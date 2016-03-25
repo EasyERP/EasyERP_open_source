@@ -1,8 +1,9 @@
 define([
         "text!templates/PayrollPayments/CreateTemplate.html",
+        'moment',
         "helpers"
     ],
-    function (CreateTemplate, helpers) {
+    function (CreateTemplate, moment, helpers) {
         "use strict";
 
         var CreateView = Backbone.View.extend({
@@ -14,6 +15,8 @@ define([
                 this.editCollection = options.collection;
                 this.editCollection.url = 'payment/salary';
                 this.editCollection.on('saved', this.savedNewModel, this);
+
+                this.date = this.editCollection.length ? moment().isoWeekYear(this.editCollection.toJSON()[0].year).month(this.editCollection.toJSON()[0].month - 1).endOf('month') : new Date();
 
                 this.render(options);
 
@@ -60,8 +63,8 @@ define([
                 if (!isInput) {
                     tempContainer = (target.text()).trim();
                     inputHtml = '<input class="editing" type="text" data-value="' +
-                    tempContainer + '" value="' + tempContainer +
-                    '"  maxLength="4" style="display: block;" />';
+                        tempContainer + '" value="' + tempContainer +
+                        '"  maxLength="4" style="display: block;" />';
 
                     target.html(inputHtml);
 
@@ -361,7 +364,7 @@ define([
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: "You do not have permission to perform this action"
                             });
                         }
@@ -415,6 +418,23 @@ define([
                         }]
 
                 });
+
+                this.dateOfPayment = this.$el.find('#dateOfPayment');
+
+                this.dateOfPayment.datepicker({ //TODO
+                    dateFormat : "d M, yy",
+                    changeMonth: true,
+                    changeYear : true,
+                    minDate    : self.date
+                });
+
+                var date = new Date(moment(self.date).endOf('month').set({
+                    hours  : 18,
+                    minutes: 1,
+                    seconds: 0
+                }));
+
+                this.dateOfPayment.datepicker("setDate", date.toString());
 
                 this.$el.find('#deleteBtn').hide();
 
