@@ -183,6 +183,7 @@ define([
                 });
 
             }, function () {
+                that.eventChannel.trigger('proformaRemove');
                 if (that.collection.length) {
                     that.recalcTotal();
                 } else {

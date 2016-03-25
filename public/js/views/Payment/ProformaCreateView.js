@@ -30,7 +30,7 @@ define([
                 this.totalAmount = this.invoiceModel.get('paymentInfo').balance || 0;
                 this.forSales = this.invoiceModel.get('forSales');
             } else {
-                this.forSales = App.weTrack;
+                this.forSales = true;
             }
             this.responseObj = {};
             this.model = new PaymentModel();

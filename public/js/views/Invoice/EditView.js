@@ -56,7 +56,7 @@ define([
 
                 this.notCreate = options.notCreate ? false : true;
 
-                if (!App || !App.currentDb) {
+                /*if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
@@ -74,9 +74,9 @@ define([
                     });
                 } else {
                     this.render();
-                }
+                }*/
 
-                /* this.render();*/
+                this.render();
             },
 
             newPayment: function (e) {

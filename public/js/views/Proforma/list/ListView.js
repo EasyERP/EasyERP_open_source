@@ -168,7 +168,7 @@ define([
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
-                            App.weTrack = response === "weTrack" || response === "production" || response === "development";
+                            App.weTrack = true;
                         }
 
                         currentEllistRenderer(self);

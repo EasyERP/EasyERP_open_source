@@ -130,21 +130,14 @@ define([
                 $currentEl = this.$el;
 
                 $currentEl.html('');
-                if (App.weTrack) {
-                    $currentEl.append(_.template(listForWTrack));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());
-                } else {
-                    $currentEl.append(_.template(listTemplate));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());
-                }
+
+                $currentEl.append(_.template(listForWTrack));
+                $currentEl.append(new listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());
+
                 //added two parameters page and items number
                 $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 4}).render());
 

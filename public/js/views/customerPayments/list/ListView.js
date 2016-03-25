@@ -478,23 +478,13 @@ define([
                 self = this;
                 $currentEl = this.$el;
 
-                if (App.weTrack) {
-                    $currentEl.html('');
-                    $currentEl.append(_.template(ListHeaderForWTrack));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());
-                } else {
-                    $currentEl.html('');
-                    $currentEl.append(_.template(listTemplate));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());
-                }
+                $currentEl.html('');
+                $currentEl.append(_.template(ListHeaderForWTrack));
+                $currentEl.append(new listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());
 
                 $currentEl.append(new listTotalView({/*element: this.$el.find("#listTable"),*/ cellSpan: 5}).render());  // took off element in case of new auto-calculating
 

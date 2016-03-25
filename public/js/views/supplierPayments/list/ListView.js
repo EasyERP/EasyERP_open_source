@@ -400,34 +400,22 @@ define([
                 var self = this;
                 var $currentEl = this.$el;
 
-                if (App.weTrack) {
-                    $currentEl.html('');
-                    $currentEl.append(_.template(ListHeaderForWTrack));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());
+                $currentEl.html('');
+                $currentEl.append(_.template(ListHeaderForWTrack));
+                $currentEl.append(new listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());
 
-                    $currentEl.append(new listTotalView({
-                        element : this.$el.find("#listTable"),
-                        cellSpan: 6,
-                        wTrack  : true
-                    }).render());
+                $currentEl.append(new listTotalView({
+                    element : this.$el.find("#listTable"),
+                    cellSpan: 6,
+                    wTrack  : true
+                }).render());
 
-                    self.renderFilter(self);
+                self.renderFilter(self);
 
-                } else {
-                    $currentEl.html('');
-                    $currentEl.append(_.template(listTemplate));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());
-
-                    $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
-                }
 
                 self.renderCheckboxes();
 

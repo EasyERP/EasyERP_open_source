@@ -670,11 +670,7 @@ define([
         },
 
         checkDatabase: function (db) {
-            if ((db === "weTrack") || (db === "production") || (db === "development")) {
-                App.weTrack = true;
-            } else {
-                App.weTrack = false;
-            }
+            App.weTrack = true;
 
             App.currentDb = db;
         },

@@ -134,6 +134,7 @@ define([
                 this.listenTo(eventChannel, 'paymentRemoved', this.newPayment);
                 this.listenTo(eventChannel, 'elemCountChanged', this.renderTabCounter);
                 this.listenTo(eventChannel, 'newProforma', this.createProforma);
+                this.listenTo(eventChannel, 'proformaRemove', this.createProforma);
                 this.listenTo(eventChannel, 'savedProforma', this.createProforma);
             },
 
@@ -1435,6 +1436,7 @@ define([
 
                 paralellTasks = [
                     self.renderProformRevenue,
+                    self.getProforma,
                     self.getProformaStats
                 ];
                 App.startPreload();
@@ -1442,6 +1444,7 @@ define([
                 async.parallel(paralellTasks, function () {
                     self.getProforma(null, quotationId);
                     self.activeTab();
+                    self.renderTabCounter();
                     App.stopPreload();
                 });
 

@@ -36,7 +36,7 @@
                                     <dt><label for="supplierDd">
 
                                         <%if(model.supplier){%>
-                                        <%if (App.weTrack && this.forSales) {%>
+                                        <%if (this.forSales) {%>
                                         Customer
                                         <% } else { %>
                                         Supplier
@@ -51,7 +51,7 @@
                                         <% } %>
                                     </dd>
 
-                                    <%if (App.weTrack && this.forSales) {%>
+                                    <%if (this.forSales) {%>
                                     <dt><label for="projectDd">Project</label></dt>
                                     <dd>
                                         <%if(hidePrAndCust){%>

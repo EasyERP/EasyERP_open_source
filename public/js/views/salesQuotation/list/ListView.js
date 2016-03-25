@@ -143,32 +143,18 @@ define([
 
                 $currentEl.html('');
 
-                if (App.weTrack) {
-                    templ = _.template(listForWTrack);
-                    $currentEl.append(templ);
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());//added two parameters page and items number
+                templ = _.template(listForWTrack);
+                $currentEl.append(templ);
+                $currentEl.append(new listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());//added two parameters page and items number
 
-                    $currentEl.append(new listTotalView({
-                        element : $currentEl.find("#listTable"),
-                        cellSpan: 5
-                    }).render());
-                } else {
-                    $currentEl.append(_.template(listTemplate));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());//added two parameters page and items number
-
-                    $currentEl.append(new listTotalView({
-                        element : $currentEl.find("#listTable"),
-                        cellSpan: 5
-                    }).render());
-                }
+                $currentEl.append(new listTotalView({
+                    element : $currentEl.find("#listTable"),
+                    cellSpan: 5
+                }).render());
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);

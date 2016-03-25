@@ -164,7 +164,7 @@ define([
 
                 $currentEl.html('');
 
-                if (!App || !App.currentDb) {
+                /*if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
@@ -177,7 +177,8 @@ define([
                 } else {
                     currentEllistRenderer(self);
                     //$currentEl.append(itemView.render());
-                }
+                }*/
+                currentEllistRenderer(self);
 
                 self.renderCheckboxes();
                 self.renderPagination($currentEl, self);
@@ -194,7 +195,7 @@ define([
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 function currentEllistRenderer(self) {
-                    $currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
+                    $currentEl.append(_.template(listTemplate, {currentDb: true}));
                     var itemView = new listItemView({
                         collection : self.collection,
                         page       : self.page,
