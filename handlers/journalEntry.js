@@ -4428,6 +4428,10 @@ var Module = function (models) {
 
                     var ar = arFirst - arLast;
 
+                    if (ar > 0){
+                        ar = ar * (-1);
+                    }
+
                     var fieldName = result[1][0].name[0];
 
                     cb(null, [{name: fieldName, debit: ar}]);
@@ -4532,7 +4536,11 @@ var Module = function (models) {
                     var spFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
                     var spLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
 
-                    var sp = Math.abs(spLast + spFirst);
+                    var sp = spLast - spFirst;
+
+                    if (sp < 0){
+                        sp = sp * (-1);
+                    }
 
                     var fieldName = 'Salary Payable';
 
@@ -4642,6 +4650,10 @@ var Module = function (models) {
                     var spLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
 
                     var sp = spLast - spFirst;
+
+                    if (sp > 0){
+                        sp = sp * (-1);
+                    }
 
                     var fieldName = result[1][0].name[0];
 
