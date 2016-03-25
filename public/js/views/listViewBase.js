@@ -27,7 +27,7 @@ define([
                 "click .showPage"                                              : "showPage",
                 "change #currentShowPage"                                      : "showPage",
                 "click .checkbox"                                              : "checked",
-                //"click .list td:not(.notForm)"                                 : "gotoForm",
+                "click .list td:not(.notForm)"                                 : "gotoForm",
                 "mouseover .currentPageList"                                   : "showPagesPopup",
                 "click"                                                        : "hidePagesPopup",
                 "click .oe_sortable"                                           : "goSort"
