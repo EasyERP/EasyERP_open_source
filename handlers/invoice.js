@@ -904,7 +904,8 @@ var Invoice = function (models, event) {
                         function proformaUpdate(parallelCb) {
                             Proforma.update(
                                 {
-                                    sourceDocument: orderId, kind: 'Proforma'
+                                    sourceDocument: orderId,
+                                    kind: 'Proforma'
                                 },
                                 {
                                     $set: {
@@ -978,7 +979,7 @@ var Invoice = function (models, event) {
 
                         async.parallel([proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks], function (err, result) {
                             if (err) {
-                                next(err)
+                                next(err);
                             }
                         });
 
