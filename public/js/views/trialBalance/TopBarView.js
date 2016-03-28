@@ -164,8 +164,14 @@ define([
                         defaultDate: startDate,
                         onSelect   : function () {
                             var endDatePicker = self.$endDate;
+                            var endDate;
 
                             endDatePicker.datepicker('option', 'minDate', $(this).val());
+
+                            endDate =  moment(new Date($(this).val())).endOf('month');
+                            endDate = new Date(endDate);
+
+                            endDatePicker.datepicker('setDate', endDate);
 
                             return false;
                         }

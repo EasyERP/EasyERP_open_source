@@ -78,10 +78,10 @@ define([
                 equityFooter.text('');
                 equtotalEquityityFooter.text('');
 
-                assetsFooter.text(helpers.currencySplitter(Math.abs((assets / 100)).toFixed(2)));
-                liabilitiesFooter.text(helpers.currencySplitter(Math.abs((liabilities / 100)).toFixed(2)));
-                equityFooter.text(helpers.currencySplitter(Math.abs((equity / 100)).toFixed(2)));
-                equtotalEquityityFooter.text(helpers.currencySplitter(Math.abs(((equity + liabilities) / 100)).toFixed(2)));
+                assetsFooter.text(helpers.currencySplitter((assets / 100).toFixed(2)));
+                liabilitiesFooter.text(helpers.currencySplitter((liabilities / 100).toFixed(2)));
+                equityFooter.text(helpers.currencySplitter((equity / 100).toFixed(2)));
+                equtotalEquityityFooter.text(helpers.currencySplitter(((equity + liabilities) / 100).toFixed(2)));
             },
 
             render: function () {

@@ -1499,13 +1499,53 @@ var Module = function (models) {
                     createReconciled(body, req.session.lastDb, cb, req.session.uId);
                 })
             };
+
             parallelTasks = [createIncomeSummary, createCloseCOGS, cretaeCloseVacation, createCloseIdle, createCloseAdminSalary];
             async.parallel(parallelTasks, function (err, result) {
                 if (err) {
                     return wfCb(err);
                 }
 
-                wfCb(null, result);
+                Model.aggregate([{
+                    $match: {
+                        date   : {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.TOTAL_EXPENSES)
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, je) {
+                    if (err) {
+                        return wfCb(err);
+                    }
+
+                    var debit = je[0] ? je[0].debit : 0;
+                    var credit = je[0] ? je[0].credit : 0;
+                    var balance = Math.abs(debit - credit);
+
+                    var body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.CLOSE_ADMIN_BUD,
+                        date          : new Date(endDate),
+                        sourceDocument: {
+                            model: 'closeMonth'
+                        },
+                        amount        : balance
+                    };
+
+                    var cb = function () {
+                        wfCb(null, result);
+                    };
+
+                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+
+                });
             });
         };
 
@@ -1786,7 +1826,7 @@ var Module = function (models) {
 
                                     for (i = length - 1; i >= 0; i--) {
                                         if (vacArray[i]) {
-                                            var key = (newDate.date(i + 1).isoWeekYear() * 100 + newDate.date(i + 1).month() + 1) * 100 + i + 1;
+                                            var key = (newDate.date(i + 1).year() * 100 + newDate.date(i + 1).month() + 1) * 100 + i + 1;
                                             vacationObject[vacation.employee][key] = vacArray[i];
                                         }
                                     }
@@ -2107,7 +2147,14 @@ var Module = function (models) {
                                 var objectForDay = totalObject[dateKey] || {};
                                 var employeesObjects = objectForDay.employees || [];
                                 var employeesIds = Object.keys(employeesObjects);
-                                var allEmployees = _.union(employeesIds, empResult.emps);
+
+                                var stringIds = [];
+
+                                empResult.emps.forEach(function (el) {
+                                    stringIds.push(el.toString());
+                                });
+
+                                var allEmployees = _.union(employeesIds, stringIds);
                                 var employeesCount = allEmployees.length;
                                 var i;
                                 var employeesWithSalary = empResult.salary;
@@ -2124,66 +2171,79 @@ var Module = function (models) {
                                 if (!totalIdleObject[dateKey]) {
                                     totalIdleObject[dateKey] = 0;
                                 }
+                                Model.remove({
+                                    "sourceDocument.model": 'Employees',
+                                    date                  : date.set(timeToSet),
+                                    journal               : CONSTANTS.IDLE_PAYABLE
+                                }, function (err, result) {
+                                    for (i = employeesCount - 1; i >= 0; i--) {
+                                        var employee = allEmployees[i];
+                                        var empObject = employeesObjects[employee] || {};
+                                        var vacation = empObject.vacation;
+                                        var totalWorkedForDay = empObject.hours || 0;
+                                        var salary = 0;
+                                        var employeeNotTracked = _.find(employeesWithSalary, function (elem) {
+                                            return elem._id.toString() === employee.toString();
+                                        });
+                                        var hireArray = employeeNotTracked ? employeeNotTracked.hire : [];
+                                        var length = hireArray.length;
+                                        var j;
+                                        var costHour = 0;
+                                        var hours = monthHours.hours || 0;
 
-                                for (i = employeesCount - 1; i >= 0; i--) {
-                                    var employee = allEmployees[i];
-                                    var empObject = employeesObjects[employee] || {};
-                                    var vacation = empObject.vacation;
-                                    var totalWorkedForDay = empObject.hours || 0;
-                                    var salary = 0;
-                                    var employeeNotTracked = _.find(employeesWithSalary, function (elem) {
-                                        return elem._id.toString() === employee.toString();
-                                    });
-                                    var hireArray = employeeNotTracked.hire;
-                                    var length = hireArray.length;
-                                    var j;
-                                    var costHour = 0;
-                                    var hours = monthHours.hours || 0;
-
-                                    for (j = length - 1; j >= 0; j--) {
-                                        if (date >= hireArray[j].date) {
-                                            salary = hireArray[j].salary;
-                                            break;
-                                        }
-                                    }
-
-                                    costHour = empObject.costHour || (isFinite(salary / hours) ? (salary / hours) : 0);
-
-                                    var bodySalaryIdle = {
-                                        currency      : CONSTANTS.CURRENCY_USD,
-                                        journal       : CONSTANTS.IDLE_PAYABLE,
-                                        date          : date.set(timeToSet),
-                                        sourceDocument: {
-                                            model: 'Employees'
-                                        }
-                                    };
-
-                                    var idleTime = HOURSCONSTANT - totalWorkedForDay;
-
-                                    bodySalaryIdle.sourceDocument._id = employee;
-
-                                    if (totalWorkedForDay - HOURSCONSTANT < 0) {
-                                        if (!vacation) {
-                                            if (totalWorkedForDay - HOURSCONSTANT >= 0) {
-                                                bodySalaryIdle.amount = 0;
-                                            } else {
-                                                bodySalaryIdle.amount = costHour * idleTime * 100;
-                                                totalIdleObject[dateKey] += costHour * idleTime * 100;
+                                        for (j = length - 1; j >= 0; j--) {
+                                            if (date >= hireArray[j].date) {
+                                                salary = hireArray[j].salary;
+                                                break;
                                             }
+                                        }
 
+                                        if (!vacation) {
+                                            vacation = vacationObject[employee] ? vacationObject[employee][dateKey] : null;
+
+                                            if ((vacation === 'P') || (vacation === 'E')){
+                                                vacation = null;
+                                            }
+                                        }
+
+                                        costHour = empObject.costHour || (isFinite(salary / hours) ? (salary / hours) : 0);
+
+                                        var bodySalaryIdle = {
+                                            currency      : CONSTANTS.CURRENCY_USD,
+                                            journal       : CONSTANTS.IDLE_PAYABLE,
+                                            date          : date.set(timeToSet),
+                                            sourceDocument: {
+                                                model: 'Employees'
+                                            }
+                                        };
+
+                                        var idleTime = HOURSCONSTANT - totalWorkedForDay;
+
+                                        bodySalaryIdle.sourceDocument._id = employee;
+
+                                        if (totalWorkedForDay - HOURSCONSTANT < 0) {
+                                            if (!vacation) {
+                                                if (totalWorkedForDay - HOURSCONSTANT >= 0) {
+                                                    bodySalaryIdle.amount = 0;
+                                                } else {
+                                                    bodySalaryIdle.amount = costHour * idleTime * 100;
+                                                    totalIdleObject[dateKey] += costHour * idleTime * 100;
+                                                }
+
+                                            } else {
+                                                bodySalaryIdle.amount = 0;
+                                            }
                                         } else {
                                             bodySalaryIdle.amount = 0;
                                         }
-                                    } else {
-                                        bodySalaryIdle.amount = 0;
-                                    }
 
-                                    if (sameDayHoliday) {
-                                        bodySalaryIdle.amount = 0;
-                                    }
+                                        if (sameDayHoliday) {
+                                            bodySalaryIdle.amount = 0;
+                                        }
 
-                                    createReconciled(bodySalaryIdle, req.session.lastDb, cb, req.session.uId);
-                                }
+                                        createReconciled(bodySalaryIdle, req.session.lastDb, cb, req.session.uId);
+                                    }
+                                });
                             }, function (err, result) {
                                 callback(err, {totalIdleObject: totalIdleObject, totalObject: totalObject});
                             });
@@ -3839,7 +3899,7 @@ var Module = function (models) {
                             debit                   : 1,
                             'journal.creditAccount' : 1,
                             'journal.name'          : 1,
-                            'sourceDocument.subject': '$sourceDocument._id'
+                            'sourceDocument.subject': '$sourceDocument._id._id'
                         }
                     }, {
                         $project: {
@@ -3905,7 +3965,7 @@ var Module = function (models) {
                             debit                   : 1,
                             'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
                             'journal.name'          : 1,
-                            'sourceDocument.subject': '$sourceDocument._id'
+                            'sourceDocument.subject': '$sourceDocument._id._id'
                         }
                     }];
 
@@ -3964,7 +4024,7 @@ var Module = function (models) {
                             debit                   : 1,
                             'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
                             'journal.name'          : 1,
-                            'sourceDocument.subject': '$sourceDocument._id'
+                            'sourceDocument.subject': '$sourceDocument._id._id'
                         }
                     }];
 
@@ -4023,7 +4083,7 @@ var Module = function (models) {
                             debit                   : 1,
                             'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
                             'journal.name'          : 1,
-                            'sourceDocument.subject': '$sourceDocument._id'
+                            'sourceDocument.subject': '$sourceDocument._id._id'
                         }
                     }];
 
@@ -4106,10 +4166,10 @@ var Module = function (models) {
             }
         }, {
             $project: {
-                _id   : 1,
-                date  : {$arrayElemAt: ["$date", 0]},
-                debit : 1,
-                credit: 1,
+                _id    : 1,
+                date   : {$arrayElemAt: ["$date", 0]},
+                debit  : 1,
+                credit : 1,
                 journal: {$arrayElemAt: ["$journal", 0]}
             }
         }, {
@@ -4504,7 +4564,8 @@ var Module = function (models) {
                     _id   : 1,
                     debit : 1,
                     credit: 1,
-                    name  : {$arrayElemAt: ["$name", 0]}
+                    name  : {$arrayElemAt: ["$name", 0]},
+                    group : {$concat: ["liabilities", '']}
                 }
             }, {
                 $sort: {
@@ -4666,10 +4727,10 @@ var Module = function (models) {
                         return cb(err);
                     }
 
-                    var grossProfit = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
-                    var expenses = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
+                    var grossProfit = result[0] && result[0][0] ? result[0][0].credit : 0;
+                    var expenses = result[1] && result[1][0] ? result[1][0].debit : 0;
 
-                    var EBIT = Math.abs(grossProfit + expenses);
+                    var EBIT = grossProfit - expenses;
 
                     cb(null, [{name: 'Operating Income (EBIT)', debit: EBIT}]);
                 });
@@ -4988,7 +5049,7 @@ var Module = function (models) {
                         sp = sp * (-1);
                     }
 
-                    var fieldName = result[1][0].name[0];
+                    var fieldName = result[1][0] ? result[1][0].name[0] : '';
 
                     cb(null, [{name: fieldName, debit: sp}]);
                 });
@@ -5101,12 +5162,123 @@ var Module = function (models) {
                 });
             };
 
-            async.parallel([getEBIT, getAR, getCOGS, getWIP, getSalaryPayable], function (err, result) {
+            var getAccountPayable = function (cb) {
+                var getSPFirst = function (pcb) {
+                    Model.aggregate([{
+                        $match: {
+                            date   : {
+                                $gte: new Date(startDate),
+                                //$lte: new Date(moment(startDate).endOf('day'))
+                                $lte: new Date(startDate)
+                            },
+                            account: objectId(CONSTANTS.ACCOUNT_PAYABLE)
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $project: {
+                            date   : 1,
+                            credit : {$divide: ['$credit', '$currency.rate']},
+                            debit  : {$divide: ['$debit', '$currency.rate']},
+                            account: {$arrayElemAt: ["$account", 0]}
+                        }
+                    }, {
+                        $group: {
+                            _id   : '$account._id',
+                            name  : {$addToSet: '$account.name'},
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }, {
+                        $group: {
+                            _id   : null,
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        pcb(null, result);
+                    });
+                };
+
+                var getSPLast = function (pcb) {
+                    Model.aggregate([{
+                        $match: {
+                            date   : {
+                                $gte: new Date(startDate),
+                                $lte: new Date(endDate)
+                            },
+                            account: objectId(CONSTANTS.ACCOUNT_PAYABLE)
+                        }
+                    }, {
+                        $lookup: {
+                            from        : "chartOfAccount",
+                            localField  : "account",
+                            foreignField: "_id", as: "account"
+                        }
+                    }, {
+                        $project: {
+                            date   : 1,
+                            credit : {$divide: ['$credit', '$currency.rate']},
+                            debit  : {$divide: ['$debit', '$currency.rate']},
+                            account: {$arrayElemAt: ["$account", 0]}
+                        }
+                    }, {
+                        $group: {
+                            _id   : '$account._id',
+                            name  : {$addToSet: '$account.name'},
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }, {
+                        $group: {
+                            _id   : null,
+                            debit : {$sum: '$debit'},
+                            credit: {$sum: '$credit'},
+                            name  : {$addToSet: '$name'}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return pcb(err);
+                        }
+
+                        pcb(null, result);
+                    });
+                };
+
+                async.parallel([getSPFirst, getSPLast], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var spFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
+                    var spLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
+
+                    var sp = spLast - spFirst;
+
+                    if (sp < 0) {
+                        sp = sp * (-1);
+                    }
+
+                    var fieldName = result[1][0] ? result[1][0].name[0] : 'Account Payable';
+
+                    cb(null, [{name: fieldName, debit: sp}]);
+                });
+            };
+
+            async.parallel([getEBIT, getAR, getCOGS, getWIP, getSalaryPayable, getAccountPayable], function (err, result) {
                 if (err) {
                     return cb(err);
                 }
 
-                var result = _.union(result[0], result[1], result[2], result[3], result[4]);
+                var result = _.union(result[0], result[1], result[2], result[3], result[4], result[5]);
 
                 cb(null, result);
             });

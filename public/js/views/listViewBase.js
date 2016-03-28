@@ -135,7 +135,7 @@ define([
                     }
 
                     if (response.totalValue) {
-                        context.$el.find('#totalDebit').text(helpers.currencySplitter(response.totalValue.toFixed(2)));
+                        context.$el.find('#totalDebit').text(helpers.currencySplitter((response.totalValue / 100).toFixed(2)));
                     }
 
                     context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js

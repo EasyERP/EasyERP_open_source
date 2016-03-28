@@ -77,8 +77,11 @@ module.exports = {
         '565eb53a6aa50532e5df0bdd', //tax received
         '565eb53a6aa50532e5df0bdb',//current Liabilities
         '56c4444eb81fd51e19207f3e', //salary Payable
-        '56c9d555c3b88f6d64490fb5' //overtime Payable
+        '56c9d555c3b88f6d64490fb5',//overtime Payable
+        '565eb53a6aa50532e5df0bdc'
     ],
+
+    ACCOUNT_PAYABLE: '565eb53a6aa50532e5df0bdc',
 
     EQUITY: [
         '565eb53a6aa50532e5df0bf3' //retained Earnings
@@ -119,6 +122,9 @@ module.exports = {
     CLOSE_VAC_EXP: '56efc13cfd70ba6414bd3de7',
     CLOSE_IDLE_EXP: '56efc15bfd70ba6414bd3de9',
     CLOSE_ADMIN_EXP: '56efc1affd70ba6414bd3deb',
+    CLOSE_ADMIN_BUD: '56f90e8d8cea58642c57f442',
+
+    TOTAL_EXPENSES: '56cc6bf2541812c07197356a',
 
     CLOSE_MONTH_JOURNALS: [
         '56f5383a9c85020807b40020', //credit Income Summary
