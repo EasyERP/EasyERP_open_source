@@ -484,6 +484,8 @@ define([
                 self.stages = stages;
             });
 
+            self.eventChannel.trigger('elemCountChanged');
+
         }
     });
 
