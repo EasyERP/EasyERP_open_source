@@ -199,7 +199,7 @@ var Invoice = function (models, event) {
                     sourceDocument: objectId(id)
                 },
                 {
-                    workflow: objectId('55647b962e4aa3804a765ec6')
+                    workflow: objectId(CONSTANTS.ORDERDONE)
                 },
                 {
                     multi: true
@@ -256,13 +256,12 @@ var Invoice = function (models, event) {
             invoice.payments = payments;
             invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
-            invoice.workflow = paidAmount ? objectId('55647d952e4aa3804a765eca') : workflow._id;
             invoice.paymentInfo.balance = order.paymentInfo.total - (paidAmount || 0);
 
             if (paidAmount === order.paymentInfo.total) {
-                invoice.workflow = objectId('55647d982e4aa3804a765ecb');
+                invoice.workflow = objectId(CONSTANTS.INVOICE_PAID);
             } else if (paidAmount) {
-                invoice.workflow = objectId('55647d952e4aa3804a765eca');
+                invoice.workflow = objectId(CONSTANTS.INVOICE_PARTIALY_PAID);
             } else {
                 invoice.workflow = workflow._id;
             }
