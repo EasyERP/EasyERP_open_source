@@ -14,7 +14,8 @@ define([
             template   : _.template(ContentTopBarTemplate),
 
             events: {
-                "click #top-bar-generate"     : "closeMonth"
+                "click #top-bar-generate": "closeMonth",
+                "click #top-bar-reclose" : "recloseEvent"
             },
 
             initialize: function (options) {
@@ -32,7 +33,43 @@ define([
                 this.trigger('generateEvent');
             },
 
-            render     : function () {
+            recloseEvent: function (event) {
+                event.preventDefault();
+              //  this.trigger('recloseEvent');
+
+                var dates = [];
+                var checked = $("input.checkbox:checked");
+                var url;
+
+                this.url = '/journal/journalEntry/recloseMonth';
+
+                checked.each(function (ind, el) {
+                    dates.push(el.value);
+                });
+
+                $.ajax({
+                    type       : 'POST',
+                    url        : this.url,
+                    contentType: "application/json",
+                    data       : JSON.stringify(dates),
+
+                    success: function () {
+                        url = window.location.hash;
+
+                        Backbone.history.fragment = '';
+                        Backbone.history.navigate(url, {trigger: true});
+
+                    },
+                    error  : function () {
+                        App.render({
+                            type   : 'error',
+                            message: "error"
+                        });
+                    }
+                });
+            },
+
+            render: function () {
                 $('title').text(this.contentType);
                 var viewType = Custom.getCurrentVT();
 

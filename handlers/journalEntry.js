@@ -1295,9 +1295,26 @@ var Module = function (models) {
         });
     };
 
-    this.closeMonth = function (req, res, next) {
+    this.recloseMonth = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var query = req.body;
+        var body = req.body;
+
+        body.forEach(function (date) {
+            Model.remove({journal: CONSTANTS.CLOSE_MONTH_JOURNALS, date: new Date(date)}, function (err, result) {
+                var month = moment(date).month() + 1;
+                var year = moment(date).year();
+                closeMonth(req, res, next, {month: month, year: year});
+            });
+        });
+    };
+
+    this.closeMonth = function (req, res, next) {
+        closeMonth(req, res, next);
+    };
+
+    function closeMonth (req, res, next, dateObject) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var query = dateObject || req.body;
         var month = parseInt(query.month, 10);
         var year = parseInt(query.year, 10);
         var startDate = moment().isoWeekYear(year).month(month - 1).startOf('month');
@@ -1596,7 +1613,7 @@ var Module = function (models) {
 
             res.status(200).send({'success': true});
         })
-    };
+    }
 
     this.reconcile = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
@@ -2201,7 +2218,7 @@ var Module = function (models) {
                                         if (!vacation) {
                                             vacation = vacationObject[employee] ? vacationObject[employee][dateKey] : null;
 
-                                            if ((vacation === 'P') || (vacation === 'E')){
+                                            if ((vacation === 'P') || (vacation === 'E')) {
                                                 vacation = null;
                                             }
                                         }
@@ -4516,7 +4533,8 @@ var Module = function (models) {
                     _id   : 1,
                     debit : 1,
                     credit: 1,
-                    name  : {$arrayElemAt: ["$name", 0]}
+                    name  : {$arrayElemAt: ["$name", 0]},
+                    group : {$concat: ["assets", '']}
                 }
             }, {
                 $sort: {
@@ -4564,8 +4582,7 @@ var Module = function (models) {
                     _id   : 1,
                     debit : 1,
                     credit: 1,
-                    name  : {$arrayElemAt: ["$name", 0]},
-                    group : {$concat: ["liabilities", '']}
+                    name  : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
                 $sort: {
@@ -4618,7 +4635,18 @@ var Module = function (models) {
                     return cb(err);
                 }
 
-                cb(null, result);
+                var debit = result[0] ? result[0].debit : 0;
+                var credit = result[0] ? result[0].credit : 0;
+
+                var balance = debit - credit;
+                var name = result[0] ? result[0].name : '300200 Retained Earnings';
+
+                if (balance < 0){
+                    debit = debit * (-1);
+                    credit = credit * (-1);
+                }
+
+                cb(null, [{name: name, credit: credit, debit: debit, group: 'assets'}]);
             });
         };
 

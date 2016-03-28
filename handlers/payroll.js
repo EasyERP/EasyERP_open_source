@@ -801,7 +801,7 @@ var PayRoll = function (models) {
         var employees;
         var ids = {};
         var i;
-        var date = moment().isoWeekYear(year).month(month - 1).date(1);
+        var date = moment().isoWeekYear(year).month(month - 1).startOf('month');
         var endDate = moment(date).endOf('month');
 
         function getEmployees(callback) {
@@ -826,10 +826,6 @@ var PayRoll = function (models) {
                     var hire = elem.hire;
                     var length = hire.length;
                     var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hours: 18, minutes: 1, seconds: 0}));
-
-                    if (elem._id.toString() === '55b92ad221e4b7c40f000073'){
-                        console.log('Ira');
-                    }
 
                     journalEntry.removeByDocId({'sourceDocument._id': elem._id, journal: CONSTANTS.ADMIN_SALARY_JOURNAL, date: localDate}, req.session.lastDb, function (err, result) {
 

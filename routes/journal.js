@@ -27,6 +27,7 @@ module.exports = function (models) {
     router.post('/journalEntry', _journalEntryHandler.create);
     router.post('/reconcile', _journalEntryHandler.reconcile);
     router.post('/journalEntry/closeMonth', _journalEntryHandler.closeMonth);
+    router.post('/journalEntry/recloseMonth', _journalEntryHandler.recloseMonth);
     router.delete('/:id', _journalHandler.remove);
     router.patch('/', _journalHandler.putchBulk);
 
