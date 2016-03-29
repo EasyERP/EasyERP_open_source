@@ -534,7 +534,7 @@ var PayRoll = function (models) {
         var key = 'salaryReport' + filter + startDate.toString() + endDate.toString();
         var redisStore = require('../helpers/redisClient');
         var waterfallTasks;
-        var startDateKey = moment(startDate).year() * 100 + moment(startDate).isoWeek();
+        var startDateKey = moment(startDate).isoWeekYEar() * 100 + moment(startDate).isoWeek();
         var endDateKey = moment(endDate).year() * 100 + moment(endDate).isoWeek();
         var filterValue;
 

@@ -1320,6 +1320,8 @@ var Module = function (models) {
         var startDate = moment().isoWeekYear(year).month(month - 1).startOf('month');
         var endDate = moment().isoWeekYear(year).month(month - 1).endOf('month');
         var waterlallTasks;
+        var productSales;
+        var COGS;
 
         var parallelCreate = function (wfCb) {
             var parallelTasks;
@@ -1347,6 +1349,8 @@ var Module = function (models) {
                     var debit = result[0] ? result[0].debit : 0;
                     var credit = result[0] ? result[0].credit : 0;
                     var balance = Math.abs(debit - credit);
+
+                    productSales = balance;
 
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
@@ -1386,6 +1390,8 @@ var Module = function (models) {
                     var debit = result[0] ? result[0].debit : 0;
                     var credit = result[0] ? result[0].credit : 0;
                     var balance = debit - credit;
+
+                    COGS = balance;
 
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
@@ -1588,9 +1594,9 @@ var Module = function (models) {
 
                 var debit = result[0] ? result[0].debit : 0;
                 var credit = result[0] ? result[0].credit : 0;
-                var balance = debit - credit;
+                var balance = Math.abs(debit - credit);
 
-                if (balance > 0){
+                if (productSales - COGS < 0){
                     balance = balance * (-1);
                 }
 
@@ -1964,15 +1970,15 @@ var Module = function (models) {
                                         };
 
                                         if (day <= 5 && !sameDayHoliday) {
-                                            //if (hours - HOURSCONSTANT >= 0) {
-                                            //    bodySalary.amount = costHour * HOURSCONSTANT * 100;
-                                            //    bodyOvertime.amount = costHour * (hours - HOURSCONSTANT) * 100;
-                                            //    bodyOverhead.amount = overheadRate * HOURSCONSTANT * 100;
-                                            //} else {
+                                            if (hours - HOURSCONSTANT >= 0) {
+                                                bodySalary.amount = costHour * HOURSCONSTANT * 100;
+                                                bodyOvertime.amount = costHour * (hours - HOURSCONSTANT) * 100;
+                                                bodyOverhead.amount = overheadRate * HOURSCONSTANT * 100;
+                                            } else {
                                             bodySalary.amount = costHour * hours * 100;
                                             bodyOvertime.amount = 0;
                                             bodyOverhead.amount = overheadRate * hours * 100;
-                                            //}
+                                            }
 
                                             if (vacationSameDate) {
                                                 if ((vacationForEmployee[dateKey] === "V") || (vacationForEmployee[dateKey] === "S")) {
@@ -2003,10 +2009,10 @@ var Module = function (models) {
                                             }
                                         }
 
-                                        if (overtime) {
-                                            bodyOvertime.amount = costHour * hours * 100;
-                                            bodyOverhead.amount = overheadRate * hours * 100;
-                                        }
+                                        //if (overtime) {
+                                        //    bodyOvertime.amount = costHour * hours * 100;
+                                        //    bodyOverhead.amount = overheadRate * hours * 100;
+                                        //}
 
                                         createReconciled(bodySalary, req.session.lastDb, methodCb, req.session.uId);
                                         createReconciled(bodyOvertime, req.session.lastDb, methodCb, req.session.uId);
@@ -4644,6 +4650,7 @@ var Module = function (models) {
 
                 var balance = debit - credit;
                 var name = result[0] ? result[0].name : '300200 Retained Earnings';
+                var id = result[0] ? result[0]._id: '56f538c39c85020807b40024';
 
                 if (balance < 0){
                     debit = debit * (-1);
@@ -4652,7 +4659,7 @@ var Module = function (models) {
                     credit = credit * (-1);
                 }
 
-                cb(null, [{name: name, credit: credit, debit: debit, group: 'assets'}]);
+                cb(null, [{_id: id, name: name, credit: credit, debit: debit, group: 'assets'}]);
             });
         };
 
