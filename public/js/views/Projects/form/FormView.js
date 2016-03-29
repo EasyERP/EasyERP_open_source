@@ -136,6 +136,7 @@ define([
                 this.listenTo(eventChannel, 'newProforma', this.createProforma);
                 this.listenTo(eventChannel, 'proformaRemove', this.createProforma);
                 this.listenTo(eventChannel, 'savedProforma', this.createProforma);
+                this.listenTo(eventChannel, 'quotationUpdated', this.getQuotations);
             },
 
             viewQuotation: function (e) {
@@ -728,7 +729,7 @@ define([
 
                 target.closest('.chart-tabs').find('a.active').removeClass('active');
                 $aEllement.addClass('active');
-                n = target.parents('.chart-tabs').find('li').index(target.parent());
+                n = target.parents('.chart-tabs').find('li').index($aEllement.parent());
                 dialogHolder = $('.dialog-tabs-items');
                 dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
                 dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
@@ -1178,7 +1179,10 @@ define([
 
                 function createView() {
 
-                    cb();
+                    if (cb) {
+                        cb();
+                    }
+
                     new QuotationView({
                         collection      : self.qCollection,
                         projectId       : _id,

@@ -484,6 +484,8 @@ define([
                         if (proformaCb && typeof proformaCb === 'function') {
                             return proformaCb(null);
                         }
+
+                        self.eventChannel.trigger('quotationUpdated');
                     },
                     error  : function (model, xhr) {
                         self.errorNotification(xhr);
