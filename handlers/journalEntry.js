@@ -1300,7 +1300,7 @@ var Module = function (models) {
         var body = req.body;
 
         body.forEach(function (date) {
-            Model.remove({journal: CONSTANTS.CLOSE_MONTH_JOURNALS, date: new Date(date)}, function (err, result) {
+            Model.remove({journal: {$in: CONSTANTS.CLOSE_MONTH_JOURNALS}, date: new Date(date)}, function (err, result) {
                 var month = moment(date).month() + 1;
                 var year = moment(date).year();
                 closeMonth(req, res, next, {month: month, year: year});
@@ -1385,7 +1385,7 @@ var Module = function (models) {
 
                     var debit = result[0] ? result[0].debit : 0;
                     var credit = result[0] ? result[0].credit : 0;
-                    var balance = Math.abs(debit - credit);
+                    var balance = debit - credit;
 
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
@@ -1424,7 +1424,7 @@ var Module = function (models) {
 
                     var debit = result[0] ? result[0].debit : 0;
                     var credit = result[0] ? result[0].credit : 0;
-                    var balance = Math.abs(debit - credit);
+                    var balance = debit - credit;
 
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
@@ -1463,7 +1463,7 @@ var Module = function (models) {
 
                     var debit = result[0] ? result[0].debit : 0;
                     var credit = result[0] ? result[0].credit : 0;
-                    var balance = Math.abs(debit - credit);
+                    var balance = debit - credit;
 
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
@@ -1501,7 +1501,7 @@ var Module = function (models) {
 
                     var debit = result[0] ? result[0].debit : 0;
                     var credit = result[0] ? result[0].credit : 0;
-                    var balance = Math.abs(debit - credit);
+                    var balance = debit - credit;
 
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
@@ -1588,7 +1588,11 @@ var Module = function (models) {
 
                 var debit = result[0] ? result[0].debit : 0;
                 var credit = result[0] ? result[0].credit : 0;
-                var balance = Math.abs(debit - credit);
+                var balance = debit - credit;
+
+                if (balance > 0){
+                    balance = balance * (-1);
+                }
 
                 var body = {
                     currency      : CONSTANTS.CURRENCY_USD,
@@ -4533,8 +4537,7 @@ var Module = function (models) {
                     _id   : 1,
                     debit : 1,
                     credit: 1,
-                    name  : {$arrayElemAt: ["$name", 0]},
-                    group : {$concat: ["assets", '']}
+                    name  : {$arrayElemAt: ["$name", 0]}
                 }
             }, {
                 $sort: {
@@ -4582,7 +4585,8 @@ var Module = function (models) {
                     _id   : 1,
                     debit : 1,
                     credit: 1,
-                    name  : {$arrayElemAt: ["$name", 0]}
+                    name  : {$arrayElemAt: ["$name", 0]},
+                    group: {$concat: ['liabilities']}
                 }
             }, {
                 $sort: {
@@ -4643,6 +4647,8 @@ var Module = function (models) {
 
                 if (balance < 0){
                     debit = debit * (-1);
+                    credit = credit * (-1);
+                } else if(credit < 0){
                     credit = credit * (-1);
                 }
 

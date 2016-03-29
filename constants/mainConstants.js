@@ -132,7 +132,8 @@ module.exports = {
         '56f538c39c85020807b40024', //retained earnings
         '56efc13cfd70ba6414bd3de7', //close Vacation Expenses
         '56efc15bfd70ba6414bd3de9', //close idle Expenses
-        '56efc1affd70ba6414bd3deb' //close admin expenses
+        '56efc1affd70ba6414bd3deb', //close admin salary expenses
+        '56f90e8d8cea58642c57f442'
     ]
 }
 ;
