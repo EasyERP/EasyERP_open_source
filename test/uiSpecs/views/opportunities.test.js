@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Opportunities/filterCollection',
@@ -12432,3 +12433,4 @@ define([
     });
 
 });
+*/

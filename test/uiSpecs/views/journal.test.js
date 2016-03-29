@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/journal/filterCollection',
@@ -1765,3 +1766,4 @@ define([
     });
 
 });
+*/

@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Birthdays/filterCollection',
@@ -1224,3 +1225,4 @@ define([
     });
 
 });
+*/

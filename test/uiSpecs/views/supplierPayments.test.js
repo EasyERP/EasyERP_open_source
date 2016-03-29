@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/supplierPayments/filterCollection',
@@ -22447,7 +22448,7 @@ define([
 
                 });
 
-                /*it ('Try to sort down list', function(){
+                /!*it ('Try to sort down list', function(){
                     var $yearInput;
                     var $cancelBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var $sortTypeBtn = listView.$el.find('th[data-sort="year"]');
@@ -22492,7 +22493,7 @@ define([
 
                     expect($bonusTypeInput.text()).to.be.equals('Sales');
 
-                });*/
+                });*!/
 
 
 
@@ -22503,3 +22504,4 @@ define([
     });
 
 });
+*/

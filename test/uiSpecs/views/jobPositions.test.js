@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'models/JobPositionsModel',
@@ -13123,3 +13124,4 @@ define([
     });
 
 });
+*/

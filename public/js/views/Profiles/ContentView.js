@@ -1,13 +1,16 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Profiles/ProfileListTemplate.html",
-        "views/Profiles/ModulesAccessView",
         "views/Profiles/CreateView"
     ],
-    function (ProfileListTemplate, ModulesAccessView, CreateView) {
+    function (Backbone, $, _, ProfileListTemplate, CreateView) {
         var ContentView = Backbone.View.extend({
             el                : '#content-holder',
             contentType       : "Profiles",
             actionType        : "Content",
+            modulesView       : null,
             initialize        : function (options) {
                 this.startTime = options.startTime;
                 this.profilesCollection = options.collection;
@@ -194,20 +197,6 @@ define([
                 $("#modulesAccessTable").show();
 
                 return false;
-            },
-
-            editItem: function () {
-                $('#saveDiscardHolder').show();
-                $('#createBtnHolder').hide();
-                var selectedProfile = $('.profile li.active a').text().replace(' Profile', '');
-                if (selectedProfile) {
-                    this.modulesView = new ModulesAccessView({
-                        action            : "edit",
-                        profileName       : selectedProfile,
-                        profilesCollection: this.profilesCollection
-                    });
-                }
-                this.modulesView.render();
             },
 
             saveProfile: function () {

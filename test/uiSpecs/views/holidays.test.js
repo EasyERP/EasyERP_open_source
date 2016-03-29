@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Holiday/filterCollection',
@@ -910,7 +911,7 @@ define([
 
                 });
 
-                /*it('Try to delete item', function(){
+                /!*it('Try to delete item', function(){
                     var holidaysUrl = new RegExp('\/Holiday\/', 'i');
                     var $firstEl = $(listView.$el.find('#listTable input')[0]);
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
@@ -929,9 +930,9 @@ define([
 
                     $firstEl.click();
 
-                });*/
+                });*!/
 
-                /*it('Try to delete with changes', function () {
+                /!*it('Try to delete with changes', function () {
                     var $input;
                     var $expenseInput = listView.$el.find('td[data-type="input"]')[0];
                     var $body = $('body');
@@ -945,7 +946,7 @@ define([
 
                     expect($(listView.$el.find('td[data-type="input"]')[0]).text()).to.be.equals('Independence Day Ukraine');
 
-                });*/
+                });*!/
 
                 it('Try to create item', function(){
                     var $dateInput;
@@ -1016,3 +1017,4 @@ define([
     });
 
 });
+*/

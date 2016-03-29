@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'router',
@@ -14573,3 +14574,4 @@ define([
 
 
 });
+*/

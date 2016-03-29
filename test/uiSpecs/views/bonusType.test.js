@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/bonusType/filterCollection',
@@ -1187,3 +1188,4 @@ define([
     });
 
 });
+*/

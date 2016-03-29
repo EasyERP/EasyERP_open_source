@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'models/EmployeesModel',
@@ -6350,3 +6351,4 @@ define([
     });
 
 });
+*/

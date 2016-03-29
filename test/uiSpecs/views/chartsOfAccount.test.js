@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/ChartOfAccount/filterCollection',
@@ -1493,7 +1494,7 @@ define([
 
                 });
 
-                /*it('Try to cancel changes', function(){
+                /!*it('Try to cancel changes', function(){
                  var $input;
                  var $codeInput = listView.$el.find('td[data-content="code"]')[0];
                  var $accountInput = listView.$el.find('td[data-content="account"]')[0];
@@ -1513,7 +1514,7 @@ define([
 
                  expect(listView.$el.find('tr:nth-child(1) > td:nth-child(3)').text()).to.be.equals('1010101');
 
-                 });*/
+                 });*!/
 
                 it('Try to delete item with Forbidden error result', function(){
                     var spyResponse;
@@ -1671,3 +1672,4 @@ define([
     });
 
 });
+*/

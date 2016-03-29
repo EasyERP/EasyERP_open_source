@@ -45,7 +45,8 @@ define([
             var data;
 
             App.currentDb = currentDb;
-            App.weTrack = !!((currentDb === "weTrack") || (currentDb === "production") || (currentDb === "development"));
+            //App.weTrack = !!((currentDb === "weTrack") || (currentDb === "production") || (currentDb === "development"));
+            App.weTrack = true;
 
             $loginForm.removeClass("notRegister");
 

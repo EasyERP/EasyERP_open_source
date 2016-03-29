@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Vacation/filterCollection',
@@ -5055,3 +5056,4 @@ define([
     });
 
 });
+*/

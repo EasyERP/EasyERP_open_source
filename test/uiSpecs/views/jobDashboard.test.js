@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Jobs/filterCollection',
@@ -1578,8 +1579,8 @@ define([
                     date: "2016-03-14T08:12:36.090Z",
                     user: "55b9fc0fd79a3a3439000008"
                 },
-                attachments: [ ],
-                notes: [ ],
+                attachments: [],
+                notes: [],
                 projecttype: "",
                 createdBy: {
                     date: "2015-07-29T19:34:46.416Z",
@@ -1593,14 +1594,14 @@ define([
                 parent: null,
                 sequence: 0,
                 groups: {
-                    group: [ ],
-                    users: [ ],
+                    group: [],
+                    users: [],
                     owner: "560c099da5d4a2e20ba5068b"
                 },
                 whoCanRW: "everyOne",
                 projectmanager: "55b92ad221e4b7c40f00005f",
                 customer: "55b92ad621e4b7c40f00063c",
-                task: [ ],
+                task: [],
                 projectName: "M-Government",
                 projectShortDesc: "emptyProject",
                 __v: 0,
@@ -1702,8 +1703,8 @@ define([
                 },
                 creationDate: "2015-11-18T22:37:00.349Z",
                 groups: {
-                    group: [ ],
-                    users: [ ],
+                    group: [],
+                    users: [],
                     owner: null
                 },
                 whoCanRW: "everyOne",
@@ -1757,8 +1758,8 @@ define([
                 },
                 creationDate: "2015-10-09T11:25:55.814Z",
                 groups: {
-                    group: [ ],
-                    users: [ ],
+                    group: [],
+                    users: [],
                     owner: "560c099da5d4a2e20ba5068b"
                 },
                 whoCanRW: "everyOne",
@@ -1806,7 +1807,7 @@ define([
                 dateBirth: "1990-04-03T03:00:00.000Z",
                 ID: 37,
                 isLead: 1,
-                fire: [ ],
+                fire: [],
                 hire: [
                     {
                         date: "2014-04-02T21:00:00.000Z",
@@ -1830,7 +1831,7 @@ define([
                     date: "2015-07-29T19:34:42.461Z",
                     reason: ""
                 },
-                attachments: [ ],
+                attachments: [],
                 editedBy: {
                     date: "2016-03-11T13:43:16.079Z",
                     user: "55ba2f3ed79a3a343900001d"
@@ -1843,8 +1844,8 @@ define([
                 color: "#4d5a75",
                 otherInfo: "",
                 groups: {
-                    group: [ ],
-                    users: [ ],
+                    group: [],
+                    users: [],
                     owner: "55ba28c8d79a3a3439000016"
                 },
                 whoCanRW: "everyOne",
@@ -1915,7 +1916,9 @@ define([
 
 
         after(function () {
-            view.remove();
+            if (view){
+                view.remove();
+            }
             topBarView.remove();
         });
 
@@ -2030,42 +2033,21 @@ define([
                     expect($listHolder.find('table')).to.exist;
                 });
 
-                /*it('Try to go sort', function () {
-                 var $sortEl = contentView.$el.find('th[data-sort="projectName"]');
-                 var projectsDashboardUrl = new RegExp('project\/getProjectPMForDashboard', 'i');
+                it('Try to go sort', function () {
+                    var $sortEl = listView.$el.find('th[data-sort="budget.budgetTotal.costSum"]');
+                    var jobsDashboardUrl = new RegExp('\/jobs\/', 'i');
 
-                 server.respondWith('GET', projectsDashboardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDashboardProjects)]);
-                 $sortEl.click();
-                 server.respond();
-                 expect(contentView.$el.find('#ProjectPMContent > tr:nth-child(1) > td:nth-child(3) > a').attr('href')).to.be.equals('#easyErp/Projects/form/56e93c3b07ea2d845ef75dff');
+                    server.respondWith('GET', jobsDashboardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeJobsDashboard[1], fakeJobsDashboard[0]])]);
+                    $sortEl.click();
+                    server.respond();
+                    expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('564cfd8ba6e6390160c9ef7d');
 
-                 server.respondWith('GET', projectsDashboardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                 data: [
-                 fakeDashboardProjects.data[1],
-                 fakeDashboardProjects.data[0]
-                 ]
-                 })]);
-                 $sortEl.click();
-                 server.respond();
-                 expect(contentView.$el.find('#ProjectPMContent > tr:nth-child(1) > td:nth-child(3) > a').attr('href')).to.be.equals('#easyErp/Projects/form/56dff1b4a12a4f3c26919c91');
+                    server.respondWith('GET', jobsDashboardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobsDashboard)]);
+                    $sortEl.click();
+                    server.respond();
+                    expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('564cfd8ba6e6390160c9ef5e');
 
-                 });
-
-                 it('Try to click on sales manager', function(){
-                 var needItem = contentView.$el.find('#ProjectPMContent > tr:nth-child(1) > td:nth-child(2) > a')[0];
-
-                 needItem.click();
-
-                 expect(window.location.hash).to.be.equals('#easyErp/Employees/form/55b92ad221e4b7c40f00004f');
-                 });
-
-                 it('Try to click on project name', function(){
-                 var needItem = contentView.$el.find('#ProjectPMContent > tr:nth-child(1) > td:nth-child(3) > a')[0];
-
-                 needItem.click();
-
-                 expect(window.location.hash).to.be.equals('#easyErp/Projects/form/56dff1b4a12a4f3c26919c91');
-                 });*/
+                });
 
             });
 
@@ -2074,3 +2056,4 @@ define([
     });
 
 });
+*/

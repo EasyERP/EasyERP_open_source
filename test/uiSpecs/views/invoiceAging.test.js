@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/invoiceAging/filterCollection',
@@ -1228,3 +1229,4 @@ define([
     });
 
 });
+*/

@@ -1,11 +1,14 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Users/CreateTemplate.html",
         "models/UsersModel",
         "common",
         "populate",
         "Validation"
     ],
-    function (CreateTemplate, UsersModel, common, populate, Validation) {
+    function (Backbone, $, _, CreateTemplate, UsersModel, common, populate, Validation) {
 
         var UsersCreateView = Backbone.View.extend({
             el         : "#content-holder",

@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Quotation/filterCollection',
@@ -1350,7 +1351,7 @@ define([
 
                 });
 
-                /*it('Try to confirm order', function(){
+                /!*it('Try to confirm order', function(){
                     var workflowUrl = new RegExp('\/workflows\/getFirstForConvert', 'i');
                     var quotationUrl = new RegExp('\/quotation\/', 'i');
                     var $dialogContainer = $('.ui-dialog');
@@ -1378,10 +1379,10 @@ define([
                     //server.respond();
 
                     expect(window.location.hash).to.be.equals('#easyErp/Order/list');
-                });*/
+                });*!/
 
 
-                /*it('Try to create vacation item', function(){
+                /!*it('Try to create vacation item', function(){
                     var createBtn = topBarView.$el.find('#top-bar-createBtn');
                     var $listTableEl = listView.$el.find('#listTable');
 
@@ -1461,7 +1462,7 @@ define([
 
                     //expect(listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)').text()).to.equals('');
 
-                });*/
+                });*!/
 
             });
 
@@ -1470,3 +1471,4 @@ define([
     });
 
 });
+*/

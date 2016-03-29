@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/PayrollExpenses/filterCollection',
@@ -17702,7 +17703,7 @@ define([
                server.restore();
             });
 
-            /*it('Try to create payroll form', function(done){
+            /!*it('Try to create payroll form', function(done){
 
                 server.respondWith('GET', '/payroll/201409', [200, {"Content-Type": "application/json"}, JSON.stringify(fakePayRollForFrom)]);
 
@@ -17734,10 +17735,11 @@ define([
                 server.respond();
 
                 expect($('#payRoll-listTable')).to.exist;
-            });*/
+            });*!/
 
         });
 
     });
 
 });
+*/

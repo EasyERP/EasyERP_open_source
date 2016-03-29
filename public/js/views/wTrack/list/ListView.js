@@ -891,11 +891,11 @@ define([
                     this.showSaveCancelBtns();
                     this.editCollection.add(model);
 
-                    new createView(startData);
+                    new this.createView(startData);
                 } else {
                     App.render({
                         type   : 'notify',
-                        message: 'Please confirm or discard changes befor create a new item'
+                        message: 'Please confirm or discard changes before create a new item'
                     });
                 }
 
@@ -1270,12 +1270,15 @@ define([
 
                 this.renderFilter(self);
 
+                self.bindingEventsToEditedCollection(self);
+                self.$listTable = $('#listTable');
+
                 setTimeout(function () {
                     /*self.editCollection = new EditCollection(self.collection.toJSON());
                      self.editCollection.on('saved', self.savedNewModel, self);
                      self.editCollection.on('updated', self.updatedOptions, self);*/
-                    self.bindingEventsToEditedCollection(self);
-                    self.$listTable = $('#listTable');
+                    //self.bindingEventsToEditedCollection(self);
+                    //self.$listTable = $('#listTable');
                 }, 10);
 
                 this.copyEl = $('#top-bar-copyBtn');

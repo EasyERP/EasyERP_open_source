@@ -1,4 +1,7 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/salesInvoice/wTrack/CreateTemplate.html",
         "models/InvoiceModel",
         "common",
@@ -10,7 +13,7 @@
         'constants',
         'moment'
     ],
-    function (CreateTemplate, InvoiceModel, common, populate, wTrackRows, AssigneesView, listHederInvoice, dataService, CONSTANTS, moment) {
+    function (Backbone, $, _, CreateTemplate, InvoiceModel, common, populate, wTrackRows, AssigneesView, listHederInvoice, dataService, CONSTANTS, moment) {
 
         var CreateView = Backbone.View.extend({
             el                    : "#content-holder",

@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Workflows/WorkflowsCollection',
@@ -1228,12 +1229,20 @@ define([
         ]
     };
 
-    var view;
     var server;
+    var view;
+    var topBarView;
+    var listView;
+    var workflowCollection;
 
     describe('WorkFlow View', function () {
         var $fixture;
         var $elFixture;
+
+        after(function () {
+            view.remove();
+
+        });
 
         describe('#initialize()', function () {
 
@@ -1285,9 +1294,7 @@ define([
 
         });
 
-        describe('Workflows list view', function () {
-            var listView;
-            var workflowsCollection;
+        describe('TopBarView', function () {
             var server;
 
             before(function () {
@@ -1296,8 +1303,47 @@ define([
 
             after(function () {
                 server.restore();
+            });
+
+            it('Try to create TopBarView', function () {
+                var workflowUrl = new RegExp('\/Workflows', 'i');
+
+                server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflows)]);
+
+                workflowCollection = new WorkflowsCollection({
+                    count: 0,
+                    page: 1,
+                    contentType: 'Workflows'
+
+                });
+                server.respond();
+
+                topBarView = new TopBarView({
+                    collection: workflowCollection
+                });
+
+                expect(topBarView.$el.find('#createBtnHolder')).to.exist;
+                expect(topBarView.$el.find('h3')).to.exist;
+                expect(topBarView.$el.find('h3').text()).to.be.equals('Workflows');
+            });
+
+        });
+
+        describe('Workflows list view', function () {
+            var server;
+            var windowConfirmStub;
+
+            before(function () {
+                server = sinon.fakeServer.create();
+                windowConfirmStub = sinon.stub(window, 'confirm');
+            });
+
+            after(function () {
+                server.restore();
                 view.remove();
                 listView.remove();
+
+                windowConfirmStub.restore();
             });
 
             describe('INITIALIZE', function(){
@@ -1306,17 +1352,16 @@ define([
                     var $contentHolderEl;
                     var $workflowListEl;
                     var $workflowAccordEl;
+                    var relatedStatusesUrl = new RegExp('\/workflows\/relatedStatus', 'i');
 
-                    server.respondWith('GET', '/Workflows?mid=39&id=', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflows)]);
-
-                    workflowsCollection = new WorkflowsCollection();
-
-                    server.respond();
+                    server.respondWith('GET', relatedStatusesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeStatuses)]);
 
                     listView = new ContentView({
-                        collection: workflowsCollection,
+                        collection: workflowCollection,
                         startTime: new Date()
                     });
+
+                    server.respond();
 
                     $contentHolderEl = view.$el.find('#content-holder');
                     $workflowListEl = $contentHolderEl.find('.workflow-list-wrapper');
@@ -1328,33 +1373,28 @@ define([
                     expect($workflowAccordEl.find('#workflowNames').text()).to.equals('\n        ');
 
                 });
-            });
-
-            describe('Test workflowView events', function(){
 
                 it('Try to click li Applications', function(){
                     var $contentHolderEl;
                     var $workflowListEl;
                     var $workflowAccordEl;
                     var $needLiEl;
+                    var workflowUrl = new RegExp('/Workflows', 'i');
 
                     $contentHolderEl = view.$el.find('#content-holder');
                     $workflowListEl = $contentHolderEl.find('.workflow-list-wrapper');
                     $workflowAccordEl = $contentHolderEl.find('#workflowAccord');
                     $needLiEl = $workflowListEl.find('li[data-id="Applications"]');
 
-                    server.respondWith('GET', '/Workflows?mid=39&id=Applications', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflows)]);
-                    server.respondWith('GET', '/workflows/relatedStatus?mid=39', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeStatuses)]);
-
+                    server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflows)]);
                     $needLiEl.click();
-
                     server.respond();
 
                     expect($workflowAccordEl.find('#details').text()).not.to.equals('\n        ');
 
                 });
 
-                it ('Try to edit item', function(){
+                it ('Try to open editForm', function(){
                     var firstAccEl = $('.row')[0];
                     var $needAEl = $(firstAccEl).find('.edit');
 
@@ -1369,28 +1409,59 @@ define([
                 });
 
                 it ('Try to edit item', function(){
-                    var firstAccEl = $('.row')[0];
-                    var $needAEl = $(firstAccEl).find('.edit');
-                    var $saveBtn = $(firstAccEl).find('.save');
+                    var $firstAccEl = $('.row:nth-child(1)');
+                    var $saveBtn = $firstAccEl.find('.save');
+                    var $needInput = $firstAccEl.find('input');
+                    var workflowUrl = new RegExp('\/workflows\/', 'i');
 
-                    $needAEl.click();
+                    $needInput.val('Test workflow');
 
-                    server.respondWith('PATCH', '/workflows/528ce51cf3f67bc40b000015', [200, {"Content-Type": "application/json"}, JSON.stringify([{
+                    server.respondWith('PUT', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([{
                         status  : 'Pending'
                     }])]);
-
-                    expect($(firstAccEl).find('span.name')).to.have.class('hidden');
-                    expect($(firstAccEl).find('span.status')).to.have.class('hidden');
-                    expect($(firstAccEl).find('input')).to.exist;
-                    expect($(firstAccEl).find('select')).to.exist;
 
                     $saveBtn.click();
 
                     server.respond();
 
+                });
+
+                it('Try to delete item', function(){
+                    var $firstEl = $('#workflows > div:nth-child(1)');
+                    var $deleteBtn = $firstEl.find('.delete');
+                    var workflowUrl = new RegExp('\/workflows\/', 'i');
+
+                    windowConfirmStub.returns(true);
+
+                    server.respondWith('DELETE', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([{success: 'Delete success'}])]);
+                    $deleteBtn.click();
+                    server.respond();
+
+                    expect($('#workflows > div:nth-child(2) > div.name').attr('data-id')).to.be.equals('528ce53bf3f67bc40b000016');
 
                 });
 
+                it('Try to create new status', function(){
+                    var $saveBtn;
+                    var $createBtn = listView.$el.find('#addNewStatus');
+                    var $addedNew;
+                    var $statusInput;
+                    var workflowUrl = new RegExp('\/workflows\/', 'i');
+
+                    $createBtn.click();
+
+                    $addedNew = listView.$el.find('.addnew');
+                    $statusInput = $addedNew.find('input');
+
+                    $statusInput.val('Super Test workflow');
+                    $saveBtn = $addedNew.find('#saveStatus');
+
+                    server.respondWith('POST', workflowUrl, [201, {"Content-Type": "application/json"}, JSON.stringify([{success: 'Created success'}])]);
+                    $saveBtn.click();
+                    server.respond();
+
+                    expect(window.location.hash).to.equals('#easyErp/Workflows');
+                });
             });
 
         });
@@ -1400,3 +1471,4 @@ define([
 
 
 });
+*/

@@ -1,5 +1,7 @@
+/*
 define([
     'text!fixtures/index.html',
+    'models/UsersModel',
     'collections/Users/filterCollection',
     'views/main/MainView',
     'views/Users/TopBarView',
@@ -12,7 +14,7 @@ define([
     'chai-jquery',
     'sinon-chai',
     'custom'
-], function (fixtures, UsersCollection, MainView, TopBarView, CreateUserView, EditView, UserFormView, ListView, $, chai, chaiJquery, sinonChai, Custom) {
+], function (fixtures, UsersModel, UsersCollection, MainView, TopBarView, CreateUserView, EditView, UserFormView, ListView, $, chai, chaiJquery, sinonChai, Custom) {
     'use strict';
     var expect;
 
@@ -3336,15 +3338,109 @@ define([
         count: 5
     };
 
+    var fakeUserById = {
+        user: {
+            _id: "560c099da5d4a2e20ba5068b",
+            profile: {
+                _id: 1387275598000,
+                profileName: "admin"
+            },
+            lastAccess: "2016-03-12T12:50:18.068Z",
+            relatedEmployee: null,
+            savedFilters: [
+                {
+                    _id: {
+                        _id: "566594636761dac5379303d4",
+                        filter: {
+                            PM: {
+                                department: {
+                                    key: "department._id",
+                                    value: [
+                                        "55bb1f40cb76ca630b000007"
+                                    ],
+                                    type: null
+                                },
+                                startDate: 201549,
+                                endDate: 201607
+                            }
+                        },
+                        contentView: "DashVacation",
+                        __v: 0
+                    },
+                    viewType: "",
+                    byDefault: "DashVacation"
+                }
+            ],
+            kanbanSettings: {
+                tasks: {
+                    foldWorkflows: [ ],
+                    countPerPage: 10
+                },
+                applications: {
+                    foldWorkflows: [ ],
+                    countPerPage: 10
+                },
+                opportunities: {
+                    foldWorkflows: [ ],
+                    countPerPage: 10
+                }
+            },
+            credentials: {
+                access_token: "",
+                refresh_token: ""
+            },
+            email: "alex.svatuk@thinkmobiles.com",
+            login: "AlexSvatuk",
+            imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"
+        },
+        savedFilters: {
+            DashVacation: [
+                {
+                    _id: {
+                        _id: "566594636761dac5379303d4",
+                        filter: {
+                            PM: {
+                                department: {
+                                    key: "department._id",
+                                    value: [
+                                        "55bb1f40cb76ca630b000007"
+                                    ],
+                                    type: null
+                                },
+                                startDate: 201549,
+                                endDate: 201607
+                            }
+                        },
+                        contentView: "DashVacation",
+                        __v: 0
+                    },
+                    viewType: "",
+                    byDefault: "DashVacation"
+                }
+            ]
+        }
+    };
+
     var view;
+    var topBarView;
+    var userCollection;
+    var listView;
+    var formView;
+    var createView;
 
     describe('MainView', function () {
         var $fixture;
         var $elFixture;
 
+        after(function(){
+            view.remove();
+            topBarView.remove();
+            listView.remove();
+            formView.remove();
+            createView.remove();
+        });
+
         describe('#initialize()', function () {
-
-
             var server;
 
             before(function () {
@@ -3389,12 +3485,50 @@ define([
 
         });
 
-        describe('List view', function () {
+        describe('TopBarView', function () {
+            var server;
 
-            var listView;
-            var userCollection;
-            var topBarView;
-            var profileForm;
+            before(function () {
+                server = sinon.fakeServer.create();
+            });
+
+            after(function () {
+                server.restore();
+            });
+
+            it('Try to create TopBarView', function (done) {
+                var usersUrl = new RegExp('\/users\/', 'i');
+                var userTotalUrl = new RegExp('\/totalCollectionLength\/Users', 'i');
+
+                server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
+                server.respondWith('GET', userTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    count: 55
+                })]);
+
+                userCollection = new UsersCollection({
+                    count: 0,
+                    page: 1,
+                    viewType: 'list',
+                    contentType: 'Users'
+
+                });
+                server.respond();
+
+                topBarView = new TopBarView({
+                    collection: userCollection
+                });
+
+                expect(topBarView.$el.find('#createBtnHolder')).to.exist;
+                expect(topBarView.$el.find('h3')).to.exist;
+                expect(topBarView.$el.find('h3').text()).to.be.equals('Users');
+                expect(topBarView.$el.find('#template-switcher')).to.exist;
+
+                done();
+            });
+
+        });
+
+        describe('List view', function () {
             var windowConfirmStub;
             var server;
 
@@ -3406,8 +3540,6 @@ define([
             });
 
             after(function () {
-                listView.remove();
-                view.remove();
                 server.restore();
                 windowConfirmStub.restore();
             });
@@ -3415,22 +3547,9 @@ define([
             it('Should render Users list view', function () {
                 var $listContainer;
 
-                server.respondWith('GET', '/account/authenticated', [200, {"Content-Type": "application/json"}, "OK"]);
-                server.respondWith('GET', '/users/?page=1&count=5', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
-                server.respondWith('GET', '/totalCollectionLength/Users', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeTotal)]);
-
-                userCollection = new UsersCollection({
-                    page: 1,
-                    count: 5
-                });
-
-                server.respond();
-
                 listView = new ListView({
                     startTime: new Date(),
                     collection: userCollection,
-                    newCollection: true,
-                    page: 1
                 });
 
                 $listContainer = listView.$el.find('table');
@@ -3440,90 +3559,170 @@ define([
 
             });
 
-            it('Create top bar view', function () {
-                var $topBarContainer;
-                var $createBtnHolder;
-                var $templateSwitcher;
-
-                topBarView = new TopBarView({
-                    collection: userCollection
-                });
-
-                $topBarContainer = topBarView.$el;
-
-                $createBtnHolder = $topBarContainer.find('#createBtnHolder');
-                $templateSwitcher = $topBarContainer.find('#template-switcher');
-
-                expect($createBtnHolder).to.exist;
-                expect($templateSwitcher).to.exist;
-
-            });
-
             it('delete some users', function () {
-                var $checkBox1 = listView.$el.find('input[value="560c099da5d4a2e20ba5068b"]');
-                var $checkBox2 = listView.$el.find('input[value="55ba28c8d79a3a3439000016"]');
-                var $deleteBtn = topBarView.$el.find('a[href="#home/action-Users/Delete"]');
-
-
+                var usersUrl = new RegExp('\/users\/', 'i');
+                var $checkBox1 = listView.$el.find('input[value="55ba28c8d79a3a3439000016"]');
+                var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                 $checkBox1.click();
-                $checkBox2.click();
 
-                server.respondWith('DELETE', '/users/560c099da5d4a2e20ba5068b', [200, {"Content-Type": "application/json"}, JSON.stringify({"success": "User remove success"})]);
-                server.respondWith('DELETE', '/users/55ba28c8d79a3a3439000016', [200, {"Content-Type": "application/json"}, JSON.stringify({"success": "User remove success"})]);
-
+                server.respondWith('DELETE', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"success": "User remove success"})]);
                 $deleteBtn.click();
-
-                server.respond();
-
-            });
-
-            it('Try open user profile form', function () {
-                var $listContainer = listView.$el.find('table');
-                var $needTd = $listContainer.find('tr[data-id="560c099da5d4a2e20ba5068b"] td');
-                var $topBarContainer = topBarView.$el;
-
-                server.respondWith('GET', '/account/authenticated', [200, {"Content-Type": "application/json"}, 'OK']);
-                server.respondWith('GET', '/users/560c099da5d4a2e20ba5068b', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUserProfile)]);
-
-                $needTd.click();
-
-                server.respond();
-
-                expect($topBarContainer.find('a[href="#home/action-Users/Edit"]')).to.exist;
-                expect($topBarContainer.find('a[href="#home/action-Users/Delete"]')).to.exist;
-                expect($topBarContainer.find('a[data-view-type="form"]')).to.have.class('selected');
-            });
-
-            it('Try to delete item correct model', function () {
-                var userModel = userCollection.get('560c099da5d4a2e20ba5068b');
-                var $deleteBtn = topBarView.$el.find('a[href="#home/action-Users/Delete"]');
-
-                profileForm = new UserFormView({
-                    model: userModel
-                });
-
-                server.respondWith('DELETE', '/users/560c099da5d4a2e20ba5068b', [200, {"Content-Type": "application/json"}, JSON.stringify({"success": "User remove success"})]);
-                server.respondWith('GET', '/account/authenticated', [200, {"Content-Type": "application/json"}, "OK"]);
-                server.respondWith('GET', '/users/?viewType=list&page=1&count=100&filter=&parrentContentId=&contentType=Users&newCollection=false', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
-                server.respondWith('GET', '/totalCollectionLength/Users?currentNumber=&contentType=Users&newCollection=false', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeTotal)]);
-
-
-                $deleteBtn.click();
-
+                listView.deleteItems();
                 server.respond();
 
                 expect(windowConfirmStub.called).to.be.true;
 
             });
 
-            it('Try to edit item ', function () {
-                var $editBtn = topBarView.$el.find('a[href="#home/action-Users/Edit"]');
+            it('Try to open CreateForm', function(done){
+                var profileUrl = new RegExp('\/profiles\/forDd', 'i');
 
-                server.respondWith('GET', '/profiles/forDd', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfileForDD)]);
-
-                $editBtn.trigger('click');
-
+                server.respondWith('GET', profileUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfileForDD)]);
+                createView = new CreateUserView();
                 server.respond();
+
+                expect($('.ui-dialog')).to.exist;
+
+                done();
+            });
+
+            it('Try to create user', function(){
+                var $select;
+                var $dialogEl = $('.ui-dialog');
+                var $profileSelect = $dialogEl.find('#profilesDd');
+                var $name = $dialogEl.find('#login');
+                var $password = $dialogEl.find('#password');
+                var $confPassword = $dialogEl.find('#confirmpassword');
+                var $email = $dialogEl.find('#email');
+                var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                var usersUrl = '/users/';
+
+                $name.val('test');
+                $password.val('test');
+                $confPassword.val('test');
+                $email.val('test@test.com');
+
+                $profileSelect.click();
+                $select = $dialogEl.find('#1438768659000');
+                $select.click();
+
+                server.respondWith('POST', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"success": "User created success"})]);
+                $createBtn.click();
+                server.respond();
+
+                //expect(window.location.hash).to.be.equals('#easyErp/Users');
+
+            });
+
+        });
+
+        describe('FormView', function(){
+            var server;
+            var userModel;
+            var windowConfirmStub;
+            var mainSpy;
+
+            before(function () {
+                mainSpy = sinon.spy(App, 'render');
+                server = sinon.fakeServer.create();
+                windowConfirmStub = sinon.stub(window, 'confirm').returns(true);
+
+            });
+
+            after(function () {
+                server.restore();
+                windowConfirmStub.restore();
+                mainSpy.restore();
+            });
+
+            it('Try to create UserFormView', function (done) {
+                var $formHolder;
+                var userUrl = new RegExp('\/users\/', 'i');
+
+                userModel = new UsersModel();
+                userModel.urlRoot = userModel.url() + '560c099da5d4a2e20ba5068b';
+                server.respondWith('GET', userUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUserById)]);
+
+                userModel.fetch({
+                    success: function(model){
+                        formView = new UserFormView({
+                            model: model
+                        });
+
+                        formView.render();
+
+                        done();
+                    },
+
+                    error: function(model, response){
+                        done(response);
+                    }
+                });
+                server.respond();
+
+                $formHolder = formView.$el;
+
+                expect($formHolder).to.exist;
+                expect($formHolder.find('form')).to.exist;
+                expect($formHolder.find('form').attr('data-id')).to.be.equals('560c099da5d4a2e20ba5068b');
+            });
+
+            it('Try to open Edit Form', function () {
+                var profileUrl = new RegExp('\/profiles\/forDd', 'i');
+
+                server.respondWith('GET', profileUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfileForDD)]);
+                formView.editItem();
+                server.respond();
+
+                expect($('.ui-dialog')).to.exist;
+
+            });
+
+            it('Try to edit item with error', function(){
+                var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                var userUrl = new RegExp('\/users\/', 'i');
+
+                server.respondWith('POST', userUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $saveBtn.click();
+                server.respond();
+
+                expect(window.location.hash).to.be.equals('#home');
+            });
+
+            it('Try to edit item', function(){
+                var $selectItem;
+                var $dialogEl = $('.ui-dialog');
+                var $selectBtn = $dialogEl.find('#profilesDd');
+                var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                var userUrl = new RegExp('\/users\/', 'i');
+
+                $selectBtn.click();
+                $selectItem = $dialogEl.find('#1438768659000');
+                $selectItem.click();
+
+                server.respondWith('PATCH', userUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $saveBtn.click();
+                server.respond();
+
+                expect(window.location.hash).to.be.equals('#easyErp/Users');
+            });
+
+            it('Try to delete item', function(){
+                var $deleteBtn;
+                var userUrl = new RegExp('\/users\/', 'i');
+                var profileUrl = new RegExp('\/profiles\/forDd', 'i');
+
+                server.respondWith('GET', profileUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfileForDD)]);
+                formView.editItem();
+                server.respond();
+
+                $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
+
+                server.respondWith('DELETE', userUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $deleteBtn.click();
+                server.respond();
+
+                expect(window.location.hash).to.be.equals('#easyErp/Users');
 
             });
 
@@ -3532,3 +3731,4 @@ define([
 
 
 });
+*/
