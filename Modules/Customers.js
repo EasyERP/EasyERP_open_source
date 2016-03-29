@@ -301,7 +301,7 @@ var Customers = function (event, models) {
             res['data'] = [];
             if (data.letter) {
                 optionsObject['type'] = 'Person';
-                optionsObject['name.last'] = new RegExp('^[' + data.letter.toLowerCase() + data.letter.toUpperCase() + '].*');
+                optionsObject['name.last'] = new RegExp('^[' + data.letter.value.toLowerCase() + data.letter.value.toUpperCase() + '].*');
             } else {
                 optionsObject['type'] = 'Person';
             }
@@ -636,7 +636,7 @@ var Customers = function (event, models) {
                                 resArray.push(filtrElement);
                                 break;
                             case 'letter':
-                                filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                                filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
                                 resArray.push(filtrElement);
                                 break;
                             case 'services':
@@ -681,7 +681,7 @@ var Customers = function (event, models) {
                                 resArray.push(filtrElement);
                                 break;
                             case 'letter':
-                                filtrElement['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                                filtrElement['name.first'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
                                 resArray.push(filtrElement);
                                 break;
                             case 'services':
@@ -714,7 +714,7 @@ var Customers = function (event, models) {
                     optionsObject['type'] = 'Company';
                     optionsObject['isOwn'] = true;
                     if (data.letter)
-                        optionsObject['name.first'] = new RegExp('^[' + data.letter.toLowerCase() + data.letter.toUpperCase() + '].*');
+                        optionsObject['name.first'] = new RegExp('^[' + data.letter.value.toLowerCase() + data.letter.value.toUpperCase() + '].*');
                 }
                     break;
             }

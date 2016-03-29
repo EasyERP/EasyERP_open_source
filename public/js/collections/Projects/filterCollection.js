@@ -8,11 +8,13 @@
             page        : null,
             namberToShow: null,
             viewType    : null,
+            contentType : null,
 
             initialize: function (options) {
                 var that = this;
 
                 this.startTime = new Date();
+                this.contentType = options.contentType;
 
                 if (options && options.count) {
                     this.namberToShow = options.count;

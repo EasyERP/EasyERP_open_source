@@ -35,7 +35,7 @@ var Employee = function (event, models) {
         var contentType = req.params.contentType;
         var optionsObject = {};
         if (data.filter && data.filter.letter) {
-            optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+            optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.value.toLowerCase() + data.filter.letter.value.toUpperCase() + '].*');
         }
 
         if (data.filter && data.filter.workflow) {
@@ -78,7 +78,7 @@ var Employee = function (event, models) {
                             resArray.push(filtrElement);
                             break;
                         case 'letter':
-                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
                             resArray.push(filtrElement);
                             break;
                         case 'department':
@@ -122,7 +122,7 @@ var Employee = function (event, models) {
                             resArray.push(filtrElement);
                             break;
                         case 'letter':
-                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
                             resArray.push(filtrElement);
                             break;
                         case 'department':
@@ -681,7 +681,7 @@ var Employee = function (event, models) {
                             resArray.push(filtrElement);
                             break;
                         case 'letter':
-                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
                             resArray.push(filtrElement);
                             break;
                         case 'department':
@@ -725,7 +725,7 @@ var Employee = function (event, models) {
                             resArray.push(filtrElement);
                             break;
                         case 'letter':
-                            filtrElement['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                            filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
                             resArray.push(filtrElement);
                             break;
                         case 'department':
