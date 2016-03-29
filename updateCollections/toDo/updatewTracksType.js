@@ -39,7 +39,6 @@ wTrack.find({_type: 'ordinary'}, function (err, results) { // if _type was set
         console.log(err);
     }
     async.eachSeries(results, function (doc, callback) {
-        var updateBody = {_type: 'ordinary'};
         var el = doc.toJSON();
         var id = el._id;
 
@@ -169,6 +168,7 @@ wTrack.find({_type: 'ordinary'}, function (err, results) { // if _type was set
 
         function changeWTracks(vacAndHol, waterfallCb) {
             var i;
+            var updateBody = {_type: 'ordinary'};
             var vacations = vacAndHol[0];
             var holidays = vacAndHol[1];
             var oTWtrack;
@@ -201,9 +201,19 @@ wTrack.find({_type: 'ordinary'}, function (err, results) { // if _type was set
                 if (updateBody.worked) {
                     oTWtrack = new wTrack(el);
                     async.parallel([function (cb) {
-                        oTWtrack.save(cb);
+                        oTWtrack.save(function (err) {
+                            if (err) {
+                                cb(err);
+                            }
+                            cb();
+                        });
                     }, function (cb) {
-                        wTrack.update({_id: id}, updateBody, cb);
+                        wTrack.update({_id: id}, {$set: updateBody}, function (err) {
+                            if (err) {
+                                cb(err);
+                            }
+                            cb();
+                        });
                     }], function (err) {
                         if (err) {
                             waterfallCb(err);
@@ -212,7 +222,7 @@ wTrack.find({_type: 'ordinary'}, function (err, results) { // if _type was set
                         waterfallCb();
                     });
                 } else {
-                    wTrack.update({_id: id}, {_type: 'overtime'}, function (err) {
+                    wTrack.update({_id: id}, {$set : {_type: 'overtime'}}, function (err) {
                         if (err) {
                             waterfallCb(err);
                         }
@@ -221,7 +231,7 @@ wTrack.find({_type: 'ordinary'}, function (err, results) { // if _type was set
                     });
                 }
             } else {
-                console.log('|'); // to see work
+                /*console.log('|');*/ // to see work
                 waterfallCb();
             }
         }
