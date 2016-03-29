@@ -25,7 +25,7 @@ module.exports = (function () {
         7          : {type: Number, default: 0},
         worked     : Number,
         rate       : Number,
-        _type      : {type: String, default: 'Ordinary'},
+        _type      : {type: String, default: 'ordinary'},
         revenue    : {type: Number, /*get: getPrice,*/ set: setPrice, default: 0},
         oldRevenue : {type: Number, /*get: getPrice,*/ set: setPrice, default: 0},
         cost       : {type: Number, /*get: getPrice,*/ set: setPrice, default: 0},

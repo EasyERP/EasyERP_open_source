@@ -236,9 +236,8 @@ define([
             var target = $(e.target);
             var newRow = this.$el.find('.false');
             var id = newRow.attr('data-id');
-            var holidayDays = newRow.find('.H, .V, .P, .S, .E, [data-content="6"], [data-content="7"]');
 
-            if (holidayDays.length && holidayDays.text() && parseInt(holidayDays.text())) {
+            if (newRow.hasClass('overtime')) {
                 return false;
             }
 
@@ -948,7 +947,7 @@ define([
                                 $el.addClass(_class);
 
                                 if (_class !== 'disabled') {
-                                    if (!isOverTime) {
+                                    if (!isOverTime) { // in case of rewriting existing values for OT
                                         $el.text(value);
                                     }
                                 } else {
@@ -1446,7 +1445,6 @@ define([
                 } else if (id.length < 24) {
                     tr.remove();
                     model = self.changedModels;
-
 
                     if (model) {
                         delete model[id];
