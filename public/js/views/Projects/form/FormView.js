@@ -727,7 +727,7 @@ define([
                 App.projectInfo.currentTab = $aEllement.attr('id').slice(0, -3);  // todo id
 
                 target.closest('.chart-tabs').find('a.active').removeClass('active');
-                target.addClass('active');
+                $aEllement.addClass('active');
                 n = target.parents('.chart-tabs').find('li').index(target.parent());
                 dialogHolder = $('.dialog-tabs-items');
                 dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
@@ -1304,15 +1304,15 @@ define([
             },
 
             renderTabCounter: function () {
-                var tabs = {};
+                /*var tabs = {};
                 var $tab;
                 var tabText;
 
-                tabs['#ordersTab'] = $('#orders table tr').length - 1;
-                tabs['#quotationsTab'] = $('#quotationTable table tr').length - 1;
-                tabs['#paymentsTab'] = $('#payments table tr').length - 2;
-                tabs['#proformaTab'] = $('#proforma table tr').length - 2;
-                tabs['#invoicesTab'] = $('#invoices table tr').length - 2;
+                tabs['#ordersTab'] = $('#orders tbody tr').length;
+                tabs['#quotationsTab'] = $('#quotationTable tbody tr').length;
+                tabs['#paymentsTab'] = $('#payments tbody tr').length;
+                tabs['#proformaTab'] = $('#proforma tbody tr').length;
+                tabs['#invoicesTab'] = $('#invoices tbody tr').length;
 
                 for (var tab in tabs) {
                     $tab = $(tab);
@@ -1323,7 +1323,23 @@ define([
                     tabText += ')';
 
                     $tab.text(tabText);
-                }
+                }*/
+
+                var $tabs = $('.countable');
+                var $table;
+                var count;
+                var id;
+
+                $tabs.each(function() {
+                    var $tab = $(this);
+
+                    id = $tab.attr('id');
+                    id = id.replace('Tab', '');
+                    $table = $('#' + id).find('tbody tr');
+                    count = $table.length;
+                    $tab.find('span').text(' (' + count + ')');
+                });
+
 
             },
 

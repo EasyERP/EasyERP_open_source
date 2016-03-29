@@ -30,9 +30,11 @@
         </span>
     </td>
     <td data-name="price" class="<%=editable  ? 'editable' : ''%>">
-        <span>
-            <%=product.unitPrice%>
-        </span>
+        <% if(editable) { %>
+        <input id="editInput" size=7 type="text" value="<%=product.unitPrice%>" />
+        <% } else { %>
+        <span><%=product.unitPrice%></span>
+        <% } %>
     </td>
     <td class="taxes">
         <span>

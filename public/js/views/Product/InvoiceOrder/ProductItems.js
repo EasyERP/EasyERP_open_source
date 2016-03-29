@@ -26,11 +26,7 @@ define([
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
             "click .current-selected.productsDd"                                      : "showProductsSelect",
             "click .current-selected.jobs"                                            : "showSelect",
-            "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
-            "mouseleave .editable"                                                    : "removeEdit",
-            "click #cancelSpan"                                                       : "cancelClick",
-            "click #saveSpan"                                                         : "saveClick",
-            "click #editSpan"                                                         : "editClick"
+            "keyup td[data-name=price] input"                                         : 'priceChange'
         },
 
         template: _.template(productItemTemplate),
@@ -67,6 +63,9 @@ define([
                 this.products = products;
                 this.filterProductsForDD();
             }, this);
+
+
+            this.priceChange = _.debounce(this.priceChange, 250);
         },
 
         generateJob: function () {
@@ -213,7 +212,7 @@ define([
 
         },
 
-        quickEdit: function (e) {
+        /*quickEdit: function (e) {
             var target = $(e.target);
             var trId = target.closest("tr");
             var tdId = target.closest("td");
@@ -224,90 +223,15 @@ define([
                     tdId.find(".no-long").width(tdId.width() - 40);
                 }
             }
-        },
+        },*/
 
-        removeEdit: function (e) {
+       /* removeEdit: function (e) {
             $('#editSpan').remove();
             $("td .no-long").css({width: "auto"});
         },
+        */
 
-        editClick: function (e) {
-            var parent = $(e.target).closest('td');
-            var maxlength = parent.find(".no-long").attr("data-maxlength") || 20;
-            var datePicker = parent.find('.datepicker');
-            var textarea = parent.find('.textarea');
-            var prevParent = $(this.prevQuickEdit).closest("td");
-            var inputEl = prevParent.find('input');
-
-            if (!inputEl.length) {
-                inputEl = prevParent.find('textarea');
-            }
-
-            e.preventDefault();
-
-            if (this.prevQuickEdit) {
-                if ($(this.prevQuickEdit).hasClass('quickEdit')) {
-                    $('.quickEdit').html('<span>' + (this.text ? this.text : "") + '</span>');
-                    $('.quickEdit').removeClass('quickEdit');
-                }
-            }
-            if (inputEl.hasClass('datepicker')) {
-                prevParent.find('span').addClass('datepicker');
-            }
-            if (inputEl.hasClass('textarea')) {
-                prevParent.find('span').addClass('textarea');
-            }
-
-            //ToDo change $(..) --> this.$el.find()
-            $('.quickEdit #editInput').remove();
-            $('.quickEdit #cancelSpan').remove();
-            $('.quickEdit #saveSpan').remove();
-
-            parent.addClass('quickEdit');
-
-            $('#editSpan').remove();
-
-            this.text = $.trim(parent.text());
-
-            parent.text('');
-
-            if (textarea.length) {
-                parent.append('<textarea id="editInput" class="textarea"/>');
-                $('#editInput').val(this.text);
-            } else {
-                if (datePicker.length) {
-                    parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text" readonly/>');
-                } else if(parent.attr('data-name') === 'productDescr') {
-                    parent.append('<input id="editInput"  maxlength="' + maxlength + '" type="text"/>');
-                } else {
-                    parent.append('<input id="editInput" class="forNum"  maxlength="' + maxlength + '" type="text"/>'); // changed validation for numbers on keyValidator
-                }
-
-                $('#editInput').val(this.text);
-            }
-
-            if (datePicker.length) {
-                $('#editInput').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true
-                }).addClass('datepicker');
-            }
-
-            this.prevQuickEdit = parent;
-
-            if (textarea.length) {
-                parent.append('<span id="cancelSpan" class="productEdit right"><i class="fa fa-times"></i></span>');
-                parent.append('<span id="saveSpan" class="productEdit right"><i class="fa fa-check"></i></span>');
-
-            } else {
-                parent.append('<span id="saveSpan" class="productEdit"><i class="fa fa-check"></i></span>');
-                parent.append('<span id="cancelSpan" class="productEdit"><i class="fa fa-times"></i></span>');
-            }
-            parent.find("#editInput").width(parent.find("#editInput").parent().width() - 55);
-        },
-
-        saveClick: function (e) {
+        priceChange: function (e) {
             e.preventDefault();
 
             var $targetEl = $(e.target);
@@ -322,7 +246,7 @@ define([
                 val = 0;
             }
 
-            parent.removeClass('quickEdit').html('<span>' + val + '</span>');
+            //parent.removeClass('quickEdit').html('<span>' + val + '</span>');
 
             if (inputEl.hasClass('datepicker')) {
                 parent.find('span').addClass('datepicker');
@@ -334,7 +258,7 @@ define([
             this.recalculateTaxes(parent);
         },
 
-        cancelClick: function (e) {
+       /* cancelClick: function (e) {
             e.preventDefault();
 
             var text = this.text ? this.text : '';
@@ -357,7 +281,7 @@ define([
                 parent.find('span').addClass('textarea');
             }
 
-        },
+        },*/
 
         showProductsSelect: function (e, prev, next) {
             var $targetEl = $(e.target);
@@ -563,7 +487,7 @@ define([
 
             $parent = $parent.closest('tr');
 
-            cost = $parent.find('[data-name="price"] span').text();
+            cost = $parent.find('[data-name="price"] input').val();
             cost = parseFloat(cost);
 
             total = quantity * cost;
@@ -602,7 +526,7 @@ define([
                 for (var i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
                     quantity = this.quantityRetriver($currentEl);
-                    cost = $currentEl.find('[data-name="price"]').text();
+                    cost = $currentEl.find('[data-name="price"] input').val();
                     totalUntax += (quantity * cost);
                     date = $currentEl.find('.datepicker').text();
                     dates.push(date);

@@ -317,7 +317,7 @@ define([
                         productId = targetEl.data('id');
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                         quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
+                        price = targetEl.find('[data-name="price"] span').text();
                         taxes = targetEl.find('.taxes').text();
                         subtotal = targetEl.find('.subtotal').text();
                         jobs = targetEl.find('[data-name="jobs"]').attr("data-content");

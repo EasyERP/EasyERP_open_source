@@ -97,8 +97,35 @@ var Proforma = function (models) {
 						groups                : 1,
 						creationDate          : 1,
 						createdBy             : 1,
-						editedBy              : 1,
-						_id                   : 0
+						editedBy              : 1
+					}
+				},
+				{
+					$group: {
+						_id                   : '$_id',
+						products              : {$push: '$products'},
+						project               : {$first: '$project'},
+						currency              : {$first: '$currency'},
+						forSales              : {$first: '$forSales'},
+						type                  : {$first: '$forSales'},
+						isOrder               : {$first: '$isOrder'},
+						supplier              : {$first: '$supplier'},
+						deliverTo             : {$first: '$deliverTo'},
+						orderDate             : {$first: '$orderDate'},
+						expectedDate          : {$first: '$expectedDate'},
+						name                  : {$first: '$name'},
+						destination           : {$first: '$destination'},
+						incoterm              : {$first: '$incoterm'},
+						invoiceControl        : {$first: '$invoiceControl'},
+						invoiceRecived        : {$first: '$invoiceRecived'},
+						paymentTerm           : {$first: '$paymentTerm'},
+						paymentInfo           : {$first: '$paymentInfo'},
+						workflow              : {$first: '$workflow'},
+						whoCanRW              : {$first: '$whoCanRW'},
+						groups                : {$first: '$groups'},
+						creationDate          : {$first: '$creationDate'},
+						createdBy             : {$first: '$createdBy'},
+						editedBy              : {$first: '$editedBy'}
 					}
 				}
 			], function (err, quotation) {
@@ -128,7 +155,7 @@ var Proforma = function (models) {
 
 			delete quotation._id;
 
-			quotation.products = [quotation.products];
+			//quotation.products = [quotation.products];
 
 			proforma = new Proforma(quotation);
 

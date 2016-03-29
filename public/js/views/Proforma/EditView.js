@@ -277,7 +277,7 @@ define([
 
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
-                            price = targetEl.find('[data-name="price"]').text();
+                            price = targetEl.find('[data-name="price"] input').val();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             taxes = targetEl.find('.taxes').text();
                             amount = targetEl.find('.amount').text();

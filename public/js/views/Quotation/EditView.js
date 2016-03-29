@@ -415,7 +415,7 @@ define([
 
                     if (productId) {
                         quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
+                        price = targetEl.find('[data-name="price"] input').val();
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                         taxes = targetEl.find('.taxes').text();
                         description = targetEl.find('[data-name="productDescr"]').text();

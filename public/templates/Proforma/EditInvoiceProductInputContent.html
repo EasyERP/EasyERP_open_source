@@ -7,7 +7,14 @@
     <td data-name="productDescr"><span class=""><%=product.description ? product.description : ' '%></span></td>
     <% } %>
     <td data-name="quantity" class=""><span><%=product.quantity%></span></td>
-    <td data-name="price" class="<%=model.workflow && model.workflow.name !== 'Invoiced' && model.workflow.name !== 'Paid' ? 'editable' : ''%>"><span><%=product.unitPrice%></span></td>
+    <% var editable = model.workflow && model.workflow.name !== 'Invoiced' && model.workflow.name !== 'Paid'%>
+    <td data-name="price" class="<%= editable ? 'editable' : ''%>">
+        <% if(editable) { %>
+        <input id="editInput" size=7 type="text" value="<%=product.unitPrice%>" />
+        <% } else { %>
+        <span><%=product.unitPrice%></span>
+        <% } %>
+    </td>
     <td class="taxes"><span><%=product.taxes%></span></td>
     <td class="amount"><span><%=product.subTotal%></span></td>
 </tr>

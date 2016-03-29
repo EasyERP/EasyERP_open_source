@@ -163,6 +163,7 @@ var Invoice = function (models, event) {
                     $project: {
                         payments: 1,
                         paymentDate: 1,
+                        dueDate: 1,
                         _id: 0
                     }
                 },
@@ -173,13 +174,15 @@ var Invoice = function (models, event) {
                     $lookup: {
                         from                   : 'Payment',
                         localField             : 'payments',
-                        foreignField: '_id', as: 'payment'
+                        foreignField           : '_id',
+                        as                     : 'payment'
                     }
                 },
                 {
                     $project: {
                         payment: {$arrayElemAt: ['$payment', 0]},
-                        paymentDate: 1
+                        paymentDate: 1,
+                        dueDate: 1
                     }
                 },
                 {
@@ -187,7 +190,8 @@ var Invoice = function (models, event) {
                         _id: null,
                         paidAmount: {$sum: '$payment.paidAmount'},
                         payments: {$push: '$payment._id'},
-                        paymentDate: {$first: '$paymentDate'}
+                        paymentDate: {$first: '$paymentDate'},
+                        dueDate: {$max: '$dueDate'}
                     }
                 }
             ], callback);
@@ -260,6 +264,7 @@ var Invoice = function (models, event) {
 
             if (paidAmount === order.paymentInfo.total) {
                 invoice.workflow = objectId(CONSTANTS.INVOICE_PAID);
+                invoice.dueDate = proforma.dueDate;
             } else if (paidAmount) {
                 invoice.workflow = objectId(CONSTANTS.INVOICE_PARTIALY_PAID);
             } else {

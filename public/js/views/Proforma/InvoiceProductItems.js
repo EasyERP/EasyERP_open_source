@@ -20,11 +20,7 @@ define([
             "click .newSelectList li.miniStylePagination .next:not(.disabled)"        : "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
             "click .current-selected"                                                 : "showProductsSelect",
-            "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
-            "mouseleave .editable"                                                    : "removeEdit",
-            "click #cancelSpan"                                                       : "cancelClick",
-            "click #saveSpan"                                                         : "saveClick",
-            "click #editSpan"                                                         : "editClick"
+            "keyup td[data-name=price] input"                                         : 'priceChange'
         },
 
         initialize: function (options) {
@@ -49,6 +45,8 @@ define([
                 this.products = products;
                 this.filterProductsForDD();
             }, this);
+
+            this.priceChange = _.debounce(this.priceChange, 250);
         },
 
         template: _.template(productItemTemplate),
@@ -86,7 +84,34 @@ define([
 
         },
 
-        quickEdit: function (e) {
+        priceChange: function (e) {
+            e.preventDefault();
+
+            var $targetEl = $(e.target);
+            var parent = $targetEl.closest('td');
+            var inputEl = parent.find('input');
+            if (!inputEl.length) {
+                inputEl = parent.find('textarea');
+            }
+            var val = inputEl.val();
+
+            if (!val.length) {
+                val = 0;
+            }
+
+            //parent.removeClass('quickEdit').html('<span>' + val + '</span>');
+
+            if (inputEl.hasClass('datepicker')) {
+                parent.find('span').addClass('datepicker');
+            }
+            if (inputEl.hasClass('textarea')) {
+                parent.find('span').addClass('textarea');
+            }
+
+            this.recalculateTaxes(parent);
+        },
+
+        /*quickEdit: function (e) {
             var target = $(e.target);
             var trId = target.closest("tr");
             var tdId = target.closest("td");
@@ -172,7 +197,7 @@ define([
                     $('.quickEdit').removeClass('quickEdit').html('<span>' + text + '</span>');
                 }
             }
-        },
+        },*/
 
         showProductsSelect: function (e, prev, next) {
             populate.showProductsSelect(e, prev, next, this);
@@ -220,7 +245,7 @@ define([
 
             var quantity = parent.find('[data-name="quantity"] span').text();
             quantity = parseFloat(quantity);
-            var cost = parent.find('[data-name="price"] span').text();
+            var cost = parent.find('[data-name="price"] input').val();
             cost = parseFloat(cost);
             var taxes = cost * this.taxesRate;
             var amount = cost + taxes;
@@ -253,7 +278,7 @@ define([
                 for (var i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
                     quantity = $currentEl.find('[data-name="quantity"]').text();
-                    cost = $currentEl.find('[data-name="price"]').text();
+                    cost = $currentEl.find('[data-name="price"] input').val();
                     totalUntax += parseInt(cost);
                 }
             }
