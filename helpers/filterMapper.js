@@ -13,6 +13,9 @@ var FilterMapper = function () {
             case 'ObjectId':
                 result['$in'] = array.objectID();
                 break;
+            case 'string':
+                result['$in'] = array;
+                break;
             case 'integer':
                 result['$in'] = _.map(array, function (element) {
                     return parseInt(element);

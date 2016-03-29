@@ -291,6 +291,10 @@ var wTrack = function (event, models) {
                         filtrElement[key] = {$in: condition};
                         resArray.push(filtrElement);
                         break;
+                    case '_type':
+                        filtrElement[key] = {$in: condition};
+                        resArray.push(filtrElement);
+                        break;
                     case 'jobs':
                         filtrElement[key] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
@@ -386,7 +390,8 @@ var wTrack = function (event, models) {
                     year      : 1,
                     week      : 1,
                     isPaid    : 1,
-                    customer  : 1
+                    customer  : 1,
+                    _type     : 1
                 }
             }, {
                 $lookup: {
@@ -412,7 +417,8 @@ var wTrack = function (event, models) {
                     month         : 1,
                     year          : 1,
                     week          : 1,
-                    isPaid        : 1
+                    isPaid        : 1,
+                    _type         : 1
                 }
             }, {
                 $project: {
@@ -424,7 +430,8 @@ var wTrack = function (event, models) {
                     week                : 1,
                     isPaid              : 1,
                     'customer._id'      : 1,
-                    'projectmanager._id': 1
+                    'projectmanager._id': 1,
+                    _type               : 1
                 }
             }, {
                 $match: queryObject

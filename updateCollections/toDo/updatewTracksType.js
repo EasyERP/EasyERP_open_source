@@ -1,4 +1,4 @@
-// to set all wTracks _type
+// to divide wTracks on ordinary and OT
 var mongoose = require('mongoose');
 var moment = require('../../public/js/libs/moment/moment');
 var wTrackSchema;
@@ -25,24 +25,25 @@ dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, {
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
-    console.log("Connection to db is success");
+    console.log('Connection to db is success');
 });
 
 wTrack = dbObject.model("wTrack", wTrackSchema);
 Vacation = dbObject.model("Vacation", vacationSchema);
 Holiday = dbObject.model("Holiday", holidaySchema);
 
-wTrack.find({_type : 'ordinary'}, function (err, results) {
+wTrack.find({_type: 'ordinary'}, function (err, results) { // if _type was set
+    'use strict';
+
     if (err) {
         console.log(err);
     }
-    async.eachSeries(results, function (el, callback) {
+    async.eachSeries(results, function (doc, callback) {
         var updateBody = {_type: 'ordinary'};
-        var el = el.toJSON();
+        var el = doc.toJSON();
         var id = el._id;
 
-
-        function findVacationByWeek(callback) {
+        function findVacationByWeek(parallelCb) {
             var query = {};
             var i;
             var aggregateQuery = [];
@@ -90,7 +91,7 @@ wTrack.find({_type : 'ordinary'}, function (err, results) {
 
             Vacation.aggregate(aggregateQuery, function (err, vacations) {
                 if (err) {
-                    callback(err);
+                    parallelCb(err);
                 }
                 vacations.forEach(function (vacation) {
                     day = vacation.day + 1;
@@ -100,11 +101,11 @@ wTrack.find({_type : 'ordinary'}, function (err, results) {
                         vacationsWeek[daysOfMonth[monthDay]] = vacation.vacArray;
                     }
                 });
-                callback(null, vacationsWeek);
+                parallelCb(null, vacationsWeek);
             });
         }
 
-        function findHolidaysByWeek(callback) {
+        function findHolidaysByWeek(parallelCb) {
             var year = el.year;
             var week = el.week;
             var date = moment([year, 2]);
@@ -144,7 +145,7 @@ wTrack.find({_type : 'ordinary'}, function (err, results) {
                 ],
                 function (err, result) {
                     if (err) {
-                        callback(err);
+                        parallelCb(err);
                     }
 
                     result.forEach(function (holiday) {
@@ -153,22 +154,20 @@ wTrack.find({_type : 'ordinary'}, function (err, results) {
                         holidaysWeek[day] = 'H';
                     });
 
-                    callback(null, holidaysWeek);
+                    parallelCb(null, holidaysWeek);
                 });
         }
 
         function getVacationAndHolidays(waterfallCb) {
-            async.parallel([findVacationByWeek, findHolidaysByWeek], function (err, results) {
+            async.parallel([findVacationByWeek, findHolidaysByWeek], function (err, vacAndHol) {
                 if (err) {
-                    (
-                        waterfallCb(err)
-                    );
+                    waterfallCb(err);
                 }
-                waterfallCb(null, results);
+                waterfallCb(null, vacAndHol);
             });
         }
 
-        function changeWTracks(vacAndHol, waterFallCb) {
+        function changeWTracks(vacAndHol, waterfallCb) {
             var i;
             var vacations = vacAndHol[0];
             var holidays = vacAndHol[1];
@@ -178,6 +177,8 @@ wTrack.find({_type : 'ordinary'}, function (err, results) {
             updateBody.worked = 0;
 
             for (i = 7; i >= 1; i--) {
+                el[i] = el[i] || 0;  // in case of null
+
                 if ((i === 6) || (i === 7) || vacations[i] || holidays[i]) {
                     updateBody[i] = 0;
                 } else {
@@ -192,10 +193,10 @@ wTrack.find({_type : 'ordinary'}, function (err, results) {
                 updateBody.worked += parseInt(updateBody[i], 10);
                 el.worked += parseInt(el[i], 10);
             }
-            if (el.worked){
+            if (el.worked) {
                 el._type = 'overtime';
                 delete el._id;
-                delete el.ID;
+                delete el.ID; // todo need to delete?
 
                 if (updateBody.worked) {
                     oTWtrack = new wTrack(el);
@@ -205,22 +206,23 @@ wTrack.find({_type : 'ordinary'}, function (err, results) {
                         wTrack.update({_id: id}, updateBody, cb);
                     }], function (err) {
                         if (err) {
-                            waterFallCb(err);
+                            waterfallCb(err);
                         }
                         console.log('wTrack overtime created, ordinary updated');
-                        waterFallCb();
+                        waterfallCb();
                     });
                 } else {
-                    wTrack.update({_id: id}, {_type : 'overtime'}, function (err){
-                        if (err){
-                            waterFallCb(err);
+                    wTrack.update({_id: id}, {_type: 'overtime'}, function (err) {
+                        if (err) {
+                            waterfallCb(err);
                         }
                         console.log('ordinary updated to overtime');
-                        waterFallCb();
+                        waterfallCb();
                     });
                 }
             } else {
-                waterFallCb();
+                console.log('|'); // to see work
+                waterfallCb();
             }
         }
 
