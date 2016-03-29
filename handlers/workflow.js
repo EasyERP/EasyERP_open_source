@@ -104,7 +104,7 @@ var workflows = function (models) {
                 }
                 res.status(200).send(workflows)
             });
-    }
+    };
 };
 
 module.exports = workflows;

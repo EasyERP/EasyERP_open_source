@@ -598,6 +598,13 @@ var Payment = function (models, event) {
             var payments;
             var products = invoice.products;
             var paymentDate = new Date(payment.date);
+            var request = {
+                query  : {
+                    source      : 'purchase',
+                    targetSource: 'invoice'
+                },
+                session: req.session
+            };
 
             if (paymentDate === 'Invalid Date') {
                 paymentDate = new Date();
@@ -605,17 +612,15 @@ var Payment = function (models, event) {
 
             if (invoice._type === 'wTrackInvoice') {
                 wId = 'Sales Invoice';
+            } else if (invoice._type === 'Proforma') {
+                wId = 'Proforma';
+                request.query = {};
             } else {
                 wId = 'Purchase Invoice';
             }
-            var request = {
-                query  : {
-                    wId         : wId,
-                    source      : 'purchase',
-                    targetSource: 'invoice'
-                },
-                session: req.session
-            };
+
+            request.query.wId = wId;
+
 
             totalToPay = parseFloat(totalToPay);
             paid = parseFloat(paid);
@@ -752,7 +757,7 @@ var Payment = function (models, event) {
 
         waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
 
-        if ( isForSale && ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) ) { // todo added condition for purchase payment
+        if ( isForSale && ((DbName === "production") || (DbName === "development")) ) { // todo added condition for purchase payment
             waterfallTasks.push(updateWtrack);
         }
 
@@ -1001,20 +1006,24 @@ var Payment = function (models, event) {
 
                                     paymentInfo = invoice.get('paymentInfo');
 
-                                    if (invoice._type === 'wTrackInvoice') {
-                                        wId = 'Sales Invoice';
-                                    } else {
-                                        wId = 'Purchase Invoice';
-                                    }
-
                                     request = {
                                         query  : {
-                                            wId         : wId,
                                             source      : 'purchase',
                                             targetSource: 'invoice'
                                         },
                                         session: req.session
                                     };
+                                    if (invoice._type === 'wTrackInvoice') {
+                                        wId = 'Sales Invoice';
+                                    } else if (invoice._type === 'Proforma') {
+                                        wId = 'Proforma';
+                                        request.query = {};
+                                    } else {
+                                        wId = 'Purchase Invoice';
+                                    }
+
+                                    request.query.wId = wId;
+
 
                                     isNotFullPaid = paymentInfo.total > (paymentInfo.balance + paid);
 
@@ -1143,20 +1152,24 @@ var Payment = function (models, event) {
                                     var paymentInfo = invoice.get('paymentInfo');
                                     var project = invoice ? invoice.get('project') : null;
 
-                                    if (invoice._type === 'wTrackInvoice') {
-                                        wId = 'Sales Invoice';
-                                    } else {
-                                        wId = 'Purchase Invoice';
-                                    }
-
                                     request = {
                                         query  : {
-                                            wId         : wId,
                                             source      : 'purchase',
                                             targetSource: 'invoice'
                                         },
                                         session: req.session
                                     };
+                                    if (invoice._type === 'wTrackInvoice') {
+                                        wId = 'Sales Invoice';
+                                    } else if (invoice._type === 'Proforma') {
+                                        wId = 'Proforma';
+                                        request.query = {};
+                                    } else {
+                                        wId = 'Purchase Invoice';
+                                    }
+
+                                    request.query.wId = wId;
+
 
                                     isNotFullPaid = paymentInfo.total > (paymentInfo.balance + paid);
 
@@ -1190,7 +1203,7 @@ var Payment = function (models, event) {
 
                                         query.paymentInfo = paymentInfoNew;
 
-                                        if (invoice.workflow.toString() !== MAINCONSTANTS.ORDERDONE) {
+                                        if (!invoice.invoiced) {
                                             query.workflow = workflowObj;
                                         }
 

@@ -16,6 +16,7 @@ var Invoice = function (models, event) {
     var PaymentSchema = mongoose.Schemas.Payment;
     var wTrackSchema = mongoose.Schemas.wTrack;
     var JobsSchema = mongoose.Schemas.jobs;
+    var WorkflowSchema = mongoose.Schemas.workflow;
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var workflowHandler = new WorkflowHandler(models);
@@ -198,16 +199,29 @@ var Invoice = function (models, event) {
         };
 
         function changeProformaWorkflow(callback) {
-            Invoice.update(
-                {
-                    sourceDocument: objectId(id)
+            var request = {
+                query  : {
+                    wId         : 'Proforma',
+                    status      : 'Done'
                 },
-                {
-                    workflow: objectId(CONSTANTS.ORDERDONE)
-                },
-                {
-                    multi: true
-                }, callback);
+                session: req.session
+            };
+
+            workflowHandler.getFirstForConvert(request, function(err, workflow) {
+                Invoice.update(
+                    {
+                        sourceDocument: objectId(id)
+                    },
+                    {
+                        $set: {
+                            workflow: workflow._id,
+                            invoiced: true
+                        }
+                    },
+                    {
+                        multi: true
+                    }, callback);
+            });
         };
 
         function parallel(callback) {
@@ -907,20 +921,31 @@ var Invoice = function (models, event) {
                         });
 
                         function proformaUpdate(parallelCb) {
-                            Proforma.update(
-                                {
-                                    sourceDocument: orderId,
-                                    kind: 'Proforma'
+                            var request = {
+                                query  : {
+                                    wId         : 'Proforma',
+                                    status      : 'New'
                                 },
-                                {
-                                    $set: {
-                                        workflow: CONSTANTS.ORDERNEW
-                                    }
-                                },
-                                {
-                                    multi: true
-                                },
+                                session: req.session
+                            };
+
+                            workflowHandler.getFirstForConvert(request, function(err, workflow) {
+                                Proforma.update(
+                                    {
+                                        sourceDocument: orderId,
+                                        kind: 'Proforma'
+                                    },
+                                    {
+                                        $set: {
+                                            workflow: workflow._id,
+                                            invoiced: false
+                                        }
+                                    },
+                                    {
+                                        multi: true
+                                    },
                                     parallelCb);
+                            });
                         };
 
                         function paymentsRemove(parallelCb) {

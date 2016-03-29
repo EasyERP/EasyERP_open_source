@@ -25,7 +25,7 @@ var Proforma = function (models) {
 		function fetchFirstWorkflow(callback) {
 			request = {
 				query  : {
-					wId: 'Sales Invoice',
+					wId: 'Proforma',
 				},
 				session: req.session
 			};
@@ -129,6 +129,9 @@ var Proforma = function (models) {
 					}
 				}
 			], function (err, quotation) {
+				if (err) {
+					return next(err);
+				}
 				callback(err, quotation[0]);
 			});
 		};
@@ -154,8 +157,6 @@ var Proforma = function (models) {
 			}
 
 			delete quotation._id;
-
-			//quotation.products = [quotation.products];
 
 			proforma = new Proforma(quotation);
 
@@ -184,7 +185,7 @@ var Proforma = function (models) {
 
 		async.waterfall(waterFallTasks, function (err, result) {
 			if (err) {
-				return next(err)
+				return next(err);
 			}
 
 			res.status(201).send(result);
