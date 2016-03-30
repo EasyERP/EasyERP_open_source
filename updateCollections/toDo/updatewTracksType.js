@@ -1,4 +1,6 @@
 // to divide wTracks on ordinary and OT
+//____________________________________
+// update only if _type and isoYear were set to all wTracks
 var mongoose = require('mongoose');
 var moment = require('../../public/js/libs/moment/moment');
 var wTrackSchema;
@@ -46,9 +48,9 @@ wTrack.find({_type: 'ordinary'}, function (err, results) { // if _type was set
             var query = {};
             var i;
             var aggregateQuery = [];
-            var dateByWeek = el.week + el.year * 100;
+            var dateByWeek = el.week + el.isoYear * 100;
             var dateByWeekField = 'vacations.' + dateByWeek;
-            var date = moment().isoWeekYear(el.year);
+            var date = moment().isoWeekYear(el.isoYear);
             var daysOfMonth = {};
             var month;
             var monthDay;
@@ -105,7 +107,7 @@ wTrack.find({_type: 'ordinary'}, function (err, results) { // if _type was set
         }
 
         function findHolidaysByWeek(parallelCb) {
-            var year = el.year;
+            var year = el.isoYear;
             var week = el.week;
             var date = moment([year, 2]);
             var holidaysWeek = [];

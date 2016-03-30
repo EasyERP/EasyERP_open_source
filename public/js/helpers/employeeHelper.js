@@ -2,15 +2,17 @@ define([
     'Underscore',
     'helpers/getVacationHelper',
     'helpers/getHolidayHelper',
+    'helpers/isoWeekYearComposer',
     'moment'
-], function (_, getVacation, getHoliday, moment) {
+], function (_, getVacation, getHoliday, isoWeekYearComposer, moment) {
     'use strict';
 
     var getNonWorkingDaysByWeek = function (year, week, month, employee, wtrack, callback, context) {
+        var isoYear = isoWeekYearComposer.getYear(year, week, month);
 
-        getVacation.forEmployeeByWeek(year, week, employee, function (vacations) {
+        getVacation.forEmployeeByWeek(isoYear, week, employee, function (vacations) {
 
-            getHoliday.byWeek(year, week, function (holidays) {
+            getHoliday.byWeek(isoYear, week, function (holidays) {
                 var nonWorkingDays = {};
                 var workingHours = 0;
                 var _endDay = 7;
@@ -25,9 +27,9 @@ define([
                 var i;
 
                 if (month) {
-                    _date = moment().isoWeekYear(year).month(month - 1).isoWeek(week);
+                    _date = moment().isoWeekYear(isoYear).month(month - 1).isoWeek(week);
                 } else {
-                    _date = moment().isoWeekYear(year).isoWeek(week);
+                    _date = moment().isoWeekYear(isoYear).isoWeek(week);
                 }
 
                 _monDate = moment(_date).day(1);

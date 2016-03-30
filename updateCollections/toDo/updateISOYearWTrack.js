@@ -1,9 +1,14 @@
 var mongoose = require('mongoose');
-var isoWeekYearComposer = require('../../helpers/isoWeekYearComposer');
+var isoWeekYearComposer = require('../../public/js/helpers/isoWeekYearComposer');
 var dbObject;
 require('../../models/index.js');
 
-dbObject = mongoose.createConnection('localhost', 'production');
+dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, {
+    db    : {native_parser: true},
+    server: {poolSize: 5},
+    user  : 'easyerp',
+    pass  : '1q2w3e!@#'
+});
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 
@@ -29,7 +34,8 @@ dbObject.once('open', function callback() {
         }
 
         res.forEach(function (wt) {
-            isoYear = isoWeekYearComposer(wt);
+            isoYear = isoWeekYearComposer(wt.year, wt.week, wt.month);
+
             dateByWeek = wt.week + isoYear * 100;
             query = {'isoYear': isoYear, 'dateByWeek': dateByWeek};
 
