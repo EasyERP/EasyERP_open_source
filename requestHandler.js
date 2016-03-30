@@ -47,7 +47,7 @@ var requestHandler = function (app, event, mainDb) {
 
     var io = app.get('io');
     var redisStore = require('./helpers/redisClient');
-    var isoWeekYearComposer = require('./public/js/helpers/isoWeekYearComposer');
+    var isoWeekYearComposer = require('./helpers/isoWeekYearComposer');
     var logger = app.get('logger');
     var moment = require('./public/js/libs/moment/moment');
 
@@ -119,7 +119,7 @@ var requestHandler = function (app, event, mainDb) {
             year = wTrackModel.year;
             _id = wTrackModel._id;
 
-            isoYear = isoWeekYearComposer(year, week, month);
+            isoYear = isoWeekYearComposer(wTrackModel);
             dateByWeek = isoYear * 100 + week;
             dateByMonth = year * 100 + month;
 
