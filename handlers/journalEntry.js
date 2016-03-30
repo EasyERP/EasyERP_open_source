@@ -1300,7 +1300,10 @@ var Module = function (models) {
         var body = req.body;
 
         body.forEach(function (date) {
-            Model.remove({journal: {$in: CONSTANTS.CLOSE_MONTH_JOURNALS}, date: new Date(date)}, function (err, result) {
+            Model.remove({
+                journal: {$in: CONSTANTS.CLOSE_MONTH_JOURNALS},
+                date   : new Date(date)
+            }, function (err, result) {
                 var month = moment(date).month() + 1;
                 var year = moment(date).year();
                 closeMonth(req, res, next, {month: month, year: year});
@@ -1312,7 +1315,7 @@ var Module = function (models) {
         closeMonth(req, res, next);
     };
 
-    function closeMonth (req, res, next, dateObject) {
+    function closeMonth(req, res, next, dateObject) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var query = dateObject || req.body;
         var month = parseInt(query.month, 10);
@@ -1596,7 +1599,7 @@ var Module = function (models) {
                 var credit = result[0] ? result[0].credit : 0;
                 var balance = Math.abs(debit - credit);
 
-                if (productSales - COGS < 0){
+                if (productSales - COGS < 0) {
                     balance = balance * (-1);
                 }
 
@@ -1846,7 +1849,7 @@ var Module = function (models) {
                                     if (!vacationObject[vacation.employee]) {
                                         vacationObject[vacation.employee] = {};
                                     }
-                                    var newDate = moment(new Date()).isoWeekYear(vacation.year).month(vacation.month - 1).date(1);
+                                    var newDate = moment(new Date()).year(vacation.year).month(vacation.month - 1).date(1);
                                     var vacArray = vacation.vacArray;
                                     var length = vacArray.length;
                                     var i;
@@ -1857,6 +1860,7 @@ var Module = function (models) {
                                             vacationObject[vacation.employee][key] = vacArray[i];
                                         }
                                     }
+
                                 });
 
                                 parallelCb(null, vacationObject);
@@ -1871,10 +1875,18 @@ var Module = function (models) {
                                 var employeeSubject = wTrackModel.employee;
                                 var sourceDocumentId = wTrackModel._id;
                                 var methodCb;
+                                var date = moment().isoWeekYear(wTrackModel.year).month(wTrackModel.month - 1).isoWeek(wTrackModel.week).startOf('isoWeek').year(wTrackModel.year);
 
-                                for (j = 7; j >= 1; j--) {
-                                    dataObject[j] = moment([wTrackModel.year, wTrackModel.month - 1]).isoWeek(wTrackModel.week).day(j);
+                                for (j = 5; j >= 1; j--) {
+                                    date = moment(date).day(j);
+                                    dataObject[j] = date;
                                 }
+
+                                date = moment(date).day(6);
+                                dataObject[6] = date;
+
+                                date = moment(date).day(7);
+                                dataObject[7] = date;
 
                                 keys = Object.keys(dataObject);
                                 methodCb = _.after(keys.length * 4, asyncCb);
@@ -1891,7 +1903,7 @@ var Module = function (models) {
                                     var salaryChangeDates = Object.keys(employeeSalary);
                                     var costHour;
                                     var hoursInMonth = monthHours ? monthHours.hours : 0;
-                                    var dateKey = (date.isoWeekYear() * 100 + date.month() + 1) * 100 + date.date();
+                                    var dateKey = (date.year() * 100 + date.month() + 1) * 100 + date.date();
                                     var holidayDate = holidaysObject[dateKey];
                                     var sameDayHoliday = holidayDate;
                                     var vacationForEmployee = vacationObject[employeeSubject] || {};
@@ -1975,9 +1987,9 @@ var Module = function (models) {
                                                 bodyOvertime.amount = costHour * (hours - HOURSCONSTANT) * 100;
                                                 bodyOverhead.amount = overheadRate * HOURSCONSTANT * 100;
                                             } else {
-                                            bodySalary.amount = costHour * hours * 100;
-                                            bodyOvertime.amount = 0;
-                                            bodyOverhead.amount = overheadRate * hours * 100;
+                                                bodySalary.amount = costHour * hours * 100;
+                                                bodyOvertime.amount = 0;
+                                                bodyOverhead.amount = overheadRate * hours * 100;
                                             }
 
                                             if (vacationSameDate) {
@@ -2217,6 +2229,7 @@ var Module = function (models) {
                                         var j;
                                         var costHour = 0;
                                         var hours = monthHours.hours || 0;
+                                        var createVacation = false;
 
                                         for (j = length - 1; j >= 0; j--) {
                                             if (date >= hireArray[j].date) {
@@ -2230,6 +2243,10 @@ var Module = function (models) {
 
                                             if ((vacation === 'P') || (vacation === 'E')) {
                                                 vacation = null;
+                                            }
+
+                                            if (vacation){
+                                                createVacation = true;
                                             }
                                         }
 
@@ -2247,6 +2264,11 @@ var Module = function (models) {
                                         var idleTime = HOURSCONSTANT - totalWorkedForDay;
 
                                         bodySalaryIdle.sourceDocument._id = employee;
+
+                                        //if (employee.toString() === '55b92ad221e4b7c40f000030'){
+                                        //    console.log('dd');
+                                        //
+                                        //}
 
                                         if (totalWorkedForDay - HOURSCONSTANT < 0) {
                                             if (!vacation) {
@@ -2266,6 +2288,11 @@ var Module = function (models) {
 
                                         if (sameDayHoliday) {
                                             bodySalaryIdle.amount = 0;
+                                        }
+
+                                        if (createVacation){
+                                            bodySalaryIdle.amount = costHour * HOURSCONSTANT * 100;
+                                            bodySalaryIdle.journal = CONSTANTS.VACATION_PAYABLE;
                                         }
 
                                         createReconciled(bodySalaryIdle, req.session.lastDb, cb, req.session.uId);
@@ -4592,7 +4619,7 @@ var Module = function (models) {
                     debit : 1,
                     credit: 1,
                     name  : {$arrayElemAt: ["$name", 0]},
-                    group: {$concat: ['liabilities']}
+                    group : {$concat: ['liabilities']}
                 }
             }, {
                 $sort: {
@@ -4650,12 +4677,12 @@ var Module = function (models) {
 
                 var balance = debit - credit;
                 var name = result[0] ? result[0].name : '300200 Retained Earnings';
-                var id = result[0] ? result[0]._id: '56f538c39c85020807b40024';
+                var id = result[0] ? result[0]._id : '56f538c39c85020807b40024';
 
-                if (balance < 0){
+                if (balance < 0) {
                     debit = debit * (-1);
                     credit = credit * (-1);
-                } else if(credit < 0){
+                } else if (credit < 0) {
                     credit = credit * (-1);
                 }
 
