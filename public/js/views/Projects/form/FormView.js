@@ -1308,27 +1308,6 @@ define([
             },
 
             renderTabCounter: function () {
-                /*var tabs = {};
-                var $tab;
-                var tabText;
-
-                tabs['#ordersTab'] = $('#orders tbody tr').length;
-                tabs['#quotationsTab'] = $('#quotationTable tbody tr').length;
-                tabs['#paymentsTab'] = $('#payments tbody tr').length;
-                tabs['#proformaTab'] = $('#proforma tbody tr').length;
-                tabs['#invoicesTab'] = $('#invoices tbody tr').length;
-
-                for (var tab in tabs) {
-                    $tab = $(tab);
-                    tabText = $tab.text().split('(')[0];
-
-                    tabText += ' (';
-                    tabText += tabs[tab] >= 0 ? tabs[tab] : 0;
-                    tabText += ')';
-
-                    $tab.text(tabText);
-                }*/
-
                 var $tabs = $('.countable');
                 var $table;
                 var count;
@@ -1343,8 +1322,6 @@ define([
                     count = $table.length;
                     $tab.find('span').text(' (' + count + ')');
                 });
-
-
             },
 
             editItem: function () {
