@@ -103,7 +103,9 @@
                     }
                 }
 
-                this.filterView.renderFilterContent(App.filter);
+                this.filter = App.filter;
+
+                this.filterView.renderFilterContent(this.filter);
                 _.debounce(
                     function () {
                         this.trigger('filter', App.filter);
@@ -113,23 +115,11 @@
                 this.newCollection = false;
                 this.$el.find('.thumbnailwithavatar').remove();
 
-                //this.filter = this.filter || {};
-                //
-                //if (e && e.target) {
-                //    selectedLetter = target.text();
-                //    this.filter.letter = selectedLetter;
-                //
-                //    if (target.text() === "All") {
-                //        this.filter = {};
-                //    }
-                //    target.parent().find(".current").removeClass("current");
-                //    target.addClass("current");
-                //}
-
                 this.defaultItemsNumber = 0;
-                this.changeLocationHash(null, this.defaultItemsNumber, App.filter);
-                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: App.filter});
-                this.getTotalLength(this.defaultItemsNumber, App.filter);
+
+                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
+                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: this.filter});
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
 
             gotoForm: function (e) {
@@ -230,16 +220,16 @@
             },
 
             showMore        : function (event) {
-                event.preventDefault();
-                this.collection.showMore({filter: App.filter, newCollection: this.newCollection});
+                //event.preventDefault();
+                this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
             showMoreContent : function (newModels) {
                 var holder = this.$el;
                 var content = holder.find("#thumbnailContent");
                 var showMore = holder.find('#showMoreDiv');
                 var created = holder.find('#timeRecivingDataFromServer');
-                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, App.filter);
-                this.getTotalLength(this.defaultItemsNumber, App.filter);
+                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (showMore.length != 0) {
                     showMore.before(this.template({collection: this.collection.toJSON()}));
@@ -262,8 +252,8 @@
 
                 this.defaultItemsNumber += newModels.length;
 
-                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, App.filter);
-                this.getTotalLength(this.defaultItemsNumber, App.filter);
+                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 holder.append(this.template({collection: newModels.toJSON()}));
                 holder.append(created);

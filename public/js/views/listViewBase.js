@@ -536,8 +536,9 @@ define([
                     }
                 }
 
+                this.filter = App.filter;
 
-                this.filterView.renderFilterContent(App.filter);
+                this.filterView.renderFilterContent(this.filter);
                 _.debounce(
                     function () {
                         this.trigger('filter', App.filter);
@@ -546,9 +547,9 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                this.changeLocationHash(1, itemsNumber, App.filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: App.filter});
-                this.getTotalLength(null, itemsNumber, App.filter);
+                this.changeLocationHash(1, itemsNumber, this.filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
+                this.getTotalLength(null, itemsNumber, this.filter);
             },
 
             renderCheckboxes: function () {
@@ -571,7 +572,6 @@ define([
                 var currentLetter;
 
                 this.hasAlphabet = true;
-                var self = this;
 
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();

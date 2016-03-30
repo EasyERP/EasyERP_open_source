@@ -107,8 +107,9 @@
                     }
                 }
 
+                this.filter = App.filter;
 
-                this.filterView.renderFilterContent(App.filter);
+                this.filterView.renderFilterContent(this.filter);
                 _.debounce(
                     function () {
                         this.trigger('filter', App.filter);
@@ -119,9 +120,9 @@
                 this.$el.find('.thumbnailwithavatar').remove();
 
                 this.defaultItemsNumber = 0;
-                this.changeLocationHash(null, this.defaultItemsNumber, App.filter);
-                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: App.filter});
-                this.getTotalLength(this.defaultItemsNumber, App.filter);
+                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
+                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
 
             render: function () {
@@ -230,7 +231,7 @@
 
             showMore       : function (event) {
                 event.preventDefault();
-                this.collection.showMore({filter: App.filter, newCollection: this.newCollection});
+                this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
 
             //modified for filter Vasya
@@ -241,7 +242,7 @@
                 var created = holder.find('#timeRecivingDataFromServer');
                 this.defaultItemsNumber += newModels.length;
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, App.filter);
-                this.getTotalLength(this.defaultItemsNumber, App.filter);
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 if (showMore.length != 0) {
                     showMore.before(this.template({collection: this.collection.toJSON()}));
@@ -263,8 +264,8 @@
 
                 this.defaultItemsNumber += newModels.length;
 
-                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, App.filter);
-                this.getTotalLength(this.defaultItemsNumber, App.filter);
+                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 holder.append(this.template({collection: newModels.toJSON()}));
                 holder.append(created);

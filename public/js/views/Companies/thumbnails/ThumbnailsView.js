@@ -113,8 +113,9 @@
                     }
                 }
 
+                this.filter = App.filter;
 
-                this.filterView.renderFilterContent(App.filter);
+                this.filterView.renderFilterContent(this.filter);
                 _.debounce(
                     function () {
                         this.trigger('filter', App.filter);
@@ -124,26 +125,10 @@
                 this.startTime = new Date();
                 this.newCollection = false;
 
-                //this.filter = {};
-                //
-                //if (e && e.target) {
-                //    target = $(e.target);
-                //    selectedLetter = $(e.target).text();
-                //
-                //    target.parent().find(".current").removeClass("current");
-                //    target.addClass("current");
-                //    if ($(e.target).text() === "All") {
-                //        selectedLetter = "";
-                //        this.filter = {};
-                //    }
-                //
-                //    this.filter.letter = selectedLetter;
-                //}
-
                 this.defaultItemsNumber = 0;
-                this.changeLocationHash(null, this.defaultItemsNumber, App.filter);
-                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: App.filter});
-                this.getTotalLength(this.defaultItemsNumber, App.filter);
+                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
+                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: this.filter});
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
             },
 
             gotoForm: function (e) {
@@ -231,7 +216,7 @@
 
             showMore: function (event) {
                 event.preventDefault();
-                this.collection.showMore({filter: App.filter, newCollection: this.newCollection});
+                this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
 
             showMoreContent: function (newModels) {
@@ -240,10 +225,10 @@
                 var showMore = holder.find('#showMoreDiv');
                 var created = holder.find('#timeRecivingDataFromServer');
                 this.defaultItemsNumber += newModels.length;
-                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, App.filter);
-                this.getTotalLength(this.defaultItemsNumber, App.filter);
+                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
 
-                if (showMore.length !== 0) {
+                if (showMore.length != 0) {
                     showMore.before(this.template({collection: this.collection.toJSON()}));
                     $(".filter-check-list").eq(1).remove();
                     showMore.after(created);
@@ -261,8 +246,8 @@
 
                 this.defaultItemsNumber += newModels.length;
 
-                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, App.filter);
-                this.getTotalLength(this.defaultItemsNumber, App.filter);
+                this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
+                this.getTotalLength(this.defaultItemsNumber, this.filter);
 
                 holder.append(this.template({collection: newModels.toJSON()}));
                 holder.append(created);
@@ -304,7 +289,7 @@
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
-                            if (target.text() === currentLetter) {
+                            if (target.text() == currentLetter) {
                                 target.addClass("current");
                             }
                         });
