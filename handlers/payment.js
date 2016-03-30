@@ -1004,9 +1004,9 @@ var Payment = function (models, event) {
                                         return next(err);
                                     }
 
-                                    paymentInfo = invoice.get('paymentInfo');
+                                    //paymentInfo = invoice.get('paymentInfo');
 
-                                    request = {
+                                    /*request = {
                                         query  : {
                                             source      : 'purchase',
                                             targetSource: 'invoice'
@@ -1033,16 +1033,16 @@ var Payment = function (models, event) {
                                     } else {
                                         request.query.status = 'New';
                                         request.query.order = 1;
-                                    }
+                                    }*/
 
-                                    workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                                    /*workflowHandler.getFirstForConvert(request, function (err, workflow) {
                                         if (err) {
                                             return next(err);
                                         }
 
-                                        workflowObj = workflow._id;
+                                        workflowObj = workflow._id;*/
 
-                                        paymentInfoNew.total = paymentInfo.total;
+                                        /*paymentInfoNew.total = paymentInfo.total;
                                         paymentInfoNew.taxes = paymentInfo.taxes;
                                         paymentInfoNew.unTaxed = paymentInfoNew.total;
 
@@ -1050,8 +1050,12 @@ var Payment = function (models, event) {
                                             paymentInfoNew.balance = paymentInfo.balance + paid;
                                         } else {
                                             paymentInfoNew.balance = paymentInfo.balance;
-                                        }
-                                        Invoice.findByIdAndUpdate(invoiceId, {workflow   : workflowObj, paymentInfo: paymentInfoNew}, {new: true}, function (err, result) {
+                                        }*/
+                                        Invoice.findByIdAndUpdate(invoiceId,
+                                            {/*workflow   : workflowObj, paymentInfo: paymentInfoNew*/
+                                                paymentDate: data.date
+                                            },
+                                            {new: true}, function (err, result) {
                                             if (err) {
                                                 return next(err);
                                             }
@@ -1077,7 +1081,7 @@ var Payment = function (models, event) {
                                                 }
                                             });
                                         });
-                                    });
+                                    //});
                                 });
                             }
                             cb();
