@@ -477,31 +477,46 @@ var Employee = function (event, models) {
                     _employee.nationality = data.nationality;
                 }
                 if (data.hire) {
-                    _employee.hire = {
-                        date       : getDate(data.hire),
-                        department : data.department,
-                        jobPosition: data.jobPosition,
-                        manager    : data.manager,
-                        salary     : 0,
-                        jobType    : data.jobType,
-                        info       : 'Hired'
-                    }
+                    _employee.hire = data.hire;
                 }
+                if (data.salary) {
+                    _employee.salary = data.salary;
+                }
+                if (data.transfer) {
+                    _employee.transfer = data.transfer;
+                }
+
+
                 ///////////////////////////////////////////////////
                 event.emit('updateSequence', models.get(req.session.lastDb, "Employees", employeeSchema), "sequence", 0, 0, _employee.workflow, _employee.workflow, true, false, function (sequence) {
+                    var DepartmentSchema = mongoose.Schemas.Department;
+                    var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
+
                     _employee.sequence = sequence;
-                    _employee.save(function (err, result) {
-                        if (err) {
-                            console.log(err);
-                            logWriter.log("Employees.js create savetoBd _employee.save " + err);
-                            res.send(500, {error: 'Employees.save BD error'});
-                        } else {
-                            res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
-                            if (result.isEmployee) {
-                                event.emit('recalculate', req);
+
+                    Department.findById(_employee.department,
+                        function (error, dep) {
+
+                            if (dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
+                                _employee.transfer[0].isDeveloper = true;
+                            } else {
+                                _employee.transfer[0].isDeveloper = false;
                             }
-                        }
+
+                            _employee.save(function (err, result) {
+                                if (err) {
+                                    console.log(err);
+                                    logWriter.log("Employees.js create savetoBd _employee.save " + err);
+                                    res.send(500, {error: 'Employees.save BD error'});
+                                } else {
+                                    res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
+                                    if (result.isEmployee) {
+                                        event.emit('recalculate', req);
+                                    }
+                                }
+                            });
                     });
+
                 });
                 event.emit('dropHoursCashes', req);
                 event.emit('recollectVacationDash');
@@ -1326,8 +1341,10 @@ var Employee = function (event, models) {
 
     function updateOnlySelectedFields(req, _id, data, res) {
         var dbName = req.session.lastDb;
-        var UsersSchema = mongoose.Schemas['User'];
+        var UsersSchema = mongoose.Schemas.User;
+        var DepartmentSchema = mongoose.Schemas.Department;
         var UsersModel = models.get(dbName, 'Users', UsersSchema);
+        var Department = models.get(dbName, 'Department', DepartmentSchema);
         var fileName = data.fileName;
 
         delete data.depForTransfer;
@@ -1377,59 +1394,95 @@ var Employee = function (event, models) {
                 event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee', _id);
             }
 
-            models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
-                if (!err) {
-                    if (data.dateBirth || data.hired) {
-                        event.emit('recalculate', req);
+            Department.aggregate([
+                {
+                    $match: {
+                        parentDepartment: {$ne: null}
                     }
-                    if (fileName) {
-                        var os = require("os");
-                        var osType = (os.type().split('_')[0]);
-                        var path;
-                        var dir;
-                        switch (osType) {
-                            case "Windows":
-                            {
-                                var newDirname = __dirname.replace("\\Modules", "");
-                                while (newDirname.indexOf("\\") !== -1) {
-                                    newDirname = newDirname.replace("\\", "\/");
-                                }
-                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                dir = newDirname + "\/uploads\/" + _id;
-                            }
-                                break;
-                            case "Linux":
-                            {
-                                var newDirname = __dirname.replace("/Modules", "");
-                                while (newDirname.indexOf("\\") !== -1) {
-                                    newDirname = newDirname.replace("\\", "\/");
-                                }
-                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                dir = newDirname + "\/uploads\/" + _id;
-                            }
-                        }
-
-                        fs.unlink(path, function (err) {
-                            console.log(err);
-                            fs.readdir(dir, function (err, files) {
-                                if (files && files.length === 0) {
-                                    fs.rmdir(dir, function () {
-                                    });
-                                }
-                            });
-                        });
-
+                },
+                {
+                    $group: {
+                        _id: '$parentDepartment',
+                        sublingDeps: {$push: '$_id'}
                     }
-                    event.emit('dropHoursCashes', req);
-                    event.emit('recollectVacationDash');
-
-                    res.send(200, {success: 'Employees updated', result: result});
-
-                    payrollHandler.composeSalaryReport(req);
-
-                } else {
-                    res.send(500, {error: "Can't update Employees"});
                 }
+            ], function (error, deps) {
+                var adminDeps;
+
+                if (error) {
+                    return console.dir(error);
+                }
+
+                adminDeps = deps[0]._id.toString === objectId(CONSTANTS.ADMIN_DEPARTMENTS) ? deps[0].sublingDeps : deps[1].sublingDeps;
+                adminDeps = adminDeps.map(function(depId) {
+                    return depId.toString();
+                });
+
+                data.transfer = data.transfer.map(function(tr) {
+                    if (adminDeps.indexOf(tr.department.toString()) !== -1 ) {
+                        tr.isDeveloper = false;
+                    } else {
+                        tr.isDeveloper = true;
+                    }
+
+                    return tr;
+                });
+
+                models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+                    if (!err) {
+                        if (data.dateBirth || data.hired) {
+                            event.emit('recalculate', req);
+                        }
+                        if (fileName) {
+                            var os = require("os");
+                            var osType = (os.type().split('_')[0]);
+                            var path;
+                            var dir;
+                            switch (osType) {
+                                case "Windows":
+                                {
+                                    var newDirname = __dirname.replace("\\Modules", "");
+                                    while (newDirname.indexOf("\\") !== -1) {
+                                        newDirname = newDirname.replace("\\", "\/");
+                                    }
+                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                    dir = newDirname + "\/uploads\/" + _id;
+                                }
+                                    break;
+                                case "Linux":
+                                {
+                                    var newDirname = __dirname.replace("/Modules", "");
+                                    while (newDirname.indexOf("\\") !== -1) {
+                                        newDirname = newDirname.replace("\\", "\/");
+                                    }
+                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                    dir = newDirname + "\/uploads\/" + _id;
+                                }
+                            }
+
+                            fs.unlink(path, function (err) {
+                                console.log(err);
+                                fs.readdir(dir, function (err, files) {
+                                    if (files && files.length === 0) {
+                                        fs.rmdir(dir, function () {
+                                        });
+                                    }
+                                });
+                            });
+
+                        }
+                        event.emit('dropHoursCashes', req);
+                        event.emit('recollectVacationDash');
+
+                        res.send(200, {success: 'Employees updated', result: result});
+
+                        payrollHandler.composeSalaryReport(req);
+
+                    } else {
+                        res.send(500, {error: "Can't update Employees"});
+                    }
+
+                });
 
             });
         }

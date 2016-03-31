@@ -1,8 +1,9 @@
 var mongoose = require('mongoose');
 var ObjectId = mongoose.Schema.Types.ObjectId;
-require('../../models/index.js');
 var async = require('async');
 var _ = require('lodash');
+
+require('../../models/index.js');
 
 var employeeSchema = new mongoose.Schema({
     isEmployee: {type: Boolean, default: false},
@@ -126,9 +127,6 @@ mongoose.Schemas['EmployeeOld'] = employeeSchema;
 var EmployeeSchema = mongoose.Schemas['Employee'];
 var EmployeeSchemaOld = mongoose.Schemas['EmployeeOld'];
 var DepartmentSchema = mongoose.Schemas['Department'];
-
-
-
 var connectOptions = {
     user  : 'easyerp',
     pass  : '1q2w3e!@#',
@@ -136,7 +134,7 @@ var connectOptions = {
     j     : true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('144.76.56.111', 'maxdb', 28017, connectOptions);
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
@@ -204,6 +202,14 @@ query.exec(function (error, _res) {
 
             }
 
+            if (emp._id.toString() === '55b92ad221e4b7c40f000034') {
+                transfer.splice(1, 0, emp.fire[0]);
+                transfer[1].status = "fired";
+                transfer[2].status = "hired";
+                fire.push(transfer[1].date);
+                hire.push(transfer[2].date);
+            }
+
             transfer = transfer.map(function(tr) {
                 if (adminDeps.indexOf(tr.department.toString()) !== -1 ) {
                     tr.isDeveloper = false;
@@ -213,14 +219,6 @@ query.exec(function (error, _res) {
 
                 return tr;
             });
-
-            if (emp._id.toString() === '55b92ad221e4b7c40f000034') {
-                transfer.splice(1, 0, emp.fire[0]);
-                transfer[1].status = "fired";
-                transfer[2].status = "hired";
-                fire.push(transfer[1].date);
-                hire.push(transfer[2].date);
-            }
 
             objectToSave = {
                 hire    : hire,
