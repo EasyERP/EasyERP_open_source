@@ -183,6 +183,7 @@ module.exports = (function () {
             date: Date,
             status: {type: String, enum: ['hired', 'fired', 'updated'], default: 'updated'},
             department: {type: ObjectId, ref: 'Department', default: null},
+            isDeveloper: {type: Boolean, required: true},
             jobPosition: {type: ObjectId, ref: 'JobPosition', default: null},
             manager: {type: ObjectId, ref: 'Employees', default: null},
             jobType: {type: String, default: ''},

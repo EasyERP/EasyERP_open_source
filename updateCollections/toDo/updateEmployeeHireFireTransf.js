@@ -125,14 +125,26 @@ mongoose.Schemas['EmployeeOld'] = employeeSchema;
 
 var EmployeeSchema = mongoose.Schemas['Employee'];
 var EmployeeSchemaOld = mongoose.Schemas['EmployeeOld'];
+var DepartmentSchema = mongoose.Schemas['Department'];
 
-var dbObject = mongoose.createConnection('localhost', 'production');
+
+
+var connectOptions = {
+    user  : 'easyerp',
+    pass  : '1q2w3e!@#',
+    w     : 1,
+    j     : true
+};
+
+var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
+
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
 });
 
 var Employee = dbObject.model("Employees", EmployeeSchema);
+var Department = dbObject.model("Department", DepartmentSchema);
 var EmployeeOld = dbObject.model("EmployeesOld", EmployeeSchemaOld);
 
 var query = EmployeeOld.find().lean();
@@ -142,47 +154,81 @@ query.exec(function (error, _res) {
         return console.dir(error);
     }
 
-    async.eachLimit(_res, 50, function (emp, callback) {
-        var objectToSave;
-        var hire;
-        var event;
-        var fire = [];
-        var transfer;
-        var fired = (emp.hire.length === emp.fire.length);
+    Department.aggregate([
+        {
+            $match: {
+                parentDepartment: {$ne: null}
+            }
+        },
+        {
+            $group: {
+                _id: '$parentDepartment',
+                sublingDeps: {$push: '$_id'}
+            }
+        }
+    ], function (error, deps) {
+        if (error) {
+            return console.dir(error);
+        }
 
-        emp.hire = emp.hire.map(function(hireObj) {
-            "use strict";
-            hireObj.status = "updated";
-            return hireObj;
+        var adminDeps = deps[0]._id.toString === ObjectId('56e6775c5ec71b00429745a4') ? deps[0].sublingDeps : deps[1].sublingDeps;
+
+        adminDeps = adminDeps.map(function(depId) {
+            return depId.toString();
         });
 
-        hire = [emp.hire[0].date];
-        transfer = emp.hire;
+        async.eachLimit(_res, 50, function (emp, callback) {
+            var objectToSave;
+            var hire;
+            var event;
+            var fire = [];
+            var transfer;
+            var fired = (emp.hire.length === emp.fire.length);
 
-        transfer[0].status = "hired";
+            emp.hire = emp.hire.map(function(hireObj) {
+                "use strict";
+                hireObj.status = "updated";
+                return hireObj;
+            });
 
-        if (fired) {
-            event = emp.fire.pop();
-            event.status = "fired";
-            fire = [event.date];
-            transfer.push(event);
+            hire = [emp.hire[0].date];
+            transfer = emp.hire;
 
-        }
+            transfer[0].status = "hired";
 
-        objectToSave = {
-            hire    : hire,
-            fire    : fire,
-            transfer: transfer
-        };
+            if (fired) {
+                event = emp.fire.pop();
+                event.status = "fired";
+                fire = [event.date];
+                transfer.push(event);
+
+            }
+
+            transfer = transfer.map(function(tr) {
+                if (adminDeps.indexOf(tr.department.toString()) !== -1 ) {
+                    tr.isDeveloper = false;
+                } else {
+                    tr.isDeveloper = true;
+                }
+
+                return tr;
+            });
+
+            objectToSave = {
+                hire    : hire,
+                fire    : fire,
+                transfer: transfer
+            };
 
 
-        Employee.update({_id: emp._id}, objectToSave, callback);
-        callback();
-    }, function (err) {
-        if (err) {
-            return console.dir(err);
-        }
+            Employee.update({_id: emp._id}, objectToSave, callback);
+            //callback();
+        }, function (err) {
+            if (err) {
+                return console.dir(err);
+            }
 
-        console.dir('Good');
-    })
+            console.dir('Good');
+        })
+    });
 });
