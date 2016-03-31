@@ -214,15 +214,21 @@ query.exec(function (error, _res) {
                 return tr;
             });
 
+            if (emp._id.toString() === '55b92ad221e4b7c40f000034') {
+                transfer.splice(1, 0, emp.fire[0]);
+                transfer[1].status = "fired";
+                transfer[2].status = "hired";
+                fire.push(transfer[1].date);
+            }
+
             objectToSave = {
                 hire    : hire,
                 fire    : fire,
                 transfer: transfer
             };
 
-
-            Employee.update({_id: emp._id}, objectToSave, callback);
-            //callback();
+            //Employee.update({_id: emp._id}, objectToSave, callback);
+            callback();
         }, function (err) {
             if (err) {
                 return console.dir(err);
