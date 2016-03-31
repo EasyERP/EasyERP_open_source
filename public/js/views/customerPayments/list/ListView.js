@@ -496,8 +496,8 @@ define([
                     }).render());
                 }
 
-                $currentEl.append(new listTotalView({/*element: this.$el.find("#listTable"),*/ cellSpan: 5}).render());  // took off element in case of new auto-calculating
-
+                $currentEl.append(new listTotalView({/*element: this.$el.find("#listTable"),*/ cellSpan: 6}).render());  // took off element in case of new auto-calculating
+                $currentEl.find('#total').addClass('money');
                 this.renderCheckboxes();
 
                 this.renderPagination($currentEl, this);
