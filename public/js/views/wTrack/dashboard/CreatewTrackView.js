@@ -100,11 +100,11 @@ define([
             }
         },
 
-        onKeyUpInput: function (e) { // max 12 hours in cell
+        onKeyUpInput: function (e) { // max hours in cell
             var element = e.target;
 
-            if ($(element).val() > 12) {
-                $(element).val(12);
+            if ($(element).val() > 24) {
+                $(element).val(24);
             }
         },
 
