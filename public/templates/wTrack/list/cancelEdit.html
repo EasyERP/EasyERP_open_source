@@ -1,4 +1,4 @@
-<tr data-id="<%=model._id%>" class="<%= enable ? 'enableEdit' : ''%>">
+<tr data-id="<%=model._id%>" class="<%= enable ? 'enableEdit' : ''%> <%=(model._type === 'overtime') ? 'overtime': ''%>">
     <td class="notForm"><input type="checkbox" value="<%=model._id%>" class="checkbox"/></td>
     <td data-content="number" class="centerCell"><%=model.startNumber%></td>
     <td class="editable <%= enable ? 'textUnderlineHover' : ''%> " data-content="jobs" data-id="<%=model.jobs ? model.jobs.name : '------'%>"><%=model.jobs ? model.jobs.name :
