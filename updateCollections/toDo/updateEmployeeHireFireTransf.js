@@ -219,6 +219,7 @@ query.exec(function (error, _res) {
                 transfer[1].status = "fired";
                 transfer[2].status = "hired";
                 fire.push(transfer[1].date);
+                hire.push(transfer[2].date);
             }
 
             objectToSave = {
@@ -227,8 +228,8 @@ query.exec(function (error, _res) {
                 transfer: transfer
             };
 
-            //Employee.update({_id: emp._id}, objectToSave, callback);
-            callback();
+            Employee.update({_id: emp._id}, objectToSave, callback);
+            //callback();
         }, function (err) {
             if (err) {
                 return console.dir(err);
