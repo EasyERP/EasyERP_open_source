@@ -39,7 +39,9 @@ var wTrack = function (models) {
         var filter = query.filter || {};
         var departmentsArray = [objectId(CONSTANTS.HR_DEPARTMENT_ID),
             objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID),
-            objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)];
+            objectId(CONSTANTS.MARKETING_DEPARTMENT_ID),
+            objectId(CONSTANTS.PM_ID)
+        ];
         var departmentQuery = {
             $nin: departmentsArray
         };
@@ -178,6 +180,14 @@ var wTrack = function (models) {
 
             function departmentMapper(department, departmentCb) {
                 var dashDepartment = _.find(dashBoardResult, function (deps) {
+                    // todo fix this bad low code after add logic transfer employee
+
+                    // bad low code start
+                    function unityWpChecker(dep1, dep2) {
+
+                    }
+
+                    // bad low code end
                     return deps.department.toString() === department.department.toString();
                 });
 
@@ -288,6 +298,7 @@ var wTrack = function (models) {
             }
 
             async.each(employeesByDep, departmentMapper, sendResponse);
+            //res.status(200).send(employeesByDep);
         }
 
         function holidaysComposer(parallelCb) {
@@ -407,16 +418,48 @@ var wTrack = function (models) {
             }, {
                 $match: employeeQueryForEmployeeByDep
             }, {
+                $unwind: '$hire'
+            }, {
+                $group: {
+                    _id     : {
+                        _id       : '$_id',
+                        department: '$hire.department',
+                        isEmployee: '$isEmployee',
+                        isLead    : '$isLead'
+                    },
+                    hired   : {$push: '$hire'},
+                    fired   : {$first: '$fire'},
+                    name    : {$first: {$concat: ['$name.first', ' ', '$name.last']}},
+                    lastHire: {$first: '$lastHire'}
+                }
+            }, {
+                $project: {
+                    department: '$_id.department',
+                    isEmployee: '$_id.isEmployee',
+                    isLead    : '$_id.isLead',
+                    _id       : '$_id._id',
+                    hired     : 1,
+                    fired     : {
+                        $filter: {
+                            input: '$fired',
+                            as   : 'fire',
+                            cond : {$eq: ['$$fire.department', '$_id.department']}
+                        }
+                    },
+                    name      : 1,
+                    lastHire  : 1
+                }
+            }, {
                 $group: {
                     _id      : '$department',
                     employees: {
-                        $push: {
+                        $addToSet: {
                             isEmployee: '$isEmployee',
                             isLead    : '$isLead',
-                            fired     : '$fire',
-                            hired     : '$hire',
+                            fired     : '$fired',
+                            hired     : '$hired',
                             lastHire  : '$lastHire',
-                            name      : {$concat: ['$name.first', ' ', '$name.last']},
+                            name      : '$name',
                             _id       : '$_id'
                         }
                     }
