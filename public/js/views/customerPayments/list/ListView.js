@@ -7,7 +7,6 @@ define([
         'text!templates/customerPayments/forWTrack/ListHeader.html',
         'text!templates/customerPayments/forWTrack/cancelTemplate.html',
         'views/customerPayments/list/ListItemView',
-        'views/customerPayments/list/ListTotalView',
         'views/Filter/FilterView',
         'views/customerPayments/EditView',
         'collections/customerPayments/filterCollection',
@@ -18,7 +17,7 @@ define([
         'async',
         "helpers"
     ],
-    function (listViewBase, listTemplate, ListHeaderForWTrack, cancelEdit, listItemView, listTotalView, filterView, EditView, paymentCollection, editCollection, currentModel, dataService, populate, async, helpers) {
+    function (listViewBase, listTemplate, ListHeaderForWTrack, cancelEdit, listItemView, filterView, EditView, paymentCollection, editCollection, currentModel, dataService, populate, async, helpers) {
         var PaymentListView = listViewBase.extend({
 
             listTemplate            : listTemplate,
@@ -124,7 +123,6 @@ define([
 
 
                 totalTd.text(helpers.currencySplitter((rowTdVal/100).toFixed(2) ));
-
             },
 
             deleteItems: function () {
@@ -478,26 +476,14 @@ define([
                 self = this;
                 $currentEl = this.$el;
 
-                if (App.weTrack) {
-                    $currentEl.html('');
-                    $currentEl.append(_.template(ListHeaderForWTrack));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());
-                } else {
-                    $currentEl.html('');
-                    $currentEl.append(_.template(listTemplate));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());
-                }
+                $currentEl.html('');
+                $currentEl.append(_.template(ListHeaderForWTrack));
+                $currentEl.append(new listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());
 
-                $currentEl.append(new listTotalView({/*element: this.$el.find("#listTable"),*/ cellSpan: 6}).render());  // took off element in case of new auto-calculating
-                $currentEl.find('#total').addClass('money');
                 this.renderCheckboxes();
 
                 this.renderPagination($currentEl, this);

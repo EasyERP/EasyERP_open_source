@@ -185,6 +185,17 @@ define([
                 return false;
             },
 
+            recalcTotal: function () {
+                var paid = 0;
+                var amount = 0;
+                _.each(this.collection.toJSON(), function (model) {
+                    paid += parseFloat(model.paid);
+                    amount += parseFloat(model.paidAmount);
+                });
+                this.$el.find('#totalPaid').text(helpers.currencySplitter(paid.toFixed(2)));
+                this.$el.find('#totalAmount').text(helpers.currencySplitter(amount.toFixed(2)));
+            },
+
             showNewSelect: function (e) {
                 var $target = $(e.target);
                 e.stopPropagation();
@@ -400,34 +411,22 @@ define([
                 var self = this;
                 var $currentEl = this.$el;
 
-                if (App.weTrack) {
-                    $currentEl.html('');
-                    $currentEl.append(_.template(ListHeaderForWTrack));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());
+                $currentEl.html('');
+                $currentEl.append(_.template(ListHeaderForWTrack));
+                $currentEl.append(new listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());
 
-                    $currentEl.append(new listTotalView({
-                        element : this.$el.find("#listTable"),
-                        cellSpan: 6,
-                        wTrack  : true
-                    }).render());
+                $currentEl.append(new listTotalView({
+                    element : this.$el.find("#listTable"),
+                    cellSpan: 6,
+                    wTrack  : true
+                }).render());
 
-                    self.renderFilter(self);
+                self.renderFilter(self);
 
-                } else {
-                    $currentEl.html('');
-                    $currentEl.append(_.template(listTemplate));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());
-
-                    $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
-                }
 
                 self.renderCheckboxes();
 

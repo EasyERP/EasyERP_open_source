@@ -10,10 +10,11 @@ define([
         'views/Filter/FilterView',
         'common',
         'dataService',
-        'constants'
+        'constants',
+        'helpers'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
@@ -168,7 +169,7 @@ define([
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
-                            App.weTrack = response === "weTrack" || response === "production" || response === "development";
+                            App.weTrack = true;
                         }
 
                         currentEllistRenderer(self);
@@ -190,6 +191,7 @@ define([
                 }, function (stages) {
                     self.stages = stages;
                 });
+                this.recalcTotal();
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
@@ -206,6 +208,18 @@ define([
 
                 }
 
+            },
+
+            recalcTotal: function () {
+                var self = this;
+                var columns = ['balance', 'total', 'unTaxed'];
+                _.each(columns,  function (col){
+                    var sum = 0;
+                    _.each(self.collection.toJSON(), function (model) {
+                        sum += parseFloat(model.paymentInfo[col]);
+                    });
+                    self.$el.find('#' + col).text(helpers.currencySplitter(sum.toFixed(2)));
+                });
             },
 
             goToEditDialog: function (e) {

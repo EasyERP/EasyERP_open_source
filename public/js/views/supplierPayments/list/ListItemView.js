@@ -16,19 +16,11 @@ define([
                 this.startNumber = (options.page - 1 ) * options.itemsNumber;//Counting the start index of list items
             },
             render    : function () {
-                if (App.weTrack) {
-                    this.$el.append(_.template(forWTrackListTemplate, {
-                        paymentCollection: this.collection.toJSON(),
-                        startNumber      : this.startNumber,
-                        currencySplitter : helpers.currencySplitter
-                    }));
-                } else {
-                    this.$el.append(_.template(PaymentListTemplate, {
-                        paymentCollection: this.collection.toJSON(),
-                        startNumber      : this.startNumber,
-                        currencySplitter : helpers.currencySplitter
-                    }));
-                }
+                this.$el.append(_.template(forWTrackListTemplate, {
+                    paymentCollection: this.collection.toJSON(),
+                    startNumber      : this.startNumber,
+                    currencySplitter : helpers.currencySplitter
+                }));
             }
         });
 
