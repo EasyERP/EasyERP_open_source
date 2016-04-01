@@ -447,6 +447,9 @@ define([
                 /*if (this.filterView) {
                  this.filterView.renderFilterContent();
                  }*/
+                if (typeof (this.recalcTotal) === 'function'){
+                    this.recalcTotal();
+                }
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");

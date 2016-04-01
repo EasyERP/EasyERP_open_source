@@ -11,10 +11,11 @@ define([
         'collections/Order/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'dataService'
+        'dataService',
+        'helpers'
     ],
 
-    function ($, listViewBase, listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
+    function ($, listViewBase, listTemplate, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService, helpers) {
         var OrdersListView = listViewBase.extend({
             createView              : createView,
             filterView              : filterView,
@@ -49,8 +50,20 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
-            }
-            ,
+            },
+
+            recalcTotal: function () {
+                var total = 0;
+                var unTaxed = 0;
+
+                _.each(this.collection.toJSON(), function (model) {
+                    total += parseFloat(model.paymentInfo.total);
+                    unTaxed += parseFloat(model.paymentInfo.unTaxed);
+                });
+
+                this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
+                this.$el.find('#unTaxed').text(helpers.currencySplitter(unTaxed.toFixed(2)));
+            },
 
             chooseOption: function (e) {
                 var self = this;
