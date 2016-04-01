@@ -23,22 +23,20 @@
                 this.count = options.count;
                 this.page = options.page || 1;
 
-                if (options && options.contentType && !(options.filter)) {
-                    options.filter = {};
+                if (options && options.contentType) {
+
+                    options.filter = options.filter || {};
+
                     if (regex.test(this.contentType)) {
-                        options.filter = {
-                            'forSales': {
-                                key  : 'forSales',
-                                value: ['true']
-                            }
-                        }
+                        options.filter.forSales = {
+                            key  : 'forSales',
+                            value: ['true']
+                        };
                     } else {
-                        options.filter = {
-                            'forSales': {
-                                key  : 'forSales',
-                                value: ['false']
-                            }
-                        }
+                        options.filter.forSales = {
+                            key  : 'forSales',
+                            value: ['false']
+                        };
                     }
                 }
 
@@ -73,22 +71,20 @@
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
                 filterObject['filter'] = (options) ? options.filter : {};
 
-                if (options && options.contentType && !(options.filter)) {
-                    options.filter = {};
+                if (options && options.contentType) {
+
+                    options.filter = options.filter || {};
+
                     if (regex.test(this.contentType)) {
-                        filterObject.filter = {
-                            'forSales': {
-                                key  : 'forSales',
-                                value: ['true']
-                            }
-                        }
+                        options.filter.forSales = {
+                            key  : 'forSales',
+                            value: ['true']
+                        };
                     } else {
-                        options.filter = {
-                            'forSales': {
-                                key  : 'forSales',
-                                value: ['false']
-                            }
-                        }
+                        options.filter.forSales = {
+                            key  : 'forSales',
+                            value: ['false']
+                        };
                     }
                 }
 
