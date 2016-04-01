@@ -314,7 +314,7 @@ define([
                     //sourceDocument: $.trim(this.$el.find('#source_document').val()),
                     //supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
                     name            : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
-                    paymentReference: $.trim(this.$el.find('#payment_reference').val()),
+                    //paymentReference: $.trim(this.$el.find('#payment_reference').val()),
                     invoiceDate     : invoiceDate,
                     dueDate         : dueDate,
                     account         : null,

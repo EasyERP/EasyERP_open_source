@@ -38,7 +38,7 @@
                 <div class="clearfix"></div>
                 <div class="dialog-tabs-items mainTabs">
                     <div class="dialog-tabs-item mainTabs active">
-                        <%if(!isWtrack){%>
+
                         <%if(!isPaid){%>
                         <div class="half-block left">
                             <dl class="opp-info">
@@ -67,14 +67,6 @@
                                            placeholder="Supplier Invoice Number" maxlength="32"/>
                                 </dd>
 
-                                <dt>
-                                    <label for="payment_reference">Payment Reference</label>
-                                </dt>
-                                <dd>
-                                    <input type="text" id="payment_reference"
-                                           value="<%=(model.paymentReference) ? model.paymentReference : ''%>"
-                                           placeholder="Payment Reference" maxlength="32"/>
-                                </dd>
                             </dl>
                         </div>
                         <div class="half-block left">
@@ -97,18 +89,6 @@
                                     <% } %>
                                     id="due_date" value="<%=(model.dueDate) ? model.dueDate : ''%>" maxlength="32"
                                     placeholder="Due Date" readonly />
-                                </dd>
-
-                                <!--<dt><label for="account">Account</label></dt>
-                                <dd>
-                                    <a id="account" data-id="" class="current-selected" href="javascript:;">Select</a>
-                                </dd>-->
-
-                                <dt><label for="journal">Journal</label></dt>
-                                <dd>
-                                    <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>"
-                                       class="current-selected" href="javascript:;"><%=model.journal ? model.journal._id
-                                        : 'Select'%></a>
                                 </dd>
 
                                 <dt><label for="currencyDd">Currency</label></dt>
@@ -141,12 +121,6 @@
                                     <span type="text"
                                           id="supplier_invoice_num"><%=(model.name) ? model.name : ''%></span>
                                 </dd>
-                                <dt>
-                                    <label for="payment_reference">Payment Reference</label>
-                                </dt>
-                                <dd>
-                                    <span><%=(model.paymentReference) ? model.paymentReference : ''%></span>
-                                </dd>
                             </dl>
                         </div>
                         <div class="half-block left">
@@ -162,12 +136,6 @@
                                     <span id="d_date"><%=(model.dueDate) ? model.dueDate : ''%></span>
                                 </dd>
 
-                                <dt><label for="journal">Journal</label></dt>
-                                <dd>
-                                    <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>" class=""
-                                       href="javascript:;"><%=model.journal ? model.journal._id : ''%></a>
-                                </dd>
-
                                 <dt><label for="currencyDd">Currency</label></dt>
                                 <dd>
                                     <a id="currencyDd" class=""
@@ -180,44 +148,6 @@
                         </div>
                         <%}%>
 
-                        <%} else {%>
-                        <div class="half-block left">
-                            <dl class="opp-info">
-                                <dt><label for="assigned">Assigned</label></dt>
-                                <dd>
-                                    <span id="assigned" data-id="<%= assigned._id%>"><%= assigned.name ? assigned.name : ''%></span>
-                                </dd>
-                                <dt><label for="supplier">Customer</label></dt>
-                                <dd>
-                                    <span id="supplier" data-id="<%= customer._id%>"><%= customer.name ? customer.name : ''%></span>
-                                </dd>
-                                <dt><label for="project">Project</label></dt>
-                                <dd>
-                                    <span id="project" data-id="<%= project._id%>"><%= project.name%></span>
-                                </dd>
-                                <dt><label for="paymentTerms">Payment Terms</label></dt>
-                                <dd>
-                                    <span id="paymentTerms"><%= model.paymentTerms ? model.paymentTerms.name : ''%></span>
-                                </dd>
-                            </dl>
-                        </div>
-                        <div class="half-block left">
-                            <dl class="opp-info">
-                                <dt><label for="invoiceName">Invoice Name</label></dt>
-                                <dd>
-                                    <span id="invoiceName"><%= model.name%></span>
-                                </dd>
-                                <dt><label for="invoiceDate">Invoice Date</label></dt>
-                                <dd>
-                                    <span id="invoiceDate"><%= model.invoiceDate%></span>
-                                </dd>
-                                <dt><label for="dueDate">Due Date</label></dt>
-                                <dd>
-                                    <span id="dueDate"><%= model.dueDate%></span>
-                                </dd>
-                            </dl>
-                        </div>
-                        <%}%>
                         <div class="clearfix"></div>
                         <ul class="dialog-tabs" data-class="childTabs">
                             <li><a class="active" href="javascript:;">Invoice</a></li>
@@ -355,7 +285,6 @@
                                 </div>
                                 <%}%>
                             </div>
-                            <%if(!isWtrack){%>
                             <div class="dialog-tabs-item childTabs">
                                 <div class="other-info-container">
                                     <div class="half-block left">
@@ -381,19 +310,40 @@
                                     </div>
                                     <div class="half-block left">
                                         <dl class="opp-info">
-                                            <!--<dt><label >Journal Entry</label></dt>-->
-                                            <!--<dd></dd>-->
 
                                             <dt><label for="force_period">Force Period</label></dt>
                                             <dd>
                                                 <a id="force_period" href="javascript:;">Select</a>
                                             </dd>
 
+                                            <%if(!isPaid){%>
+                                            <dt><label for="journal">Journal</label></dt>
+                                            <dd>
+                                                <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>"
+                                                   class="current-selected" href="javascript:;"><%=model.journal ? model.journal._id
+                                                    : 'Select'%></a>
+                                            </dd>
+                                            <%} else {%>
+
+                                            <dt><label for="journal">Journal</label></dt>
+                                            <dd>
+                                                <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>" class=""
+                                                   href="javascript:;"><%=model.journal ? model.journal._id : ''%></a>
+                                            </dd>
+
+                                            <%}%>
+
+                                            <dt>
+                                                <label for="payment_reference">Payment Reference</label>
+                                            </dt>
+                                            <dd>
+                                                <span><%=(model.paymentReference) ? model.paymentReference : ''%></span>
+                                            </dd>
+
                                         </dl>
                                     </div>
                                 </div>
                             </div>
-                            <%}%>
                             <div class="dialog-tabs-item childTabs">
                                 <div id="payments-container"></div>
                             </div>
