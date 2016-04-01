@@ -500,7 +500,7 @@ define([
                 var self = this;
                 var mapData;
                 var sortOptions;
-                var intFiltersArray = ['week', 'month', 'year'];
+                var intFiltersArray = ['week', 'month', 'year', 'paymentsCount'];
 
                 if (!groupOptions) {
                     groupOptions = {};

@@ -22,7 +22,7 @@ define([
                 return this.sortOrder;
             }
 
-            if (nameA && nameB) {
+            if ((nameA !== undefined) && (nameB !== undefined)) {
                 if (this.int) {
                     nameA = parseInt(nameA);
                     nameB = parseInt(nameB);
