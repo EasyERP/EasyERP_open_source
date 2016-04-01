@@ -46,23 +46,23 @@
                 this.count = options.count;
                 this.page = options.page || 1;
 
-                if (regex.test(this.contentType) && !(options.filter)) {
+                if (options && options.contentType && !(options.filter)) {
                     options.filter = {};
 
-                    options.filter = {
-                        'forSales': {
-                            key  : 'forSales',
-                            value: ['true']
-                        }
-                    }
-                } else {
-                    options.filter = {};
-
-                    options.filter = {
-                        'forSales': {
-                            key  : 'forSales',
-                            value: ['false']
-                        }
+                    if (regex.test(this.contentType)) {
+                        options.filter = {
+                            forSales: {
+                                key  : 'forSales',
+                                value: ['true']
+                            }
+                        };
+                    } else {
+                        options.filter = {
+                            forSales: {
+                                key  : 'forSales',
+                                value: ['false']
+                            }
+                        };
                     }
                 }
 
