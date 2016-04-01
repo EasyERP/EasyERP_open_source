@@ -165,13 +165,13 @@ define([
                 self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
-                dataService.getData("/workflow/fetch", {
+/*                dataService.getData("/workflow/fetch", {
                     wId         : 'Sales Invoice',
                     source      : 'purchase',
                     targetSource: 'invoice'
                 }, function (stages) {
                     self.stages = stages;
-                });
+                });*/
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
