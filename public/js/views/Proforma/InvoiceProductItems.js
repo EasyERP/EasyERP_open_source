@@ -8,8 +8,8 @@ define([
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
     'populate',
-    'helpers'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, productCollection, populate, helpers) {
+    'helpers/keyValidator'
+], function (productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, productCollection, populate, keyValidator) {
     var ProductItemTemplate = Backbone.View.extend({
         el: '#invoiceItemsHolder',
 
@@ -20,7 +20,8 @@ define([
             "click .newSelectList li.miniStylePagination .next:not(.disabled)"        : "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
             "click .current-selected"                                                 : "showProductsSelect",
-            "keyup td[data-name=price] input"                                         : 'priceChange'
+            "keyup td[data-name=price] input"                                         : 'priceChange',
+            'keypress .forNum'                                                        : 'keypressHandler'
         },
 
         initialize: function (options) {
@@ -82,6 +83,10 @@ define([
 
             //$(id).text(this.responseObj[id][0].name).attr("data-id", this.responseObj[id][0]._id);
 
+        },
+
+        keypressHandler: function (e) {
+            return keyValidator(e, true);
         },
 
         priceChange: function (e) {

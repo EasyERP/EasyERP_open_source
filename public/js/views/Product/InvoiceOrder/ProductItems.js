@@ -12,8 +12,9 @@ define([
     'populate',
     'helpers',
     'dataService',
-    'constants'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, GenerateWTrack, populate, helpers, dataService, CONSTANTS) {
+    'constants',
+    'helpers/keyValidator'
+], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, GenerateWTrack, populate, helpers, dataService, CONSTANTS, keyValidator) {
     "use strict";
     var ProductItemTemplate = Backbone.View.extend({
         el: '#productItemsHolder',
@@ -26,7 +27,8 @@ define([
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
             "click .current-selected.productsDd"                                      : "showProductsSelect",
             "click .current-selected.jobs"                                            : "showSelect",
-            "keyup td[data-name=price] input"                                         : 'priceChange'
+            "keyup td[data-name=price] input"                                         : 'priceChange',
+            'keypress  .forNum'                                                       : 'keypressHandler'
         },
 
         template: _.template(productItemTemplate),
@@ -122,6 +124,10 @@ define([
             var aEl = tr.find('a[data-id="jobs"]');
 
             //aEl.click();
+        },
+
+        keypressHandler: function (e) {
+            return keyValidator(e, true);
         },
 
         checkForQuickEdit: function (el) {
@@ -379,7 +385,7 @@ define([
                 }
                     salePrice = selectedProduct.info.salePrice;
 
-                    $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
+                    $($parrents[4]).attr('class', 'editable forNum').find('span').text(salePrice);
                     total = parseFloat(selectedProduct.info.salePrice);
                     taxes = total * this.taxesRate;
                     subtotal = total + taxes;

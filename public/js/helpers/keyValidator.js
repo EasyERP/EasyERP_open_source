@@ -1,8 +1,13 @@
 define(function(){
     "use strict";
-    function validator(e){
-        var dannyArr = [0, 8];   // opportunity to enter minus and plus taken away
-        var index = dannyArr.indexOf(e.which);
+    function validator(e, isDot){
+        var dannyArr = [0, 8];
+        var index;
+        if (isDot){
+            dannyArr.push(46);
+        }
+
+        index = dannyArr.indexOf(e.which);
 
         if (index === -1 && (e.which < 48 || e.which > 57)) {
             return false;
