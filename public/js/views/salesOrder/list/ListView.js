@@ -109,9 +109,11 @@ define([
 
             recalcTotal: function () {
                 var total = 0;
+
                 _.each(this.collection.toJSON(), function (model) {
                     total += parseFloat(model.paymentInfo.total);
                 });
+
                 this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
             },
 

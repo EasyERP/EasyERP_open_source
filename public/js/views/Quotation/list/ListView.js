@@ -80,10 +80,12 @@ define([
             recalcTotal: function () {
                 var total = 0;
                 var unTaxed = 0;
+
                 _.each(this.collection.toJSON(), function (model) {
                     total += parseFloat(model.paymentInfo.total);
                     unTaxed += parseFloat(model.paymentInfo.unTaxed);
                 });
+
                 this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
                 this.$el.find('#unTaxed').text(helpers.currencySplitter(unTaxed.toFixed(2)));
             },

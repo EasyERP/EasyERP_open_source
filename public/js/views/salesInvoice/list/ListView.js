@@ -213,11 +213,14 @@ define([
             recalcTotal: function () {
                 var self = this;
                 var columns = ['balance', 'total', 'unTaxed'];
-                _.each(columns,  function (col){
+
+                _.each(columns, function (col) {
                     var sum = 0;
+
                     _.each(self.collection.toJSON(), function (model) {
                         sum += parseFloat(model.paymentInfo[col]);
                     });
+
                     self.$el.find('#' + col).text(helpers.currencySplitter(sum.toFixed(2)));
                 });
             },
@@ -239,7 +242,7 @@ define([
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please refresh browser'
                         });
                     }
