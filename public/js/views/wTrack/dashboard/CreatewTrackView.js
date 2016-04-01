@@ -95,6 +95,7 @@ define([
                 }
                 return;
             }
+
             if (e.shiftKey || !keyCodes.isDigit(e.keyCode)) {
                 e.preventDefault();
             }
