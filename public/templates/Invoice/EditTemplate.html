@@ -60,6 +60,13 @@
                                     <span type="text" id="source_document"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></span>
                                 </dd>
 
+                                <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
+                                <dd>
+                                    <input type="text" id="supplier_invoice_num"
+                                           value="<%=(model.name) ? model.name : ''%>"
+                                           placeholder="Supplier Invoice Number" maxlength="32"/>
+                                </dd>
+
                                 <dt>
                                     <label for="payment_reference">Payment Reference</label>
                                 </dt>
@@ -127,6 +134,12 @@
                                 <dt><label for="source_document">Source Document</label></dt>
                                 <dd>
                                     <span type="text" id="source_document"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></span>
+                                </dd>
+
+                                <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
+                                <dd>
+                                    <span type="text"
+                                          id="supplier_invoice_num"><%=(model.name) ? model.name : ''%></span>
                                 </dd>
                                 <dt>
                                     <label for="payment_reference">Payment Reference</label>
