@@ -1,7 +1,6 @@
 define([
         'views/listViewBase',
         'text!templates/salesInvoice/list/ListHeader.html',
-        'text!templates/stages.html',
         'views/salesInvoice/CreateView',
         'views/salesInvoice/EditView',
         'models/InvoiceModel',
@@ -13,7 +12,7 @@ define([
         'constants'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (listViewBase, listTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
@@ -41,12 +40,9 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
-                this.stages = [];
-                this.filterView;
             },
 
             events: {
-                "click .stageSelect"                       : "showNewSelect",
                 "click  .list td:not(.notForm, .validated)": "goToEditDialog",
                 "click .newSelectList li"                  : "chooseOption",
                 "click .selectList"                        : "showSelects"
@@ -139,20 +135,6 @@ define([
 
             },
 
-            showNewSelect: function (e) {
-                if ($(".newSelectList").is(":visible")) {
-                    this.hideNewSelect();
-                    return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
-                    return false;
-                }
-            },
-
-            hideNewSelect: function (e) {
-                $(".newSelectList").remove();
-            },
-
             render: function () {
                 var self;
                 var $currentEl;
@@ -183,13 +165,13 @@ define([
                 self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
-                dataService.getData("/workflow/fetch", {
+/*                dataService.getData("/workflow/fetch", {
                     wId         : 'Sales Invoice',
                     source      : 'purchase',
                     targetSource: 'invoice'
                 }, function (stages) {
                     self.stages = stages;
-                });
+                });*/
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
