@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Profiles/ProfilesCollection',
@@ -5,13 +6,12 @@ define([
     'views/Profiles/ContentView',
     'views/Profiles/TopBarView',
     'views/Profiles/CreateView',
-    'views/Profiles/ModulesAccessView',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai',
     'custom'
-], function (fixtures, ProfilesCollection, MainView, ContentView, TopBarView,  CreateView, ModulesAccessView, $, chai, chaiJquery, sinonChai, Custom) {
+], function (fixtures, ProfilesCollection, MainView, ContentView, TopBarView,  CreateView, $, chai, chaiJquery, sinonChai, Custom) {
     'use strict';
     var expect;
 
@@ -10022,6 +10022,43 @@ define([
         isOwnProfile: true
     };
 
+    var fakeProfilesForDD = {
+        data: [
+            {
+                _id: 1438768659000,
+                profileName: "Finance"
+            },
+            {
+                _id: 1438158808000,
+                profileName: "HR"
+            },
+            {
+                _id: 1445088919000,
+                profileName: "Marketing"
+            },
+            {
+                _id: 1444991193000,
+                profileName: "PM"
+            },
+            {
+                _id: 1438158771000,
+                profileName: "SalesAccount"
+            },
+            {
+                _id: 1438325949000,
+                profileName: "Usual"
+            },
+            {
+                _id: 1387275598000,
+                profileName: "admin"
+            },
+            {
+                _id: 1387275504000,
+                profileName: "baned"
+            }
+        ]
+    };
+
     var view;
     var topBarView;
     var listView;
@@ -10033,6 +10070,8 @@ define([
 
         after(function(){
            view.remove();
+           topBarView.remove();
+           listView.remove();
         });
 
         describe('#initialize()', function () {
@@ -10173,11 +10212,26 @@ define([
 
                 });
 
+                it ('Try to edit banned profile', function(){
+                    var spyResponse;
+                    var $needA = listView.$el.find('a[data-id="1387275598000"]');
+
+                    $needA.click();
+                    listView.editProfileDetails();
+                    spyResponse = mainSpy.args[0][0];
+
+                    expect(spyResponse).to.have.property('type', 'error');
+
+                });
+
                 it ('Try to edit profile', function(){
                     var $editInput;
                     var $needCheckBtn;
                     var $profilesMenu = listView.$el.find('.workflow-list-wrapper');
+                    var $needA = $profilesMenu.find('a[data-id="1438158808000"]')
                     var profileUrl = new RegExp('\/profiles\/', 'i');
+
+                    $needA.click();
 
                     listView.editProfileDetails();
                     expect($profilesMenu.find('.editProfileContainer')).to.exist;
@@ -10245,13 +10299,44 @@ define([
 
                 });
 
+                it('Try to open CreateForm', function(){
+                    var profilesForDDUrl = new RegExp('\/profiles\/forDd', 'i');
+
+                    server.respondWith('GET', profilesForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfilesForDD)]);
+                    listView.createItem();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.exist;
+
+                });
+
+                it('Try to create new profile', function(){
+                    var $selectItem;
+                    var $dialogEl = $('.ui-dialog');
+                    var $profileName = $dialogEl.find('#profileName');
+                    var $description = $dialogEl.find('#profileDescription');
+                    var $profileSelect = $dialogEl.find('#profilesDd');
+                    var $saveBtn = $dialogEl.find('#saveBtn');
+                    var profileUrl = '/profiles/';
+
+                    $profileName.val('Test');
+                    $description.val('Test');
+                    $profileSelect.click();
+
+                    $selectItem = $dialogEl.find('#1438158808000');
+                    $selectItem.click();
+
+                    server.respondWith('POST', profileUrl, [201, {"Content-Type": "application/json"}, JSON.stringify({success: 'created success'})]);
+                    $saveBtn.click();
+                    server.respond();
+
+                    expect(window.location.hash).to.be.equals('#easyErp/Profiles');
+                });
 
             });
-
         });
-
-
     });
 
 
 });
+*/

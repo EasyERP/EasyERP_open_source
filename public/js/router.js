@@ -673,6 +673,7 @@ define([
                 App.weTrack = false;
             }
 
+            App.weTrack = true; //todo remove
             App.currentDb = db;
         },
 

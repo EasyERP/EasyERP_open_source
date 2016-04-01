@@ -6024,6 +6024,31 @@ define([
 
             });
 
+            it('Try to open EditForm form Form', function(){
+                formView.editItem();
+
+                expect($('.ui-dialog')).to.exist;
+            });
+
+            it('Try to cancel dialog', function(){
+                var $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
+
+                $cancelBtn.click();
+
+                expect($('.ui-dialog')).to.not.exist;
+            });
+
+            it('Try to delete employee from the form', function(){
+                var employeeUrl = new RegExp('\/employees\/', 'i');
+
+                server.respondWith('DELETE', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                formView.deleteItems();
+                server.respond();
+
+                expect(window.location.hash).to.be.equals('#easyErp/Employees/list');
+
+            });
+
         });
 
         describe('Thumbnails View', function(){

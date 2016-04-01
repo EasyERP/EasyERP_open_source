@@ -244,7 +244,8 @@
 
         gotoEditForm: function (e) {
             e.preventDefault();
-            var id = $(e.target).closest(".inner").data("id");
+            var id = $(e.target).closest(".inner").attr("data-id");
+            console.log(id);
             var model = new CurrentModel();
             model.urlRoot = '/Tasks/form';
             model.fetch({

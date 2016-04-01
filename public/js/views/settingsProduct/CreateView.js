@@ -1,11 +1,14 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/settingsProduct/CreateTemplate.html",
         "models/Category",
         "common",
         "custom",
         "populate"
     ],
-    function (CreateTemplate, Model, common, Custom, populate) {
+    function (Backbone, $, _, CreateTemplate, Model, common, Custom, populate) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -14,7 +17,6 @@ define([
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem", "render");
-                //this.departmentsCollection = new DepartmentsCollection();
                 this.model = new Model();
                 this.responseObj = {};
                 this.render();
@@ -30,106 +32,12 @@ define([
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
                 // 'keydown': 'keydownHandler'
-            },
-
-            notHide: function (e) {
-                return false;
-            },
-
-            keydownHandler: function (e) {
-                switch (e.which) {
-                    case 27:
-                        this.hideDialog();
-                        break;
-                    default:
-                        break;
-                }
-            },
-
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
-            },
-
-            updateAssigneesPagination: function (el) {
-                var pag = el.find(".userPagination .text");
-                el.find(".userPagination .nextUserList").remove();
-                el.find(".userPagination .prevUserList").remove();
-                el.find(".userPagination .nextGroupList").remove();
-                el.find(".userPagination .prevGroupList").remove();
-                var list = el.find("ul");
-                var count = list.find("li").length;
-                var s = "";
-                var page = parseInt(list.attr("data-page"));
-                if (page > 1) {
-                    el.find(".userPagination").prepend("<a class='prevUserList' href='javascript:;'>« prev</a>");
-                }
-                if (count === 0) {
-                    s += "0-0 of 0";
-                } else {
-                    if ((page) * 20 - 1 < count) {
-                        s += ((page - 1) * 20 + 1) + "-" + ((page) * 20) + " of " + count;
-                    } else {
-                        s += ((page - 1) * 20 + 1) + "-" + (count) + " of " + count;
-                    }
-                }
-
-                if (page < count / 20) {
-                    el.find(".userPagination").append("<a class='nextUserList' href='javascript:;'>next »</a>");
-                }
-                el.find("ul li").hide();
-                for (var i = (page - 1) * 20; i < 20 * page; i++) {
-                    el.find("ul li").eq(i).show();
-                }
-                pag.text(s);
-            },
-
-            nextUserList: function (e, page) {
-                $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page")) + 1);
-                this.updateAssigneesPagination($(e.target).closest(".left"));
-            },
-
-            prevUserList: function (e, page) {
-                $(e.target).closest(".left").find("ul").attr("data-page", parseInt($(e.target).closest(".left").find("ul").attr("data-page")) - 1);
-                this.updateAssigneesPagination($(e.target).closest(".left"));
-            },
-            chooseUser  : function (e) {
-                $(e.target).toggleClass("choosen");
-            },
-
-            changeTab: function (e) {
-                $(e.target).closest(".dialog-tabs").find("a.active").removeClass("active");
-                $(e.target).addClass("active");
-                var n = $(e.target).parents(".dialog-tabs").find("li").index($(e.target).parent());
-                $(".dialog-tabs-items").find(".dialog-tabs-item.active").removeClass("active");
-                $(".dialog-tabs-items").find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
             close: function () {
                 this._modelBinder.unbind();
-            },
-
-            addUsers: function (e) {
-                e.preventDefault();
-                var div = $(e.target).parents(".left");
-                $('#targetUsers').append($(e.target));
-                this.updateAssigneesPagination(div);
-                div = $(e.target).parents(".left");
-                this.updateAssigneesPagination(div);
-            },
-
-            removeUsers: function (e) {
-                e.preventDefault();
-                var div = $(e.target).parents(".left");
-                $('#sourceUsers').append($(e.target));
-                this.updateAssigneesPagination(div);
-                div = $(e.target).parents(".left");
-                this.updateAssigneesPagination(div);
             },
 
             saveItem: function () {

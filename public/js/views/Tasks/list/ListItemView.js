@@ -1,8 +1,10 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'text!templates/Tasks/list/ListTemplate.html'
     ],
 
-    function (ListTemplate) {
+    function (Backbone, _, ListTemplate) {
         var TasksListItemView = Backbone.View.extend({
             el: '#listTable',
 

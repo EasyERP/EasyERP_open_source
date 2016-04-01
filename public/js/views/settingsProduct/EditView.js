@@ -35,7 +35,7 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
-            notHide    : function (e) {
+          /*  notHide    : function (e) {
                 return false;
             },
 
@@ -115,7 +115,7 @@ define([
                 var n = $(e.target).parents(".dialog-tabs").find("li").index($(e.target).parent());
                 $(".dialog-tabs-items").find(".dialog-tabs-item.active").removeClass("active");
                 $(".dialog-tabs-items").find(".dialog-tabs-item").eq(n).addClass("active");
-            },
+            },*/
 
             hideNewSelect: function (e) {
                 $(".newSelectList").hide();

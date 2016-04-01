@@ -2,8 +2,11 @@
  * Created by German on 02.07.2015.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/vacationDashboard/statisticsTemplate.html'
-], function (statiscticsBlock) {
+], function (Backbone, $, _, statiscticsBlock) {
     var StatisticsView = Backbone.View.extend({
         el        : '#statistics',
         initialize: function (options) {

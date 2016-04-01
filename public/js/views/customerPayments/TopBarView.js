@@ -32,10 +32,10 @@ define([
                 this.render();
             },
 
-            createEvent: function (event) {
+            /*createEvent: function (event) {
                 event.preventDefault();
                 this.trigger('createEvent');
-            },
+            },*/
 
             saveEvent: function (event) {
                 event.preventDefault();
@@ -51,10 +51,10 @@ define([
                 return this;
             },
 
-            editEvent: function (event) {
+           /* editEvent: function (event) {
                 event.preventDefault();
                 this.trigger('editEvent');
-            },
+            },*/
 
             deleteEvent: function (event) {
                 event.preventDefault();
