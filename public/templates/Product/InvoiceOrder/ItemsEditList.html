@@ -29,9 +29,9 @@
             <%=product.quantity%>
         </span>
     </td>
-    <td data-name="price" class="<%=editable  ? 'editable' : ''%>">
+    <td data-name="price" class="<%=editable  ? 'editable' : ''%> forNum">
         <% if(editable) { %>
-        <input id="editInput" size=7 type="text" value="<%=product.unitPrice%>" />
+        <input id="editInput" maxlength="9" size=7 type="text" value="<%=product.unitPrice%>" />
         <% } else { %>
         <span><%=product.unitPrice%></span>
         <% } %>

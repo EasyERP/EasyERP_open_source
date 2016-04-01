@@ -9,10 +9,9 @@ define([
         "populate",
         'constants',
         'views/Assignees/AssigneesView',
-        'dataService',
-        'helpers/keyValidator'
+        'dataService'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, keyValidator) {
+    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -32,7 +31,6 @@ define([
             },
 
             events: {
-                'keypress .forNum'                                               : 'keydownHandler',
                 'click .dialog-tabs a'                                           : 'changeTab',
                 "click a.current-selected:not(.jobs)"                            : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination,#generateJobs)": "chooseOption",
@@ -95,26 +93,6 @@ define([
                 this.hideNewSelect();
 
                 return false;
-            },
-
-            keydownHandler: function (e) {
-                var charCode = e.which;
-                var symbol = String.fromCharCode(charCode);
-
-                switch (charCode) {
-                    case 27:
-                        this.hideDialog();
-                        break;
-                    case 13:
-                        this.validateForm(e);
-                        break;
-                    default:
-                        return keyValidator(e);
-                }
-            },
-
-            validateForm: function(e){
-
             },
 
             changeTab: function (e) {
