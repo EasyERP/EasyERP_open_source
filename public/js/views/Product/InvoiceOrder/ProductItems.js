@@ -484,7 +484,7 @@ define([
                 datePicker.remove();
 
                 //$($parrents[2]).attr('class', 'editable');
-                $($parrents[3]).attr('class', 'editable').find("span").text(quantity);
+                $($parrents[3]).attr('class', 'editable').find("span").text(salePrice); // changed on def 0
 
                 /*if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
                     $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
