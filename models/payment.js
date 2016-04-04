@@ -32,7 +32,11 @@ module.exports = (function () {
         editedBy : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
-        }
+        },
+        currency: {
+            _id : {type: ObjectId, ref: 'currency', default: null},
+            rate: {type: Number, default: 1}
+        },
     }, {collection: 'Payment', discriminatorKey: '_type'});
 
     var PaymentSchema = basePaymentSchema.extend({
