@@ -25,14 +25,14 @@ var Quotation = function (models, event) {
 
         if (type === 'integer') {
             for (i = array.length - 1;
-                 i >= 0;
-                 i--) {
+                i >= 0;
+                i--) {
                 array[i] = parseInt(array[i], 10);
             }
         } else if (type === 'boolean') {
             for (i = array.length - 1;
-                 i >= 0;
-                 i--) {
+                i >= 0;
+                i--) {
                 if (array[i] === 'true') {
                     array[i] = true;
                 } else if (array[i] === 'false') {
@@ -141,7 +141,6 @@ var Quotation = function (models, event) {
                 }
 
                 res.status(200).send({success: 'Quotation updated', result: quotation});
-
             });
 
             event.emit('recalculateRevenue', {   // added for recalculating projectInfo after editing quotation
@@ -217,7 +216,7 @@ var Quotation = function (models, event) {
                         Project.populate(_quotation, {
                             path  : 'project',
                             select: '_id projectName projectmanager'
-                        }, function (err, resp) {
+                        }, function (err) {
                             if (err) {
                                 return callback(err);
                             }
@@ -259,7 +258,7 @@ var Quotation = function (models, event) {
                                 $set: {
                                     quotation: id,
                                     type     : "Quoted",
-                                    editedBy: editedBy
+                                    editedBy : editedBy
                                 }
                             }, {new: true}, function (err, result) {
                                 if (err) {
@@ -666,7 +665,7 @@ var Quotation = function (models, event) {
         var waterfallTasks;
 
         /*var contentType = req.query.contentType;
-        var isOrder = ((contentType === 'Order') || (contentType === 'salesOrder'));*/
+         var isOrder = ((contentType === 'Order') || (contentType === 'salesOrder'));*/
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -768,7 +767,7 @@ var Quotation = function (models, event) {
                 JobsModel.findByIdAndUpdate(product.jobs, {
                     type     : type,
                     quotation: null,
-                    editedBy: editedBy
+                    editedBy : editedBy
                 }, {new: true}, function (err, result) {
                     var wTracks;
 
@@ -810,7 +809,7 @@ var Quotation = function (models, event) {
                         }
                     ], function (err, quot) {
                         if (err) {
-                           return cb(err);
+                            return cb(err);
 
                         }
 
