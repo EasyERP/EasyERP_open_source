@@ -39,12 +39,29 @@ define([
                 "click .removeSavedFilter"             : "removeFilterFromDB",
                 "click .removeValues"                  : "removeFilter",
                 "keydown #forFilterName"               : "keyDown",
-                "click .showLast"                      : "showManyFilters"   // toDO overflow for many filters
+                "click .showLast"                      : "showManyFilters",
+                "keydown #searchInput"                 : "deleteFilterByBackspace"
             },
 
             keyDown: function (e) {
                 if (e.which === 13) {
                     this.saveFilter();
+                }
+            },
+
+            deleteFilterByBackspace : function(e){
+                var searchInputVal;
+                var searchFilterContainer;
+
+                if (e.which === 8) {
+                    searchInputVal = $('#searchInput').text();
+                    if(searchInputVal.length === 0){
+                        searchFilterContainer = $('#searchFilterContainer').find('div:last-child');
+                        if(searchFilterContainer.length !== 0){
+                            e.target = searchFilterContainer.find('.removeValues');
+                            this.removeFilter(e);
+                        }
+                    }
                 }
             },
 
