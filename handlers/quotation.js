@@ -116,31 +116,34 @@ var Quotation = function (models, event) {
                 return next(err);
             }
 
-            if (data.isOrder) {
-                products = quotation.products;
+            products = quotation.products;
 
-                async.each(products, function (product, cb) {
-                    var jobs = product.jobs;
+            async.each(products, function (product, cb) {
+                var jobs = product.jobs;
+                var _type = data.isOrder ? 'Ordered' : 'Quoted';
 
-                    JobsModel.findByIdAndUpdate(jobs, {$set: {type: "Ordered", editedBy: editedBy}}, {new: true}, function (err, result) {
-                        if (err) {
-                            return cb(err);
-                        }
-                        project = result.project || null;
-                        cb();
-                    });
-
-                }, function () {
-                    if (project) {
-                        event.emit('fetchJobsCollection', {project: project});
+                JobsModel.findByIdAndUpdate(jobs, {
+                    $set: {
+                        type    : _type,
+                        editedBy: editedBy
                     }
-
-                    res.status(200).send({success: 'Quotation updated', result: quotation});
-
+                }, {new: true}, function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+                    project = result.project || null;
+                    cb();
                 });
-            } else {
+
+            }, function () {
+                if (project) {
+                    event.emit('fetchJobsCollection', {project: project});
+                }
+
                 res.status(200).send({success: 'Quotation updated', result: quotation});
-            }
+
+            });
+
             event.emit('recalculateRevenue', {   // added for recalculating projectInfo after editing quotation
                 quotation  : quotation,
                 wTrackModel: wTrackModel,
