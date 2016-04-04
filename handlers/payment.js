@@ -260,10 +260,18 @@ var Payment = function (models, event) {
                                 foreignField: "_id", as: "paymentMethod"
                             }
                         }, {
+                            $lookup: {
+                                from        : 'currency',
+                                localField  : 'currency._id',
+                                foreignField: '_id', 
+                                as          : 'currency.obj'
+                            }
+                        }, {
                             $project: {
-                                supplier        : {$arrayElemAt: ["$supplier", 0]},
-                                invoice         : {$arrayElemAt: ["$invoice", 0]},
-                                paymentMethod   : {$arrayElemAt: ["$paymentMethod", 0]},
+                                supplier        : {$arrayElemAt: ['$supplier', 0]},
+                                invoice         : {$arrayElemAt: ['$invoice', 0]},
+                                paymentMethod   : {$arrayElemAt: ['$paymentMethod', 0]},
+                                'currency.obj'  : {$arrayElemAt: ['$currency.obj', 0]},
                                 forSale         : 1,
                                 differenceAmount: 1,
                                 paidAmount      : 1,
@@ -274,7 +282,7 @@ var Payment = function (models, event) {
                                 paymentRef      : 1,
                                 year            : 1,
                                 month           : 1,
-                                period: 1
+                                period          : 1
                             }
                         }, {
                             $lookup: {
@@ -285,6 +293,8 @@ var Payment = function (models, event) {
                         }, {
                             $project: {
                                 supplier        : 1,
+                                'currency.name' : '$currency.obj.name',
+                                'currency._id' : '$currency.obj._id',
                                 invoice         : 1,
                                 assigned        : {$arrayElemAt: ["$assigned", 0]},
                                 forSale         : 1,

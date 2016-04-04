@@ -52,10 +52,10 @@
                                                 <dd><input type="text" name="memo" id="memo" maxlength="20"></dd>-->
                         <dt><label for="currencyDd">Currency</label></dt>
                         <dd>
-                            <a id="currencyDd" class=""
-                               data-id="<%= invoice.currency && invoice.currency._id ? invoice.currency._id._id : null%>"
-                               href="javascript:;"><%= invoice.currency && invoice.currency._id && invoice.currency._id.name ?
-                                invoice.currency._id.name : ''%></a>
+                            <a id="currencyDd" class="current-selected"
+                               data-id="<%= currency && currency._id ? invoice.currency._id : null%>"
+                               href="javascript:;"><%= currency && currency.name ?
+                                currency.name : ''%></a>
                         </dd>
                     </dl>
                 </div>

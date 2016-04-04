@@ -80,12 +80,13 @@ define([
 
                 e.preventDefault();
 
-                this.saveItem(function (err) {
+                this.saveItem(function (err, currency) {
                     if (!err) {
                         paymentView = new PaymentCreateView({
                             model     : self.currentModel,
                             redirect  : self.redirect,
                             collection: self.collection,
+                            currency  : currency,
                             eventChannel: self.eventChannel
                         });
                     }
@@ -348,7 +349,7 @@ define([
                             self.hideDialog();
 
                             if (paymentCb && typeof paymentCb === 'function') {
-                                return paymentCb(null);
+                                return paymentCb(null, currency);
                             }
 
                             self.eventChannel.trigger('savedProforma');

@@ -39,6 +39,7 @@ define([
             this.redirect = options.redirect;
             this.collection = options.collection;
 
+            this.currency = options.currency || {};
 
             this.render();
         },
@@ -133,6 +134,9 @@ define([
             var date = thisEl.find('#paymentDate').val();
             var paymentRef = thisEl.find('#paymentRef').val();
             var period = thisEl.find('#period').attr('data-id');
+            var currency = {
+                _id: thisEl.find('#currencyDd').attr('data-id')
+            };
 
             paymentMethod = paymentMethod || null;
             period = period || null;
@@ -147,6 +151,7 @@ define([
                 period          : period,
                 paymentRef      : paymentRef,
                 paidAmount      : paidAmount,
+                currency        : currency,
                 differenceAmount: this.differenceAmount
             };
 
@@ -183,7 +188,10 @@ define([
         render: function () {
             var self = this;
             var model = this.invoiceModel.toJSON();
-            var htmBody = this.template({invoice: model});
+            var htmBody = this.template({
+                invoice: model,
+                currency: self.currency
+            });
 
             this.$el = $(htmBody).dialog({
                 closeOnEscape: false,
@@ -211,6 +219,7 @@ define([
             populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
             populate.get("#period", "/period", {}, 'name', this, true, true);
             populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true);
+            populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
 
             this.$el.find('#paymentDate').datepicker({
                 dateFormat : "d M, yy",
