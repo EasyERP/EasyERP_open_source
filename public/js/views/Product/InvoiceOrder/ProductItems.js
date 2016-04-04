@@ -444,6 +444,7 @@ define([
                     quantity = currentJob ? currentJob.budget.budgetTotal.hoursSum : 1;
 
                     $parrent.find(".jobs").text($target.text()).attr("data-id", jobId);
+                    $parrent.attr("data-content", jobId); // in case of getting id  on edit quotation
                     $parrent.append('<span title="Delete" class="fa fa-trash-o hidden"></span>');
 
                     $hoursContainer.text(currentJob.budget.budgetTotal.hoursSum);
