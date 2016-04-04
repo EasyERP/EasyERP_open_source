@@ -1533,7 +1533,7 @@ var Filters = function (models) {
                 $lookup: {
                     from        : "Payment",
                     localField  : "invoice._id",
-                    foreignField: "invoice._id",
+                    foreignField: "invoice",
                     as          : "payments"
                 }
             }, {

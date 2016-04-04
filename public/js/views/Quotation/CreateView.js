@@ -293,7 +293,7 @@ define([
                 var productItemContainer;
 
                 productItemContainer = this.$el.find('#productItemsHolder');
-                if (App.weTrack && this.forSales) {
+                if (this.forSales) {
                     productItemContainer.append(
                         new ProductItemView({canBeSold: true, service: true}).render().el
                     );
@@ -351,7 +351,7 @@ define([
 
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
 
-                if (App.weTrack && this.forSales) {
+                if (this.forSales) {
                     this.$el.find('#supplierDd').removeClass('current-selected');
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
                     //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);

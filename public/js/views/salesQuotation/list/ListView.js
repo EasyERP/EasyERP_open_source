@@ -57,6 +57,16 @@ define([
                 this.stages = [];
             },
 
+           /* recalcTotal: function () {
+                var total = 0;
+
+                _.each(this.collection.toJSON(), function (model) {
+                    total += parseFloat(model.paymentInfo.total);
+                });
+
+                this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
+            },*/
+
             showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
 
@@ -166,29 +176,23 @@ define([
 
                 $currentEl.html('');
 
-                if (App.weTrack) {
-                    templ = _.template(listForWTrack);
-                    $currentEl.append(templ);
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());//added two parameters page and items number
+                templ = _.template(listForWTrack);
+                $currentEl.append(templ);
+                $currentEl.append(new listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());//added two parameters page and items number
 
-
-                } else {
-                    $currentEl.append(_.template(listTemplate));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());//added two parameters page and items number
-                }
                 $currentEl.find('#listTotal').append(_.template(totalTemplate, {
                     total: 0,
                     cellSpan: 5,
                     currencySplitter: helpers.currencySplitter
                 }));
+                /*$currentEl.append(new listTotalView({
+                    element : $currentEl.find("#listTable"),
+                    cellSpan: 5
+                }).render());*/
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);

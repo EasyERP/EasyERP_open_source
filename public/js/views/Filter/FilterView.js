@@ -398,6 +398,7 @@ define([
                 var target = $(e.target);
                 var groupName = target.prev().text();
                 var filterView = target.prev().attr('data-value');
+                var alphabetHolder = $('#startLetter');
 
                 $('#searchInput').empty();
 
@@ -411,7 +412,7 @@ define([
                     this.removeSelectedFilter();
                 }
 
-                if (valuesArray) {
+                if (valuesArray && filterView !== 'letter') {
                     if (this.currentCollection[filterView].length !== 0) {
                         for (var i = valuesArray.length - 1; i >= 0; i--) {
                             collectionElement = this.currentCollection[filterView].findWhere({_id: valuesArray[i]});
@@ -424,6 +425,8 @@ define([
                 } else {
                     if (filterView) {
                         delete App.filter['letter'];
+                        alphabetHolder.children().removeClass('current');
+                        alphabetHolder.find(':first-child').addClass('current');
                     }
                 }
 
@@ -497,7 +500,7 @@ define([
                 var self = this;
                 var mapData;
                 var sortOptions;
-                var intFiltersArray = ['week', 'month', 'year'];
+                var intFiltersArray = ['week', 'month', 'year', 'paymentsCount'];
 
                 if (!groupOptions) {
                     groupOptions = {};

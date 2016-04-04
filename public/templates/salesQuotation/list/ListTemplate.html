@@ -12,7 +12,7 @@ class="canceledListItem"
 </td>
 <td class="total"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total.toFixed(2)) : '0'%></td>
 <td id='<%=quotation._id%>'>
-    <a href="javascript:;"><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>
+    <span><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></span>
 </td>
 <td><%=quotation.orderDate%></td>
 </tr>

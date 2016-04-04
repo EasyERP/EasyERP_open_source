@@ -33,7 +33,7 @@
                                     <dt><label for="supplierDd">
 
                                         <%if(model.supplier){%>
-                                        <%if (App.weTrack && this.forSales) {%>
+                                        <%if (this.forSales) {%>
                                         Customer
                                         <% } else { %>
                                         Supplier
@@ -43,7 +43,8 @@
                                     <dd>
                                         <span id="supplierDd" data-id="<%=model.supplier._id%>"><%=model.supplier.name.first + ' ' + model.supplier.name.last%></span>
                                     </dd>
-                                    <%if (App.weTrack && this.forSales) {%>
+
+                                    <%if (this.forSales) {%>
                                     <dt><label for="projectDd">Project</label></dt>
                                     <dd>
                                         <span id="projectDd" data-id="<%=model.project._id%>"><%=model.project.projectName%></span>

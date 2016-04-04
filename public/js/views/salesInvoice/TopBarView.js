@@ -67,12 +67,8 @@ define([
             },
 
             checkDbValue: function (dbName) {
-                if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
-                    this.hideSaveCancelBtns();
-                    App.weTrack = true;
-                } else {
-                    App.weTrack = false;
-                }
+                this.hideSaveCancelBtns();
+                App.weTrack = true;
             },
 
             hideSaveCancelBtns: function () {

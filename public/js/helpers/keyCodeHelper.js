@@ -19,6 +19,12 @@ define([], function () {
     var isDecimalDot = function (keyCode) {
         return keyCode === 190;
     };
+    var isArrowsOrHomeEnd = function (keyCode) {
+        return (keyCode >= 35 && keyCode <= 39);
+    };
+    var isBspDelTabEscEnt = function (keyCode) {
+        return ([46, 8, 9, 27, 13].indexOf(keyCode) !== -1);
+    };
 
     var isDigitOrDecimalDot = function (keyCode) {
         return isDigit(keyCode) || isDecimalDot(keyCode);
@@ -30,6 +36,8 @@ define([], function () {
         isEnter            : isEnter,
         isDecimalDot       : isDecimalDot,
         isDigitOrDecimalDot: isDigitOrDecimalDot,
-        isBspaceAndDelete : isBspaceAndDelete
+        isBspaceAndDelete : isBspaceAndDelete,
+        isArrowsOrHomeEnd  : isArrowsOrHomeEnd,
+        isBspDelTabEscEnt  : isBspDelTabEscEnt
     };
 });

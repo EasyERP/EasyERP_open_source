@@ -107,6 +107,16 @@ define([
                 return false;
             },
 
+            recalcTotal: function () {
+                var total = 0;
+
+                _.each(this.collection.toJSON(), function (model) {
+                    total += parseFloat(model.paymentInfo.total);
+                });
+
+                this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
+            },
+
             showNewSelect: function (e) {
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
@@ -154,24 +164,17 @@ define([
                 $currentEl = this.$el;
 
                 $currentEl.html('');
-                if (App.weTrack) {
-                    $currentEl.append(_.template(listForWTrack));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());
-                } else {
-                    $currentEl.append(_.template(listTemplate));
-                    $currentEl.append(new listItemView({
-                        collection : this.collection,
-                        page       : this.page,
-                        itemsNumber: this.collection.namberToShow
-                    }).render());
-                }
+
+                $currentEl.append(_.template(listForWTrack));
+                $currentEl.append(new listItemView({
+                    collection : this.collection,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                }).render());
+
                 //added two parameters page and items number
                 $currentEl.find('#listTotal').append(_.template(totalTemplate, {total: 0, cellSpan: 5, currencySplitter: helpers.currencySplitter}));
-
+               // $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 5}).render());
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);
                 this.renderFilter(self);

@@ -18,19 +18,11 @@ define([
             render    : function (options) {
                 var el = (options && options.thisEl) ? options.thisEl : this.$el;
 
-                if (App.weTrack) {
-                    el.append(_.template(ListTemplateForWTrack, {
-                        paymentCollection: this.collection.toJSON(),
-                        startNumber      : this.startNumber,
-                        currencySplitter : helpers.currencySplitter
-                    }));
-                } else {
-                    el.append(_.template(PaymentListTemplate, {
-                        paymentCollection: this.collection.toJSON(),
-                        startNumber      : this.startNumber,
-                        currencySplitter : helpers.currencySplitter
-                    }));
-                }
+                el.append(_.template(ListTemplateForWTrack, {
+                    paymentCollection: this.collection.toJSON(),
+                    startNumber      : this.startNumber,
+                    currencySplitter : helpers.currencySplitter
+                }));
             }
         });
 

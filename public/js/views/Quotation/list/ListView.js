@@ -102,6 +102,19 @@ define([
                 totalTd.text(helpers.currencySplitter((rowTdVal/100).toFixed(2) ));
             },
 
+          /*  recalcTotal: function () {
+                var total = 0;
+                var unTaxed = 0;
+
+                _.each(this.collection.toJSON(), function (model) {
+                    total += parseFloat(model.paymentInfo.total);
+                    unTaxed += parseFloat(model.paymentInfo.unTaxed);
+                });
+
+                this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
+                this.$el.find('#unTaxed').text(helpers.currencySplitter(unTaxed.toFixed(2)));
+            },*/
+
             showNewSelect: function (e) {
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
@@ -133,6 +146,7 @@ define([
                 }).render());//added two parameters page and items number
 
                 $currentEl.find('#listTotal').append(_.template(totalTemplate, {unTaxed: 0, total: 0, cellSpan: 4}));
+               /* $currentEl.append(new listTotalView({element: $currentEl.find("#listTable"), cellSpan: 5}).render());*/
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);

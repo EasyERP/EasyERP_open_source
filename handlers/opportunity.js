@@ -12,6 +12,8 @@ var Opportunity = function (models) {
     var async = require('async');
     var validator = require('validator');
 
+    var CONSTANTS = require('../constants/mainConstants');
+
     var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     this.addNewLeadFromSite = function (req, res, next) {
@@ -139,7 +141,8 @@ var Opportunity = function (models) {
                 campaign      : campaign,
                 source        : source,
                 internalNotes : internalNotes,
-                isOpportunitie: false
+                isOpportunitie: false,
+                workflow      : CONSTANTS.LEAD_DRAFT
             };
 
             leadModel = new Opportunitie(saveObject);
@@ -476,19 +479,19 @@ var Opportunity = function (models) {
                 case ('Opportunities'):
                 {
                     query.populate('customer', 'name').
-                        populate('workflow', '_id name status').
-                        populate('salesPerson', 'name').
-                        populate('createdBy.user', 'login').
-                        populate('editedBy.user', 'login');
+                    populate('workflow', '_id name status').
+                    populate('salesPerson', 'name').
+                    populate('createdBy.user', 'login').
+                    populate('editedBy.user', 'login');
                 }
                     break;
                 case ('Leads'):
                 {
                     query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName").
-                        populate('company', 'name').
-                        populate('workflow', "name status").
-                        populate('createdBy.user', 'login').
-                        populate('editedBy.user', 'login');
+                    populate('company', 'name').
+                    populate('workflow', "name status").
+                    populate('createdBy.user', 'login').
+                    populate('editedBy.user', 'login');
                 }
                     break;
             }

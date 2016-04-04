@@ -17,7 +17,7 @@
                             <div class="half-block left">
                                 <dl class="person-info">
                                     <dt><label for="supplierDd">
-                                        <%if (App.weTrack && forSales) {%>
+                                        <%if (forSales) {%>
                                         Customer
                                         <% } else { %>
                                         Supplier
@@ -29,10 +29,7 @@
                                     <dd><input type="text" name="supplierReference" id="supplierReference"
                                                maxlength="32"/></dd>-->
 
-                                    <%if (App.weTrack && forSales) {%>
-                                    <dd>
-                                        <span id="supplierDd" ></span>
-                                    </dd>
+                                    <%if (forSales) {%>
                                     <dt><label for="projectDd">Project</label></dt>
                                     <dd>
                                         <a id="projectDd" class="current-selected" href="javascript:;">Select</a>

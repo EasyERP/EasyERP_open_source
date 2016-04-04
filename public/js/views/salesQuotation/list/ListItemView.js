@@ -13,21 +13,12 @@
                 this.startNumber = (options.page - 1 ) * options.itemsNumber;
             },
             render    : function () {
-                if (App.weTrack) {
-                    this.$el.append(_.template(listForWTrack, {
-                        quotations : this.collection.toJSON(),
-                        startNumber: this.startNumber,
-                        currencySplitter: helpers.currencySplitter
-                    }));
 
-                } else {
-                    this.$el.append(_.template(listTemplate, {
-                        quotations : this.collection.toJSON(),
-                        startNumber: this.startNumber,
-                        currencySplitter: helpers.currencySplitter
-                    }));
-
-                }
+                this.$el.append(_.template(listForWTrack, {
+                    quotations : this.collection.toJSON(),
+                    startNumber: this.startNumber,
+                    currencySplitter: helpers.currencySplitter
+                }));
             }
         });
 
