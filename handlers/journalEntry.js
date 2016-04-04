@@ -19,7 +19,7 @@ var _ = require('underscore');
 var async = require('async');
 var moment = require('../public/js/libs/moment/moment');
 
-var Module = function (models) {
+var Module = function (models, event) {
     "use strict";
     //ToDo set it to process.env
     oxr.set({app_id: process.env.OXR_APP_ID});
@@ -1657,7 +1657,7 @@ var Module = function (models) {
         reconcileInvoiceEntries = function (mainCallback) {
             Invoice.find({reconcile: true}, function (err, result) {
                 if (err) {
-                    return pCb(err);
+                    return mainCallback(err);
                 }
 
                 var resultArray = [];
@@ -1711,12 +1711,13 @@ var Module = function (models) {
 
                     Invoice.update({_id: {$in: resultArray}}, {$set: {reconcile: false}}, {multi: true}, function () {
                         mainCallback();
+                        res.status(200).send({success: true});
                     });
                 });
             });
         };
 
-        reconcileSalaryEntries = function (mainCallback) {
+       /* reconcileSalaryEntries = function (mainCallback) {
 
             wTrackFinder = function (wfcallback) {
                 WTrack.find({reconcile: true}, function (err, result) {
@@ -1875,7 +1876,7 @@ var Module = function (models) {
                                 var employeeSubject = wTrackModel.employee;
                                 var sourceDocumentId = wTrackModel._id;
                                 var methodCb;
-                                var date = moment().isoWeekYear(wTrackModel.year).month(wTrackModel.month - 1).isoWeek(wTrackModel.week).startOf('isoWeek').year(wTrackModel.year);
+                                var date = moment().year(wTrackModel.year).month(wTrackModel.month - 1).isoWeek(wTrackModel.week).startOf('isoWeek');
 
                                 for (j = 5; j >= 1; j--) {
                                     date = moment(date).day(j);
@@ -1885,7 +1886,7 @@ var Module = function (models) {
                                 date = moment(date).day(6);
                                 dataObject[6] = date;
 
-                                date = moment(date).day(7);
+                                date = moment(date).day(0);
                                 dataObject[7] = date;
 
                                 keys = Object.keys(dataObject);
@@ -2058,11 +2059,11 @@ var Module = function (models) {
                         var startYear = parseInt(minDate.slice(0, 4), 10);
                         var startMonth = parseInt(minDate.slice(4, 6), 10);
                         var dateOfMonth = parseInt(minDate.slice(6), 10);
-                        var date = moment().isoWeekYear(startYear).month(startMonth - 1).date(dateOfMonth);
+                        var date = moment().year(startYear).month(startMonth - 1).date(dateOfMonth);
                         var endYear = parseInt(maxDate.slice(0, 4), 10);
                         var endMonth = parseInt(maxDate.slice(4, 6), 10);
                         var endDateOfMonth = parseInt(maxDate.slice(6), 10);
-                        var endDate = moment().isoWeekYear(endYear).month(endMonth - 1).date(endDateOfMonth);
+                        var endDate = moment().year(endYear).month(endMonth - 1).date(endDateOfMonth);
                         var j;
 
                         var startDateKey = startYear * 100 + moment(date).isoWeek();
@@ -2116,7 +2117,7 @@ var Module = function (models) {
                             Employee
                                 .aggregate([{
                                     $match: {
-                                        'department': {$nin: notDevArray.objectID()},
+                                      //  'department': {$nin: notDevArray.objectID()},
                                         hire        : {$ne: []}
                                     }
                                 }, {
@@ -2158,19 +2159,24 @@ var Module = function (models) {
                                 var month = parseInt(dateKey.slice(4, 6), 10);
                                 var key = year * 100 + month;
 
-                                redisStore.readFromStorage('monthHours', key, function (err, result) {
+                                if (!monthHoursObject[key]){
+                                    redisStore.readFromStorage('monthHours', key, function (err, result) {
 
-                                    if (!monthHours[key]) {
-                                        monthHours[key] = {};
-                                    }
+                                        if (!monthHoursObject[key]) {
+                                            monthHoursObject[key] = {};
+                                        }
 
-                                    result = JSON.parse(result);
-                                    monthHours[key] = result && result[0] ? result[0] : {};
+                                        result = JSON.parse(result);
+                                        monthHoursObject[key] = result && result[0] ? result[0] : {};
+                                        asyncCb();
+                                    });
+                                } else {
                                     asyncCb();
-                                });
+                                }
+
                             }, function (err, result) {
                                 callback(null, {
-                                    monthHours: monthHours,
+                                    monthHours: monthHoursObject,
                                     emps      : empResult.emps,
                                     salary    : empResult.salary
                                 });
@@ -2182,7 +2188,7 @@ var Module = function (models) {
                                 var year = parseInt(dateKey.slice(0, 4), 10);
                                 var month = parseInt(dateKey.slice(4, 6), 10);
                                 var dateOfMonth = parseInt(dateKey.slice(6), 10);
-                                var date = moment().isoWeekYear(year).month(month - 1).date(dateOfMonth);
+                                var date = moment().year(year).month(month - 1).date(dateOfMonth);
                                 var objectForDay = totalObject[dateKey] || {};
                                 var employeesObjects = objectForDay.employees || [];
                                 var employeesIds = Object.keys(employeesObjects);
@@ -2295,7 +2301,16 @@ var Module = function (models) {
                                             bodySalaryIdle.journal = CONSTANTS.VACATION_PAYABLE;
                                         }
 
-                                        createReconciled(bodySalaryIdle, req.session.lastDb, cb, req.session.uId);
+                                        if (!createVacation && notDevArray.indexOf(employee.toString()) !== -1){
+                                            cb();
+                                            continue;
+                                        }
+
+                                        if (bodySalaryIdle.amount > 0){
+                                            createReconciled(bodySalaryIdle, req.session.lastDb, cb, req.session.uId);
+                                        } else {
+                                            cb();
+                                        }
                                     }
                                 });
                             }, function (err, result) {
@@ -2347,15 +2362,18 @@ var Module = function (models) {
                 mainCallback(null, result);
             });
         };
-
-        parallelTasks = [reconcileInvoiceEntries, reconcileSalaryEntries];
+*/
+        parallelTasks = [reconcileInvoiceEntries/*, reconcileSalaryEntries*/];
 
         async.parallel(parallelTasks, function (err, result) {
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send({success: true});
+            //res.status(200).send({success: true});
+
+            event.emit('sendMessage', {view: 'journalEntry', message: 'Please, refresh browser, data was changed.'});
+
             var db = models.connection(req.session.lastDb);
             var setObj = {date: date};
 

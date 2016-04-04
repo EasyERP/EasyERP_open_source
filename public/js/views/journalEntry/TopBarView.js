@@ -185,9 +185,10 @@ define([
                 var date = this.$el.find('#reconcileDate').text();
 
                 dataService.postData('journal/reconcile', {date: date}, function () {
-                    var location = window.location.hash;
-                    Backbone.history.fragment = '';
-                    Backbone.history.navigate(location, {trigger: true});
+                    //var location = window.location.hash;
+                    //Backbone.history.fragment = '';
+                    //Backbone.history.navigate(location, {trigger: true});
+                    App.render({type: 'notify', message: 'Your request has been sent for processing. Please, wait few minutes.'});
                 });
             },
 

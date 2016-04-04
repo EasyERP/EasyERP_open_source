@@ -3,9 +3,9 @@ var router = express.Router();
 var journalHandler = require('../handlers/journal');
 var journalEntryHandler = require('../handlers/journalEntry');
 
-module.exports = function (models) {
-    var _journalHandler = new journalHandler(models);
-    var _journalEntryHandler = new journalEntryHandler(models);
+module.exports = function (models, event) {
+    var _journalHandler = new journalHandler(models, event);
+    var _journalEntryHandler = new journalEntryHandler(models, event);
 
     router.get('/getForDd', _journalHandler.getForDd);
     router.get('/getReconcileDate', _journalEntryHandler.getReconcileDate);

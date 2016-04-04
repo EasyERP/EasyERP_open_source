@@ -1152,6 +1152,10 @@ var requestHandler = function (app, event, mainDb) {
         io.emit('fetchInvoiceCollection', options);
     });
 
+    event.on('sendMessage', function (options) {
+        io.emit('sendMessage', options);
+    });
+
     event.on('recalculateRevenue', function (options) {
         var quotation = options.quotation;
         var req = options.req;
