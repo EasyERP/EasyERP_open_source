@@ -844,14 +844,17 @@ define([
         deleteItems: function () {
             var newElements;
             var id;
+
             if (this.changed) {
                 this.cancelChanges();
             } else {
                 newElements = this.$el.find('#false');
                 id = newElements.data('id');
-                if (id){
+
+                if (id) {
                     this.editCollection.remove(id);
                 }
+
                 newElements.remove();
                 this.hideSaveCancelBtns();
             }
