@@ -134,9 +134,8 @@ define([
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
                 var model = new CurrentModel({validate: false});
-                model.urlRoot = '/applications/form';
+                model.urlRoot = '/applications/' + id;
                 model.fetch({
-                    data   : {id: id},
                     success: function (model) {
                         new EditView({model: model});
                     },

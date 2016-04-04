@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Dashboard/vacationDashboard',
@@ -1606,14 +1607,14 @@ define([
             before(function () {
 
                 server = sinon.fakeServer.create();
-                /*mainSpy = sinon.spy(App, 'render');
-                windowConfirmStub = sinon.stub(window, 'confirm').returns(true);*/
+                /!*mainSpy = sinon.spy(App, 'render');
+                windowConfirmStub = sinon.stub(window, 'confirm').returns(true);*!/
             });
 
             after(function () {
                 server.restore();
-                /*mainSpy.restore();
-                windowConfirmStub.restore();*/
+                /!*mainSpy.restore();
+                windowConfirmStub.restore();*!/
             });
 
             describe('INITIALIZE', function () {
@@ -1736,3 +1737,4 @@ define([
 
 
 });
+*/
