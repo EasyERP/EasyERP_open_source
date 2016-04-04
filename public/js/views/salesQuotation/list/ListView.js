@@ -3,9 +3,9 @@ define([
         'text!templates/salesQuotation/list/ListHeader.html',
         'text!templates/salesQuotation/wTrack/ListHeader.html',
         'text!templates/stages.html',
-        'text!templates/supplierPayments/list/ListTotal.html',
         'views/salesQuotation/CreateView',
         'views/salesQuotation/list/ListItemView',
+        'views/supplierPayments/list/ListTotalView',
         'views/salesQuotation/EditView',
         'models/QuotationModel',
         'collections/salesQuotation/filterCollection',
@@ -16,7 +16,7 @@ define([
         'helpers'
     ],
 
-    function (listViewBase, listTemplate, listForWTrack, stagesTemplate, totalTemplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
+    function (listViewBase, listTemplate, listForWTrack, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
         var QuotationListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -57,7 +57,7 @@ define([
                 this.stages = [];
             },
 
-           /* recalcTotal: function () {
+            recalcTotal: function () {
                 var total = 0;
 
                 _.each(this.collection.toJSON(), function (model) {
@@ -65,7 +65,7 @@ define([
                 });
 
                 this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
-            },*/
+            },
 
             showFilteredPage: function (filter, context) {
                 var itemsNumber = $("#itemsNumber").text();
@@ -93,29 +93,6 @@ define([
                 context.changeLocationHash(1, itemsNumber, filter);
                 context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
                 context.getTotalLength(null, itemsNumber, filter);
-            },
-
-            setAllTotalVals: function () {      // added method for choosing auto-calculating fields
-                this.getAutoCalcField('total');
-            },
-
-            getAutoCalcField: function (idTotal) { // added method for auto-calculating field if row checked
-                var footerRow = this.$el.find('#listTotal');
-
-                var checkboxes = this.$el.find('#listTable :checked');
-                var totalTd = $(footerRow).find('#' + idTotal);
-                var rowTdVal = 0;
-                var row;
-                var rowTd;
-
-                $(checkboxes).each(function (index, element) {
-                    row = $(element).closest('tr');
-                    rowTd = row.find('.' + idTotal + '');
-                    var currentText = rowTd.text().split(' ').join('');
-                    rowTdVal += parseFloat(currentText || 0) * 100;
-                });
-
-                totalTd.text(helpers.currencySplitter((rowTdVal/100).toFixed(2) ));
             },
 
             chooseOption: function (e) {
@@ -184,15 +161,10 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                $currentEl.find('#listTotal').append(_.template(totalTemplate, {
-                    total: 0,
-                    cellSpan: 5,
-                    currencySplitter: helpers.currencySplitter
-                }));
-                /*$currentEl.append(new listTotalView({
+                $currentEl.append(new listTotalView({
                     element : $currentEl.find("#listTable"),
                     cellSpan: 5
-                }).render());*/
+                }).render());
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);

@@ -155,82 +155,86 @@ define([
                 status = 'New'; // todo workflow for purchase
             }
 
-            populate.fetchWorkflow({
-                wId   : wId,
-                source: 'purchase',
-                status: status
-                //targetSource: 'order'
-            }, function (workflow) {
-                var products;
+            this.saveItem(function (err) {
+                if (!err) {
+                    populate.fetchWorkflow({
+                        wId   : wId,
+                        source: 'purchase',
+                        status: status
+                        //targetSource: 'order'
+                    }, function (workflow) {
+                        var products;
 
-                if (workflow && workflow.error) {
-                    return App.render({
-                        type   : 'error',
-                        message: workflow.error.statusText
-                    });
-                }
-
-                products = self.currentModel.get('products');
-
-                if (products && products.length) {
-                    self.currentModel.save({
-                        isOrder : true,
-                        type    : 'Not Invoiced',
-                        workflow: workflow._id
-                    }, {
-                        headers: {
-                            mid: mid
-                        },
-                        patch  : true,
-                        success: function () {
-                            var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
-
-                            if (self.redirect) {
-                                var filter = {
-                                    'projectName': {
-                                        key  : 'project._id',
-                                        value: [self.pId]
-                                    },
-                                    'isOrder'    : {
-                                        key  : 'isOrder',
-                                        value: ['true']
-                                    }
-                                };
-
-                                self.ordersCollection = new QuotationCollection({
-                                    count      : 50,
-                                    viewType   : 'list',
-                                    contentType: 'salesOrder',
-                                    filter     : filter
-                                });
-
-                                self.ordersCollection.bind('reset', function () {
-                                    self.ordersView = new OrdersView({
-                                        collection    : self.ordersCollection,
-                                        projectId     : self.pId,
-                                        customerId    : self.customerId,
-                                        projectManager: self.projectManager,
-                                        filter        : filter,
-                                        activeTab     : true
-                                    });
-
-                                    self.ordersView.showOrderDialog(id);
-                                });
-
-                                if (self.collection) {
-                                    self.collection.remove(self.currentModel.get('_id'));
-
-                                }
-
-                            } else {
-                                Backbone.history.navigate(redirectUrl, {trigger: true});
-                            }
+                        if (workflow && workflow.error) {
+                            return App.render({
+                                type   : 'error',
+                                message: workflow.error.statusText
+                            });
                         }
-                    });
-                } else {
-                    return App.render({
-                        type   : 'error',
-                        message: CONSTANTS.RESPONSES.CONFIRM_ORDER
+
+                        products = self.currentModel.get('products');
+
+                        if (products && products.length) {
+                            self.currentModel.save({
+                                isOrder : true,
+                                type    : 'Not Invoiced',
+                                workflow: workflow._id
+                            }, {
+                                headers: {
+                                    mid: mid
+                                },
+                                patch  : true,
+                                success: function () {
+                                    var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
+
+                                    if (self.redirect) {
+                                        var filter = {
+                                            'projectName': {
+                                                key  : 'project._id',
+                                                value: [self.pId]
+                                            },
+                                            'isOrder'    : {
+                                                key  : 'isOrder',
+                                                value: ['true']
+                                            }
+                                        };
+
+                                        self.ordersCollection = new QuotationCollection({
+                                            count      : 50,
+                                            viewType   : 'list',
+                                            contentType: 'salesOrder',
+                                            filter     : filter
+                                        });
+
+                                        self.ordersCollection.bind('reset', function () {
+                                            self.ordersView = new OrdersView({
+                                                collection    : self.ordersCollection,
+                                                projectId     : self.pId,
+                                                customerId    : self.customerId,
+                                                projectManager: self.projectManager,
+                                                filter        : filter,
+                                                activeTab     : true
+                                            });
+
+                                            self.ordersView.showOrderDialog(id);
+                                        });
+
+                                        if (self.collection) {
+                                            self.collection.remove(self.currentModel.get('_id'));
+
+                                        }
+
+                                    } else {
+                                        Backbone.history.navigate(redirectUrl, {trigger: true});
+                                    }
+                                }
+                            });
+                        } else {
+                            return App.render({
+                                type   : 'error',
+                                message: CONSTANTS.RESPONSES.CONFIRM_ORDER
+                            });
+                        }
                     });
                 }
             });
@@ -308,7 +312,7 @@ define([
             });
         },
 
-        saveItem: function () {
+        saveItem: function (orderCb) {
             var self = this;
             var mid = this.forSales ? 62 : 55;
             var thisEl = this.$el;
@@ -431,16 +435,23 @@ define([
                     success: function () {
                         var url = window.location.hash;
 
-                        self.hideDialog();
-
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(url, {trigger: true});
+                        self.hideDialog();
 
                         App.projectInfo = App.projectInfo || {};
                         App.projectInfo.currentTab = 'quotations';
+
+                        if (orderCb && typeof orderCb === 'function') {
+                            return orderCb(null);
+                        }
                     },
                     error  : function (model, xhr) {
                         self.errorNotification(xhr);
+
+                        if (orderCb && typeof orderCb === 'function') {
+                            return orderCb(xhr.text);
+                        }
                     }
                 });
 
