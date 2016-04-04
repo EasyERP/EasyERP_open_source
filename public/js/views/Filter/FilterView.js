@@ -56,7 +56,7 @@ define([
                 if (e.which === 8) {
                     searchInputVal = $('#searchInput').text();
                     if(searchInputVal.length === 0){
-                        searchFilterContainer = $('#searchFilterContainer').find('div:last-child');
+                        searchFilterContainer = $('#searchFilterContainer').children('div:last');
                         if(searchFilterContainer.length !== 0){
                             e.target = searchFilterContainer.find('.removeValues');
                             this.removeFilter(e);
