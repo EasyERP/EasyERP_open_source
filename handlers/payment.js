@@ -274,7 +274,7 @@ var Payment = function (models, event) {
                                 paymentRef      : 1,
                                 year            : 1,
                                 month           : 1,
-                                period: 1
+                                period          : 1
                             }
                         }, {
                             $lookup: {
@@ -298,7 +298,7 @@ var Payment = function (models, event) {
                                 paymentRef      : 1,
                                 year            : 1,
                                 month           : 1,
-                                period: 1
+                                period          : 1
 
                             }
                         }, {
@@ -337,7 +337,7 @@ var Payment = function (models, event) {
         var query;
         var moduleId = returnModuleId(req);
 
-        if (moduleId === 79){
+        if (moduleId === 79) {
             Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
         } else {
             Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
@@ -668,12 +668,11 @@ var Payment = function (models, event) {
                     if (project) {
                         event.emit('fetchInvoiceCollection', {project: project});
                     }
-                    if(isForSale){ //todo added in case of no last task
+                    if (isForSale) { //todo added in case of no last task
                         waterfallCallback(null, invoice, payment);
                     } else {
                         waterfallCallback(null, payment);
                     }
-
 
                 });
             });
@@ -752,7 +751,7 @@ var Payment = function (models, event) {
 
         waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
 
-        if ( isForSale && ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development")) ) { // todo added condition for purchase payment
+        if (isForSale && ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development"))) { // todo added condition for purchase payment
             waterfallTasks.push(updateWtrack);
         }
 
@@ -802,7 +801,7 @@ var Payment = function (models, event) {
         queryObject.$and = [];
 
         if (bonus) {
-           // queryObject.bonus = bonus; //todo this is case of no view purchase payments in supplier payments list length
+            // queryObject.bonus = bonus; //todo this is case of no view purchase payments in supplier payments list length
             supplier = 'Employees';
         }
 
@@ -893,9 +892,17 @@ var Payment = function (models, event) {
                     supplier        : {$arrayElemAt: ["$supplier", 0]},
                     invoice         : {$arrayElemAt: ["$invoice", 0]},
                     paymentMethod   : {$arrayElemAt: ["$paymentMethod", 0]},
-                    forSale: 1,
-                    isExpense: 1,
-                    bonus: 1
+                    forSale         : 1,
+                    differenceAmount: 1,
+                    paidAmount      : 1,
+                    workflow        : 1,
+                    date            : 1,
+                    isExpense       : 1,
+                    bonus           : 1,
+                    paymentRef      : 1,
+                    year            : 1,
+                    month           : 1,
+                    period          : 1
                 }
             }, {
                 $lookup: {
@@ -906,12 +913,20 @@ var Payment = function (models, event) {
             }, {
                 $project: {
                     supplier        : 1,
+                    invoice         : 1,
                     assigned        : {$arrayElemAt: ["$assigned", 0]},
+                    forSale         : 1,
+                    differenceAmount: 1,
+                    paidAmount      : 1,
+                    workflow        : 1,
+                    date            : 1,
                     paymentMethod   : 1,
-                    invoice: 1,
-                    forSale: 1,
-                    isExpense: 1,
-                    bonus: 1
+                    isExpense       : 1,
+                    bonus           : 1,
+                    paymentRef      : 1,
+                    year            : 1,
+                    month           : 1,
+                    period          : 1
                 }
             }, {
                 $match: queryObject
@@ -1042,7 +1057,10 @@ var Payment = function (models, event) {
                                         } else {
                                             paymentInfoNew.balance = paymentInfo.balance;
                                         }
-                                        Invoice.findByIdAndUpdate(invoiceId, {workflow   : workflowObj, paymentInfo: paymentInfoNew}, {new: true}, function (err, result) {
+                                        Invoice.findByIdAndUpdate(invoiceId, {
+                                            workflow   : workflowObj,
+                                            paymentInfo: paymentInfoNew
+                                        }, {new: true}, function (err, result) {
                                             if (err) {
                                                 return next(err);
                                             }
