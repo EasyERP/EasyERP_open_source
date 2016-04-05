@@ -183,43 +183,28 @@ define([
 
         isWorking: function (employee, week) {
             var date;
-            var firedArr = employee.fired;
-            var firedLength = firedArr.length;
-            var hiredArr = employee.hired;
+            var isEmployee = !!employee.isEmployee;
+            var firstTransfer = employee.firstTransferDate;
+            var lastTransfer = employee.lastTransferDate;
+            var _lastTransfer = moment(employee.lastTransfer);
+
             var year = week.dateByWeek.toString().slice(0, 4);
             var _week = week.dateByWeek.toString().slice(4);
 
-            var _lastHiredObject = hiredArr[hiredArr.length - 1];
-            var _firstHiredObject = hiredArr[0];
-            var _lastFiredObject = firedArr[firedArr.length - 1];
-            var _lastHiredDate = _lastHiredObject ? moment(_lastHiredObject.date, 'YYYY-MM-DD') : null;
-            var _firstHiredDate = _firstHiredObject ? moment(_firstHiredObject.date, 'YYYY-MM-DD') : null;
-            var _lastFiredDate = _lastFiredObject ? moment(_lastFiredObject.date, 'YYYY-MM-DD') : null;
-            var _hiredDate;
-            var _firedDate;
-            var i;
+            firstTransfer = moment(firstTransfer);
+            lastTransfer = moment(lastTransfer);
 
-            // date = moment().set('year', year).set('week', _week);
             date = moment().isoWeekYear(year).isoWeek(_week).day(7);
 
-            if (!firedLength) {
-                return date > _firstHiredDate;
-            }
-
-            for (i = firedLength - 1; i >= 0; i--) {
-                _hiredDate = hiredArr[i] ? hiredArr[i].date : null;
-                _firedDate = firedArr[i] ? firedArr[i].date : null;
-                _hiredDate = moment(_hiredDate).format('YYYY-MM-DD');
-                _firedDate = moment(_firedDate).format('YYYY-MM-DD');
-
-                if (!employee.isEmployee && date > _lastFiredDate && date > _lastHiredDate) {
-                    return false;
-                }
-
-                if (_hiredDate === _firedDate || date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate >= _lastFiredDate))) {
+            if (isEmployee) {
+                if (firstTransfer.isSame(lastTransfer)) {
                     return true;
                 }
+                if (date >= firstTransfer) {
+                    return date <= lastTransfer || lastTransfer === _lastTransfer;
+                }
             }
+
             return false;
         },
 

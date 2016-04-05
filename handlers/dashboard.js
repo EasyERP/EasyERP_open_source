@@ -140,9 +140,13 @@ var wTrack = function (models) {
                             $ne : null,
                             $gte: startDate
                         }
+                    }, {
+                        lastHire: {
+                            $ne : null,
+                            $lte: endDate
+                        }
                     }]
-                }
-                ],
+                }],
                 department: departmentQuery
             }]
         };
@@ -298,7 +302,7 @@ var wTrack = function (models) {
             }
 
             async.each(employeesByDep, departmentMapper, sendResponse);
-            //res.status(200).send(employeesByDep);
+            // res.status(200).send(employeesByDep);
         }
 
         function holidaysComposer(parallelCb) {
@@ -398,69 +402,68 @@ var wTrack = function (models) {
                 }
             }, {
                 $project: {
-                    isEmployee: 1,
-                    department: 1,
-                    isLead    : 1,
-                    fire      : 1,
-                    hire      : 1,
-                    name      : 1,
-                    lastFire  : 1,
-                    hireCount : {$size: '$hire'},
-                    lastHire  : {
+                    isEmployee  : 1,
+                    department  : 1,
+                    isLead      : 1,
+                    fire        : 1,
+                    hire        : 1,
+                    name        : 1,
+                    lastFire    : 1,
+                    transfer    : 1,
+                    lastTransfer: {$max: '$transfer'},
+                    hireCount   : {$size: '$hire'},
+                    lastHire    : {
                         $let: {
                             vars: {
                                 lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
                             },
-                            in  : {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
+                            in  : {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
                         }
                     }
                 }
             }, {
                 $match: employeeQueryForEmployeeByDep
             }, {
-                $unwind: '$hire'
+                $unwind: '$transfer'
             }, {
                 $group: {
-                    _id     : {
+                    _id              : {
                         _id       : '$_id',
-                        department: '$hire.department',
+                        department: '$transfer.department',
                         isEmployee: '$isEmployee',
                         isLead    : '$isLead'
                     },
-                    hired   : {$push: '$hire'},
-                    fired   : {$first: '$fire'},
-                    name    : {$first: {$concat: ['$name.first', ' ', '$name.last']}},
-                    lastHire: {$first: '$lastHire'}
+                    firstTransferDate: {$min: '$transfer.date'},
+                    lastTransferDate : {$max: '$transfer.date'},
+                    name             : {$first: {$concat: ['$name.first', ' ', '$name.last']}},
+                    lastTransfer     : {$first: '$lastTransfer'},
+                    lastHire         : {$first: '$lastHire'}
                 }
             }, {
                 $project: {
-                    department: '$_id.department',
-                    isEmployee: '$_id.isEmployee',
-                    isLead    : '$_id.isLead',
-                    _id       : '$_id._id',
-                    hired     : 1,
-                    fired     : {
-                        $filter: {
-                            input: '$fired',
-                            as   : 'fire',
-                            cond : {$eq: ['$$fire.department', '$_id.department']}
-                        }
-                    },
-                    name      : 1,
-                    lastHire  : 1
+                    department       : '$_id.department',
+                    isEmployee       : '$_id.isEmployee',
+                    isLead           : '$_id.isLead',
+                    _id              : '$_id._id',
+                    firstTransferDate: 1,
+                    lastTransferDate : 1,
+                    lastTransfer     : 1,
+                    name             : 1,
+                    lastHire         : 1
                 }
             }, {
                 $group: {
                     _id      : '$department',
                     employees: {
                         $addToSet: {
-                            isEmployee: '$isEmployee',
-                            isLead    : '$isLead',
-                            fired     : '$fired',
-                            hired     : '$hired',
-                            lastHire  : '$lastHire',
-                            name      : '$name',
-                            _id       : '$_id'
+                            isEmployee       : '$isEmployee',
+                            isLead           : '$isLead',
+                            firstTransferDate: '$firstTransferDate',
+                            lastTransferDate : '$lastTransferDate',
+                            lastHire         : '$lastHire',
+                            lastTransfer     : '$lastTransfer',
+                            name             : '$name',
+                            _id              : '$_id'
                         }
                     }
                 }
