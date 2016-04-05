@@ -1484,7 +1484,7 @@ define([
                 self.responseObj['#project'] = projects;
             });
 
-            dataService.getData('/employee/getForDD', null, function (employees) {
+            dataService.getData('/employee/getForDD', {devDepartments: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 
