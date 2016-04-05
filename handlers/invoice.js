@@ -35,16 +35,32 @@ var Invoice = function (models, event) {
 
     function journalEntryComposer(invoice, dbIndex, waterfallCb, uId) {
         var journalEntryBody = {};
+        var beforeInvoiceBody = {};
+        var cb = waterfallCb;
 
         journalEntryBody.date = invoice.invoiceDate;
         journalEntryBody.journal = invoice.journal;
         journalEntryBody.currency = invoice.currency ? invoice.currency._id : 'USD';
-        journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
+        journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.balance : 0;
         journalEntryBody.sourceDocument = {};
         journalEntryBody.sourceDocument._id = invoice._id;
         journalEntryBody.sourceDocument.model = 'Invoice';
 
-        _journalEntryHandler.create(journalEntryBody, dbIndex, waterfallCb, uId);
+        if (invoice.paymentInfo.total - invoice.paymentInfo.balance > 0){
+            cb = _.after(2, waterfallCb);
+
+            beforeInvoiceBody.date = invoice.invoiceDate;
+            beforeInvoiceBody.journal = invoice.journal;
+            beforeInvoiceBody.currency = invoice.currency ? invoice.currency._id : 'USD';
+            beforeInvoiceBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total - invoice.paymentInfo.balance : 0;
+            beforeInvoiceBody.sourceDocument = {};
+            beforeInvoiceBody.sourceDocument._id = invoice._id;
+            beforeInvoiceBody.sourceDocument.model = 'proforma';
+
+            _journalEntryHandler.create(journalEntryBody, dbIndex, cb, uId);
+        }
+
+        _journalEntryHandler.create(journalEntryBody, dbIndex, cb, uId);
     }
 
     this.create = function (req, res, next) {
@@ -151,7 +167,7 @@ var Invoice = function (models, event) {
                 .populate('project', '_id projectName projectmanager');
 
             query.exec(callback);
-        };
+        }
 
         function findProformaPayments(callback) {
             Invoice.aggregate([
@@ -196,7 +212,7 @@ var Invoice = function (models, event) {
                     }
                 }
             ], callback);
-        };
+        }
 
         function changeProformaWorkflow(callback) {
             var request = {
@@ -222,11 +238,11 @@ var Invoice = function (models, event) {
                         multi: true
                     }, callback);
             });
-        };
+        }
 
         function parallel(callback) {
             async.parallel(parallelTasks, callback);
-        };
+        }
 
         function createInvoice(parallelResponse, callback) {
             var order;
@@ -294,7 +310,7 @@ var Invoice = function (models, event) {
             invoice.supplier = order.supplier;
 
             if (forSales === 'true') {
-                invoice.salesPerson = order.project.projectmanager ? order.project.projectmanager : null;
+                invoice.salesPerson = order.project.projectmanager || null;
 
                 invoice.save(callback);
 
@@ -305,7 +321,7 @@ var Invoice = function (models, event) {
 
                 query.exec(function (err, result) {
                     if (err) {
-                        callback(err)
+                      return  callback(err);
                     }
 
                     if (result && result.salesPurchases.salesPerson) {
@@ -317,14 +333,18 @@ var Invoice = function (models, event) {
 
             }
 
-        };
+        }
+
+        function createJournalEntry (invoice, callback){
+            journalEntryComposer(invoice, req.session.lastDb, callback, req.session.uId);
+        }
 
         parallelTasks = [findOrder, fetchFirstWorkflow, findProformaPayments, changeProformaWorkflow];
-        waterFallTasks = [parallel, createInvoice];
+        waterFallTasks = [parallel, createInvoice, createJournalEntry];
 
         async.waterfall(waterFallTasks, function (err, result) {
             if (err) {
-                return next(err)
+                return next(err);
             }
             var project;
             var invoiceId = result._id;
@@ -417,23 +437,23 @@ var Invoice = function (models, event) {
                                     return next(err);
                                 }
 
-                                journalEntryComposer(invoice, db, function (err, response) {
+                                /*journalEntryComposer(invoice, db, function (err, response) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                }, req.session.uId);*/
+
+
+                                Customer.populate(invoice, {
+                                    path  : 'supplier',
+                                    select: '_id name fullName'
+                                }, function (err, resp) {
                                     if (err) {
                                         return next(err);
                                     }
 
-                                    Customer.populate(invoice, {
-                                        path  : 'supplier',
-                                        select: '_id name fullName'
-                                    }, function (err, resp) {
-                                        if (err) {
-                                            return next(err);
-                                        }
-
-                                        res.status(200).send(invoice);
-                                    });
-
-                                }, req.session.uId);
+                                    res.status(200).send(invoice);
+                                });
                             });
                         } else {
                             Customer.populate(invoice, {
