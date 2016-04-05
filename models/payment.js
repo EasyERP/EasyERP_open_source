@@ -89,7 +89,11 @@ module.exports = (function () {
     mongoose.model('salaryPayment', salaryPaymentSchema);
     mongoose.model('wTrackPayOut', payOutSchema);
 
-    PaymentSchema.pre('save', function (next) {
+    PaymentSchema.pre('save', setName);
+    ProformaPaymentSchema.pre('save', setName);
+    InvoicePaymentSchema.pre('save', setName);
+
+    function setName (next) {
         var payment = this;
         var db = payment.db.db;
 
@@ -114,7 +118,7 @@ module.exports = (function () {
 
                 next();
             });
-    });
+    }
     /*PaymentSchema.post('save', function (doc) {
      var payment = this;
      var paymentDate = new Date(this.date);
