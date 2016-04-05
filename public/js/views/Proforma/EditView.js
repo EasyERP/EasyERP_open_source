@@ -80,12 +80,13 @@ define([
 
                 e.preventDefault();
 
-                this.saveItem(function (err) {
+                this.saveItem(function (err, currency) {
                     if (!err) {
                         paymentView = new PaymentCreateView({
                             model     : self.currentModel,
                             redirect  : self.redirect,
                             collection: self.collection,
+                            currency  : currency,
                             eventChannel: self.eventChannel
                         });
                     }
@@ -309,8 +310,8 @@ define([
                     supplier        : supplier,
                     fiscalPosition  : null,
                     //sourceDocument: $.trim(this.$el.find('#source_document').val()),
-                    //supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
-                    name            : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
+                    supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
+                    //name            : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
                     //paymentReference: $.trim(this.$el.find('#payment_reference').val()),
                     invoiceDate     : invoiceDate,
                     dueDate         : dueDate,
@@ -348,7 +349,7 @@ define([
                             self.hideDialog();
 
                             if (paymentCb && typeof paymentCb === 'function') {
-                                return paymentCb(null);
+                                return paymentCb(null, currency);
                             }
 
                             self.eventChannel.trigger('savedProforma');
@@ -435,7 +436,7 @@ define([
                 model = this.currentModel.toJSON();
                 invoiceDate = model.invoiceDate;
 
-                this.isPaid = (model && model.workflow) ? model.workflow.status === 'Done' : false;
+                this.isPaid = !!(model && model.workflow && model.workflow.status !== 'New');
 
                 this.notAddItem = true;
 

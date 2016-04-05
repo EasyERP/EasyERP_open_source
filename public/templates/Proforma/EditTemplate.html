@@ -112,9 +112,9 @@
                                 <dt><label for="currencyDd">Currency</label></dt>
                                 <dd>
                                     <a id="currencyDd" class=""
-                                       data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>"
-                                       href="javascript:;"><%= model.currency && model.currency.name ?
-                                        model.currency.name : ''%></a>
+                                       data-id="<%= model.currency && model.currency._id ? model.currency._id._id : null%>"
+                                       href="javascript:;"><%= model.currency && model.currency._id && model.currency._id.name ?
+                                        model.currency._id.name : ''%></a>
                                 </dd>
 
                             </dl>

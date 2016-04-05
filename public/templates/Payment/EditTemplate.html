@@ -45,6 +45,13 @@
                             <!--<input type="text" name="paymentRef" id="paymentRef" maxlength="20"-->
                                    <!--value="<%=model.invoice.name%>" readonly/>-->
                         </dd>
+                        <dt><label for="currencyDd">Currency</label></dt>
+                        <dd>
+                            <a id="currencyDd"
+                               data-id="<%= model && model.currency ? model.currency._id : null%>"
+                               href="javascript:;"><%= model && model.currency ?
+                                model.currency.name : ''%></a>
+                        </dd>
                     </dl>
                 </div>
                 <div id="differenceAmountContainer" class="half-block left hidden">

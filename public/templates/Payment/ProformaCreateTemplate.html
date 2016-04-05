@@ -50,6 +50,13 @@
                         </dd>
                         <!--                        <dt><label for="memo">Memo</label></dt>
                                                 <dd><input type="text" name="memo" id="memo" maxlength="20"></dd>-->
+                        <dt><label for="currencyDd">Currency</label></dt>
+                        <dd>
+                            <a id="currencyDd" class="current-selected"
+                               data-id="<%= currency && currency._id ? invoice.currency._id : null%>"
+                               href="javascript:;"><%= currency && currency.name ?
+                                currency.name : ''%></a>
+                        </dd>
                     </dl>
                 </div>
                 <div id="differenceAmountContainer" class="half-block left hidden">
