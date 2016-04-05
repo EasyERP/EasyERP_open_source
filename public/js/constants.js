@@ -586,6 +586,9 @@ define([], function () {
             'Applications': 43,
             'Persons'     : 49,
             'Companies'   : 50
-        }
+        },
+
+        INVOICE_JOURNAL: '565ef6ba270f53d02ee71d65',
+        PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146'
     };
 });

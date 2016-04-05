@@ -55,8 +55,6 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = paymentCollection;
-
-                this.filterView;
             },
 
             goToEditDialog: function (e) {
@@ -122,8 +120,7 @@ define([
                     rowTdVal += parseFloat(currentText || 0) * 100;
                 });
 
-
-                totalTd.text(helpers.currencySplitter((rowTdVal/100).toFixed(2) ));
+                totalTd.text(helpers.currencySplitter((rowTdVal / 100).toFixed(2)));
 
             },
 
@@ -181,7 +178,7 @@ define([
                                     error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             App.render({
-                                                type: 'error',
+                                                type   : 'error',
                                                 message: "You do not have permission to perform this action"
                                             });
                                         }
@@ -203,6 +200,38 @@ define([
                     }
                 } else {
                     this.cancelChanges();
+                }
+            },
+
+            checked: function (e) {
+                e.stopPropagation();
+
+                var el = this.$el;
+                var $targetEl = $(e.target);
+                var checkLength = el.find("input.checkbox:checked").length;
+                var checkAll$ = el.find('#check_all');
+                var removeBtnEl = $('#top-bar-deleteBtn');
+
+                if ($targetEl.hasClass('notRemovable')) {
+                    $targetEl.prop('checked', false);
+
+                    return false;
+                }
+
+                if (this.collection.length > 0) {
+                    if (checkLength > 0) {
+                        checkAll$.prop('checked', false);
+
+                        removeBtnEl.show();
+
+                        if (checkLength === this.collection.length) {
+
+                            checkAll$.prop('checked', true);
+                        }
+                    } else {
+                        removeBtnEl.hide();
+                        checkAll$.prop('checked', false);
+                    }
                 }
             },
 

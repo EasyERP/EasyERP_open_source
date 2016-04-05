@@ -201,7 +201,7 @@ define([
                                         projectManager: self.projectManager,
                                         filter        : filter,
                                         activeTab     : true,
-                                        eventChannel: self.eventChannel
+                                        eventChannel  : self.eventChannel
                                     });
 
                                     self.ordersView.showOrderDialog(id);
@@ -233,9 +233,10 @@ define([
             var url = '/proforma/create';
             var quotationId = this.currentModel.id;
             var data = {
-                forSales: this.forSales,
-                quotationId : quotationId,
-                currency: this.currentModel.currency
+                forSales   : this.forSales,
+                quotationId: quotationId,
+                currency   : this.currentModel.currency,
+                journal    : CONSTANTS.PROFORMA_JOURNAL
             };
 
             this.saveItem(function (err) {

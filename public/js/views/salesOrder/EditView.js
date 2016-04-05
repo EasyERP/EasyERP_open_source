@@ -149,7 +149,8 @@ define([
                 var data = {
                     forSales: this.forSales,
                     orderId : orderId,
-                    currency: this.currentModel.currency
+                    currency: this.currentModel.currency,
+                    journal: CONSTANTS.INVOICE_JOURNAL
                 };
 
                 this.saveItem(function (err) {

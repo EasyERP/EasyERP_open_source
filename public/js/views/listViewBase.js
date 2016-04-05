@@ -528,7 +528,7 @@ define([
             renderCheckboxes: function () {
                 var self = this;
                 $('#check_all').click(function () {
-                    $(':checkbox').prop('checked', this.checked);
+                    $(':checkbox:not(.notRemovable)').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
                     } else {

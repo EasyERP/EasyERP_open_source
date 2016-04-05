@@ -319,11 +319,34 @@ var Payment = function (models, event) {
                                 year              : 1,
                                 month             : 1,
                                 period            : 1,
-                                _type             : 1,
-                                removable: {$cond: {if: {$and: [{$eq: ['$_type', "ProformaPayment"]}, {$eq: ['$invoice.workflow.status', "Invoiced"]}]}, then: false, else: true}}
+                                _type             : 1
                             }
                         }, {
                             $match: optionsObject
+                        },{
+                            $project: {
+                                supplier          : 1,
+                                'currency.name'   : 1,
+                                'currency._id'    : 1,
+                                'invoice._id'     : 1,
+                                'invoice.name'    : 1,
+                                'invoice.workflow': 1,
+                                assigned          : 1,
+                                forSale           : 1,
+                                differenceAmount  : 1,
+                                paidAmount        : 1,
+                                workflow          : 1,
+                                date              : 1,
+                                paymentMethod     : 1,
+                                isExpense         : 1,
+                                bonus             : 1,
+                                paymentRef        : 1,
+                                year              : 1,
+                                month             : 1,
+                                period            : 1,
+                                _type             : 1,
+                                removable: {$cond: {if: {$and: [{$eq: ['$_type', "ProformaPayment"]}, {$eq: ['$invoice.workflow.name', "Invoiced"]}]}, then: false, else: true}}
+                            }
                         }, {
                             $sort: sort
                         }, {

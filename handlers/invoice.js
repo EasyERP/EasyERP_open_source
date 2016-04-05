@@ -120,6 +120,7 @@ var Invoice = function (models, event) {
     this.receive = function (req, res, next) {
         var id = req.body.orderId;
         var forSales = req.body.forSales;
+        var journal = req.body.journal;
         var dbIndex = req.session.lastDb;
         var JobsModel = models.get(dbIndex, 'jobs', JobsSchema);
         var Invoice = models.get(dbIndex, 'Invoice', InvoiceSchema);
@@ -309,6 +310,8 @@ var Invoice = function (models, event) {
 
             invoice.supplier = order.supplier;
 
+            invoice.journal = journal;
+
             if (forSales === 'true') {
                 invoice.salesPerson = order.project.projectmanager || null;
 
@@ -373,31 +376,36 @@ var Invoice = function (models, event) {
                 }
             });
 
-            async.each(products, function (result, cb) {
-                var jobs = result.jobs;
+            if (products){
+                async.each(products, function (result, cb) {
+                    var jobs = result.jobs;
 
-                JobsModel.findByIdAndUpdate(jobs, {
-                    $set: {
-                        invoice : invoiceId,
-                        type    : "Invoiced",
-                        workflow: CONSTANTS.JOBSFINISHED,
-                        editedBy: editedBy
+                    JobsModel.findByIdAndUpdate(jobs, {
+                        $set: {
+                            invoice : invoiceId,
+                            type    : "Invoiced",
+                            workflow: CONSTANTS.JOBSFINISHED,
+                            editedBy: editedBy
+                        }
+                    }, {new: true}, function (err, job) {
+                        if (err) {
+                            return cb(err);
+                        }
+                        project = job.project || null;
+                        cb();
+                    });
+
+                }, function () {
+                    if (project) {
+                        event.emit('fetchJobsCollection', {project: project});
                     }
-                }, {new: true}, function (err, job) {
-                    if (err) {
-                        return cb(err);
-                    }
-                    project = job.project ? job.project : null;
-                    cb();
+
+                    res.status(201).send(result);
                 });
-
-            }, function () {
-                if (project) {
-                    event.emit('fetchJobsCollection', {project: project});
-                }
-
+            } else {
                 res.status(201).send(result);
-            });
+            }
+
         });
 
     };
@@ -720,8 +728,7 @@ var Invoice = function (models, event) {
                                     name            : 1,
                                     paymentDate     : 1,
                                     dueDate         : 1,
-                                    payments        : 1,
-                                    kind            : 1
+                                    payments        : 1
                                 }
                             }, {
                                 $match: optionsObject
