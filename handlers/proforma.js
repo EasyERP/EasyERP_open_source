@@ -173,6 +173,8 @@ var Proforma = function (models) {
             proforma.workflow = workflow._id;
             proforma.paymentInfo.balance = quotation.paymentInfo.total;
 
+            proforma.journal = CONSTANTS.PROFORMA_JOURNAL;
+
             if (!proforma.project) {
                 proforma.project = quotation.project ? quotation.project._id : null;
             }
@@ -180,7 +182,13 @@ var Proforma = function (models) {
             proforma.supplier = quotation.supplier;
             proforma.salesPerson = quotation.project.projectmanager || null;
 
-            proforma.save(callback);
+            proforma.save(function (err, result) {
+                if (err){
+                    return callback(err);
+                }
+
+                callback(null, result);
+            });
         }
 
         function createJournalEntry(proforma, callback) {

@@ -38,6 +38,7 @@ define([
 
             this.redirect = options.redirect;
             this.collection = options.collection;
+            this.proforma = options.proforma;
 
             this.currency = options.currency || {};
 
@@ -153,7 +154,8 @@ define([
                 paymentRef      : paymentRef,
                 paidAmount      : paidAmount,
                 currency        : currency,
-                differenceAmount: this.differenceAmount
+                differenceAmount: this.differenceAmount,
+                proforma        : this.proforma
             };
 
             if (supplier) {

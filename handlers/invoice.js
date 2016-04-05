@@ -312,7 +312,13 @@ var Invoice = function (models, event) {
             if (forSales === 'true') {
                 invoice.salesPerson = order.project.projectmanager || null;
 
-                invoice.save(callback);
+                invoice.save(function (err, result) {
+                    if (err){
+                        return next(err);
+                    }
+
+                    callback(null, result);
+                });
 
             } else {
                 query = Company.findById(invoice.supplier).lean();
@@ -328,7 +334,13 @@ var Invoice = function (models, event) {
                         invoice.salesPerson = result.salesPurchases.salesPerson._id;
                     }
 
-                    invoice.save(callback);
+                    invoice.save(function(err, result){
+                        if (err){
+                            return next(err);
+                        }
+
+                        callback(null, result);
+                    });
                 });
 
             }

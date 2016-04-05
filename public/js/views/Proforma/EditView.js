@@ -83,11 +83,12 @@ define([
                 this.saveItem(function (err, currency) {
                     if (!err) {
                         paymentView = new PaymentCreateView({
-                            model     : self.currentModel,
-                            redirect  : self.redirect,
-                            collection: self.collection,
-                            currency  : currency,
-                            eventChannel: self.eventChannel
+                            model       : self.currentModel,
+                            redirect    : self.redirect,
+                            collection  : self.collection,
+                            currency    : currency,
+                            eventChannel: self.eventChannel,
+                            proforma    : 'proforma'
                         });
                     }
                 });
@@ -116,7 +117,7 @@ define([
                 }, function (workflow) {
                     if (workflow && workflow.error) {
                         return App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: workflow.error.statusText
                         });
                     }
@@ -153,8 +154,8 @@ define([
                     wId: wId
                 }, function (workflow) {
                     if (workflow && workflow.error) {
-                        return  App.render({
-                            type: 'error',
+                        return App.render({
+                            type   : 'error',
                             message: workflow.error.statusText
                         });
                     }
@@ -255,7 +256,7 @@ define([
                     total  : total,
                     unTaxed: unTaxed,
                     balance: balance,
-                    taxes: taxes
+                    taxes  : taxes
                 };
 
                 var salesPersonId = $thisEl.find("#salesPerson").attr("data-id") || null;
@@ -306,17 +307,17 @@ define([
                 });
 
                 data = {
-                    currency        : currency,
-                    supplier        : supplier,
-                    fiscalPosition  : null,
+                    currency             : currency,
+                    supplier             : supplier,
+                    fiscalPosition       : null,
                     //sourceDocument: $.trim(this.$el.find('#source_document').val()),
                     supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
                     //name            : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
                     //paymentReference: $.trim(this.$el.find('#payment_reference').val()),
-                    invoiceDate     : invoiceDate,
-                    dueDate         : dueDate,
-                    account         : null,
-                    journal         : journalId,
+                    invoiceDate          : invoiceDate,
+                    dueDate              : dueDate,
+                    account              : null,
+                    journal              : journalId,
 
                     salesPerson : salesPerson,
                     paymentTerms: paymentTermId,
@@ -366,7 +367,7 @@ define([
 
                 } else {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: CONSTANTS.RESPONSES.CREATE_QUOTATION
                     });
                 }
@@ -407,7 +408,7 @@ define([
                         error  : function (model, err) {
                             if (err.status === 403) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }

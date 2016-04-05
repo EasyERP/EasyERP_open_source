@@ -189,7 +189,7 @@ define([
             var self = this;
             var model = this.invoiceModel.toJSON();
             var htmBody = this.template({
-                invoice: model,
+                invoice : model,
                 currency: self.currency
             });
 

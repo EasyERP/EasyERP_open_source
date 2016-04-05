@@ -22,6 +22,7 @@ var Payment = function (models, event) {
     var InvoiceSchema = mongoose.Schemas['Invoice'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var wTrackSchema = mongoose.Schemas['wTrack'];
+    var ProformaPaymentSchema = mongoose.Schemas.ProformaPaymentSchema;
 
     var objectId = mongoose.Types.ObjectId;
     var waterfallTasks;
@@ -193,7 +194,7 @@ var Payment = function (models, event) {
                     }
 
                     if (bonus) {
-                      //  optionsObject.$and.push({bonus: bonus}); //todo   this is case of no view purchase payments in supplier payments
+                        //  optionsObject.$and.push({bonus: bonus}); //todo   this is case of no view purchase payments in supplier payments
                         supplier = "Employees"
                     }
 
@@ -263,7 +264,7 @@ var Payment = function (models, event) {
                             $lookup: {
                                 from        : 'currency',
                                 localField  : 'currency._id',
-                                foreignField: '_id', 
+                                foreignField: '_id',
                                 as          : 'currency.obj'
                             }
                         }, {
@@ -282,7 +283,8 @@ var Payment = function (models, event) {
                                 paymentRef      : 1,
                                 year            : 1,
                                 month           : 1,
-                                period          : 1
+                                period          : 1,
+                                _type           : 1
                             }
                         }, {
                             $lookup: {
@@ -291,25 +293,34 @@ var Payment = function (models, event) {
                                 foreignField: "_id", as: "assigned"
                             }
                         }, {
+                            $lookup: {
+                                from        : "workflows",
+                                localField  : "invoice.workflow",
+                                foreignField: "_id", as: "invoice.workflow"
+                            }
+                        }, {
                             $project: {
-                                supplier        : 1,
-                                'currency.name' : '$currency.obj.name',
-                                'currency._id' : '$currency.obj._id',
-                                invoice         : 1,
-                                assigned        : {$arrayElemAt: ["$assigned", 0]},
-                                forSale         : 1,
-                                differenceAmount: 1,
-                                paidAmount      : 1,
-                                workflow        : 1,
-                                date            : 1,
-                                paymentMethod   : 1,
-                                isExpense       : 1,
-                                bonus           : 1,
-                                paymentRef      : 1,
-                                year            : 1,
-                                month           : 1,
-                                period: 1
-
+                                supplier          : 1,
+                                'currency.name'   : '$currency.obj.name',
+                                'currency._id'    : '$currency.obj._id',
+                                'invoice._id'     : 1,
+                                'invoice.name'    : 1,
+                                'invoice.workflow': {$arrayElemAt: ["$invoice.workflow", 0]},
+                                assigned          : {$arrayElemAt: ["$assigned", 0]},
+                                forSale           : 1,
+                                differenceAmount  : 1,
+                                paidAmount        : 1,
+                                workflow          : 1,
+                                date              : 1,
+                                paymentMethod     : 1,
+                                isExpense         : 1,
+                                bonus             : 1,
+                                paymentRef        : 1,
+                                year              : 1,
+                                month             : 1,
+                                period            : 1,
+                                _type             : 1,
+                                removable: {$cond: {if: {$and: [{$eq: ['$_type', "ProformaPayment"]}, {$eq: ['$invoice.workflow.status', "Invoiced"]}]}, then: false, else: true}}
                             }
                         }, {
                             $match: optionsObject
@@ -347,7 +358,7 @@ var Payment = function (models, event) {
         var query;
         var moduleId = returnModuleId(req);
 
-        if (moduleId === 79){
+        if (moduleId === 79) {
             Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
         } else {
             Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
@@ -569,6 +580,7 @@ var Payment = function (models, event) {
         var data = body;
         var isForSale = data.forSale;
         var project;
+        var proforma = body.proforma;
         //var type = "Paid";
 
         delete  data.mid;
@@ -576,7 +588,11 @@ var Payment = function (models, event) {
         var moduleId = returnModuleId(req);
         var Payment;
 
-        Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        if (proforma) {
+            Payment = models.get(req.session.lastDb, 'ProformaPayment', ProformaPaymentSchema);
+        } else {
+            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        }
 
         function fetchInvoice(waterfallCallback) {
             Invoice.findById(invoiceId, waterfallCallback);
@@ -631,7 +647,6 @@ var Payment = function (models, event) {
 
             request.query.wId = wId;
 
-
             totalToPay = parseFloat(totalToPay);
             paid = parseFloat(paid);
 
@@ -683,12 +698,11 @@ var Payment = function (models, event) {
                     if (project) {
                         event.emit('fetchInvoiceCollection', {project: project});
                     }
-                    if(isForSale){ //todo added in case of no last task
+                    if (isForSale) { //todo added in case of no last task
                         waterfallCallback(null, invoice, payment);
                     } else {
                         waterfallCallback(null, payment);
                     }
-
 
                 });
             });
@@ -767,7 +781,7 @@ var Payment = function (models, event) {
 
         waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
 
-        if ( isForSale && ((DbName === "production") || (DbName === "development")) ) { // todo added condition for purchase payment
+        if (isForSale && ((DbName === "production") || (DbName === "development"))) { // todo added condition for purchase payment
             waterfallTasks.push(updateWtrack);
         }
 
@@ -817,7 +831,7 @@ var Payment = function (models, event) {
         queryObject.$and = [];
 
         if (bonus) {
-           // queryObject.bonus = bonus; //todo this is case of no view purchase payments in supplier payments list length
+            // queryObject.bonus = bonus; //todo this is case of no view purchase payments in supplier payments list length
             supplier = 'Employees';
         }
 
@@ -905,12 +919,12 @@ var Payment = function (models, event) {
                 }
             }, {
                 $project: {
-                    supplier        : {$arrayElemAt: ["$supplier", 0]},
-                    invoice         : {$arrayElemAt: ["$invoice", 0]},
-                    paymentMethod   : {$arrayElemAt: ["$paymentMethod", 0]},
-                    forSale: 1,
-                    isExpense: 1,
-                    bonus: 1
+                    supplier     : {$arrayElemAt: ["$supplier", 0]},
+                    invoice      : {$arrayElemAt: ["$invoice", 0]},
+                    paymentMethod: {$arrayElemAt: ["$paymentMethod", 0]},
+                    forSale      : 1,
+                    isExpense    : 1,
+                    bonus        : 1
                 }
             }, {
                 $lookup: {
@@ -920,13 +934,13 @@ var Payment = function (models, event) {
                 }
             }, {
                 $project: {
-                    supplier        : 1,
-                    assigned        : {$arrayElemAt: ["$assigned", 0]},
-                    paymentMethod   : 1,
-                    invoice: 1,
-                    forSale: 1,
-                    isExpense: 1,
-                    bonus: 1
+                    supplier     : 1,
+                    assigned     : {$arrayElemAt: ["$assigned", 0]},
+                    paymentMethod: 1,
+                    invoice      : 1,
+                    forSale      : 1,
+                    isExpense    : 1,
+                    bonus        : 1
                 }
             }, {
                 $match: queryObject
@@ -1017,55 +1031,56 @@ var Payment = function (models, event) {
                                     //paymentInfo = invoice.get('paymentInfo');
 
                                     /*request = {
-                                        query  : {
-                                            source      : 'purchase',
-                                            targetSource: 'invoice'
-                                        },
-                                        session: req.session
-                                    };
-                                    if (invoice._type === 'wTrackInvoice') {
-                                        wId = 'Sales Invoice';
-                                    } else if (invoice._type === 'Proforma') {
-                                        wId = 'Proforma';
-                                        request.query = {};
-                                    } else {
-                                        wId = 'Purchase Invoice';
-                                    }
+                                     query  : {
+                                     source      : 'purchase',
+                                     targetSource: 'invoice'
+                                     },
+                                     session: req.session
+                                     };
+                                     if (invoice._type === 'wTrackInvoice') {
+                                     wId = 'Sales Invoice';
+                                     } else if (invoice._type === 'Proforma') {
+                                     wId = 'Proforma';
+                                     request.query = {};
+                                     } else {
+                                     wId = 'Purchase Invoice';
+                                     }
 
-                                    request.query.wId = wId;
+                                     request.query.wId = wId;
 
 
-                                    isNotFullPaid = paymentInfo.total > (paymentInfo.balance + paid);
+                                     isNotFullPaid = paymentInfo.total > (paymentInfo.balance + paid);
 
-                                    if (isNotFullPaid) {
-                                        request.query.status = 'In Progress';
-                                        request.query.order = 1;
-                                    } else {
-                                        request.query.status = 'New';
-                                        request.query.order = 1;
-                                    }*/
+                                     if (isNotFullPaid) {
+                                     request.query.status = 'In Progress';
+                                     request.query.order = 1;
+                                     } else {
+                                     request.query.status = 'New';
+                                     request.query.order = 1;
+                                     }*/
 
                                     /*workflowHandler.getFirstForConvert(request, function (err, workflow) {
-                                        if (err) {
-                                            return next(err);
-                                        }
+                                     if (err) {
+                                     return next(err);
+                                     }
 
-                                        workflowObj = workflow._id;*/
+                                     workflowObj = workflow._id;*/
 
-                                        /*paymentInfoNew.total = paymentInfo.total;
-                                        paymentInfoNew.taxes = paymentInfo.taxes;
-                                        paymentInfoNew.unTaxed = paymentInfoNew.total;
+                                    /*paymentInfoNew.total = paymentInfo.total;
+                                     paymentInfoNew.taxes = paymentInfo.taxes;
+                                     paymentInfoNew.unTaxed = paymentInfoNew.total;
 
-                                        if (paymentInfo.total !== paymentInfo.balance) {
-                                            paymentInfoNew.balance = paymentInfo.balance + paid;
-                                        } else {
-                                            paymentInfoNew.balance = paymentInfo.balance;
-                                        }*/
-                                        Invoice.findByIdAndUpdate(invoiceId,
-                                            {/*workflow   : workflowObj, paymentInfo: paymentInfoNew*/
-                                                paymentDate: data.date
-                                            },
-                                            {new: true}, function (err, result) {
+                                     if (paymentInfo.total !== paymentInfo.balance) {
+                                     paymentInfoNew.balance = paymentInfo.balance + paid;
+                                     } else {
+                                     paymentInfoNew.balance = paymentInfo.balance;
+                                     }*/
+                                    Invoice.findByIdAndUpdate(invoiceId,
+                                        {
+                                            /*workflow   : workflowObj, paymentInfo: paymentInfoNew*/
+                                            paymentDate: data.date
+                                        },
+                                        {new: true}, function (err, result) {
                                             if (err) {
                                                 return next(err);
                                             }
@@ -1160,7 +1175,7 @@ var Payment = function (models, event) {
                                 return next(err);
                             }
 
-                            invoices.forEach(function(inv) {
+                            invoices.forEach(function (inv) {
                                 Invoice.findByIdAndUpdate(inv._id, {$pull: {payments: removed._id}}, function (err, invoice) {
 
                                     var paymentInfo = invoice.get('paymentInfo');
@@ -1183,7 +1198,6 @@ var Payment = function (models, event) {
                                     }
 
                                     request.query.wId = wId;
-
 
                                     isNotFullPaid = paymentInfo.total > (paymentInfo.balance + paid);
 

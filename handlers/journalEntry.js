@@ -60,7 +60,7 @@ var Module = function (models) {
 
             Journal.findById(journalId, waterfallCb);
 
-        };
+        }
 
         function journalEntrySave(journal, waterfallCb) {
             oxr.historical(date, function () {
@@ -132,7 +132,7 @@ var Module = function (models) {
                     waterfallCb(null, result);
                 });
             });
-        };
+        }
 
         async.waterfall(waterfallTasks, function (err, response) {
             if (err) {
