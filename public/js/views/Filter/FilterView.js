@@ -39,7 +39,8 @@ define([
                 "click .removeSavedFilter"             : "removeFilterFromDB",
                 "click .removeValues"                  : "removeFilter",
                 "keydown #forFilterName"               : "keyDown",
-                "click .showLast"                      : "showManyFilters"   // toDO overflow for many filters
+                "click .showLast"                      : "showManyFilters",
+                "keydown #searchInput"                 : "deleteFilterByBackspace"
             },
 
             keyDown: function (e) {
@@ -48,8 +49,25 @@ define([
                 }
             },
 
+            deleteFilterByBackspace : function(e){
+                var searchInputVal;
+                var searchFilterContainer;
+
+                if (e.which === 8) {
+                    searchInputVal = $('#searchInput').text();
+                    if(searchInputVal.length === 0){
+                        searchFilterContainer = $('#searchFilterContainer').children('div:last');
+                        if(searchFilterContainer.length !== 0){
+                            e.target = searchFilterContainer.find('.removeValues');
+                            this.removeFilter(e);
+                        }
+                    }
+                }
+            },
+
             showManyFilters: function () {
                 this.$el.find('.forFilterIcons').slice(0, 3).toggle();
+                this.$el.find('#searchInput').focus();
             },
 
             initialize: function (options) {
@@ -369,14 +387,14 @@ define([
 
                     if (groupName.length > 0) {
                         filterIc.addClass('active');
-                        filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
-                        //filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                        //filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                        filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                     } else {
                         if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId')) {
                             groupName = 'Letter';
                             filterIc.addClass('active');
-                            filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
-                            //filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                            //filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                            filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                         }
                     }
                 });
