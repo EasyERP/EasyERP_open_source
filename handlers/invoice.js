@@ -641,7 +641,7 @@ var Invoice = function (models, event) {
     };
 
     this.getInvoiceById = function (req, res, next) {
-        var isWtrack = checkDb(req.session.lastDb);
+        var isWtrack = true;/*checkDb(req.session.lastDb);*/
         var moduleId = 56;
         var data = req.query || {};
         var id = data.id;
