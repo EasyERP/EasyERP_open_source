@@ -751,6 +751,7 @@ define([
                 var filterByDefault;
                 var viewType;
                 var savedID;
+                var filter;
 
                 this.$el.find('#favoritesContent').append(_.template(savedFilterTemplate));
 
