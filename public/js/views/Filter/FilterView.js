@@ -67,6 +67,7 @@ define([
 
             showManyFilters: function () {
                 this.$el.find('.forFilterIcons').slice(0, 3).toggle();
+                this.$el.find('#searchInput').focus();
             },
 
             initialize: function (options) {
