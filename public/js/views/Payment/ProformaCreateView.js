@@ -124,7 +124,7 @@ define([
             var self = this;
             var data;
             //FixMe change mid value to proper number after inserting it into DB
-            var mid = 56;
+            var mid = 95;
             var thisEl = this.$el;
             var invoiceModel = this.invoiceModel.toJSON();
             var supplier = thisEl.find('#supplierDd');
@@ -136,7 +136,8 @@ define([
             var paymentRef = thisEl.find('#paymentRef').val();
             var period = thisEl.find('#period').attr('data-id');
             var currency = {
-                _id: thisEl.find('#currencyDd').attr('data-id')
+                _id: thisEl.find('#currencyDd').attr('data-id'),
+                name: $.trim(thisEl.find('#currencyDd').text())
             };
 
             paymentMethod = paymentMethod || null;

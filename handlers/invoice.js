@@ -624,9 +624,9 @@ var Invoice = function (models, event) {
                         optionsObject.$and.push({expense: {$exists: false}});
 
                         if (baseUrl === '/Proforma') {
-                            optionsObject.$and.push({kind: 'Proforma'});
+                            optionsObject.$and.push({_type: 'Proforma'});
                         } else {
-                            optionsObject.$and.push({kind: {$exists: false}});
+                            optionsObject.$and.push({_type: {$ne: 'Proforma'}});
                         }
 
                         Invoice
@@ -689,7 +689,7 @@ var Invoice = function (models, event) {
                                     paymentDate     : 1,
                                     dueDate         : 1,
                                     payments        : 1,
-                                    kind            : 1
+                                    _type            : 1
                                 }
                             }, {
                                 $match: optionsObject
@@ -933,7 +933,7 @@ var Invoice = function (models, event) {
                                 Proforma.update(
                                     {
                                         sourceDocument: orderId,
-                                        kind: 'Proforma'
+                                        _type: 'Proforma'
                                     },
                                     {
                                         $set: {
@@ -1560,9 +1560,9 @@ var Invoice = function (models, event) {
                         optionsObject[condition].push({expense: {$exists: false}});
 
                         if (baseUrl === '/proforma') {
-                            optionsObject.$and.push({kind: 'Proforma'});
+                            optionsObject.$and.push({_type: 'Proforma'});
                         } else {
-                            optionsObject.$and.push({kind: {$exists: false}});
+                            optionsObject.$and.push({_type: {$ne: 'Proforma'}});
                         }
 
                         Invoice
@@ -1587,7 +1587,7 @@ var Invoice = function (models, event) {
                                     ammount    : {$divide: ['$paymentInfo.total', 100]},
                                     paid       : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]},
                                     balance    : {$divide: ['$paymentInfo.balance', 100]},
-                                    kind       : 1
+                                    _type       : 1
                                 }
                             }, {
                                 $match: optionsObject

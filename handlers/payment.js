@@ -2,6 +2,9 @@ var mongoose = require('mongoose');
 var async = require('async');
 var WorkflowHandler = require('./workflow');
 var _ = require('lodash');
+var oxr = require('open-exchange-rates');
+var fx = require('money');
+var moment = require('../public/js/libs/moment/moment');
 
 var CONSTANTS = require('../constants/modules');
 var MAINCONSTANTS = require('../constants/mainConstants');
@@ -18,6 +21,7 @@ var Payment = function (models, event) {
     var payrollSchema = mongoose.Schemas['PayRoll'];
     var JobsSchema = mongoose.Schemas['jobs'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+    var ProformaSchema = mongoose.Schemas['Proforma'];
     var payRollInvoiceSchema = mongoose.Schemas['payRollInvoice'];
     var InvoiceSchema = mongoose.Schemas['Invoice'];
     var DepartmentSchema = mongoose.Schemas['Department'];
@@ -25,6 +29,8 @@ var Payment = function (models, event) {
 
     var objectId = mongoose.Types.ObjectId;
     var waterfallTasks;
+
+    oxr.set({app_id: process.env.OXR_APP_ID});
 
     function checkDb(db) {
         var validDbs = ["weTrack", "production", "development"];
@@ -560,27 +566,56 @@ var Payment = function (models, event) {
 
     this.create = function (req, res, next) {
         var body = req.body;
-        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var PaymentSchema;
+        var Invoice;
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var workflowHandler = new WorkflowHandler(models);
         var invoiceId = body.invoice;
         var DbName = req.session.lastDb;
+        var date = body.date ? moment(body.date) : now;
         var mid = body.mid;
         var data = body;
         var isForSale = data.forSale;
         var project;
-        //var type = "Paid";
 
         delete  data.mid;
 
         var moduleId = returnModuleId(req);
         var Payment;
 
-        Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        date = date.format('YYYY-MM-DD');
+
+        if (mid === 56) {
+            PaymentSchema = mongoose.Schemas.InvoicePayment;
+            Payment = models.get(req.session.lastDb, 'InvoicePayment', PaymentSchema);
+            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        } else if (mid === 95) {
+            PaymentSchema = mongoose.Schemas.ProformaPayment;
+            Payment = models.get(req.session.lastDb, 'ProformaPayment', PaymentSchema);
+            Invoice = models.get(req.session.lastDb, 'Proforma', ProformaSchema);
+        }
 
         function fetchInvoice(waterfallCallback) {
-            Invoice.findById(invoiceId, waterfallCallback);
-        }
+            //Invoice.findById(invoiceId, waterfallCallback);
+
+            Invoice.aggregate([
+                {
+                    $match: {
+                        _id: objectId(invoiceId)
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'currency',
+                        localField  : 'currency._id',
+                        foreignField: '_id',
+                        as          : 'currency.obj'
+                    }
+                }
+            ], function(err, invoice) {
+                waterfallCallback(null, invoice[0]);
+            });
+        };
 
         function savePayment(invoice, waterfallCallback) {
             var payment = new Payment(data);
@@ -591,6 +626,8 @@ var Payment = function (models, event) {
             payment.groups = invoice.groups;
             payment.createdBy.user = req.session.uId;
             payment.editedBy.user = req.session.uId;
+
+            payment.currency.rate = oxr.rates[data.currency.name];
 
             payment.save(function (err, payment) {
                 if (err) {
@@ -603,6 +640,8 @@ var Payment = function (models, event) {
         function invoiceUpdater(invoice, payment, waterfallCallback) {
             var totalToPay = (invoice.paymentInfo) ? invoice.paymentInfo.balance : 0;
             var paid = payment.paidAmount;
+            var paymentCurrency = data.currency.name;
+            var invoiceCurrency = invoice.currency.obj[0].name;
             var isNotFullPaid;
             var wId;
             var payments;
@@ -615,6 +654,10 @@ var Payment = function (models, event) {
                 },
                 session: req.session
             };
+
+            invoice.payments = invoice.payments || [];
+
+            paid = fx(paid).from(paymentCurrency).to(invoiceCurrency);
 
             if (paymentDate === 'Invalid Date') {
                 paymentDate = new Date();
@@ -651,7 +694,7 @@ var Payment = function (models, event) {
                 }
 
                 invoice.workflow = workflow._id;
-                invoice.paymentInfo.balance = (totalToPay - paid) / 100;
+                invoice.paymentInfo.balance = totalToPay - paid;
                 // invoice.paymentInfo.unTaxed += paid / 100;// commented by Liliya forRoman
                 // invoice.paymentInfo.unTaxed = paid * (1 + invoice.paymentInfo.taxes);
                 invoice.payments.push(payment._id);
@@ -765,7 +808,15 @@ var Payment = function (models, event) {
 
         }
 
-        waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
+        function getRates(waterfallCallback) {
+            oxr.historical(date, function () {
+                fx.rates = oxr.rates;
+                fx.base = oxr.base;
+                waterfallCallback();
+            });
+        }
+
+        waterfallTasks = [getRates, fetchInvoice, savePayment, invoiceUpdater];
 
         if ( isForSale && ((DbName === "production") || (DbName === "development")) ) { // todo added condition for purchase payment
             waterfallTasks.push(updateWtrack);
@@ -784,6 +835,7 @@ var Payment = function (models, event) {
                 res.status(403).send();
             }
         });
+
     };
 
     this.totalCollectionLength = function (req, res, next) {

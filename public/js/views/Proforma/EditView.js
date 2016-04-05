@@ -87,6 +87,7 @@ define([
                             redirect  : self.redirect,
                             collection: self.collection,
                             currency  : currency,
+                            mid       : 95,
                             eventChannel: self.eventChannel
                         });
                     }

@@ -91,6 +91,7 @@ define([
                             model     : self.currentModel,
                             redirect  : self.redirect,
                             collection: self.collection,
+                            mid       : 56,
                             currency  : currency,
                             eventChannel: self.eventChannel
                         });

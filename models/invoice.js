@@ -75,9 +75,7 @@ module.exports = (function () {
         project : {type: ObjectId, ref: 'Project', default: null}
     });
 
-    var proformaSchema = jobsInvoiceSchema.extend({
-        kind : {type: String, default: 'Proforma'}
-    });
+    var proformaSchema = jobsInvoiceSchema.extend({});
 
     var payRollInvoiceSchema = baseSchema.extend({
         expense : {type: Boolean, default: true},

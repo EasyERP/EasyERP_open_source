@@ -135,7 +135,8 @@ define([
             var paymentRef = thisEl.find('#paymentRef').val();
             var period = thisEl.find('#period').attr('data-id');
             var currency = {
-                _id: thisEl.find('#currencyDd').attr('data-id')
+                _id: thisEl.find('#currencyDd').attr('data-id'),
+                name: $.trim(thisEl.find('#currencyDd').text())
             };
 
             paymentMethod = paymentMethod || null;
