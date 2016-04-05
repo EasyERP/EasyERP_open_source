@@ -32,11 +32,7 @@ module.exports = (function () {
         editedBy : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
-        },
-        currency: {
-            _id : {type: ObjectId, ref: 'currency', default: null},
-            rate: {type: Number, default: 1}
-        },
+        }
     }, {collection: 'Payment', discriminatorKey: '_type'});
 
     var PaymentSchema = basePaymentSchema.extend({
@@ -46,8 +42,16 @@ module.exports = (function () {
         supplier     : {type: ObjectId, ref: 'Customers', default: null},
         paymentMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
         period       : {type: ObjectId, ref: 'Destination', default: null},
-        bonus        : {type: Boolean}
+        bonus        : {type: Boolean},
+        currency: {
+            _id : {type: ObjectId, ref: 'currency', default: null},
+            rate: {type: Number, default: 1}
+        }
     });
+
+    var InvoicePaymentSchema = PaymentSchema.extend({});
+
+    var ProformaPaymentSchema = PaymentSchema.extend({});
 
     var salaryPaymentSchema = basePaymentSchema.extend({
         //invoice      : {
@@ -80,6 +84,8 @@ module.exports = (function () {
     });
 
     mongoose.model('Payment', PaymentSchema);
+    mongoose.model('InvoicePayment', InvoicePaymentSchema);
+    mongoose.model('ProformaPayment', ProformaPaymentSchema);
     mongoose.model('salaryPayment', salaryPaymentSchema);
     mongoose.model('wTrackPayOut', payOutSchema);
 
@@ -206,6 +212,8 @@ module.exports = (function () {
     }
 
     mongoose.Schemas.Payment = PaymentSchema;
+    mongoose.Schemas.InvoicePayment = InvoicePaymentSchema;
+    mongoose.Schemas.ProformaPayment = ProformaPaymentSchema;
     mongoose.Schemas.salaryPayment = salaryPaymentSchema;
     mongoose.Schemas.wTrackPayOut = payOutSchema;
 })();
