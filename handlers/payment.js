@@ -395,6 +395,25 @@ var Payment = function (models, event) {
             res.status(200).send({success: payments});
         });
     };
+    
+    this.amountLeftCalc = function (req, res, next) {
+        var data = req.query;
+        var diff;
+        var totalAmount = data.totalAmount;
+        var paymentAmount = data.paymentAmount;
+        var invoiceCurrency = data.invoiceCurrency;
+        var paymentCurrency = data.paymentCurrency;
+        var date = moment().format('YYYY-MM-DD');
+
+        oxr.historical(date, function () {
+            fx.rates = oxr.rates;
+            fx.base = oxr.base;
+            diff = totalAmount - fx(paymentAmount).from(paymentCurrency).to(invoiceCurrency);
+
+            res.status(200).send({difference: diff});
+        });
+        
+    };
 
     this.getForView = function (req, res, next) {
         var viewType = req.params.viewType;

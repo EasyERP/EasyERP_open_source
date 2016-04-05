@@ -15,7 +15,22 @@ define([
     "models/PaymentModel",
     "common",
     "populate",
-    'constants'], function (Backbone, $, _, CreateTemplate, PersonCollection, DepartmentCollection, invoiceCollection, paymentCollection, PaymentView, /*invoiceView, */PaymentModel, common, populate, constants) {
+    'dataService',
+    'constants'], function (Backbone,
+                            $,
+                            _,
+                            CreateTemplate,
+                            PersonCollection,
+                            DepartmentCollection,
+                            invoiceCollection,
+                            paymentCollection,
+                            PaymentView,
+                            /*invoiceView, */
+                            PaymentModel,
+                            common,
+                            populate,
+                            dataService,
+                            constants) {
     var CreateView = Backbone.View.extend({
         el         : "#paymentHolder",
         contentType: "Payment",
@@ -41,6 +56,8 @@ define([
 
             this.currency = options.currency || {};
 
+            this.changePaidAmount = _.debounce(this.changePaidAmount, 500);
+
 
             this.render();
         },
@@ -51,7 +68,7 @@ define([
             "click"                                            : "hideNewSelect",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .newSelectList li.miniStylePagination"      : "notHide",
-            "change #paidAmount"                               : "changePaidAmount",
+            "keyup #paidAmount"                                : "changePaidAmount",
 
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
@@ -66,26 +83,37 @@ define([
         },
 
         changePaidAmount: function (e) {
-            var targetEl = $(e.target);
-            var changedValue = targetEl.val();
+            var self = this;
+            var targetEl = $('#paidAmount');
+            var changedValue = $.trim(targetEl.val());
+            var currency = $.trim(this.$el.find('#currencyDd').text());
             var differenceAmountContainer = this.$el.find('#differenceAmountContainer');
             var differenceAmount = differenceAmountContainer.find('#differenceAmount');
             var totalAmount = parseFloat(this.totalAmount);
-            var difference;
+            var data = {};
 
             changedValue = parseFloat(changedValue);
-            difference = totalAmount - changedValue;
 
-            if (changedValue < totalAmount) {
-                differenceAmount.text(difference.toFixed(2));
-                this.differenceAmount = difference;
+            data.totalAmount = totalAmount;
+            data.paymentAmount = changedValue;
+            data.invoiceCurrency = this.currency.name;
+            data.paymentCurrency = currency;
 
-                return differenceAmountContainer.removeClass('hidden');
-            }
+            dataService.getData(constants.URLS.PAYMENT_AMOUNT_LEFT, data,
+                function(res, self) {
+                    if (res.difference) {
+                        differenceAmount.text(res.difference.toFixed(2));
+                        self.differenceAmount = res.difference;
 
-            if (!differenceAmountContainer.hasClass('hidden')) {
-                return differenceAmountContainer.addClass('hidden');
-            }
+                        return differenceAmountContainer.removeClass('hidden');
+                    }
+
+                    if (!differenceAmountContainer.hasClass('hidden')) {
+                        return differenceAmountContainer.addClass('hidden');
+                    }
+            }, self);
+
+            App.stopPreload();
         },
 
         showNewSelect: function (e, prev, next) {
@@ -103,6 +131,8 @@ define([
 
         chooseOption: function (e) {
             $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
+            this.changePaidAmount();
         },
 
         keydownHandler: function (e) {
