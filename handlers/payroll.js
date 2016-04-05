@@ -474,7 +474,7 @@ var PayRoll = function (models) {
                     $or: [{
                         $and: [{
                             isEmployee: true
-                        }, {
+                        }, /*{ // commented in case of employee that was fired and again hired
                             $or: [{
                                 lastFire: null
                             }, {
@@ -483,7 +483,7 @@ var PayRoll = function (models) {
                                     $gte: startDateKey
                                 }
                             }]
-                        }, {
+                        },*/{
                             firstHire: {
                                 $ne : null,
                                 $lte: endDateKey
