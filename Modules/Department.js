@@ -102,7 +102,7 @@ var Department = function (event, models) {
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'Department', DepartmentSchema).find();
-        query.select('_id departmentName nestingLevel parentDepartment');
+        query.select('_id departmentName nestingLevel parentDepartment departmentManager');
         query.sort({departmentName: 1});
         query.exec(function (err, departments) {
             if (err) {

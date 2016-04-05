@@ -388,10 +388,6 @@ var Employee = function (models) {
      *        "jobType": null,
      *        "gender": "male",
      *        "marital": "unmarried",
-     *        "contractEnd": {
-     *            "date": "2015-07-29T19:34:42.405Z",
-     *            "reason": ""
-     *            },
      *        "attachments": [],
      *        "editedBy": {
      *            "date": "2015-08-18T05:55:15.458Z",

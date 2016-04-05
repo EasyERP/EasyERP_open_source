@@ -44,16 +44,10 @@
                         });
                     }
 
-                    if (response.hire) {
-                        response.hire = _.map(response.hire, function (hire) {
-                            hire.date = common.utcDateToLocaleDate(hire.date);
-                            return hire;
-                        });
-                    }
-                    if (response.fire) {
-                        response.fire = _.map(response.fire, function (fire) {
-                            fire.date = common.utcDateToLocaleDate(fire.date);
-                            return fire;
+                    if (response.transfer) {
+                        response.transfer = _.map(response.transfer, function (transfer) {
+                            transfer.date = common.utcDateToLocaleDate(transfer.date);
+                            return transfer;
                         });
                     }
                 }

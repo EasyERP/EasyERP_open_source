@@ -5,6 +5,7 @@
                 <ul class="dialog-tabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;" class="">Personal Information</a></li>
+                    <li><a href="javascript:;" class="">Job</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
                 </ul>
                 <div class="clearfix"></div>
@@ -48,22 +49,7 @@
                             </div>
                             <div class="half-block left">
                                 <dl class="create-employee-info">
-                                    <dt><label for="jobPositionDd">Job position</label></dt>
-                                    <dd>
-                                        <a id="jobPositionDd" class="current-selected" href="javascript:;"></a>
-                                    </dd>
-                                    <dt><label for="departmentsDd">Department</label></dt>
-                                    <dd>
-                                        <a id="departmentsDd" class="current-selected" href="javascript:;"></a>
-                                    </dd>
-                                    <dt><label for="projectManagerDD">Manager</label></dt>
-                                    <dd>
-                                        <a id="projectManagerDD" class="current-selected" href="javascript:;"></a>
-                                    </dd>
-                                    <dt><label for="jobTypeDd">Job type</label></dt>
-                                    <dd>
-                                        <a id="jobTypeDd" data-id="Full-time" class="current-selected" href="javascript:;">Full-time</a>
-                                    </dd>
+
                                     <dt><label for="sourceDd">Source </label></dt>
                                     <dd>
                                         <a id="sourceDd" data-id="www.rabota.ua" class="current-selected"
@@ -184,13 +170,6 @@
                             <div class="clearfix"></div>
                         </div>
 
-                        <div class="half-block left withPaddingLeft">
-                            <dt><label>Hire</label></dt>
-                            <dd><input type="text" name="hire" id="hire"
-                                       value="<%= dateFormat(new Date(), 'd mmm, yyyy', false) %>" required readonly/>
-                            </dd>
-
-                        </div>
                         <div class="clearfix"></div>
                         <div class="formTitle">
                             <h3 class="left">
@@ -214,6 +193,68 @@
                         </div>
                         <div class="clearfix"></div>
 
+                    </div>
+                    <div class="clearfix"></div>
+                    <div class="dialog-tabs-item" id="job">
+                        <div class="clearfix"></div>
+
+                        <table class="list" id="hireFireTable">
+                            <thead>
+                            <tr>
+                                <th>X</th>
+                                <th>Status</th>
+                                <th>Date</th>
+                                <th>Job position</th>
+                                <th>Department</th>
+                                <th>Manager</th>
+                                <th>Job Type</th>
+                                <th>Salary</th>
+                                <th>Status info</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+
+                            <tr class="transfer" data-id="0" data-content="hired">
+                                <td class="remove">
+                                </td>
+                                <td>hired</td>
+                                <td class="editable date"><%= dateFormat(new Date(), 'd mmm, yyyy', false) %></td>
+                                <td>
+                                    <a id="jobPositionDd" class="current-selected"
+                                       data-id="null"
+                                       href="javascript:;">
+                                        Select
+                                    </a>
+                                </td>
+                                <td>
+                                    <a id="departmentsDd" class="current-selected"
+                                       data-id="null"
+                                       href="javascript:;">
+                                        Select
+                                    </a>
+                                </td>
+                                <td>
+                                    <a id="projectManagerDD" class="current-selected"
+                                       data-id="null"
+                                       href="javascript:;">
+                                        Select
+                                    </a>
+                                </td>
+                                <td>
+                                    <a id="jobTypeDd" class="current-selected"
+                                       data-id=""
+                                       href="javascript:;">
+                                        Select
+                                    </a>
+                                </td>
+                                <td class="editable" data-id="salary"></td>
+                                <td>
+                                    <input id="statusInfoDd" class="statusInfo" data-id=""/>
+                                </td>
+                            </tr>
+
+                            </tbody>
+                        </table>
                     </div>
                     <div class="dialog-tabs-item">
                         <div class="assignees-container"></div>

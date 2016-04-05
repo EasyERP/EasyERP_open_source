@@ -15,7 +15,7 @@ var Department = function (models) {
 
         Department
             .find()
-            .select('_id departmentName')
+            .select('_id departmentName departmentManager')
             .sort({departmentName: 1})
             .lean()
             .exec(function (err, departments) {
