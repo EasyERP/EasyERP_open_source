@@ -26,8 +26,8 @@ define([
             searchGroupTemplate: _.template(searchGroupLiTemplate),
 
             events: {
-                "mouseover .search-content"            : 'showSearchContent',
-                "mouseleave .search-options"           : 'showSearchContent',
+                //"mouseover .search-content"            : 'showSearchContent',
+                //"mouseleave .search-options"           : 'showSearchContent',
                 "click .search-content"                : 'showSearchContent',
                 "click .filter-dialog-tabs .filterTabs": 'showFilterContent',
                 'click #applyFilter'                   : 'applyFilter',
