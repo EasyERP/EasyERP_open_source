@@ -296,6 +296,10 @@ var Project = function (models, event) {
                     }
                     if (data.projectmanager) {
                         _project.projectmanager = data.projectmanager;
+                        _project.salesManagers = [{
+                            manager: data.projectmanager,
+                            date   : data.StartDate || new Date().toString()
+                        }];
                     }
 
                     if (data.notes) {
@@ -995,7 +999,8 @@ var Project = function (models, event) {
             .populate('budget.projectTeam')
             .populate('projectmanager', '_id name fullName')
             .populate('customer', '_id name fullName')
-            .populate('workflow', '_id name');
+            .populate('workflow', '_id name')
+            .populate('salesManagers.manager', '_id name fullName');
 
         query.exec(function (err, project) {
             if (err) {
@@ -1372,6 +1377,9 @@ var Project = function (models, event) {
         }
         if (data.workflow) {
             data.workflow = data.workflow;
+        }
+        if (data.salesManagers && data.salesManagers.length) {
+            data.projectmanager = data.salesManagers[data.salesManagers.length - 1].manager;
         }
 
         if (data.notes && data.notes.length != 0 && !remove) {

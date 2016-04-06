@@ -9,6 +9,7 @@
             <li><a href="javascript:;" class="" id="paymentsTab">Payments</a></li>
             <li><a href="javascript:;" class="" id="commentsTab">Comments</a></li>
             <li><a href="javascript:;" class="" id="bonusTab">Bonus</a></li>
+            <li><a href="javascript:;" class="" id="salesManagersTab">Sales Managers</a></li>
             <li><a href="javascript:;" class="" id="assigneesTab">Assignees</a></li>
         </ul>
         <div class="clearfix"></div>
@@ -31,11 +32,10 @@
                                    id="projectShortDesc" required value="<%=model.projectShortDesc%>" maxlength="32"/>
                         </dd>
                         <dt>
-                            <label for="projectManagerDD">Sales Manager</label>
+                            <label for="projectManager">Sales Manager</label>
                         </dt>
                         <dd>
-                            <a id="projectManagerDD" data-id="<%=model.projectmanager?model.projectmanager._id:''%>"
-                               class="current-selected" href="javascript:;"><%=model.projectmanager?(model.projectmanager.fullName):'Select'%></a>
+                            <a id="projectManager" data-id="<%=model.projectmanager?model.projectmanager._id:''%>" href="javascript:;"><%=model.projectmanager?(model.projectmanager.fullName):''%></a>
                         </dd>
 
                         <dt><label for="projectTypeDD">Project Type </label></dt>
@@ -132,6 +132,12 @@
             <div class="dialog-tabs-item">
                 <div id="bonus">
                     <div id="bonus-container"></div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="dialog-tabs-item">
+                <div id="salesManagers">
+                    <div id="salesManagers-container"></div>
                 </div>
             </div>
             <div class="clearfix"></div>

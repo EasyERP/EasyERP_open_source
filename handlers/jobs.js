@@ -233,11 +233,14 @@ var Jobs = function (models, event) {
         var data = req.query;
         var forDashboard = data.forDashboard;
         var sort = {"budget.budgetTotal.costSum": -1};
-        var count = parseInt(data.count, 10) || 100;
+        var count = parseInt(data.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = parseInt(data.page, 10);
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var skip;
 
         var filter = data ? data.filter : {};
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (data.sort) {
             sort = {};

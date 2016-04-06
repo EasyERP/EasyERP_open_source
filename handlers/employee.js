@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var async = require('async');
+var objectId = mongoose.Types.ObjectId;
 
 var Employee = function (models) {
     'use strict';
@@ -11,6 +12,7 @@ var Employee = function (models) {
     var ProjectSchema = mongoose.Schemas.Project;
     var _ = require('underscore');
     var moment = require('../public/js/libs/moment/moment');
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
@@ -20,29 +22,59 @@ var Employee = function (models) {
 
     this.getNameAndDepartment = getNameAndDepartment;
 
-    function getNameAndDepartment(db, isEmployee, callback) {
+    function getNameAndDepartment(db, query, callback) {
         var Employee = models.get(db, 'Employees', EmployeeSchema);
-        var query;
+        var matchQuery = {};
 
-        if (isEmployee) {
-            query = Employee.find({isEmployee: true});
-        } else {
-            query = Employee.find();
+        if (query) {
+            if (query.devDepartments) {
+                matchQuery['department.parentDepartment'] = objectId(CONSTANTS.PARENT_DEV);
+            }
+            if (query.isEmployee) {
+                matchQuery.isEmployee = true;
+            }
+            if (query.salesDepartments) {
+                matchQuery['department._id'] = {$in: CONSTANTS.SALESDEPARTMENTS.objectID()};
+            }
         }
 
-        query
-            .select('_id name department isEmployee')
-            .populate('department', 'departmentName _id')
-            .sort({'name.first': 1})
-            .lean()
-            .exec(function (err, employees) {
-                if (err) {
-                    return callback(err);
+        Employee.aggregate([
+            {
+                $project: {
+                    name      : 1,
+                    department: 1,
+                    isEmployee: 1
                 }
+            },
+            {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id',
+                    as          : 'department'
+                }
+            },
+            {
+                $project: {
+                    department: {$arrayElemAt: ['$department', 0]},
+                    isEmployee: 1,
+                    name      : 1
+                }
+            },
+            {
+                $match : matchQuery
+            },
+            {
+                $sort : {'name.first' : 1}
+            }
+        ], function (err, employees) {
+            if (err) {
+                return callback(err);
+            }
 
-                callback(null, employees);
-            });
-    };
+            callback(null, employees);
+        });
+    }
 
     this.getSalaryByMonth = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -109,9 +141,9 @@ var Employee = function (models) {
     };
 
     this.getForDD = function (req, res, next) {
-        var isEmployee = req.query.isEmployee;
+        var query = req.query;
 
-        getNameAndDepartment(req.session.lastDb, isEmployee, function (err, result) {
+        getNameAndDepartment(req.session.lastDb, query, function (err, result) {
             if (err) {
                 return next(err);
             }

@@ -2,8 +2,11 @@ var mongoose = require('mongoose');
 var async = require('async');
 
 var MonthHours = function (event, models) {
+    'use strict';
+
     var MonthHoursSchema = mongoose.Schemas['MonthHours'];
     var access = require("../Modules/additions/access.js")(models);
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     this.create = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
@@ -84,10 +87,13 @@ var MonthHours = function (event, models) {
     this.getList = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var sort = {};
-        var count = req.query.count ? req.query.count : 100;
+        var count = parseInt(req.query.count, 10) ||  CONSTANTS.DEF_LIST_COUNT;
         var page = req.query.page;
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var skip;
         var query = req.query;
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
             sort = query.sort;

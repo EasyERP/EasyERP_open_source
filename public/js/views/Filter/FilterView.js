@@ -26,8 +26,8 @@ define([
             searchGroupTemplate: _.template(searchGroupLiTemplate),
 
             events: {
-                "mouseover .search-content"            : 'showSearchContent',
-                "mouseleave .search-options"           : 'showSearchContent',
+                //"mouseover .search-content"            : 'showSearchContent',
+                //"mouseleave .search-options"           : 'showSearchContent',
                 "click .search-content"                : 'showSearchContent',
                 "click .filter-dialog-tabs .filterTabs": 'showFilterContent',
                 'click #applyFilter'                   : 'applyFilter',
@@ -751,6 +751,7 @@ define([
                 var filterByDefault;
                 var viewType;
                 var savedID;
+                var filter;
 
                 this.$el.find('#favoritesContent').append(_.template(savedFilterTemplate));
 
