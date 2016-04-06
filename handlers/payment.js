@@ -349,7 +349,7 @@ var Payment = function (models, event) {
 
     this.getAll = function (req, res, next) {
         //this temporary unused
-        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);;
+        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         var query = {};
 
         Payment.find(query, function (err, payments) {

@@ -860,7 +860,7 @@ var Invoice = function (models, event) {
 
                         async.parallel([paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks], function (err, result) {
                             if (err) {
-                                next(err);
+                               return next(err);
                             }
                         });
 
