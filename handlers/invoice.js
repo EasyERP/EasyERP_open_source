@@ -467,7 +467,7 @@ var Invoice = function (models, event) {
                 if (access) {
                     Invoice = models.get(db, 'Invoice', InvoiceSchema);
 
-                    count = parseInt(query.count) ? parseInt(query.count) : CONSTANTS.DEF_LIST_COUNT;
+                    count = parseInt(query.count) || CONSTANTS.DEF_LIST_COUNT;
                     page = parseInt(query.page);
 
                     count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;

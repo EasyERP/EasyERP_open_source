@@ -97,7 +97,7 @@ var BonusType = function (models) {
 
         bonusTypeModel.find().count(function (err, count) {
             if (err) {
-                next(err);
+              return next(err);
             }
             res.status(200).send({count: count});
 
