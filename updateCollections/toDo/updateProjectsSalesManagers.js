@@ -103,7 +103,7 @@ query.exec(function (error, _res) {
             salesManagers: salesMananagers
         };
 
-        Project.update({_id: project._id}, objectToSave, callback);
+        Project.update({_id: project._id}, {$set: objectToSave}, callback);
 
         callback();
     }, function (err) {
