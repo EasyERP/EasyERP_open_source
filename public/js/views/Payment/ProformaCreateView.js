@@ -90,7 +90,9 @@ define([
             var differenceAmountContainer = this.$el.find('#differenceAmountContainer');
             var differenceAmount = differenceAmountContainer.find('#differenceAmount');
             var totalAmount = parseFloat(this.totalAmount);
+            var date = $('#paymentDate').val();
             var data = {};
+            data.date = date;
 
             changedValue = parseFloat(changedValue);
 
@@ -257,7 +259,10 @@ define([
                 dateFormat : "d M, yy",
                 changeMonth: true,
                 changeYear : true,
-                maxDate    : 0
+                maxDate    : 0,
+                onSelect   : function () {
+                    self.changePaidAmount();
+                }
             }).datepicker('setDate', new Date())
                 .datepicker('option', 'minDate', model.invoiceDate);
 

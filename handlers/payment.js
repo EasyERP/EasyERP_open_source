@@ -399,11 +399,13 @@ var Payment = function (models, event) {
     this.amountLeftCalc = function (req, res, next) {
         var data = req.query;
         var diff;
+        var date = data.date;
         var totalAmount = data.totalAmount;
         var paymentAmount = data.paymentAmount;
         var invoiceCurrency = data.invoiceCurrency;
         var paymentCurrency = data.paymentCurrency;
-        var date = moment().format('YYYY-MM-DD');
+
+        date = moment(date).format('YYYY-MM-DD');
 
         oxr.historical(date, function () {
             fx.rates = oxr.rates;
