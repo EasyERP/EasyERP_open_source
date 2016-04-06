@@ -443,6 +443,8 @@ define([
 
 
                 $.each($jobTrs, function (index, $tr) {
+                    var $previousTr;
+
                     $tr = $($tr);
                     salary = self.isSalary ? parseInt($tr.find('[data-id="salary"]').text()) : null;
                     manager = $tr.find('#projectManagerDD').attr('data-id') || null;
@@ -453,8 +455,25 @@ define([
                     info = $tr.find('#statusInfoDd').val();
                     event = $tr.attr('data-content');
 
-                    if (!previousDep){
-                        //
+                    if (!previousDep) {
+                        previousDep = department;
+                    }
+
+                    if (previousDep !== department) {
+                        $previousTr = $jobTrs[index - 1];
+
+                        transferArray.push({
+                            status     : 'transfer',
+                            date       : date,
+                            department : previousDep,
+                            jobPosition: $previousTr.find('#jobPositionDd').attr('data-id') || null,
+                            manager    : $previousTr.find('#projectManagerDD').attr('data-id') || null,
+                            jobType    : $.trim($previousTr.find('#jobTypeDd').text()),
+                            salary     : salary,
+                            info       : $previousTr.find('#statusInfoDd').val()
+                        });
+
+                        previousDep = department;
                     }
 
                     transferArray.push({
