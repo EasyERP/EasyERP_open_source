@@ -44,22 +44,13 @@
                                         <% } %>
                                     </label></dt>
                                     <dd>
-                                        <%if(hidePrAndCust){%>
-                                        <span id="supplierDd" data-id="<%=model.supplier._id%>"><%=model.supplier.fullName%></span>
-                                        <%} else {%>
-                                        <a id="supplierDd" class="current-selected" href="javascript:;" data-id="<%=model.supplier._id%>"><%=model.supplier.name.first + ' ' + model.supplier.name.last%></a>
-                                        <% } %>
+                                        <span id="supplierDd" data-id="<%=model.supplier._id%>"><%=model.supplier.name.first + ' ' + model.supplier.name.last%></span>
                                     </dd>
 
                                     <%if (this.forSales) {%>
                                     <dt><label for="projectDd">Project</label></dt>
                                     <dd>
-                                        <%if(hidePrAndCust){%>
                                         <span id="projectDd" data-id="<%=model.project._id%>"><%=model.project.projectName%></span>
-                                        <%} else {%>
-                                        <a id="projectDd" class="current-selected" href="javascript:;" data-id="<%=model.project._id%>"><%=model.project.projectName%></a>
-                                        <% } %>
-
                                     </dd>
                                     <% } %>
                                 </dl>

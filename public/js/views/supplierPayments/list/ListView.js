@@ -185,6 +185,19 @@ define([
                 return false;
             },
 
+            recalcTotal: function () {
+                var paid = 0;
+                var amount = 0;
+
+                _.each(this.collection.toJSON(), function (model) {
+                    paid += parseFloat(model.paid);
+                    amount += parseFloat(model.paidAmount);
+                });
+
+                this.$el.find('#totalPaid').text(helpers.currencySplitter(paid.toFixed(2)));
+                this.$el.find('#totalAmount').text(helpers.currencySplitter(amount.toFixed(2)));
+            },
+
             showNewSelect: function (e) {
                 var $target = $(e.target);
                 e.stopPropagation();

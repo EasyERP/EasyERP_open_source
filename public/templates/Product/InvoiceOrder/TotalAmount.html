@@ -14,7 +14,7 @@
         <td>
                 <span><span id="totalUntaxes">
                     <%if (model && model.paymentInfo && model.paymentInfo.unTaxed) {%>
-                        <%=(model.paymentInfo.unTaxed)%>
+                        <%=currencySplitter(model.paymentInfo.unTaxed.toString())%>
                     <%} else {%>
                         0.00
                     <%}%>
@@ -28,7 +28,7 @@
         <td>
                 <span><span id="taxes">
                     <%if (model && model.paymentInfo && model.paymentInfo.taxes) {%>
-                        <%=(model.paymentInfo.taxes)%>
+                        <%=currencySplitter(model.paymentInfo.taxes.toString())%>
                     <%} else {%>
                         0.00
                     <%}%>
@@ -42,7 +42,7 @@
         <td>
                 <span class=""><span id="totalAmount">
                     <%if (model && model.paymentInfo && model.paymentInfo.total) {%>
-                        <%=(model.paymentInfo.total)%>
+                        <%=currencySplitter(model.paymentInfo.total.toString())%>
                     <%} else {%>
                         0.00
                     <%}%>

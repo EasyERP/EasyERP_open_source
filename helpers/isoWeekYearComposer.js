@@ -1,7 +1,7 @@
 var moment = require('../public/js/libs/moment/moment');
 
 module.exports = function (wTrackObject) {
-    "use strict";
+    'use strict';
 
     var year = wTrackObject.year;
     var month = wTrackObject.month;

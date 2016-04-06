@@ -19,7 +19,8 @@ var wTrack = function (models) {
         '55b92ace21e4b7c40f000012',
         '55b92ace21e4b7c40f000011',
         '55bb1f14cb76ca630b000006',
-        '55bb1f40cb76ca630b000007'
+        '55bb1f40cb76ca630b000007',
+        '56e175c4d62294582e10ca68'
     ];
 
     var objectId = mongoose.Types.ObjectId;
@@ -29,11 +30,8 @@ var wTrack = function (models) {
     var EmployeeSchema = mongoose.Schemas.Employee;
     var HolidaySchema = mongoose.Schemas.Holiday;
     var VacationSchema = mongoose.Schemas.Vacation;
-    //var vacationCacheSchema = mongoose.Schemas.vacationCacheSchema;
 
     this.composeForVacation = function (req, res, next) {
-        console.time('dash');
-
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var query = req.query;
@@ -41,7 +39,9 @@ var wTrack = function (models) {
         var filter = query.filter || {};
         var departmentsArray = [objectId(CONSTANTS.HR_DEPARTMENT_ID),
             objectId(CONSTANTS.BUSINESS_DEPARTMENT_ID),
-            objectId(CONSTANTS.MARKETING_DEPARTMENT_ID)];
+            objectId(CONSTANTS.MARKETING_DEPARTMENT_ID),
+            objectId(CONSTANTS.PM_ID)
+        ];
         var departmentQuery = {
             $nin: departmentsArray
         };
@@ -62,7 +62,7 @@ var wTrack = function (models) {
         var key;
         var i;
 
-        function getDate(dateStr){
+        function getDate(dateStr) {
             return dateStr.isoWeekday(5).format("DD.MM");
         }
 
@@ -96,7 +96,7 @@ var wTrack = function (models) {
             week = _dateStr.isoWeek();
             year = _dateStr.isoWeekYear();
             weeksArr.push({
-                lastDate: getDate(/*week, year*/_dateStr),
+                lastDate  : getDate(_dateStr),
                 dateByWeek: year * 100 + week,
                 week      : week,
                 year      : year
@@ -114,7 +114,7 @@ var wTrack = function (models) {
 
         employeeQueryForEmployeeByDep = {
             $and: [{
-                $or         : [{
+                $or       : [{
                     $and: [{
                         isEmployee: true
                     }, {
@@ -140,10 +140,14 @@ var wTrack = function (models) {
                             $ne : null,
                             $gte: startDate
                         }
+                    }, {
+                        lastHire: {
+                            $ne : null,
+                            $lte: endDate
+                        }
                     }]
-                }
-                ],
-                'department': departmentQuery
+                }],
+                department: departmentQuery
             }]
         };
 
@@ -180,6 +184,14 @@ var wTrack = function (models) {
 
             function departmentMapper(department, departmentCb) {
                 var dashDepartment = _.find(dashBoardResult, function (deps) {
+                    // todo fix this bad low code after add logic transfer employee
+
+                    // bad low code start
+                    function unityWpChecker(dep1, dep2) {
+
+                    }
+
+                    // bad low code end
                     return deps.department.toString() === department.department.toString();
                 });
 
@@ -285,12 +297,12 @@ var wTrack = function (models) {
                     resultData.sortDepartments = sortDepartments;
 
                     res.status(200).send(resultData);
-                    console.timeEnd('dash');
                     redisStore.writeToStorage('dashboardVacation', key, JSON.stringify(resultData));
                 });
             }
 
             async.each(employeesByDep, departmentMapper, sendResponse);
+            // res.status(200).send(employeesByDep);
         }
 
         function holidaysComposer(parallelCb) {
@@ -390,36 +402,68 @@ var wTrack = function (models) {
                 }
             }, {
                 $project: {
-                    isEmployee: 1,
-                    department: 1,
-                    isLead    : 1,
-                    fire      : 1,
-                    hire      : 1,
-                    name      : 1,
-                    lastFire  : 1,
-                    hireCount : {$size: '$hire'},
-                    lastHire  : {
+                    isEmployee  : 1,
+                    department  : 1,
+                    isLead      : 1,
+                    fire        : 1,
+                    hire        : 1,
+                    name        : 1,
+                    lastFire    : 1,
+                    transfer    : 1,
+                    lastTransfer: {$max: '$transfer'},
+                    hireCount   : {$size: '$hire'},
+                    lastHire    : {
                         $let: {
                             vars: {
                                 lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
                             },
-                            in  : {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
+                            in  : {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
                         }
                     }
                 }
             }, {
                 $match: employeeQueryForEmployeeByDep
             }, {
+                $unwind: '$transfer'
+            }, {
                 $group: {
-                    _id      : "$department",
+                    _id              : {
+                        _id       : '$_id',
+                        department: '$transfer.department',
+                        isEmployee: '$isEmployee',
+                        isLead    : '$isLead'
+                    },
+                    firstTransferDate: {$min: '$transfer.date'},
+                    lastTransferDate : {$max: '$transfer.date'},
+                    name             : {$first: {$concat: ['$name.first', ' ', '$name.last']}},
+                    lastTransfer     : {$first: '$lastTransfer'},
+                    lastHire         : {$first: '$lastHire'}
+                }
+            }, {
+                $project: {
+                    department       : '$_id.department',
+                    isEmployee       : '$_id.isEmployee',
+                    isLead           : '$_id.isLead',
+                    _id              : '$_id._id',
+                    firstTransferDate: 1,
+                    lastTransferDate : 1,
+                    lastTransfer     : 1,
+                    name             : 1,
+                    lastHire         : 1
+                }
+            }, {
+                $group: {
+                    _id      : '$department',
                     employees: {
-                        $push: {
-                            isLead  : '$isLead',
-                            fired   : '$fire',
-                            hired   : '$hire',
-                            lastHire: '$lastHire',
-                            name    : {$concat: ['$name.first', ' ', '$name.last']},
-                            _id     : '$_id'
+                        $addToSet: {
+                            isEmployee       : '$isEmployee',
+                            isLead           : '$isLead',
+                            firstTransferDate: '$firstTransferDate',
+                            lastTransferDate : '$lastTransferDate',
+                            lastHire         : '$lastHire',
+                            lastTransfer     : '$lastTransfer',
+                            name             : '$name',
+                            _id              : '$_id'
                         }
                     }
                 }
@@ -691,7 +735,7 @@ var wTrack = function (models) {
                         fire          : 1,
                         name          : 1,
                         firedCount    : 1,
-                        firstHiredDate: '$firstHired.date'
+                        firstHiredDate: '$firstHired'
                     }
                 },
                     {
@@ -737,11 +781,11 @@ var wTrack = function (models) {
         function firedEmployees(parallelCb) {
             Employee
                 .aggregate([
-                    {
+                   /* {
                         $match: {
-                            $and: [{'fire.date': {$gte: startDate}}, {'fire.date': {$lte: endDate}}]
+                            $and: [{'fire': {$gte: startDate}}, {'fire': {$lte: endDate}}]
                         }
-                    },
+                    },*/
                     {
                         $project: {
                             isEmployee: 1,
@@ -775,14 +819,14 @@ var wTrack = function (models) {
                         $unwind: '$fire'
                     }, {
                         $match: {
-                            'fire.date': {$gte: startDate, $lte: endDate}
+                            fire: {$gte: startDate, $lte: endDate}
                         }
                     }, {
                         $project: {
                             isEmployee: 1,
                             department: 1,
                             isLead    : 1,
-                            fireDate  : {$add: [{$multiply: [{$year: '$fire.date'}, 100]}, {$month: '$fire.date'}]},
+                            fireDate  : {$add: [{$multiply: [{$year: '$fire'}, 100]}, {$month: '$fire'}]},
                             name      : 1
                         }
                     }, {

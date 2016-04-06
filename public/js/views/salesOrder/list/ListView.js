@@ -11,10 +11,11 @@ define([
         'collections/salesQuotation/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'dataService'
+        'dataService',
+        'helpers'
     ],
 
-    function (listViewBase, listTemplate, listForWTrack, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService) {
+    function (listViewBase, listTemplate, listForWTrack, stagesTamplate, createView, listItemView, listTotalView, editView, quotationModel, contentCollection, filterView, common, dataService, helpers) {
         var OrdersListView = listViewBase.extend({
 
             createView              : createView,
@@ -106,6 +107,16 @@ define([
                 return false;
             },
 
+            recalcTotal: function () {
+                var total = 0;
+
+                _.each(this.collection.toJSON(), function (model) {
+                    total += parseFloat(model.paymentInfo.total);
+                });
+
+                this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
+            },
+
             showNewSelect: function (e) {
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
@@ -139,7 +150,7 @@ define([
                 }).render());
 
                 //added two parameters page and items number
-                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 4}).render());
+                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 5}).render());
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);

@@ -1,5 +1,7 @@
 var mongoose = require('mongoose');
 var Products = function (models) {
+        'use strict';
+
         var access = require("../Modules/additions/access.js")(models);
         var rewriteAccess = require('../helpers/rewriteAccess');
         var ProductSchema = mongoose.Schemas['Products'];
@@ -8,6 +10,7 @@ var Products = function (models) {
         var async = require('async');
         var _ = require('lodash');
         var underscore = require('../node_modules/underscore');
+        var CONSTANTS = require('../constants/mainConstants.js');
 
         var fs = require("fs");
 
@@ -298,19 +301,26 @@ var Products = function (models) {
             var mid = req.query.contentType === 'salesProduct' ? 65 : 58;
             if (req.session && req.session.loggedIn && req.session.lastDb) {
                 access.getReadAccess(req, req.session.uId, mid, function (access) {
-                    if (access) {
-                        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
-                        var query = req.query;
-                        var optionsObject = {};
-                        var sort = {};
-                        var count = query.count ? query.count : 100;
-                        var page = req.query.page;
-                        //var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+                    var Product;
+                    var query = req.query;
+                    var optionsObject = {};
+                    var sort = {};
+                    var count;
+                    var page;
 
-                        var departmentSearcher;
-                        var contentIdsSearcher;
-                        var contentSearcher;
-                        var waterfallTasks;
+                    var departmentSearcher;
+                    var contentIdsSearcher;
+                    var contentSearcher;
+                    var waterfallTasks;
+                    var skip;
+
+                    if (access) {
+                        Product = models.get(req.session.lastDb, 'Product', ProductSchema);
+                        count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
+                        page = req.query.page;
+
+                        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+                        skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                         if (query && query.sort) {
                             sort = query.sort;
@@ -373,7 +383,10 @@ var Products = function (models) {
                             var query;
                             optionsObject._id = {$in: productsIds};
 
-                            query = Product.find(optionsObject).sort(sort);
+                            query = Product.find(optionsObject)
+                                .limit(count)
+                                .skip(skip)
+                                .sort(sort);
                             query.exec(waterfallCallback);
                         };
 

@@ -10,8 +10,9 @@ define([
     'async',
     'common',
     'dataService',
-    'helpers/employeeHelper'
-], function (Backbone, $, _, selectView, CreateJob, template, wTrackModel, moment, async, common, dataService, employeeHelper) {
+    'helpers/employeeHelper',
+    'helpers/keyCodeHelper'
+], function (Backbone, $, _, selectView, CreateJob, template, wTrackModel, moment, async, common, dataService, employeeHelper, keyCodes) {
     'use strict';
 
     var CreateView = Backbone.View.extend({
@@ -22,8 +23,10 @@ define([
 
         events: {
             'click .stageSelect'                               : 'showNewSelect',
-            'click td.editable'                                : 'editRow',
+            'click td.editable:not(.disabled)'                 : 'editRow',
+            'click td.disabled'                                : 'notify',
             'keydown input.editing'                            : 'keyDown',
+            'keyup input.editing'                              : 'onKeyUpInput',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             click                                              : 'removeInputs'
         },
@@ -42,7 +45,7 @@ define([
             this.row = options.tr;
             this.wTracks = options.wTracks;
 
-            employeeHelper.getNonWorkingDaysByWeek(year, week, employee, null,
+            employeeHelper.getNonWorkingDaysByWeek(year, week, null, employee, null,
                 function (nonWorkingDays, self) {
                     options.nonWorkingDays = nonWorkingDays;
                     self.render(options);
@@ -50,9 +53,24 @@ define([
 
         },
 
-        keyDown: function (e) {
-            if (e.which === 13) {
-                this.autoCalc(e);
+        keyDown: function (e) {  // validation from generateWTrack, need keydown instead of keypress in case of enter key
+            if (keyCodes.isBspDelTabEscEnt(e.keyCode) || keyCodes.isArrowsOrHomeEnd(e.keyCode)) {
+                if (e.which === 13) {
+                    this.autoCalc(e);
+                }
+                return;
+            }
+            
+            if (e.shiftKey || !keyCodes.isDigit(e.keyCode)) {
+                e.preventDefault();
+            }
+        },
+
+        onKeyUpInput: function (e) { // max hours in cell
+            var element = e.target;
+
+            if ($(element).val() > 24) {
+                $(element).val(24);
             }
         },
 
@@ -198,14 +216,24 @@ define([
         },
 
         autoCalc: function (e, targetEl) {
-            targetEl = targetEl || $(e.target);
-
-            var isInput = targetEl.prop('tagName') === 'INPUT';
-            var trs = targetEl.closest('tr');
-            var edited = trs.find('input.edited');
-            var editedCol = edited.closest('td');
+            var isInput;
+            var trs;
+            var edited;
+            var editedCol;
             var value;
             var calcEl;
+
+            targetEl = targetEl || $(e.target);
+
+            isInput = targetEl.prop('tagName') === 'INPUT';
+            trs = targetEl.closest('tr');
+            edited = trs.find('input.edited');
+            editedCol = edited.closest('td');
+
+            isInput = targetEl.prop('tagName') === 'INPUT';
+            trs = targetEl.closest('tr');
+            edited = trs.find('input.edited');
+            editedCol = edited.closest('td');
 
             function appplyDefaultValue(el) {
                 var value = el.text();
@@ -339,7 +367,7 @@ define([
 
                 tempContainer = el.text();
                 width = el.width() - 6;
-                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="2" style="width:' + width + 'px">');
 
                 insertedInput = el.find('input');
                 insertedInput.focus();
@@ -361,6 +389,13 @@ define([
             return false;
         },
 
+        notify: function () {
+            App.render({
+                type   : 'notify',
+                message: 'This day from another month'
+            });
+        },
+
         removeInputs: function () {
             if (this.selectView) {
                 this.selectView.remove();
@@ -376,10 +411,10 @@ define([
         chooseOption: function (e) {
             var self = this;
             var target = $(e.target);
-            var targetElement = target.parents("td");
-            var tr = target.parents("tr");
-            var id = target.attr("id");
-            var attr = targetElement.attr("id") || targetElement.data("content");
+            var targetElement = target.parents('td');
+            var tr = target.parents('tr');
+            var id = target.attr('id');
+            var attr = targetElement.attr('id') || targetElement.data('content');
             var elementType = '#' + attr;
             var jobs = {};
 

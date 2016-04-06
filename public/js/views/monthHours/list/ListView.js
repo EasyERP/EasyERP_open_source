@@ -425,7 +425,8 @@ define([
                 var template = _.template(cancelEdit);
                 var model;
 
-                if (!id) {
+                if (!id || (id.length < 24)) {
+                    self.hideSaveCancelBtns();
                     return cb('Empty id');
                 }
 

@@ -10,10 +10,11 @@ define([
         'collections/Quotation/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'dataService'
+        'dataService',
+        'helpers'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService) {
+    function (listViewBase, listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, helpers) {
         var QuotationListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -76,6 +77,19 @@ define([
                 return false;
             },
 
+            recalcTotal: function () {
+                var total = 0;
+                var unTaxed = 0;
+
+                _.each(this.collection.toJSON(), function (model) {
+                    total += parseFloat(model.paymentInfo.total);
+                    unTaxed += parseFloat(model.paymentInfo.unTaxed);
+                });
+
+                this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
+                this.$el.find('#unTaxed').text(helpers.currencySplitter(unTaxed.toFixed(2)));
+            },
+
             showNewSelect: function (e) {
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
@@ -106,7 +120,7 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                $currentEl.append(new listTotalView({element: $currentEl.find("#listTable"), cellSpan: 5}).render());
+                $currentEl.append(new listTotalView({element: $currentEl.find("#listTable"), cellSpan: 4}).render());
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);

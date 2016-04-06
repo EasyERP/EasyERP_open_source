@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var Opportunity = function (models) {
+    'use strict';
 
     var access = require("../Modules/additions/access.js")(models);
     var _ = require('../node_modules/underscore');
@@ -11,7 +12,7 @@ var Opportunity = function (models) {
     var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var validator = require('validator');
-
+    var CONSTANTS = require('../constants/mainConstants.js');
     var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     this.addNewLeadFromSite = function (req, res, next) {
@@ -139,7 +140,8 @@ var Opportunity = function (models) {
                 campaign      : campaign,
                 source        : source,
                 internalNotes : internalNotes,
-                isOpportunitie: false
+                isOpportunitie: false,
+                workflow      : CONSTANTS.LEAD_DRAFT
             };
 
             leadModel = new Opportunitie(saveObject);
@@ -383,9 +385,12 @@ var Opportunity = function (models) {
         var sort;
         var mid;
 
-        var count = data.count ? data.count : 100;
+        var count = parseInt(data.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = data.page;
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var skip;
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (data.sort) {
             sort = data.sort;
@@ -476,19 +481,19 @@ var Opportunity = function (models) {
                 case ('Opportunities'):
                 {
                     query.populate('customer', 'name').
-                        populate('workflow', '_id name status').
-                        populate('salesPerson', 'name').
-                        populate('createdBy.user', 'login').
-                        populate('editedBy.user', 'login');
+                    populate('workflow', '_id name status').
+                    populate('salesPerson', 'name').
+                    populate('createdBy.user', 'login').
+                    populate('editedBy.user', 'login');
                 }
                     break;
                 case ('Leads'):
                 {
                     query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName").
-                        populate('company', 'name').
-                        populate('workflow', "name status").
-                        populate('createdBy.user', 'login').
-                        populate('editedBy.user', 'login');
+                    populate('company', 'name').
+                    populate('workflow', "name status").
+                    populate('createdBy.user', 'login').
+                    populate('editedBy.user', 'login');
                 }
                     break;
             }

@@ -7,7 +7,6 @@ define([
         'text!templates/customerPayments/forWTrack/ListHeader.html',
         'text!templates/customerPayments/forWTrack/cancelTemplate.html',
         'views/customerPayments/list/ListItemView',
-        'views/customerPayments/list/ListTotalView',
         'views/Filter/FilterView',
         'views/customerPayments/EditView',
         'collections/customerPayments/filterCollection',
@@ -18,7 +17,7 @@ define([
         'async',
         "helpers"
     ],
-    function (listViewBase, listTemplate, ListHeaderForWTrack, cancelEdit, listItemView, listTotalView, filterView, EditView, paymentCollection, editCollection, currentModel, dataService, populate, async, helpers) {
+    function (listViewBase, listTemplate, ListHeaderForWTrack, cancelEdit, listItemView, filterView, EditView, paymentCollection, editCollection, currentModel, dataService, populate, async, helpers) {
         var PaymentListView = listViewBase.extend({
 
             listTemplate            : listTemplate,
@@ -120,8 +119,8 @@ define([
                     rowTdVal += parseFloat(currentText || 0) * 100;
                 });
 
-                totalTd.text(helpers.currencySplitter((rowTdVal / 100).toFixed(2)));
 
+                totalTd.text(helpers.currencySplitter((rowTdVal/100).toFixed(2) ));
             },
 
             deleteItems: function () {
@@ -514,8 +513,6 @@ define([
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());
-
-                $currentEl.append(new listTotalView({/*element: this.$el.find("#listTable"),*/ cellSpan: 5}).render());  // took off element in case of new auto-calculating
 
                 this.renderCheckboxes();
 

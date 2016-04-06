@@ -42,7 +42,7 @@ define([
             "click .checkbox"               : "checked",
             "click #savePayment"            : "saveItem",
             "click #removePayment"          : "deleteItems",
-            "click td:not(.checkbox, .date)": "goToEditDialog"
+            "click td:not(.checkbox)"       : "goToEditDialog"
         },
 
         goToEditDialog: function (e) {

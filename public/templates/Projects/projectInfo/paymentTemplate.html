@@ -48,7 +48,7 @@
                 <%=currencySplitter(parseFloat(payment.paidAmount).toFixed(2))%>
             </td>
             <!--<td data-content="workflow" class=""><a href="javascript:;" class="<%= payment.workflow === 'Paid' ? 'done' : 'new'%>"><%=payment.workflow%></a></td>-->
-            <td data-type="dtPicker" class="editable date" data-content="date">
+            <td class="date" data-content="date">
                 <%=utcDateToLocaleDate(payment.date)%>
             </td>
             <%totalPaidAmount += parseFloat(payment.paidAmount)%>

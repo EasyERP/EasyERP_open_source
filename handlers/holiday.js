@@ -1,10 +1,13 @@
 var mongoose = require('mongoose');
 var Holiday = function (models, event) {
+    'use strict';
+
     var access = require("../Modules/additions/access.js")(models);
     var HolidaySchema = mongoose.Schemas['Holiday'];
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var moment = require('../public/js/libs/moment/moment');
+    var CONSTANTS = require('../constants/mainConstants');
 
     this.totalCollectionLength = function (req, res, next) {
         var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
@@ -31,9 +34,13 @@ var Holiday = function (models, event) {
         var queryObject = {};
         var sort = {};
         var query;
-        var count = options.count ? options.count : 100;
+        var count = parseInt(options.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = options.page;
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var skip;
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
+
 
         if (options && options.sort) {
             sort = options.sort;

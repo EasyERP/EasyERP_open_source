@@ -2,89 +2,48 @@
  * Created by liliya on 17.09.15.
  */
 define([
-    'Backbone',
-    'jQuery',
-    'Underscore',
-    'text!templates/Projects/form/FormTemplate.html',
-    'text!templates/Projects/projectInfo/DetailsTemplate.html',
-    'text!templates/Projects/projectInfo/proformRevenue.html',
-    'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
-    'text!templates/Projects/projectInfo/invoiceStats.html',
-    'text!templates/Projects/projectInfo/proformaStats.html',
-    'views/selectView/selectView',
-    'views/salesOrder/EditView',
-    'views/salesQuotation/EditView',
-    'views/salesInvoice/EditView',
-    'views/Proforma/EditView',
-    'views/Projects/EditView',
-    'views/Notes/NoteView',
-    'views/Notes/AttachView',
-    'views/Assignees/AssigneesView',
-    'views/Bonus/BonusView',
-    'views/Projects/projectInfo/wTracks/wTrackView',
-    'views/Projects/projectInfo/payments/paymentView',
-    'views/Projects/projectInfo/invoices/invoiceView',
-    'views/Projects/projectInfo/proformas/proformaView',
-    'views/Projects/projectInfo/quotations/quotationView',
-    'views/Projects/projectInfo/wTracks/generateWTrack',
-    'views/Projects/projectInfo/orders/orderView',
-    'collections/wTrack/filterCollection',
-    'collections/Quotation/filterCollection',
-    'collections/salesInvoice/filterCollection',
-    'collections/customerPayments/filterCollection',
-    'collections/Jobs/filterCollection',
-    'collections/Proforma/filterCollection',
-    'models/QuotationModel',
-    'models/InvoiceModel',
-    'text!templates/Notes/AddAttachments.html',
-    'common',
-    'populate',
-    'custom',
-    'dataService',
-    'async',
-    'helpers'],
-    function (Backbone,
-              $,
-              _,
-              ProjectsFormTemplate,
-              DetailsTemplate,
-              ProformRevenueTemplate,
-              jobsWTracksTemplate,
-              invoiceStats,
-              proformaStats,
-              selectView,
-              EditViewOrder,
-              editViewQuotation,
-              editViewInvoice,
-              editViewProforma,
-              EditView,
-              noteView,
-              attachView,
-              AssigneesView,
-              BonusView,
-              wTrackView,
-              PaymentView,
-              InvoiceView,
-              ProformaView,
-              QuotationView,
-              GenerateWTrack,
-              oredrView,
-              wTrackCollection,
-              quotationCollection,
-              invoiceCollection,
-              paymentCollection,
-              jobsCollection,
-              proformaCollection,
-              quotationModel,
-              invoiceModel,
-              addAttachTemplate,
-              common,
-              populate,
-              custom,
-              dataService,
-              async,
-              helpers) {
-        'use strict';
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        'text!templates/Projects/form/FormTemplate.html',
+        'text!templates/Projects/projectInfo/DetailsTemplate.html',
+        'text!templates/Projects/projectInfo/proformRevenue.html',
+        'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
+        'text!templates/Projects/projectInfo/invoiceStats.html',
+        'views/selectView/selectView',
+        'views/salesOrder/EditView',
+        'views/salesQuotation/EditView',
+        'views/salesInvoice/EditView',
+        'views/Projects/EditView',
+        'views/Notes/NoteView',
+        'views/Notes/AttachView',
+        'views/Assignees/AssigneesView',
+        'views/Bonus/BonusView',
+        'views/Projects/projectInfo/wTracks/wTrackView',
+        'views/Projects/projectInfo/salesManagers/salesManagersList',
+        'views/Projects/projectInfo/payments/paymentView',
+        'views/Projects/projectInfo/invoices/invoiceView',
+        'views/Projects/projectInfo/quotations/quotationView',
+        'views/Projects/projectInfo/wTracks/generateWTrack',
+        'views/Projects/projectInfo/orders/orderView',
+        'collections/wTrack/filterCollection',
+        'collections/Quotation/filterCollection',
+        'collections/salesInvoice/filterCollection',
+        'collections/customerPayments/filterCollection',
+        'collections/Jobs/filterCollection',
+        'models/QuotationModel',
+        'models/InvoiceModel',
+        'text!templates/Notes/AddAttachments.html',
+        "common",
+        'populate',
+        'custom',
+        'dataService',
+        'async',
+        'helpers'
+    ],
+
+    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, SalesManagersView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+        "use strict";
 
         var View = Backbone.View.extend({
             el              : '#content-holder',
@@ -540,6 +499,9 @@ define([
                 var bonusContainer = $('#bonusTable');
                 var bonusRow = bonusContainer.find('tr');
                 var bonus = [];
+                var salesManagersContainer = $('#salesManagersTable');
+                var salesManagerRow = salesManagersContainer.find('tr');
+                var salesManagers = [];
 
                 var budget = this.formModel.get('budget');
 
@@ -572,6 +534,7 @@ define([
                     EndDate         : endDate,
                     TargetEndDate   : _targetEndDate,
                     bonus           : bonus,
+                    salesManagers   : salesManagers,
                     budget          : budget
                 };
 
@@ -625,9 +588,35 @@ define([
                     });
                 });
 
-                $('.groupsAndUser tr').each(function () {
-                    if ($(this).data('type') == 'targetUsers') {
-                        usersId.push($(this).data('id'));
+                salesManagerRow.each(function (key, val) {
+                    var employeeId = $(val).attr('data-id');
+                    var dateEl = $(val).find('.salesManagerDate');
+                    var inputInside = dateEl.find('input');
+                    var date;
+
+                    if (inputInside.length) {
+                        dateEl.text(inputInside.val());
+                    }
+
+                    date = dateEl.text();
+
+                    if (employeeId === 'false') {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please, select Sales Manager first.'
+                        });
+                        validation = false;
+                    }
+
+                    salesManagers.push({
+                        manager   : employeeId,
+                        date      : date
+                    });
+                });
+
+                $(".groupsAndUser tr").each(function () {
+                    if ($(this).data("type") == "targetUsers") {
+                        usersId.push($(this).data("id"));
                     }
                     if ($(this).data('type') == 'targetGroups') {
                         groupsId.push($(this).data('id'));
@@ -649,7 +638,7 @@ define([
                             //Backbone.history.navigate(url, {trigger: true});
                             App.render({
                                 type   : 'notify',
-                                message: 'Data were changed, please refresh browser'
+                                message: 'Data was changed, please refresh browser'
                             });
                         },
                         error  : function (model, xhr) {
@@ -662,7 +651,7 @@ define([
 
             chooseOption: function (e) {
                 var data;
-                var attrId = $(e.target).parents('td').find('.current-selected').attr('id');
+                var attrId = $(e.target).parents("td").find(".current-selected").attr('id');
 
                 $('.newSelectList').hide();
 
@@ -767,7 +756,7 @@ define([
             },
 
             showSaveButton: function () {
-                $('#top-bar-saveBtn').show();
+                $("#top-bar-saveBtn").show();
             },
 
             hideSaveButton: function () {
@@ -880,17 +869,17 @@ define([
 
                     var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
                     var itemsNumber = parseInt($('.selectedItemsNumber').text()) || 'all';
-                    var defaultItemsNumber = itemsNumber  || self.wCollection.namberToShow;
+                    var defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
                     if (self.wTrackView) {
                         self.wTrackView.undelegateEvents();
                     }
 
                     this.wTrackView = new wTrackView({
-                        model      : self.wCollection,
-                        defaultItemsNumber : defaultItemsNumber,
-                        filter     : filter,
-                        startNumber: startNumber,
-                        project    : self.formModel
+                        model             : self.wCollection,
+                        defaultItemsNumber: defaultItemsNumber,
+                        filter            : filter,
+                        startNumber       : startNumber,
+                        project           : self.formModel
                     }).render();
                 }
 
@@ -1079,7 +1068,7 @@ define([
                 function createView() {
                     var proformaView;
                     var payments = [];
-                    
+
                     //App.proformaCollection = self.pCollection;
 
                     proformaView = new ProformaView({
@@ -1450,6 +1439,7 @@ define([
             render: function () {
                 var formModel = this.formModel.toJSON();
                 var assignees;
+                var salesManagers;
                 var bonus;
                 var paralellTasks;
                 var self = this;
@@ -1458,6 +1448,7 @@ define([
                 var notDiv;
                 var bonusView;
                 var container;
+                var salesManagersView;
 
                 App.startPreload();
 
@@ -1495,6 +1486,17 @@ define([
                         model: this.formModel
                     }).render().el
                 );
+
+                salesManagers = thisEl.find('#salesManagers-container');
+                salesManagersView = new SalesManagersView({
+                    model: this.formModel
+                });
+                salesManagers.html(
+                    salesManagersView.render().el
+                );
+                salesManagersView.bind('save', function () {
+                    self.saveItem();
+                });
 
                 bonus = this.$el.find('#bonus-container');
                 bonusView = new BonusView({
@@ -1542,7 +1544,7 @@ define([
                     dateFormat : 'd M, yy',
                     changeMonth: true,
                     changeYear : true,
-                    minDate : $('#StartDate').datepicker('getDate'), //added minDate at start
+                    minDate    : $('#StartDate').datepicker('getDate'), //added minDate at start
                     onSelect   : function () {
                         var endDate = $('#StartDate').datepicker('getDate');
                         endDate.setDate(endDate.getDate());

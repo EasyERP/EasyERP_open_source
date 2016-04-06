@@ -26,8 +26,8 @@ define([
             searchGroupTemplate: _.template(searchGroupLiTemplate),
 
             events: {
-                "mouseover .search-content"            : 'showSearchContent',
-                "mouseleave .search-options"           : 'showSearchContent',
+                //"mouseover .search-content"            : 'showSearchContent',
+                //"mouseleave .search-options"           : 'showSearchContent',
                 "click .search-content"                : 'showSearchContent',
                 "click .filter-dialog-tabs .filterTabs": 'showFilterContent',
                 'click #applyFilter'                   : 'applyFilter',
@@ -39,7 +39,8 @@ define([
                 "click .removeSavedFilter"             : "removeFilterFromDB",
                 "click .removeValues"                  : "removeFilter",
                 "keydown #forFilterName"               : "keyDown",
-                "click .showLast"                      : "showManyFilters"   // toDO overflow for many filters
+                "click .showLast"                      : "showManyFilters",
+                "keydown #searchInput"                 : "deleteFilterByBackspace"
             },
 
             keyDown: function (e) {
@@ -48,8 +49,25 @@ define([
                 }
             },
 
+            deleteFilterByBackspace : function(e){
+                var searchInputVal;
+                var searchFilterContainer;
+
+                if (e.which === 8) {
+                    searchInputVal = $('#searchInput').text();
+                    if(searchInputVal.length === 0){
+                        searchFilterContainer = $('#searchFilterContainer').children('div:last');
+                        if(searchFilterContainer.length !== 0){
+                            e.target = searchFilterContainer.find('.removeValues');
+                            this.removeFilter(e);
+                        }
+                    }
+                }
+            },
+
             showManyFilters: function () {
                 this.$el.find('.forFilterIcons').slice(0, 3).toggle();
+                this.$el.find('#searchInput').focus();
             },
 
             initialize: function (options) {
@@ -369,12 +387,13 @@ define([
 
                     if (groupName.length > 0) {
                         filterIc.addClass('active');
-                        filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
-                        //filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                        //filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                        filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                     } else {
-                        if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate')) {
+                        if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId')) {
                             groupName = 'Letter';
                             filterIc.addClass('active');
+                            //filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                             filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                         }
                     }
@@ -397,6 +416,7 @@ define([
                 var target = $(e.target);
                 var groupName = target.prev().text();
                 var filterView = target.prev().attr('data-value');
+                var alphabetHolder = $('#startLetter');
 
                 $('#searchInput').empty();
 
@@ -404,13 +424,13 @@ define([
                 var collectionElement;
 
                 if (filterView) {
-                    valuesArray = App.filter[filterView]['value'];
+                    valuesArray = App.filter[filterView] || App.filter[filterView]['value'];
                 } else {
                     App.filter = {};
                     this.removeSelectedFilter();
                 }
 
-                if (valuesArray) {
+                if (valuesArray && filterView !== 'letter') {
                     if (this.currentCollection[filterView].length !== 0) {
                         for (var i = valuesArray.length - 1; i >= 0; i--) {
                             collectionElement = this.currentCollection[filterView].findWhere({_id: valuesArray[i]});
@@ -423,6 +443,8 @@ define([
                 } else {
                     if (filterView) {
                         delete App.filter['letter'];
+                        alphabetHolder.children().removeClass('current');
+                        alphabetHolder.find(':first-child').addClass('current');
                     }
                 }
 
@@ -496,9 +518,9 @@ define([
                 var self = this;
                 var mapData;
                 var sortOptions;
-                var intFiltersArray = ['week', 'month', 'year'];
+                var intFiltersArray = ['week', 'month', 'year', 'paymentsCount'];
 
-                if(!groupOptions){
+                if (!groupOptions) {
                     groupOptions = {};
                 }
 
@@ -729,6 +751,7 @@ define([
                 var filterByDefault;
                 var viewType;
                 var savedID;
+                var filter;
 
                 this.$el.find('#favoritesContent').append(_.template(savedFilterTemplate));
 

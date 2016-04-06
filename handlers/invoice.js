@@ -30,12 +30,6 @@ var Invoice = function (models, event) {
     var JournalEntryHandler = require('./journalEntry');
     var _journalEntryHandler = new JournalEntryHandler(models);
 
-    function checkDb(db) {
-        var validDbs = ["weTrack", "production", "development", "maxdb"];
-
-        return validDbs.indexOf(db) !== -1;
-    }
-
     function journalEntryComposer(invoice, dbIndex, waterfallCb, uId) {
         var journalEntryBody = {};
         var beforeInvoiceBody = {};
@@ -68,7 +62,6 @@ var Invoice = function (models, event) {
 
     this.create = function (req, res, next) {
         var dbIndex = req.session.lastDb;
-        var isWtrack = checkDb(dbIndex);
         var body = req.body;
         var forSales = body.forSales;
         var waterfallTasks;
@@ -103,7 +96,7 @@ var Invoice = function (models, event) {
             });
         }
 
-        if (isWtrack && forSales) {
+        if (forSales) {
             Invoice = models.get(dbIndex, 'wTrackInvoice', wTrackInvoiceSchema);
             waterfallTasks = [invoiceSaver, journalEntryComposer];
         } else {
@@ -447,9 +440,8 @@ var Invoice = function (models, event) {
         var data = req.body;
         var isProforma;
         var journalId = data.journal;
-        var moduleId;
-        var isWtrack;
-        var Invoice;
+        var moduleId = 64;
+        var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);;
         var date;
         var updateName = false;
         var JobsModel = models.get(db, 'jobs', JobsSchema);
@@ -465,16 +457,7 @@ var Invoice = function (models, event) {
             delete data.proforma;
         }
 
-        if (checkDb(db)) {
-            moduleId = 64;
-            isWtrack = true;
-        }
-
-        if (isWtrack) {
-            Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
-        } else {
-            Invoice = models.get(db, 'Invoice', InvoiceSchema);
-        }
+        Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
 
         delete data.journal;
 
@@ -616,36 +599,40 @@ var Invoice = function (models, event) {
         }
 
         return resArray;
-    };
+    }
 
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
-        var moduleId = 56;
-
-        if (checkDb(db)) {
-            moduleId = 64;
-        }
+        var moduleId = 64;
 
         if (req.session && req.session.loggedIn && db) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
+                var Invoice;
+
+                var query = req.query;
+                var queryObject = {};
+                var filter = query.filter;
+                var baseUrl = req.baseUrl;
+
+                var optionsObject = {};
+                var sort = {};
+                var count;
+                var page;
+                var skip;
+
+                var departmentSearcher;
+                var contentIdsSearcher;
+                var contentSearcher;
+                var waterfallTasks;
+
                 if (access) {
-                    var Invoice = models.get(db, 'Invoice', InvoiceSchema);
+                    Invoice = models.get(db, 'Invoice', InvoiceSchema);
 
-                    var query = req.query;
-                    var queryObject = {};
-                    var filter = query.filter;
-                    var baseUrl = req.baseUrl;
+                    count = parseInt(query.count) || CONSTANTS.DEF_LIST_COUNT;
+                    page = parseInt(query.page);
 
-                    var optionsObject = {};
-                    var sort = {};
-                    var count = parseInt(query.count) ? parseInt(query.count) : 100;
-                    var page = parseInt(query.page);
-                    var skip = (page - 1) > 0 ? (page - 1) * count : 0;
-
-                    var departmentSearcher;
-                    var contentIdsSearcher;
-                    var contentSearcher;
-                    var waterfallTasks;
+                    count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+                    skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     if (req.query.sort) {
                         var key = Object.keys(req.query.sort)[0];
@@ -709,7 +696,7 @@ var Invoice = function (models, event) {
                         }
 
                         optionsObject.$and.push({_id: {$in: _.pluck(invoicesIds, "_id")}});
-                        // optionsObject.$and.push({expense: {$exists: false}});
+                        optionsObject.$and.push({expense: {$exists: false}});
 
                         if (baseUrl === '/Proforma') {
                             optionsObject.$and.push({_type: 'Proforma'});
@@ -813,35 +800,26 @@ var Invoice = function (models, event) {
     };
 
     this.getInvoiceById = function (req, res, next) {
-        var isWtrack = checkDb(req.session.lastDb);
-        var moduleId = 56;
+        var moduleId = 64;
         var data = req.query || {};
         var id = data.id;
         var forSales;
-
-        if (isWtrack) {
-            moduleId = 64
-        }
 
         forSales = data.forSales !== 'false';
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
+                var Invoice;
+                var optionsObject = {};
+
+                var departmentSearcher;
+                var contentIdsSearcher;
+                var contentSearcher;
+                var waterfallTasks;
+
                 if (access) {
-                    var Invoice;
-                    var optionsObject = {};
-
-                    var departmentSearcher;
-                    var contentIdsSearcher;
-                    var contentSearcher;
-                    var waterfallTasks;
-
-                    if (isWtrack) {
-                        if (forSales) {
-                            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-                        } else {
-                            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-                        }
+                    if (forSales) {
+                        Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
                     } else {
                         Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
                     }
@@ -957,7 +935,7 @@ var Invoice = function (models, event) {
 
     this.removeInvoice = function (req, res, id, next) {
         var db = req.session.lastDb;
-        var moduleId = 56;
+        var moduleId = 64;
         var paymentIds = [];
         var jobs = [];
         var wTrackIds = [];
@@ -973,10 +951,6 @@ var Invoice = function (models, event) {
             user: req.session.uId,
             date: new Date()
         };
-
-        if (checkDb(db)) {
-            moduleId = 64;
-        }
 
         if (req.session && req.session.loggedIn && db) {
             access.getDeleteAccess(req, req.session.uId, moduleId, function (access) {
@@ -1042,11 +1016,11 @@ var Invoice = function (models, event) {
                             }, function () {
                                 parallelCb();
                             });
-                        };
+                        }
 
                         function journalEntryRemove(parallelCb) {
                             _journalEntryHandler.removeByDocId(id, db, parallelCb);
-                        };
+                        }
 
                         function jobsUpdateAndWTracks(parallelCb) {
                             var setData = {};
@@ -1095,11 +1069,11 @@ var Invoice = function (models, event) {
                                 }
                                 parallelCb();
                             });
-                        };
+                        }
 
                         async.parallel([proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks], function (err, result) {
                             if (err) {
-                                next(err);
+                               return next(err);
                             }
                         });
 
@@ -1119,20 +1093,8 @@ var Invoice = function (models, event) {
 
     this.updateInvoice = function (req, res, _id, data, next) {
         var db = req.session.lastDb;
-        var moduleId = 56;
-        var isWtrack;
-        var Invoice;
-
-        if (checkDb(db)) {
-            moduleId = 64;
-            isWtrack = true;
-        }
-
-        if (isWtrack) {
-            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-        } else {
-            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-        }
+        var moduleId = 64;
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
 
         if (req.session && req.session.loggedIn && db) {
             access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
@@ -1145,7 +1107,7 @@ var Invoice = function (models, event) {
                         } else {
                             res.status(200).send(result);
                         }
-                    })
+                    });
 
                 } else {
                     res.status(403).send();
@@ -1166,9 +1128,11 @@ var Invoice = function (models, event) {
         var contentSearcher;
         var query = req.query;
         var filter = query.filter;
+        var filterObj;
         // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
+
         if (filter) {
-            var filterObj = {};
+            filterObj = {};
             filterObj['$and'] = caseFilter(filter);
         }
 
@@ -1383,17 +1347,17 @@ var Invoice = function (models, event) {
                         }
                     ], function (err, invoice) {
                         if (err) {
-                            cb(err)
+                            cb(err);
 
                         } else {
-                            cb(null, invoice)
+                            cb(null, invoice);
                         }
 
-                    })
+                    });
             }
         ], function (err, result) {
             if (err) {
-                return next(err)
+                return next(err);
             }
 
             _.map(result[0], function (value, key) {
@@ -1401,31 +1365,25 @@ var Invoice = function (models, event) {
                     case 'salesPerson':
                         result[0][key] = _.sortBy(value, 'name');
                         break;
-                        ;
-
                 }
             });
             res.status(200).send(result)
-        })
+        });
     };
 
     this.getStats = function (req, res, next) {
-        var db = req.session.lastDb;
-        var Invoice;
+        var sortObj = {'paymentInfo.balance': -1};
         var now = new Date();
-        var moduleId;
+        var sortValueInt;
+        var key;
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
 
-        var isWtrack;
+        sortObj = req.query.sort || sortObj;
 
-        if (checkDb(db)) {
-            moduleId = 64;
-            isWtrack = true;
-        }
-
-        if (isWtrack) {
-            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-        } else {
-            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        for (key in sortObj) {
+            sortValueInt = parseInt(sortObj[key]);
+            sortObj[key] = sortValueInt;
+            break;
         }
 
         Invoice.aggregate([{
@@ -1517,9 +1475,7 @@ var Invoice = function (models, event) {
                 }
             }
         }, {
-            $sort: {
-                'paymentInfo.balance': -1
-            }
+            $sort: sortObj
         }], function (err, result) {
             if (err) {
                 return next(err);
@@ -1559,35 +1515,24 @@ var Invoice = function (models, event) {
 
     this.getStatsForProject = function (req, res, next) {
         var db = req.session.lastDb;
-        var moduleId = 56;
-        var isWtrack;
-        var Invoice;
+        var moduleId = 64;
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         var baseUrl = req.baseUrl;
-
-        if (checkDb(db)) {
-            moduleId = 64;
-            isWtrack = true;
-        }
-
-        if (isWtrack) {
-            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-        } else {
-            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-        }
 
         if (req.session && req.session.loggedIn && db) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
+                var query = req.query;
+                var queryObject = {};
+                var filter = query.filter;
+
+                var optionsObject = {};
+
+                var departmentSearcher;
+                var contentIdsSearcher;
+                var contentSearcher;
+                var waterfallTasks;
+
                 if (access) {
-                    var query = req.query;
-                    var queryObject = {};
-                    var filter = query.filter;
-
-                    var optionsObject = {};
-
-                    var departmentSearcher;
-                    var contentIdsSearcher;
-                    var contentSearcher;
-                    var waterfallTasks;
 
                     departmentSearcher = function (waterfallCallback) {
                         models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(

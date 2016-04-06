@@ -19,7 +19,7 @@ define([
         routes: {
             "home"                                                                                          : "any",
             "login"                                                                                         : "login",
-            "easyErp/:contentType/kanban(/:parrentContentId)"                                               : "goToKanban",
+            "easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)"                              : "goToKanban",
             "easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)"                            : "goToThumbnails",
             "easyErp/:contentType/form(/:modelId)"                                                          : "goToForm", //FixMe chenge to required Id after test
             "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
@@ -978,6 +978,8 @@ define([
                         if (parrentContentId) {
                             url += '/' + parrentContentId;
                         }
+
+                        url = encodeURI(url);
 
                         Backbone.history.navigate(url, {replace: true});
                     }

@@ -240,7 +240,7 @@ var Project = function (models, event) {
             }
             function saveProjectToBd(data) {
                 try {
-                    _project = new models.get(req.session.lastDb, 'Project', projectSchema)();
+                   var _project = new models.get(req.session.lastDb, 'Project', projectSchema)();
                     if (data.projectName) {
                         _project.projectName = data.projectName;
                     }
@@ -296,6 +296,10 @@ var Project = function (models, event) {
                     }
                     if (data.projectmanager) {
                         _project.projectmanager = data.projectmanager;
+                        _project.salesManagers = [{
+                            manager: data.projectmanager,
+                            date   : data.StartDate || new Date().toString()
+                        }];
                     }
 
                     if (data.notes) {
@@ -309,6 +313,11 @@ var Project = function (models, event) {
                     if (data.bonus) {
                         _project.bonus = data.bonus;
                     }
+
+                    _project.budget = {
+                        projectTeam: [],
+                        bonus: []
+                    };
 
                     _project.save(function (err, result) {
                         try {
@@ -990,7 +999,8 @@ var Project = function (models, event) {
             .populate('budget.projectTeam')
             .populate('projectmanager', '_id name fullName')
             .populate('customer', '_id name fullName')
-            .populate('workflow', '_id name');
+            .populate('workflow', '_id name')
+            .populate('salesManagers.manager', '_id name fullName');
 
         query.exec(function (err, project) {
             if (err) {
@@ -1367,6 +1377,9 @@ var Project = function (models, event) {
         }
         if (data.workflow) {
             data.workflow = data.workflow;
+        }
+        if (data.salesManagers && data.salesManagers.length) {
+            data.projectmanager = data.salesManagers[data.salesManagers.length - 1].manager;
         }
 
         if (data.notes && data.notes.length != 0 && !remove) {

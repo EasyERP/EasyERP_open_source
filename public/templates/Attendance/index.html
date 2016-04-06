@@ -16,7 +16,8 @@
             </span>
             <select id="currentStatus">
                 <% status.forEach(function(stat){ %>
-                <option id="stat">
+                <%statId = stat.replace(' ', '')%>
+                <option id="status<%= statId %>">
                     <%= stat %>
                 </option>
                 <% }) %>

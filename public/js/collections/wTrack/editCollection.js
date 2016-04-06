@@ -21,6 +21,9 @@
             var year;
             var month;
             var week;
+            var cid;
+            var saveObject;
+            var options;
 
             var syncObject = {
                 trigger: this.trigger,
@@ -72,8 +75,9 @@
 
                     models.push(modelObject);
                 } else if (model && !model.id) {
+                    cid = model.cid;
 
-                    var saveObject = {
+                    saveObject = {
                         trigger: this.trigger,
                         url    : this.url,
                         toJSON : function () {
@@ -81,11 +85,14 @@
                         }
                     };
 
-                    var options = {
-                        success: function (model, resp, xhr) {
+                    options = {
+                        success: function thisFunction(model, resp, xhr) {
+                            model.cid = thisFunction.cid; // (in case of multi copying)
                             self.trigger('saved', model);
                         }
                     };
+
+                    options.success.cid = cid; // tied parameter cid with function
 
                     newModel = model.changed;
                     newModel._id = model.id;

@@ -160,6 +160,8 @@
                             </div>
 
                             <div class="half-block left">
+                                <% if (model.transfer.length) { %>
+                                <!--not editible-->
                                 <dl class="edit-employee-info">
                                     <dt>
                                         <label>Job Position</label>
@@ -167,18 +169,21 @@
                                     <dd>
                                         <span id="jobPosition" data-id="<%=model.jobPosition ? model.jobPosition._id: ''%>"><%=model.jobPosition ? model.jobPosition.name: ''%></span>
                                     </dd>
+
                                     <dt>
                                         <label>Department</label>
                                     </dt>
                                     <dd>
                                         <span id="department"  data-id="<%=model.department ? model.department._id: ''%>"><%=model.department ? model.department.departmentName: ''%></span>
                                     </dd>
+
                                     <dt>
                                         <label>Manager</label>
                                     </dt>
                                     <dd>
                                         <span id="manager" data-id="<%=model.manager ? model.manager._id: null%>"><%=model.manager ? model.manager.fullName : ""%></span>
                                     </dd>
+
                                     <dt>
                                         <label>Job Type</label>
                                     </dt>
@@ -215,6 +220,7 @@
                                         <input type="text" id="workEmail" value="<%=model.workEmail%>" required
                                                maxlength="48"/>
                                     </dd>
+
                                     <dt>
                                         <label for="phone">Work Phone</label>
                                     </dt>
@@ -231,7 +237,7 @@
                                     </dt>
                                     <dd id="selectWorkflow">
                                         <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>"
-                                           class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Undefinded'%></a>
+                                           class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Select workflow'%></a>
                                     </dd>
 
                                     <dt>
@@ -246,6 +252,125 @@
                                     </dd>
 
                                 </dl>
+                                <% } else { %>
+                                <!--editible-->
+                                <dl class="edit-employee-info">
+                                    <dt>
+                                        <label for="nextAction">Next Action </label>
+                                    </dt>
+                                    <dd>
+                                        <input type="text"
+                                               value="<%=model.nextAction%>"
+                                               id="nextAction"
+                                               maxlength="32"
+                                               readonly/>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="jobPositionDd">Job position</label></dt>
+                                    <dd>
+                                        <a id="jobPositionDd"
+                                           class="current-selected"
+                                           href="javascript:;"
+                                           data-id="<%= model.jobPosition ? model.jobPosition._id : '' %>">
+                                            <%= model.jobPosition ? model.jobPosition.name : 'select position' %>
+                                        </a>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="departmentsDd">Department</label>
+                                    </dt>
+                                    <dd>
+                                        <a id="departmentsDd"
+                                           class="current-selected"
+                                           href="javascript:;"
+                                           data-id="<%= model.department ? model.department._id : '' %>">
+                                            <%= model.department ? model.department.departmentName : 'select department'%>
+                                        </a>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="projectManagerDD">Manager</label>
+                                    </dt>
+                                    <dd>
+                                        <a id="projectManagerDD"
+                                           class="current-selected"
+                                           href="javascript:;"
+                                           data-id="<%=model.manager ? model.manager._id : ''%>">
+                                            <%=model.manager ? model.manager.fullName : "select manager"%>
+                                        </a>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="jobTypeDd">Job type</label>
+                                    </dt>
+                                    <dd>
+                                        <a id="jobTypeDd"
+                                           class="current-selected"
+                                           href="javascript:;"
+                                           data-id="<%=model.jobType ? model.jobType : ''%>">
+                                            <%=model.jobType ? model.jobType : 'select job type'%>
+                                        </a>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="sourceDd">Source </label>
+                                    </dt>
+                                    <dd>
+                                        <a id="sourceDd"
+                                           class="current-selected"
+                                           href="javascript:;"
+                                           data-id="<%=model.source ? model.source : ''%>">
+                                            <%=model.source?(model.source):'Select'%>
+                                        </a>
+                                        <ul class="newSelectList" style="display: none;">
+                                            <li id="www.rabota.ua">www.rabota.ua</li>
+                                            <li id="www.work.ua">www.work.ua</li>
+                                            <li id="www.ain.net">www.ain.net</li>
+                                            <li id="other">other</li>
+                                        </ul>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="workEmail">Work Email</label>
+                                    </dt>
+                                    <dd>
+                                        <input type="text" id="workEmail" value="<%=model.workEmail%>" required
+                                               maxlength="48"/>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="phone">Work Phone</label>
+                                    </dt>
+                                    <dd>
+                                        <input type="text"
+                                               name="phone"
+                                               id="phone"
+                                               value="<%=model.workPhones.phone%>"
+                                               required maxlength="32"/>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="workflowsDd">Stage</label>
+                                    </dt>
+                                    <dd id="selectWorkflow">
+                                        <a id="workflowsDd" data-id="<%=(model.workflow) ? model.workflow._id : ''%>"
+                                           class="current-selected" href="javascript:;"><%=(model.workflow)?model.workflow.name:'Select workflow'%></a>
+                                    </dd>
+
+                                    <dt>
+                                        <label for="relatedUsersDd">Related User</label>
+                                    </dt>
+                                    <dd>
+                                        <a id="relatedUsersDd"
+                                           data-id="<%=model.relatedUser?model.relatedUser._id:''%>"
+                                           class="current-selected"
+                                           href="javascript:;"><%=model.relatedUser?(model.relatedUser.login):'Select'%>
+                                        </a>
+                                    </dd>
+
+                                </dl>
+                                <% } %>
 
                             </div>
 
@@ -441,68 +566,64 @@
                                 <th>Department</th>
                                 <th>Manager</th>
                                 <th>Job Type</th>
-                                <%if (model.enableView) {%>
+                                <%if (model.transfer[0] && (model.transfer[0].salary || model.transfer[0].salary === 0)) {%>
                                 <th>Salary</th>
                                 <% } %>
                                 <th>Status info</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <%_.each(model.hire, function(hire, key){ %>
-                            <tr id="hire<%=key%>" data-id="<%=key%>" data-content="hire">
+                            <%_.each(model.transfer, function(transfer, key, transfers) { %>
+                            <tr class="transfer" data-id="<%=key%>" data-content=<%= transfer.status %>>
                                 <td class="remove">
-                                    <%if (key === model.hire.length - 1 && key) {%>
-                                    <a class="fa fa-trash" id="<%=key%>"></a>
+                                    <% if (key === transfers.length - 1 && key) {%>
+                                    <a class="fa fa-trash"></a>
                                     <% } %>
                                 </td>
-                                <td>Hired</td>
-                                <td  class="editable hireDate" data-id="hireDate"><%=model.hire[key].date%></td>
+                                <td><%= transfer.status %></td>
+                                <td class="editable date"><%= transfer.date %></td>
                                 <td>
-                                    <a id="jobPositionDd" class="current-selected"  data-id="<%=model.jobPosition ? model.jobPosition._id : null%>" href="javascript:;">
-                                        <%=model.hire[key].jobPosition ? model.hire[key].jobPosition.name : 'Select'%>
+                                    <a id="jobPositionDd" class="current-selected"
+                                       data-id="<%= transfer.jobPosition ?  transfer.jobPosition._id : null%>"
+                                       href="javascript:;">
+                                        <%=transfer.jobPosition ? transfer.jobPosition.name : 'Select'%>
                                     </a>
                                 </td>
                                 <td>
-                                    <a id="departmentsDd" class="current-selected"  data-id="<%=model.department ? model.department._id : null%>" href="javascript:;">
-                                        <%=model.hire[key].department ? model.hire[key].department.departmentName : "Select"%>
+                                    <a id="departmentsDd" class="current-selected"
+                                       data-id="<%=transfer.department ? transfer.department._id : null%>"
+                                       href="javascript:;">
+                                        <%=transfer.department ? transfer.department.departmentName :
+                                        "Select" %>
                                     </a>
                                 </td>
                                 <td>
-                                    <a id="projectManagerDD" class="current-selected"  data-id="<%=model.manager ? model.manager._id : null%>" href="javascript:;">
-                                        <%=model.hire[key].manager ? model.hire[key].manager.name.first + ' ' + model.hire[key].manager.name.last : "Select"%>
+                                    <a id="projectManagerDD" class="current-selected"
+                                       data-id="<%= transfer.manager ?  transfer.manager._id : null%>"
+                                       href="javascript:;">
+                                        <%=transfer.manager ? transfer.manager.name.first + ' ' +
+                                        transfer.manager.name.last : "Select"%>
                                     </a>
                                 </td>
                                 <td>
-                                    <a id="jobTypeDd" class="current-selected"  data-id="<%=model.jobType?model.jobType:''%>" href="javascript:;">
-                                        <%=model.hire[key].jobType ? model.hire[key].jobType : "Select"%>
+                                    <a id="jobTypeDd" class="current-selected"
+                                       data-id="<%transfer.jobType ? transfer.jobType :''%>"
+                                       href="javascript:;">
+                                        <%=transfer.jobType ? transfer.jobType : "Select"%>
                                     </a>
                                 </td>
-                                <%if (model.enableView) {%>
-                                <td class="editable" data-id="salary"><%=model.hire[key].salary%></td>
+                                <%if (model.transfer[0] && (model.transfer[0].salary || model.transfer[0].salary === 0)) {%>
+                                <td class="editable" data-id="salary"><%= transfer.salary %></td>
                                 <% } %>
                                 <td>
-                                    <input id="statusInfoDd" class="statusInfo" data-id="<%=model.hire[key].info ? model.hire[key].info : ''%> " value='<%=model.hire[key].info && model.hire[key].info.length > 1 ? model.hire[key].info : ""%>' />
+
+                                    <input id="statusInfoDd" class="statusInfo"
+                                           data-id="<%=transfer.info ? transfer.info : ''%> "
+                                           value='<%=transfer.info && transfer.info.length > 1 ? transfer.info : ""%>'/>
+
                                 </td>
                             </tr>
 
-                            <%if (model.fire && model.fire[key] && model.fire[key].date !==  model.hire[key].date) {%>
-                            <tr id="fire<%=key%>" data-id="<%=key%>" data-content="fire">
-                                <td class="remove"></td>
-                                <td>Fired</td>
-                                <td class="editable fireDate" data-id="fireDate"><%=model.fire[key].date%></td>
-                                <td><%=model.fire[key].jobPosition.name !== model.hire[key].jobPosition.name ? model.fire[key].jobPosition.name : ""%></td>
-                                <td><%=model.fire[key].department.departmentName !== model.hire[key].department.departmentName ? model.fire[key].department.departmentName : ''%></td>
-                                <td><%=model.fire[key].manager && model.hire[key].manager.name.last !== model.fire[key].manager.name.last ? model.fire[key].manager.name.first + ' ' + model.fire[key].manager.name.last : ""%></td>
-                                <td><%=model.fire[key].jobType !== model.hire[key].jobType ? model.fire[key].jobType : ''%></td>
-                                <td><%=model.fire[key].salary%></td>
-                                <td>
-                                    <!--<a id="statusInfoDd" data-id="<%=model.fire[key].info ? model.fire[key].info : ''%> " class="current-selected" href="javascript:;">-->
-                                    <!--<%=model.fire[key].info ? model.fire[key].info : "Select"%>-->
-                                <!--</a>-->
-                                    <input id="statusInfoDd" class="statusInfo" data-id="<%=model.fire[key].info ? model.fire[key].info : ''%> " value='<%=model.fire[key].info && model.fire[key].info.length > 1 ? model.fire[key].info : ""%>' />
-                                </td>
-                            </tr>
-                            <% } %>
                             <% }); %>
 
                             </tbody>

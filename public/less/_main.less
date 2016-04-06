@@ -25,6 +25,8 @@
 @bold-border: 3px solid;
 @thin-border: 1px solid;
 
+
+
 .spinner {
   background-color: yellow;
 }
@@ -604,7 +606,7 @@ input::-ms-clear {
       textarea {
         width: 99%;
         resize: none;
-        padding-top: 10px;
+        padding: 10px 5px;
       }
     }
   }
@@ -719,6 +721,7 @@ input::-ms-clear {
       width: 99%;
       height: 160px;
       resize: none;
+      line-height: 20px;
     }
   }
 }
@@ -1941,7 +1944,7 @@ input::-ms-clear {
     border: 1px solid #E2E9EF;
     border-top: 1px solid #CBD3E2;
     max-width: 280px;
-    height: 18px;
+    height: 20px;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
     border: @thin-border @list-border-color;
@@ -2118,7 +2121,7 @@ input::-ms-clear {
   input:not([type=checkbox]) {
     border: @thin-border @list-border-color;
     max-width: 280px;
-    line-height: 20px;
+    //line-height: 16px;
     background-color: transparent;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 12px;
@@ -2471,6 +2474,11 @@ input, textarea, select {
       background-color: #BEF624 !important;
     }
 
+    &.selected {
+      color: #f3f3f3;
+      background-color: #545454;
+    }
+
     &:hover {
       background-color: lighten(@bg-main, 5%) !important;
       border: 0 !important;
@@ -2570,6 +2578,7 @@ body {
   font-family: @body-font;
   font-size: 12px;
   height: 100%;
+  min-width: 1349px;
 }
 
 dl {
@@ -4580,7 +4589,8 @@ h3.dashboard {
     .dl-auto(200px, 10%);
     input {
       max-width: inherit !important;
-      width: 98% !important;
+      width: 99% !important;
+      margin-right: 1%;
     }
     dt {
       width: 10% !important;
@@ -4593,7 +4603,7 @@ h3.dashboard {
   .opprtunitie-info {
     .dl-auto(250px, 40%);
     input {
-      max-width: 231px !important;
+      max-width: 250px !important;
     }
     select {
       width: 95% !important;
@@ -4733,6 +4743,7 @@ h3.dashboard {
 
 .newSelectList {
   max-width: 200px;
+  text-align: center;
   li {
     .text-overflow;
   }

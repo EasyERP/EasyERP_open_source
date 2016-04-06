@@ -10,5 +10,5 @@ process.env.DB_PASS = '1q2w3e!@#';
 process.env.OXR_APP_ID = '90432684fb4f46f483317e4ec2cd8bcc';
 
 process.env.SOCKET_DB_PORT = 6379;
-process.env.SOCKET_DB_HOST = 'localhost';
+process.env.SOCKET_DB_HOST = '192.168.89.99';
 process.env.SOCKET_DB = 9;
