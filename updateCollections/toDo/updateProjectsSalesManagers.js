@@ -94,10 +94,9 @@ query.exec(function (error, _res) {
 
     async.eachLimit(_res, 50, function (project, callback) {
         var objectToSave;
-
         var salesMananagers = [{
             manager: project.projectmanager,
-            date   : project.StartDate
+            date   : project.StartDate || new Date()
         }];
 
         objectToSave = {

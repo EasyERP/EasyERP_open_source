@@ -29,13 +29,21 @@ define([
             'click .fa-trash'                                  : 'removeSalesManager'
         },
 
-        renderRemoveBtn: function () {
+        editLastSales: function () {
             var table = this.$el.find('#salesManagersTable');
             var trs = table.find('tr');
             var removeBtn = '<a href="javascript;" class="fa fa-trash"></a>';
+            var lastSales;
 
             trs.find('td:first-child').text('');
-            trs.last().find('td').first().html(removeBtn);
+
+            if (trs.length > 1){
+                trs.last().find('td').first().html(removeBtn);
+            }
+
+            trs.last().find('.salesManagerDate').addClass('editable');
+            lastSales = trs.last().find('td').last().text();
+            trs.last().find('td').last().html('<a id="employee" class="current-selected" href="javascript:;">' + lastSales +'</a>');
         },
 
         editNewRow: function (e) {
@@ -59,6 +67,7 @@ define([
                 onSelect   : function (dateText) {
                     var $editedCol = target.closest('td');
                     $editedCol.text(dateText);
+                    $('#top-bar-saveBtn').show();
                 }
             });
             this.$el.find('#date').datepicker('show');
@@ -109,13 +118,17 @@ define([
             var selectorContainer;
 
             if (prevSales === id) {
-                return false;
+                return App.render({
+                    type   : 'error',
+                    message: 'Please choose another Sales Manager'
+                });
             }
 
             targetRow.attr('data-id', id);
             selectorContainer = targetElement.find('a.current-selected');
 
             selectorContainer.text(target.text());
+            $('#top-bar-saveBtn').show();
 
             this.hideNewSelect();
 
@@ -123,7 +136,6 @@ define([
         },
 
         addSalesManager: function (e) {
-            var self = this;
             var employeeSelect = this.$el.find('.current-selected');
             var newElements = this.$el.find('[data-id="false"]');
             var prevDate = this.$el.find('#salesManagersTable .salesManagerDate').last().text();
@@ -147,19 +159,7 @@ define([
             this.$el.find('#salesManagersTable').append(_.template(updateSalesManager, {date: date}));
 
             $('#top-bar-saveBtn').show();
-            this.renderRemoveBtn();
-
-            if (!Object.keys(this.responseObj).length) {
-                dataService.getData('/employee/getByDepartments', {departments: ['BusinessDev', 'PM']}, function (employees) {
-                    employees = _.map(employees.data, function (employee) {
-                        employee.name = employee.name.first + ' ' + employee.name.last;
-
-                        return employee;
-                    });
-
-                    self.responseObj['#employee'] = employees;
-                });
-            }
+            this.editLastSales();
         },
 
         removeSalesManager: function (e) {
@@ -170,7 +170,7 @@ define([
             row.remove();
             $('#top-bar-saveBtn').show();
 
-            this.renderRemoveBtn();
+            this.editLastSales();
         },
 
         render: function () {
@@ -182,8 +182,17 @@ define([
                 utcDateToLocaleDate: common.utcDateToLocaleDate
             }));
 
-            self.$el.find('#removeSalesManager, #saveSalesManager').hide();
-            this.renderRemoveBtn();
+            dataService.getData('/employee/getForDD', {salesDepartments: true, isEmployee: true}, function (employees) {
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.name.first + ' ' + employee.name.last;
+
+                    return employee;
+                });
+
+                self.responseObj['#employee'] = employees;
+            });
+
+            this.editLastSales();
 
             return this;
         }

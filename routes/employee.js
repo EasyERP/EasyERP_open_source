@@ -14,7 +14,6 @@ module.exports = function (models) {
     router.get('/exportToCsv',handler.exportToCsv);
     router.get('/getYears',handler.getYears);
     router.get('/getByMonth', handler.getSalaryByMonth);
-    router.get('/getByDepartments', handler.getByDepartments);
 
     return router;
 };
