@@ -735,7 +735,7 @@ var wTrack = function (models) {
                         fire          : 1,
                         name          : 1,
                         firedCount    : 1,
-                        firstHiredDate: '$firstHired.date'
+                        firstHiredDate: '$firstHired'
                     }
                 },
                     {
@@ -781,11 +781,11 @@ var wTrack = function (models) {
         function firedEmployees(parallelCb) {
             Employee
                 .aggregate([
-                    {
+                   /* {
                         $match: {
-                            $and: [{'fire.date': {$gte: startDate}}, {'fire.date': {$lte: endDate}}]
+                            $and: [{'fire': {$gte: startDate}}, {'fire': {$lte: endDate}}]
                         }
-                    },
+                    },*/
                     {
                         $project: {
                             isEmployee: 1,
@@ -819,14 +819,14 @@ var wTrack = function (models) {
                         $unwind: '$fire'
                     }, {
                         $match: {
-                            'fire.date': {$gte: startDate, $lte: endDate}
+                            fire: {$gte: startDate, $lte: endDate}
                         }
                     }, {
                         $project: {
                             isEmployee: 1,
                             department: 1,
                             isLead    : 1,
-                            fireDate  : {$add: [{$multiply: [{$year: '$fire.date'}, 100]}, {$month: '$fire.date'}]},
+                            fireDate  : {$add: [{$multiply: [{$year: '$fire'}, 100]}, {$month: '$fire'}]},
                             name      : 1
                         }
                     }, {
