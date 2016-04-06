@@ -12,6 +12,7 @@ var Employee = function (models) {
     var ProjectSchema = mongoose.Schemas.Project;
     var _ = require('underscore');
     var moment = require('../public/js/libs/moment/moment');
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
@@ -27,7 +28,7 @@ var Employee = function (models) {
 
         if (query) {
             if (query.devDepartments) {
-                matchQuery['department.parentDepartment'] = objectId('56cebdf6541812c07197358f');
+                matchQuery['department.parentDepartment'] = objectId(CONSTANTS.PARENT_DEV);
             }
             if (query.isEmployee){
                 matchQuery.isEmployee = true;

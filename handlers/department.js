@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var objectId = mongoose.Types.ObjectId;
 var Department = function (models) {
     var access = require("../Modules/additions/access.js")(models);
+    var CONSTANTS = require('../constants/mainConstants.js');
     var DepartmentSchema = mongoose.Schemas['Department'];
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
@@ -16,7 +17,7 @@ var Department = function (models) {
         var query = req.query;
         var matchQuery = {};
         if (query.devDepartments){
-            matchQuery.parentDepartment = objectId('56cebdf6541812c07197358f');
+            matchQuery.parentDepartment = objectId(CONSTANTS.PARENT_DEV);
         }
 
         Department
