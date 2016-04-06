@@ -13,7 +13,7 @@ var Invoice = function (models, event) {
     var InvoiceSchema = mongoose.Schemas.Invoice;
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var OrderSchema = mongoose.Schemas.Quotation;
-    var ProformaSchema  = mongoose.Schemas.Proforma;
+    var ProformaSchema = mongoose.Schemas.Proforma;
     var DepartmentSchema = mongoose.Schemas.Department;
     var CustomerSchema = mongoose.Schemas.Customer;
     var PaymentSchema = mongoose.Schemas.Payment;
@@ -49,7 +49,7 @@ var Invoice = function (models, event) {
         journalEntryBody.sourceDocument._id = invoice._id;
         journalEntryBody.sourceDocument.model = 'Invoice';
 
-        if (invoice.paymentInfo.total - invoice.paymentInfo.balance > 0){
+        if (invoice.paymentInfo.total - invoice.paymentInfo.balance > 0) {
             cb = _.after(2, waterfallCb);
 
             beforeInvoiceBody.date = invoice.invoiceDate;
@@ -108,7 +108,7 @@ var Invoice = function (models, event) {
             waterfallTasks = [invoiceSaver, journalEntryComposer];
         } else {
             Invoice = models.get(dbIndex, 'Invoice', InvoiceSchema);
-           waterfallTasks = [invoiceSaver];   // added in case of bad creating no forSales invoice ( property model undefined for Journal )
+            waterfallTasks = [invoiceSaver];   // added in case of bad creating no forSales invoice ( property model undefined for Journal )
         }
 
         async.waterfall(waterfallTasks, function (err, result) {
@@ -192,10 +192,10 @@ var Invoice = function (models, event) {
                 },
                 {
                     $project: {
-                        payments: 1,
+                        payments   : 1,
                         paymentDate: 1,
-                        dueDate: 1,
-                        _id: 0
+                        dueDate    : 1,
+                        _id        : 0
                     }
                 },
                 {
@@ -203,26 +203,26 @@ var Invoice = function (models, event) {
                 },
                 {
                     $lookup: {
-                        from                   : 'Payment',
-                        localField             : 'payments',
-                        foreignField           : '_id',
-                        as                     : 'payment'
+                        from        : 'Payment',
+                        localField  : 'payments',
+                        foreignField: '_id',
+                        as          : 'payment'
                     }
                 },
                 {
                     $project: {
-                        payment: {$arrayElemAt: ['$payment', 0]},
+                        payment    : {$arrayElemAt: ['$payment', 0]},
                         paymentDate: 1,
-                        dueDate: 1
+                        dueDate    : 1
                     }
                 },
                 {
                     $group: {
-                        _id: null,
+                        _id         : null,
                         paymentsInfo: {$push: '$payment'},
-                        payments: {$push: '$payment._id'},
-                        paymentDate: {$first: '$paymentDate'},
-                        dueDate: {$max: '$dueDate'}
+                        payments    : {$push: '$payment._id'},
+                        paymentDate : {$first: '$paymentDate'},
+                        dueDate     : {$max: '$dueDate'}
                     }
                 }
             ], callback);
@@ -231,13 +231,13 @@ var Invoice = function (models, event) {
         function changeProformaWorkflow(callback) {
             var request = {
                 query  : {
-                    wId         : 'Proforma',
-                    status      : 'Done'
+                    wId   : 'Proforma',
+                    status: 'Done'
                 },
                 session: req.session
             };
 
-            workflowHandler.getFirstForConvert(request, function(err, workflow) {
+            workflowHandler.getFirstForConvert(request, function (err, workflow) {
                 Invoice.update(
                     {
                         sourceDocument: objectId(id)
@@ -294,14 +294,14 @@ var Invoice = function (models, event) {
             }
 
             if (proforma) {
-                proforma.paymentsInfo.forEach(function(payment) {
+                proforma.paymentsInfo.forEach(function (payment) {
                     var paid = payment.paidAmount;
-                    var paidInUSD = paid/payment.currency.rate;
+                    var paidInUSD = paid / payment.currency.rate;
 
                     paidAmount += fx(paidInUSD).from('USD').to(invoiceCurrency);
                 });
 
-                paidAmount = paidAmount/100;
+                paidAmount = paidAmount / 100;
 
                 payments = proforma.payments;
                 invoice.paymentDate = proforma.paymentDate;
@@ -318,7 +318,11 @@ var Invoice = function (models, event) {
             invoice.payments = payments;
             invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
-            invoice.paymentInfo.balance = order.paymentInfo.total - (paidAmount);
+            invoice.paymentInfo.balance = order.paymentInfo.total - paidAmount;
+
+            if (payments && payments.length){
+                invoice.removable = false;
+            }
 
             if (paidAmount === order.paymentInfo.total) {
                 invoice.workflow = objectId(CONSTANTS.INVOICE_PAID);
@@ -343,7 +347,7 @@ var Invoice = function (models, event) {
                 invoice.salesPerson = order.project.projectmanager || null;
 
                 invoice.save(function (err, result) {
-                    if (err){
+                    if (err) {
                         return next(err);
                     }
 
@@ -357,15 +361,15 @@ var Invoice = function (models, event) {
 
                 query.exec(function (err, result) {
                     if (err) {
-                      return  callback(err);
+                        return callback(err);
                     }
 
                     if (result && result.salesPurchases.salesPerson) {
                         invoice.salesPerson = result.salesPurchases.salesPerson._id;
                     }
 
-                    invoice.save(function(err, result){
-                        if (err){
+                    invoice.save(function (err, result) {
+                        if (err) {
                             return next(err);
                         }
 
@@ -377,7 +381,7 @@ var Invoice = function (models, event) {
 
         }
 
-        function createJournalEntry (invoice, callback){
+        function createJournalEntry(invoice, callback) {
             journalEntryComposer(invoice, req.session.lastDb, callback, req.session.uId);
         }
 
@@ -403,7 +407,7 @@ var Invoice = function (models, event) {
                 }
             });
 
-            if (products){
+            if (products) {
                 async.each(products, function (result, cb) {
                     var jobs = result.jobs;
 
@@ -453,7 +457,7 @@ var Invoice = function (models, event) {
         var optionsForPayments;
         var Customer = models.get(db, 'Customers', CustomerSchema);
 
-        date = moment(data.invoiceDate);
+        date = moment(new Date(data.invoiceDate));
         date = date.format('YYYY-MM-DD');
 
         if (data.proforma) {
@@ -500,13 +504,24 @@ var Invoice = function (models, event) {
                                         return next(err);
                                     }
 
-                                /*journalEntryComposer(invoice, db, function (err, response) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-                                }, req.session.uId);*/
+                                    /*journalEntryComposer(invoice, db, function (err, response) {
+                                     if (err) {
+                                     return next(err);
+                                     }
+                                     }, req.session.uId);*/
 
+                                    Customer.populate(invoice, {
+                                        path  : 'supplier',
+                                        select: '_id name fullName'
+                                    }, function (err, resp) {
+                                        if (err) {
+                                            return next(err);
+                                        }
 
+                                        res.status(200).send(invoice);
+                                    });
+                                });
+                            } else {
                                 Customer.populate(invoice, {
                                     path  : 'supplier',
                                     select: '_id name fullName'
@@ -514,18 +529,6 @@ var Invoice = function (models, event) {
                                     if (err) {
                                         return next(err);
                                     }
-
-                                    res.status(200).send(invoice);
-                                });
-                            });
-                        } else {
-                            Customer.populate(invoice, {
-                                path  : 'supplier',
-                                select: '_id name fullName'
-                            }, function (err, resp) {
-                                if (err) {
-                                    return next(err);
-                                }
 
                                     res.status(200).send(invoice);
                                 });
@@ -706,7 +709,7 @@ var Invoice = function (models, event) {
                         }
 
                         optionsObject.$and.push({_id: {$in: _.pluck(invoicesIds, "_id")}});
-                        optionsObject.$and.push({expense: {$exists: false}});
+                        // optionsObject.$and.push({expense: {$exists: false}});
 
                         if (baseUrl === '/Proforma') {
                             optionsObject.$and.push({_type: 'Proforma'});
@@ -773,7 +776,9 @@ var Invoice = function (models, event) {
                                     name            : 1,
                                     paymentDate     : 1,
                                     dueDate         : 1,
-                                    payments        : 1
+                                    payments        : 1,
+                                    _type           : 1,
+                                    removable       : 1
                                 }
                             }, {
                                 $match: optionsObject
@@ -996,7 +1001,6 @@ var Invoice = function (models, event) {
                             }
                         });
 
-
                         async.each(invoiceDeleted.products, function (product) {
                             jobs.push(product.jobs);
                         });
@@ -1007,17 +1011,17 @@ var Invoice = function (models, event) {
                         function proformaUpdate(parallelCb) {
                             var request = {
                                 query  : {
-                                    wId         : 'Proforma',
-                                    status      : 'New'
+                                    wId   : 'Proforma',
+                                    status: 'New'
                                 },
                                 session: req.session
                             };
 
-                            workflowHandler.getFirstForConvert(request, function(err, workflow) {
+                            workflowHandler.getFirstForConvert(request, function (err, workflow) {
                                 Proforma.update(
                                     {
                                         sourceDocument: orderId,
-                                        _type: 'Proforma'
+                                        _type         : 'Proforma'
                                     },
                                     {
                                         $set: {
@@ -1033,8 +1037,10 @@ var Invoice = function (models, event) {
                         };
 
                         function paymentsRemove(parallelCb) {
-                            async.each(paymentIds, function (pid) {
-                                Payment.remove({invoice: id}, parallelCb);
+                            async.each(paymentIds, function (pid, cb) {
+                                Payment.remove({invoice: id}, cb);
+                            }, function () {
+                                parallelCb();
                             });
                         };
 
@@ -1152,9 +1158,7 @@ var Invoice = function (models, event) {
 
     };
 
-
     this.totalCollectionLength = function (req, res, next) {
-
 
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var departmentSearcher;
@@ -1199,7 +1203,6 @@ var Invoice = function (models, event) {
                 ]
             };
 
-
             Invoice.aggregate(
                 {
                     $match: matchQuery
@@ -1223,7 +1226,6 @@ var Invoice = function (models, event) {
             }
 
             queryObject['$and'].push({_id: {$in: _.pluck(invoicesIds, '_id')}});
-
 
             Invoice.aggregate([{
                 $lookup: {
@@ -1312,7 +1314,6 @@ var Invoice = function (models, event) {
 
                 waterfallCallback(null, result.length);
             });
-
 
             /* var query;
              var queryObject = ({_id: {$in: invoicesIds}});
@@ -1671,7 +1672,7 @@ var Invoice = function (models, event) {
                                     ammount    : {$divide: ['$paymentInfo.total', 100]},
                                     paid       : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]},
                                     balance    : {$divide: ['$paymentInfo.balance', 100]},
-                                    _type       : 1
+                                    _type      : 1
                                 }
                             }, {
                                 $match: optionsObject

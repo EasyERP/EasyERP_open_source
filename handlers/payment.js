@@ -433,7 +433,7 @@ var Payment = function (models, event) {
     this.amountLeftCalc = function (req, res, next) {
         var data = req.query;
         var diff;
-        var date = data.date;
+        var date = new Date(data.date);
         var totalAmount = data.totalAmount;
         var paymentAmount = data.paymentAmount;
         var invoiceCurrency = data.invoiceCurrency;
@@ -627,12 +627,11 @@ var Payment = function (models, event) {
         var workflowHandler = new WorkflowHandler(models);
         var invoiceId = body.invoice;
         var DbName = req.session.lastDb;
-        var date = body.date ? moment(body.date) : now;
+        var date = body.date ? moment(new Date(body.date)) : now;
         var mid = body.mid;
         var data = body;
         var isForSale = data.forSale;
         var project;
-        var proforma = body.proforma;
         //var type = "Paid";
 
         delete  data.mid;

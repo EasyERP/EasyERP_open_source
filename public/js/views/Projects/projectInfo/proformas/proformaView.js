@@ -35,12 +35,12 @@ define([
         template: _.template(invoiceTemplate),
 
         events: {
-            "click .checkbox"                          : "checked",
+            "click .checkbox"                                : "checked",
             "click  .list tbody td:not(.notForm, .validated)": "goToEditDialog",
-            "click #removeInvoice"                     : "deleteItems",
-            "click #saveInvoice"                       : "saveItems",
-            "click .selectList"                        : "showSelects",
-            "click .newSelectList li"                  : "chooseOption"
+            "click #removeProforma"                           : "deleteItems",
+            "click #saveProforma"                             : "saveItems",
+            "click .selectList"                              : "showSelects",
+            "click .newSelectList li"                        : "chooseOption"
         },
 
         showSelects: function (e) {
@@ -69,7 +69,7 @@ define([
                     patch   : true,
                     validate: false,
                     success : function () {
-                        self.$el.find("#saveInvoice").hide();
+                        self.$el.find("#saveProforma").hide();
                     }
                 });
             }
@@ -125,7 +125,7 @@ define([
 
             this.hideNewSelect();
 
-            this.$el.find("#saveInvoice").show();
+            this.$el.find("#saveProforma").show();
             return false;
         },
 
@@ -143,7 +143,7 @@ define([
             var tr;
             var listTableCheckedInput;
             var table = this.$el.find('#listTable');
-            listTableCheckedInput = table.find("input:not('#check_all_invoice'):checked");
+            listTableCheckedInput = table.find("input:not('#check_all_proforma'):checked");
 
             this.collectionLength = this.collection.length;
             async.each(listTableCheckedInput, function (checkbox, cb) {
@@ -163,8 +163,8 @@ define([
                         tr.removeClass('notEditable');
                         tr.find('.checkbox').removeClass('notRemovable');
 
-                        $("#removeInvoice").hide();
-                        $('#check_all_invoice').prop('checked', false);
+                        $("#removeProforma").hide();
+                        $('#check_all_proforma').prop('checked', false);
 
                         that.collection.remove(checkbox.value);
 
@@ -173,7 +173,7 @@ define([
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: "You do not have permission to perform this action"
                             });
                         }
@@ -228,16 +228,16 @@ define([
                 },
                 success: function (model) {
                     new editView({
-                        model: model,
-                        redirect: true,
-                        collection: this.collection,
-                        notCreate: true,
+                        model       : model,
+                        redirect    : true,
+                        collection  : this.collection,
+                        notCreate   : true,
                         eventChannel: self.eventChannel
                     });
                 },
                 error  : function () {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'Please refresh browser'
                     });
                 }
@@ -261,16 +261,17 @@ define([
                 success: function (model) {
                     // var isWtrack = App.weTrack;
 
-                    new editView({model: model,
-                        redirect: true,
-                        collection: this.collection,
-                        notCreate: true,
+                    new editView({
+                        model       : model,
+                        redirect    : true,
+                        collection  : this.collection,
+                        notCreate   : true,
                         eventChannel: self.eventChannel
                     });
                 },
                 error  : function () {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'Please refresh browser'
                     });
                 }
@@ -363,8 +364,8 @@ define([
 
             if (this.collection.length > 0) {
                 checkLength = $el.find("input.checkbox:checked:not(.notRemovable)").length;
-                checkAll$ = $el.find('#check_all_invoice');
-                removeBtnEl = $('#removeInvoice');
+                checkAll$ = $el.find('#check_all_proforma');
+                removeBtnEl = $('#removeProforma');
 
                 if (checkLength > 0) {
                     checkAll$.prop('checked', false);
@@ -432,18 +433,18 @@ define([
                 self.stages = stages;
             });
 
-            this.$el.find("#removeInvoice").hide();
-            this.$el.find("#saveInvoice").hide();
+            this.$el.find("#removeProforma").hide();
+            this.$el.find("#saveProforma").hide();
 
-            $('#check_all_invoice').click(function () {
+            $('#check_all_proforma').click(function () {
 
                 self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);
 
                 if (self.$el.find("input.checkbox:checked").length > 0) {
-                    self.$el.find("#removeInvoice").show();
+                    self.$el.find("#removeProforma").show();
                 } else {
-                    self.$el.find("#removeInvoice").hide();
-                    $('#check_all_invoice').prop('checked', false);
+                    self.$el.find("#removeProforma").hide();
+                    $('#check_all_proforma').prop('checked', false);
                 }
             });
 

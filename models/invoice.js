@@ -26,8 +26,8 @@ module.exports = (function () {
         invoiceDate: {type: Date, default: Date.now},
         dueDate    : Date,
         paymentDate: Date,
-        journal: {type: ObjectId, ref: 'journal', default: null},
-        currency: {
+        journal    : {type: ObjectId, ref: 'journal', default: null},
+        currency   : {
             _id : {type: ObjectId, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
         },
@@ -53,11 +53,12 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         },
 
-        editedBy : {
+        editedBy: {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
-        invoiced : {type: Boolean, default: false}
+        invoiced: {type: Boolean, default: false},
+        removable: {type: Boolean, default: true}
     }, {collection: 'Invoice', discriminatorKey: '_type'});
 
     var jobsInvoiceSchema = baseSchema.extend({
@@ -88,7 +89,7 @@ module.exports = (function () {
     });
 
     var invoiceSchema = baseSchema.extend({
-        products: [{
+        products : [{
             _id        : false,
             quantity   : {type: Number, default: 1},
             unitPrice  : Number,

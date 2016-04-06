@@ -29,15 +29,6 @@ var Proforma = function (models) {
         var parallelTasks;
         var waterFallTasks;
 
-        function fetchFirstWorkflow(callback) {
-            request = {
-                query  : {
-                    wId: 'Proforma'
-                },
-                session: req.session
-            };
-            workflowHandler.getFirstForConvert(request, callback);
-        }
 		function getRates(callback) {
 			oxr.historical(date, function () {
 				fx.rates = oxr.rates;
@@ -49,7 +40,7 @@ var Proforma = function (models) {
 		function fetchFirstWorkflow(callback) {
 			request = {
 				query  : {
-					wId: 'Proforma',
+					wId: 'Proforma'
 				},
 				session: req.session
 			};
@@ -90,26 +81,27 @@ var Proforma = function (models) {
 						foreignField: '_id',
 						as          : 'project'
 					}
-				},{
-                    $lookup: {
-                        from        : 'currency',
-                        localField  : 'currency._id',
-                        foreignField: '_id',
-                        as          : 'currency.obj'
-                    }
-                },
+				},
+				{
+					$lookup: {
+						from        : 'currency',
+						localField  : 'currency._id',
+						foreignField: '_id',
+						as          : 'currency.obj'
+					}
+				},
 				{
 					$project: {
 						'products.product'    : {$arrayElemAt: ['$products.product', 0]},
 						'products.jobs'       : {$arrayElemAt: ['$products.jobs', 0]},
+						'currency.obj'        : {$arrayElemAt: ['$currency.obj', 0]},
 						project               : {$arrayElemAt: ['$project', 0]},
-                        'currency.obj'        : {$arrayElemAt: ['$currency.obj', 0]},
-                        'products.subTotal'   : 1,
+						'products.subTotal'   : 1,
 						'products.unitPrice'  : 1,
 						'products.taxes'      : 1,
 						'products.description': 1,
 						'products.quantity'   : 1,
-						currency              : 1,
+						'currency._id'        : 1,
 						forSales              : 1,
 						type                  : 1,
 						isOrder               : 1,
@@ -166,7 +158,7 @@ var Proforma = function (models) {
 				}
 				callback(err, quotation[0]);
 			});
-		};
+		}
 
         function parallel(callback) {
             async.parallel(parallelTasks, callback);
@@ -250,7 +242,6 @@ var Proforma = function (models) {
             }
 
             res.status(201).send(result);
-
         });
     };
 };
