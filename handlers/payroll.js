@@ -429,8 +429,8 @@ var PayRoll = function (models) {
         var key = 'salaryReport' + filter + startDate.toString() + endDate.toString();
         var redisStore = require('../helpers/redisClient');
         var waterfallTasks;
-        var startDateKey = moment(startDate).year() * 100 +  moment(startDate).isoWeek();
-        var endDateKey = moment(endDate).year() * 100 +  moment(endDate).isoWeek();
+        var startDateKey = moment(startDate).year() * 100 +  moment(startDate).week(); // todo isoWeek (changed on week)
+        var endDateKey = moment(endDate).year() * 100 +  moment(endDate).week(); // todo isoWeek (changed on week)
         var filterValue;
 
         function caseFilterEmployee(filter) {
@@ -474,7 +474,7 @@ var PayRoll = function (models) {
                     $or: [{
                         $and: [{
                             isEmployee: true
-                        }, {
+                        }, /*{ // commented in case of employee that was fired and again hired
                             $or: [{
                                 lastFire: null
                             }, {
@@ -482,12 +482,12 @@ var PayRoll = function (models) {
                                     $ne : null,
                                     $gte: startDateKey
                                 }
-                            }, {
-                                lastHire: {
-                                    $ne : null,
-                                    $lte: endDateKey
-                                }
                             }]
+                        },*/{
+                            firstHire: {
+                                $ne : null,
+                                $lte: endDateKey
+                            }
                         }]
                     }, {
                         $and: [{
@@ -496,6 +496,11 @@ var PayRoll = function (models) {
                             lastFire: {
                                 $ne : null,
                                 $gte: startDateKey
+                            }
+                        }, {
+                            firstHire: {
+                                $ne : null,
+                                $lte: endDateKey
                             }
                         }]
                     }
@@ -525,12 +530,12 @@ var PayRoll = function (models) {
                         hire      : 1,
                         name      : 1,
                         lastFire  : 1,
-                        lastHire  : {
+                        firstHire  : {
                             $let: {
                                 vars: {
-                                    lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                                    firstHired: {$arrayElemAt: [{$slice: ['$hire', 1]}, 0]}
                                 },
-                                in  : {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
+                                in  : {$add: [{$multiply: [{$year: '$$firstHired.date'}, 100]}, {$week: '$$firstHired.date'}]}
                             }
                         }
                     }

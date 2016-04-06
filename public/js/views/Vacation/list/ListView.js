@@ -160,9 +160,18 @@ define([
 
         saveItem: function () {
             var model;
+            var newElements = this.$el.find('#false');
 
             this.editCollection.on('saved', this.savedNewModel, this);
             this.editCollection.on('updated', this.updatedOptions, this);
+
+            if ( newElements && _.isEmpty(this.changedModels)){
+                App.render({
+                    type: 'error',
+                    message: "Please choose employee or cancel changes"
+                });
+                return false;
+            }
 
             for (var id in this.changedModels) {
                 model = this.editCollection.get(id);
@@ -833,8 +842,21 @@ define([
         },
 
         deleteItems: function () {
+            var newElements;
+            var id;
+
             if (this.changed) {
                 this.cancelChanges();
+            } else {
+                newElements = this.$el.find('#false');
+                id = newElements.data('id');
+
+                if (id) {
+                    this.editCollection.remove(id);
+                }
+
+                newElements.remove();
+                this.hideSaveCancelBtns();
             }
         },
 

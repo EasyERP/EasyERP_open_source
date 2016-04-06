@@ -592,7 +592,7 @@ define([
                             //Backbone.history.navigate(url, {trigger: true});
                             App.render({
                                 type   : 'notify',
-                                message: 'Data were changed, please refresh browser'
+                                message: 'Data was changed, please refresh browser'
                             });
                         },
                         error  : function (model, xhr) {

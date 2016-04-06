@@ -22,8 +22,10 @@ define([
 
                 this.$el.html(this.template({model: this.model.toJSON()}));
 
-                if (this.model.toJSON().nextAction.date && moment(new Date(this.model.toJSON().nextAction.date)).isBefore(this.date)) {
-                    this.$el.addClass("errorContent");
+                if ((this.model.toJSON().workflow.status !== 'Done') && (this.model.toJSON().workflow.status !==  'Cancelled')){
+                    if (this.model.toJSON().nextAction.date && moment(new Date(this.model.toJSON().nextAction.date)).isBefore(this.date)) {
+                        this.$el.addClass("errorContent");
+                    }
                 }
 
                 return this;

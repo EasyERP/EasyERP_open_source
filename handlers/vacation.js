@@ -19,9 +19,10 @@ var Vacation = function (event, models) {
         var resultObj = {};
         var weekKey;
         var dayNumber;
+        var day;
 
         if (array.length) {
-            for (var day = array.length; day >= 0; day--) {
+            for (day = array.length; day >= 0; day--) {
                 if (array[day]) {
                     dateValue = moment([year, month - 1, day + 1]);
                     //weekKey = year * 100 + moment(dateValue).isoWeek();
@@ -41,7 +42,7 @@ var Vacation = function (event, models) {
         }
 
         return resultObj;
-    };
+    }
 
     function calculate(data, year) {
         var leaveDays = 0;
@@ -61,6 +62,8 @@ var Vacation = function (event, models) {
         var monthYear;
         var startMonth;
         var day;
+        var i;
+        var j;
 
         data.forEach(function (attendance) {
             attendance.vacArray.forEach(function (day) {
@@ -84,10 +87,10 @@ var Vacation = function (event, models) {
         if (year !== 'Line Year') {
             monthArray = new Array(12);
 
-            for (var i = 0; i < monthArray.length; i++) {
+            for (i = 0; i < monthArray.length; i++) {
                 dayMonthCount = moment().set('year', year).set('month', i).endOf('month').date();
 
-                for (var j = 1; j <= dayMonthCount; j++) {
+                for (j = 1; j <= dayMonthCount; j++) {
                     day = new Date(year, i, j);
                     day = day.getDay();
 
@@ -103,7 +106,7 @@ var Vacation = function (event, models) {
             monthArray = new Array(13);
             startMonth = moment().month();
 
-            for (var i = 0; i < monthArray.length; i++) {
+            for (i = 0; i < monthArray.length; i++) {
                 if (i >= startMonth) {
                     monthYear = moment().year() - 1;
                 } else {
@@ -111,8 +114,8 @@ var Vacation = function (event, models) {
                 }
                 dayMonthCount = moment().set('year', monthYear).set('month', i).endOf('month').date();
 
-                for (var j = 1; j <= dayMonthCount; j++) {
-                    var day = new Date(monthYear, i, j);
+                for (j = 1; j <= dayMonthCount; j++) {
+                    day = new Date(monthYear, i, j);
                     day = day.getDay();
                     if (day === 0 || day === 6) {
                         weekend++;
@@ -129,14 +132,14 @@ var Vacation = function (event, models) {
         workingDays = endYear.diff(startYear, 'days') - leaveDays - weekend;
 
         return {
-            leaveDays: leaveDays,
+            leaveDays  : leaveDays,
             workingDays: workingDays,
-            vacation: vacation,
-            personal: personal,
-            sick: sick,
-            education: education
-        }
-    };
+            vacation   : vacation,
+            personal   : personal,
+            sick       : sick,
+            education  : education
+        };
+    }
 
     this.getYears = function (req, res, next) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
@@ -152,11 +155,13 @@ var Vacation = function (event, models) {
 
         query = Vacation.distinct('year');
 
-        query.exec(function (err, result) {
+        query.exec(function (err, years) {
+            var result;
+
             if (err) {
                 return next(err);
             }
-            result = _.map(result, function (element) {
+            result = _.map(years, function (element) {
                 var el = element;
 
                 element = {};
@@ -166,20 +171,18 @@ var Vacation = function (event, models) {
                 return element;
             });
 
-
             for (year = yearFrom; year <= yearTo; year++) {
                 newYear = {
-                    _id: year,
+                    _id : year,
                     name: year
                 };
 
-                if (result.indexOf(newYear) === -1) {
+                if (years.indexOf(year) === -1) {
                     result.push(newYear);
                 }
             }
 
             result.sort();
-
 
             /*length = result.length;
              lastEl = result[length - 1];*/
@@ -198,10 +201,15 @@ var Vacation = function (event, models) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var options = req.query;
         var queryObject = {};
-        var query;
-
         var startDate;
         var endDate;
+        var stat;
+        var date;
+        var startQuery;
+        var endQuery;
+        var condition1;
+        var condition2;
+        var employeeQuery = {};
 
         if (options) {
             if (options.employee) {
@@ -209,22 +217,17 @@ var Vacation = function (event, models) {
             }
             if (options.year && options.year !== 'Line Year') {
                 if (options.month) {
-                    queryObject.year = parseInt(options.year);
-                    queryObject.month = parseInt(options.month);
+                    queryObject.year = parseInt(options.year, 10);
+                    queryObject.month = parseInt(options.month,10);
                 } else {
                     endDate = moment([options.year, 12]);
                     startDate = moment([options.year, 1]);
 
                     // queryObject.year = {'$in': [options.year, (options.year - 1).toString()]};
-                    queryObject.year = {'$in': [parseInt(options.year), (options.year - 1)]}; // changed from String to Number
+                    queryObject.year = {'$in': [parseInt(options.year, 10), (options.year - 1)]}; // changed from String to Number
                 }
             } else if (options.year) {
-                var date = new Date();
-                var startQuery;
-                var endQuery;
-                var condition1;
-                var condition2;
-                var employeeQuery = {};
+                date = new Date();
 
                 employeeQuery['employee._id'] = queryObject['employee._id'];
 
@@ -233,8 +236,8 @@ var Vacation = function (event, models) {
                 endDate = new Date(date);
                 endDate.setMonth(endDate.getMonth() + 1);
 
-                condition1 = {month: {'$lte': parseInt(date.format('M'))}};
-                condition2 = {year: {'$lte': parseInt(date.format('YYYY'))}};
+                condition1 = {month: {'$lte': parseInt(date.format('M'), 10)}};
+                condition2 = {year: {'$lte': parseInt(date.format('YYYY'), 10)}};
 
                 endQuery = {'$and': [condition1, condition2, employeeQuery]};
 
@@ -243,14 +246,14 @@ var Vacation = function (event, models) {
 
                 //date.subtract(12, 'M');
 
-                condition1 = {month: {'$gte': parseInt(date.format('M'))}};
-                condition2 = {year: {'$gte': parseInt(date.format('YYYY'))}};
+                condition1 = {month: {'$gte': parseInt(date.format('M'), 10)}};
+                condition2 = {year: {'$gte': parseInt(date.format('YYYY'), 10)}};
 
                 startQuery = {'$and': [condition1, condition2, employeeQuery]};
 
                 queryObject = {};
 
-                queryObject['$or'] = [startQuery, endQuery];
+                queryObject.$or = [startQuery, endQuery];
             }
         }
 
@@ -259,36 +262,36 @@ var Vacation = function (event, models) {
         // query.exec(function (err, result) {
         Vacation.aggregate([{
             $lookup: {
-                from: "Employees",
-                localField: "employee",
+                from        : "Employees",
+                localField  : "employee",
                 foreignField: "_id", as: "employee"
             }
         }, {
             $lookup: {
-                from: "Department",
-                localField: "department",
+                from        : "Department",
+                localField  : "department",
                 foreignField: "_id", as: "department"
             }
         }, {
             $project: {
                 department: {$arrayElemAt: ["$department", 0]},
-                employee: {$arrayElemAt: ["$employee", 0]},
-                month: 1,
-                year: 1,
-                vacations: 1,
-                vacArray: 1,
+                employee  : {$arrayElemAt: ["$employee", 0]},
+                month     : 1,
+                year      : 1,
+                vacations : 1,
+                vacArray  : 1,
                 monthTotal: 1
             }
         }, {
             $project: {
                 'department.departmentName': 1,
-                'employee.name': 1,
-                'employee._id': 1,
-                month: 1,
-                year: 1,
-                vacations: 1,
-                vacArray: 1,
-                monthTotal: 1
+                'employee.name'            : 1,
+                'employee._id'             : 1,
+                month                      : 1,
+                year                       : 1,
+                vacations                  : 1,
+                vacArray                   : 1,
+                monthTotal                 : 1
             }
         }, {
             $match: queryObject
@@ -310,12 +313,12 @@ var Vacation = function (event, models) {
                             };
 
                             result.forEach(function (element) {
-                                var date = moment([element.year, element.month]);
+                                date = moment([element.year, element.month]);
 
                                 if (date >= startDate && date <= endDate) {
-                                    resultObj['curYear'].push(element);
+                                    resultObj.curYear.push(element);
                                 } else {
-                                    resultObj['preYear'].push(element);
+                                    resultObj.preYear.push(element);
                                 }
                             });
 
@@ -323,9 +326,9 @@ var Vacation = function (event, models) {
                         },
                         function (result, callback) {
                             if (options.year !== 'Line Year') {
-                                var stat = calculate(result['preYear'], options.year - 1);
+                                stat = calculate(result.preYear, options.year - 1);
                             } else {
-                                var stat = calculate(result['preYear'], options.year);
+                                stat = calculate(result.preYear, options.year);
                             }
 
                             callback(null, result, stat);
@@ -335,20 +338,20 @@ var Vacation = function (event, models) {
                         if (err) {
                             return next(err);
                         }
-                        res.status(200).send({data: object['curYear'], stat: stat});
+                        res.status(200).send({data: object.curYear, stat: stat});
 
                     }
                 );
             }
         });
 
-    };
+    }
 
     function getVacationByWeek(req, res, next) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var options = req.query;
-        var year = parseInt(options.year);
-        var week = parseInt(options.week);
+        var year = parseInt(options.year, 10);
+        var week = parseInt(options.week, 10);
         var employee = options.employee;
         var dateByWeek = week + year * 100;
         var dateByWeekField = 'vacations.' + dateByWeek;
@@ -360,10 +363,11 @@ var Vacation = function (event, models) {
         var monthDay;
         var month;
         var day;
+        var i;
 
         date.isoWeek(week);
 
-        for (var i = 1; i <= 7; i++) {
+        for (i = 1; i <= 7; i++) {
             date.isoWeekday(i);
             month = date.month() + 1;
             day = date.date();
@@ -378,9 +382,9 @@ var Vacation = function (event, models) {
 
         query = {
             $project: {
-                _id: 0,
+                _id     : 0,
                 vacArray: 1,
-                month: 1
+                month   : 1
             }
         };
 
@@ -388,7 +392,7 @@ var Vacation = function (event, models) {
 
         query = {
             $unwind: {
-                path: '$vacArray',
+                path             : '$vacArray',
                 includeArrayIndex: 'day'
             }
         };
@@ -400,7 +404,7 @@ var Vacation = function (event, models) {
                 if (err) {
                     return next(err);
                 }
-                result.forEach(function(vacation) {
+                result.forEach(function (vacation) {
                     day = vacation.day + 1;
                     month = vacation.month;
                     monthDay = day + 100 * month;
@@ -412,7 +416,7 @@ var Vacation = function (event, models) {
                 res.status(200).send(vacationsWeek);
             });
 
-    };
+    }
 
     this.getForView = function (req, res, next) {
         var modelId = 70;
@@ -438,7 +442,7 @@ var Vacation = function (event, models) {
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = req.body;
-        var vacArr = data.vacArray ? data.vacArray : [];
+        var vacArr = data.vacArray || [];
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var capData = {
             db: req.session.lastDb
@@ -554,7 +558,7 @@ var Vacation = function (event, models) {
         var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var body = req.body;
-        var vacArr = body.vacArray ? body.vacArray : [];
+        var vacArr = body.vacArray || [];
         var vacation;
         var vacationKeys;
         var result = 0;
@@ -577,25 +581,25 @@ var Vacation = function (event, models) {
                 return next(err);
             }
 
-            parallelTasks = [populateEmployees, populateDeps];
-
             function populateEmployees(cb) {
                 Employee.populate(Vacation, {
-                    'path': 'employee',
+                    'path'  : 'employee',
                     'select': '_id name fullName',
-                    'lean': true
+                    'lean'  : true
                 }, cb);
             }
 
             function populateDeps(cb) {
                 Department.populate(Vacation, {
-                    'path': 'department',
+                    'path'  : 'department',
                     'select': '_id departmentName',
-                    'lean': true
+                    'lean'  : true
                 }, cb);
             }
 
-            async.parallel(parallelTasks, function (err, result) {
+            parallelTasks = [populateEmployees, populateDeps];
+
+            async.parallel(parallelTasks, function (err) {
                 if (err) {
                     return next(err);
                 }

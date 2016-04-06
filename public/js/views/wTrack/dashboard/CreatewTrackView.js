@@ -10,8 +10,9 @@ define([
     'async',
     'common',
     'dataService',
-    'helpers/employeeHelper'
-], function (Backbone, $, _, selectView, CreateJob, template, WTrackModel, moment, async, common, dataService, employeeHelper) {
+    'helpers/employeeHelper',
+    'helpers/keyCodeHelper'
+], function (Backbone, $, _, selectView, CreateJob, template, WTrackModel, moment, async, common, dataService, employeeHelper, keyCodes) {
     'use strict';
     var CreateView = Backbone.View.extend({
         template   : _.template(template),
@@ -24,6 +25,7 @@ define([
             'click td.editable:not(.disabled)'                 : 'editRow',
             'click td.disabled'                                : 'notify',
             'keydown input.editing'                            : 'keyDown',
+            'keyup input.editing'                              : 'onKeyUpInput',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             click                                              : 'removeInputs'
         },
@@ -86,9 +88,24 @@ define([
 
         },
 
-        keyDown: function (e) {
-            if (e.which === 13) {
-                this.autoCalc(e);
+        keyDown: function (e) {  // validation from generateWTrack, need keydown instead of keypress in case of enter key
+            if (keyCodes.isBspDelTabEscEnt(e.keyCode) || keyCodes.isArrowsOrHomeEnd(e.keyCode)) {
+                if (e.which === 13) {
+                    this.autoCalc(e);
+                }
+                return;
+            }
+
+            if (e.shiftKey || !keyCodes.isDigit(e.keyCode)) {
+                e.preventDefault();
+            }
+        },
+
+        onKeyUpInput: function (e) { // max hours in cell
+            var element = e.target;
+
+            if ($(element).val() > 24) {
+                $(element).val(24);
             }
         },
 
@@ -423,7 +440,7 @@ define([
 
                 tempContainer = el.text();
                 width = el.width() - 6;
-                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
+                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="2" style="width:' + width + 'px">');
 
                 insertedInput = el.find('input');
                 insertedInput.focus();

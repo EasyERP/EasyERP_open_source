@@ -983,12 +983,11 @@ define([
             }
 
             this.editCollection.save();
-
             this.$el.find('.edited').removeClass('edited');
         },
 
         savedNewModel: function (modelObject) {
-            var savedRow = this.$listTable.find('.false');
+            var savedRow = this.$listTable.find(".false[data-id='" + modelObject.cid + "']"); // additional selector for finding old row by cid (in case of multiply copying)
             var modelId;
             var checkbox = savedRow.find('input[type=checkbox]');
 
@@ -1485,7 +1484,7 @@ define([
                 self.responseObj['#project'] = projects;
             });
 
-            dataService.getData('/employee/getForDD', null, function (employees) {
+            dataService.getData('/employee/getForDD', {devDepartments: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -1495,7 +1494,7 @@ define([
                 self.responseObj['#employee'] = employees;
             });
 
-            dataService.getData('/department/getForDD', null, function (departments) {
+            dataService.getData('/department/getForDD', {devDepartments : true}, function (departments) {
                 departments = _.map(departments.data, function (department) {
                     department.name = department.departmentName;
 

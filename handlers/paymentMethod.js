@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var PaymentMthod = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
+    'use strict';
+
     var PaymentMethodSchema = mongoose.Schemas['PaymentMethod'];
 
     this.getForDd = function (req, res, next) {

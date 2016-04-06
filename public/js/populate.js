@@ -229,7 +229,7 @@ define([
                 currentPage++;
             }
 
-            s = "<ul class='newSelectList' data-page='1'><li id='createJob'>Generate</li>";
+            s = "<ul class='newSelectList' data-page='1'><li class='selected' id='createJob'>Generate</li> </ul>";
             start = (currentPage - 1) * elementVisible;
             end = Math.min(currentPage * elementVisible, data ? data.length : 0);
             allPages = Math.ceil(data ? data.length : 0 / elementVisible);
@@ -254,6 +254,9 @@ define([
                     $curUl.css({
                         top: curUlPosition.top - curUlHeight - parent.outerHeight()
                     });
+                }
+                if (attr === 'jobs') {
+                    $curUl.append("<li id='createJob' class='selected'>Generate</li>");
                 }
 
             } else if (attr === 'jobs') {
@@ -397,7 +400,7 @@ define([
                 start         : start,
                 end           : end,
                 dataLength    : data.length,
-                elementVisible: elementVisible,
+                elementVisible: elementVisible
             }));
         };
 

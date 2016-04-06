@@ -646,6 +646,7 @@ var Opportunities = function (models, event) {
             var optionsObject = [];
             var data = req.query;
             var filter = data.filter || {};
+            var key;
 
             res.data = [];
 
@@ -852,6 +853,9 @@ var Opportunities = function (models, event) {
                                         });
 
                                     if (data.sort) {
+                                        key = Object.keys(data.sort)[0];
+                                        req.query.sort[key] = parseInt(data.sort[key], 10);
+
                                         aggregateQuery.push({
                                             $sort: data.sort
                                         });

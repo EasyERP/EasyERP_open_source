@@ -111,13 +111,10 @@ define([
             },
 
             setEditable: function (td) {
-                var tr;
-
                 if (!td.parents) {
                     td = $(td.target).closest('td');
                 }
 
-                tr = td.parents('tr');
                 td.addClass('edited');
 
                 if (this.isEditRows()) {
@@ -132,7 +129,7 @@ define([
 
                 event.preventDefault();
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || newRows.length){
+                if ((this.changed) || newRows.length){
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
@@ -280,32 +277,27 @@ define([
             },
 
             saveItem: function () {
+                var id;
                 var model;
-                // validation for empty fields
                 var filled = true;
 
-                 $(".editable").each(function (index, elem){
-                     if (!$(elem).html()){
-                         return filled = false;
-                     }
-                 });
+                $(".editable").each(function (index, elem){
+                    if (!$(elem).html()){
+                        filled = false;
+                        return false;
+                    }
+                });
 
                 if (!filled) {
-                    return App.render({type: 'error', message: 'Fill all fields please'});
+                    return  App.render({type: 'error', message: 'Fill all fields please'});
                 }
-                // end
 
                 this.setChangedValueToModel();
-                for (var id in this.changedModels) {
+                for (id in this.changedModels) {
                     model = this.editCollection.get(id);
                     model.changed = this.changedModels[id];
                 }
                 this.editCollection.save();
-
-                for (var id in this.changedModels) {
-                   delete this.changedModels[id];
-
-                }
             },
 
             savedNewModel: function (modelObject) {
@@ -336,6 +328,7 @@ define([
             updatedOptions: function () {
                 this.hideSaveCancelBtns();
                 this.resetCollection();
+                this.changedModels = {};
             },
 
             fetchSortCollection: function (sortObject) {
@@ -515,7 +508,7 @@ define([
                 var itemView;
                 var pagenation;
 
-                $("#top-bar-deleteBtn").hide();
+                this.hideSaveCancelBtns();
                 $('#check_all').prop('checked', false);
 
                 tBody.empty();
@@ -535,6 +528,11 @@ define([
                 } else {
                     pagenation.show();
                 }
+
+                if (this.editCollection) { // add for reset editCollection after sort
+                    this.editCollection.reset(this.collection.models);
+                }
+
             },
 
             previousPage: function (event) {
@@ -705,12 +703,12 @@ define([
 
                 startData.cid = model.cid;
 
-                //if (!this.isNewRow()) {
                 this.showSaveCancelBtns();
                 this.editCollection.add(model);
 
                 new createView(startData);
-                // }
+
+                this.changed = true;
             },
 
             showSaveCancelBtns: function () {
@@ -804,36 +802,28 @@ define([
                     mid = 72,
                     model;
                 var localCounter = 0;
-                var checkboxes$ = $("#listTable").find('input:checked');
-                var isObjectId = function (stringValue) {
-                    return stringValue.length === 24
-                };
-                var count = checkboxes$.length;
-
+                var count = $("#listTable input:checked").length;
                 this.collectionLength = this.collection.length;
-                var checkId = isObjectId($('#listTable').find('tr').data('id'));  // check if new element
 
-                if (!this.changed || !checkId) {
+                if (!this.changed) {
                     var answer = confirm("Really DELETE items ?!");
                     var value;
 
-                    if (answer) {
-                        $.each(checkboxes$, function (index, checkbox) {
+                    if (answer === true) {
+                        $.each($("#listTable input:checked"), function (index, checkbox) {
                             value = checkbox.value;
 
-                            if (!isObjectId(value)) {
+                            if (value.length < 24) {
+                                that.editCollection.remove(value);
+                                that.editCollection.on('remove', function () {
+                                    this.listLength--;
+                                    localCounter++;
 
-                                that.listLength--;
-                                localCounter++;
+                                    if (index === count - 1) {
+                                        that.triggerDeleteItemsRender(localCounter);
+                                    }
 
-                                that.createBtnEl.show();
-                                that.saveBtnEl.hide();
-                                that.changed = false; // in case of full field new element
-
-                                if (index === count - 1) {
-                                    that.triggerDeleteItemsRender(localCounter);
-                                }
-
+                                }, that);
                             } else {
 
                                 model = that.collection.get(value);
@@ -880,15 +870,18 @@ define([
                 var self = this;
                 var edited = this.edited;
                 var collection = this.collection;
+                var copiedCreated;
+                var dataId;
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
                     var rowNumber = tr.find('[data-content="number"]').text();
-                    var id = tr.data('id');
+                    var id = tr.attr('data-id');
                     var template = _.template(cancelEdit);
                     var model;
 
-                    if (!id) {
+                    if (!id  || (id.length < 24)) {
+                        self.hideSaveCancelBtns();
                         return cb('Empty id');
                     }
 
@@ -900,9 +893,21 @@ define([
                 }, function (err) {
                     if (!err) {
                         self.editCollection = new EditCollection(collection.toJSON());
+                        self.editCollection.on('saved', self.savedNewModel, self);
+                        self.editCollection.on('updated', self.updatedOptions, self);
                         self.hideSaveCancelBtns();
                     }
                 });
+
+                copiedCreated = this.$el.find('#false');
+                dataId = copiedCreated.attr('data-id');
+                this.editCollection.remove(dataId);
+                delete this.changedModels[dataId];
+                copiedCreated.remove();
+
+                this.createdCopied = false;
+
+                self.changedModels = {};
             }
 
         });

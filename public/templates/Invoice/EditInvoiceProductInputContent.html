@@ -21,17 +21,17 @@
     </td>
     <td data-name="price" class="">
         <span>
-            <%=product.unitPrice%>
+            <%=product.unitPrice ? currencySplitter(product.unitPrice.toString()): ''%>
         </span>
     </td>
     <td class="taxes">
         <span>
-            <%=product.taxes%>
+            <%=product.taxes ? currencySplitter(product.taxes.toString()): ''%>
         </span>
     </td>
     <td class="amount">
         <span>
-            <%=product.subTotal%>
+            <%=product.subTotal ? currencySplitter(product.subTotal.toString()): ''%>
         </span>
     </td>
 </tr>
