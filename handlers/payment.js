@@ -26,14 +26,7 @@ var Payment = function (models, event) {
     var objectId = mongoose.Types.ObjectId;
     var waterfallTasks;
 
-    function checkDb(db) {
-        var validDbs = ["weTrack", "production", "development"];
-
-        return validDbs.indexOf(db) !== -1;
-    }
-
     function returnModuleId(req) {
-        var body = req.body;
         var moduleId;
         var type = req.params.byType;
 
@@ -42,26 +35,20 @@ var Payment = function (models, event) {
         return moduleId;
     }
 
-    function returnModel(req, options) {
+    function returnModel(req) {
         var moduleId = returnModuleId(req);
         var Payment;
 
-        options = options || {};
-
-        if (options.isWtrack) {
-            if (moduleId === 61) {
-                Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
-            } else if (moduleId === 79) {
-                Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
-            } else if (moduleId === 60) {
-                Payment = models.get(req.session.lastDb, 'wTrackPayOut', wTrackPayOutSchema);
-            }
-        } else {
+        if (moduleId === 61) {
             Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        } else if (moduleId === 79) {
+            Payment = models.get(req.session.lastDb, 'salaryPayment', salaryPaymentSchema);
+        } else if (moduleId === 60) {
+            Payment = models.get(req.session.lastDb, 'wTrackPayOut', wTrackPayOutSchema);
         }
 
         return Payment;
-    };
+    }
 
     function caseFilter(filter) {
         var condition;
@@ -138,19 +125,15 @@ var Payment = function (models, event) {
     }
 
     function getPaymentFilter(req, res, next, options) {
-        var isWtrack = checkDb(req.session.lastDb);
         var moduleId = returnModuleId(req);
         var data = req.query;
         var filter = data.filter;
         var forSale = options ? !!options.forSale : false;
         var bonus = options ? !!options.bonus : false;
         var salary = options ? !!options.salary : false;
-        var Payment;
+        var Payment = returnModel(req, options);
         var supplier = 'Customers';
         var paymentMethod = "PaymentMethod";
-
-        options.isWtrack = isWtrack;
-        Payment = returnModel(req, options);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
@@ -366,10 +349,7 @@ var Payment = function (models, event) {
 
     this.getAll = function (req, res, next) {
         //this temporary unused
-        var Payment;
-
-        Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
-
+        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         var query = {};
 
         Payment.find(query, function (err, payments) {
@@ -403,15 +383,8 @@ var Payment = function (models, event) {
         var body = req.body;
 
         var moduleId = returnModuleId(req);
-        var isWtrack = checkDb(req.session.lastDb);
 
-        var Payment;
-
-        if (isWtrack) {
-            Payment = models.get(req.session.lastDb, 'wTrackPayOut', wTrackPayOutSchema);
-        } else {
-            Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
-        }
+        var Payment = models.get(req.session.lastDb, 'wTrackPayOut', wTrackPayOutSchema);
 
         access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
             if (access) {
@@ -554,7 +527,6 @@ var Payment = function (models, event) {
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var workflowHandler = new WorkflowHandler(models);
         var invoiceId = body.invoice;
-        var DbName = req.session.lastDb;
         var mid = body.mid;
         var data = body;
         var isForSale = data.forSale;
@@ -751,7 +723,7 @@ var Payment = function (models, event) {
 
         waterfallTasks = [fetchInvoice, savePayment, invoiceUpdater];
 
-        if (isForSale && ((DbName === MAINCONSTANTS.WTRACK_DB_NAME) || (DbName === "production") || (DbName === "development"))) { // todo added condition for purchase payment
+        if (isForSale) { // todo added condition for purchase payment
             waterfallTasks.push(updateWtrack);
         }
 
@@ -787,16 +759,12 @@ var Payment = function (models, event) {
         var contentSearcher;
         var waterfallTasks;
 
-        var isWtrack = checkDb(req.session.lastDb);
         var options = {
             forSale : forSale,
             bonus   : bonus,
-            salary  : salary,
-            isWtrack: isWtrack
+            salary  : salary
         };
-        var Payment;
-
-        Payment = returnModel(req, options);
+        var Payment = returnModel(req, options);
 
         queryObject.$and = [];
 
@@ -961,7 +929,6 @@ var Payment = function (models, event) {
         var forSale = contentType === 'customers';
         var bonus = contentType === 'supplier';
         var salary = contentType === 'salary';
-        var isWtrack = checkDb(req.session.lastDb);
         var workflowHandler = new WorkflowHandler(models);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var type = "Invoiced";
@@ -969,13 +936,9 @@ var Payment = function (models, event) {
         var options = {
             forSale : forSale,
             bonus   : bonus,
-            salary  : salary,
-            isWtrack: isWtrack
+            salary  : salary
         };
-        var Payment;
-
-        Payment = returnModel(req, options);
-
+        var Payment = returnModel(req, options);
         var moduleId = returnModuleId(req);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1003,11 +966,7 @@ var Payment = function (models, event) {
 
                             if (invoiceId && (payment._type !== 'salaryPayment')) {
 
-                                if (isWtrack) {
-                                    Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-                                } else {
-                                    Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-                                }
+                                Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
 
                                 Invoice.findById({_id: invoiceId}, function (err, invoice) {
                                     if (err) {
@@ -1110,8 +1069,7 @@ var Payment = function (models, event) {
     this.remove = function (req, res, next) {
         var db = req.session.lastDb;
         var id = req.params.id;
-        var isWtrack = checkDb(req.session.lastDb);
-        var Payment;
+        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
         var Invoice;
         var invoiceId;
         var paid;
@@ -1130,8 +1088,6 @@ var Payment = function (models, event) {
 
         moduleId = parseInt(moduleId);
 
-        Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
-
         access.getDeleteAccess(req, req.session.uId, moduleId, function (access) {
             if (access) {
                 Payment.findByIdAndRemove(id, function (err, removed) {
@@ -1144,11 +1100,7 @@ var Payment = function (models, event) {
 
                     if (invoiceId && (removed && removed._type !== 'salaryPayment')) {
 
-                        if (isWtrack) {
-                            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-                        } else {
-                            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-                        }
+                        Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
 
                         Invoice.findByIdAndUpdate({_id: invoiceId}, {$pull: {payments: removed._id}}, function (err, invoice) {
                             if (err) {
@@ -1252,8 +1204,8 @@ var Payment = function (models, event) {
 
                                 res.status(200).send({success: 'Done'});
                                 composeExpensesAndCache(req);
-                            })
-                        })
+                            });
+                        });
                     } else {
                         res.status(200).send({success: 'Done'});
                     }
@@ -1283,7 +1235,7 @@ var Payment = function (models, event) {
                 res.send(403);
             }
         });
-    }
+    };
 
 };
 
