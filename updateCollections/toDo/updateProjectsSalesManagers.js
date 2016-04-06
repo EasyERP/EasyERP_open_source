@@ -92,7 +92,7 @@ query.exec(function (error, _res) {
         return console.dir(error);
     }
 
-    async.each(_res, function (project, callback) {
+    async.eachLimit(_res, 50, function (project, callback) {
         var objectToSave;
         var salesMananagers = [{
             manager: project.projectmanager,
