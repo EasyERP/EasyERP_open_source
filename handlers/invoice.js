@@ -1,6 +1,9 @@
 var mongoose = require('mongoose');
 var WorkflowHandler = require('./workflow');
 var RESPONSES = require('../constants/responses');
+var oxr = require('open-exchange-rates');
+var fx = require('money');
+var moment = require('../public/js/libs/moment/moment');
 
 var Invoice = function (models, event) {
     "use strict";
@@ -111,12 +114,21 @@ var Invoice = function (models, event) {
         var Order = models.get(dbIndex, 'Quotation', OrderSchema);
         var Company = models.get(dbIndex, 'Customer', CustomerSchema);
         var request;
+        var date = moment().format('YYYY-MM-DD');
         var parallelTasks;
         var waterFallTasks;
         var editedBy = {
             user: req.session.uId,
             date: new Date()
         };
+
+        function getRates(callback) {
+            oxr.historical(date, function () {
+                fx.rates = oxr.rates;
+                fx.base = oxr.base;
+                callback();
+            });
+        }
 
         function fetchFirstWorkflow(callback) {
             if (forSales === "true") {
@@ -148,6 +160,7 @@ var Invoice = function (models, event) {
             query//.populate('supplier', 'name')
                 .populate('products.product')
                 .populate('products.jobs')
+                .populate('currency._id')
                 .populate('project', '_id projectName projectmanager');
 
             query.exec(callback);
@@ -270,6 +283,9 @@ var Invoice = function (models, event) {
                 invoice.editedBy.user = req.session.uId;
             }
 
+            invoice.currency.rate = oxr.rates[order.currency._id.name];
+            invoice.currency._id = order.currency._id._id;
+
             // invoice.sourceDocument = order.name;
             invoice.payments = payments;
             invoice.sourceDocument = id;
@@ -319,7 +335,7 @@ var Invoice = function (models, event) {
 
         };
 
-        parallelTasks = [findOrder, fetchFirstWorkflow, findProformaPayments, changeProformaWorkflow];
+        parallelTasks = [findOrder, fetchFirstWorkflow, findProformaPayments, changeProformaWorkflow, getRates];
         waterFallTasks = [parallel, createInvoice];
 
         async.waterfall(waterFallTasks, function (err, result) {
@@ -374,15 +390,25 @@ var Invoice = function (models, event) {
         var db = req.session.lastDb;
         var id = req.params.id;
         var data = req.body;
+        var isProforma;
         var journalId = data.journal;
         var moduleId;
         var isWtrack;
         var Invoice;
+        var date;
         var updateName = false;
         var JobsModel = models.get(db, 'jobs', JobsSchema);
         var PaymentModel = models.get(db, 'Payment', PaymentSchema);
         var optionsForPayments;
         var Customer = models.get(db, 'Customers', CustomerSchema);
+
+        date = moment(data.invoiceDate);
+        date = date.format('YYYY-MM-DD');
+
+        if (data.proforma) {
+            isProforma = true;
+            delete data.proforma;
+        }
 
         if (checkDb(db)) {
             moduleId = 64;
@@ -406,48 +432,56 @@ var Invoice = function (models, event) {
                         date: new Date().toISOString()
                     };
 
-                    Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
-                        if (err) {
-                            return next(err);
-                        }
+                    oxr.historical(date, function () {
+                        fx.rates = oxr.rates;
+                        fx.base = oxr.base;
 
-                        if (!invoice.journal && journalId) { // todo in case of purchase invoice hasnt journalId
-                            Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
-                                if (err) {
-                                    return next(err);
-                                }
+                        data.currency.rate = oxr.rates[data.currency.name];
 
-                                journalEntryComposer(invoice, db, function (err, response) {
+                        Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            if (!invoice.journal && journalId) { // todo in case of purchase invoice hasnt journalId
+                                Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
                                     if (err) {
                                         return next(err);
                                     }
 
-                                    Customer.populate(invoice, {
-                                        path  : 'supplier',
-                                        select: '_id name fullName'
-                                    }, function (err, resp) {
+                                    journalEntryComposer(invoice, db, function (err, response) {
                                         if (err) {
                                             return next(err);
                                         }
 
-                                        res.status(200).send(invoice);
-                                    });
+                                        Customer.populate(invoice, {
+                                            path  : 'supplier',
+                                            select: '_id name fullName'
+                                        }, function (err, resp) {
+                                            if (err) {
+                                                return next(err);
+                                            }
 
-                                }, req.session.uId);
-                            });
-                        } else {
-                            Customer.populate(invoice, {
-                                path  : 'supplier',
-                                select: '_id name fullName'
-                            }, function (err, resp) {
-                                if (err) {
-                                    return next(err);
-                                }
+                                            res.status(200).send(invoice);
+                                        });
 
-                                res.status(200).send(invoice);
-                            });
-                        }
+                                    }, req.session.uId);
+                                });
+                            } else {
+                                Customer.populate(invoice, {
+                                    path  : 'supplier',
+                                    select: '_id name fullName'
+                                }, function (err, resp) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+
+                                    res.status(200).send(invoice);
+                                });
+                            }
+                        });
                     });
+
                 } else {
                     res.status(403).send();
                 }

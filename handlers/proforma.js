@@ -1,6 +1,9 @@
 var mongoose = require('mongoose');
 var WorkflowHandler = require('./workflow');
 var RESPONSES = require('../constants/responses');
+var oxr = require('open-exchange-rates');
+var fx = require('money');
+var moment = require('../public/js/libs/moment/moment');
 
 var Proforma = function (models) {
 	'use strict';
@@ -19,8 +22,17 @@ var Proforma = function (models) {
 		var Proforma = models.get(dbIndex, 'Proforma', ProformaSchema);
 		var Quotation = models.get(dbIndex, 'Quotation', QuotationSchema);
 		var request;
+		var date = moment().format('YYYY-MM-DD');
 		var parallelTasks;
 		var waterFallTasks;
+
+		function getRates(callback) {
+			oxr.historical(date, function () {
+				fx.rates = oxr.rates;
+				fx.base = oxr.base;
+				callback();
+			});
+		}
 
 		function fetchFirstWorkflow(callback) {
 			request = {
@@ -68,16 +80,25 @@ var Proforma = function (models) {
 					}
 				},
 				{
+					$lookup: {
+						from        : 'currency',
+						localField  : 'currency._id',
+						foreignField: '_id',
+						as          : 'currency.obj'
+					}
+				},
+				{
 					$project: {
 						'products.product'    : {$arrayElemAt: ['$products.product', 0]},
 						'products.jobs'       : {$arrayElemAt: ['$products.jobs', 0]},
+						'currency.obj'        : {$arrayElemAt: ['$currency.obj', 0]},
 						project               : {$arrayElemAt: ['$project', 0]},
 						'products.subTotal'   : 1,
 						'products.unitPrice'  : 1,
 						'products.taxes'      : 1,
 						'products.description': 1,
 						'products.quantity'   : 1,
-						currency              : 1,
+						'currency._id'        : 1,
 						forSales              : 1,
 						type                  : 1,
 						isOrder               : 1,
@@ -170,6 +191,9 @@ var Proforma = function (models) {
 			proforma.workflow = workflow._id;
 			proforma.paymentInfo.balance = quotation.paymentInfo.total;
 
+			proforma.currency.rate = oxr.rates[quotation.currency.obj.name];
+			proforma.currency._id = quotation.currency._id;
+
 			if (!proforma.project) {
 				proforma.project = quotation.project ? order.quotation._id : null;
 			}
@@ -180,7 +204,7 @@ var Proforma = function (models) {
 			proforma.save(callback);
 		};
 
-		parallelTasks = [findQuotation, fetchFirstWorkflow];
+		parallelTasks = [findQuotation, fetchFirstWorkflow, getRates];
 		waterFallTasks = [parallel, createProforma];
 
 		async.waterfall(waterFallTasks, function (err, result) {

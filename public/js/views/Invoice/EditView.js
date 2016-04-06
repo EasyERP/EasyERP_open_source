@@ -244,7 +244,7 @@ define([
                 var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
                 var currency = {
                     _id : $thisEl.find('#currencyDd').attr('data-id'),
-                    name: $thisEl.find('#currencyDd').text()
+                    name: $.trim($thisEl.find('#currencyDd').text())
                 };
 
                 var invoiceDate = $thisEl.find("#invoice_date").val();
