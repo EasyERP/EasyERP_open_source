@@ -436,7 +436,7 @@ var wTrack = function (models) {
                     firstTransferDate: {$min: '$transfer.date'},
                     lastTransferDate : {$max: '$transfer.date'},
                     name             : {$first: {$concat: ['$name.first', ' ', '$name.last']}},
-                    lastTransfer     : {$first: '$lastTransfer'},
+                    lastTransfer     : {$first: '$lastTransfer.date'},
                     lastHire         : {$first: '$lastHire'}
                 }
             }, {

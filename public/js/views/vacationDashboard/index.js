@@ -190,11 +190,22 @@ define([
 
             var year = week.dateByWeek.toString().slice(0, 4);
             var _week = week.dateByWeek.toString().slice(4);
+            var _date = moment().isoWeekYear(year).isoWeek(_week);
+
+            function dateComparator(date1, date2){
+                if(date2 > date1){
+                    date2 = moment(date1)
+                }
+            }
 
             firstTransfer = moment(firstTransfer);
             lastTransfer = moment(lastTransfer);
 
-            date = moment().isoWeekYear(year).isoWeek(_week).day(7);
+            date = moment(_date).day(7);
+
+            if (date > _date) {
+                date = moment(_date).day(1);
+            }
 
             if (isEmployee) {
                 if (firstTransfer.isSame(lastTransfer)) {
