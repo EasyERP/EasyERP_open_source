@@ -76,7 +76,16 @@ mongoose.Schemas['ProjectOld'] = projectSchema;
 var ProjectSchema = mongoose.Schemas['Project'];
 var ProjectSchemaOld = mongoose.Schemas['ProjectOld'];
 
-var dbObject = mongoose.createConnection('localhost', 'production');
+//var dbObject = mongoose.createConnection('localhost', 'production');
+
+var connectOptions = {
+    user  : 'easyerp',
+    pass  : '1q2w3e!@#',
+    w     : 1,
+    j     : true
+};
+
+var dbObject = mongoose.createConnection('144.76.56.111', 'sergey', 28017, connectOptions);
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
