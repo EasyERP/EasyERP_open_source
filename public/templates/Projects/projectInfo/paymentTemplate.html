@@ -51,7 +51,7 @@
             <td data-type="dtPicker" class="editable date" data-content="date">
                 <%=utcDateToLocaleDate(payment.date)%>
             </td>
-            <%totalPaidAmount += parseFloat(payment.paidAmount)%>
+            <%totalPaidAmount += parseFloat(payment.paidAmount)/payment.currency.rate %>
         </tr>
         <%})%>
         <% if (paymentCollection.length) {%>

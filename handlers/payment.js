@@ -269,7 +269,7 @@ var Payment = function (models, event) {
                             $lookup: {
                                 from        : 'currency',
                                 localField  : 'currency._id',
-                                foreignField: '_id', 
+                                foreignField: '_id',
                                 as          : 'currency.obj'
                             }
                         }, {
@@ -278,6 +278,7 @@ var Payment = function (models, event) {
                                 invoice         : {$arrayElemAt: ['$invoice', 0]},
                                 paymentMethod   : {$arrayElemAt: ['$paymentMethod', 0]},
                                 'currency.obj'  : {$arrayElemAt: ['$currency.obj', 0]},
+                                'currency.rate' : 1,
                                 forSale         : 1,
                                 differenceAmount: 1,
                                 paidAmount      : 1,
@@ -301,6 +302,7 @@ var Payment = function (models, event) {
                                 supplier        : 1,
                                 'currency.name' : '$currency.obj.name',
                                 'currency._id' : '$currency.obj._id',
+                                'currency.rate' : 1,
                                 invoice         : 1,
                                 assigned        : {$arrayElemAt: ["$assigned", 0]},
                                 forSale         : 1,
