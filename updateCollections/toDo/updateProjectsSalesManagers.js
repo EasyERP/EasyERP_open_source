@@ -103,9 +103,13 @@ query.exec(function (error, _res) {
             salesManagers: salesMananagers
         };
 
-        Project.update({_id: project._id}, {$set: objectToSave}, callback);
+        Project.update({_id: project._id}, {$set: objectToSave}, function (err) {
+            if (err) {
+                callback(err);
+            }
+            callback();
+        });
 
-        callback();
     }, function (err) {
         if (err) {
             return console.dir(err);
