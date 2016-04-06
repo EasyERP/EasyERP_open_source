@@ -727,7 +727,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         }
                     });
 
-                    dataService.getData("/employee/getForDD", {isEmployee: true}, function (employees) {
+                    dataService.getData("/employee/getForDD", {isEmployee: true, devDepartments: true}, function (employees) {
                         employees = _.map(employees.data, function (employee) {
                             employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -737,7 +737,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         self.responseObj['#employee'] = employees;
                     });
 
-                    dataService.getData("/department/getForDD", null, function (departments) {
+                    dataService.getData("/department/getForDD", {devDepartments : true}, function (departments) {
                         departments = _.map(departments.data, function (department) {
                             department.name = department.departmentName;
 

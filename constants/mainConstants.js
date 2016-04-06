@@ -30,5 +30,6 @@ module.exports = {
     DASH_VAC_WEEK_AFTER: 8,
 
     HR_VAC_YEAR_BEFORE: 2,
-    HR_VAC_YEAR_AFTER: 1
+    HR_VAC_YEAR_AFTER: 1,
+    PARENT_DEV : '56cebdf6541812c07197358f'
 };
