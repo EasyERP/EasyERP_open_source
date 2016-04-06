@@ -188,32 +188,29 @@ define([
             var lastTransfer = employee.lastTransferDate;
             var _lastTransfer = moment(employee.lastTransfer);
 
-            var year = week.dateByWeek.toString().slice(0, 4);
-            var _week = week.dateByWeek.toString().slice(4);
-            var _date = moment().isoWeekYear(year).isoWeek(_week);
-
-            function dateComparator(date1, date2){
-                if(date2 > date1){
-                    date2 = moment(date1)
-                }
-            }
+            date = week.dateByWeek;
 
             firstTransfer = moment(firstTransfer);
+            firstTransfer = firstTransfer.isoWeekYear() * 100 + firstTransfer.isoWeek();
+
             lastTransfer = moment(lastTransfer);
+            lastTransfer = lastTransfer.isoWeekYear() * 100 + lastTransfer.isoWeek();
 
-            date = moment(_date).day(7);
+            _lastTransfer = _lastTransfer.isoWeekYear() * 100 + _lastTransfer.isoWeek();
 
-            if (date > _date) {
-                date = moment(_date).day(1);
+            if (!date) {
+                date = moment().isoWeekYear() * 100 + moment().isoWeek;
             }
 
             if (isEmployee) {
-                if (firstTransfer.isSame(lastTransfer)) {
-                    return true;
+                if (firstTransfer === lastTransfer) {
+                    return date >= firstTransfer;
                 }
                 if (date >= firstTransfer) {
                     return date <= lastTransfer || lastTransfer === _lastTransfer;
                 }
+            } else {
+                return (date >= firstTransfer && date <= lastTransfer);
             }
 
             return false;

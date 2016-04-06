@@ -487,7 +487,6 @@ var Employee = function (event, models) {
                 }
 
 
-                ///////////////////////////////////////////////////
                 event.emit('updateSequence', models.get(req.session.lastDb, "Employees", employeeSchema), "sequence", 0, 0, _employee.workflow, _employee.workflow, true, false, function (sequence) {
                     var DepartmentSchema = mongoose.Schemas.Department;
                     var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
@@ -509,13 +508,17 @@ var Employee = function (event, models) {
                                     logWriter.log("Employees.js create savetoBd _employee.save " + err);
                                     res.send(500, {error: 'Employees.save BD error'});
                                 } else {
-                                    res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
+                                    res.send(201, {
+                                        success: 'A new Employees create success',
+                                        result: result,
+                                        id: result._id
+                                    });
                                     if (result.isEmployee) {
                                         event.emit('recalculate', req);
                                     }
                                 }
                             });
-                    });
+                        });
 
                 });
                 event.emit('dropHoursCashes', req);
@@ -534,8 +537,7 @@ var Employee = function (event, models) {
         res['data'] = [];
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
         query.where('isEmployee', true);
-        query.select('_id name').
-        sort({'name.first': 1});
+        query.select('_id name').sort({'name.first': 1});
         query.exec(function (err, result) {
             if (err) {
                 console.log(err);
@@ -1111,9 +1113,7 @@ var Employee = function (event, models) {
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
 
         query.where('isEmployee', false);
-        query.populate('relatedUser department jobPosition workflow').
-        populate('createdBy.user').
-        populate('editedBy.user');
+        query.populate('relatedUser department jobPosition workflow').populate('createdBy.user').populate('editedBy.user');
 
         query.sort({'name.first': 1});
         query.exec(function (err, applications) {
@@ -1331,11 +1331,11 @@ var Employee = function (event, models) {
             fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
 
             /*event.emit('updateName', _id, EmployeeModel, 'manager._id', 'manager.name', fullName);
-            event.emit('updateName', _id, Invoice, 'salesPerson._id', 'salesPerson.name', fullName);
-            event.emit('updateName', _id, Payment, 'invoice.assigned._id', 'invoice.assigned.name', fullName);
-            event.emit('updateName', _id, Salary, 'employee._id', 'employee.name', fullName);
-            event.emit('updateName', _id, SalaryCash, 'employeesArray.employee._id', 'employeesArray.$.employee.name', fullName, true);
-            event.emit('updateName', _id, Vacation, 'employee._id', 'employee.name', fullName);*/
+             event.emit('updateName', _id, Invoice, 'salesPerson._id', 'salesPerson.name', fullName);
+             event.emit('updateName', _id, Payment, 'invoice.assigned._id', 'invoice.assigned.name', fullName);
+             event.emit('updateName', _id, Salary, 'employee._id', 'employee.name', fullName);
+             event.emit('updateName', _id, SalaryCash, 'employeesArray.employee._id', 'employeesArray.$.employee.name', fullName, true);
+             event.emit('updateName', _id, Vacation, 'employee._id', 'employee.name', fullName);*/
         }
     };
 
@@ -1402,7 +1402,7 @@ var Employee = function (event, models) {
                 },
                 {
                     $group: {
-                        _id: '$parentDepartment',
+                        _id        : '$parentDepartment',
                         sublingDeps: {$push: '$_id'}
                     }
                 }
@@ -1414,12 +1414,12 @@ var Employee = function (event, models) {
                 }
 
                 adminDeps = deps[0]._id.toString === objectId(CONSTANTS.ADMIN_DEPARTMENTS) ? deps[0].sublingDeps : deps[1].sublingDeps;
-                adminDeps = adminDeps.map(function(depId) {
+                adminDeps = adminDeps.map(function (depId) {
                     return depId.toString();
                 });
 
-                data.transfer = data.transfer.map(function(tr) {
-                    if (adminDeps.indexOf(tr.department.toString()) !== -1 ) {
+                data.transfer = data.transfer.map(function (tr) {
+                    if (adminDeps.indexOf(tr.department.toString()) !== -1) {
                         tr.isDeveloper = false;
                     } else {
                         tr.isDeveloper = true;
@@ -1534,9 +1534,7 @@ var Employee = function (event, models) {
 
     function getEmployeesImages(req, data, res) {
         var query = models.get(req.session.lastDb, "Employees", employeeSchema).find({isEmployee: true});
-        query.where('_id').in(data.ids).
-        select('_id imageSrc name').
-        exec(function (error, response) {
+        query.where('_id').in(data.ids).select('_id imageSrc name').exec(function (error, response) {
             if (error) {
                 console.log(error);
                 logWriter.log("Employees.js remove employee.remove " + error);
