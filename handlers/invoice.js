@@ -202,7 +202,7 @@ var Invoice = function (models, event) {
                 {
                     $group: {
                         _id: null,
-                        paidAmount: {$sum: '$payment.paidAmount'},
+                        paymentsInfo: {$push: '$payment'},
                         payments: {$push: '$payment._id'},
                         paymentDate: {$first: '$paymentDate'},
                         dueDate: {$max: '$dueDate'}
@@ -247,8 +247,9 @@ var Invoice = function (models, event) {
             var err;
             var invoice;
             var supplier;
+            var invoiceCurrency;
             var query;
-            var paidAmount;
+            var paidAmount = 0;
             var proforma;
             var payments;
 
@@ -264,6 +265,9 @@ var Invoice = function (models, event) {
                 return callback(err);
             }
 
+            invoiceCurrency = order.currency._id.name;
+            order.currency._id = order.currency._id._id;
+
             delete order._id;
 
             if (forSales === 'true') {
@@ -273,7 +277,15 @@ var Invoice = function (models, event) {
             }
 
             if (proforma) {
-                paidAmount = proforma.paidAmount / 100;
+                proforma.paymentsInfo.forEach(function(payment) {
+                    var paid = payment.paidAmount;
+                    var paidInUSD = paid/payment.currency.rate;
+
+                    paidAmount += fx(paidInUSD).from('USD').to(invoiceCurrency);
+                });
+
+                paidAmount = paidAmount/100;
+
                 payments = proforma.payments;
                 invoice.paymentDate = proforma.paymentDate;
             }
@@ -283,14 +295,13 @@ var Invoice = function (models, event) {
                 invoice.editedBy.user = req.session.uId;
             }
 
-            invoice.currency.rate = oxr.rates[order.currency._id.name];
-            invoice.currency._id = order.currency._id._id;
+            invoice.currency.rate = oxr.rates[invoiceCurrency];
 
             // invoice.sourceDocument = order.name;
             invoice.payments = payments;
             invoice.sourceDocument = id;
             invoice.paymentReference = order.name;
-            invoice.paymentInfo.balance = order.paymentInfo.total - (paidAmount || 0);
+            invoice.paymentInfo.balance = order.paymentInfo.total - (paidAmount);
 
             if (paidAmount === order.paymentInfo.total) {
                 invoice.workflow = objectId(CONSTANTS.INVOICE_PAID);
