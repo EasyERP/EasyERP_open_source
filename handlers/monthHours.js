@@ -87,7 +87,7 @@ var MonthHours = function (event, models) {
     this.getList = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var sort = {};
-        var count = req.query.count ||  CONSTANTS.DEF_LIST_COUNT;
+        var count = parseInt(req.query.count, 10) ||  CONSTANTS.DEF_LIST_COUNT;
         var page = req.query.page;
         var skip;
         var query = req.query;

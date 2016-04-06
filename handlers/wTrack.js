@@ -764,7 +764,7 @@ var wTrack = function (event, models) {
         };
 
         var sort = {};
-        var count = query.count || CONSTANTS.DEF_LIST_COUNT;
+        var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = query.page || 1;
 
         var skip;

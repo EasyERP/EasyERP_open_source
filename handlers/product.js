@@ -316,7 +316,7 @@ var Products = function (models) {
 
                     if (access) {
                         Product = models.get(req.session.lastDb, 'Product', ProductSchema);
-                        count = query.count || CONSTANTS.DEF_LIST_COUNT;
+                        count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
                         page = req.query.page;
 
                         count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;

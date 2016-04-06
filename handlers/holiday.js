@@ -34,7 +34,7 @@ var Holiday = function (models, event) {
         var queryObject = {};
         var sort = {};
         var query;
-        var count = options.count || CONSTANTS.DEF_LIST_COUNT;
+        var count = parseInt(options.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = options.page;
         var skip;
 

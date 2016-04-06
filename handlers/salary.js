@@ -238,7 +238,7 @@ var Salary = function (event, models) {
                 if (access) {
                     Salary = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
 
-                    count = query.count || CONSTANTS.DEF_LIST_COUNT;
+                    count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
                     page = req.query.page;
 
                     count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;

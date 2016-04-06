@@ -149,8 +149,8 @@ var Payment = function (models, event) {
 
                 if (access) {
 
-                    count = parseInt(req.query.count) ||  CONSTANTS.DEF_LIST_COUNT;
-                    page = parseInt(req.query.page);
+                    count = parseInt(req.query.count, 10) ||  CONSTANTS.DEF_LIST_COUNT;
+                    page = parseInt(req.query.page, 10);
 
                     count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
                     skip = (page - 1) > 0 ? (page - 1) * count : 0;

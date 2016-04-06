@@ -385,7 +385,7 @@ var Opportunity = function (models) {
         var sort;
         var mid;
 
-        var count = data.count || CONSTANTS.DEF_LIST_COUNT;
+        var count = parseInt(data.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = data.page;
         var skip;
 
