@@ -129,7 +129,7 @@ define([
 
                 var currency = {
                     _id : $currentEl.find('#currencyDd').attr('data-id'),
-                    name: $currentEl.find('#currencyDd').text()
+                    name: $.trim($currentEl.find('#currencyDd').text())
                 };
 
                 if (selectedLength) {

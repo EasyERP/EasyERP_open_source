@@ -578,7 +578,8 @@ define([], function () {
             DEPARTMENTS_FOREDITDD : "/departments/getDepartmentsForEditDd",
             CURRENCY_FORDD        : "/currency/getForDd",
             SUPPLIER              : '/supplier',
-            WORKFLOWS_FETCH       : '/workflows/fetch'
+            WORKFLOWS_FETCH       : '/workflows/fetch',
+            PAYMENT_AMOUNT_LEFT   : '/payment/amountLeftCalc'
         },
 
         MID: {
