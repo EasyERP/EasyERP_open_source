@@ -527,52 +527,56 @@ var PayRoll = function (models) {
                     $project: {
                         department: {$arrayElemAt: ["$department", 0]},
                         isEmployee: 1,
-                        hire      : 1,
                         name      : 1,
                         lastFire  : 1,
+                        transfer  : 1,
                         firstHire  : {
                             $let: {
                                 vars: {
-                                    firstHired: {$arrayElemAt: [{$slice: ['$hire', 1]}, 0]}
+                                    firstHired: {$arrayElemAt: ["$hire", 0]}
                                 },
-                                in  : {$add: [{$multiply: [{$year: '$$firstHired.date'}, 100]}, {$week: '$$firstHired.date'}]}
+                                in  : {$add: [{$multiply: [{$year: '$$firstHired'}, 100]}, {$week: '$$firstHired'}]}
                             }
                         }
                     }
                 }, {
                     $match: matchObj
                 }, {
-                    $unwind: '$hire'
+                    $unwind: '$transfer'
+                }, {
+                    $match: {
+                        'transfer.status': {$ne: 'fired'}
+                    }
                 }, {
                     $project: {
                         isEmployee: 1,
                         department: 1,
-                        hire      : 1,
+                        transfer  : 1,
                         name      : 1,
                         lastFire  : 1,
-                        year      : {$year: '$hire.date'}
+                        year      : {$year: '$transfer.date'}
                     }
-                //}, {
-                //    $match: {
-                //        'year': {$lt: year + 1}
-                //    }
+                    //}, {
+                    //    $match: {
+                    //        'year': {$lt: year + 1}
+                    //    }
                 }, {
                     $project: {
                         isEmployee: 1,
                         department: 1,
-                        hire      : 1,
+                        transfer  : 1,
                         name      : 1,
-                        month     : {$month: '$hire.date'},
+                        month     : {$month: '$transfer.date'},
                         year      : 1,
                         lastFire  : 1,
-                        hireDate  : {$add: [{$multiply: [{$year: '$hire.date'}, 100]}, {$month: '$hire.date'}]}
+                        hireDate  : {$add: [{$multiply: [{$year: '$transfer.date'}, 100]}, {$month: '$transfer.date'}]}
                     }
                 }, {
                     $group: {
                         _id       : '$_id',
                         department: {$addToSet: '$department'},
                         name      : {$addToSet: '$name'},
-                        hire      : {$push: '$$ROOT'},
+                        transfer  : {$push: '$$ROOT'},
                         lastFire  : {$addToSet: '$lastFire'}
                     }
                 }, {
@@ -580,7 +584,7 @@ var PayRoll = function (models) {
                         _id       : 1,
                         department: {$arrayElemAt: ["$department", 0]},
                         name      : {$arrayElemAt: ["$name", 0]},
-                        hire      : 1,
+                        transfer  : 1,
                         lastFire  : {$arrayElemAt: ["$lastFire", 0]}
                     }
                 }, {
@@ -588,7 +592,7 @@ var PayRoll = function (models) {
                         _id       : 1,
                         department: '$department.departmentName',
                         name      : {$concat: ['$name.first', ' ', '$name.last']},
-                        hire      : 1,
+                        transfer  : 1,
                         lastFire  : 1
                     }
                 }, {
