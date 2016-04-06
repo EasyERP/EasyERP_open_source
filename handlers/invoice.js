@@ -424,23 +424,31 @@ var Invoice = function (models, event) {
 
         if (req.session && req.session.loggedIn && db) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
+                var Invoice;
+
+                var query = req.query;
+                var queryObject = {};
+                var filter = query.filter;
+
+                var optionsObject = {};
+                var sort = {};
+                var count;
+                var page;
+                var skip;
+
+                var departmentSearcher;
+                var contentIdsSearcher;
+                var contentSearcher;
+                var waterfallTasks;
+
                 if (access) {
-                    var Invoice = models.get(db, 'Invoice', InvoiceSchema);
+                    Invoice = models.get(db, 'Invoice', InvoiceSchema);
 
-                    var query = req.query;
-                    var queryObject = {};
-                    var filter = query.filter;
+                    count = parseInt(query.count) || CONSTANTS.DEF_LIST_COUNT;
+                    page = parseInt(query.page);
 
-                    var optionsObject = {};
-                    var sort = {};
-                    var count = parseInt(query.count) ? parseInt(query.count) : 100;
-                    var page = parseInt(query.page);
-                    var skip = (page - 1) > 0 ? (page - 1) * count : 0;
-
-                    var departmentSearcher;
-                    var contentIdsSearcher;
-                    var contentSearcher;
-                    var waterfallTasks;
+                    count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+                    skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     if (req.query.sort) {
                         var key = Object.keys(req.query.sort)[0];

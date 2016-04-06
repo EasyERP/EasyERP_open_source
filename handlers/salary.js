@@ -1,12 +1,14 @@
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var Salary = function (event, models) {
+    'use strict';
 
     var access = require("../Modules/additions/access.js")(models);
     var SalarySchema = mongoose.Schemas['Salary'];
     var SalaryCashSchema = mongoose.Schemas['SalaryCash'];
     var DepartmentSchema = mongoose.Schemas['Department'];
     var _ = require('lodash');
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
@@ -220,19 +222,27 @@ var Salary = function (event, models) {
     function getSalaryFilter(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 66, function (access) {
-                if (access) {
-                    var Salary = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
-                    var query = req.query;
-                    var queryObject = {};
-                    var sort = {};
-                    var count = query.count ? query.count : 100;
-                    var page = req.query.page;
-                    var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+                var Salary;
+                var query = req.query;
+                var queryObject = {};
+                var sort = {};
+                var count;
+                var page;
+                var skip;
 
-                    var departmentSearcher;
-                    var contentIdsSearcher;
-                    var contentSearcher;
-                    var waterfallTasks;
+                var departmentSearcher;
+                var contentIdsSearcher;
+                var contentSearcher;
+                var waterfallTasks;
+
+                if (access) {
+                    Salary = models.get(req.session.lastDb, 'SalaryCash', SalaryCashSchema);
+
+                    count = query.count || CONSTANTS.DEF_LIST_COUNT;
+                    page = req.query.page;
+
+                    count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+                    skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     if (query && query.sort) {
                         sort = query.sort;

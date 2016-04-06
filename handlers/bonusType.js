@@ -1,9 +1,12 @@
 var mongoose = require('mongoose');
 
 var BonusType = function (models) {
+    'use strict';
+
     var access = require("../Modules/additions/access.js")(models);
     var bonusTypeSchema = mongoose.Schemas['bonusType'];
     var async = require('async');
+    var CONSTANTS = require('../constants/mainConstants');
 
     this.create = function (req, res, next) {
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
@@ -56,10 +59,13 @@ var BonusType = function (models) {
     this.getList = function (req, res, next) {
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
         var sort = {};
-        var count = req.query.count ? req.query.count : 100;
+        var count = req.query.count || CONSTANTS.DEF_LIST_COUNT;
         var page = req.query.page;
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var skip;
         var query = req.query;
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (query.sort) {
             sort = query.sort;
@@ -91,7 +97,7 @@ var BonusType = function (models) {
 
         bonusTypeModel.find().count(function (err, count) {
             if (err) {
-                next(err)
+              return next(err);
             }
             res.status(200).send({count: count});
 

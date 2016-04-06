@@ -31,5 +31,7 @@ module.exports = {
 
     HR_VAC_YEAR_BEFORE: 2,
     HR_VAC_YEAR_AFTER: 1,
+    DEF_LIST_COUNT : 100,
+    MAX_COUNT : 200,
     PARENT_DEV : '56cebdf6541812c07197358f'
 };

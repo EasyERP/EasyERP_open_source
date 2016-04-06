@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Task = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
+    'use strict';
+
     var tasksSchema = mongoose.Schemas['Task'];
 
     this.getFilterValues = function (req, res, next) {

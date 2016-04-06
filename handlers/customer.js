@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 
 var Customers = function (models) {
+    'use strict';
     /**
      * @module Customer
      */
@@ -200,8 +201,10 @@ var Customers = function (models) {
         var count = query.count || CONSTANTS.MOBILE_DEFAULT_COUNT_PER_LIST;
         var page = query.page || 1;
         var queryObject = {};
+        var skip;
 
-        var skip = (page - 1) * count;
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         queryObject.type = type;
 

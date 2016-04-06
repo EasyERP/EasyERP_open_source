@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var workflows = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
+    'use strict';
+
     var WorkflowSchema = mongoose.Schemas['workflow'];
     var RESPONSES = require('../constants/responses.js');
 
@@ -57,12 +58,10 @@ var workflows = function (models) {
                     }
                     return next(err);
                 }
-                ;
                 if (callback) {
                     return callback(null, workflow);
                 }
-                ;
-                res.status(200).send(workflow)
+                res.status(200).send(workflow);
             });
     };
 
@@ -104,9 +103,9 @@ var workflows = function (models) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send(workflows)
+                res.status(200).send(workflows);
             });
-    }
+    };
 };
 
 module.exports = workflows;

@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Period = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
+    'use strict';
+
     var PeriodSchema = mongoose.Schemas['Period'];
 
     this.getForDd = function (req, res, next) {
@@ -13,7 +14,7 @@ var Period = function (models) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send({data: terms})
+                res.status(200).send({data: terms});
             });
     };
 
