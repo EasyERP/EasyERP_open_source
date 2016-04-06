@@ -188,6 +188,8 @@ define([
             var lastTransfer = employee.lastTransferDate;
             var _lastTransfer = moment(employee.lastTransfer);
 
+            var isTransfer = employee.isTransfer.indexOf('transfer') !== -1;
+
             date = week.dateByWeek;
 
             firstTransfer = moment(firstTransfer);
@@ -207,7 +209,7 @@ define([
                     return date >= firstTransfer;
                 }
                 if (date >= firstTransfer) {
-                    return date <= lastTransfer || lastTransfer === _lastTransfer;
+                    return date <= lastTransfer || (lastTransfer === _lastTransfer && !isTransfer);
                 }
             } else {
                 return (date >= firstTransfer && date <= lastTransfer);

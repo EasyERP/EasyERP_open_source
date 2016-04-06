@@ -435,6 +435,7 @@ var wTrack = function (models) {
                     },
                     firstTransferDate: {$min: '$transfer.date'},
                     lastTransferDate : {$max: '$transfer.date'},
+                    isTransfer       : {$addToSet: '$transfer.status'},
                     name             : {$first: {$concat: ['$name.first', ' ', '$name.last']}},
                     lastTransfer     : {$first: '$lastTransfer.date'},
                     lastHire         : {$first: '$lastHire'}
@@ -445,6 +446,7 @@ var wTrack = function (models) {
                     isEmployee       : '$_id.isEmployee',
                     isLead           : '$_id.isLead',
                     _id              : '$_id._id',
+                    isTransfer       : 1,
                     firstTransferDate: 1,
                     lastTransferDate : 1,
                     lastTransfer     : 1,
@@ -463,6 +465,7 @@ var wTrack = function (models) {
                             lastHire         : '$lastHire',
                             lastTransfer     : '$lastTransfer',
                             name             : '$name',
+                            isTransfer       : '$isTransfer',
                             _id              : '$_id'
                         }
                     }
