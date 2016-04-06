@@ -30,8 +30,8 @@ html {
 }
 body {
   margin: 0;
-  padding: 0;
 }
+article,
 aside,
 details,
 figcaption,
@@ -39,6 +39,7 @@ figure,
 footer,
 header,
 main,
+menu,
 nav,
 section,
 summary {
@@ -60,7 +61,7 @@ template {
   display: none;
 }
 a {
-  background: transparent;
+  background-color: transparent;
 }
 a:active,
 a:hover {
@@ -132,6 +133,7 @@ textarea {
   color: inherit;
   font: inherit;
   margin: 0;
+  box-sizing: border-box;
 }
 button {
   overflow: visible;
@@ -141,7 +143,9 @@ select {
   text-transform: none;
 }
 button,
-html input[type="button"] {
+html input[type="button"],
+input[type="reset"],
+input[type="submit"] {
   -webkit-appearance: button;
   cursor: pointer;
 }
@@ -149,17 +153,13 @@ button[disabled],
 html input[disabled] {
   cursor: default;
 }
-button input::-moz-focus-inner {
+button::-moz-focus-inner,
+input::-moz-focus-inner {
   border: 0;
   padding: 0;
 }
 input {
   line-height: normal;
-}
-input[type="reset"],
-input[type="submit"] {
-  -webkit-appearance: button;
-  cursor: pointer;
 }
 input[type="checkbox"],
 input[type="radio"] {
@@ -636,7 +636,7 @@ th {
   -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 #loading {
-  position: relative;
+  position: fixed;
   display: block;
   width: 100%;
   height: 100%;
@@ -2226,6 +2226,7 @@ body {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   font-size: 12px;
   height: 100%;
+  min-width: 1349px;
 }
 dl {
   clear: both;
@@ -2568,7 +2569,7 @@ dl dd span.ui-spinner {
 .form .inner .half-block textarea {
   width: 99%;
   resize: none;
-  padding-top: 10px;
+  padding: 10px 5px;
 }
 .form > #tabList li {
   float: left;
@@ -3144,7 +3145,7 @@ dl dd span.ui-spinner {
 .formLeftColumn .form .inner .half-block textarea {
   width: 99%;
   resize: none;
-  padding-top: 10px;
+  padding: 10px 5px;
 }
 .formLeftColumn .form > #tabList li {
   float: left;
@@ -3479,7 +3480,7 @@ dl dd span.ui-spinner {
 .formRightColumn .form .inner .half-block textarea {
   width: 99%;
   resize: none;
-  padding-top: 10px;
+  padding: 10px 5px;
 }
 .formRightColumn .form > #tabList li {
   float: left;
@@ -6385,7 +6386,7 @@ ul.dialog-tabs li.right button {
   border: 1px solid #E2E9EF;
   border-top: 1px solid #CBD3E2;
   max-width: 280px;
-  height: 18px;
+  height: 20px;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
   border: 1px solid #7f7f80;
@@ -6592,7 +6593,6 @@ ul.dialog-tabs li.right button {
 .form-holder form input:not([type=checkbox]) {
   border: 1px solid #7f7f80;
   max-width: 280px;
-  line-height: 20px;
   background-color: transparent;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
@@ -7689,7 +7689,8 @@ a.cancelled {
 }
 .form-holder form .subject-info input {
   max-width: inherit !important;
-  width: 98% !important;
+  width: 99% !important;
+  margin-right: 1%;
 }
 .form-holder form .subject-info dt {
   width: 10% !important;
@@ -7754,7 +7755,7 @@ a.cancelled {
   width: 100%;
 }
 .form-holder form .opprtunitie-info input {
-  max-width: 231px !important;
+  max-width: 250px !important;
 }
 .form-holder form .opprtunitie-info select {
   width: 95% !important;
@@ -8164,6 +8165,7 @@ a.cancelled {
 }
 .newSelectList {
   max-width: 200px;
+  text-align: center;
 }
 .newSelectList li {
   overflow: hidden;
