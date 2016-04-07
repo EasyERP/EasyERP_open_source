@@ -1248,10 +1248,11 @@ var Payment = function (models, event) {
                             }
 
                             invoices.forEach(function (inv) {
-                                Invoice.findByIdAndUpdate(inv._id, {$pull: {payments: removed._id}}, function (err, invoice) {
+                                Invoice.findByIdAndUpdate(inv._id, {$pull: {payments: removed._id}}).populate('payments').exec(function (err, invoice) {
 
                                     var paymentInfo = invoice.get('paymentInfo');
                                     var project = invoice ? invoice.get('project') : null;
+                                    var payments = invoice ? invoice.get('payments') : [];
 
                                     request = {
                                         query  : {
