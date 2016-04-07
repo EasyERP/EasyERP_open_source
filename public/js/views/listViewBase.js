@@ -421,9 +421,9 @@ define([
             showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var itemView;
-                var page = holder.find("#currentShowPage").val();
+                var page = parseInt(holder.find('#currentShowPage').val(), 10) || 1; // if filter give 0 elements
 
-                holder.find("#listTable").empty();
+                holder.find('#listTable').empty();
 
                 itemView = new this.listItemView({
                     collection : newModels,
