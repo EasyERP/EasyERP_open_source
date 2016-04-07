@@ -8,8 +8,10 @@
 
             initialize: function (options) {
                 this.collection = options.collection;
-                this.startNumber = (options.page - 1 ) * options.itemsNumber;
+                this.page = options.page ? parseInt(options.page, 10) : 1;
+                this.startNumber = (this.page - 1) * options.itemsNumber;
             },
+
             render    : function () {
                 this.$el.append(_.template(listTemplate, {
                     invoiceCollection: this.collection.toJSON(),
