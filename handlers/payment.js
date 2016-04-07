@@ -622,6 +622,7 @@ var Payment = function (models, event) {
 
         var moduleId = returnModuleId(req);
         var Payment;
+        var removable = true;
 
         date = date.format('YYYY-MM-DD');
 
@@ -629,6 +630,7 @@ var Payment = function (models, event) {
             PaymentSchema = mongoose.Schemas.InvoicePayment;
             Payment = models.get(req.session.lastDb, 'InvoicePayment', PaymentSchema);
             Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+            removable = false;
         } else if (mid === 95) {
             PaymentSchema = mongoose.Schemas.ProformaPayment;
             Payment = models.get(req.session.lastDb, 'ProformaPayment', PaymentSchema);
@@ -696,6 +698,8 @@ var Payment = function (models, event) {
             };
 
             invoice.payments = invoice.payments || [];
+
+            invoice.removable = removable;
 
             paid = fx(paid).from(paymentCurrency).to(invoiceCurrency);
 
@@ -1253,6 +1257,13 @@ var Payment = function (models, event) {
                                     var paymentInfo = invoice.get('paymentInfo');
                                     var project = invoice ? invoice.get('project') : null;
                                     var payments = invoice ? invoice.get('payments') : [];
+                                    var removable = false;
+
+                                    payments.forEach(function (payment) {
+                                        if (payment._type !== 'ProformaPayment'){
+                                            removable = true;
+                                        }
+                                    });
 
                                     request = {
                                         query  : {
@@ -1303,6 +1314,10 @@ var Payment = function (models, event) {
                                         }
 
                                         query.paymentInfo = paymentInfoNew;
+
+                                        if (removable){
+                                            query.removable = removable;
+                                        }
 
                                         if (!invoice.invoiced) {
                                             query.workflow = workflowObj;

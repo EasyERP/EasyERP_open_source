@@ -314,7 +314,7 @@ var Invoice = function (models, event) {
             invoice.paymentInfo.balance = order.paymentInfo.total - paidAmount;
 
             if (payments && payments.length){
-                invoice.removable = false;
+                invoice.removable = true;
             }
 
             if (paidAmount === order.paymentInfo.total) {

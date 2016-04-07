@@ -53,11 +53,11 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         },
 
-        editedBy: {
+        editedBy : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
-        invoiced: {type: Boolean, default: false},
+        invoiced : {type: Boolean, default: false},
         removable: {type: Boolean, default: true}
     }, {collection: 'Invoice', discriminatorKey: '_type'});
 
@@ -89,7 +89,7 @@ module.exports = (function () {
     });
 
     var invoiceSchema = baseSchema.extend({
-        products : [{
+        products: [{
             _id        : false,
             quantity   : {type: Number, default: 1},
             unitPrice  : Number,
