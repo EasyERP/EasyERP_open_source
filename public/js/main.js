@@ -280,7 +280,7 @@ require(['app'], function (app) {
             page = (location.split('/p=')[1]) ? location.split('/p=')[1].split('/')[0] : 1;
         }
 
-        if (!count) {
+        if (!count && page) {
             var thumbnails = location.split('thumbnails')[0];
             count = (location.split('/c=')[1]) ? location.split('/c=')[1].split('/')[0] : 100;
             if (thumbnails && count < 100) {
@@ -315,7 +315,7 @@ require(['app'], function (app) {
             }
         }
 
-        Backbone.history.navigate(url);
+        Backbone.history.navigate(url, {replace: true});
 
     };
 

@@ -90,7 +90,7 @@ define([
                 var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').attr('data-id'));
 
                 var orderDate = thisEl.find('#orderDate').val();
-                var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
+                var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#orderDate').val();
 
                 var total = $.trim(thisEl.find('#totalAmount').text());
                 var totalTaxes = $.trim(thisEl.find('#taxes').text());
@@ -223,7 +223,7 @@ define([
                 productItemContainer.append(
                     new ProductItemView({
                         canBeSold       : true,
-                        service         : 'Service',
+                        service         : true,
                         projectModel    : this.projectModel,
                         wTrackCollection: this.wTrackCollection,
                         channelObject   : this.channelObject

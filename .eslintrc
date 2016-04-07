@@ -1,0 +1,10 @@
+{
+  "extends": "thinkmobiles/legacy.js",
+  "globals"     : {
+    "App": true
+  },
+  "rules": {
+    /*"no-param-reassign": [2, {"props": false}],*/
+    "key-spacing": [2, { "align": "colon" }]
+  }
+}

@@ -1,144 +1,180 @@
-/**
- * Created by liliy on 11.02.2016.
- */
 define([
-        'Backbone',
-        'jQuery',
-        'Underscore',
-        'views/selectView/selectView',
-        'views/wTrack/list/createJob',
-        "text!templates/wTrack/dashboard/CreatewTrackTemplate.html",
-        'models/wTrackModel',
-        'moment',
-        'async',
-        'common',
-        'dataService'
-    ],
-    function (Backbone, $, _, selectView, CreateJob, template, WTrackModel, moment, async, common, dataService) {
-        "use strict";
-        var CreateView = Backbone.View.extend({
-            template   : _.template(template),
-            responseObj: {},
-            dateByWeek : null,
-            row        : null,
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'views/selectView/selectView',
+    'views/wTrack/list/createJob',
+    'text!templates/wTrack/dashboard/CreatewTrackTemplate.html',
+    'models/wTrackModel',
+    'moment',
+    'async',
+    'common',
+    'dataService',
+    'helpers/employeeHelper',
+    'helpers/keyCodeHelper'
+], function (Backbone, $, _, selectView, CreateJob, template, WTrackModel, moment, async, common, dataService, employeeHelper, keyCodes) {
+    'use strict';
+    var CreateView = Backbone.View.extend({
+        template   : _.template(template),
+        responseObj: {},
+        dateByWeek : null,
+        row        : null,
 
-            events: {
-                "click .stageSelect"                               : "showNewSelect",
-                "click td.editable"                                : "editRow",
-                "keydown input.editing "                           : "keyDown",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click"                                            : "removeInputs"
-            },
+        events: {
+            'click .stageSelect'                               : 'showNewSelect',
+            'click td.editable:not(.disabled)'                 : 'editRow',
+            'click td.disabled'                                : 'notify',
+            'keydown input.editing'                            : 'keyDown',
+            'keyup input.editing'                              : 'onKeyUpInput',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            click                                              : 'removeInputs'
+        },
 
-            initialize: function (options) {
-                _.bindAll(this, "saveItem");
+        initialize: function (options) {
+            var self = this;
+            var month;
+            var year;
+            var dateByMonth;
+            var body;
 
-                this.dateByWeek = options.dateByWeek;
-                this.tds = options.tds;
-                this.row = options.tr;
-                var year = parseInt(this.dateByWeek.slice(0, 4), 10);
-                this.week = parseInt(this.dateByWeek.slice(4), 10);
-                var month = moment().year(year).isoWeek(this.week).day(1).month() + 1;
-                this.startMonth = month;
-                this.startYear = moment().year(year).isoWeek(this.week).day(1).year();
-                this.endMonth = moment().year(year).isoWeek(this.week).day(6).month() + 1;
-                this.endYear = moment().year(year).isoWeek(this.week).day(6).year();
-                var dateByMonth = year * 100 + month;
-                this.employee = options.employee;
-                this.department = options.department;
-                var body = {
-                    year       : year,
-                    month      : month,
-                    week       : this.week,
-                    department : {
-                        _id           : this.department,
-                        departmentName: options.departmentName
-                    },
-                    employee   : {
-                        _id : this.employee,
-                        name: options.employeeName
-                    },
-                    dateByWeek : parseInt(this.dateByWeek, 10),
-                    dateByMonth: dateByMonth
-                };
+            App.startPreload();
 
-                this.wTrack = new WTrackModel(body);
-                options.wTrack = this.wTrack;
-                this.render(options);
-            },
+            _.bindAll(self, 'saveItem');
 
-            keyDown: function (e) {
+            self.dateByWeek = options.dateByWeek;
+            self.tds = options.tds;
+            self.row = options.tr;
+            year = parseInt(self.dateByWeek.slice(0, 4), 10);
+            self.week = parseInt(self.dateByWeek.slice(4), 10);
+            month = moment().isoWeekYear(year).isoWeek(self.week).day(1).month() + 1;
+            self.startMonth = month;
+            self.startYear = moment().isoWeekYear(year).isoWeek(self.week).day(1).year();
+            self.endMonth = moment().isoWeekYear(year).isoWeek(self.week).day(6).month() + 1;
+            self.endYear = moment().isoWeekYear(year).isoWeek(self.week).day(6).year();
+            dateByMonth = year * 100 + month;
+            self.employee = options.employee;
+            self.department = options.department;
+            body = {
+                year : year,
+                month: month,
+                week : self.week,
+
+                department: {
+                    _id           : self.department,
+                    departmentName: options.departmentName
+                },
+
+                employee: {
+                    _id : self.employee,
+                    name: options.employeeName
+                },
+
+                dateByWeek : parseInt(self.dateByWeek, 10),
+                dateByMonth: dateByMonth
+            };
+
+            options.nonWorkingDays = {
+                workingHours: 0
+            };
+
+            self.wTrack = new WTrackModel(body);
+            options.wTrack = self.wTrack;
+
+            employeeHelper.getNonWorkingDaysByWeek(year, self.week, null, options.employee, self.wTrack,
+                function (nonWorkingDays, self) {
+                    options.nonWorkingDays = nonWorkingDays;
+                    self.render(options);
+                }, self);
+
+        },
+
+        keyDown: function (e) {  // validation from generateWTrack, need keydown instead of keypress in case of enter key
+            var element = e.target;
+
+            if ($(element).val() > 24) { // added in case of fast input
+                $(element).val(24);
+            }
+
+            if (keyCodes.isBspDelTabEscEnt(e.keyCode) || keyCodes.isArrowsOrHomeEnd(e.keyCode)) {
                 if (e.which === 13) {
                     this.autoCalc(e);
                 }
-            },
+                return;
+            }
 
-            stopDefaultEvents: function (e) {
-                e.stopPropagation();
+            if (e.shiftKey || !keyCodes.isDigit(e.keyCode)) {
                 e.preventDefault();
-            },
+            }
+        },
 
-            hideDialog: function () {
-                $(".edit-dialog").remove();
-            },
+        onKeyUpInput: function (e) { // max hours in cell
+            var element = e.target;
 
-            asyncLoadImgs: function (model) {
-                var currentModel = model.id ? model.toJSON() : model;
-                var id = currentModel._id;
-                var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id : currentModel.projectmanager;
-                var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
+            if ($(element).val() > 24) {
+                $(element).val(24);
+            }
+        },
 
-                if (pm) {
-                    common.getImagesPM([pm], "/getEmployeesImages", "#" + id, function (result) {
-                        var res = result.data[0];
+        notify: function () {
+            App.render({
+                type   : 'notify',
+                message: 'This day from another month'
+            });
+        },
 
-                        $(".miniAvatarPM").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
-                    });
-                }
+        stopDefaultEvents: function (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        },
 
-                if (customer) {
-                    common.getImagesPM([customer], "/getCustomersImages", "#" + id, function (result) {
-                        var res = result.data[0];
+        hideDialog: function () {
+            $('.edit-dialog').remove();
+        },
 
-                        $(".miniAvatarCustomer").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
-                    });
-                }
-            },
+        asyncLoadImgs: function (model) {
+            var self = this;
+            var currentModel = model.id ? model.toJSON() : model;
+            var id = currentModel._id;
+            var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id : currentModel.projectmanager;
+            var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
+            var fullName;
 
-            saveItem: function () {
-                var Model = WTrackModel.extend({
-                    //redefine defaults for proper putch backEnd model;
-                    defaults: {}
+            if (pm) {
+                fullName = currentModel.projectmanager && currentModel.projectmanager.name ? currentModel.projectmanager.name.first + ' ' + currentModel.projectmanager.name.last : '';
+                self.$el.find('#projectManager').text(fullName);
+
+                common.getImagesPM([pm], '/getEmployeesImages', '#' + id, function (result) {
+                    var res = result.data[0];
+
+                    self.$el.find('.miniAvatarPM').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
                 });
+            }
 
-                if (this.$el.find('.error').length || this.$el.find('.errorContent').length){
-                    return App.render({
-                        type   : 'error',
-                        message: 'Please, select all information first.'
-                    });
-                }
-                var self = this;
-                var thisEl = this.$el;
-                var table = thisEl.find('#wTrackCreateTable');
-                var inputEditing = table.find('input.editing');
-                var row = table.find('tr');
-                var model;
+            if (customer) {
+                fullName = currentModel.customer && currentModel.customer.name ? currentModel.customer.name.first + ' ' + currentModel.customer.name.last : '';
+                self.$el.find('#customer').text(fullName);
 
-                if (inputEditing.length) {
-                    this.autoCalc(null, inputEditing);
-                }
+                common.getImagesPM([customer], '/getCustomersImages', '#' + id, function (result) {
+                    var res = result.data[0];
 
-                function retriveText(el) {
-                    var child = el.children('input');
+                    self.$el.find('.miniAvatarCustomer').attr('data-id', res._id).find('img').attr('src', res.imageSrc);
+                });
+            }
+        },
 
-                    if (child.length) {
-                        return child.val();
-                    }
+        saveItem: function () {
+            var Model = WTrackModel.extend({
+                defaults: {}
+            });
+            var self = this;
+            var thisEl = this.$el;
+            var table = thisEl.find('#wTrackCreateTable');
+            var inputEditing = table.find('input.editing');
+            var rows = table.find('tr');
+            var count = rows.length - 1;
 
-                    return el.text() || 0;
-                }
-
-                var target = row;
+            rows.each(function (index) {
+                var target = $(this);
                 var id = target.attr('data-id');
                 var jobs = target.find('[data-content="jobs"]');
                 var monEl = target.find('[data-content="1"]');
@@ -151,17 +187,53 @@ define([
                 var worked = target.find('[data-content="worked"]');
                 var month = target.find('[data-content="month"]');
                 var year = target.find('[data-content="year"]');
-                var mo = retriveText(monEl);
-                var tu = retriveText(tueEl);
-                var we = retriveText(wenEl);
-                var th = retriveText(thuEl);
-                var fr = retriveText(friEl);
-                var sa = retriveText(satEl);
-                var su = retriveText(sunEl);
-                var m = retriveText(month);
-                var y = retriveText(year);
+                var dateByMonth;
+                var mo;
+                var tu;
+                var we;
+                var th;
+                var fr;
+                var sa;
+                var su;
+                var m;
+                var y;
                 var wTrack;
-                var project = self.$el.find('#project').attr('data-id');
+                var model;
+                var project;
+
+                function retriveText(el) {
+                    var child = el.children('input');
+
+                    if (child.length) {
+                        return child.val();
+                    }
+
+                    return el.text() || 0;
+                }
+
+                mo = retriveText(monEl);
+                tu = retriveText(tueEl);
+                we = retriveText(wenEl);
+                th = retriveText(thuEl);
+                fr = retriveText(friEl);
+                sa = retriveText(satEl);
+                su = retriveText(sunEl);
+                m = retriveText(month);
+                y = retriveText(year);
+
+                dateByMonth = y * 100 + parseInt(m, 10);
+                project = self.$el.find('#project').attr('data-id');
+
+                if (self.$el.find('.error').length || self.$el.find('.errorContent').length) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Please, select all information first.'
+                    });
+                }
+
+                if (inputEditing.length) {
+                    self.autoCalc(null, inputEditing);
+                }
 
                 worked = retriveText(worked);
                 wTrack = {
@@ -178,18 +250,20 @@ define([
                     project    : project,
                     month      : m,
                     year       : y,
-                    dateByWeek : this.dateByWeek,
-                    dateByMonth: y * 100 + m,
-                    employee   : this.employee,
-                    department : this.department,
-                    week       : this.week
+                    dateByWeek : self.dateByWeek,
+                    dateByMonth: dateByMonth,
+                    employee   : self.employee,
+                    department : self.department,
+                    week       : self.week
                 };
 
                 model = new Model(wTrack);
 
                 model.save(null, {
                     success: function () {
-                        return self.hideDialog();
+                        if (count === index) {
+                            return self.hideDialog();
+                        }
                     },
                     error  : function (err) {
                         App.render({
@@ -198,311 +272,377 @@ define([
                         });
                     }
                 });
-            },
+            });
+        },
 
-            autoCalc: function (e, targetEl) {
-                this.removeInputs();
-                var tr = this.$el.find('tr');
-                var edited = tr.find('input.edited');
-                var days = tr.find('.autoCalc');
-                var editedCol = edited.closest('td');
-                var worked = 0;
-                var value;
-                var calcEl;
-                var workedEl = tr.find('[data-content="worked"]');
+        autoCalc: function (e, targetEl) {
+            var isInput;
+            var trs;
+            var edited;
+            var editedCol;
+            var value;
+            var calcEl;
 
-                function appplyDefaultValue(el) {
-                    var value = el.text();
-                    var children = el.children('input');
+            if (e || targetEl) {
+                targetEl = targetEl || $(e.target);
 
-                    if (value === '' || undefined) {
-                        if (children.length) {
-                            value = children.val();
-                        } else {
-                            value = '0';
-                        }
+                isInput = targetEl.prop('tagName') === 'INPUT';
+                trs = targetEl.closest('tr');
+                edited = trs.find('input.edited');
+                editedCol = edited.closest('td');
+            } else {
+                trs = this.$tableBody.find('tr');
+            }
+
+            function appplyDefaultValue(el) {
+                var value = el.text();
+                var children = el.children('input');
+
+                if (value === '' || undefined) {
+                    if (children.length) {
+                        value = children.val();
+                    } else {
+                        value = '0';
                     }
-
-                    return value;
                 }
 
-                for (var i = days.length - 1; i >= 0; i--) {
+                return value || '0';
+            }
+
+            trs.each(function () {
+                var tr = $(this);
+                var days = tr.find('.autoCalc');
+                var worked = 0;
+                var _value;
+                var workedEl;
+                var i;
+
+                workedEl = tr.find('[data-content="worked"]');
+
+                for (i = days.length - 1; i >= 0; i--) {
                     calcEl = $(days[i]);
 
                     value = appplyDefaultValue(calcEl);
 
-                    if (value === undefined) {
+                    if (isInput) {
                         editedCol = targetEl.closest('td');
                         edited = targetEl;
                     }
 
-                    worked += parseInt(value);
+                    worked += parseInt(value, 10);
                 }
 
-                editedCol.text(edited.val());
-                edited.remove();
+                if (edited) {
+                    _value = parseInt(edited.val(), 10);
 
-                workedEl.text(worked);
-            },
-
-            autoHoursPerDay: function (e) {
-                var targetEl = $(e.target);
-                var isInput = targetEl.prop("tagName") === 'INPUT';
-                var tr = targetEl.closest('tr');
-                var edited = tr.find('input.editing');
-                var days = tr.find('.autoCalc');
-                var editedCol = edited.closest('td');
-                var worked = edited.val();
-                var value;
-                var intValue;
-                var calcEl;
-                var workedEl = tr.find('[data-content="worked"]');
-
-                if (worked) {
-                    intValue = worked / 7;
-                    intValue = Math.floor(intValue);
-
-                    for (var i = days.length - 1; i >= 0; i--) {
-                        value = worked - intValue;
-                        calcEl = $(days[i]);
-
-                        if (value <= 0 || ((value - intValue) > 0 && (value - intValue) < intValue)) {
-                            calcEl.val(value);
-                        } else {
-
-                            calcEl.val(intValue);
-                        }
+                    if (isNaN(_value)) {
+                        _value = 0;
                     }
+
+                    editedCol.text(_value);
+                    edited.remove();
                 }
 
-                editedCol.text(edited.val());
-                edited.remove();
-
                 workedEl.text(worked);
-            },
+            });
+        },
 
-            editRow: function (e) {
-                $(".newSelectList").hide();
-                var self = this;
-                var el = $(e.target);
-                var td = el.closest('td');
-                var tr = el.closest('tr');
-                var isHours = td.hasClass('hours');
-                var input = tr.find('input.editing');
-                var content = el.data('content');
-                var tempContainer;
-                var width;
-                var value;
-                var insertedInput;
-                var colType = el.data('type');
-                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
+        autoHoursPerDay: function (e) {
+            var targetEl = $(e.target);
+            var isInput = targetEl.prop("tagName") === 'INPUT';
+            var tr = targetEl.closest('tr');
+            var edited = tr.find('input.editing');
+            var days = tr.find('.autoCalc');
+            var editedCol = edited.closest('td');
+            var worked = edited.val();
+            var value;
+            var intValue;
+            var calcEl;
+            var workedEl = tr.find('[data-content="worked"]');
 
-                if (isSelect) {
-                    if (content === 'jobs') {
-                        if (self.project) {
-                            dataService.getData("/jobs/getForDD", {
-                                "projectId": self.project,
-                                "all"      : true
-                            }, function (jobs) {
+            if (worked) {
+                intValue = worked / 7;
+                intValue = Math.floor(intValue);
 
-                                self.responseObj['#jobs'] = jobs;
+                for (var i = days.length - 1; i >= 0; i--) {
+                    value = worked - intValue;
+                    calcEl = $(days[i]);
 
-                                tr.find('[data-content="jobs"]').addClass('editable');
-                                // populate.showSelect(e, prev, next, self);
-                                self.showNewSelect(e);
-                                return false;
-                            });
-                        } else {
-                            App.render({
-                                type   : 'error',
-                                message: 'Please, choose project first.'
-                            });
-                        }
-
+                    if (value <= 0 || ((value - intValue) > 0 && (value - intValue) < intValue)) {
+                        calcEl.val(value);
                     } else {
-                        //populate.showSelect(e, prev, next, this);
-                        this.showNewSelect(e);
-                        return false;
+
+                        calcEl.val(intValue);
                     }
-                } else if (content === 'month') {
-                    if (this.startMonth === this.endMonth) {
-                        return false;
+                }
+            }
+
+            editedCol.text(edited.val());
+            edited.remove();
+
+            workedEl.text(worked);
+        },
+
+        editRow: function (e) {
+            var self = this;
+            var el = $(e.target);
+            var td = el.closest('td');
+            var tr = el.closest('tr');
+            var isHours = td.hasClass('hours');
+            var input = tr.find('input.editing');
+            var content = el.data('content');
+            var tempContainer;
+            var width;
+            var value;
+            var insertedInput;
+            var colType = el.data('type');
+            var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
+
+            $('.newSelectList').hide();
+
+            if (isSelect) {
+                if (content === 'jobs') {
+                    if (self.project) {
+                        dataService.getData('/jobs/getForDD', {
+                            projectId: self.project,
+                            all      : true
+                        }, function (jobs) {
+
+                            self.responseObj['#jobs'] = jobs;
+
+                            tr.find('[data-content="jobs"]').addClass('editable');
+                            // populate.showSelect(e, prev, next, self);
+                            self.showNewSelect(e);
+                            return false;
+                        });
+                    } else {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please, choose project first.'
+                        });
                     }
 
-                    el.append('<ul class="newSelectList"><li>' + this.startMonth + '</li><li>' + this.endMonth + '</li></ul>');
-
-                } else if (content === 'year') {
-                    if (this.startYear === this.endYear) {
-                        return false;
-                    }
-
-                    el.append('<ul class="newSelectList"><li>' + this.startYear + '</li><li>' + this.endYear + '</li></ul>');
                 } else {
-                    input.removeClass('editing');
-                    input.addClass('edited');
-
-                    tempContainer = el.text();
-                    width = el.width() - 6;
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="4" style="width:' + width + 'px">');
-
-                    insertedInput = el.find('input');
-                    insertedInput.focus();
-                    insertedInput[0].setSelectionRange(0, insertedInput.val().length);
-
-                    if (input.length && !isHours) {
-                        if (!input.val()) {
-                            input.val(0);
-                        }
-
-                        this.autoCalc(e);
-                    }
+                    // populate.showSelect(e, prev, next, this);
+                    this.showNewSelect(e);
+                    return false;
                 }
-
-                return false;
-            },
-
-            removeInputs: function (e) {
-                var self = this;
-                if (this.selectView) {
-                    this.selectView.remove();
-                }
-
-                this.$el.find('.editing').each(function (el) {
-                    var val = $(this).val();
-                    $(this).closest('td').text(val);
-                    self.autoCalc();
-                    $(this).remove();
-                });
-
-            },
-
-            chooseOption: function (e) {
-                var self = this;
-                var target = $(e.target);
-                var targetElement = target.parents("td");
-                if (!targetElement.length) {
-                    targetElement = target.parents("span");
-                }
-                var tr = target.parents("tr");
-                var id = target.attr("id");
-                var attr = targetElement.data("content");
-                var elementType = '#' + attr;
-                var jobs = {};
-                var project;
-
-                var element = _.find(this.responseObj[elementType], function (el) {
-                    return el._id === id;
-                });
-
-                if (id !== 'createJob') {
-                    if (elementType === '#jobs') {
-
-                        jobs = element._id;
-
-                        targetElement.attr("data-id", jobs);
-                        tr.find('[data-content="jobs"]').removeClass('errorContent');
-                    } else if (elementType === '#project') {
-                        project = element._id;
-                        this.project = project;
-
-                        targetElement.attr("data-id", project);
-                        targetElement.removeClass('error');
-
-                        this.asyncLoadImgs(element);
-                    }
-                    targetElement.removeClass('errorContent');
-
-                    targetElement.text(target.text());
-
-                } else if (id === 'createJob') {
-                    self.generateJob(e);
-                }
-
-                this.hideNewSelect();
-
-                return false;
-            },
-
-            generateJob: function (e) {
-                var model = this.project;
-
-                new CreateJob({
-                    model     : model,
-                    createJob: true
-                });
-
-                return false;
-            },
-
-            showNewSelect: function (e) {
-                var $target = $(e.target);
-                e.stopPropagation();
-
-                if ($target.attr('id') === 'selectInput') {
+            } else if (content === 'month') {
+                if (this.startMonth === this.endMonth) {
                     return false;
                 }
 
-                if (this.selectView) {
-                    this.selectView.remove();
+                el.append('<ul class="newSelectList"><li>' + this.startMonth + '</li><li>' + this.endMonth + '</li></ul>');
+
+            } else if (content === 'year') {
+                if (this.startYear === this.endYear) {
+                    return false;
                 }
 
-                this.selectView = new selectView({
-                    e          : e,
-                    responseObj: this.responseObj
-                });
+                el.append('<ul class="newSelectList"><li>' + this.startYear + '</li><li>' + this.endYear + '</li></ul>');
+            } else {
+                input.removeClass('editing');
+                input.addClass('edited');
 
-                $target.append(this.selectView.render().el);
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html('<input class="editing" type="text" value="' + tempContainer + '"  maxLength="2" style="width:' + width + 'px">');
 
-                return false;
-            },
+                insertedInput = el.find('input');
+                insertedInput.focus();
+                insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
-            hideNewSelect: function (e) {
-                if (this.selectView) {
-                    this.selectView.remove();
+                if (input.length && !isHours) {
+                    if (!input.val()) {
+                        input.val(0);
+                    }
+
+                    this.autoCalc(e);
                 }
-            },
+            }
 
-            render: function (data) {
-                data.wTrack = data.wTrack.toJSON();
-                var formString = this.template(data);
-                var self = this;
+            return false;
+        },
 
-                dataService.getData("/project/getForWtrack", {inProgress: true}, function (projects) {
-                    projects = _.map(projects.data, function (project) {
-                        project.name = project.projectName;
+        removeInputs: function (e) {
+            var self = this;
 
-                        return project
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            this.$el.find('.editing').each(function (el) {
+                var $el = $(this);
+                var val = $el.val();
+
+                $el.closest('td').text(val);
+                self.autoCalc($el);
+                $el.remove();
+            });
+
+        },
+
+        chooseOption: function (e) {
+            var self = this;
+            var target = $(e.target);
+            var targetElement = target.parents('td');
+            var jobs = {};
+            var tr;
+            var id;
+            var attr;
+            var elementType;
+            var element;
+            var project;
+
+            if (!targetElement.length) {
+                targetElement = target.parents('span');
+            }
+
+
+            tr = target.parents('tr');
+            id = target.attr('id');
+            attr = targetElement.data('content');
+            elementType = '#' + attr;
+
+
+            element = _.find(this.responseObj[elementType], function (el) {
+                return el._id === id;
+            });
+
+            if (id !== 'createJob') {
+                if (elementType === '#jobs') {
+
+                    jobs = element._id;
+
+                    targetElement.attr('data-id', jobs);
+                    tr.find('[data-content="jobs"]').removeClass('errorContent');
+                } else if (elementType === '#project') {
+                    project = element._id;
+                    this.project = project;
+
+                    targetElement.attr('data-id', project);
+                    targetElement.removeClass('error');
+
+                    dataService.getData('/jobs/getForDD', {
+                        projectId: project,
+                        all      : true
+                    }, function (jobs) {
+                        var $jobs = self.$el.find('[data-content="jobs"]');
+                        var job = jobs ? jobs[0] : {name: 'Empty'};
+                        var jobId = job._id;
+
+                        $jobs.text(job.name);
+                        $jobs.attr('data-id', jobId);
+
+                        if (jobId) {
+                            $jobs.removeClass('errorContent');
+                        }
                     });
 
-                    self.responseObj['#project'] = projects;
-                });
+                    this.asyncLoadImgs(element);
+                }
+                targetElement.removeClass('errorContent');
 
-                this.$el = $(formString).dialog({
-                    closeOnEscape: false,
-                    autoOpen     : true,
-                    resizable    : false,
-                    title        : "Edit Project",
-                    dialogClass  : "edit-dialog",
-                    width        : "900px",
-                    buttons      : {
-                        save  : {
-                            text : "Save",
-                            class: "btn",
-                            click: self.saveItem
-                        },
-                        cancel: {
-                            text : "Cancel",
-                            class: "btn",
-                            click: self.hideDialog
-                        }
-                    }
-                });
+                targetElement.text(target.text());
 
-                this.asyncLoadImgs(data);
-
-                return this;
+            } else if (id === 'createJob') {
+                self.generateJob(e);
             }
-        });
-        return CreateView;
-    })
+
+            this.hideNewSelect();
+
+            return false;
+        },
+
+        generateJob: function () {
+            var model = this.project;
+
+            new CreateJob({
+                model    : model,
+                createJob: true
+            });
+
+            return false;
+        },
+
+        showNewSelect: function (e) {
+            var $target = $(e.target);
+            e.stopPropagation();
+
+            if ($target.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            this.selectView = new selectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
+
+            $target.append(this.selectView.render().el);
+
+            return false;
+        },
+
+        hideNewSelect: function () {
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+        },
+
+        render: function (data) {
+            var self = this;
+            var formString;
+
+            data.wTrack = data.wTrack.toJSON();
+            formString = this.template(data);
+
+            dataService.getData('/project/getForWtrack', {inProgress: true}, function (projects) {
+                projects = _.map(projects.data, function (project) {
+                    project.name = project.projectName;
+
+                    return project;
+                });
+
+                self.responseObj['#project'] = projects;
+
+                App.stopPreload();
+            });
+
+            this.$el = $(formString).dialog({
+                closeOnEscape: false,
+                autoOpen     : true,
+                resizable    : false,
+                title        : 'Edit Project',
+                dialogClass  : 'edit-dialog',
+                width        : '900px',
+                buttons      : {
+                    save  : {
+                        text : 'Save',
+                        class: 'btn',
+                        click: self.saveItem
+                    },
+                    cancel: {
+                        text : 'Cancel',
+                        class: 'btn',
+                        click: self.hideDialog
+                    }
+                }
+            });
+
+            this.delegateEvents(this.events);
+
+            this.asyncLoadImgs(data);
+
+            this.$tableBody = $('#wTrackCreateTable');
+            this.autoCalc();
+
+            return this;
+        }
+    });
+    return CreateView;
+})
 ;

@@ -483,11 +483,12 @@ define([
                 var template = _.template(cancelEdit);
                 var model;
 
-                if (id.length < 24) {
+                if (!id || (id.length < 24)) {
+                    self.hideSaveCancelBtns();
                     return cb('Empty id');
                 }
 
-                model = collection.get(id) || self.editCollection.get(id);
+                model = collection.get(id);
                 model = model.toJSON();
                 model.startNumber = rowNumber;
                 tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter}));

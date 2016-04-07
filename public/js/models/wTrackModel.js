@@ -1,9 +1,10 @@
-/**
- * Created by Roman on 04.05.2015.
- */
-define(['Validation', 'common', 'moment'], function (Validation, common, moment) {
+define([
+    'Backbone'
+], function (Backbone) {
+    "use strict";
+
     var wTrackModel = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
 
         defaults: {
             dateByWeek : 0,
@@ -29,7 +30,7 @@ define(['Validation', 'common', 'moment'], function (Validation, common, moment)
             rate       : 0
         },
         urlRoot : function () {
-            return "/wTrack/";
+            return '/wTrack/';
         },
         parse   : function (model) {
             var profit;

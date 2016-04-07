@@ -31,11 +31,7 @@
                                 <dl class="opp-info">
                                     <dt><label>
                                         <%if(model.supplier){%>
-                                        <%if (App.weTrack) {%>
                                         Customer
-                                        <% } else { %>
-                                        Supplier
-                                        <% } %>
                                         <% } %>
                                     </label></dt>
                                     <dd>
@@ -45,12 +41,10 @@
                                             + ' ' + model.supplier.name.last%></a>
                                         <%}%>
                                     </dd>
-                                    <%if (App.weTrack) {%>
                                     <dt><label for="projectDd">Project</label></dt>
                                     <dd>
                                         <a id="projectDd" class="" href="javascript:;" data-id="<%=model.project._id%>"><%=model.project.projectName%></a>
                                     </dd>
-                                    <% } %>
                                 </dl>
                             </div>
                             <div class="half-block left">
@@ -68,7 +62,7 @@
                                     <dt><label for="currencyDd">Currency</label></dt>
                                     <dd>
                                         <a id="currencyDd" class=""
-                                           data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>"
+                                           data-id="<%= model.currency && model.currency._id ? model.currency._id._id : null%>"
                                            href="javascript:;"><%= model.currency && model.currency._id ?
                                             model.currency._id.name : ''%></a>
                                     </dd>

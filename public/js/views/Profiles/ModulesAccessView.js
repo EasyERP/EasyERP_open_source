@@ -12,6 +12,7 @@ define([
             },
             filterCollection: function () {
                 this.profile = this.profilesCollection.get('5264f88d22be433c0b000003');
+
                 if (!this.profile) {
                     throw new Error("No profile found after filter: ModulesTableView -> filterCollection");
                 }

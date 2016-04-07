@@ -42,7 +42,7 @@ module.exports = (function () {
         project       : {type: ObjectId, ref: 'Project', default: null},
         deliverTo     : {type: ObjectId, ref: 'DeliverTo', default: null},
         orderDate     : {type: Date, default: Date.now},
-        expectedDate  : Date,
+        expectedDate  : {type: Date, default: Date.now},
         name          : {type: String, default: 'PO', unique: true},
         destination   : {type: ObjectId, ref: 'Destination', default: null},
         incoterm      : {type: ObjectId, ref: 'Incoterm', default: null},

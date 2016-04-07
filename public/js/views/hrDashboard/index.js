@@ -24,7 +24,7 @@ define([
 
             this.startTime = options.startTime;
 
-            if (!dashCollection) {
+            if (!dashCollection || !dashCollection.length) {
                 dashCollection = this.dashCollection = new hrDashboard();
                 dashCollection.on('reset sort', this.render, this);
 

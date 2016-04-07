@@ -52,7 +52,7 @@ module.exports = function (models) {
         });
     }
 
-    router.get('/vacation', cacheRetriver, handler.composeForVacation);
+    router.get('/vacation', /*cacheRetriver, */handler.composeForVacation);
     //router.get('/vacation', handler.getFromCache);
     router.get('/hr', handler.composeForHr);
 

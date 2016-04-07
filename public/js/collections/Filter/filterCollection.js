@@ -11,7 +11,18 @@ define([
             var nameA = modelA.get(this.sortName);
             var nameB = modelB.get(this.sortName);
 
-            if (nameA && nameB) {
+            var statusA = modelA.get('status');
+            var statusB = modelB.get('status');
+
+            if (statusA > statusB) {
+                return this.sortOrder * (-1);
+            }
+
+            if (statusA < statusB) {
+                return this.sortOrder;
+            }
+
+            if ((nameA === 0 || nameA) && (nameB === 0 || nameB)) {
                 if (this.int) {
                     nameA = parseInt(nameA);
                     nameB = parseInt(nameB);
@@ -30,7 +41,7 @@ define([
         sortBy: function (options) {
             this.sortName = options.key ? options.key : 'name';
             this.sortOrder = options.order ? options.order : 1;
-            ;
+
             this.int = options.int ? true : false;
 
             this.sort();

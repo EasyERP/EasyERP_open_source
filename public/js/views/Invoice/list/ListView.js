@@ -10,10 +10,11 @@ define([
         'collections/Invoice/filterCollection',
         'views/Filter/FilterView',
         'common',
-        'dataService'
+        'dataService',
+        'helpers'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, listTotalView, contentCollection, filterView, common, dataService) {
+    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, listTotalView, contentCollection, filterView, common, dataService, helpers) {
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
@@ -74,6 +75,21 @@ define([
 
                 this.hideNewSelect();
                 return false;
+            },
+
+            recalcTotal: function () {
+                var self = this;
+                var columns = ['total', 'unTaxed'];
+
+                _.each(columns,  function (col){
+                    var sum = 0;
+
+                    _.each(self.collection.toJSON(), function (model) {
+                        sum += parseFloat(model.paymentInfo[col]);
+                    });
+
+                    self.$el.find('#' + col).text(helpers.currencySplitter(sum.toFixed(2)));
+                });
             },
 
             showNewSelect: function (e) {

@@ -1,10 +1,11 @@
 ﻿define([
-        'models/VacationDashboard'
+        'Backbone',
+        'models/VacationDashboard',
+        'custom'
     ],
-    function (Model) {
+    function (Backbone, Model, custom) {
         var Colection = Backbone.Collection.extend({
             model: Model,
-
             url: 'dashboard/vacation',
 
             initialize: function (options) {
@@ -12,6 +13,14 @@
                     data : options,
                     reset: true
                 });
+            },
+
+            parse: function(response){
+                var weeksArr = response ? response.weeksArray: [];
+
+                custom.cacheToApp('vacationDashWeeksArr', weeksArr);
+
+                return response ? response.sortDepartments: [];
             }
 
         });

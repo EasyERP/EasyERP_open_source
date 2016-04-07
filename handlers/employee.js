@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var async = require('async');
+var objectId = mongoose.Types.ObjectId;
 
 var Employee = function (models) {
     'use strict';
@@ -11,6 +12,7 @@ var Employee = function (models) {
     var ProjectSchema = mongoose.Schemas.Project;
     var _ = require('underscore');
     var moment = require('../public/js/libs/moment/moment');
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
@@ -43,25 +45,55 @@ var Employee = function (models) {
 
     this.getNameAndDepartment = getNameAndDepartment;
 
-    function getNameAndDepartment(db, isEmployee, callback) {
+    function getNameAndDepartment(db, query, callback) {
         var Employee = models.get(db, 'Employees', EmployeeSchema);
-        var query;
+        var matchQuery = {};
 
-        if (isEmployee) {
-            query = Employee.find({isEmployee: true});
-        } else {
-            query = Employee.find();
+        if (query) {
+            if (query.devDepartments) {
+                matchQuery['department.parentDepartment'] = objectId(CONSTANTS.PARENT_DEV);
+            }
+            if (query.isEmployee) {
+                matchQuery.isEmployee = true;
+            }
+            if (query.salesDepartments) {
+                matchQuery['department._id'] = {$in: CONSTANTS.SALESDEPARTMENTS.objectID()};
+            }
         }
 
-        query
-            .select('_id name department')
-            .populate('department', 'departmentName _id')
-            .sort({'name.first': 1})
-            .lean()
-            .exec(function (err, employees) {
-                if (err) {
-                    return callback(err);
+        Employee.aggregate([
+            {
+                $project: {
+                    name      : 1,
+                    department: 1,
+                    isEmployee: 1
                 }
+            },
+            {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id',
+                    as          : 'department'
+                }
+            },
+            {
+                $project: {
+                    department: {$arrayElemAt: ['$department', 0]},
+                    isEmployee: 1,
+                    name      : 1
+                }
+            },
+            {
+                $match : matchQuery
+            },
+            {
+                $sort : {'name.first' : 1}
+            }
+        ], function (err, employees) {
+            if (err) {
+                return callback(err);
+            }
 
                 callback(null, employees);
             });
@@ -87,18 +119,24 @@ var Employee = function (models) {
         var date = moment().year(year).month(month - 1).date(1);
 
         Employee.findById(_id, {hire: 1, fire: 1}, function (err, result) {
+            var salary = 0;
+            var hire;
+            var i;
+            var length;
+
             if (err){
                 return next(err);
             }
-            var hire = result.hire;
-            var salary = 0;
-            var i;
-            var length = hire.length;
 
-            for (i = length - 1; i >= 0; i--){
-                if (date >= hire[i].date){
-                    salary = hire[i].salary;
-                    break;
+            if (result){
+                hire = result.hire;
+                length = hire.length;
+
+                for (i = length - 1; i >= 0; i--){
+                    if (date >= hire[i].date){
+                        salary = hire[i].salary;
+                        break;
+                    }
                 }
             }
 
@@ -137,9 +175,9 @@ var Employee = function (models) {
     };
 
     this.getForDD = function (req, res, next) {
-        var isEmployee = req.query.isEmployee;
+        var query = req.query;
 
-        getNameAndDepartment(req.session.lastDb, isEmployee, function (err, result) {
+        getNameAndDepartment(req.session.lastDb, query, function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -416,10 +454,6 @@ var Employee = function (models) {
      *        "jobType": null,
      *        "gender": "male",
      *        "marital": "unmarried",
-     *        "contractEnd": {
-     *            "date": "2015-07-29T19:34:42.405Z",
-     *            "reason": ""
-     *            },
      *        "attachments": [],
      *        "editedBy": {
      *            "date": "2015-08-18T05:55:15.458Z",

@@ -3,6 +3,8 @@
  */
 
 function connectorLoader(configOptions) {
+    "use strict";
+
     var csv = configOptions.csv;
     var msSql = configOptions.msSql;
     var sql = configOptions.sql;
@@ -22,6 +24,8 @@ function connectorLoader(configOptions) {
 };
 
 module.exports = function (configOptions) {
+    "use strict";
+
     var Connector;
 
     if (!configOptions) {
@@ -31,5 +35,5 @@ module.exports = function (configOptions) {
 
     Connector = connectorLoader(configOptions);
 
-    this.importData = Connector.importData
+    this.importData = Connector.importData;
 };

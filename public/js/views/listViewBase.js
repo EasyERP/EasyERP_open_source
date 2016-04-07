@@ -106,6 +106,7 @@ define([
                     }
                         break;
                 }
+
                 sortObject[sortBy] = sortConst;
 
                 this.fetchSortCollection(sortObject);
@@ -114,6 +115,11 @@ define([
             },
 
             getTotalLength: function (currentNumber, itemsNumber, filter) {
+
+                if (this.contentType === 'invoiceAging') {
+                    return;
+                }
+
                 dataService.getData(this.totalCollectionLengthUrl, {
                     currentNumber: currentNumber,
                     filter       : filter,
@@ -207,7 +213,7 @@ define([
                             localCounter++;
                             count--;
                             if (count === 0) {
-                                if (this.hasAlphabet) {
+                                if (that.hasAlphabet) {
                                     common.buildAphabeticArray(that.collection, function (arr) {
                                         $("#startLetter").remove();
                                         that.alphabeticArray = arr;
@@ -216,7 +222,7 @@ define([
                                             selectedLetter    : (that.selectedLetter == "" ? "All" : that.selectedLetter),
                                             allAlphabeticArray: that.allAlphabeticArray
                                         }));
-                                        var currentLetter = (that.filter) ? that.filter.letter : null;
+                                        var currentLetter = (that.filter && that.filter.letter) ? that.filter.letter.value : null;
                                         if (currentLetter) {
                                             $('#startLetter').find('a').each(function () {
                                                 var target = $(this);
@@ -299,7 +305,8 @@ define([
 
                 dataService.getData(this.totalCollectionLengthUrl, {
                     sort  : this.sort,
-                    filter: this.filter
+                    filter     : this.filter,
+                    contentType: this.contentType,
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
@@ -445,6 +452,9 @@ define([
                 /*if (this.filterView) {
                  this.filterView.renderFilterContent();
                  }*/
+                if (typeof (this.recalcTotal) === 'function'){
+                    this.recalcTotal();
+                }
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
@@ -499,25 +509,48 @@ define([
                 if (this.editCollection) { // add for reset editCollection after sort
                     this.editCollection.reset(this.collection.models);
                 }
+
+                App.stopPreload();
             },
 
             alpabeticalRender: function (e) {
-                var target = $(e.target);
-                var selectedLetter = target.text();
+                var target;
                 var itemsNumber = $("#itemsNumber").text();
 
                 this.startTime = new Date();
 
-                this.filter = (this.filter) ? this.filter : {};
-                this.filter['letter'] = selectedLetter;
+                var selectedLetter;
 
-                if ($(e.target).text() == "All") {
-                    selectedLetter = "";
+                if (e && e.target) {
+                    target = $(e.target);
+                    selectedLetter = $(e.target).text();
+
+                    if (!this.filter) {
                     this.filter = {};
                 }
+                    this.filter['letter'] = {
+                        key  : 'letter',
+                        value: selectedLetter,
+                        type : null
+                    };
 
                 target.parent().find(".current").removeClass("current");
                 target.addClass("current");
+                    if ($(e.target).text() === "All") {
+                        delete this.filter;
+                        delete App.filter.letter;
+                    } else {
+                        App.filter.letter = this.filter.letter;
+                    }
+                }
+
+                this.filter = App.filter;
+
+                this.filterView.renderFilterContent(this.filter);
+                _.debounce(
+                    function () {
+                        this.trigger('filter', App.filter);
+                    }, 10);
 
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
@@ -543,8 +576,10 @@ define([
             },
 
             renderAlphabeticalFilter: function () {
-                this.hasAlphabet = true;
                 var self = this;
+                var currentLetter;
+
+                this.hasAlphabet = true;
 
                 common.buildAphabeticArray(this.collection, function (arr) {
                     $("#startLetter").remove();
@@ -554,7 +589,8 @@ define([
                         alphabeticArray   : self.alphabeticArray,
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter : "All";
+
+                    currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : "All";
                     if (currentLetter) {
                         $('#startLetter').find('a').each(function () {
                             var target = $(this);
@@ -603,7 +639,7 @@ define([
                     }
                     self.showFilteredPage(filter, self);
                 });
-                self.filterView.bind('defaultFilter', function () {
+                self.filterView.bind('defaultFilter', function (filter) {
                     if (baseFilter) {
                         filter[baseFilter.name] = baseFilter.value;
                     }
@@ -618,7 +654,8 @@ define([
                 $('#check_all').prop('checked', false);
                 dataService.getData(this.totalCollectionLengthUrl, {
                     filter       : this.filter,
-                    newCollection: this.newCollection
+                    newCollection: this.newCollection,
+                    contentType  : this.contentType,
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);

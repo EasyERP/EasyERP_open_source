@@ -11,6 +11,10 @@ module.exports = (function () {
         task            : [{type: ObjectId, ref: 'Tasks', default: null}],
         customer        : {type: ObjectId, ref: 'Customers', default: null},
         projectmanager  : {type: ObjectId, ref: 'Employees', default: null},
+        salesManagers   : [{
+            manager : {type: ObjectId, ref: 'Employees', default: null},
+            date: {type: Date}
+        }],
         description     : String,
         whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         groups          : {

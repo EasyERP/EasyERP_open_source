@@ -71,10 +71,6 @@ module.exports = (function () {
          *
          * @property {Array} attachments - Some files
          *
-         * @property {Object} contractEnd
-         * @property {String} contractEnd.reason - Reason of the end of contract
-         * @property {Date} contractEnd.date - Date of the end of contract
-         *
          * @property {String} marital - Marital can be `married` or `unmarried`
          *
          * @property {String} gender - Gender can be `male` or `female`
@@ -144,7 +140,6 @@ module.exports = (function () {
         nextAction: Date,
         source: {type: String, default: ''},
         referredBy: {type: String, default: ''},
-        active: {type: Boolean, default: true},
         workflow: {type: ObjectId, ref: 'workflows', default: null},
         whoCanRW: {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         groups: {
@@ -181,20 +176,14 @@ module.exports = (function () {
             LI: {type: String, default: ''},
             GP: {type: String, default: ''}
         },
-        hire: [{
+        hire: [Date],
+        fire: [Date],
+        transfer: [{
             _id: false,
             date: Date,
+            status: {type: String, enum: ['hired', 'fired', 'updated'], default: 'updated'},
             department: {type: ObjectId, ref: 'Department', default: null},
-            jobPosition: {type: ObjectId, ref: 'JobPosition', default: null},
-            manager: {type: ObjectId, ref: 'Employees', default: null},
-            jobType: {type: String, default: ''},
-            salary: {type: Number, default: 0},
-            info: {type: String, default: ''}
-        }],
-        fire: [{
-            _id: false,
-            date: Date,
-            department: {type: ObjectId, ref: 'Department', default: null},
+            isDeveloper: {type: Boolean, required: true},
             jobPosition: {type: ObjectId, ref: 'JobPosition', default: null},
             manager: {type: ObjectId, ref: 'Employees', default: null},
             jobType: {type: String, default: ''},

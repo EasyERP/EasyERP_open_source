@@ -7,7 +7,8 @@
             el: '#listTable',
             initialize: function (options) {
                 this.collection = options.collection;
-                this.startNumber = (options.page - 1 ) * options.itemsNumber;
+                this.page = options.page ? parseInt(options.page) : 1;
+                this.startNumber = (this.page - 1 ) * options.itemsNumber;
             },
             events: {},
 

@@ -1,11 +1,13 @@
 define([
     'Backbone',
+    'Underscore',
+    'jQuery',
     'libs/date.format',
     'common',
     'constants',
     'dataService',
     'moment'
-], function (Backbone, dateformat, common, CONTENT_TYPES, dataService, moment) {
+], function (Backbone, _, $, dateformat, common, CONTENT_TYPES, dataService, moment) {
     'use strict';
 
     var Store = function () {
@@ -16,6 +18,9 @@ define([
             var store = localStorage.getItem(name);
 
             return (store && JSON.parse(store)) || null;
+        };
+        this.remove = function (name) {
+           localStorage.removeItem(name);
         };
     };
 
@@ -54,7 +59,7 @@ define([
             this.contentType = contentType;
         }
 
-        if (typeof windowLocHash != "undefined" && windowLocHash.length == 24) {
+        if (windowLocHash !== undefined && windowLocHash.length === 24) {
             id = windowLocHash;
         }
 
@@ -62,7 +67,7 @@ define([
         url = "#easyErp/" + this.contentType + "/" + viewtype + (browserFilter ? '/filter=' + browserFilter : '');
 
         if (id) {
-            if (viewtype != "list" && (viewtype != "thumbnails")) {
+            if (viewtype !== "list" && (viewtype !== "thumbnails")) {
                 url += "/" + id;
             }
             if (collection) {
@@ -70,7 +75,7 @@ define([
             }
         } else {
 
-            if (viewtype == "form" && collection) {
+            if (viewtype === "form" && collection) {
                 var model = collection.getElement();
                 url += "/" + model.attributes._id;
             }
@@ -84,11 +89,12 @@ define([
     var getCurrentVT = function (option) {
         var viewType;
         var savedFilter;
+        var viewVariants;
 
-        if (option && (option.contentType != App.contentType)) {
+        if (option && (option.contentType !== App.contentType)) {
             App.ownContentType = false;
         }
-        if (App.currentViewType == null) {
+        if (App.currentViewType === null) {
             if (option) {
                 switch (option.contentType) {
                     case CONTENT_TYPES.DASHBOARD:
@@ -199,7 +205,8 @@ define([
             }
         }
 
-        var viewVariants = ["kanban", "list", "form", "thumbnails"];
+        viewVariants = ["kanban", "list", "form", "thumbnails"];
+
         if ($.inArray(App.currentViewType, viewVariants) === -1) {
             App.currentViewType = "thumbnails";
             viewType = "thumbnails";
@@ -290,6 +297,15 @@ define([
         return App.cashedData[key] || App.storage.find(key);
     }
 
+    function removeFromCash(key) {
+        App.cashedData = App.cashedData || {};
+
+        delete App.cashedData[key];
+
+        return App.storage.remove(key);
+    }
+
+    //ToDo refactor It
     var savedFilters = function (contentType, uIFilter) {
         var savedFilter;
         var length;
@@ -437,20 +453,19 @@ define([
     App.storage = new Store();
 
     return {
-        runApplication          : runApplication,
-        changeContentViewType   : changeContentViewType,
-        //getCurrentII: getCurrentII,
-        //setCurrentII: setCurrentII,
-        getCurrentVT            : getCurrentVT,
-        setCurrentVT            : setCurrentVT,
-        getCurrentCL            : getCurrentCL,
-        setCurrentCL            : setCurrentCL,
-        cacheToApp              : cacheToApp,
-        retriveFromCash         : retriveFromCash,
-        savedFilters            : savedFilters,
+        runApplication: runApplication,
+        changeContentViewType: changeContentViewType,
+        getCurrentVT: getCurrentVT,
+        setCurrentVT: setCurrentVT,
+        getCurrentCL: getCurrentCL,
+        setCurrentCL: setCurrentCL,
+        cacheToApp: cacheToApp,
+        retriveFromCash: retriveFromCash,
+        removeFromCash: removeFromCash,
+        savedFilters: savedFilters,
         getFiltersForContentType: getFiltersForContentType,
-        getFilterById           : getFilterById,
-        getWeeks                : getWeeks,
-        getFiltersValues        : getFiltersValues
+        getFilterById: getFilterById,
+        getWeeks: getWeeks,
+        getFiltersValues: getFiltersValues
     };
 });

@@ -21,7 +21,7 @@
     });
 
     client.on("ready", function () {
-        console.log("Redis server  is now ready to accept connections on port " + process.env.REDIS_PORT);
+        console.log("Redis server  is now ready to accept connections on port " + process.env.SOCKET_DB_PORT);
     });
 
     function writeToStorage(name, key, value) {

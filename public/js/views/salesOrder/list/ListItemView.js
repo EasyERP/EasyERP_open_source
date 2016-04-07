@@ -10,24 +10,18 @@
 
             initialize: function (options) {
                 this.collection = options.collection;
-                this.startNumber = (options.page - 1 ) * options.itemsNumber;
+                this.page = options.page ? parseInt(options.page, 10) : 1;
+                this.startNumber = (this.page - 1) * options.itemsNumber;
             },
+
             render    : function (options) {
                 var el = (options && options.thisEl) ? options.thisEl : this.$el;
 
-                if (App.weTrack) {
-                    el.append(_.template(listForWTrack, {
-                        orderCollection: this.collection.toJSON(),
-                        startNumber    : this.startNumber,
-                        currencySplitter: helpers.currencySplitter
-                    }));
-                } else {
-                    el.append(_.template(listTemplate, {
-                        orderCollection: this.collection.toJSON(),
-                        startNumber    : this.startNumber,
-                        currencySplitter: helpers.currencySplitter
-                    }));
-                }
+                el.append(_.template(listForWTrack, {
+                    orderCollection: this.collection.toJSON(),
+                    startNumber    : this.startNumber,
+                    currencySplitter: helpers.currencySplitter
+                }));
             }
         });
 

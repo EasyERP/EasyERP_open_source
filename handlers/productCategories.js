@@ -235,8 +235,8 @@ var Categories = function (models, event) {
                                 console.log("fullName was updated");
                             });
 
-                            event.emit('updateName', _id, Product, 'accounting.category._id', 'accounting.category.name', result.fullName);
-                            event.emit('updateName', _id, PayRoll, 'type._id', 'type.name', result.name);
+                            /*event.emit('updateName', _id, Product, 'accounting.category._id', 'accounting.category.name', result.fullName);
+                            event.emit('updateName', _id, PayRoll, 'type._id', 'type.name', result.name);*/
                         });
                     }
                 });
@@ -265,8 +265,8 @@ var Categories = function (models, event) {
                     res.send(200, {success: 'Category updated success'});
                 }
 
-                event.emit('updateName', _id, Product, 'accounting.category._id', 'accounting.category.name', result.fullName);
-                event.emit('updateName', _id, PayRoll, 'type._id', 'type.name', result.name);
+                /*event.emit('updateName', _id, Product, 'accounting.category._id', 'accounting.category.name', result.fullName);
+                event.emit('updateName', _id, PayRoll, 'type._id', 'type.name', result.name);*/
             });
         }
     };

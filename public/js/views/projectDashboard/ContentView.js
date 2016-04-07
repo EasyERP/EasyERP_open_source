@@ -31,7 +31,7 @@ define([
 
                 this.collection.unbind('reset');
 
-                target$ = $(e.target);
+                target$ = $(e.target).closest('th');
                 currentParrentSortClass = target$.attr('class');
                 sortClass = currentParrentSortClass.split(' ')[1];
                 sortConst = 1;

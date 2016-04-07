@@ -35,7 +35,7 @@ define([
             "click .checkbox"               : "checked",
             "click #savePayment"            : "saveItem",
             "click #removePayment"          : "deleteItems",
-            "click td:not(.checkbox, .date)": "goToEditDialog"
+            "click td:not(.checkbox)"       : "goToEditDialog"
         },
 
         goToEditDialog: function (e) {
@@ -211,7 +211,7 @@ define([
             this.collection.unbind('reset');
             this.collection.unbind('showmore');
 
-            target$ = $(e.target);
+            target$ = $(e.target).closest('th');
             currentParrentSortClass = target$.attr('class');
             sortClass = currentParrentSortClass.split(' ')[1];
             sortConst = 1;

@@ -14,14 +14,13 @@
     </td>
     <% for (var i = startKey + 1; i <= endKey + 1; i++) {%>
     <%var salary = '&nbsp;';%>
-    <%var length =  emp.hire.length; %>
+    <%var length =  emp.transfer.length; %>
     <%if (i <= parseInt(i.toString().slice(0, 4)) * 100 + 12) {%>
        <% for (var j = 0; j <= length - 1; j++) {%>
-         <%if (i >= emp.hire[j].hireDate) {%>
-           <% salary = emp.hire[j].hire.salary; %>;
-
-           <%if (fireKey && fireKey < i && fireKey > emp.hire[j].hireDate) {%>
-               <% salary ='&nbsp;' %>;
+         <%if (i >= emp.transfer[j].hireDate) {%>
+           <% salary = emp.transfer[j].transfer.salary; %>;
+           <%if (fireKey && fireKey < i && fireKey > emp.transfer[j].hireDate) {%>
+               <% salary ='&nbsp;';%>;
            <%}%>
 
           <%}%>

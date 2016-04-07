@@ -1,8 +1,9 @@
 define([
         "text!templates/Applications/kanban/KanbanItemTemplate.html",
-        "common"
+        "common",
+        'moment'
     ],
-    function (KanbanItemTemplate, common) {
+    function (KanbanItemTemplate, common, moment) {
         var ApplicationsItemView = Backbone.View.extend({
             className: "item",
             id       : function () {
@@ -34,6 +35,11 @@ define([
                 var index = this.model.collection.indexOf(this.model);
                 this.$el.html(this.template(this.model.toJSON()));
                 this.$el.attr("data-index", index);
+
+                if (this.model.toJSON().nextAction && moment(new Date(this.model.toJSON().nextAction)).isBefore(this.date)) {
+                    this.$el.addClass("errorContent");
+                }
+
                 return this;
             }
         });

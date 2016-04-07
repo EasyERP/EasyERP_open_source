@@ -1,7 +1,6 @@
 define([
         'views/listViewBase',
         'text!templates/salesInvoice/list/ListHeader.html',
-        'text!templates/stages.html',
         'views/salesInvoice/CreateView',
         'views/salesInvoice/EditView',
         'models/InvoiceModel',
@@ -10,10 +9,11 @@ define([
         'views/Filter/FilterView',
         'common',
         'dataService',
-        'constants'
+        'constants',
+        'helpers'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (listViewBase, listTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
@@ -41,12 +41,9 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
-                this.stages = [];
-                this.filterView;
             },
 
             events: {
-                "click .stageSelect"                       : "showNewSelect",
                 "click  .list td:not(.notForm, .validated)": "goToEditDialog",
                 "click .newSelectList li"                  : "chooseOption",
                 "click .selectList"                        : "showSelects"
@@ -139,20 +136,6 @@ define([
 
             },
 
-            showNewSelect: function (e) {
-                if ($(".newSelectList").is(":visible")) {
-                    this.hideNewSelect();
-                    return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
-                    return false;
-                }
-            },
-
-            hideNewSelect: function (e) {
-                $(".newSelectList").remove();
-            },
-
             render: function () {
                 var self;
                 var $currentEl;
@@ -168,7 +151,7 @@ define([
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
-                            App.weTrack = response === "weTrack" || response === "production" || response === "development";
+                            App.weTrack = true;
                         }
 
                         currentEllistRenderer(self);
@@ -183,13 +166,15 @@ define([
                 self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
-                dataService.getData("/workflow/fetch", {
+/*                dataService.getData("/workflow/fetch", {
                     wId         : 'Sales Invoice',
                     source      : 'purchase',
                     targetSource: 'invoice'
                 }, function (stages) {
                     self.stages = stages;
-                });
+                });*/
+
+                this.recalcTotal();
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
@@ -206,6 +191,21 @@ define([
 
                 }
 
+            },
+
+            recalcTotal: function () {
+                var self = this;
+                var columns = ['balance', 'total', 'unTaxed'];
+
+                _.each(columns, function (col) {
+                    var sum = 0;
+
+                    _.each(self.collection.toJSON(), function (model) {
+                        sum += parseFloat(model.paymentInfo[col]);
+                    });
+
+                    self.$el.find('#' + col).text(helpers.currencySplitter(sum.toFixed(2)));
+                });
             },
 
             goToEditDialog: function (e) {
@@ -225,7 +225,7 @@ define([
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please refresh browser'
                         });
                     }

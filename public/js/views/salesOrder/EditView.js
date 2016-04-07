@@ -9,9 +9,10 @@ define([
         "custom",
         "dataService",
         "populate",
-        "constants"
+        "constants",
+        "helpers"
     ],
-    function (EditTemplate, ViewTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS) {
+    function (EditTemplate, ViewTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS, helpers) {
 
         var EditView = Backbone.View.extend({
             contentType: "Order",
@@ -271,9 +272,9 @@ define([
                 var orderDate = thisEl.find('#orderDate').val();
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
-                var total = $.trim(thisEl.find('#totalAmount').text());
-                var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
-                var totalTaxes = $.trim(thisEl.find('#taxes').text());
+                var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
+                var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
+                var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
 
                 var usersId = [];
                 var groupsId = [];
@@ -285,12 +286,12 @@ define([
                     currency = {
                         _id : thisEl.find('#currencyDd').attr('data-id'),
                         name: thisEl.find('#currencyDd').text()
-                    }
+                    };
                 } else {
                     currency = {
                         _id : null,
                         name: ''
-                    }
+                    };
                 }
 
                 $(".groupsAndUser tr").each(function () {
@@ -315,9 +316,9 @@ define([
                         productId = targetEl.data('id');
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                         quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
-                        taxes = targetEl.find('.taxes').text();
-                        subtotal = targetEl.find('.subtotal').text();
+                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"]').text());
+                        taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
+                        subtotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                         jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
 
                         products.push({

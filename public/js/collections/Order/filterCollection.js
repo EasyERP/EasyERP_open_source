@@ -13,11 +13,31 @@
 
             showMore: function (options) {
                 var that = this;
+                var regex = /^sales/;
                 var filterObject = options || {};
                 filterObject['page'] = (options && options.page) ? options.page : this.page;
                 filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
+                filterObject['filter'] = (options) ? options.filter : {};
+
+                if (options && options.contentType) {
+
+                    options.filter = options.filter || {};
+
+                    if (regex.test(this.contentType)) {
+                        options.filter.forSales = {
+                            key  : 'forSales',
+                            value: ['true']
+                        };
+                    } else {
+                        options.filter.forSales = {
+                            key  : 'forSales',
+                            value: ['false']
+                        };
+                    }
+                }
+
                 this.fetch({
                     data   : filterObject,
                     waite  : true,
@@ -46,23 +66,20 @@
                 this.count = options.count;
                 this.page = options.page || 1;
 
-                if (regex.test(this.contentType) && !(options.filter)) {
-                    options.filter = {};
+                if (options && options.contentType) {
 
-                    options.filter = {
-                        'forSales': {
+                    options.filter = options.filter || {};
+
+                    if (regex.test(this.contentType)) {
+                        options.filter.forSales = {
                             key  : 'forSales',
                             value: ['true']
-                        }
-                    }
-                } else {
-                    options.filter = {};
-
-                    options.filter = {
-                        'forSales': {
+                        };
+                    } else {
+                        options.filter.forSales = {
                             key  : 'forSales',
                             value: ['false']
-                        }
+                        };
                     }
                 }
 

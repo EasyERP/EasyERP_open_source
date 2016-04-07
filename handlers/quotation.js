@@ -19,20 +19,21 @@ var Quotation = function (models, event) {
     var mapObject = require('../helpers/bodyMaper');
     var _ = require('../node_modules/underscore');
     var currencyHalper = require('../helpers/currency');
+    var CONSTANTS = require('../constants/mainConstants.js');
 
     function convertType(array, type) {
         var i;
 
         if (type === 'integer') {
             for (i = array.length - 1;
-                 i >= 0;
-                 i--) {
+                i >= 0;
+                i--) {
                 array[i] = parseInt(array[i], 10);
             }
         } else if (type === 'boolean') {
             for (i = array.length - 1;
-                 i >= 0;
-                 i--) {
+                i >= 0;
+                i--) {
                 if (array[i] === 'true') {
                     array[i] = true;
                 } else if (array[i] === 'false') {
@@ -116,31 +117,33 @@ var Quotation = function (models, event) {
                 return next(err);
             }
 
-            if (data.isOrder) {
-                products = quotation.products;
+            products = quotation.products;
 
-                async.each(products, function (product, cb) {
-                    var jobs = product.jobs;
+            async.each(products, function (product, cb) {
+                var jobs = product.jobs;
+                var _type = data.isOrder ? 'Ordered' : 'Quoted';
 
-                    JobsModel.findByIdAndUpdate(jobs, {$set: {type: "Ordered", editedBy: editedBy}}, {new: true}, function (err, result) {
-                        if (err) {
-                            return cb(err);
-                        }
-                        project = result.project || null;
-                        cb();
-                    });
-
-                }, function () {
-                    if (project) {
-                        event.emit('fetchJobsCollection', {project: project});
+                JobsModel.findByIdAndUpdate(jobs, {
+                    $set: {
+                        type    : _type,
+                        editedBy: editedBy
                     }
-
-                    res.status(200).send({success: 'Quotation updated', result: quotation});
-
+                }, {new: true}, function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+                    project = result.project || null;
+                    cb();
                 });
-            } else {
+
+            }, function () {
+                if (project) {
+                    event.emit('fetchJobsCollection', {project: project});
+                }
+
                 res.status(200).send({success: 'Quotation updated', result: quotation});
-            }
+            });
+
             event.emit('recalculateRevenue', {   // added for recalculating projectInfo after editing quotation
                 quotation  : quotation,
                 wTrackModel: wTrackModel,
@@ -214,7 +217,7 @@ var Quotation = function (models, event) {
                         Project.populate(_quotation, {
                             path  : 'project',
                             select: '_id projectName projectmanager'
-                        }, function (err, resp) {
+                        }, function (err) {
                             if (err) {
                                 return callback(err);
                             }
@@ -256,7 +259,7 @@ var Quotation = function (models, event) {
                                 $set: {
                                     quotation: id,
                                     type     : "Quoted",
-                                    editedBy: editedBy
+                                    editedBy : editedBy
                                 }
                             }, {new: true}, function (err, result) {
                                 if (err) {
@@ -499,11 +502,14 @@ var Quotation = function (models, event) {
         var contentType = query.contentType;
         var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
         var sort = {};
-        var count = parseInt(query.count, 10) || 100;
+        var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = parseInt(query.page, 10);
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var skip;
         var filter = query.filter || {};
         var key;
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (isOrder) {
             filter.isOrder = {
@@ -663,7 +669,7 @@ var Quotation = function (models, event) {
         var waterfallTasks;
 
         /*var contentType = req.query.contentType;
-        var isOrder = ((contentType === 'Order') || (contentType === 'salesOrder'));*/
+         var isOrder = ((contentType === 'Order') || (contentType === 'salesOrder'));*/
 
         departmentSearcher = function (waterfallCallback) {
             models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -765,7 +771,7 @@ var Quotation = function (models, event) {
                 JobsModel.findByIdAndUpdate(product.jobs, {
                     type     : type,
                     quotation: null,
-                    editedBy: editedBy
+                    editedBy : editedBy
                 }, {new: true}, function (err, result) {
                     var wTracks;
 
@@ -807,7 +813,7 @@ var Quotation = function (models, event) {
                         }
                     ], function (err, quot) {
                         if (err) {
-                           return cb(err);
+                            return cb(err);
 
                         }
 

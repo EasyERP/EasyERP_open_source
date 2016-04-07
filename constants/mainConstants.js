@@ -5,6 +5,7 @@ module.exports = {
     HR_DEPARTMENT_ID       : '55b79342b370f8642a0013b5',
     BUSINESS_DEPARTMENT_ID : '55b79342b370f8642a0013b4',
     MARKETING_DEPARTMENT_ID: '55b79342b370f8642a0013b3',
+    PM_ID                  : '55bb1f40cb76ca630b000007',
 
     PAYONEER    : '555cc981532aebbc4a8baf36',
     UKR_SIB_BANK: '555cc981532aebbc4a8baf37',
@@ -12,9 +13,9 @@ module.exports = {
 
     WTRACK_DB_NAME: 'weTrack',
 
-    PRODUCRSERVICE: "5540d528dacb551c24000003",
+    PRODUCRSERVICE: '5540d528dacb551c24000003',
 
-    EXPENSESCAREGORY: "56459202624e48551dfe3b24",
+    EXPENSESCAREGORY: '56459202624e48551dfe3b24',
 
     ORDERNEW         : "55647b932e4aa3804a765ec5",
     ORDERDONE        : "55647b962e4aa3804a765ec6",
@@ -103,6 +104,8 @@ module.exports = {
 
     MOBILE_DEFAULT_COUNT_PER_LIST: 50,
 
+    ADMIN_DEPARTMENTS: '56e6775c5ec71b00429745a4',
+
     DASH_VAC_WEEK_BEFORE: 2,
     DASH_VAC_WEEK_AFTER : 8,
 
@@ -116,6 +119,15 @@ module.exports = {
         "55b92ace21e4b7c40f000015",
         '55bb1f40cb76ca630b000007' //PM
     ],
+
+    LEAD_DRAFT: '528ce74ef3f67bc40b00001e',
+
+    ORDERNEW                     : '55647b932e4aa3804a765ec5',
+    ORDERDONE                    : '55647b962e4aa3804a765ec6',
+    PROJECTINPROGRESS            : '528ce7f2f3f67bc40b000023',
+    JOBSFINISHED                 : '56337c675d49d8d6537832ea',
+    JOBSINPROGRESS               : '56337c705d49d8d6537832eb',
+    PROJECTCLOSED                : '528ce82df3f67bc40b000025',
 
     CREDIT_IS: '56f5383a9c85020807b40020',
     CLOSE_COGS: '56f538679c85020807b40022',
@@ -135,6 +147,13 @@ module.exports = {
         '56efc15bfd70ba6414bd3de9', //close idle Expenses
         '56efc1affd70ba6414bd3deb', //close admin salary expenses
         '56f90e8d8cea58642c57f442'
-    ]
+    ],
+
+    HR_VAC_YEAR_AFTER: 1,
+    DEF_LIST_COUNT : 100,
+    MAX_COUNT : 200,
+    PARENT_DEV : '56cebdf6541812c07197358f',
+    SALESDEPARTMENTS: ['55b92ace21e4b7c40f000014', '55bb1f40cb76ca630b000007']
+
 }
 ;

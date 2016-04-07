@@ -30,10 +30,10 @@
                                 <dd>
                                     <a id="salesPersonDd" data-id="<%=(model.salesPerson)?model.salesPerson._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesPerson)?(model.salesPerson.name.first+" "+model.salesPerson.name.last):"Select"%></a>
                                 </dd>
-                                <dt><label for="salesTeamDd">Sales Team</label></dt>
-                                <dd>
-                                    <a id="salesTeamDd" data-id="<%=(model.salesTeam)?model.salesTeam._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesTeam)?(model.salesTeam.departmentName):"Select"%></a>
-                                </dd>
+                                <!--<dt><label for="salesTeamDd">Sales Team</label></dt>-->
+                                <!--<dd>-->
+                                    <!--<a id="salesTeamDd" data-id="<%=(model.salesTeam)?model.salesTeam._id:''%>" class="current-selected" href="javascript:;"><%=(model.salesTeam)?(model.salesTeam.departmentName):"Select"%></a>-->
+                                <!--</dd>-->
                                 <dt><label for="workflowDd">Stage </label></dt>
                                 <dd>
                                     <a id="workflowDd" data-id="<%=(model.workflow)?model.workflow._id:''%>" class="current-selected" href="javascript:;"><%=(model.workflow)?(model.workflow.name):"Undefinded"%></a>
@@ -42,14 +42,14 @@
                                 <dd><input type="text" class="date" id="nextActionDate"
                                            value="<%=(model.nextAction) ? model.nextAction.date : ''%>" maxlength="32"
                                            placeholder="Date" readonly/></dd>
-                                <dt><label for="nextActionDescription">Next Action Description</label></dt>
-                                <dd><input type="text" id="nextActionDescription"
-                                           value="<%=(model.nextAction) ? model.nextAction.desc : ''%>"
-                                           placeholder="Description" maxlength="32"/></dd>
-                                <dt><label for="expectedClosing">Expected Closing </label></dt>
-                                <dd><input type="text" id="expectedClosing" class="date"
-                                           value="<%=model.expectedClosing%>" maxlength="32" placeholder="Date"
-                                           readonly/></dd>
+                                <!--<dt><label for="nextActionDescription">Next Action Description</label></dt>-->
+                                <!--<dd><input type="text" id="nextActionDescription"-->
+                                           <!--value="<%=(model.nextAction) ? model.nextAction.desc : ''%>"-->
+                                           <!--placeholder="Description" maxlength="32"/></dd>-->
+                                <!--<dt><label for="expectedClosing">Expected Closing </label></dt>-->
+                                <!--<dd><input type="text" id="expectedClosing" class="date"-->
+                                           <!--value="<%=model.expectedClosing%>" maxlength="32" placeholder="Date"-->
+                                           <!--readonly/></dd>-->
                                 <dt><label for="priorityDd">Priority </label></dt>
                                 <dd>
                                     <a id="priorityDd" data-id="<%=(model.priority)?model.priority:''%>"

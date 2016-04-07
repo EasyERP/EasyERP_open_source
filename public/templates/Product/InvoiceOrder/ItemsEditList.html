@@ -2,7 +2,7 @@
 <tr class="productItem" data-id="<%=product.product._id%>">
     <td data-name="productName" class="width20">
         <%if(editable) {%>
-        <a class="current-selected productsDd" href="javascript:;"><%=product.product.name%></a>
+        <a class="current-selected productsDd" href="javascript:; " data-id="<%= product ? product.product._id : null%>"><%=product.product.name%></a>
         <%} else {%>
         <a href="#easyErp/Product/form/<%=product.product._id%>"><%=product.product.name%></a>
         <%}%>
@@ -18,12 +18,12 @@
           </span>
     </td>
     <% } %>
-    <td data-name="scheduledDate" class="<%=editable && !forSales ? 'editable' : ''%>">
+    <!--<td data-name="scheduledDate" class="<%=editable && !forSales ? 'editable' : ''%>">
         <span class="datepicker">
             <%=product.scheduledDate%>
         </span>
         <input type="text" class="datepicker notVisible" readonly>
-    </td>
+    </td>--> <!--commented on 14 Mar, in quotationEdit commit -->
     <td data-name="quantity" class="<%=editable && !forSales ? 'editable' : ''%>">
         <span>
             <%=product.quantity%>
@@ -31,31 +31,31 @@
     </td>
     <td data-name="price" class="<%=editable  ? 'editable' : ''%>">
         <span>
-            <%=product.unitPrice%>
+            <%= product.unitPrice ? currencySplitter(product.unitPrice.toString()) : ''%>
         </span>
     </td>
-    <td class="taxes">
+    <td class="<%=editable  ? 'editable' : ''%>">
         <span>
-            <%=product.taxes%>
+            <%= product.taxes ?  currencySplitter(product.taxes.toString()) : ''%>
         </span>
     </td>
     <td class="subtotal">
         <span>
-            <%=product.subTotal%>
+            <%= product.subTotal ? currencySplitter(product.subTotal.toString()) : ''%>
         </span>
     </td>
 </tr>
 <% }); %>
 <%if(editable) {%>
 <tr>
-    <td colspan="7" class="addProductItem">
+    <td colspan="6" class="addProductItem">
         <a href="javascript:;">Add an item</a>
     </td>
 </tr>
 <%}%>
 <tr>
-    <td colspan="7" class="invisible_border">&nbsp;</td>
+    <td colspan="6" class="invisible_border">&nbsp;</td>
 </tr>
 <tr>
-    <td colspan="7" class="invisible_border">&nbsp;</td>
+    <td colspan="6" class="invisible_border">&nbsp;</td>
 </tr>

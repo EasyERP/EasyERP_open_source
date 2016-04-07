@@ -19,7 +19,7 @@ define([
         routes: {
             "home"                                                                                          : "any",
             "login"                                                                                         : "login",
-            "easyErp/:contentType/kanban(/:parrentContentId)"                                               : "goToKanban",
+            "easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)"                              : "goToKanban",
             "easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)"                            : "goToThumbnails",
             "easyErp/:contentType/form(/:modelId)"                                                          : "goToForm", //FixMe chenge to required Id after test
             "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
@@ -103,7 +103,9 @@ define([
         dashBoardVacation: function (filter) {
             var self = this;
 
-            if (filter) {
+            filter = filter || custom.retriveFromCash('DashVacation.filter');
+
+            if (filter && typeof filter === 'string') {
                 filter = decodeURIComponent(filter);
                 filter = JSON.parse(filter);
             }
@@ -397,16 +399,16 @@ define([
                     function createViews() {
                         collection.unbind('reset');
                         var contentview = new contentView({collection: collection, startTime: startTime});
+                        var url = '#easyErp/Profiles';
                         var topbarView = new topBarView({actionType: "Content"});
 
                         topbarView.bind('createEvent', contentview.createItem, contentview);
                         topbarView.bind('editEvent', contentview.editProfileDetails, contentview);
                         topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
-                        topbarView.bind('saveEvent', contentview.saveProfile, contentview);
 
+                        topbarView.bind('saveEvent', contentview.saveProfile, contentview);
                         context.changeView(contentview);
                         context.changeTopBarView(topbarView);
-                        var url = '#easyErp/Profiles';
                         Backbone.history.navigate(url, {replace: true});
                     }
                 });
@@ -490,13 +492,13 @@ define([
                 require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
 
                     custom.setCurrentVT('list');
-
+                    var url = '#easyErp/myProfile';
                     var contentview = new contentView({startTime: startTime});
                     var topbarView = new topBarView({actionType: "Content"});
 
                     self.changeView(contentview);
                     self.changeTopBarView(topbarView);
-                    var url = '#easyErp/myProfile';
+
                     Backbone.history.navigate(url, {replace: true});
                 });
             }
@@ -651,6 +653,7 @@ define([
                         collection.unbind('reset');
                         var contentview = new contentView({collection: collection, startTime: startTime});
                         var topbarView = new topBarView({actionType: "Content"});
+                        var url = '#easyErp/Workflows';
 
                         topbarView.bind('createEvent', contentview.createItem, contentview);
                         topbarView.bind('editEvent', contentview.editWorkflowsDetails, contentview);
@@ -659,7 +662,7 @@ define([
 
                         context.changeView(contentview);
                         context.changeTopBarView(topbarView);
-                        var url = '#easyErp/Workflows';
+
                         Backbone.history.navigate(url, {replace: true});
                     }
                 });
@@ -667,11 +670,7 @@ define([
         },
 
         checkDatabase: function (db) {
-            if ((db === "weTrack") || (db === "production") || (db === "development")) {
-                App.weTrack = true;
-            } else {
-                App.weTrack = false;
-            }
+            App.weTrack = true;
 
             App.currentDb = db;
         },
@@ -751,7 +750,7 @@ define([
                         };
 
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), { replace: true });
                     } else if (contentType === 'Product') {
                         filter = {
                             'canBePurchased': {
@@ -760,7 +759,7 @@ define([
                             }
                         };
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), { replace: true });
                     }
                 } else if (filter) {
                     filter = JSON.parse(filter);
@@ -981,6 +980,8 @@ define([
                             url += '/' + parrentContentId;
                         }
 
+                        url = encodeURI(url);
+
                         Backbone.history.navigate(url, {replace: true});
                     }
                 });
@@ -1039,7 +1040,7 @@ define([
                             }
                         };
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), { replace: true });
                     } else if (contentType === 'Product') {
                         filter = {
                             'canBePurchased': {
@@ -1048,7 +1049,7 @@ define([
                             }
                         };
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), { replace: true });
                     }
                 } else if (filter) {
                     filter = JSON.parse(filter);

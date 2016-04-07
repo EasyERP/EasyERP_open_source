@@ -61,7 +61,7 @@
                         that.page += 1;
                         that.trigger('showmore', models);
                     },
-                    error  : function () {
+                    error  : function (models, xhr) {
                         App.render({
                             type: 'error',
                             message: "Some Error."

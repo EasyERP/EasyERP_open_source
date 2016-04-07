@@ -187,6 +187,10 @@ define([], function () {
             'Stage'       : {
                 view   : 'workflow',
                 backend: 'workflow._id'
+            },
+            'Sales Person': {
+                view   : 'salesPerson',
+                backend: 'salesPerson._id'
             }
         },
         Opportunities   : {
@@ -522,8 +526,13 @@ define([], function () {
 
         IT_SERVICES: 'IT services',
 
+        END_CONTRACT_WORKFLOW_ID : "52d2c1369b57890814000005",
+        TRASH_BIN   : '<a class="fa fa-trash"></a>',
+
         DASH_VAC_WEEK_BEFORE: 2,
         DASH_VAC_WEEK_AFTER : 8,
+
+        DEFAULT_ELEMENTS_PER_PAGE: 100,
 
         URLS: {
             PROFILES_FOR_DD       : '/profiles/forDd',

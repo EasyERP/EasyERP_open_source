@@ -305,13 +305,15 @@ define([
                         products  : products,
                         forSales  : self.forSales,
                         isPaid    : self.isPaid,
-                        notAddItem: this.notAddItem
+                        notAddItem: this.notAddItem,
+                        currencySplitter : helpers.currencySplitter
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
                         model         : options.model,
-                        balanceVisible: this.visible
+                        balanceVisible: this.visible,
+                        currencySplitter : helpers.currencySplitter
                     }));
                 }
             } else {

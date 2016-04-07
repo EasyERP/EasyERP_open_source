@@ -21,6 +21,7 @@ define([
         'views/Assignees/AssigneesView',
         'views/Bonus/BonusView',
         'views/Projects/projectInfo/wTracks/wTrackView',
+        'views/Projects/projectInfo/salesManagers/salesManagersList',
         'views/Projects/projectInfo/payments/paymentView',
         'views/Projects/projectInfo/invoices/invoiceView',
         'views/Projects/projectInfo/quotations/quotationView',
@@ -42,7 +43,7 @@ define([
         'helpers'
     ],
 
-    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, ReportView, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, ReportView, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, SalesManagersView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
         "use strict";
 
         var View = Backbone.View.extend({
@@ -52,28 +53,28 @@ define([
             invoiceStatsTmpl: _.template(invoiceStats),
 
             events: {
-                'click .chart-tabs'                                                                                       : 'changeTab',
-                'click .deleteAttach'                                                                                     : 'deleteAttach',
-                "click #health a:not(.disabled)"                                                                          : "showHealthDd",
-                "click #health ul li div:not(.disabled)"                                                                  : "chooseHealthDd",
-                "click .newSelectList li:not(.miniStylePagination):not(.disabled)"                                        : "chooseOption",
-                "click .current-selected:not(.disabled)"                                                                  : "showNewSelect",
-                "click #createItem"                                                                                       : "createDialog",
-                "click #createJob"                                                                                        : "createJob",
-                "change input:not(.checkbox, .check_all, #check_all_bonus, .statusCheckbox, #inputAttach, #noteTitleArea)": "showSaveButton",  // added id for noteView
-                "change #description"                                                                                     : "showSaveButton",
-                "click .expand"                                                                                           : "renderJobWTracks",
-                "mouseover #jobsItem"                                                                                     : "showRemoveButton",
-                "mouseleave #jobsItem"                                                                                    : "hideRemoveButton",
-                "click .fa.fa-trash"                                                                                      : "removeJobAndWTracks",
-                "dblclick td.editableJobs"                                                                                : "editRow",
+                'click .chart-tabs'                                                                                                                                                          : 'changeTab',
+                'click .deleteAttach'                                                                                                                                                        : 'deleteAttach',
+                "click #health a:not(.disabled)"                                                                                                                                             : "showHealthDd",
+                "click #health ul li div:not(.disabled)"                                                                                                                                     : "chooseHealthDd",
+                "click .newSelectList li:not(.miniStylePagination):not(.disabled)"                                                                                                           : "chooseOption",
+                "click .current-selected:not(.disabled)"                                                                                                                                     : "showNewSelect",
+                "click #createItem"                                                                                                                                                          : "createDialog",
+                "click #createJob"                                                                                                                                                           : "createJob",
+                "change input:not(.checkbox, .bonus-checkbox, .check_all, #check_all_bonus, .statusCheckbox, #inputAttach, #noteTitleArea)"                                                  : "showSaveButton",  // added id for noteView
+                "change #description"                                                                                                                                                        : "showSaveButton",
+                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)"                                                                                                          : "renderJobWTracks",
+                "mouseover #jobsItem"                                                                                                                                                        : "showRemoveButton",
+                "mouseleave #jobsItem"                                                                                                                                                       : "hideRemoveButton",
+                "click .fa.fa-trash"                                                                                                                                                         : "removeJobAndWTracks",
+                "dblclick td.editableJobs"                                                                                                                                                   : "editRow",
+                "click #saveName"                                                                                                                                                            : "saveNewJobName",
+                "keydown input.editing "                                                                                                                                                     : "keyDown",
+                'click'                                                                                                                                                                      : 'hideSelect',
+                'keydown'                                                                                                                                                                    : 'keydownHandler',
+                "click a.quotation"                                                                                                                                                          : "viewQuotation",
                 "click .report"                                                                                           : "showReport",
-                "click #saveName"                                                                                         : "saveNewJobName",
-                "keydown input.editing "                                                                                  : "keyDown",
-                'click'                                                                                                   : 'hideSelect',
-                'keydown'                                                                                                 : 'keydownHandler',
-                "click a.quotation"                                                                                       : "viewQuotation",
-                "click a.invoice"                                                                                         : "viewInvoice"
+                "click a.invoice"                                                                                                                                                            : "viewInvoice"
             },
 
             initialize: function (options) {
@@ -464,6 +465,9 @@ define([
                 var bonusContainer = $('#bonusTable');
                 var bonusRow = bonusContainer.find('tr');
                 var bonus = [];
+                var salesManagersContainer = $('#salesManagersTable');
+                var salesManagerRow = salesManagersContainer.find('tr');
+                var salesManagers = [];
 
                 var budget = this.formModel.get('budget');
 
@@ -496,6 +500,7 @@ define([
                     EndDate         : endDate,
                     TargetEndDate   : _targetEndDate,
                     bonus           : bonus,
+                    salesManagers   : salesManagers,
                     budget          : budget
                 };
 
@@ -549,6 +554,32 @@ define([
                     });
                 });
 
+                salesManagerRow.each(function (key, val) {
+                    var employeeId = $(val).attr('data-id');
+                    var dateEl = $(val).find('.salesManagerDate');
+                    var inputInside = dateEl.find('input');
+                    var date;
+
+                    if (inputInside.length) {
+                        dateEl.text(inputInside.val());
+                    }
+
+                    date = dateEl.text();
+
+                    if (employeeId === 'false') {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please, select Sales Manager first.'
+                        });
+                        validation = false;
+                    }
+
+                    salesManagers.push({
+                        manager   : employeeId,
+                        date      : date
+                    });
+                });
+
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -573,7 +604,7 @@ define([
                             //Backbone.history.navigate(url, {trigger: true});
                             App.render({
                                 type   : 'notify',
-                                message: 'Data were changed, please refresh browser'
+                                message: 'Data was changed, please refresh browser'
                             });
                         },
                         error  : function (model, xhr) {
@@ -730,7 +761,7 @@ define([
                 var jobsCollection = custom.retriveFromCash(key);
 
                 var projectTeam = _.filter(this.jobsCollection.toJSON(), function (el) {
-                    return el.project._id === _id
+                    return el.project._id === _id;
                 });
 
                 if (!jobsCollection || !jobsCollection.length) {
@@ -1185,6 +1216,7 @@ define([
             render: function () {
                 var formModel = this.formModel.toJSON();
                 var assignees;
+                var salesManagers;
                 var bonus;
                 var paralellTasks;
                 var self = this;
@@ -1193,6 +1225,9 @@ define([
                 var notDiv;
                 var bonusView;
                 var container;
+                var salesManagersView;
+
+                App.startPreload();
 
                 var notesEl = new noteView({
                     model: this.formModel
@@ -1229,6 +1264,17 @@ define([
                     }).render().el
                 );
 
+                salesManagers = thisEl.find('#salesManagers-container');
+                salesManagersView = new SalesManagersView({
+                    model: this.formModel
+                });
+                salesManagers.html(
+                    salesManagersView.render().el
+                );
+                salesManagersView.bind('save', function () {
+                    self.saveItem();
+                });
+
                 bonus = this.$el.find('#bonus-container');
                 bonusView = new BonusView({
                     model: this.formModel
@@ -1247,6 +1293,7 @@ define([
                 paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
                 async.parallel(paralellTasks, function (err, result) {
+                    App.stopPreload();
                     self.renderProformRevenue();
                     self.getInvoiceStats();
                     self.activeTab();

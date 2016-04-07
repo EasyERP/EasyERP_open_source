@@ -14,9 +14,10 @@ define([
     'collections/wTrack/filterCollection',
     'dataService',
     'populate',
-    'async'
+    'async',
+    'constants'
 
-], function (wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, createView, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async) {
+], function (wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, createView, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async, constants) {
     var wTrackView = listView.extend({
 
         el                      : '#timesheet',
@@ -44,7 +45,7 @@ define([
         initialize: function (options) {
             this.remove();
             this.collection = options.model;
-            this.defaultItemsNumber = options.defaultItemsNumber;
+            this.defaultItemsNumber = options.defaultItemsNumber || constants.DEFAULT_ELEMENTS_PER_PAGE;
             this.filter = options.filter ? options.filter : {};
             this.project = options.project ? options.project : {};
 
@@ -154,7 +155,7 @@ define([
             this.collection.unbind('reset');
             this.collection.unbind('showmore');
 
-            target$ = $(e.target);
+            target$ = $(e.target).closest('th');
             currentParrentSortClass = target$.attr('class');
             sortClass = currentParrentSortClass.split(' ')[1];
             sortConst = 1;
@@ -330,7 +331,7 @@ define([
         },
 
         savedNewModel: function (modelObject) {
-            var savedRow = this.$listTable.find('.false');
+            var savedRow = this.$listTable.find(".false[data-id='" + modelObject.cid + "']"); // additional selector for finding old row by cid (in case of multiply copying)
             var modelId;
             var checkbox = savedRow.find('input[type=checkbox]');
 
@@ -456,7 +457,7 @@ define([
                 cb();
             }, function (err) {
                 if (!err) {
-
+                    self.copyEl.hide();
                     self.hideSaveCancelBtns();
                 }
             });
@@ -563,6 +564,7 @@ define([
             }
 
             this.$el.find('.edited').removeClass('edited');
+            this.rerenderNumbers(); // added rerender after saving too
         },
 
         checked: function (e) {

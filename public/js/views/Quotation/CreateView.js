@@ -10,9 +10,10 @@ define([
         'constants',
         'views/Assignees/AssigneesView',
         'dataService',
-        'helpers/keyValidator'
+        'helpers/keyValidator',
+        'helpers'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, keyValidator) {
+    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, keyValidator, helpers) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -87,7 +88,7 @@ define([
 
                     aEl = $('.current-selected.jobs');
                     aEl.text("Select");
-                    aEl.attr('id', 'jobs');
+                    aEl.attr('data-id', 'jobs');
                 }
 
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
@@ -111,6 +112,10 @@ define([
                     default:
                         return keyValidator(e);
                 }
+            },
+
+            validateForm: function(e){
+
             },
 
             changeTab: function (e) {
@@ -156,13 +161,13 @@ define([
                 var paymentTerm = $.trim(thisEl.find('#paymentTerm').attr('data-id'));
                 var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').attr('data-id'));
                 var orderDate = thisEl.find('#orderDate').val();
-                var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
+                var expectedDate = thisEl.find('#expectedDate').val() || orderDate;
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-                var total = $.trim(thisEl.find('#totalAmount').text());
-                var totalTaxes = $.trim(thisEl.find('#taxes').text());
+                var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
+                var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
                 var taxes;
                 var description;
-                var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
+                var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
                 var subTotal;
                 var jobs;
                 var usersId = [];
@@ -186,11 +191,11 @@ define([
                         productId = targetEl.data('id');
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
-                            price = targetEl.find('[data-name="price"]').text();
-                            scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
-                            taxes = targetEl.find('.taxes').text();
+                            price = helpers.spaceReplacer(targetEl.find('[data-name="price"]').text());
+                            /*scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();*/
+                            taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                             description = targetEl.find('[data-name="productDescr"]').text();
-                            subTotal = targetEl.find('.subtotal').text();
+                            subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
                             if (jobs === "jobs" && this.forSales) {
@@ -204,7 +209,7 @@ define([
                                 product      : productId,
                                 unitPrice    : price,
                                 quantity     : quantity,
-                                scheduledDate: scheduledDate,
+                               /* scheduledDate: scheduledDate,*/
                                 taxes        : taxes,
                                 description  : description,
                                 subTotal     : subTotal,
@@ -288,9 +293,9 @@ define([
                 var productItemContainer;
 
                 productItemContainer = this.$el.find('#productItemsHolder');
-                if (App.weTrack && this.forSales) {
+                if (this.forSales) {
                     productItemContainer.append(
-                        new ProductItemView({canBeSold: true, service: 'Service'}).render().el
+                        new ProductItemView({canBeSold: true, service: true}).render().el
                     );
                 } else {
                     productItemContainer.append(
@@ -346,7 +351,7 @@ define([
 
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
 
-                if (App.weTrack && this.forSales) {
+                if (this.forSales) {
                     this.$el.find('#supplierDd').removeClass('current-selected');
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
                     //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);

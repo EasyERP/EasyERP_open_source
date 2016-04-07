@@ -5,9 +5,10 @@ define([
         "populate",
         'views/Notes/AttachView',
         'views/Assignees/AssigneesView',
-        'views/selectView/selectView'
+        'views/selectView/selectView',
+        'moment'
     ],
-    function (CreateTemplate, EmployeeModel, common, populate, attachView, AssigneesView, selectView) {
+    function (CreateTemplate, EmployeeModel, common, populate, attachView, AssigneesView, selectView, moment) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -65,7 +66,8 @@ define([
                 'click .dialog-tabs a'                             : 'changeTab',
                 "click .current-selected"                          : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click"                                            : "hideNewSelect"
+                "click"                                            : "hideNewSelect",
+                "click td.editable"                                : "editJob"
             },
 
             showNewSelect: function (e, prev, next) {
@@ -90,8 +92,79 @@ define([
                 return false;
             },
 
+            editJob: function (e) {
+                var self    = this;
+                var $target = $(e.target);
+                var dataId  = $target.attr('data-id');
+                var tempContainer;
+
+                tempContainer = ($target.text()).trim();
+                $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
+
+                if (dataId === 'salary') {
+                    return false;
+                }
+
+                $target.find('.editing').datepicker({
+                    dateFormat : "d M, yy",
+                    changeMonth: true,
+                    changeYear : true,
+                    minDate    : self.hiredDate,
+                    onSelect   : function () {
+                        var editingDates = self.$el.find('.editing');
+
+                        editingDates.each(function () {
+                            $(this).parent().text($(this).val()).removeClass('changeContent');
+                            $(this).remove();
+                        });
+                    }
+                }).addClass('datepicker');
+
+                return false;
+            },
+
             chooseOption: function (e) {
-                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+                //$(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
+                var $target     = $(e.target);
+                var parentUl    = $target.parent();
+                var element     = $target.closest('a') || parentUl.closest('a');
+                var id          = element.attr('id') || parentUl.attr('id');
+                var valueId     = $target.attr('id');
+                var managersIds = this.responseObj['#departmentManagers'];
+                var managers    = this.responseObj['#projectManagerDD'];
+                var managerId;
+                var manager;
+
+                if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'hireFireDd') {
+                    element.text($target.text());
+                    element.attr('data-id', valueId);
+
+                    if (id === 'departmentsDd') {
+
+                        managersIds.forEach(function (managerObj) {
+                            if (managerObj._id === valueId) {
+                                managerId = managerObj.name;
+                            }
+                        });
+
+                        managers.forEach(function (managerObj) {
+                            if (managerObj._id === managerId) {
+                                manager = managerObj.name;
+                            }
+                        });
+
+                        if (manager) {
+                            element = element.closest('tr').find('a#projectManagerDD');
+
+                            element.text(manager);
+                            element.attr('data-id', managerId);
+                        }
+                    }
+
+                } else {
+                    $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+                }
             },
 
             hideNewSelect: function () {
@@ -211,7 +284,7 @@ define([
                 this.$(".tab").hide().eq(index).show();
             },
 
-            saveItem: function () {
+            /*saveItem: function () {
                 var self = this;
                 var mid = 39;
                 var thisEl = this.$el;
@@ -337,6 +410,206 @@ define([
                 if (!valid) {
                     $("#createBtnDialog").removeAttr("disabled");
                 }
+            },*/
+
+            saveItem: function () {
+                var transferArray;
+                var employeeModel;
+                var homeAddress;
+                var dateBirthSt;
+                var self = this;
+                var nationality;
+                var jobPosition;
+                var relatedUser;
+                var isEmployee;
+                var $jobTable;
+                var department;
+                var hireArray;
+                var fireArray;
+                var lastFire;
+                var whoCanRW;
+                var sourceId;
+                var groupsId;
+                var empThumb;
+                var dataType;
+                var manager;
+                var marital;
+                var jobType;
+                var usersId;
+                var salary;
+                var gender;
+                var coach;
+                var event;
+                var data;
+                var date;
+                var info;
+                var $tr;
+                var el;
+
+                self.hideNewSelect();
+
+                employeeModel = new EmployeeModel();
+
+                relatedUser   = self.$el.find("#relatedUsersDd").data("id") || null;
+                coach         = $.trim(self.$el.find("#coachDd").data("id")) || null;
+                whoCanRW      = self.$el.find("[name='whoCanRW']:checked").val();
+                dateBirthSt   = $.trim(self.$el.find("#dateBirth").val());
+                $jobTable     = self.$el.find('#hireFireTable');
+                marital       = $("#maritalDd").data("id") || null;
+                nationality   = $("#nationality").data("id");
+                gender        = $("#genderDd").data("id") || null;
+                $tr       = $jobTable.find('tr.transfer');
+                sourceId      = $("#sourceDd").data("id");
+                homeAddress   = {};
+                fireArray     = [];
+                hireArray     = [];
+                groupsId      = [];
+                usersId       = [];
+
+
+                $("dd").find(".homeAddress").each(function (index, addressLine) {
+                    el                           = $(addressLine);
+                    homeAddress[el.attr("name")] = $.trim(el.val());
+                });
+
+                salary      = self.isSalary ? parseInt($tr.find('[data-id="salary"]').text()) : null;
+                manager     = $tr.find('#projectManagerDD').attr('data-id') || null;
+                date        = new Date($.trim($tr.find("td").eq(2).text()));
+                jobPosition = $tr.find('#jobPositionDd').attr('data-id');
+                department  = $tr.find('#departmentsDd').attr('data-id');
+                jobType     = $.trim($tr.find('#jobTypeDd').text());
+                info        = $tr.find('#statusInfoDd').val();
+                event       = $tr.attr('data-content');
+
+                transferArray = [{
+                    status     : event,
+                    date       : date,
+                    department : department,
+                    jobPosition: jobPosition,
+                    manager    : manager,
+                    jobType    : jobType,
+                    salary     : salary,
+                    info       : info
+                }];
+
+                date = moment(date);
+                fireArray.push(date);
+                lastFire = date.year() * 100 + date.isoWeek();
+                isEmployee = true;
+
+                $(".groupsAndUser tr").each(function (index, element) {
+                    dataType = $(element).data("type");
+
+                    if (dataType === "targetUsers") {
+                        usersId.push($(element).data("id"));
+                    }
+
+                    if (dataType === "targetGroups") {
+                        groupsId.push($(element).data("id"));
+                    }
+
+                });
+
+                data = {
+                    name          : {
+                        first: $.trim(this.$el.find("#first").val()),
+                        last : $.trim(this.$el.find("#last").val())
+                    },
+                    gender        : gender,
+                    jobType       : jobType,
+                    marital       : marital,
+                    workAddress   : {
+                        street : $.trim(this.$el.find('#street').val()),
+                        city   : $.trim(this.$el.find('#city').val()),
+                        state  : $.trim(this.$el.find('#state').val()),
+                        zip    : $.trim(this.$el.find('#zip').val()),
+                        country: $.trim(this.$el.find('#country').val())
+                    },
+                    social        : {
+                        LI: $.trim(this.$el.find('#LI').val()),
+                        FB: $.trim(this.$el.find('#FB').val())
+                    },
+                    tags          : $.trim(this.$el.find("#tags").val()).split(','),
+                    workEmail     : $.trim(this.$el.find("#workEmail").val()),
+                    personalEmail : $.trim(this.$el.find("#personalEmail").val()),
+                    skype         : $.trim(this.$el.find("#skype").val()),
+                    workPhones    : {
+                        phone : $.trim(this.$el.find("#phone").val()),
+                        mobile: $.trim(this.$el.find("#mobile").val())
+                    },
+                    officeLocation: $.trim(this.$el.find("#officeLocation").val()),
+                    bankAccountNo : $.trim($("#bankAccountNo").val()),
+                    relatedUser   : relatedUser,
+                    department    : department,
+                    jobPosition   : jobPosition,
+                    manager       : manager,
+                    coach         : coach,
+                    identNo       : $.trim($("#identNo").val()),
+                    passportNo    : $.trim(this.$el.find("#passportNo").val()),
+                    otherId       : $.trim(this.$el.find("#otherId").val()),
+                    homeAddress   : homeAddress,
+                    dateBirth     : dateBirthSt,
+                    source        : sourceId,
+                    imageSrc      : self.imageSrc,
+                    nationality   : nationality,
+                    isEmployee    : isEmployee,
+                    lastFire      : lastFire,
+
+                    groups  : {
+                        owner: $("#allUsersSelect").data("id"),
+                        users: usersId,
+                        group: groupsId
+                    },
+                    whoCanRW: whoCanRW,
+                    hire    : hireArray,
+                    fire    : fireArray,
+                    transfer: transferArray
+                };
+
+                employeeModel.save(data, {
+                    headers: {
+                        mid: 39
+                    },
+                    success: function (model) {
+
+                        if (model.get('relatedUser') === App.currentUser._id) {
+                            App.currentUser.imageSrc = self.imageSrc;
+
+                            $("#loginPanel .iconEmployee").attr("src", self.imageSrc);
+                            $("#loginPanel #userName").text(model.toJSON().fullName);
+                        }
+
+                        if (self.firstData === data.name.first &&
+                            self.lastData === data.name.last &&
+                            self.departmentData === department &&
+                            self.jobPositionData === jobPosition &&
+                            self.projectManagerData === manager) {
+
+                            model    = model.toJSON();
+                            empThumb = $('#' + model._id);
+
+                            empThumb.find('.age').html(model.result.age);
+                            empThumb.find('.empDateBirth').html("(" + model.dateBirth + ")");
+                            empThumb.find('.telephone a').html(model.workPhones.mobile);
+                            empThumb.find('.telephone a').attr('href', "skype:" + model.workPhones.mobile + "?call");
+
+                            if (model.relatedUser) {
+                                empThumb.find('.relUser').html(model.relatedUser.login);
+                            }
+
+                        } else {
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
+                        }
+                        self.hideDialog();
+                    },
+                    error  : function (model, xhr) {
+                        self.errorNotification(xhr);
+                    }
+
+                });
+
+
             },
 
             render: function () {
@@ -377,6 +650,7 @@ define([
                 );
 
                 populate.get("#jobTypeDd", "/jobType", {}, "name", this, true);
+                populate.get("#departmentManagers", "/DepartmentsForDd", {}, "departmentManager", this);
                 populate.get("#nationality", "/nationality", {}, "_id", this, true);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this, true);
                 populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this, true, true);

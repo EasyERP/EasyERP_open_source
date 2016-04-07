@@ -29,7 +29,7 @@ module.exports = function (app, mainDb) {
     var paymentRouter = require('./payment')(models, event);
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
-    var importDataRouter = require('./importData')(models);
+    //var importDataRouter = require('./importData')(models);
     var projectRouter = require('./project')(models);
     var employeeRouter = require('./employee')(models);
     var departmentRouter = require('./department')(models);
@@ -153,6 +153,11 @@ module.exports = function (app, mainDb) {
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
     });
+/*
+    app.get('/kill', function (req, res, next) {
+        res.status(200).send('skjdgfjsdgfj');
+        process.exit(1);
+    });*/
 
     app.use('/filter', filterRouter);
     app.use('/product', productRouter);
@@ -169,7 +174,7 @@ module.exports = function (app, mainDb) {
     app.use('/payment', paymentRouter);
     app.use('/period', periodRouter);
     app.use('/paymentMethod', paymentMethodRouter);
-    app.use('/importData', importDataRouter);
+    //app.use('/importData', importDataRouter);
     app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
     app.use('/project', projectRouter);
@@ -1678,14 +1683,14 @@ module.exports = function (app, mainDb) {
 
         if (process.env.NODE_ENV === 'production') {
             if (status === 401) {
-                logWriter.log('', err.message + '\n' + err.message);
-                logger.error(err.message);
+                logWriter.log('', err.message + '\n' + err.message)
             }
             res.status(status).send({error: err.message});
         } else {
             res.status(status).send({error: err.message + '\n' + err.stack});
-            logger.error(err.message + '\n' + err.stack);
         }
+
+        logger.error(err.message + '\n' + err.stack);
     };
 
     requestHandler.initScheduler();

@@ -14,7 +14,7 @@ define([
     'moment',
     'constants'
 ], function (Backbone, $, _, mainTemplate, StatisticsView, VacationDashboard, VacationDashEdit, CreatewTrackView, FilterView, dataService, async, custom, moment, CONSTANTS) {
-    "use strict";
+    'use strict';
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -24,12 +24,12 @@ define([
         expandAll: false,
 
         events: {
-            "click .openAll"                   : "openAll",
-            "click .employeesRow"              : "openEmployee",
-            "click .group"                     : "openDepartment",
-            "click .wTrackInfo :not(.createTd)": "getWtrackInfo",
-            "click td.createTd:not(.inactive)" : "createWTrack",
-            "click"                            : "hideDateRange"
+            'click .openAll'                   : 'openAll',
+            'click .employeesRow'              : 'openEmployee',
+            'click .group'                     : 'openDepartment',
+            'click .wTrackInfo :not(.createTd)': 'getWtrackInfo',
+            'click td.createTd:not(.inactive)' : 'createWTrack',
+            click                              : 'hideDateRange'
         },
 
         initialize: function (options) {
@@ -65,14 +65,8 @@ define([
         },
 
         createWTrack: function (e) {
-            e.stopPropagation();
             var table = this.$el.find('#dashboardBody');
             var $target = $(e.target);
-
-            if ($target.hasClass('inactive')) {
-                return false;
-            }
-
             var td = $target.closest('td');
             var tr = td.closest('tr');
             var dateByWeek = td.attr('data-date');
@@ -90,6 +84,12 @@ define([
                 first: nameFirst,
                 last : nameLast
             };
+
+            e.stopPropagation();
+
+            if ($target.hasClass('inactive')) {
+                return false;
+            }
 
             new CreatewTrackView({
                 tr            : tr,
@@ -147,7 +147,7 @@ define([
             var targetEmployee = '.' + $(target).parents('tr').attr('data-id');
             var display = self.$el.find(targetEmployee).css('display');
 
-            if (display === "none") {
+            if (display === 'none') {
                 self.$el.find(targetEmployee).show();
                 targetIcon.text('-');
             } else {
@@ -163,7 +163,7 @@ define([
             var targetProjects = '.projectsFor' + $(target).parents('tr').attr('data-id');
             var display = self.$el.find(targetDepartment).css('display');
 
-            if (display === "none") {
+            if (display === 'none') {
                 self.$el.find(targetDepartment).show();
             } else {
                 self.$el.find(targetDepartment).hide();
@@ -183,43 +183,33 @@ define([
 
         isWorking: function (employee, week) {
             var date;
-            var firedArr = employee.fired;
-            var firedLength = firedArr.length;
-            var hiredArr = employee.hired;
+            var isEmployee = !!employee.isEmployee;
+            var firstTransfer = employee.firstTransferDate;
+            var lastTransfer = employee.lastTransferDate;
+            var _lastTransfer = moment(employee.lastTransfer);
+
             var year = week.dateByWeek.toString().slice(0, 4);
             var _week = week.dateByWeek.toString().slice(4);
 
-            var _lastHiredObject = hiredArr[hiredArr.length - 1];
-            var _firstHiredObject = hiredArr[0];
-            var _lastFiredObject = firedArr[firedArr.length - 1];
-            var _lastHiredDate = _lastHiredObject ? moment(_lastHiredObject.date, 'YYYY-MM-DD') : null;
-            var _firstHiredDate = _firstHiredObject ? moment(_firstHiredObject.date, 'YYYY-MM-DD') : null;
-            var _lastFiredDate = _lastFiredObject ? moment(_lastFiredObject.date, 'YYYY-MM-DD') : null;
-            var _hiredDate;
-            var _firedDate;
-            var i;
+            firstTransfer = moment(firstTransfer);
+            lastTransfer = moment(lastTransfer);
 
-            date = moment().set('year', year).set('week', _week);
+            date = moment().isoWeekYear(year).isoWeek(_week).day(7);
 
-            if (!firedLength) {
-                return date > _firstHiredDate;
-            }
-
-            for (i = firedLength - 1; i >= 0; i--) {
-                _hiredDate = hiredArr[i] ? hiredArr[i].date : null;
-                _firedDate = firedArr[i] ? firedArr[i].date : null;
-                _hiredDate = moment(_hiredDate).format('YYYY-MM-DD');
-                _firedDate = moment(_firedDate).format('YYYY-MM-DD');
-
-                if (_hiredDate === _firedDate || date.isBetween(_hiredDate, _firedDate) || (date > _lastHiredDate && (date < _lastFiredDate || _lastHiredDate >= _lastFiredDate))) {
+            if (isEmployee) {
+                if (firstTransfer.isSame(lastTransfer)) {
                     return true;
                 }
+                if (date >= firstTransfer) {
+                    return date <= lastTransfer || lastTransfer === _lastTransfer;
+                }
             }
+
             return false;
         },
 
         getCellClass: function (week, self, employee) {
-            var s = "";
+            var s = '';
             var hours = week.hours || 0;
             var holidays = week.holidays || 0;
             var vacations = week.vacations || 0;
@@ -227,23 +217,23 @@ define([
             hours = hours + (holidays + vacations) * 8;
 
             if (hours > 40) {
-                s += "dgreen ";
+                s += 'dgreen ';
             } else if (hours > 35) {
-                s += "green ";
+                s += 'green ';
             } else if (hours > 19) {
-                s += "yellow ";
+                s += 'yellow ';
             } else if (hours > 8) {
-                s += week.hours ? "pink " : ((self.dateByWeek >= week.dateByWeek) ? "red" : "");
+                s += week.hours ? 'pink ' : ((self.dateByWeek >= week.dateByWeek) ? "red" : "");
             } else if (self.dateByWeek >= week.dateByWeek) {
-                s += "red ";
+                s += 'red ';
             }
 
             if (self.dateByWeek === week.dateByWeek) {
-                s += "active ";
+                s += 'active ';
             }
 
             if (!self.isWorking(employee, week)) {
-                s += "inactive ";
+                s += 'inactive ';
             }
             return s;
         },
@@ -265,19 +255,19 @@ define([
             var vacationHours = (week.vacations || 0) * 8;
             var workedHours = week.hours || 0;
 
-            if (vacationHours > 16) {
-                v = workedHours ? "size40" : "sizeFull";
-                w = workedHours ? "size40" : "size0";
+            // if (vacationHours > 16) {
+            if (vacationHours === 40) {
+                v = workedHours ? 'size40' : 'sizeFull';
+                w = workedHours ? 'size40' : 'size0';
             } else if (vacationHours > 8) {
-                v = workedHours ? "size16" : "size40";
-                w = workedHours ? "size24" : "size40";
+                v = workedHours ? 'size16' : 'size40';
+                w = workedHours ? 'size24' : 'size40';
             } else if (vacationHours > 0) {
-                //v = workedHours ? "size8" : "size8";
-                v = "size8";
-                w = "sizeFull";
+                v = 'size8';
+                w = 'sizeFull';
             } else {
-                v = "size0";
-                w = "sizeFull";
+                v = 'size0';
+                w = 'sizeFull';
             }
 
             if (vacation && vacationHours) {
@@ -287,12 +277,8 @@ define([
             return w;
         },
 
-        getDate: function (/*num, year*/dateStr) {
-            /*var _moment = moment().hours(12).isoWeek(num).isoWeekYear(year);
-            var date = _moment.isoWeekday(5).format("DD.MM"/!*, true*!/);*/
-            var date = dateStr.isoWeekday(5).format("DD.MM"/*, true*/);
-
-            return date;
+        getDate: function (dateStr) {
+            return dateStr.isoWeekday(5).format("DD.MM");
         },
 
         calculateStatistics: function () {
@@ -376,18 +362,13 @@ define([
         changeDateRange: function (/*e*/) {
             var startDateStr = this.$startDate.val();
             var endDateStr = this.$endDate.val();
-            var weeksArr = [];
 
             var dashCollection = this.dashCollection;
             var startDate;
             var endDate;
             var year;
             var week;
-            var _dateStr;
             var filter;
-            var duration;
-            var i;
-            var weeks = 0;
 
             this.startTime = new Date();
 
@@ -396,83 +377,23 @@ define([
 
             this.dateByWeek = year * 100 + week;
 
-            startDateStr = moment(startDateStr);
-            endDate = endDateStr = moment(endDateStr);
-            startDate = moment(startDateStr);
-            duration = endDateStr.diff(startDateStr, 'weeks');
-
-            for (i = 0; i <= duration; i++) {
-                _dateStr = startDateStr.add(weeks, 'weeks');
-                week = _dateStr.isoWeek();
-                year = _dateStr.isoWeekYear();
-                weeksArr.push({
-                    lastDate: this.getDate(/*week, year*/_dateStr),
-                    week    : week,
-                    year    : year
-                });
-                weeks = weeks || 1;
-            }
-
-            custom.cacheToApp('vacationDashWeeksArr', weeksArr);
+            startDateStr = moment.utc(startDateStr);
+            endDate = moment.utc(endDateStr);
+            startDate = moment.utc(startDateStr);
 
             filter = this.filter || custom.retriveFromCash('DashVacation.filter') || {};
 
             filter.startDate = startDate.toDate();
             filter.endDate = endDate.toDate();
 
-            if (dashCollection) {
-                dashCollection = this.dashCollection = this.fetchData({
-                    filter: filter
-                });
-                dashCollection.unbind();
-                dashCollection.on('reset sort', this.render, this);
-            } else {
-                this.render();
-            }
+            dashCollection = this.dashCollection = this.fetchData({
+                filter: filter
+            });
+            dashCollection.unbind();
+            dashCollection.on('reset sort', this.render, this);
 
             this.filter = filter;
             custom.cacheToApp('DashVacation.filter', this.filter);
-        },
-
-        defaultDataGenerator: function () {
-            var startDate = this.momentDate;
-            var filter = this.filter;
-            var endDate;
-            var duration;
-            var weeksArr = custom.retriveFromCash('vacationDashWeeksArr') || [];
-            var weeks = 0;
-            var week;
-            var year;
-            var _dateStr;
-
-            var i;
-
-            if (filter && filter.endDate) {
-                endDate = new Date(filter.endDate);
-                endDate = moment(endDate);
-            } else {
-                endDate = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
-            }
-
-            duration = endDate.diff(startDate, 'weeks');
-
-            if (!weeksArr || !weeksArr.length) {
-                for (i = 0; i <= duration; i++) {
-                    _dateStr = startDate.add(weeks, 'weeks');
-                    week = _dateStr.isoWeek();
-                    year = _dateStr.isoWeekYear();
-                    weeksArr.push({
-                        lastDate: this.getDate(/*week, year*/_dateStr),
-                        week    : week,
-                        year    : year
-                    });
-                    weeks = weeks || 1;
-                }
-
-                custom.cacheToApp('vacationDashWeeksArr', weeksArr);
-            }
-
-            return weeksArr;
         },
 
         showFilteredPage: function (filter) {
@@ -509,9 +430,8 @@ define([
             targetEl.addClass('hidden');
         },
 
-        render: function (options) {
+        render: function () {
             var $currentEl = this.$el;
-            var defaultData = options ? !options.defaultData : true;
             var dashboardData = this.dashCollection;
             var filter = this.filter || custom.retriveFromCash('DashVacation.filter');
             var weeksArr;
@@ -530,11 +450,7 @@ define([
 
             custom.cacheToApp('dashboardVacation', this.dashCollection);
 
-            if (defaultData) {
-                weeksArr = this.defaultDataGenerator();
-            } else {
-                weeksArr = custom.retriveFromCash('vacationDashWeeksArr');
-            }
+            weeksArr = custom.retriveFromCash('vacationDashWeeksArr');
 
             $currentEl.html(self.template({
                 weeks         : weeksArr,
@@ -548,6 +464,7 @@ define([
             }));
 
             statictics = new StatisticsView({});
+
             this.statisticsView$ = statictics;
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             this.calculateStatistics();
@@ -571,10 +488,6 @@ define([
 
                 this.filterView.render();
             }
-
-            //$('tr').on('click', 'td.createTd :not(.inactive)', function (e) {
-            //    self.createWTrack(e);
-            //});
 
             return this;
         }

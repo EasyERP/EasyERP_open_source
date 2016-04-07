@@ -16,18 +16,18 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 responseObj              : {},
 
                 events: {
-                    "click .newSelectList li:not(.miniStylePagination)"       : "chooseOption",
-                    "click .current-selected"                                 : "showNewSelect",
-                    "click #addNewEmployeeRow"                                : "addNewEmployeeRow",
-                    "click a.generateType"                                    : "generateType",
-                    "click td.editable"                                       : "editRow",
-                    "change .editable "                                       : "setEditable",
-                    'mouseover tbody tr:not("#addNewItem")'                   : 'showRemove',
-                    'mouseleave tbody tr:not("#addNewItem")'                  : 'hideRemove',
-                    'click .remove'                                           : 'deleteRow',
-                    "keydown input:not(#jobName, #selectInput)"               : "onKeyDownInput",
-                    "keyup input:not(#jobName, #selectInput, .hasDatepicker)" : "onKeyUpInput",
-                    "click div:not(input.endDateInput)"                       : "hideSelects"
+                    "click .newSelectList li:not(.miniStylePagination)"        : "chooseOption",
+                    "click .current-selected"                                  : "showNewSelect",
+                    "click #addNewEmployeeRow"                                 : "addNewEmployeeRow",
+                    "click a.generateType"                                     : "generateType",
+                    "click td.editable"                                        : "editRow",
+                    "change .editable "                                        : "setEditable",
+                    'mouseover tbody tr:not("#addNewItem")'                    : 'showRemove',
+                    'mouseleave tbody tr:not("#addNewItem")'                   : 'hideRemove',
+                    'click .remove'                                            : 'deleteRow',
+                    "keydown input:not(#jobName, #selectInput)"                : "onKeyDownInput",
+                    "keyup input:not(#jobName, #selectInput, .hasDatepicker)"  : "onKeyUpInput",
+                    "click div:not(input.endDateInput) input:not(#selectInput)": "hideSelects"
                 },
 
                 hideSelects: function (e) {
@@ -60,7 +60,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
 
                     if (element.maxLength && element.value.length > element.maxLength) {
                         element.value = element.value.slice(0, element.maxLength);
-                    } else if ($(element).hasClass('editing') && ($(element).attr('id') !== 'inputHours') ){  // added validation for hours fields
+                    } else if ($(element).hasClass('editing') && ($(element).attr('id') !== 'inputHours')) {  // added validation for hours fields
                         if ($(element).val() > 24) {
                             $(element).val(24);
                         }
@@ -570,7 +570,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                             });
                         } else {
                             App.render({
-                                type   : 'notify',
+                                type   : 'error',
                                 message: 'Please, enter correct Job name!'
                             });
                         }
@@ -727,7 +727,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         }
                     });
 
-                    dataService.getData("/employee/getForDD", {isEmployee: true}, function (employees) {
+                    dataService.getData("/employee/getForDD", {isEmployee: true, devDepartments: true}, function (employees) {
                         employees = _.map(employees.data, function (employee) {
                             employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -737,7 +737,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         self.responseObj['#employee'] = employees;
                     });
 
-                    dataService.getData("/department/getForDD", null, function (departments) {
+                    dataService.getData("/department/getForDD", {devDepartments : true}, function (departments) {
                         departments = _.map(departments.data, function (department) {
                             department.name = department.departmentName;
 

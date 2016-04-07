@@ -534,8 +534,8 @@ var PayRoll = function (models) {
         var key = 'salaryReport' + filter + startDate.toString() + endDate.toString();
         var redisStore = require('../helpers/redisClient');
         var waterfallTasks;
-        var startDateKey = moment(startDate).isoWeekYEar() * 100 + moment(startDate).isoWeek();
-        var endDateKey = moment(endDate).year() * 100 + moment(endDate).isoWeek();
+        var startDateKey = moment(startDate).year() * 100 +  moment(startDate).week(); // todo isoWeek (changed on week)
+        var endDateKey = moment(endDate).year() * 100 +  moment(endDate).week(); // todo isoWeek (changed on week)
         var filterValue;
 
         function caseFilterEmployee(filter) {
@@ -579,7 +579,7 @@ var PayRoll = function (models) {
                     $or: [{
                         $and: [{
                             isEmployee: true
-                        }, {
+                        }, /*{ // commented in case of employee that was fired and again hired
                             $or: [{
                                 lastFire: null
                             }, {
@@ -587,12 +587,12 @@ var PayRoll = function (models) {
                                     $ne : null,
                                     $gte: startDateKey
                                 }
-                            }, {
-                                lastHire: {
-                                    $ne : null,
-                                    $lte: endDateKey
-                                }
                             }]
+                        },*/{
+                            firstHire: {
+                                $ne : null,
+                                $lte: endDateKey
+                            }
                         }]
                     }, {
                         $and: [{
@@ -601,6 +601,11 @@ var PayRoll = function (models) {
                             lastFire: {
                                 $ne : null,
                                 $gte: startDateKey
+                            }
+                        }, {
+                            firstHire: {
+                                $ne : null,
+                                $lte: endDateKey
                             }
                         }]
                     }
@@ -627,30 +632,34 @@ var PayRoll = function (models) {
                     $project: {
                         department: {$arrayElemAt: ["$department", 0]},
                         isEmployee: 1,
-                        hire      : 1,
                         name      : 1,
                         lastFire  : 1,
-                        lastHire  : {
+                        transfer  : 1,
+                        firstHire  : {
                             $let: {
                                 vars: {
-                                    lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                                    firstHired: {$arrayElemAt: ["$hire", 0]}
                                 },
-                                in  : {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
+                                in  : {$add: [{$multiply: [{$year: '$$firstHired'}, 100]}, {$week: '$$firstHired'}]}
                             }
                         }
                     }
                 }, {
                     $match: matchObj
                 }, {
-                    $unwind: '$hire'
+                    $unwind: '$transfer'
+                }, {
+                    $match: {
+                        'transfer.status': {$ne: 'fired'}
+                    }
                 }, {
                     $project: {
                         isEmployee: 1,
                         department: 1,
-                        hire      : 1,
+                        transfer  : 1,
                         name      : 1,
                         lastFire  : 1,
-                        year      : {$year: '$hire.date'}
+                        year      : {$year: '$transfer.date'}
                     }
                     //}, {
                     //    $match: {
@@ -660,19 +669,19 @@ var PayRoll = function (models) {
                     $project: {
                         isEmployee: 1,
                         department: 1,
-                        hire      : 1,
+                        transfer  : 1,
                         name      : 1,
-                        month     : {$month: '$hire.date'},
+                        month     : {$month: '$transfer.date'},
                         year      : 1,
                         lastFire  : 1,
-                        hireDate  : {$add: [{$multiply: [{$year: '$hire.date'}, 100]}, {$month: '$hire.date'}]}
+                        hireDate  : {$add: [{$multiply: [{$year: '$transfer.date'}, 100]}, {$month: '$transfer.date'}]}
                     }
                 }, {
                     $group: {
                         _id       : '$_id',
                         department: {$addToSet: '$department'},
                         name      : {$addToSet: '$name'},
-                        hire      : {$push: '$$ROOT'},
+                        transfer  : {$push: '$$ROOT'},
                         lastFire  : {$addToSet: '$lastFire'}
                     }
                 }, {
@@ -680,7 +689,7 @@ var PayRoll = function (models) {
                         _id       : 1,
                         department: {$arrayElemAt: ["$department", 0]},
                         name      : {$arrayElemAt: ["$name", 0]},
-                        hire      : 1,
+                        transfer  : 1,
                         lastFire  : {$arrayElemAt: ["$lastFire", 0]}
                     }
                 }, {
@@ -688,7 +697,7 @@ var PayRoll = function (models) {
                         _id       : 1,
                         department: '$department.departmentName',
                         name      : {$concat: ['$name.first', ' ', '$name.last']},
-                        hire      : 1,
+                        transfer  : 1,
                         lastFire  : 1
                     }
                 }, {

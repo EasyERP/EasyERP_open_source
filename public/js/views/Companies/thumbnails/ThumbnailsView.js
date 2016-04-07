@@ -40,8 +40,6 @@
 
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 this.asyncLoadImgs(this.collection);
-
-                this.filterView;
             },
 
             events: {
@@ -70,7 +68,8 @@
                 dataService.getData('/totalCollectionLength/Companies', {
                     currentNumber: currentNumber,
                     filter       : this.filter,
-                    newCollection: this.newCollection
+                    newCollection: this.newCollection,
+                    contentType  : this.contentType
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {
@@ -90,28 +89,43 @@
                 var selectedLetter;
                 var target;
 
-                this.$el.find('.thumbnailwithavatar').remove();
-                this.startTime = new Date();
-                this.newCollection = false;
-
-                this.filter = {};
 
                 if (e && e.target) {
                     target = $(e.target);
                     selectedLetter = $(e.target).text();
 
-                    this.filter['letter'] = selectedLetter;
+                    if (!this.filter) {
+                        this.filter = {};
+                    }
+                    this.filter['letter'] = {
+                        key  : 'letter',
+                        value: selectedLetter,
+                        type : null
+                    };
 
                     target.parent().find(".current").removeClass("current");
                     target.addClass("current");
-                    if ($(e.target).text() == "All") {
-                        selectedLetter = "";
-                        this.filter = {};
+                    if ($(e.target).text() === "All") {
+                        delete this.filter;
+                        delete App.filter.letter;
+                    } else {
+                        App.filter.letter = this.filter.letter;
                     }
                 }
 
-                this.defaultItemsNumber = 0;
+                this.filter = App.filter;
 
+                this.filterView.renderFilterContent(this.filter);
+                _.debounce(
+                    function () {
+                        this.trigger('filter', App.filter);
+                    }, 10);
+
+                this.$el.find('.thumbnailwithavatar').remove();
+                this.startTime = new Date();
+                this.newCollection = false;
+
+                this.defaultItemsNumber = 0;
                 this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
@@ -128,9 +142,6 @@
                 var self = this;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
                 var $currentEl = this.$el;
-                var filterObject;
-                var FilterView;
-                var showList;
 
                 $currentEl.html('');
 
@@ -146,32 +157,22 @@
                         alphabeticArray   : self.alphabeticArray,
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter : "All";
+                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : "All";
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
-                            if (target.text() == currentLetter) {
+                            if (target.text() === currentLetter) {
                                 target.addClass("current");
                             }
                         });
                     }
                 });
                 $currentEl.append(createdInTag);
-                filterObject = [
-                    {
-                        name: 'isCustomer',
-                        _id : 'isCustomer'
-                    },
-                    {
-                        name: 'isSupplier',
-                        _id : 'isSupplier'
-                    }
-                ];
 
                 self.filterView = new filterView({contentType: self.contentType});
 
                 self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter, self);
                 });
                 self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({}, self);
@@ -186,27 +187,17 @@
             },
 
             showFilteredPage: function (filter, context) {
-                var itemsNumber = $("#itemsNumber").text();
-
-                //var alphaBet = this.$el.find('#startLetter');
-                //var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
                 context.startTime = new Date();
                 context.newCollection = false;
 
-                //if (!filter.name) {
-                //    if (selectedLetter !== '') {
-                //        filter['letter'] = selectedLetter;
-                //    }
-                //}
-
                 if (Object.keys(filter).length === 0) {
                     this.filter = {};
                 }
 
+                this.defaultItemsNumber = 0;
                 context.$el.find('.thumbnailwithavatar').remove();
 
                 context.changeLocationHash(null, context.defaultItemsNumber, filter);
@@ -214,19 +205,13 @@
                 context.getTotalLength(this.defaultItemsNumber, filter);
             },
             hideItemsNumber : function (e) {
-                var el = e.target;
+                var el = this.$(e.target);  // changed after ui test
 
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
                 }
-                ;
-
-                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                //if (!el.closest('.search-view')) {
-                //    $('.search-content').removeClass('fa-caret-up');
-                //};
             },
 
             showMore: function (event) {
@@ -242,6 +227,7 @@
                 this.defaultItemsNumber += newModels.length;
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
+
                 if (showMore.length != 0) {
                     showMore.before(this.template({collection: this.collection.toJSON()}));
                     $(".filter-check-list").eq(1).remove();
@@ -250,19 +236,20 @@
                     content.html(this.template({collection: this.collection.toJSON()}));
                 }
                 this.asyncLoadImgs(newModels);
+                this.filterView.renderFilterContent();
             },
 
             showMoreAlphabet: function (newModels) {
                 var holder = this.$el;
-                var alphaBet = holder.find('#startLetter');
                 var created = holder.find('#timeRecivingDataFromServer');
                 var showMore = holder.find('#showMoreDiv');
-                var content = holder.find(".thumbnailwithavatar");
+
                 this.defaultItemsNumber += newModels.length;
+
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
+
                 holder.append(this.template({collection: newModels.toJSON()}));
-                // holder.prepend(alphaBet);
                 holder.append(created);
                 created.before(showMore);
                 this.asyncLoadImgs(newModels);
@@ -279,6 +266,8 @@
             deleteItems: function () {
                 var mid = 39;
                 var model;
+                var self = this;
+
                 model = this.collection.get(this.$el.attr("id"));
                 this.$el.fadeToggle(200, function () {
                     model.destroy({
@@ -293,10 +282,10 @@
                     self.alphabeticArray = arr;
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
-                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        selectedLetter    : (self.selectedLetter === "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter) ? self.filter.letter : null
+                    var currentLetter = (self.filter) ? self.filter.letter.value : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);

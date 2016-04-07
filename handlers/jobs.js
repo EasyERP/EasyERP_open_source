@@ -233,11 +233,14 @@ var Jobs = function (models, event) {
         var data = req.query;
         var forDashboard = data.forDashboard;
         var sort = {"budget.budgetTotal.costSum": -1};
-        var count = parseInt(data.count, 10) || 100;
+        var count = parseInt(data.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = parseInt(data.page, 10);
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var skip;
 
         var filter = data ? data.filter : {};
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         if (data.sort) {
             sort = {};
@@ -385,7 +388,13 @@ var Jobs = function (models, event) {
         var pId = req.query.projectId;
         var query = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var all = req.query.all;
-        var queryObj = {type: "Not Quoted", 'project': objectId(pId)};
+        var queryObj;
+
+        if (!pId || !pId.length) {
+            return res.status(200).send([]);
+        }
+
+        queryObj = {type: "Not Quoted", 'project': objectId(pId)};
 
         if (all) {
             queryObj = {'project': objectId(pId)};
@@ -399,8 +408,8 @@ var Jobs = function (models, event) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send(jobs);
 
+            res.status(200).send(jobs);
         });
     };
 
@@ -419,29 +428,31 @@ var Jobs = function (models, event) {
                 return next(err);
             }
 
-            jobId = result.get('_id');
-            projectId = result.get('project');
+            if (result){
+                jobId = result.get('_id');
+                projectId = result.get('project');
 
-            wTrack.find({"jobs": jobId}, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                async.each(result, function (wTrackEl, cb) {
-                    var _id = wTrackEl.get('_id');
-
-                    wTrack.findByIdAndRemove(_id, function (err, r) {
-                        cb();
-                    });
-                }, function () {
-                    if (projectId) {
-                        event.emit('updateProjectDetails', {req: req, _id: projectId});
+                wTrack.find({"jobs": jobId}, function (err, result) {
+                    if (err) {
+                        return next(err);
                     }
 
-                    event.emit('recollectVacationDash');
-                });
+                    async.each(result, function (wTrackEl, cb) {
+                        var _id = wTrackEl.get('_id');
 
-            });
+                        wTrack.findByIdAndRemove(_id, function (err, r) {
+                            cb();
+                        });
+                    }, function () {
+                        if (projectId) {
+                            event.emit('updateProjectDetails', {req: req, _id: projectId});
+                        }
+
+                        event.emit('recollectVacationDash');
+                    });
+
+                });
+            }
 
             res.status(200).send(result)
         })
