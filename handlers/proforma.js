@@ -15,6 +15,7 @@ var Proforma = function (models) {
 	var objectId = mongoose.Types.ObjectId;
 	var workflowHandler = new WorkflowHandler(models);
 
+	oxr.set({app_id: process.env.OXR_APP_ID});
 
 	this.create = function (req, res, next) {
 		var dbIndex = req.session.lastDb;
