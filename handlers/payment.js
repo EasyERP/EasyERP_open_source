@@ -162,7 +162,7 @@ var Payment = function (models, event) {
 
                 if (access) {
 
-                    count = parseInt(req.query.count, 10) ||  CONSTANTS.DEF_LIST_COUNT;
+                    count = parseInt(req.query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
                     page = parseInt(req.query.page, 10);
 
                     count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
@@ -304,7 +304,7 @@ var Payment = function (models, event) {
                                 supplier          : 1,
                                 'currency.name'   : '$currency.obj.name',
                                 'currency._id'    : '$currency.obj._id',
-                                'currency.rate' : 1,
+                                'currency.rate'   : 1,
                                 'invoice._id'     : 1,
                                 'invoice.name'    : 1,
                                 'invoice.workflow': {$arrayElemAt: ["$invoice.workflow", 0]},
@@ -325,12 +325,12 @@ var Payment = function (models, event) {
                             }
                         }, {
                             $match: optionsObject
-                        },{
+                        }, {
                             $project: {
                                 supplier          : 1,
                                 'currency.name'   : 1,
                                 'currency._id'    : 1,
-                                'currency.rate' : 1,
+                                'currency.rate'   : 1,
                                 'invoice._id'     : 1,
                                 'invoice.name'    : 1,
                                 'invoice.workflow': 1,
@@ -348,7 +348,13 @@ var Payment = function (models, event) {
                                 month             : 1,
                                 period            : 1,
                                 _type             : 1,
-                                removable: {$cond: {if: {$and: [{$eq: ['$_type', "ProformaPayment"]}, {$eq: ['$invoice.workflow.name', "Invoiced"]}]}, then: false, else: true}}
+                                removable         : {
+                                    $cond: {
+                                        if  : {$and: [{$eq: ['$_type', "ProformaPayment"]}, {$eq: ['$invoice.workflow.name', "Invoiced"]}]},
+                                        then: false,
+                                        else: true
+                                    }
+                                }
                             }
                         }, {
                             $sort: sort
@@ -657,7 +663,7 @@ var Payment = function (models, event) {
                         as          : 'currency.obj'
                     }
                 }
-            ], function(err, invoice) {
+            ], function (err, invoice) {
                 waterfallCallback(null, invoice[0]);
             });
         };
@@ -901,9 +907,9 @@ var Payment = function (models, event) {
         var waterfallTasks;
 
         var options = {
-            forSale : forSale,
-            bonus   : bonus,
-            salary  : salary
+            forSale: forSale,
+            bonus  : bonus,
+            salary : salary
         };
         var Payment = returnModel(req, options);
 
@@ -1075,9 +1081,9 @@ var Payment = function (models, event) {
         var type = "Invoiced";
         var project;
         var options = {
-            forSale : forSale,
-            bonus   : bonus,
-            salary  : salary
+            forSale: forSale,
+            bonus  : bonus,
+            salary : salary
         };
         var Payment = returnModel(req, options);
         var moduleId = returnModuleId(req);
@@ -1263,7 +1269,7 @@ var Payment = function (models, event) {
                                     var removable = true;
 
                                     payments.forEach(function (payment) {
-                                        if (payment._type !== 'ProformaPayment'){
+                                        if (payment._type !== 'ProformaPayment') {
                                             removable = false;
                                         }
                                     });
