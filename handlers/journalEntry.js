@@ -186,7 +186,7 @@ var Module = function (models, event) {
 
     var lookupInvoiceArray = [{
         $match: {
-            "sourceDocument.model": "Invoice",
+            "sourceDocument.model": {$in: ["Invoice", "proforma"]},
             debit                 : {$gt: 0}
         }
     }, {
@@ -3832,7 +3832,7 @@ var Module = function (models, event) {
                             $match: matchObject
                         }, {
                             $match: {
-                                "sourceDocument.model": "Invoice",
+                                "sourceDocument.model": {$in: ["Invoice", "proforma"]},
                                 debit                 : {$gt: 0}
                             }
                         }, {
@@ -6016,7 +6016,7 @@ var Module = function (models, event) {
                             $match: matchObject
                         }, {
                             $match: {
-                                "sourceDocument.model": "Invoice",
+                                "sourceDocument.model": {$in: ["Invoice", "proforma"]},
                                 debit                 : {$gt: 0}
                             }
                         }, {
