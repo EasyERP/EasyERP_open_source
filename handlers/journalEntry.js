@@ -3646,7 +3646,11 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-            res.status(200).send({date: result.date});
+            if (result && result.length){
+                res.status(200).send({date: result.date});
+            } else {
+                res.status(200).send({date: new Date("14 Jul 2014")});
+            }
         });
     };
 

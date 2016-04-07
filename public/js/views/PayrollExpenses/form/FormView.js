@@ -46,7 +46,7 @@ define([
                 "click .diff"                       : "newPayment",
                 // "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .oe_sortable"                : "goSort",
+                "click .oe_sortable"                : "goSort"
                 //'click tr.mainTr td:not(td.notForm)': 'showHidden'
 
             },
