@@ -1252,16 +1252,16 @@ var Payment = function (models, event) {
                             }
 
                             invoices.forEach(function (inv) {
-                                Invoice.findByIdAndUpdate(inv._id, {$pull: {payments: removed._id}}).populate('payments').exec(function (err, invoice) {
+                                Invoice.findByIdAndUpdate(inv._id, {$pull: {payments: removed._id}}, {new: true}).populate('payments').exec(function (err, invoice) {
 
                                     var paymentInfo = invoice.get('paymentInfo');
                                     var project = invoice ? invoice.get('project') : null;
                                     var payments = invoice ? invoice.get('payments') : [];
-                                    var removable = false;
+                                    var removable = true;
 
                                     payments.forEach(function (payment) {
                                         if (payment._type !== 'ProformaPayment'){
-                                            removable = true;
+                                            removable = false;
                                         }
                                     });
 
@@ -1315,9 +1315,7 @@ var Payment = function (models, event) {
 
                                         query.paymentInfo = paymentInfoNew;
 
-                                        if (removable){
-                                            query.removable = removable;
-                                        }
+                                        query.removable = removable;
 
                                         if (!invoice.invoiced) {
                                             query.workflow = workflowObj;
