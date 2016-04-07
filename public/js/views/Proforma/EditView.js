@@ -247,10 +247,10 @@ define([
 
                 var supplier = $thisEl.find('#supplier').attr("data-id");
 
-                var total = parseFloat($thisEl.find("#totalAmount").text()) * 100;
-                var unTaxed = parseFloat($thisEl.find("#totalUntaxes").text()) * 100;
-                var balance = parseFloat($thisEl.find("#balance").text()) * 100;
-                var taxes = parseFloat($thisEl.find("#taxes").text()) * 100;
+                var total = parseFloat(helpers.spaceReplacer($thisEl.find("#totalAmount").text())) * 100;
+                var unTaxed = parseFloat(helpers.spaceReplacer($thisEl.find("#totalUntaxes").text())) * 100;
+                var balance = parseFloat(helpers.spaceReplacer($thisEl.find("#balance").text())) * 100;
+                var taxes = parseFloat(helpers.spaceReplacer($thisEl.find("#taxes").text())) * 100;
 
                 var payments = {
                     total  : total,

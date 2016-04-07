@@ -182,6 +182,8 @@ define([
                 self.render();
             }
 
+            App.startPreload();
+
             model.urlRoot = '/quotation/form/' + id;
             model.fetch({
                 success: function (model) {

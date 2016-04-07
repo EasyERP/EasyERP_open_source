@@ -57,7 +57,7 @@
         <td>
                 <span class=""><span id="balance">
                     <%if (model && model.paymentInfo && model.paymentInfo.balance) {%>
-                        <%=model.paymentInfo.balance%>
+                        <%=currencySplitter(model.paymentInfo.balance)%>
                     <%} else {%>
                         0.00
                     <%}%>
