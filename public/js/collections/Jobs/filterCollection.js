@@ -37,7 +37,7 @@ define([
                         } else if (self.bySocket) {
                             App.render({
                                 type   : 'notify',
-                                message: 'Data were changed, please refresh browser'
+                                message: 'Data was changed, please refresh browser'
                             });
                         }
                     } else {
