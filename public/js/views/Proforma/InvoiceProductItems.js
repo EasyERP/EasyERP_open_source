@@ -2,26 +2,30 @@
  * Created by Roman on 27.04.2015.
  */
 define([
+    'Backbone',
     'text!templates/Invoice/InvoiceProductItems.html',
     'text!templates/Invoice/InvoiceProductInputContent.html',
     'text!templates/Proforma/EditInvoiceProductInputContent.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
     'populate',
-    'helpers/keyValidator'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, productCollection, populate, keyValidator) {
+    'helpers/keyValidator',
+    'helpers',
+    'constants'
+], function (Backbone, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, productCollection, populate, keyValidator, helpers, CONSTANTS) {
+    'use strict'
     var ProductItemTemplate = Backbone.View.extend({
         el: '#invoiceItemsHolder',
 
         events: {
-            'click .addProductItem'                                                   : 'getProducts',
-            "click .newSelectList li:not(.miniStylePagination)"                       : "chooseOption",
-            "click .newSelectList li.miniStylePagination"                             : "notHide",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)"        : "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
-            "click .current-selected"                                                 : "showProductsSelect",
-            "keyup td[data-name=price] input"                                         : 'priceChange',
-            'keypress .forNum'                                                        : 'keypressHandler'
+            'click .addProductItem'                                           : 'getProducts',
+            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+            "click .newSelectList li.miniStylePagination"                     : "notHide",
+            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+            "click .current-selected"                                         : "showProductsSelect",
+            "keyup td[data-name=price] input"                                 : 'priceChange',
+            'keypress .forNum'                                                : 'keypressHandler'
         },
 
         initialize: function (options) {
@@ -35,7 +39,7 @@ define([
                 this.isPaid = !!options.isPaid;
                 this.notAddItem = !!options.notAddItem;
                 this.paid = options.paid;
-            };
+            }
 
             this.forSales = options.forSales;
 
@@ -117,92 +121,92 @@ define([
         },
 
         /*quickEdit: function (e) {
-            var target = $(e.target);
-            var trId = target.closest("tr");
-            var tdId = target.closest("td");
+         var target = $(e.target);
+         var trId = target.closest("tr");
+         var tdId = target.closest("td");
 
-            if (trId.find("#editSpan").length === 0) {
-                tdId.append('<span id="editSpan" class=""><a href="javascript:;">e</a></span>');
-                if (tdId.width() - 30 < tdId.find(".no-long").width()) {
-                    tdId.find(".no-long").width(tdId.width() - 30);
-                }
-            }
-        },
+         if (trId.find("#editSpan").length === 0) {
+         tdId.append('<span id="editSpan" class=""><a href="javascript:;">e</a></span>');
+         if (tdId.width() - 30 < tdId.find(".no-long").width()) {
+         tdId.find(".no-long").width(tdId.width() - 30);
+         }
+         }
+         },
 
-        removeEdit: function (e) {
-            $('#editSpan').remove();
-            $("td .no-long").css({width: "auto"});
-        },
+         removeEdit: function (e) {
+         $('#editSpan').remove();
+         $("td .no-long").css({width: "auto"});
+         },
 
-        editClick: function (e) {
-            var parent = $(e.target).closest('td');
-            var maxlength = parent.find(".no-long").attr("data-maxlength") || 20;
-            var datePicker = parent.find('.datepicker');
+         editClick: function (e) {
+         var parent = $(e.target).closest('td');
+         var maxlength = parent.find(".no-long").attr("data-maxlength") || 20;
+         var datePicker = parent.find('.datepicker');
 
-            e.preventDefault();
+         e.preventDefault();
 
-            $('.quickEdit #editInput').remove();
-            $('.quickEdit #cancelSpan').remove();
-            $('.quickEdit #saveSpan').remove();
+         $('.quickEdit #editInput').remove();
+         $('.quickEdit #cancelSpan').remove();
+         $('.quickEdit #saveSpan').remove();
 
-            if (this.prevQuickEdit) {
-                if ($(this.prevQuickEdit).hasClass('quickEdit')) {
-                    $('.quickEdit').text(this.text ? this.text : "").removeClass('quickEdit');
-                }
-            }
+         if (this.prevQuickEdit) {
+         if ($(this.prevQuickEdit).hasClass('quickEdit')) {
+         $('.quickEdit').text(this.text ? this.text : "").removeClass('quickEdit');
+         }
+         }
 
-            parent.addClass('quickEdit');
+         parent.addClass('quickEdit');
 
-            $('#editSpan').remove();
+         $('#editSpan').remove();
 
-            this.text = $.trim(parent.text());
+         this.text = $.trim(parent.text());
 
-            parent.text('');
-            parent.append('<input id="editInput" maxlength="' + maxlength + '" type="text" />');
-            $('#editInput').val(this.text);
+         parent.text('');
+         parent.append('<input id="editInput" maxlength="' + maxlength + '" type="text" />');
+         $('#editInput').val(this.text);
 
-            //if (datePicker.length) {
-            //    $('#editInput').datepicker({
-            //        dateFormat: "d M, yy",
-            //        changeMonth: true,
-            //        changeYear: true
-            //    }).addClass('datepicker');
-            //}
+         //if (datePicker.length) {
+         //    $('#editInput').datepicker({
+         //        dateFormat: "d M, yy",
+         //        changeMonth: true,
+         //        changeYear: true
+         //    }).addClass('datepicker');
+         //}
 
-            this.prevQuickEdit = parent;
+         this.prevQuickEdit = parent;
 
-            parent.append('<span id="saveSpan" class="productEdit"><i class="fa fa-check"></i></span>');
-            parent.append('<span id="cancelSpan" class="productEdit"><i class="fa fa-times"></i></span>');
-            parent.find("#editInput").width(parent.find("#editInput").width() - 50);
-        },
+         parent.append('<span id="saveSpan" class="productEdit"><i class="fa fa-check"></i></span>');
+         parent.append('<span id="cancelSpan" class="productEdit"><i class="fa fa-times"></i></span>');
+         parent.find("#editInput").width(parent.find("#editInput").width() - 50);
+         },
 
-        saveClick: function (e) {
-            e.preventDefault();
+         saveClick: function (e) {
+         e.preventDefault();
 
-            var targetEl = $(e.target);
-            var parent = targetEl.closest('td');
-            var inputEl = parent.find('input');
-            var val = inputEl.val();
+         var targetEl = $(e.target);
+         var parent = targetEl.closest('td');
+         var inputEl = parent.find('input');
+         var val = inputEl.val();
 
-            parent.removeClass('quickEdit').html('<span>' + val + '</span>');
+         parent.removeClass('quickEdit').html('<span>' + val + '</span>');
 
-            if (inputEl.hasClass('datepicker')) {
-                parent.find('span').addClass('datepicker');
-            }
+         if (inputEl.hasClass('datepicker')) {
+         parent.find('span').addClass('datepicker');
+         }
 
-            this.recalculateTaxes(parent);
-        },
+         this.recalculateTaxes(parent);
+         },
 
-        cancelClick: function (e) {
-            e.preventDefault();
-            var text = this.text ? this.text : '';
+         cancelClick: function (e) {
+         e.preventDefault();
+         var text = this.text ? this.text : '';
 
-            if (this.prevQuickEdit) {
-                if ($(this.prevQuickEdit).hasClass('quickEdit')) {
-                    $('.quickEdit').removeClass('quickEdit').html('<span>' + text + '</span>');
-                }
-            }
-        },*/
+         if (this.prevQuickEdit) {
+         if ($(this.prevQuickEdit).hasClass('quickEdit')) {
+         $('.quickEdit').removeClass('quickEdit').html('<span>' + text + '</span>');
+         }
+         }
+         },*/
 
         showProductsSelect: function (e, prev, next) {
             populate.showProductsSelect(e, prev, next, this);
@@ -278,23 +282,30 @@ define([
             var quantity;
             var cost;
             var balance;
+            var taxes;
+            var total;
+            var date;
+            var dates = [];
 
             if (totalEls) {
                 for (var i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
-                    quantity = $currentEl.find('[data-name="quantity"]').text();
-                    cost = $currentEl.find('[data-name="price"] input').val();
+                    cost = $currentEl.find('[data-name="price"] input').val() || '0';
+                    quantity = this.quantityRetriver($currentEl);
+                    cost = helpers.spaceReplacer(cost);
                     totalUntax += parseInt(cost);
+                    date = $currentEl.find('.datepicker').text();
+                    dates.push(date);
                 }
             }
 
             totalUntax = totalUntax.toFixed(2);
-            totalUntaxContainer.text(totalUntax);
+            totalUntaxContainer.text(helpers.currencySplitter(totalUntax));
             totalUntax = parseFloat(totalUntax);
 
             taxes = totalUntax * this.taxesRate;
             taxes = taxes.toFixed(2);
-            taxesContainer.text(taxes);
+            taxesContainer.text(helpers.currencySplitter(taxes));
             taxes = parseFloat(taxes);
 
             total = totalUntax + taxes;
@@ -302,10 +313,32 @@ define([
             total = total.toFixed(2);
             balance = balance.toFixed(2);
 
-            totalContainer.text(total);
+            totalContainer.text(helpers.currencySplitter(total));
 
             balanceContainer.text(balance);
 
+            date = helpers.minFromDates(dates);
+            thisEl.find('#minScheduleDate span').text(date);
+        },
+
+        quantityRetriver: function ($parent) {
+            var selectedProduct = this.products || new Backbone.Collection();
+            var id;
+            var quantity;
+
+            $parent = $parent.closest('tr');
+            id = $parent.attr('data-id');
+
+            selectedProduct = selectedProduct.get(id) || null;
+
+            if (selectedProduct && selectedProduct.get('name') === CONSTANTS.IT_SERVICES) {
+                quantity = 1
+            } else {
+                quantity = $parent.find('[data-name="quantity"] span').text();
+                quantity = parseFloat(quantity);
+            }
+
+            return quantity;
         },
 
         nextSelect: function (e) {
@@ -345,8 +378,9 @@ define([
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
-                        model         : options.model,
-                        balanceVisible: this.visible
+                        model           : options.model,
+                        balanceVisible  : this.visible,
+                        currencySplitter: helpers.currencySplitter
                     }));
                 }
             } else {
@@ -358,7 +392,11 @@ define([
                     notAddItem: this.notAddItem
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
-                totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));
+                totalAmountContainer.append(_.template(totalAmount, {
+                    model           : null,
+                    balanceVisible  : this.visible,
+                    currencySplitter: helpers.currencySplitter
+                }));
             }
 
             return this;

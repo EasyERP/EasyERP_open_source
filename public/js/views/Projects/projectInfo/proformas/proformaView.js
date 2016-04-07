@@ -37,8 +37,8 @@ define([
         events: {
             "click .checkbox"                                : "checked",
             "click  .list tbody td:not(.notForm, .validated)": "goToEditDialog",
-            "click #removeProforma"                           : "deleteItems",
-            "click #saveProforma"                             : "saveItems",
+            "click #removeProforma"                          : "deleteItems",
+            "click #saveProforma"                            : "saveItems",
             "click .selectList"                              : "showSelects",
             "click .newSelectList li"                        : "chooseOption"
         },

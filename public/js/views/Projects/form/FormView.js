@@ -10,10 +10,12 @@ define([
         'text!templates/Projects/projectInfo/proformRevenue.html',
         'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
         'text!templates/Projects/projectInfo/invoiceStats.html',
+        'text!templates/Projects/projectInfo/proformaStats.html',
         'views/selectView/selectView',
         'views/salesOrder/EditView',
         'views/salesQuotation/EditView',
         'views/salesInvoice/EditView',
+        'views/Proforma/EditView',
         'views/Projects/EditView',
         'views/Notes/NoteView',
         'views/Notes/AttachView',
@@ -23,6 +25,7 @@ define([
         'views/Projects/projectInfo/salesManagers/salesManagersList',
         'views/Projects/projectInfo/payments/paymentView',
         'views/Projects/projectInfo/invoices/invoiceView',
+        'views/Projects/projectInfo/proformas/proformaView',
         'views/Projects/projectInfo/quotations/quotationView',
         'views/Projects/projectInfo/wTracks/generateWTrack',
         'views/Projects/projectInfo/orders/orderView',
@@ -31,25 +34,65 @@ define([
         'collections/salesInvoice/filterCollection',
         'collections/customerPayments/filterCollection',
         'collections/Jobs/filterCollection',
+        'collections/Proforma/filterCollection',
         'models/QuotationModel',
         'models/InvoiceModel',
         'text!templates/Notes/AddAttachments.html',
-        "common",
+        'common',
         'populate',
         'custom',
         'dataService',
         'async',
-        'helpers'
-    ],
-
-    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, SalesManagersView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+        'helpers'],
+    function (Backbone,
+              $,
+              _,
+              ProjectsFormTemplate,
+              DetailsTemplate,
+              ProformRevenueTemplate,
+              jobsWTracksTemplate,
+              invoiceStats,
+              proformaStats,
+              selectView,
+              EditViewOrder,
+              editViewQuotation,
+              editViewInvoice,
+              editViewProforma,
+              EditView,
+              noteView,
+              attachView,
+              AssigneesView,
+              BonusView,
+              wTrackView,
+              SalesManagersView,
+              PaymentView,
+              InvoiceView,
+              ProformaView,
+              QuotationView,
+              GenerateWTrack,
+              oredrView,
+              wTrackCollection,
+              quotationCollection,
+              invoiceCollection,
+              paymentCollection,
+              jobsCollection,
+              proformaCollection,
+              quotationModel,
+              invoiceModel,
+              addAttachTemplate,
+              common,
+              populate,
+              custom,
+              dataService,
+              async,
+              helpers) {
         "use strict";
 
         var View = Backbone.View.extend({
-            el              : '#content-holder',
-            contentType     : 'Projects',
-            proformRevenue  : _.template(ProformRevenueTemplate),
-            invoiceStatsTmpl: _.template(invoiceStats),
+            el               : '#content-holder',
+            contentType      : 'Projects',
+            proformRevenue   : _.template(ProformRevenueTemplate),
+            invoiceStatsTmpl : _.template(invoiceStats),
             proformaStatsTmpl: _.template(proformaStats),
 
             events: {
@@ -120,7 +163,7 @@ define([
                                 projectManager: self.projectManager
                             });
                         },
-                        error: function (xhr) {
+                        error  : function (xhr) {
                             App.render({
                                 type   : 'error',
                                 message: 'Please refresh browser'
@@ -145,7 +188,7 @@ define([
                                 projectManager: self.projectManager
                             });
                         },
-                        error: function (xhr) {
+                        error  : function (xhr) {
                             App.render({
                                 type   : 'error',
                                 message: 'Please refresh browser'
@@ -165,19 +208,19 @@ define([
 
                 model.urlRoot = '/Invoice/form';
                 model.fetch({
-                    data: {
+                    data   : {
                         id       : id,
                         currentDb: App.currentDb
                     },
                     success: function (model) {
                         new editViewInvoice({
-                            model    : model,
-                            notCreate: true,
-                            redirect : true,
+                            model       : model,
+                            notCreate   : true,
+                            redirect    : true,
                             eventChannel: self.eventChannel
                         });
                     },
-                    error: function () {
+                    error  : function () {
                         App.render({
                             type   : 'error',
                             message: 'Please refresh browser'
@@ -202,9 +245,9 @@ define([
                     },
                     success: function (model) {
                         new editViewProforma({
-                            model    : model,
-                            notCreate: true,
-                            redirect : true,
+                            model       : model,
+                            notCreate   : true,
+                            redirect    : true,
                             eventChannel: self.eventChannel
                         });
                     },
@@ -457,8 +500,7 @@ define([
                 return false;
             },
 
-            showNewSelect: function (e, prev, next) {
-                //populate.showSelect(e, prev, next, this);
+            showNewSelect: function (e) {
                 var $target = $(e.target);
                 e.stopPropagation();
 
@@ -476,7 +518,6 @@ define([
                 });
 
                 $target.append(this.selectView.render().el);
-                return false;
                 return false;
             },
 
@@ -609,8 +650,8 @@ define([
                     }
 
                     salesManagers.push({
-                        manager   : employeeId,
-                        date      : date
+                        manager: employeeId,
+                        date   : date
                     });
                 });
 
@@ -750,7 +791,7 @@ define([
             hideSelect: function () {
                 $('#health').find('ul').hide(); // added for hiding list if element in isnt chosen
 
-                if (this.selectView){
+                if (this.selectView) {
                     this.selectView.remove();
                 }
             },
@@ -965,10 +1006,10 @@ define([
                 var statsContainer = this.$el.find('#invoiceStatsContainer');
 
                 statsContainer.html(this.invoiceStatsTmpl({
-                    invoceStats     : data.invoices,
-                    invoceStat      : data,
-                    currencySplitter: helpers.currencySplitter
-                })
+                        invoceStats     : data.invoices,
+                        invoceStat      : data,
+                        currencySplitter: helpers.currencySplitter
+                    })
                 );
             },
 
@@ -976,10 +1017,10 @@ define([
                 var statsContainer = this.$el.find('#proformaStatsContainer');
 
                 statsContainer.html(this.proformaStatsTmpl({
-                    invoceStats     : data.invoices,
-                    invoceStat      : data,
-                    currencySplitter: helpers.currencySplitter
-                })
+                        invoceStats     : data.invoices,
+                        invoceStat      : data,
+                        currencySplitter: helpers.currencySplitter
+                    })
                 );
             },
 
@@ -1021,8 +1062,8 @@ define([
                     //App.invoiceCollection = self.iCollection;
 
                     new InvoiceView({
-                        model : self.iCollection,
-                        filter: filter,
+                        model       : self.iCollection,
+                        filter      : filter,
                         eventChannel: self.eventChannel
                     }).render();
 
@@ -1072,9 +1113,9 @@ define([
                     //App.proformaCollection = self.pCollection;
 
                     proformaView = new ProformaView({
-                        el    : '#proforma',
-                        model : self.pCollection,
-                        filter: filter,
+                        el          : '#proforma',
+                        model       : self.pCollection,
+                        filter      : filter,
                         eventChannel: self.eventChannel
                     }).render();
 
@@ -1105,7 +1146,7 @@ define([
 
             },
 
-            getPayments: function(activate) {
+            getPayments: function (activate) {
                 var self = this;
                 var payFromInvoice;
                 var payFromProforma;
@@ -1136,9 +1177,9 @@ define([
 
                 function createPayment() {
                     var data = {
-                        model : self.payCollection,
-                        filter: filterPayment,
-                        activate: activate,
+                        model       : self.payCollection,
+                        filter      : filterPayment,
+                        activate    : activate,
                         eventChannel: self.eventChannel
                     };
 
@@ -1181,7 +1222,7 @@ define([
                         model           : self.formModel,
                         wTrackCollection: self.wCollection,
                         createJob       : true,
-                        eventChannel: self.eventChannel
+                        eventChannel    : self.eventChannel
                     }).render();
 
                 };
@@ -1222,7 +1263,7 @@ define([
                         customerId    : self.formModel.toJSON().customer._id,
                         projectManager: self.formModel.toJSON().projectmanager,
                         filter        : filter,
-                        eventChannel: self.eventChannel
+                        eventChannel  : self.eventChannel
                     }).render();
 
                 }
@@ -1286,9 +1327,9 @@ define([
                 };
 
                 proformContainer.html(this.proformRevenue({
-                    proformValues   : self.proformValues,
-                    currencySplitter: helpers.currencySplitter
-                })
+                        proformValues   : self.proformValues,
+                        currencySplitter: helpers.currencySplitter
+                    })
                 );
 
                 if (typeof cb === 'function') {
@@ -1302,7 +1343,7 @@ define([
                 var count;
                 var id;
 
-                $tabs.each(function() {
+                $tabs.each(function () {
                     var $tab = $(this);
 
                     id = $tab.attr('id');
@@ -1395,7 +1436,7 @@ define([
                 }
             },
 
-            newPayment : function() {
+            newPayment: function () {
                 var self = this;
                 var paralellTasks;
 
@@ -1416,7 +1457,7 @@ define([
 
             },
 
-            createProforma : function(quotationId) {
+            createProforma: function (quotationId) {
                 var self = this;
                 var paralellTasks;
 

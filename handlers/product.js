@@ -18,7 +18,7 @@ var Products = function (models) {
         var exportMap = require('../helpers/csvMap').Products;
 
         exportDecorator.addExportFunctionsToHandler(this, function (req) {
-            return models.get(req.session.lastDb, 'Product', ProductSchema)
+            return models.get(req.session.lastDb, 'Product', ProductSchema);
         }, exportMap, 'Products');
 
         this.create = function (req, res, next) {
@@ -96,15 +96,13 @@ var Products = function (models) {
 
         function getProductImages(req, res, next, data) {
             var query = models.get(req.session.lastDb, "Products", ProductSchema).find({});
-            query.where('_id').in(data.ids).
-                select('_id imageSrc').
-                exec(function (error, response) {
-                    if (error) {
-                        next(error);
-                    } else {
-                        res.status(200).send({data: response});
-                    }
-                });
+            query.where('_id').in(data.ids).select('_id imageSrc').exec(function (error, response) {
+                if (error) {
+                    next(error);
+                } else {
+                    res.status(200).send({data: response});
+                }
+            });
         }
 
         this.uploadProductFiles = function (req, res, next) {
@@ -463,13 +461,7 @@ var Products = function (models) {
 
                 query = Product.findById(id);
 
-                query.populate('info.productType', 'name _id').
-                    populate('department', '_id departmentName').
-                    populate('createdBy.user').
-                    populate('editedBy.user').
-                    populate('groups.users').
-                    populate('groups.group').
-                    populate('groups.owner', '_id login');
+                query.populate('info.productType', 'name _id').populate('department', '_id departmentName').populate('createdBy.user').populate('editedBy.user').populate('groups.users').populate('groups.group').populate('groups.owner', '_id login');
 
                 query.exec(waterfallCallback);
             };

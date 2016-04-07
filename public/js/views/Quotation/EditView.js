@@ -342,7 +342,7 @@ define([
             });
         },
 
-        saveItem: function (proformaCb, /*orderCb*/) {
+        saveItem: function (proformaCb /*orderCb*/) {
             var self = this;
             var mid = this.forSales ? 62 : 55;
             var thisEl = this.$el;

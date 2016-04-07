@@ -127,9 +127,9 @@ define([
 
             if (this.collection.length > 0) {
                 $currentEl.find('#listTableQuotation').html(this.templateList({
-                    quotations : this.collection.toJSON(),
-                    startNumber: 0,
-                    dateToLocal: common.utcDateToLocaleDate,
+                    quotations      : this.collection.toJSON(),
+                    startNumber     : 0,
+                    dateToLocal     : common.utcDateToLocaleDate,
                     currencySplitter: helpers.currencySplitter
                 }));
             }
@@ -192,7 +192,7 @@ define([
                         customerId   : self.customerId,
                         collection   : self.collection,
                         hidePrAndCust: true,
-                        eventChannel: self.eventChannel
+                        eventChannel : self.eventChannel
                     });
 
                     //self.collection.remove(id);
@@ -200,7 +200,7 @@ define([
                 },
                 error  : function (xhr) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: "Please refresh browser"
                     });
                 }
@@ -270,7 +270,7 @@ define([
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }

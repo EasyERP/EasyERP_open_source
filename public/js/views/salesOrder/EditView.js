@@ -348,8 +348,9 @@ define([
                     invoiceControl   : invoiceControl ? invoiceControl : null,
                     paymentTerm      : paymentTerm ? paymentTerm : null,
                     fiscalPosition   : fiscalPosition ? fiscalPosition : null,
+                    project          : project,
                     //
-                    paymentInfo  project          : project,    : {
+                    paymentInfo      : {
                         total  : total,
                         unTaxed: unTaxed,
                         taxes  : totalTaxes
