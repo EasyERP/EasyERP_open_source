@@ -142,6 +142,7 @@ define([
             var id;
             var tr;
             var listTableCheckedInput;
+            var payments;
             var table = this.$el.find('#listTable');
             listTableCheckedInput = table.find("input:not('#check_all_invoice'):checked");
 
@@ -154,6 +155,7 @@ define([
                         orderId = model.get("sourceDocument");
                         orderId = orderId && orderId._id ? orderId._id : orderId;
                         id = model.get('_id');
+                        payments = model.get('payments');
                         tr = $("[data-id=" + orderId + "]");
 
                         table.find('[data-id="' + id + '"]').remove();
@@ -165,6 +167,11 @@ define([
 
                         $("#removeInvoice").hide();
                         $('#check_all_invoice').prop('checked', false);
+
+                        payments.forEach(function (payment) {
+                            $('.payment-list').find("[data-id=" + payment + "]").find('.checkbox').removeClass('notRemovable');
+                        });
+
 
                         that.collection.remove(checkbox.value);
 

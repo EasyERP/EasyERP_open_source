@@ -42,7 +42,7 @@
             <td><%=payment.supplier && payment.supplier.name ? payment.supplier.name.first + ' ' +
                 payment.supplier.name.last : ''%>
             </td>
-            <td><%=payment.invoice ? payment.invoice.name : ''%></td>
+            <td data-id="<%=payment.invoice._id%>"><%=payment.invoice ? payment.invoice.name : ''%></td>
             <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
             <td class="totalPaidAmount money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>">
                 <%=currencySplitter(parseFloat(payment.paidAmount).toFixed(2))%>
