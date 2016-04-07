@@ -1249,7 +1249,7 @@ var Payment = function (models, event) {
                     }
 
                     invoiceId = removed ? removed.get('invoice') : null;
-                    paid = removed ? removed.get('paidAmount') : 0;
+                    paid = removed ? removed.paidAmount/removed.currency.rate : 0;
 
                     if (invoiceId && (removed && removed._type !== 'salaryPayment')) {
 
@@ -1262,6 +1262,8 @@ var Payment = function (models, event) {
 
                             invoices.forEach(function (inv) {
                                 Invoice.findByIdAndUpdate(inv._id, {$pull: {payments: removed._id}}, {new: true}).populate('payments').exec(function (err, invoice) {
+
+                                    paid = paid * invoice.currency.rate;
 
                                     var paymentInfo = invoice.get('paymentInfo');
                                     var project = invoice ? invoice.get('project') : null;

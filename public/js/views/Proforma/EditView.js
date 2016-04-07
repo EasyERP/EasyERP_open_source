@@ -242,7 +242,7 @@ define([
                     name: $.trim($thisEl.find('#currencyDd').text())
                 };
 
-                var invoiceDate = $thisEl.find("#invoice_date").val();
+                var invoiceDate = $thisEl.find("#invoice_date").val() || $thisEl.find('#inv_date').text();
                 var dueDate = $thisEl.find("#due_date").val();
 
                 var supplier = $thisEl.find('#supplier').attr("data-id");
