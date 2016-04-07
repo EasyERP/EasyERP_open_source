@@ -262,11 +262,13 @@ define([
         getCellSize: function (week, vacation) {
             var v = '';
             var w = '';
-            var vacationHours = (week.vacations || 0) * 8;
+            var holidays = week.holidays || 0;
+            var vacations = week.vacations || 0;
+            var vacationHours = (holidays + vacations) * 8;
             var workedHours = week.hours || 0;
 
             // if (vacationHours > 16) {
-            if (vacationHours === 40) {
+            if (vacationHours >= 40) {
                 v = workedHours ? 'size40' : 'sizeFull';
                 w = workedHours ? 'size40' : 'size0';
             } else if (vacationHours > 8) {
