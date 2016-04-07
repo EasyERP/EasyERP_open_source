@@ -77,7 +77,7 @@ define([
 
                 var currency = {
                     _id : thisEl.find('#currencyDd').attr('data-id'),
-                    name: thisEl.find('#currencyDd').text()
+                    name: $.trim(thisEl.find('#currencyDd').text())
                 };
 
                 var supplier = thisEl.find('#supplierDd').attr('data-id');
@@ -93,11 +93,11 @@ define([
                 var orderDate = thisEl.find('#orderDate').val();
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#orderDate').val();
 
-                var total = $.trim(thisEl.find('#totalAmount').text());
+                var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
                 var totalTaxes = $.trim(thisEl.find('#taxes').text());
                 var taxes;
                 var description;
-                var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
+                var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
                 var subTotal;
                 var jobs;
 
@@ -127,7 +127,7 @@ define([
                             scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                             taxes = targetEl.find('.taxes').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
-                            subTotal = targetEl.find('.subtotal').text();
+                            subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
                             if (jobs.length < 24) {
