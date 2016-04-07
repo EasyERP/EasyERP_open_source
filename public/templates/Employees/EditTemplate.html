@@ -421,7 +421,13 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <%_.each(model.transfer, function(transfer, key, transfers) { %>
+                            <%_.each(model.transfer, function(transfer, key, transfers) {
+
+                                if (transfer.status === 'transfer') {
+                                     return;
+                                }
+
+                            %>
                             <tr class="transfer" data-id="<%=key%>" data-content=<%= transfer.status %>>
                                 <td class="remove">
                                     <% if (key === transfers.length - 1 && key) {%>
