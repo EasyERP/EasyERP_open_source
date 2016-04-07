@@ -89,6 +89,12 @@ define([
         },
 
         keyDown: function (e) {  // validation from generateWTrack, need keydown instead of keypress in case of enter key
+            var element = e.target;
+
+            if ($(element).val() > 24) { // added in case of fast input
+                $(element).val(24);
+            }
+
             if (keyCodes.isBspDelTabEscEnt(e.keyCode) || keyCodes.isArrowsOrHomeEnd(e.keyCode)) {
                 if (e.which === 13) {
                     this.autoCalc(e);
