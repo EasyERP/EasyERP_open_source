@@ -299,12 +299,12 @@
 
             exportToCsv: function () {
                 //todo change after routes refactoring
-                window.location = '/Customers/exportToCsv?type=Company'
+                window.location = '/Customers/exportToCsv?type=Company';
             },
 
             exportToXlsx: function () {
                 //todo change after routes refactoring
-                window.location = '/Customers/exportToXlsx?type=Company'
+                window.location = '/Customers/exportToXlsx?type=Company';
             }
         });
         return CompaniesThumbnalView;

@@ -32,10 +32,10 @@ var createProjection = function (map, options) {
 var addExportToCsvFunctionToHandler = function (handler, getModel, map, fileName) {
     handler['exportToCsv'] = function (req, res, next) {
         var Model = getModel(req);
-        var body = req.body;
+        var query = req.query;
 
-        var propertiesToDisplay = body.properties;
-        var type = body.type;
+        var propertiesToDisplay = query.properties;
+        var type = query.type;
 
         var project = createProjection(map.aliases, {properties: propertiesToDisplay});
         var nameOfFile = fileName ? fileName : type ? type : 'data';
