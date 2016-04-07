@@ -106,7 +106,7 @@ define([
 
             async.forEach(collection, function (model, cb) {
                 totalPaidAmount += parseFloat(model.paidAmount);
-                total += parseFloat(model.paidAmount) + parseFloat(model.differenceAmount);
+                total += parseFloat(model.paidAmount/model.currency.rate) + parseFloat(model.differenceAmount);
 
                 cb();
             }, function () {

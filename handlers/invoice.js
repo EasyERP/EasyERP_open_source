@@ -758,6 +758,7 @@ var Invoice = function (models, event) {
                                     project         : {$arrayElemAt: ["$project", 0]},
                                     expense         : 1,
                                     forSales        : 1,
+                                    currency        : 1,
                                     paymentInfo     : 1,
                                     invoiceDate     : 1,
                                     name            : 1,

@@ -76,9 +76,10 @@
         <!--</ul>-->
         <!--</td>-->
 
-        <%balance += parseFloat(invoice.paymentInfo.balance)%>
-        <%paid += parseFloat(invoice.paymentInfo.paid)%>
-        <%total += parseFloat(invoice.paymentInfo.total)%>
+        <% var rate = invoice.currency.rate || 1 %>
+        <%balance += parseFloat(invoice.paymentInfo.balance)/rate %>
+        <%paid += parseFloat(invoice.paymentInfo.paid)/rate %>
+        <%total += parseFloat(invoice.paymentInfo.total)/rate %>
         </tr>
         <% }) %>
 
