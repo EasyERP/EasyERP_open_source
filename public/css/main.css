@@ -9241,6 +9241,7 @@ textarea#editInput {
   background-color: #303031;
   position: absolute;
   width: 60%;
+  min-width: 230px;
   top: calc(100% - 1px);
   right: 0;
   z-index: 500;
@@ -9291,6 +9292,7 @@ textarea#editInput {
   position: absolute;
   z-index: 10;
   width: calc(100% - 52px);
+  min-width: 178px;
   background-color: #303031;
   border: 1px solid #7f7f80;
   right: 0;
