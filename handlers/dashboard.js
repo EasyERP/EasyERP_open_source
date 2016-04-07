@@ -119,7 +119,11 @@ var wTrack = function (models) {
                         isEmployee: true
                     }, {
                         $or: [{
-                            lastFire: null
+                            lastFire: null,
+                            lastHire: {
+                                $ne : null,
+                                $lte: endDate
+                            }
                         }, {
                             lastFire: {
                                 $ne : null,
@@ -148,8 +152,10 @@ var wTrack = function (models) {
                     }]
                 }],
                 department: departmentQuery
-            }]
-        };
+            }
+            ]
+        }
+        ;
 
         if (filter && filter.name) {
             employeesArray = filter.name.value;
