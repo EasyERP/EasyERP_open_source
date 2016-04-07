@@ -30,6 +30,14 @@ var Invoice = function (models, event) {
     var JournalEntryHandler = require('./journalEntry');
     var _journalEntryHandler = new JournalEntryHandler(models);
 
+    oxr.set({app_id: process.env.OXR_APP_ID});
+
+    function checkDb(db) {
+        var validDbs = ["weTrack", "production", "development", "maxdb"];
+
+        return validDbs.indexOf(db) !== -1;
+    }
+
     function journalEntryComposer(invoice, dbIndex, waterfallCb, uId) {
         var journalEntryBody = {};
         var beforeInvoiceBody = {};

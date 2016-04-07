@@ -19,7 +19,9 @@ var Proforma = function (models) {
     var JournalEntryHandler = require('./journalEntry');
     var _journalEntryHandler = new JournalEntryHandler(models);
 
-    this.create = function (req, res, next) {
+	oxr.set({app_id: process.env.OXR_APP_ID});
+
+	this.create = function (req, res, next) {
         var dbIndex = req.session.lastDb;
         var id = req.body.quotationId;
         var Proforma = models.get(dbIndex, 'Proforma', ProformaSchema);
