@@ -100,29 +100,14 @@ define([
                 return !!edited.length;
             },
 
-            setAllTotalVals: function () {      // added method for choosing auto-calculating fields
-                this.getAutoCalcField('total');
-                this.getAutoCalcField('totalPaidAmount');
-            },
+            recalcTotal: function () {
+                var amount = 0;
 
-            getAutoCalcField: function (idTotal) { // added method for auto-calculating field if row checked
-                var footerRow = this.$el.find('#listTotal');
-
-                var checkboxes = this.$el.find('#listTable :checked');
-                var totalTd = $(footerRow).find('#' + idTotal);
-                var rowTdVal = 0;
-                var row;
-                var rowTd;
-
-                $(checkboxes).each(function (index, element) {
-                    row = $(element).closest('tr');
-                    rowTd = row.find('.' + idTotal + '');
-                    var currentText = rowTd.text().split(' ').join('');
-                    rowTdVal += parseFloat(currentText || 0) * 100;
+                _.each(this.collection.toJSON(), function (model) {
+                    amount += parseFloat(model.paidAmount);
                 });
 
-
-                totalTd.text(helpers.currencySplitter((rowTdVal/100).toFixed(2) ));
+                this.$el.find('#totalPaidAmount').text(helpers.currencySplitter(amount.toFixed(2)));
             },
 
             deleteItems: function () {
@@ -483,6 +468,8 @@ define([
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
                 }).render());
+
+                this.recalcTotal();
 
                 this.renderCheckboxes();
 
