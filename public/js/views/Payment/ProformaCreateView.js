@@ -16,21 +16,24 @@ define([
     "common",
     "populate",
     'dataService',
-    'constants'], function (Backbone,
-                            $,
-                            _,
-                            CreateTemplate,
-                            PersonCollection,
-                            DepartmentCollection,
-                            invoiceCollection,
-                            paymentCollection,
-                            PaymentView,
-                            /*invoiceView, */
-                            PaymentModel,
-                            common,
-                            populate,
-                            dataService,
-                            constants) {
+    'constants',
+    'helpers/keyValidator'
+], function (Backbone,
+             $,
+             _,
+             CreateTemplate,
+             PersonCollection,
+             DepartmentCollection,
+             invoiceCollection,
+             paymentCollection,
+             PaymentView,
+             /*invoiceView, */
+             PaymentModel,
+             common,
+             populate,
+             dataService,
+             constants,
+             keyValidator) {
     var CreateView = Backbone.View.extend({
         el         : "#paymentHolder",
         contentType: "Payment",
@@ -63,7 +66,7 @@ define([
         },
 
         events: {
-            'keydown'                                          : 'keydownHandler',
+            'keypress'                                          : 'keypressHandler',
             "click .current-selected"                          : "showNewSelect",
             "click"                                            : "hideNewSelect",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
@@ -137,14 +140,8 @@ define([
             this.changePaidAmount();
         },
 
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
+        keypressHandler: function (e) {
+            return keyValidator(e, true);
         },
 
         hideDialog: function () {
