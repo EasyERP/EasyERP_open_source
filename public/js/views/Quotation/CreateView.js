@@ -191,7 +191,7 @@ define([
                         productId = targetEl.data('id');
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
-                            price = helpers.spaceReplacer(targetEl.find('[data-name="price"]').text());
+                            price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
                             /*scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();*/
                             taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                             description = targetEl.find('[data-name="productDescr"]').text();

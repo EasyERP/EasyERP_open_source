@@ -44,7 +44,8 @@ define([
             },
 
             events: {
-                "click  .list td:not(.notForm, .validated)": "goToEditDialog",
+               // "click .stageSelect"                       : "showNewSelect",
+                "click  .list tbody td:not(.notForm, .validated)": "goToEditDialog",
                 "click .newSelectList li"                  : "chooseOption",
                 "click .selectList"                        : "showSelects"
             },
@@ -136,6 +137,20 @@ define([
 
             },
 
+           /* showNewSelect: function (e) {
+                if ($(".newSelectList").is(":visible")) {
+                    this.hideNewSelect();
+                    return false;
+                } else {
+                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
+                    return false;
+                }
+            },
+
+            hideNewSelect: function (e) {
+                $(".newSelectList").remove();
+            },*/
+
             render: function () {
                 var self;
                 var $currentEl;
@@ -147,11 +162,11 @@ define([
 
                 $currentEl.html('');
 
-                if (!App || !App.currentDb) {
+                /*if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
-                            App.weTrack = true;
+                            App.weTrack = response === "weTrack" || response === "production" || response === "development";
                         }
 
                         currentEllistRenderer(self);
@@ -160,7 +175,8 @@ define([
                 } else {
                     currentEllistRenderer(self);
                     //$currentEl.append(itemView.render());
-                }
+                }*/
+                currentEllistRenderer(self);
 
                 self.renderCheckboxes();
                 self.renderPagination($currentEl, self);
@@ -179,7 +195,7 @@ define([
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 function currentEllistRenderer(self) {
-                    $currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
+                    $currentEl.append(_.template(listTemplate, {currentDb: true}));
                     var itemView = new listItemView({
                         collection : self.collection,
                         page       : self.page,

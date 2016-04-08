@@ -26,7 +26,14 @@ define([
             this.collection = options.model;
             this.filter = options.filter ? options.filter : {};
 
-            this.render();
+            if (options.activate) {
+                this.render({activeTab: true});
+            } else {
+                this.render();
+            }
+
+            this.eventChannel = options.eventChannel || {};
+
         },
 
         template: _.template(paymentTemplate),
@@ -35,7 +42,7 @@ define([
             "click .checkbox"               : "checked",
             "click #savePayment"            : "saveItem",
             "click #removePayment"          : "deleteItems",
-            "click td:not(.checkbox)"       : "goToEditDialog"
+            "click tbody td:not(.checkbox)" : "goToEditDialog"
         },
 
         goToEditDialog: function (e) {
@@ -56,7 +63,10 @@ define([
             listTableCheckedInput = $('#paymentsTable').find("input:not('#check_all_payments'):checked");
 
             this.collectionLength = this.collection.length;
-            async.each(listTableCheckedInput, function (checkbox, cb) {
+
+            App.startPreload();
+
+            async.eachSeries(listTableCheckedInput, function (checkbox, cb) {
                 model = that.collection.get(checkbox.value);
                 model.destroy({
                     wait   : true,
@@ -75,7 +85,7 @@ define([
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: "You do not have permission to perform this action"
                             });
                         }
@@ -83,6 +93,8 @@ define([
                         cb();
                     }
                 });
+            }, function (err) {
+                that.eventChannel.trigger('paymentRemoved');
             });
         },
 
@@ -94,7 +106,7 @@ define([
 
             async.forEach(collection, function (model, cb) {
                 totalPaidAmount += parseFloat(model.paidAmount);
-                total += parseFloat(model.paidAmount) + parseFloat(model.differenceAmount);
+                total += parseFloat(model.paidAmount/model.currency.rate) + parseFloat(model.differenceAmount);
 
                 cb();
             }, function () {
@@ -247,12 +259,19 @@ define([
         checked: function (e) {
             e.stopPropagation();
 
-            if (this.collection.length > 0) {
-                var el = this.$el;
-                var checkLength = el.find("input.checkbox:checked").length;
-                var checkAll$ = el.find('#check_all_payments');
-                var removeBtnEl = $('#removePayment');
+            var el = this.$el;
+            var $targetEl = $(e.target);
+            var checkLength = el.find("input.checkbox:checked").length;
+            var checkAll$ = el.find('#check_all_payments');
+            var removeBtnEl = $('#removePayment');
 
+            if ($targetEl.hasClass('notRemovable')) {
+                $targetEl.prop('checked', false);
+
+                return false;
+            }
+
+            if (this.collection.length > 0) {
                 if (checkLength > 0) {
                     checkAll$.prop('checked', false);
 
@@ -342,7 +361,7 @@ define([
             this.$el.find("#removePayment").hide();
 
             $('#check_all_payments').click(function () {
-                self.$el.find(':checkbox').prop('checked', this.checked);
+                self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);
                 if (self.$el.find("input.checkbox:checked").length > 0) {
                     self.$el.find("#removePayment").show();
                 } else {

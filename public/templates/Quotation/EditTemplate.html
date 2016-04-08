@@ -8,6 +8,9 @@
                     <li><a href="javascript:;">Assignees</a></li>
                     <li class="right">
                         <%if(model.workflow && model.workflow.name !== 'Canceled'){%>
+                        <button class="createProforma">
+                            <span>Create Proforma</span>
+                        </button>
                         <button class="confirmOrder">
                             <span>Confirm Order</span>
                         </button>

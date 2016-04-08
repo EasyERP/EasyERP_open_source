@@ -15,13 +15,33 @@ define([
     "models/PaymentModel",
     "common",
     "populate",
-    'constants'], function (Backbone, $, _, CreateTemplate, PersonCollection, DepartmentCollection, invoiceCollection, paymentCollection, PaymentView, /*invoiceView, */PaymentModel, common, populate, constants) {
+    'dataService',
+    'constants',
+    'helpers/keyValidator'], function (Backbone,
+                                       $,
+                                       _,
+                                       CreateTemplate,
+                                       PersonCollection,
+                                       DepartmentCollection,
+                                       invoiceCollection,
+                                       paymentCollection,
+                                       PaymentView,
+                                       /*invoiceView, */
+                                       PaymentModel,
+                                       common,
+                                       populate,
+                                       dataService,
+                                       constants,
+                                       keyValidator) {
     var CreateView = Backbone.View.extend({
         el         : "#paymentHolder",
         contentType: "Payment",
         template   : _.template(CreateTemplate),
 
         initialize: function (options) {
+
+            this.eventChannel = options.eventChannel || {};
+
             if (options) {
                 this.invoiceModel = options.model;
                 this.totalAmount = this.invoiceModel.get('paymentInfo').balance || 0;
@@ -36,17 +56,19 @@ define([
             this.redirect = options.redirect;
             this.collection = options.collection;
 
+            this.currency = options.currency || {};
+            this.changePaidAmount = _.debounce(this.changePaidAmount, 500);
 
             this.render();
         },
 
         events: {
-            'keydown'                                          : 'keydownHandler',
+            'keypress'                                          : 'keypressHandler',
             "click .current-selected"                          : "showNewSelect",
             "click"                                            : "hideNewSelect",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .newSelectList li.miniStylePagination"      : "notHide",
-            "change #paidAmount"                               : "changePaidAmount",
+            "keyup #paidAmount"                                : "changePaidAmount",
 
             "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
             "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
@@ -61,26 +83,39 @@ define([
         },
 
         changePaidAmount: function (e) {
-            var targetEl = $(e.target);
-            var changedValue = targetEl.val();
+            var self = this;
+            var targetEl = $('#paidAmount');
+            var changedValue = $.trim(targetEl.val());
+            var currency = $.trim(this.$el.find('#currencyDd').text());
             var differenceAmountContainer = this.$el.find('#differenceAmountContainer');
             var differenceAmount = differenceAmountContainer.find('#differenceAmount');
             var totalAmount = parseFloat(this.totalAmount);
-            var difference;
+            var date = $('#paymentDate').val();
+            var data = {};
 
             changedValue = parseFloat(changedValue);
-            difference = totalAmount - changedValue;
 
-            if (changedValue < totalAmount) {
-                differenceAmount.text(difference.toFixed(2));
-                this.differenceAmount = difference;
+            data.totalAmount = totalAmount;
+            data.paymentAmount = changedValue;
+            data.invoiceCurrency = this.currency.name;
+            data.paymentCurrency = currency;
+            data.date = date;
 
-                return differenceAmountContainer.removeClass('hidden');
-            }
+            dataService.getData(constants.URLS.PAYMENT_AMOUNT_LEFT, data,
+                function(res, self) {
+                    if (res.difference) {
+                        differenceAmount.text(res.difference.toFixed(2));
+                        self.differenceAmount = res.difference;
 
-            if (!differenceAmountContainer.hasClass('hidden')) {
-                return differenceAmountContainer.addClass('hidden');
-            }
+                        return differenceAmountContainer.removeClass('hidden');
+                    }
+
+                    if (!differenceAmountContainer.hasClass('hidden')) {
+                        return differenceAmountContainer.addClass('hidden');
+                    }
+                }, self);
+
+            App.stopPreload();
         },
 
         showNewSelect: function (e, prev, next) {
@@ -98,16 +133,12 @@ define([
 
         chooseOption: function (e) {
             $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
+            this.changePaidAmount();
         },
 
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
+        keypressHandler: function (e) {
+            return keyValidator(e, true);
         },
 
         hideDialog: function () {
@@ -130,6 +161,10 @@ define([
             var date = thisEl.find('#paymentDate').val();
             var paymentRef = thisEl.find('#paymentRef').val();
             var period = thisEl.find('#period').attr('data-id');
+            var currency = {
+                _id: thisEl.find('#currencyDd').attr('data-id'),
+                name: $.trim(thisEl.find('#currencyDd').text())
+            };
 
             paymentMethod = paymentMethod || null;
             period = period || null;
@@ -144,6 +179,7 @@ define([
                 period          : period,
                 paymentRef      : paymentRef,
                 paidAmount      : paidAmount,
+                currency        : currency,
                 differenceAmount: this.differenceAmount
             };
 
@@ -159,62 +195,7 @@ define([
                         self.hideDialog();
 
                         if (self.redirect) {
-                            var _id = window.location.hash.split('form/')[1];
-
-                            var filter = {
-                                'project': {
-                                    key  : 'project._id',
-                                    value: [_id]
-                                }
-                            };
-
-                            self.collection = new invoiceCollection({
-                                count      : 50,
-                                viewType   : 'list',
-                                contentType: 'salesInvoice',
-                                filter     : filter
-                            });
-
-                            function createView() {
-                                var payments = [];
-
-                                //new invoiceView({
-                                //    model: self.collection
-                                //}).render();
-
-                                self.collection.toJSON().forEach(function (element) {
-                                    element.payments.forEach(function (payment) {
-                                        payments.push(payment);
-                                    });
-                                });
-
-                                var filterPayment = {
-                                    'name': {
-                                        key  : '_id',
-                                        value: payments
-                                    }
-                                };
-
-                                self.pCollection = new paymentCollection({
-                                    count      : 50,
-                                    viewType   : 'list',
-                                    contentType: 'customerPayments',
-                                    filter     : filterPayment
-                                });
-
-                                self.pCollection.unbind();
-                                self.pCollection.bind('reset', createPayment);
-
-                                function createPayment() {
-                                    new PaymentView({
-                                        model: self.pCollection
-                                    }).render({activeTab: true});
-                                }
-
-                            };
-
-                            self.collection.unbind();
-                            self.collection.bind('reset', createView);
+                            self.eventChannel.trigger('newPayment');
                         } else {
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
@@ -235,7 +216,10 @@ define([
         render: function () {
             var self = this;
             var model = this.invoiceModel.toJSON();
-            var htmBody = this.template({invoice: model});
+            var htmBody = this.template({
+                invoice : model,
+                currency: self.currency
+            });
 
             this.$el = $(htmBody).dialog({
                 closeOnEscape: false,
@@ -263,12 +247,16 @@ define([
             populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
             populate.get("#period", "/period", {}, 'name', this, true, true);
             populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true);
+            populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
 
             this.$el.find('#paymentDate').datepicker({
                 dateFormat : "d M, yy",
                 changeMonth: true,
                 changeYear : true,
-                maxDate    : 0
+                maxDate    : 0,
+                onSelect   : function () {
+                    self.changePaidAmount();
+                    }
             }).datepicker('setDate', new Date())
                 .datepicker('option', 'minDate', model.invoiceDate);
 

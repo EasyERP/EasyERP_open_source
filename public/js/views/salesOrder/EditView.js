@@ -33,6 +33,7 @@ define([
                 this.onlyView = !!options.onlyView;
 
                 this.projectManager = options.projectManager;
+                this.eventChannel = options.eventChannel || {};
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
@@ -118,14 +119,14 @@ define([
                     var redirectUrl = window.location.hash;//self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                     if (workflow && workflow.error) {
-                        return  App.render({
-                            type: 'error',
+                        return App.render({
+                            type   : 'error',
                             message: workflow.error.statusText
                         });
                     }
 
                     self.currentModel.save({
-                        workflow : workflow._id
+                        workflow: workflow._id
                     }, {
                         headers: {
                             mid: 57
@@ -149,7 +150,8 @@ define([
                 var data = {
                     forSales: this.forSales,
                     orderId : orderId,
-                    currency: this.currentModel.currency
+                    currency: this.currentModel.currency,
+                    journal : CONSTANTS.INVOICE_JOURNAL
                 };
 
                 this.saveItem(function (err) {
@@ -160,7 +162,7 @@ define([
 
                             if (err) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: 'Can\'t receive invoice'
                                 });
                             } else {
@@ -193,8 +195,9 @@ define([
                                     function createView() {
 
                                         this.invoiceView = new InvoiceView({
-                                            model    : self.collection,
-                                            activeTab: true
+                                            model       : self.collection,
+                                            activeTab   : true,
+                                            eventChannel: self.eventChannel
                                         });
 
                                         this.invoiceView.showDialog(orderId);
@@ -223,8 +226,8 @@ define([
                     var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
 
                     if (workflow && workflow.error) {
-                        return  App.render({
-                            type: 'error',
+                        return App.render({
+                            type   : 'error',
                             message: workflow.error.statusText
                         });
                     }
@@ -345,7 +348,8 @@ define([
                     invoiceControl   : invoiceControl ? invoiceControl : null,
                     paymentTerm      : paymentTerm ? paymentTerm : null,
                     fiscalPosition   : fiscalPosition ? fiscalPosition : null,
-                    //project          : project,
+                    project          : project,
+                    //
                     paymentInfo      : {
                         total  : total,
                         unTaxed: unTaxed,
@@ -388,7 +392,7 @@ define([
 
                 } else {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: CONSTANTS.RESPONSES.CREATE_QUOTATION
                     });
                 }
@@ -423,7 +427,7 @@ define([
                         error  : function (model, err) {
                             if (err.status === 403) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }
@@ -516,7 +520,8 @@ define([
                 this.$el.find('#orderDate').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear : true
+                    changeYear : true,
+                    maxDate    : 0
                 });
 
                 productItemContainer = this.$el.find('#productItemsHolder');
