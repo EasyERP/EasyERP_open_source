@@ -459,11 +459,11 @@ var wTrack = function (models) {
                     lastHire         : 1/*,
                     _lastTransferDate: {$add: [{$multiply: [{$year: '$lastTransferDate'}, 100]}, {$week: '$lastTransferDate'}]}*/
                 }
-            }, {
+            }, /*{
                 $match: {
                     _lastTransferDate: {$gte: startDate}
                 }
-            }, {
+            },*/ {
                 $project: {
                     department       : '$_id.department',
                     isEmployee       : '$_id.isEmployee',
