@@ -1626,6 +1626,7 @@ var Invoice = function (models, event) {
                                     ammount    : {$divide: ['$paymentInfo.total', 100]},
                                     paid       : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]},
                                     balance    : {$divide: ['$paymentInfo.balance', 100]},
+                                    currency   : 1,
                                     _type      : 1
                                 }
                             }, {
@@ -1637,6 +1638,7 @@ var Invoice = function (models, event) {
                                     paymentInfo: 1,
                                     status     : '$status.name',
                                     ammount    : 1,
+                                    currency   : 1,
                                     paid       : 1,
                                     balance    : 1
                                 }
@@ -1648,6 +1650,7 @@ var Invoice = function (models, event) {
                                             _id        : '$_id',
                                             name       : '$name',
                                             status     : '$status',
+                                            currency   : '$currency',
                                             paymentInfo: {
                                                 ammount: '$ammount',
                                                 paid   : '$paid',
@@ -1655,9 +1658,9 @@ var Invoice = function (models, event) {
                                             }
                                         }
                                     },
-                                    ammount : {$sum: '$ammount'},
-                                    paid    : {$sum: '$paid'},
-                                    balance : {$sum: '$balance'}
+                                    ammount : {$sum: {$divide: ['$ammount', '$currency.rate']}},
+                                    paid    : {$sum: {$divide: ['$paid', '$currency.rate']}},
+                                    balance : {$sum: {$divide: ['$balance', '$currency.rate']}}
                                 }
                             }])
                             .exec(waterfallCallback);

@@ -242,15 +242,15 @@ define([
                     name: $.trim($thisEl.find('#currencyDd').text())
                 };
 
-                var invoiceDate = $thisEl.find("#invoice_date").val();
+                var invoiceDate = $thisEl.find("#invoice_date").val() || $thisEl.find('#inv_date').text();
                 var dueDate = $thisEl.find("#due_date").val();
 
                 var supplier = $thisEl.find('#supplier').attr("data-id");
 
-                var total = parseFloat($thisEl.find("#totalAmount").text()) * 100;
-                var unTaxed = parseFloat($thisEl.find("#totalUntaxes").text()) * 100;
-                var balance = parseFloat($thisEl.find("#balance").text()) * 100;
-                var taxes = parseFloat($thisEl.find("#taxes").text()) * 100;
+                var total = parseFloat(helpers.spaceReplacer($thisEl.find("#totalAmount").text())) * 100;
+                var unTaxed = parseFloat(helpers.spaceReplacer($thisEl.find("#totalUntaxes").text())) * 100;
+                var balance = parseFloat(helpers.spaceReplacer($thisEl.find("#balance").text())) * 100;
+                var taxes = parseFloat(helpers.spaceReplacer($thisEl.find("#taxes").text())) * 100;
 
                 var payments = {
                     total  : total,
@@ -526,20 +526,38 @@ define([
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
                 populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
-                this.$el.find('#invoice_date').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    maxDate    : 0,
-                    onSelect   : function () {
-                        var dueDatePicker = $('#due_date');
-                        var endDate = $(this).datepicker('getDate');
+                if (this.currentModel.toJSON().workflow.name !== 'New') {
+                    this.$el.find('#invoice_date').datepicker({
+                        dateFormat : "d M, yy",
+                        changeMonth: true,
+                        changeYear : true,
+                        disabled   : true,
+                        maxDate    : 0,
+                        onSelect   : function () {
+                            var dueDatePicker = $('#due_date');
+                            var endDate = $(this).datepicker('getDate');
 
-                        endDate.setDate(endDate.getDate());
+                            endDate.setDate(endDate.getDate());
 
-                        dueDatePicker.datepicker('option', 'minDate', endDate);
-                    }
-                });
+                            dueDatePicker.datepicker('option', 'minDate', endDate);
+                        }
+                    });
+                } else {
+                    this.$el.find('#invoice_date').datepicker({
+                        dateFormat : "d M, yy",
+                        changeMonth: true,
+                        changeYear : true,
+                        maxDate    : 0,
+                        onSelect   : function () {
+                            var dueDatePicker = $('#due_date');
+                            var endDate = $(this).datepicker('getDate');
+
+                            endDate.setDate(endDate.getDate());
+
+                            dueDatePicker.datepicker('option', 'minDate', endDate);
+                        }
+                    });
+                }
 
                 this.$el.find('#due_date').datepicker({
                     defaultValue: invoiceDate,

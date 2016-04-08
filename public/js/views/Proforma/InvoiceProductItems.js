@@ -293,7 +293,7 @@ define([
                     cost = $currentEl.find('[data-name="price"] input').val() || '0';
                     quantity = this.quantityRetriver($currentEl);
                     cost = helpers.spaceReplacer(cost);
-                    totalUntax += parseInt(cost);
+                    totalUntax += parseFloat(cost);
                     date = $currentEl.find('.datepicker').text();
                     dates.push(date);
                 }
@@ -315,7 +315,7 @@ define([
 
             totalContainer.text(helpers.currencySplitter(total));
 
-            balanceContainer.text(balance);
+            balanceContainer.text(helpers.currencySplitter(balance));
 
             date = helpers.minFromDates(dates);
             thisEl.find('#minScheduleDate span').text(date);

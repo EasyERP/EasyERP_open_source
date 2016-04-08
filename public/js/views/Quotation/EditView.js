@@ -244,7 +244,8 @@ define([
                 journal    : CONSTANTS.PROFORMA_JOURNAL
             };
 
-            this.saveItem(function (err) {
+            this.saveItem(function (err, res) {
+                var id = res.id;
                 if (!err) {
 
                     dataService.postData(url, data, function (err, response) {
@@ -259,7 +260,7 @@ define([
 
                             App.projectInfo.currentTab = 'proforma';
 
-                            self.eventChannel.trigger('newProforma', quotationId);
+                            self.eventChannel.trigger('newProforma', response._id);
 
                             tr = $('[data-id=' + quotationId + ']');
                             tr.find('.checkbox').addClass('notRemovable');
@@ -462,7 +463,7 @@ define([
                         mid: mid
                     },
                     wait   : true,
-                    success: function () {
+                    success: function (res) {
                         var url = window.location.hash;
 
                         if (url === '#easyErp/salesQuotation/list') {
@@ -474,7 +475,7 @@ define([
                         }
 
                         if (proformaCb && typeof proformaCb === 'function') {
-                            return proformaCb(null);
+                            return proformaCb(null, res);
                         }
 
                         self.eventChannel.trigger('quotationUpdated');
@@ -644,6 +645,8 @@ define([
 
                 }
             }
+
+            App.stopPreload();
 
             return this;
         }

@@ -232,7 +232,9 @@ var Proforma = function (models) {
 
             body.amount = amount;
 
-            _journalEntryHandler.create(body, req.session.lastDb, callback, req.session.uId);
+            _journalEntryHandler.create(body, req.session.lastDb, function() {}, req.session.uId);
+
+	        callback(null, proforma);
         }
 
 		parallelTasks = [findQuotation, fetchFirstWorkflow, getRates];

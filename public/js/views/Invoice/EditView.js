@@ -530,20 +530,40 @@ define([
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
                 populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
-                this.$el.find('#invoice_date').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    maxDate    : 0,
-                    onSelect   : function () {
-                        var dueDatePicker = $('#due_date');
-                        var endDate = $(this).datepicker('getDate');
 
-                        endDate.setDate(endDate.getDate());
 
-                        dueDatePicker.datepicker('option', 'minDate', endDate);
-                    }
-                });
+                if (this.currentModel.toJSON().workflow.name !== 'New') {
+                    this.$el.find('#invoice_date').datepicker({
+                        dateFormat : "d M, yy",
+                        changeMonth: true,
+                        changeYear : true,
+                        disabled   : true,
+                        maxDate    : 0,
+                        onSelect   : function () {
+                            var dueDatePicker = $('#due_date');
+                            var endDate = $(this).datepicker('getDate');
+
+                            endDate.setDate(endDate.getDate());
+
+                            dueDatePicker.datepicker('option', 'minDate', endDate);
+                        }
+                    });
+                } else {
+                    this.$el.find('#invoice_date').datepicker({
+                        dateFormat : "d M, yy",
+                        changeMonth: true,
+                        changeYear : true,
+                        maxDate    : 0,
+                        onSelect   : function () {
+                            var dueDatePicker = $('#due_date');
+                            var endDate = $(this).datepicker('getDate');
+
+                            endDate.setDate(endDate.getDate());
+
+                            dueDatePicker.datepicker('option', 'minDate', endDate);
+                        }
+                    });
+                }
 
                 this.$el.find('#due_date').datepicker({
                     defaultValue: invoiceDate,
