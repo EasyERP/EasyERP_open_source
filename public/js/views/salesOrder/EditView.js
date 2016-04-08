@@ -520,7 +520,8 @@ define([
                 this.$el.find('#orderDate').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear : true
+                    changeYear : true,
+                    maxDate    : 0
                 });
 
                 productItemContainer = this.$el.find('#productItemsHolder');
