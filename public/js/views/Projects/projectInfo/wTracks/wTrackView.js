@@ -49,7 +49,7 @@ define([
             this.filter = options.filter ? options.filter : {};
             this.project = options.project ? options.project : {};
 
-            this.startNumber = options.startNumber;
+            this.startNumber = options.startNumber || 1;
 
             if (this.startNumber < 100) {
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
