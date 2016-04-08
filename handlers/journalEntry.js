@@ -118,7 +118,10 @@ var Module = function (models) {
                 rates = oxr.rates;
                 currency.rate = rates[currency.name];
 
-                body.currency = currency;
+                if (!body.currency.rate){
+                    body.currency = currency;
+                }
+
                 body.journal = journal._id;
 
                 debitObject = _.extend({}, body);
@@ -241,7 +244,7 @@ var Module = function (models) {
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
 
         Model
-            .update(query, {$set: {date: new Date(date)}}, callback);
+            .update(query, {$set: {date: new Date(date)}}, {multi: true}, callback);
     };
 };
 

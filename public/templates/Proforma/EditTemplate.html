@@ -287,23 +287,6 @@
                                                 <a id="force_period" href="javascript:;">Select</a>
                                             </dd>
 
-                                            <%if(model.workflow && model.workflow.name === 'Unpaid'){%>
-                                            <dt><label for="journal">Journal</label></dt>
-                                            <dd>
-                                                <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>"
-                                                   class="current-selected" href="javascript:;"><%=model.journal ? model.journal._id
-                                                    : 'Select'%></a>
-                                            </dd>
-                                            <%} else {%>
-
-                                            <dt><label for="journal">Journal</label></dt>
-                                            <dd>
-                                                <a id="journal" data-id="<%=model.journal ? model.journal._id : ''%>" class=""
-                                                   href="javascript:;"><%=model.journal ? model.journal._id : ''%></a>
-                                            </dd>
-
-                                            <%}%>
-
                                             <dt>
                                                 <label for="payment_reference">Payment Reference</label>
                                             </dt>

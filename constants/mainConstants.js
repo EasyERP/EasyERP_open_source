@@ -44,5 +44,10 @@ module.exports = {
     DEF_LIST_COUNT    : 100,
     MAX_COUNT         : 200,
     PARENT_DEV        : '56cebdf6541812c07197358f',
-    SALESDEPARTMENTS  : ['55b92ace21e4b7c40f000014', '55bb1f40cb76ca630b000007']
+    SALESDEPARTMENTS  : ['55b92ace21e4b7c40f000014', '55bb1f40cb76ca630b000007'],
+
+    JOB_FINISHED        : '56337c675d49d8d6537832ea',
+    FINISHED_JOB_JOURNAL: '56ebb636b2a906141f194fa5',
+
+    CLOSED_JOB: '56f2a96f58dfeeac4be1582a'
 };
