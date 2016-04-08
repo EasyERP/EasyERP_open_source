@@ -727,8 +727,8 @@ var Payment = function (models, event) {
 
 			request.query.wId = wId;
 
-			totalToPay = parseFloat(totalToPay);
-			paid = parseFloat(paid);
+			totalToPay = parseFloat(totalToPay).toFixed(2);
+			paid = parseFloat(paid).toFixed(2);
 
 			isNotFullPaid = paid < totalToPay;
 
