@@ -1,5 +1,5 @@
 ﻿define([
-        'text!templates/salesInvoice/list/ListTemplate.html',
+        'text!templates/Proforma/ListTemplate.html',
         'helpers'
     ],
 
@@ -16,7 +16,7 @@
                 var el = (options && options.thisEl) ? options.thisEl : this.$el;
 
                 el.append(_.template(listTemplate, {
-                    invoiceCollection: this.collection.toJSON(),
+                    collection       : this.collection.toJSON(),
                     startNumber      : this.startNumber,
                     currencySplitter : helpers.currencySplitter
                 }));

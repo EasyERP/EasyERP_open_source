@@ -7,7 +7,7 @@ define([
     'text!templates/Projects/projectInfo/proformaTemplate.html',
     'views/Proforma/EditView',
     'views/Proforma/list/ListItemView',
-    'collections/salesInvoice/filterCollection',
+    'collections/Proforma/filterCollection',
     'models/InvoiceModel',
     'common',
     'helpers',

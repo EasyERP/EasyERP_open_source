@@ -369,11 +369,12 @@ define([
                 if (products) {
                     productsContainer = thisEl.find('#productList');
                     productsContainer.prepend(_.template(ProductItemsEditList, {
-                        products  : products,
-                        forSales  : self.forSales,
-                        isPaid    : self.isPaid,
-                        notAddItem: this.notAddItem,
-                        model     : options.model
+                        products        : products,
+                        forSales        : self.forSales,
+                        isPaid          : self.isPaid,
+                        notAddItem      : this.notAddItem,
+                        model           : options.model,
+                        currencySplitter: helpers.currencySplitter
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');

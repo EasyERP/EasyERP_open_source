@@ -792,7 +792,8 @@ var Invoice = function (models, event) {
                                     dueDate         : 1,
                                     payments        : 1,
                                     _type           : 1,
-                                    removable       : 1
+                                    removable       : 1,
+                                    paid            : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
                                 }
                             }, {
                                 $match: optionsObject

@@ -282,7 +282,7 @@ define([
                             price = targetEl.find('[data-name="price"] input').val();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             taxes = targetEl.find('.taxes').text();
-                            amount = targetEl.find('.amount').text();
+                            amount = helpers.spaceReplacer(targetEl.find('.amount').text());
 
                             products.push({
                                 product    : productId,
