@@ -246,7 +246,7 @@ define([
 
             populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
             populate.get("#period", "/period", {}, 'name', this, true, true);
-            populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true);
+            populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true, null, null, 2);
             populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
 
             this.$el.find('#paymentDate').datepicker({
