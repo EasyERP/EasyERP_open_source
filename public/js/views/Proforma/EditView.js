@@ -547,7 +547,7 @@ define([
                         dateFormat : "d M, yy",
                         changeMonth: true,
                         changeYear : true,
-                        minDate    : model.sourceDocument.orderDate,
+                        minDate    : new Date(model.sourceDocument.orderDate),
                         maxDate    : 0,
                         onSelect   : function () {
                             var dueDatePicker = $('#due_date');
