@@ -236,6 +236,13 @@ var Module = function (models) {
         Model
             .remove({'sourceDocument._id': docId}, callback);
     };
+
+    this.changeDate = function (query, date, dbIndex, callback) {
+        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+
+        Model
+            .update(query, {$set: {date: new Date(date)}}, callback);
+    };
 };
 
 module.exports = Module;
