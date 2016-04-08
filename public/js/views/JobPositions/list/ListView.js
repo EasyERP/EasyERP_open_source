@@ -24,7 +24,7 @@ define([
             contentType             : 'JobPositions',//needs in view.prototype.changeLocationHash
 
             events: {
-                "click  .list td:not(.notForm)": "goToEditDialog",
+                "click .list td:not(.notForm)": "goToEditDialog",
                 "click .stageSelect"           : "showNewSelect",
                 "click .newSelectList li"      : "chooseOption"
             },
