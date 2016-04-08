@@ -1,0 +1,33 @@
+<h3>Balance Sheet</h3>
+<div class="vocationFilter">
+    <ul class="dateFilter">
+        <li class="dateRange">
+            <span id="startTime"><%= startDate%></span> - <span id="endTime"><%= endDate%></span>
+            <i class="fa fa-caret-down"></i>
+        </li>
+        <li>
+            <ul class="frameDetail hidden">
+                <li id="thisMonth" class="filterValues checked">This Month</li>
+                <li id="thisYear" class="filterValues checked">This Financial Year</li>
+                <li id="lastMonth" class="filterValues checked">Last Month</li>
+                <li id="lastQuarter" class="filterValues checked">Last Quarter</li>
+                <li id="lastYear" class="filterValues checked">Last Financial Year</li>
+                <li id="custom" class="filterValues checked">Custom Dates</li>
+                <li class="customTime hidden">
+                    <span>
+                        <label for="startDate">From </label><input readonly type="text" id="startDate"><br/>
+                        <label for="endDate">To </label><input readonly type="text" id="endDate">
+                    </span>
+                </li>
+                <li class="buttons">
+                    <button id="updateDate" class="btn">
+                        <span>Update</span>
+                    </button>
+                    <button id="cancelBtn" class="btn">
+                        <span>Cancel</span>
+                    </button>
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>

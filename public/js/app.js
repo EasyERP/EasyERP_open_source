@@ -46,6 +46,14 @@ define([
             }
         });
 
+        App.startPreload = function() {
+            $('#loading').show();
+        };
+
+        App.stopPreload = function() {
+            $('#loading').hide();
+        };
+
         appRouter.checkLogin = Communication.checkLogin;
         Communication.checkLogin(Custom.runApplication);
 

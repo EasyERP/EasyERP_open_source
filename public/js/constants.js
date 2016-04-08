@@ -428,6 +428,20 @@ define([], function () {
                 view   : 'onlyEmployees',
                 backend: 'onlyEmployees'
             }
+        },
+        "journalEntry"  : {
+            "Journal"       : {
+                view   : 'journalName',
+                backend: 'journal.name'
+            },
+            "Subject"       : {
+                view   : 'sourceDocument',
+                backend: 'sourceDocument.subject._id'
+            },
+            "Credit Account": {
+                view   : 'creditAccount',
+                backend: 'journal.creditAccount._id'
+            }
         }
     };
 
@@ -481,6 +495,11 @@ define([], function () {
         JOURNALENTRY      : "journalEntry",
         INVOICECHARTS     : "invoiceCharts",
         SALARYREPORT      : "salaryReport",
+        TRIALBALANCE      : "trialBalance",
+        PROFITANDLOSS     : "profitAndLoss",
+        BALANCESHEET      : 'balanceSheet',
+        CASHFLOW          : 'cashFlow',
+        CLOSEMONTH        : 'closeMonth',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',

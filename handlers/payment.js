@@ -503,13 +503,15 @@ var Payment = function (models, event) {
 
 		paid = paid * mulParram;
 
-		Payroll.findByIdAndUpdate(id, {
-			$inc: {
-				diff: paid,
-				paid: paid
-			}
-		}, cb);
-	}
+        Payroll.findByIdAndUpdate(id, {
+            $inc: {
+                diff: -paid,
+                paid: paid
+            }
+        }, function (err, result) {
+            cb(err, result);
+        });
+    }
 
 	this.salaryPayOut = function (req, res, next) {
 		var db = req.session.lastDb;
@@ -531,9 +533,9 @@ var Payment = function (models, event) {
 						var supplierObject = _payment.supplier;
 						var productObject = {};
 
-						productObject.product = _payment.paymentRef;
-						productObject.paid = _payment.paidAmount;
-						productObject.diff = _payment.diff;
+                        productObject.product = _payment.paymentRef;
+                        productObject.paid = _payment.paidAmount;
+                        productObject.diff = _payment.differenceAmount;
 
 						supplierObject.paidAmount = _payment.paidAmount;
 						supplierObject.differenceAmount = _payment.differenceAmount;
@@ -542,8 +544,8 @@ var Payment = function (models, event) {
 						suppliers.push(supplierObject);
 						products.push(productObject);
 
-						return true;
-					})
+                        return true;
+                    });
 
 					resultObject.suppliers = suppliers;
 					resultObject.products = products;
@@ -584,13 +586,29 @@ var Payment = function (models, event) {
 					});
 				};
 
-				var updatePayRolls = function (params, cb) {
-					async.each(body, function (_payment, eachCb) {
-						payrollExpensUpdater(db, _payment, 1, eachCb);
-					}, function (err) {
-						if (err) {
-							return cb(err);
-						}
+                var updatePayRolls = function (params, cb) {
+                    async.each(body, function (_payment, eachCb) {
+                        payrollExpensUpdater(db, _payment, 1, eachCb);
+
+                        var bodySalary = {
+                            currency: MAIN_CONSTANTS.CURRENCY_USD,
+                            journal: MAIN_CONSTANTS.SALARY_PAYMENT_JOURNAL,
+                           // date: _payment.date,
+                            date: '2014-8-31',
+                            sourceDocument: {
+                                model: 'salaryPayment',
+                                _id: _payment.supplier._id
+                            },
+                            amount: _payment.paidAmount * 100
+                        };
+
+                        _journalEntryHandler.createReconciled(bodySalary, req.session.lastDb, function () {
+
+                        }, req.session.uId)
+                    }, function (err) {
+                        if (err) {
+                            return cb(err);
+                        }
 
 						cb(null, 'Done');
 					})
@@ -788,9 +806,28 @@ var Payment = function (models, event) {
 			});
 		}
 
-		function updateWtrack(invoice, payment, waterfallCallback) {
-			var paid = payment.paidAmount || 0;
-			var wTrackIds = _.pluck(invoice.products, 'product');
+        function createJournalEntry(invoice, payment, waterfallCallback) {
+            var paymentBody = {
+                journal       : MAIN_CONSTANTS.PAYMENT_JOURNAL,
+                currency      : MAIN_CONSTANTS.CURRENCY_USD,
+                date          : payment.date,
+                sourceDocument: {
+                    model: 'Payment',
+                    _id  : payment._id
+                },
+                amount        : payment.paidAmount
+            };
+
+            _journalEntryHandler.createReconciled(paymentBody, req.session.lastDb, function () {
+
+            }, req.session.uId);
+
+            waterfallCallback(null, invoice, payment);
+        }
+
+        function updateWtrack(invoice, payment, waterfallCallback) {
+            var paid = payment.paidAmount || 0;
+            var wTrackIds = _.pluck(invoice.products, 'product');
 
 			function updateWtrack(id, cb) {
 				var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -867,7 +904,7 @@ var Payment = function (models, event) {
 			});
 		}
 
-		waterfallTasks = [getRates, fetchInvoice, savePayment, invoiceUpdater];
+		waterfallTasks = [getRates, fetchInvoice, savePayment, invoiceUpdater, createJournalEntry];
 
 		if (isForSale) { // todo added condition for purchase payment
 			waterfallTasks.push(updateWtrack);
@@ -1261,7 +1298,12 @@ var Payment = function (models, event) {
 							fx.rates = oxr.rates;
 							fx.base = oxr.base;
 
+							_journalEntryHandler.removeByDocId(id, req.session.lastDb, function () {
+
+							});
+
 							invoiceId = removed ? removed.get('invoice') : null;
+							paid = removed ? removed.get('paidAmount') : 0;
 
 							if (invoiceId && (removed && removed._type !== 'salaryPayment')) {
 
@@ -1389,12 +1431,13 @@ var Payment = function (models, event) {
 										return next(err);
 									}
 
-									async.each(invoice.products, function (_payment, eachCb) {
-										payrollExpensUpdater(db, _payment, -1, eachCb);
-									}, function (err) {
-										if (err) {
-											return next(err);
-										}
+                            async.each(invoice.products, function (_payment, eachCb) {
+                                payrollExpensUpdater(db, _payment, -1, eachCb);
+                                _journalEntryHandler.removeByDocId({"sourceDocument.model": 'salaryPayment', "sourceDocument._id" : _payment}, req.session.lastDb, function () {});
+                            }, function (err) {
+                                if (err) {
+                                    return next(err);
+                                }
 
 										res.status(200).send({success: 'Done'});
 										composeExpensesAndCache(req);

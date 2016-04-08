@@ -2,18 +2,18 @@
  * Created by liliy on 20.01.2016.
  */
 define([
-        "Backbone",
         "jQuery",
         "Underscore",
         'views/listViewBase',
         "text!templates/jobsDashboard/DashboardHeader.html",
-        "text!templates/jobsDashboard/DashboardTemplate.html",
         'collections/Jobs/filterCollection',
         'views/Filter/FilterView',
         'views/jobsDashboard/list/ListItemView',
+        'views/Projects/projectInfo/journalEntriesForJob/dialogView',
         "constants"
     ],
-    function (Backbone, $, _, listViewBase, DashboardHeader, DashboardTemplate, JobsCollection, FilterView, ListItemView, CONSTANTS) {
+    function ($, _, listViewBase, DashboardHeader, JobsCollection, FilterView, ListItemView, ReportView, CONSTANTS) {
+        'use strict';
         var ContentView = listViewBase.extend({
             page                    : null,
             sort                    : null,
@@ -25,12 +25,16 @@ define([
             contentCollection       : JobsCollection,
             filterView              : FilterView,
 
+            events: {
+                'click .jobs': "showReport"
+            },
+
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
-                this.filter = options.filter ? options.filter : {};
-                this.sort = options.sort ? options.sort : {};
+                this.filter = options.filter || {};
+                this.sort = options.sort || {};
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.deleteCounter = 0;
@@ -39,6 +43,14 @@ define([
                 this.render();
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+            },
+
+            showReport: function (e) {
+                var el = $(e.target);
+                var id = el.attr('data-id');
+
+                new ReportView({_id: id});
+
             },
 
             render: function () {

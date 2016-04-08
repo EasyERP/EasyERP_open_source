@@ -130,7 +130,12 @@ define([
                     case CONTENT_TYPES.CHARTOFACCOUNT:
                     case CONTENT_TYPES.JOURNAL:
                     case CONTENT_TYPES.JOURNALENTRY:
+                    case CONTENT_TYPES.TRIALBALANCE:
                     case CONTENT_TYPES.SALARYREPORT:
+                    case CONTENT_TYPES.PROFITANDLOSS:
+                    case CONTENT_TYPES.BALANCESHEET:
+                    case CONTENT_TYPES.CASHFLOW:
+                    case CONTENT_TYPES.CLOSEMONTH:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -145,53 +150,58 @@ define([
                 App.currentViewType = "thumbnails";
             }
             return App.currentViewType;
-        }
-
-        if (option && !App.ownContentType) {
-            switch (option.contentType) {
-                case CONTENT_TYPES.DASHBOARD:
-                case CONTENT_TYPES.TASKS:
-                case CONTENT_TYPES.PROFILES:
-                case CONTENT_TYPES.DEPARTMENTS:
-                case CONTENT_TYPES.USERS:
-                case CONTENT_TYPES.JOBPOSITIONS:
-                case CONTENT_TYPES.DEGREES:
-                case CONTENT_TYPES.SOURCEOFAPPLICANTS:
-                case CONTENT_TYPES.LEADS:
-                case CONTENT_TYPES.BIRTHDAYS:
-                case CONTENT_TYPES.LEADSWORKFLOW:
-                case CONTENT_TYPES.MYPROFILE:
-                case CONTENT_TYPES.QUOTATION:
-                case CONTENT_TYPES.ORDER:
-                case CONTENT_TYPES.INVOICE:
-                case CONTENT_TYPES.SUPPLIERPAYMENTS:
-                case CONTENT_TYPES.CUSTOMERPAYMENTS:
-                case CONTENT_TYPES.SALESQUOTATION:
-                case CONTENT_TYPES.SALESORDER:
-                case CONTENT_TYPES.SALESINVOICE:
-                case CONTENT_TYPES.WTRACK:
-                case CONTENT_TYPES.PAYROLLEXPENSES:
-                case CONTENT_TYPES.MONTHHOURS:
-                case CONTENT_TYPES.BONUSTYPE:
-                case CONTENT_TYPES.HOLIDAY:
-                case CONTENT_TYPES.VACATION:
-                case CONTENT_TYPES.CAPACITY:
-                case CONTENT_TYPES.JOBSDASHBOARD:
-                case CONTENT_TYPES.PAYROLLPAYMENTS:
-                case CONTENT_TYPES.INVOICEAGING:
-                case CONTENT_TYPES.CHARTOFACCOUNT:
-                case CONTENT_TYPES.JOURNAL:
-                case CONTENT_TYPES.JOURNALENTRY:
-                case CONTENT_TYPES.SALARYREPORT:
-                    App.currentViewType = 'list';
-                    break;
-                case CONTENT_TYPES.APPLICATIONS:
-                case CONTENT_TYPES.OPPORTUNITIES:
-                    App.currentViewType = "kanban";
-                    break;
-                default:
-                    App.currentViewType = "thumbnails";
-                    break;
+        } else {
+            if (option && !App.ownContentType) {
+                switch (option.contentType) {
+                    case CONTENT_TYPES.DASHBOARD:
+                    case CONTENT_TYPES.TASKS:
+                    case CONTENT_TYPES.PROFILES:
+                    case CONTENT_TYPES.DEPARTMENTS:
+                    case CONTENT_TYPES.USERS:
+                    case CONTENT_TYPES.JOBPOSITIONS:
+                    case CONTENT_TYPES.DEGREES:
+                    case CONTENT_TYPES.SOURCEOFAPPLICANTS:
+                    case CONTENT_TYPES.LEADS:
+                    case CONTENT_TYPES.BIRTHDAYS:
+                    case CONTENT_TYPES.LEADSWORKFLOW:
+                    case CONTENT_TYPES.MYPROFILE:
+                    case CONTENT_TYPES.QUOTATION:
+                    case CONTENT_TYPES.ORDER:
+                    case CONTENT_TYPES.INVOICE:
+                    case CONTENT_TYPES.SUPPLIERPAYMENTS:
+                    case CONTENT_TYPES.CUSTOMERPAYMENTS:
+                    case CONTENT_TYPES.SALESQUOTATION:
+                    case CONTENT_TYPES.SALESORDER:
+                    case CONTENT_TYPES.SALESINVOICE:
+                    case CONTENT_TYPES.WTRACK:
+                    case CONTENT_TYPES.PAYROLLEXPENSES:
+                    case CONTENT_TYPES.MONTHHOURS:
+                    case CONTENT_TYPES.BONUSTYPE:
+                    case CONTENT_TYPES.HOLIDAY:
+                    case CONTENT_TYPES.VACATION:
+                    case CONTENT_TYPES.CAPACITY:
+                    case CONTENT_TYPES.JOBSDASHBOARD:
+                    case CONTENT_TYPES.PAYROLLPAYMENTS:
+                    case CONTENT_TYPES.INVOICEAGING:
+                    case CONTENT_TYPES.CHARTOFACCOUNT:
+                    case CONTENT_TYPES.JOURNAL:
+                    case CONTENT_TYPES.JOURNALENTRY:
+                    case CONTENT_TYPES.TRIALBALANCE:
+                    case CONTENT_TYPES.SALARYREPORT:
+                    case CONTENT_TYPES.PROFITANDLOSS:
+                    case CONTENT_TYPES.BALANCESHEET:
+                    case CONTENT_TYPES.CASHFLOW:
+                    case CONTENT_TYPES.CLOSEMONTH:
+                        App.currentViewType = 'list';
+                        break;
+                    case CONTENT_TYPES.APPLICATIONS:
+                    case CONTENT_TYPES.OPPORTUNITIES:
+                        App.currentViewType = "kanban";
+                        break;
+                    default:
+                        App.currentViewType = "thumbnails";
+                        break;
+                }
             }
         }
 

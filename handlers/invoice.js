@@ -424,6 +424,9 @@ var Invoice = function (models, event) {
                             return cb(err);
                         }
                         project = job.project || null;
+
+                        _journalEntryHandler.checkAndCreateForJob({req: req, jobId: jobs, workflow: CONSTANTS.JOBSFINISHED, wTracks: job.wTracks, date: result.invoiceDate});
+
                         cb();
                     });
 
@@ -1075,6 +1078,8 @@ var Invoice = function (models, event) {
                                     if (err) {
                                         return console.log(err);
                                     }
+
+                                    _journalEntryHandler.checkAndCreateForJob({req: req, jobId: id, workflow: CONSTANTS.JOBSINPROGRESS, wTracks: result.wTracks, date: invoiceDeleted.invoiceDate});
 
                                     project = result ? result.project : null;
                                     array = result ? result.wTracks : [];

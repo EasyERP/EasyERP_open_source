@@ -6,14 +6,24 @@ var PayRoll = function (models) {
     var access = require("../Modules/additions/access.js")(models);
     var PayRollSchema = mongoose.Schemas.PayRoll;
     var EmployeeSchema = mongoose.Schemas.Employees;
+    var journalEntrySchema = mongoose.Schemas.journalEntry;
+    var CONSTANTS = require('../constants/mainConstants.js');
+
     var _ = require('lodash');
 
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
-    var objectId = mongoose.Types.ObjectId;
+    var ObjectId = mongoose.Types.ObjectId;
     var mid = 66;
 
+    var departmentArray = CONSTANTS.NOT_DEV_ARRAY;
+
+    var journalArray = [ObjectId(CONSTANTS.SALARY_PAYABLE), ObjectId(CONSTANTS.OVERTIME_PAYABLE)];
+
     var composeExpensesAndCache = require('../helpers/expenses')(models);
+
+    var JournalEntryHandler = require('./journalEntry');
+    var journalEntry = new JournalEntryHandler(models);
 
     /*function convertType(array, type) {
      var i;
@@ -208,7 +218,7 @@ var PayRoll = function (models) {
                 };
 
                 if (data.type) {
-                    data.type = objectId(data.type);
+                    data.type = ObjectId(data.type);
                 }
 
                 PayRoll.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err) {
@@ -305,7 +315,7 @@ var PayRoll = function (models) {
                     delete data._id;
 
                     if (data.type) {
-                        data.type = objectId(data.type);
+                        data.type = ObjectId(data.type);
                     }
 
                     PayRoll.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
@@ -324,15 +334,64 @@ var PayRoll = function (models) {
         }
     };
 
+    this.getAsyncData = function (req, res, next) {
+        var data = req.query;
+        var dataKey = data.dataKey;
+        var _id = data._id;
+        var sort = {date: -1, "type.name": -1};
+        var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
+        var queryObject = {dataKey: parseInt(dataKey, 10), employee: ObjectId(_id)};
+
+        PayRoll.aggregate([{
+            $match: queryObject
+        }, {
+            $lookup: {
+                from        : "Employees",
+                localField  : "employee",
+                foreignField: "_id", as: "employee"
+            }
+        }, {
+            $lookup: {
+                from        : "journals",
+                localField  : "type",
+                foreignField: "_id", as: "type"
+            }
+        }, {
+            $project: {
+                employee: {$arrayElemAt: ["$employee", 0]},
+                type    : {$arrayElemAt: ["$type", 0]},
+                calc    : 1,
+                paid    : 1,
+                diff    : 1,
+                month   : 1,
+                year    : 1,
+                dataKey : 1,
+                date    : 1
+            }
+        }, {
+            $sort: sort
+        }], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
+    };
+
     function getByDataKey(req, res, next) {
         var id = req.query.id;
         var data = req.query;
         var error;
         var sort = data.sort || {"employee.name": 1};
+        var sortKeys = Object.keys(sort);
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
         var queryObject = {dataKey: parseInt(id, 10)};
         var query;
+
+        if (data.sort) {
+            sort[sortKeys[0]] = parseInt(sort[sortKeys[0]], 10);
+        }
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, mid, function (access) {
@@ -343,9 +402,31 @@ var PayRoll = function (models) {
                     return next(error);
                 }
 
-                query = PayRoll.find(queryObject).sort(sort).populate('employee').populate('type');
+                // query = PayRoll.find(queryObject).sort(sort).populate('employee').populate('type');
 
-                query.exec(function (err, result) {
+                PayRoll.aggregate([{
+                    $match: {
+                        dataKey: parseInt(id, 10)
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "employee",
+                        foreignField: "_id", as: "employee"
+                    }
+                }, {
+                    $project: {
+                        employee: {$arrayElemAt: ["$employee", 0]},
+                        calc    : 1,
+                        paid    : 1,
+                        diff    : 1,
+                        month   : 1,
+                        year    : 1,
+                        dataKey : 1
+                    }
+                }, {
+                    $sort: sort
+                }], function (err, result) {
                     if (err) {
                         return next(err);
                     }
@@ -366,15 +447,39 @@ var PayRoll = function (models) {
         var dataKey = data.dataKey;
         var queryObject = {dataKey: parseInt(dataKey, 10)};
         var sort = data.sort || {"employee": 1};
+        var sortKeys = Object.keys(sort);
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
 
-        var query = Payroll.find(queryObject).sort(sort).lean();
+        if (data.sort) {
+            sort[sortKeys[0]] = parseInt(sort[sortKeys[0]], 10);
+        }
 
-        query.exec(function (err, result) {
+        //   var query = Payroll.find(queryObject).sort(sort).lean();
+
+        Payroll.aggregate([{
+            $match: queryObject
+        }, {
+            $lookup: {
+                from        : "Employees",
+                localField  : "employee",
+                foreignField: "_id", as: "employee"
+            }
+        }, {
+            $project: {
+                employee: {$arrayElemAt: ["$employee", 0]},
+                calc    : 1,
+                paid    : 1,
+                diff    : 1,
+                month   : 1,
+                year    : 1,
+                dataKey : 1
+            }
+        }, {
+            $sort: sort
+        }], function (err, result) {
             if (err) {
                 return next(err);
             }
-
             res.status(200).send(result);
         });
     };
@@ -424,8 +529,8 @@ var PayRoll = function (models) {
         var query = req.query;
         //var year = parseInt(query.year, 10) || date.getFullYear();
         var filter = query.filter || {};
-        var startDate = new Date (query.startDate);
-        var endDate = new Date (query.endDate);
+        var startDate = new Date(query.startDate);
+        var endDate = new Date(query.endDate);
         var key = 'salaryReport' + filter + startDate.toString() + endDate.toString();
         var redisStore = require('../helpers/redisClient');
         var waterfallTasks;
@@ -510,7 +615,7 @@ var PayRoll = function (models) {
 
             if (filter && typeof filter === 'object') {
                 filterValue = caseFilterEmployee(filter);
-                if (filterValue.length){
+                if (filterValue.length) {
                     matchObj.$and.push({$and: caseFilterEmployee(filter)});
                 }
             }
@@ -656,27 +761,67 @@ var PayRoll = function (models) {
         salaryReport(req, cb);
     };
 
-    this.generate = function (req, res, next) {
+    this.recount = function (req, res, next) {
+        var db = req.session.lastDb;
+        var data = req.body;
+        var dataKey = parseInt(data.dataKey, 10);
+        var year = parseInt(data.dataKey.slice(0, 4), 10);
+        var month = parseInt(data.dataKey.slice(4), 10);
+        var Payroll = models.get(db, 'PayRoll', PayRollSchema);
+        var waterfallFunc;
+
+        req.body.month = month;
+        req.body.year = year;
+
+        function removeByDataKey(wfCb) {
+            Payroll.remove({dataKey: dataKey}, wfCb);
+        }
+
+        /* function createIdleByMonth(removed, wfCb) {
+         journalEntry.createIdleByMonth({req: req, callback: wfCb, month: month, year: year});
+         }*/
+
+        function generateByDataKey(created, wfCb) {
+            generate(req, res, next, wfCb);
+        }
+
+        waterfallFunc = [removeByDataKey, /*createIdleByMonth,*/ generateByDataKey];
+
+        async.waterfall(waterfallFunc, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
+        });
+
+    };
+
+    function generate(req, res, next, cbFromRecalc) {
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
+        var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var data = req.body;
         var month = parseInt(data.month, 10);
         var year = parseInt(data.year, 10);
-        var dateKey = year * 100 + month;
+        var dataKey = year * 100 + month;
         var waterfallTasks;
-        var maxKey = 0;
-        var createdIds = [];
-        var difference;
         var employees;
-        var ids = [];
+        var ids = {};
+        var i;
+        var date = moment().isoWeekYear(year).month(month - 1).startOf('month');
+        var endDate = moment(date).endOf('month');
 
         function getEmployees(callback) {
             var queryObject = {
-                isEmployee: true
+                isEmployee: true,
+                department: {
+                    $in: departmentArray
+                }
             };
 
-            var query = Employee.find(queryObject).lean();
+            var query = Employee.find(queryObject, {hire: 1}).lean();
 
             query.exec(function (err, result) {
                 if (err) {
@@ -686,105 +831,223 @@ var PayRoll = function (models) {
                 employees = result;
 
                 result.forEach(function (elem) {
-                    ids.push(elem._id.toString());
+                    var salary = 0;
+                    var hire = elem.hire;
+                    var length = hire.length;
+                    var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hours: 18, minutes: 1, seconds: 0}));
+
+                    journalEntry.removeByDocId({'sourceDocument._id': elem._id, journal: CONSTANTS.ADMIN_SALARY_JOURNAL, date: localDate}, req.session.lastDb, function (err, result) {
+
+                    });
+
+                    for (i = length - 1; i >= 0; i--) {
+                        if (date >= hire[i].date) {
+                            salary = hire[i].salary;
+                            break;
+                        }
+                    }
+
+                    if (salary) {
+                        ids[elem._id] = salary;
+                    }
                 });
 
                 callback(null, ids);
             });
         }
 
-        function savePayroll(ids, callback) {
+        function getJournalEntries(ids, callback) {
+            function matchEmployee(pcb) {
+                JournalEntry.aggregate([{
+                    $match: {
+                        'sourceDocument.model': "Employees",
+                        date                  : {
+                            $gte: new Date(date),
+                            $lte: new Date(endDate)
+                        }
+                    }
+                }, {
+                    $project: {
+                        employee: '$sourceDocument._id',
+                        debit   : {$divide: ['$debit', 100]},
+                        credit  : {$divide: ['$credit', 100]},
+                        journal : 1,
+                        date    : 1
+                    }
+                }, {
+                    $group: {
+                        _id   : '$employee',
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pcb(err);
+                    }
 
-            var newResult;
-            var keys;
-            var query = Payroll.find({});
+                    pcb(null, result);
+                });
+            }
 
-            query.exec(function (err, result) {
+            function matchByWTrack(pcb) {
+                JournalEntry.aggregate([{
+                    $match: {
+                        'sourceDocument.model': "wTrack",
+                        journal               : {$in: journalArray},
+                        date                  : {
+                            $gte: new Date(date),
+                            $lte: new Date(endDate)
+                        }
+                    }
+                }, {
+                    $lookup: {
+                        from        : "wTrack",
+                        localField  : "sourceDocument._id",
+                        foreignField: "_id", as: "sourceDocument"
+                    }
+                }, {
+                    $project: {
+                        debit  : {$divide: ['$debit', 100]},
+                        credit : {$divide: ['$credit', 100]},
+                        journal: 1,
+                        wTrack : {$arrayElemAt: ["$sourceDocument", 0]},
+                        date   : 1
+                    }
+                }, {
+                    $project: {
+                        debit   : '$debit',
+                        credit  : '$credit',
+                        journal : 1,
+                        employee: '$wTrack.employee',
+                        date    : 1
+                    }
+                }, {
+                    $group: {
+                        _id   : '$employee',
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pcb(err);
+                    }
+
+                    pcb(null, result);
+                });
+            }
+
+            async.parallel([matchByWTrack, matchEmployee], function (err, result) {
                 if (err) {
-                    return next(err);
+                    return callback(err);
                 }
 
-                newResult = _.groupBy(result, "dataKey");
+                var empIds = _.pluck(result[0], '_id');
+                var empIdsSecond = _.pluck(result[1], '_id');
 
-                keys = Object.keys(newResult);
-
-                keys.forEach(function (key) {
-                    if (parseInt(key, 10) >= maxKey) {
-                        maxKey = key;
-                    }
-                });
-
-                var parseKey = parseInt(maxKey, 10);
-
-                var neqQuery = Payroll.find({dataKey: parseKey}).lean();
-
-                neqQuery.exec(function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    async.each(result, function (element, cb) {
-                        var dataToSave = _.clone(element);
-
-                        delete dataToSave._id;
-                        delete dataToSave.ID;
-                        delete dataToSave.data;
-                        dataToSave.status = false;
-
-                        dataToSave.dataKey = dateKey;
-                        dataToSave.month = month;
-                        dataToSave.year = year;
-                        dataToSave.paid = 0;
-                        dataToSave.diff = (dataToSave.paid || 0) - (dataToSave.calc || 0);
-
-                        var PRoll = new Payroll(dataToSave);
-
-                        PRoll.save(function (err, result) {
-                            if (err) {
-                                cb(err);
-                            }
-
-                            createdIds.push(result.employee.toString());
-                            cb();
-                        });
-
-                    }, function () {
-                        difference = _.difference(ids, createdIds);
-
-                        async.each(difference, function (id, callB) {
-                            var PRoll;
-                            var defObj = {};
-                            var empl = _.find(employees, function (el) {
-                                return el._id.toString() === id;
-                            });
-
-                            defObj.dataKey = dateKey;
-                            defObj.month = month;
-                            defObj.year = year;
-                            defObj.paid = 0;
-                            defObj.diff = 0;
-                            defObj.calc = 0;
-
-                            defObj.employee = empl._id;
-
-                            PRoll = new Payroll(defObj);
-
-                            PRoll.save(function (err, result) {
-                                if (err) {
-                                    callB(err);
-                                }
-
-                                callB(null, result);
-                            });
-                        }, function () {
-                            callback();
-                        });
-                    });
+                callback(null, {
+                    resultByEmployee: result[0],
+                    resultByWTrack  : result[1],
+                    ids             : _.union(empIds, empIdsSecond),
+                    empIds          : ids
                 });
             });
         }
 
-        waterfallTasks = [getEmployees, savePayroll];
+        function savePayroll(resultItems, callback) {
+            var resultByEmployee = resultItems.resultByEmployee;
+            var resultByWTrack = resultItems.resultByWTrack;
+            var ids = resultItems.ids;
+            var empIds = resultItems.empIds;
+            var empKeys = Object.keys(empIds);
+            var newPayroll;
+            var parallelTasks;
+            var startBody = {
+                year   : year,
+                month  : month,
+                dataKey: dataKey,
+                paid   : 0
+            };
+            var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hours: 18, minutes: 1, seconds: 0}));
+
+            function createForNotDev(pCb) {
+                async.each(empKeys, function (employee, asyncCb) {
+                    startBody.employee = employee;
+                    startBody.calc = empIds[employee];
+                    startBody.diff = empIds[employee];
+
+                    var cb = _.after(2, asyncCb);
+
+                    var bodyAdminSalary = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.ADMIN_SALARY_JOURNAL,
+                        date          : localDate,
+                        sourceDocument: {
+                            model: 'Employees'
+                        }
+                    };
+
+                    newPayroll = new Payroll(startBody);
+
+                    bodyAdminSalary.sourceDocument._id = employee;
+                    bodyAdminSalary.amount = empIds[employee] * 100;
+
+                    journalEntry.createReconciled(bodyAdminSalary, req.session.lastDb, cb, req.session.uId);
+
+                    newPayroll.save(cb);
+                }, function () {
+                    pCb();
+                });
+            }
+
+            function createForDev(pCb) {
+                var newArray = [];
+
+                ids.forEach(function (el) {
+                    newArray.push(el.toString());
+                });
+
+                newArray = _.uniq(newArray);
+
+                async.each(newArray, function (id, asyncCb) {
+                    var journalEntryEmp = _.find(resultByEmployee, function (el) {
+                        return el._id.toString() === id.toString();
+                    });
+
+                    var journalEntrywTrack = _.find(resultByWTrack, function (el) {
+                        return el._id.toString() === id.toString();
+                    });
+
+                    var sumFirst = parseFloat(journalEntryEmp ? (journalEntryEmp.debit || journalEntryEmp.credit).toFixed(2) : '0');
+                    var sumSecond = parseFloat(journalEntrywTrack ? (journalEntrywTrack.debit || journalEntrywTrack.credit).toFixed(2) : '0');
+
+                    startBody.employee = id;
+                    startBody.calc = sumFirst + sumSecond;
+                    startBody.diff = startBody.calc;
+                    startBody.month = month;
+                    startBody.year = year;
+                    startBody.dataKey = startBody.year * 100 + startBody.month;
+                    startBody.date = localDate;
+
+                    newPayroll = new Payroll(startBody);
+
+                    newPayroll.save(asyncCb);
+                }, function () {
+                    pCb();
+                });
+            }
+
+            parallelTasks = [createForDev, createForNotDev];
+
+            async.parallel(parallelTasks, function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                callback();
+            });
+        }
+
+        waterfallTasks = [getEmployees, getJournalEntries, savePayroll];
 
         async.waterfall(waterfallTasks, function (err) {
             if (err) {
@@ -796,10 +1059,18 @@ var PayRoll = function (models) {
                     return next(err);
                 }
 
-                res.status(200).send("ok");
+                if (cbFromRecalc) {
+                    cbFromRecalc(null, "ok");
+                } else {
+                    res.status(200).send("ok");
+                }
             });
         });
 
+    }
+
+    this.generate = function (req, res, next) {
+        generate(req, res, next);
     };
 };
 

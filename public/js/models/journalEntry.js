@@ -11,7 +11,7 @@ define([
         parse: function (response) {
             if (response) {
                 if (response.date) {
-                    response.date = common.utcDateToLocaleDate(response.date);
+                    response.date = common.utcDateToLocaleFullDateTime(response.date);
                 }
 
                 if (response.debit) {

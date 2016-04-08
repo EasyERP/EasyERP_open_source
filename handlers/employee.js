@@ -16,9 +16,32 @@ var Employee = function (models) {
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
-    exportDecorator.addExportFunctionsToHandler(this, function (req) {
-        return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
-    }, exportMap, 'Employees');
+    //exportDecorator.addExportFunctionsToHandler(this, function (req) {
+    //    return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
+    //}, exportMap, 'Employees');
+
+    this.exportToXlsx = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var filter = req.params.filter;
+        var filterObj = {};
+        var type = req.query.type;
+        var options;
+        var query = [];
+
+        //filter = JSON.parse(filter); //ToDo uncomment when Modules move to handler
+        //
+        //if (filter) {
+        //    filterObj.$and = caseFilter(filter);
+        //}
+
+        options = {
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
+            fileName    : 'Employees'
+        };
+    };
 
     this.getNameAndDepartment = getNameAndDepartment;
 
@@ -72,9 +95,20 @@ var Employee = function (models) {
                 return callback(err);
             }
 
-            callback(null, employees);
-        });
+                callback(null, employees);
+            });
     }
+
+    this.getEmployeesCount = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        Employee.find({isEmployee: true}).count(function (err, result) {
+            if (err){
+                return next(err);
+            }
+
+            res.status(200).send({count: result});
+        });
+    };
 
     this.getSalaryByMonth = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);

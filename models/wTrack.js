@@ -49,7 +49,8 @@ module.exports = (function () {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
-        jobs       : {type: ObjectId, ref: 'jobs', default: null}
+        jobs       : {type: ObjectId, ref: 'jobs', default: null},
+        reconcile: {type: Boolean, default: true}
     }, {collection: 'wTrack'});
 
     /*function getPrice(num) {
