@@ -127,6 +127,7 @@ define([
                 //$(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
 
                 var $target     = $(e.target);
+                var $td          = $target.closest('td');
                 var parentUl    = $target.parent();
                 var element     = $target.closest('a') || parentUl.closest('a');
                 var id          = element.attr('id') || parentUl.attr('id');
@@ -135,6 +136,8 @@ define([
                 var managers    = this.responseObj['#projectManagerDD'];
                 var managerId;
                 var manager;
+
+                $td.removeClass('errorContent');
 
                 if (id === 'jobPositionDd' || 'departmentsDd' || 'projectManagerDD' || 'jobTypeDd' || 'hireFireDd') {
                     element.text($target.text());
@@ -445,6 +448,14 @@ define([
                 var info;
                 var $tr;
                 var el;
+
+
+                if ($('.errorContent').length) {
+                    return App.render({
+                        type: 'error',
+                        message: 'Please fill Job tab'
+                    });
+                }
 
                 self.hideNewSelect();
 
