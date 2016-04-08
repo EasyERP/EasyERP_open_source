@@ -2,9 +2,11 @@
 <tr class="productItem" data-id="<%=product.product ? product.product._id : 'err'%>">
     <td data-name="productName"><a class="productsDd" href="javascript:;"><%=product.product ? product.product.name : '- - -' %></a></td>
     <% if (forSales) {%>
-    <td data-name="jobs" class="jobs"><a class="" id="jobs" href="javascript:;"> <%=product.jobs ? product.jobs.name : ' --- '%></a></td>
-    <% } else { %>
-    <td data-name="productDescr"><span class=""><%=product.description ? product.description : ' '%></span></td>
+    <td data-name="jobs" data-content="<%=product.jobs._id%>">
+        <a id="jobs" href="javascript:;"><%=product.jobs.name%></a>
+    </td>
+    <% } else {%>
+    <td data-name="productDescr" class="<%=editable  ? 'editable' : ''%>"><span><%=product.description%></span></td>
     <% } %>
     <td data-name="quantity" class=""><span><%=product.quantity%></span></td>
     <% var editable = model.workflow && model.workflow.name !== 'Invoiced' && model.workflow.name !== 'Paid'%>

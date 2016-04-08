@@ -46,6 +46,7 @@ define([
 
                 this.isWtrack = !!options.isWtrack;
                 this.filter = options.filter;
+                this.forSales = options.forSales;
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/Invoice";
@@ -232,6 +233,7 @@ define([
                 var price;
                 var description;
                 var taxes;
+                var jobs;
                 var amount;
                 var data;
                 var workflow = this.currentModel.workflow ? this.currentModel.workflow : this.currentModel.get('workflow');
@@ -280,13 +282,13 @@ define([
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
                             price = targetEl.find('[data-name="price"] input').val();
-                            description = targetEl.find('[data-name="productDescr"]').text();
+                            jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
                             taxes = targetEl.find('.taxes').text();
                             amount = helpers.spaceReplacer(targetEl.find('.amount').text());
 
                             products.push({
                                 product    : productId,
-                                description: description,
+                                jobs       : jobs,
                                 unitPrice  : price,
                                 quantity   : quantity,
                                 taxes      : taxes,
