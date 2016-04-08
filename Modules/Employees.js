@@ -496,9 +496,9 @@ var Employee = function (event, models) {
                     Department.findById(_employee.department,
                         function (error, dep) {
 
-                            if (dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
+                            if (dep && dep.parentDepartment && dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
                                 _employee.transfer[0].isDeveloper = true;
-                            } else {
+                            } else if (_employee.transfer && _employee.transfer[0]) {
                                 _employee.transfer[0].isDeveloper = false;
                             }
 
