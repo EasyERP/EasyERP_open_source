@@ -11,7 +11,7 @@
             this.collection = options.collection;
             this.page = options.page ? parseInt(options.page) : 1;
 
-            this.startNumber = (this.page - 1 ) * options.itemsNumber;
+            this.startNumber = (this.page - 1 ) * options.itemsNumber || 0;
         },
         render    : function () {
             this.$el.append(_.template(listTemplate, {
