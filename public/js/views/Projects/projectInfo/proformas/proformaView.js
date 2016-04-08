@@ -232,7 +232,8 @@ define([
                         redirect    : true,
                         collection  : this.collection,
                         notCreate   : true,
-                        eventChannel: self.eventChannel
+                        eventChannel: self.eventChannel,
+                        forSales    : true
                     });
                 },
                 error  : function () {
@@ -266,7 +267,8 @@ define([
                         redirect    : true,
                         collection  : this.collection,
                         notCreate   : true,
-                        eventChannel: self.eventChannel
+                        eventChannel: self.eventChannel,
+                        forSales    : true
                     });
                 },
                 error  : function () {
