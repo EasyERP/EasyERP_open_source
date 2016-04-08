@@ -188,21 +188,31 @@ define([
             var lastTransfer = employee.lastTransferDate;
             var _lastTransfer = moment(employee.lastTransfer);
 
-            var year = week.dateByWeek.toString().slice(0, 4);
-            var _week = week.dateByWeek.toString().slice(4);
+            var isTransfer = employee.isTransfer.indexOf('transfer') !== -1;
+
+            date = week.dateByWeek;
 
             firstTransfer = moment(firstTransfer);
-            lastTransfer = moment(lastTransfer);
+            firstTransfer = firstTransfer.isoWeekYear() * 100 + firstTransfer.isoWeek();
 
-            date = moment().isoWeekYear(year).isoWeek(_week).day(7);
+            lastTransfer = moment(lastTransfer);
+            lastTransfer = lastTransfer.isoWeekYear() * 100 + lastTransfer.isoWeek();
+
+            _lastTransfer = _lastTransfer.isoWeekYear() * 100 + _lastTransfer.isoWeek();
+
+            if (!date) {
+                date = moment().isoWeekYear() * 100 + moment().isoWeek;
+            }
 
             if (isEmployee) {
-                if (firstTransfer.isSame(lastTransfer)) {
-                    return true;
+                if (firstTransfer === lastTransfer) {
+                    return date >= firstTransfer;
                 }
                 if (date >= firstTransfer) {
-                    return date <= lastTransfer || lastTransfer === _lastTransfer;
+                    return date <= lastTransfer || (lastTransfer === _lastTransfer && !isTransfer);
                 }
+            } else {
+                return (date >= firstTransfer && date <= lastTransfer);
             }
 
             return false;
@@ -252,11 +262,13 @@ define([
         getCellSize: function (week, vacation) {
             var v = '';
             var w = '';
-            var vacationHours = (week.vacations || 0) * 8;
+            var holidays = week.holidays || 0;
+            var vacations = week.vacations || 0;
+            var vacationHours = (holidays + vacations) * 8;
             var workedHours = week.hours || 0;
 
             // if (vacationHours > 16) {
-            if (vacationHours === 40) {
+            if (vacationHours >= 40) {
                 v = workedHours ? 'size40' : 'sizeFull';
                 w = workedHours ? 'size40' : 'size0';
             } else if (vacationHours > 8) {

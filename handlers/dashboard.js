@@ -114,12 +114,16 @@ var wTrack = function (models) {
 
         employeeQueryForEmployeeByDep = {
             $and: [{
-                $or       : [{
+                $or: [{
                     $and: [{
                         isEmployee: true
                     }, {
                         $or: [{
-                            lastFire: null
+                            lastFire: null,
+                            lastHire: {
+                                $ne : null,
+                                $lte: endDate
+                            }
                         }, {
                             lastFire: {
                                 $ne : null,
@@ -146,8 +150,8 @@ var wTrack = function (models) {
                             $lte: endDate
                         }
                     }]
-                }],
-                department: departmentQuery
+                }]/*,
+                 department: departmentQuery*/
             }]
         };
 
@@ -426,6 +430,10 @@ var wTrack = function (models) {
             }, {
                 $unwind: '$transfer'
             }, {
+                $match: {
+                    'transfer.department': departmentQuery
+                }
+            }, {
                 $group: {
                     _id              : {
                         _id       : '$_id',
@@ -435,9 +443,25 @@ var wTrack = function (models) {
                     },
                     firstTransferDate: {$min: '$transfer.date'},
                     lastTransferDate : {$max: '$transfer.date'},
+                    isTransfer       : {$addToSet: '$transfer.status'},
                     name             : {$first: {$concat: ['$name.first', ' ', '$name.last']}},
-                    lastTransfer     : {$first: '$lastTransfer'},
+                    lastTransfer     : {$first: '$lastTransfer.date'},
                     lastHire         : {$first: '$lastHire'}
+                }
+            }, {
+                $project: {
+                    _id              : 1,
+                    isTransfer       : 1,
+                    firstTransferDate: 1,
+                    lastTransferDate : 1,
+                    lastTransfer     : 1,
+                    name             : 1,
+                    lastHire         : 1,
+                    _lastTransferDate: {$add: [{$multiply: [{$year: '$lastTransferDate'}, 100]}, {$week: '$lastTransferDate'}]}
+                }
+            }, {
+                $match: {
+                    _lastTransferDate: {$gte: startDate}
                 }
             }, {
                 $project: {
@@ -445,6 +469,7 @@ var wTrack = function (models) {
                     isEmployee       : '$_id.isEmployee',
                     isLead           : '$_id.isLead',
                     _id              : '$_id._id',
+                    isTransfer       : 1,
                     firstTransferDate: 1,
                     lastTransferDate : 1,
                     lastTransfer     : 1,
@@ -463,6 +488,7 @@ var wTrack = function (models) {
                             lastHire         : '$lastHire',
                             lastTransfer     : '$lastTransfer',
                             name             : '$name',
+                            isTransfer       : '$isTransfer',
                             _id              : '$_id'
                         }
                     }
@@ -502,7 +528,7 @@ var wTrack = function (models) {
                 if (employeesArray && employeesArray.length) {
                     aggregateQuery.unshift({
                         $match: {
-                            'employee': {$in: employeesArray}
+                            employee: {$in: employeesArray}
                         }
                     });
                 }
@@ -520,20 +546,18 @@ var wTrack = function (models) {
                             },
                             {
                                 $match: {
-                                    /*isEmployee: true,*/
-                                    $or         : [
+                                    $or: [
                                         {
                                             isEmployee: true
                                         }, {
                                             $and: [{isEmployee: false}, {firedCount: {$gt: 0}}, {_id: {$in: _employeesIds}}]
                                         }
-                                    ],
-                                    'department': departmentQuery
+                                    ]/*,
+                                     department: departmentQuery*/
                                 }
                             }], function (err, employees) {
                             if (err) {
                                 return inerWaterfallCb(err);
-                                //return waterfallCb(err);
                             }
 
                             employees = _.pluck(employees, '_id');
