@@ -526,7 +526,7 @@ define([
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
                 populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
-                if (this.currentModel.toJSON().workflow.status !== 'New') {
+                if (model.workflow.status !== 'New') {
                     this.$el.find('#invoice_date').datepicker({
                         dateFormat : "d M, yy",
                         changeMonth: true,
@@ -547,6 +547,7 @@ define([
                         dateFormat : "d M, yy",
                         changeMonth: true,
                         changeYear : true,
+                        minDate    : model.sourceDocument.orderDate,
                         maxDate    : 0,
                         onSelect   : function () {
                             var dueDatePicker = $('#due_date');
