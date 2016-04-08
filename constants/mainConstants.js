@@ -5,7 +5,6 @@ module.exports = {
     HR_DEPARTMENT_ID       : '55b79342b370f8642a0013b5',
     BUSINESS_DEPARTMENT_ID : '55b79342b370f8642a0013b4',
     MARKETING_DEPARTMENT_ID: '55b79342b370f8642a0013b3',
-    PM_ID                  : '55bb1f40cb76ca630b000007',
 
     PAYONEER    : '555cc981532aebbc4a8baf36',
     UKR_SIB_BANK: '555cc981532aebbc4a8baf37',
@@ -13,9 +12,9 @@ module.exports = {
 
     WTRACK_DB_NAME: 'weTrack',
 
-    PRODUCRSERVICE: '5540d528dacb551c24000003',
+    PRODUCRSERVICE: "5540d528dacb551c24000003",
 
-    EXPENSESCAREGORY: '56459202624e48551dfe3b24',
+    EXPENSESCAREGORY: "56459202624e48551dfe3b24",
 
     ORDERNEW         : "55647b932e4aa3804a765ec5",
     ORDERDONE        : "55647b962e4aa3804a765ec6",
@@ -87,7 +86,7 @@ module.exports = {
     EQUITY: [
         '565eb53a6aa50532e5df0bf3' //retained Earnings
         //'565eb53a6aa50532e5df0bf2', //capital
-       // '565eb53a6aa50532e5df0be0', //productSales
+        // '565eb53a6aa50532e5df0be0', //productSales
         //'565eb53a6aa50532e5df0be2'//COGS
     ],
 
@@ -104,8 +103,6 @@ module.exports = {
 
     MOBILE_DEFAULT_COUNT_PER_LIST: 50,
 
-    ADMIN_DEPARTMENTS: '56e6775c5ec71b00429745a4',
-
     DASH_VAC_WEEK_BEFORE: 2,
     DASH_VAC_WEEK_AFTER : 8,
 
@@ -116,34 +113,16 @@ module.exports = {
         "560c0b83a5d4a2e20ba5068c",
         "55b92ace21e4b7c40f000013",
         "55b92ace21e4b7c40f000014",
-        "55b92ace21e4b7c40f000015",
-        '55bb1f40cb76ca630b000007' //PM
+        "55b92ace21e4b7c40f000015"
     ],
 
-    LEAD_DRAFT: '528ce74ef3f67bc40b00001e',
-
-    ORDERNEW                     : '55647b932e4aa3804a765ec5',
-    ORDERDONE                    : '55647b962e4aa3804a765ec6',
-    PROJECTINPROGRESS            : '528ce7f2f3f67bc40b000023',
-    JOBSFINISHED                 : '56337c675d49d8d6537832ea',
-    JOBSINPROGRESS               : '56337c705d49d8d6537832eb',
-    PROJECTCLOSED                : '528ce82df3f67bc40b000025',
-    INVOICE_PARTIALY_PAID        : '55647d952e4aa3804a765eca',
-    INVOICE_PAID                 : '55647d982e4aa3804a765ecb',
-    MOBILE_DEFAULT_COUNT_PER_LIST: 50,
-
-    ADMIN_DEPARTMENTS: '56e6775c5ec71b00429745a4',
-
-    DASH_VAC_WEEK_BEFORE: 2,
-    DASH_VAC_WEEK_AFTER : 8,
-
-    CREDIT_IS: '56f5383a9c85020807b40020',
-    CLOSE_COGS: '56f538679c85020807b40022',
+    CREDIT_IS        : '56f5383a9c85020807b40020',
+    CLOSE_COGS       : '56f538679c85020807b40022',
     RETAINED_EARNINGS: '56f538c39c85020807b40024',
-    CLOSE_VAC_EXP: '56efc13cfd70ba6414bd3de7',
-    CLOSE_IDLE_EXP: '56efc15bfd70ba6414bd3de9',
-    CLOSE_ADMIN_EXP: '56efc1affd70ba6414bd3deb',
-    CLOSE_ADMIN_BUD: '56f90e8d8cea58642c57f442',
+    CLOSE_VAC_EXP    : '56efc13cfd70ba6414bd3de7',
+    CLOSE_IDLE_EXP   : '56efc15bfd70ba6414bd3de9',
+    CLOSE_ADMIN_EXP  : '56efc1affd70ba6414bd3deb',
+    CLOSE_ADMIN_BUD  : '56f90e8d8cea58642c57f442',
 
     TOTAL_EXPENSES: '56cc6bf2541812c07197356a',
 
@@ -157,26 +136,22 @@ module.exports = {
         '56f90e8d8cea58642c57f442'
     ],
 
-    HR_VAC_YEAR_AFTER: 1,
-    DEF_LIST_COUNT : 100,
-    MAX_COUNT : 200,
-    PARENT_DEV : '56cebdf6541812c07197358f',
-    SALESDEPARTMENTS: ['55b92ace21e4b7c40f000014', '55bb1f40cb76ca630b000007']
-    CURRENCY_USD    : '565eab29aeb95fa9c0f9df2d',
+    PM_ID: '55bb1f40cb76ca630b000007',
+
+    LEAD_DRAFT: '528ce74ef3f67bc40b00001e',
+
+    INVOICE_PARTIALY_PAID: '55647d952e4aa3804a765eca',
+    INVOICE_PAID         : '55647d982e4aa3804a765ecb',
+
+    ADMIN_DEPARTMENTS: '56e6775c5ec71b00429745a4',
+
     PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146',
     BEFORE_INVOICE  : '57035ffd21f9b0c4313d414e',
-    INVOICE_JOURNAL : '565ef6ba270f53d02ee71d65',
 
-    HR_VAC_YEAR_BEFORE: 2,
-    HR_VAC_YEAR_AFTER : 1,
-    DEF_LIST_COUNT    : 100,
-    MAX_COUNT         : 200,
-    PARENT_DEV        : '56cebdf6541812c07197358f',
-    SALESDEPARTMENTS  : ['55b92ace21e4b7c40f000014', '55bb1f40cb76ca630b000007'],
+    DEF_LIST_COUNT  : 100,
+    MAX_COUNT       : 200,
+    PARENT_DEV      : '56cebdf6541812c07197358f',
+    SALESDEPARTMENTS: ['55b92ace21e4b7c40f000014', '55bb1f40cb76ca630b000007']
 
-    JOB_FINISHED        : '56337c675d49d8d6537832ea',
-    FINISHED_JOB_JOURNAL: '56ebb636b2a906141f194fa5',
-
-    CLOSED_JOB: '56f2a96f58dfeeac4be1582a'
 }
 ;

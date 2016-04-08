@@ -4917,7 +4917,7 @@ var Module = function (models, event) {
                         ar = ar * (-1);
                     }
 
-                    var fieldName = result[1][0].name[0];
+                    var fieldName = result[1] && result[1][0] ? result[1][0].name[0] : "Account receivable";
 
                     cb(null, [{name: fieldName, debit: ar}]);
                 });
@@ -5139,7 +5139,7 @@ var Module = function (models, event) {
                         sp = sp * (-1);
                     }
 
-                    var fieldName = result[1][0] ? result[1][0].name[0] : '';
+                    var fieldName = result[1][0] ? result[1][0].name[0] : 'Work in proess';
 
                     cb(null, [{name: fieldName, debit: sp}]);
                 });
@@ -5246,7 +5246,7 @@ var Module = function (models, event) {
 
                     var sp = Math.abs(spLast - spFirst);
 
-                    var fieldName = result[1][0].name[0];
+                    var fieldName = result[1] && result[1][0] ? result[1][0].name[0] : "Finished goods";
 
                     cb(null, [{name: fieldName, debit: sp}]);
                 });
