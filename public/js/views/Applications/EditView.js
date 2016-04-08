@@ -366,7 +366,23 @@
             var data;
             var date;
             var info;
+            var flag;
             var el;
+
+            $('.required').each(function () {
+                if (!$(this).attr('data-id')) {
+                    App.render({
+                        type: 'error',
+                        message: 'Please fill ' + $(this).attr('id')
+                    });
+                    flag = true;
+                    return false;
+                }
+            });
+
+            if (flag) {
+                return;
+            }
 
             self.hideNewSelect();
 
@@ -718,6 +734,7 @@
 
         chooseOption: function (e) {
             var $target = $(e.target);
+            var $td = $target.closest('td');
             var parentUl = $target.parent();
             var element = $target.closest('a') || parentUl.closest('a');
             var id = element.attr('id') || parentUl.attr('id');
@@ -849,7 +866,7 @@
             });
 
             this.removeIcon = this.$el.find('.fa-trash');
-            this.hireDate = this.currentModel.get('hire')[0].date;
+            this.hireDate = this.currentModel.get('hire')[0];
             this.fireDate = this.$el.find("[data-content='fire']").last().find('.fireDate').text();
 
             this.renderRemoveBtn();
