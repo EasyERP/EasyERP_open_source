@@ -6,7 +6,6 @@ var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
 
-var CONSTANTS = require('../constants/modules');
 var MAINCONSTANTS = require('../constants/mainConstants');
 
 var Payment = function (models, event) {
@@ -162,10 +161,10 @@ var Payment = function (models, event) {
 
                 if (access) {
 
-                    count = parseInt(req.query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
+                    count = parseInt(req.query.count, 10) || MAINCONSTANTS.DEF_LIST_COUNT;
                     page = parseInt(req.query.page, 10);
 
-                    count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+                    count = count > MAINCONSTANTS.MAX_COUNT ? MAINCONSTANTS.MAX_COUNT : count;
                     skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     if (req.query.sort) {
