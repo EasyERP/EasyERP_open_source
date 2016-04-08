@@ -833,7 +833,7 @@ define([
                         filter            : filter,
                         startNumber       : startNumber,
                         project           : self.formModel
-                    }).render();
+                    });
                 };
 
                 function showMoreContent(newModels) {
