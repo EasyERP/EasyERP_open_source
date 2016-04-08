@@ -526,7 +526,7 @@ define([
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
-                populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
+              //  populate.get("#journal", "/journal/getForDd", {}, 'name', this, true);
 
                 if (model.workflow.status !== 'New') {
                     this.$el.find('#invoice_date').datepicker({

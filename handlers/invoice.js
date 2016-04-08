@@ -45,7 +45,7 @@ var Invoice = function (models, event) {
 
         journalEntryBody.date = invoice.invoiceDate;
         journalEntryBody.journal = invoice.journal;
-        journalEntryBody.currency = invoice.currency ? invoice.currency._id : 'USD';
+        journalEntryBody.currency = invoice.currency || 'USD';
         journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.balance : 0;
         journalEntryBody.sourceDocument = {};
         journalEntryBody.sourceDocument._id = invoice._id;
@@ -459,6 +459,7 @@ var Invoice = function (models, event) {
         var query;
         var model;
         var journal;
+        var dateForobs;
 
         date = moment(new Date(data.invoiceDate));
         date = date.format('YYYY-MM-DD');
@@ -502,6 +503,11 @@ var Invoice = function (models, event) {
                             } else {
                                 model = "Invoice";
                                 journal = CONSTANTS.INVOICE_JOURNAL;
+
+                                dateForobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
+
+                                query = {"sourceDocument.model": 'jobs', journal: {$in: [CONSTANTS.JOB_FINISHED, CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]}};
+                                _journalEntryHandler.changeDate(query, dateForobs, req.session.lastDb, function () {});
                             }
 
                             query = {"sourceDocument.model": model, journal: journal};
