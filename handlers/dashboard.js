@@ -456,14 +456,21 @@ var wTrack = function (models) {
                     lastTransferDate : 1,
                     lastTransfer     : 1,
                     name             : 1,
-                    lastHire         : 1/*,
-                    _lastTransferDate: {$add: [{$multiply: [{$year: '$lastTransferDate'}, 100]}, {$week: '$lastTransferDate'}]}*/
+                    lastHire         : 1,
+                    _lastTransferDate: {$add: [{$multiply: [{$year: '$lastTransferDate'}, 100]}, {$week: '$lastTransferDate'}]}
                 }
-            }, /*{
+            }, {
                 $match: {
-                    _lastTransferDate: {$gte: startDate}
+                    $or: [
+                        {
+                            _lastTransferDate: {$gte: startDate},
+                            isTransfer       : 'transfer'
+                        }, {
+                            isTransfer: {$nin: ['transfer']}
+                        }
+                    ]
                 }
-            },*/ {
+            }, {
                 $project: {
                     department       : '$_id.department',
                     isEmployee       : '$_id.isEmployee',
@@ -805,11 +812,11 @@ var wTrack = function (models) {
         function firedEmployees(parallelCb) {
             Employee
                 .aggregate([
-                   /* {
-                        $match: {
-                            $and: [{'fire': {$gte: startDate}}, {'fire': {$lte: endDate}}]
-                        }
-                    },*/
+                    /* {
+                     $match: {
+                     $and: [{'fire': {$gte: startDate}}, {'fire': {$lte: endDate}}]
+                     }
+                     },*/
                     {
                         $project: {
                             isEmployee: 1,
