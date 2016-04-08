@@ -456,6 +456,9 @@ var Invoice = function (models, event) {
         var PaymentModel = models.get(db, 'Payment', PaymentSchema);
         var optionsForPayments;
         var Customer = models.get(db, 'Customers', CustomerSchema);
+        var query;
+        var model;
+        var journal;
 
         date = moment(new Date(data.invoiceDate));
         date = date.format('YYYY-MM-DD');
@@ -488,6 +491,21 @@ var Invoice = function (models, event) {
                             if (err) {
                                 return next(err);
                             }
+
+                            if (invoice._type === 'Proforma') {
+                                model = "Proforma";
+
+                                query = {"sourceDocument.model": model, journal: CONSTANTS.BEFORE_INVOICE};
+                                _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
+
+                                journal = CONSTANTS.PROFORMA_JOURNAL;
+                            } else {
+                                model = "Invoice";
+                                journal = CONSTANTS.INVOICE_JOURNAL;
+                            }
+
+                            query = {"sourceDocument.model": model, journal: journal};
+                            _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
 
                             if (!invoice.journal && journalId) { // todo in case of purchase invoice hasnt journalId
                                 Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
@@ -774,7 +792,8 @@ var Invoice = function (models, event) {
                                     dueDate         : 1,
                                     payments        : 1,
                                     _type           : 1,
-                                    removable       : 1
+                                    removable       : 1,
+                                    paid            : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
                                 }
                             }, {
                                 $match: optionsObject

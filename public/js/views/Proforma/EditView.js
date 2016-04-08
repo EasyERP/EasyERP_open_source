@@ -282,7 +282,7 @@ define([
                             price = targetEl.find('[data-name="price"] input').val();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             taxes = targetEl.find('.taxes').text();
-                            amount = targetEl.find('.amount').text();
+                            amount = helpers.spaceReplacer(targetEl.find('.amount').text());
 
                             products.push({
                                 product    : productId,
@@ -526,7 +526,7 @@ define([
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
                 populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
-                if (this.currentModel.toJSON().workflow.name !== 'New') {
+                if (model.workflow.status !== 'New') {
                     this.$el.find('#invoice_date').datepicker({
                         dateFormat : "d M, yy",
                         changeMonth: true,
@@ -547,6 +547,7 @@ define([
                         dateFormat : "d M, yy",
                         changeMonth: true,
                         changeYear : true,
+                        minDate    : new Date(model.sourceDocument.orderDate),
                         maxDate    : 0,
                         onSelect   : function () {
                             var dueDatePicker = $('#due_date');

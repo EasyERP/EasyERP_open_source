@@ -37,7 +37,7 @@ define([
                 "click td.editable"                                : "editRow",
                 "change .editable "                                : "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click td:not(.checkbox, .date)"                   : "goToEditDialog"
+                "click tbody td:not(.checkbox, .date)"             : "goToEditDialog"
             },
 
             initialize: function (options) {
