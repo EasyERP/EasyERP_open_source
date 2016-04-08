@@ -532,7 +532,7 @@ define([
 
 
 
-                if (this.currentModel.toJSON().workflow.name !== 'New') {
+                if (this.currentModel.toJSON().workflow.status !== 'New') {
                     this.$el.find('#invoice_date').datepicker({
                         dateFormat : "d M, yy",
                         changeMonth: true,
