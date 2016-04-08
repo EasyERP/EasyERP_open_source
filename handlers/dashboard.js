@@ -456,8 +456,8 @@ var wTrack = function (models) {
                     lastTransferDate : 1,
                     lastTransfer     : 1,
                     name             : 1,
-                    lastHire         : 1,
-                    _lastTransferDate: {$add: [{$multiply: [{$year: '$lastTransferDate'}, 100]}, {$week: '$lastTransferDate'}]}
+                    lastHire         : 1/*,
+                    _lastTransferDate: {$add: [{$multiply: [{$year: '$lastTransferDate'}, 100]}, {$week: '$lastTransferDate'}]}*/
                 }
             }, {
                 $match: {
