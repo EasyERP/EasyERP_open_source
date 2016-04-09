@@ -1065,7 +1065,7 @@ define([
                         model       : self.iCollection,
                         filter      : filter,
                         eventChannel: self.eventChannel
-                    }).render();
+                    });
 
                     self.iCollection.toJSON().forEach(function (element) {
                         if (element.payments) {
@@ -1117,7 +1117,7 @@ define([
                         model       : self.pCollection,
                         filter      : filter,
                         eventChannel: self.eventChannel
-                    }).render();
+                    });
 
                     if (quotationId) {
                         proformaView.showDialog(quotationId);
@@ -1264,7 +1264,7 @@ define([
                         projectManager: self.formModel.toJSON().projectmanager,
                         filter        : filter,
                         eventChannel  : self.eventChannel
-                    }).render();
+                    });
 
                 }
 
@@ -1560,7 +1560,6 @@ define([
                     self.getPayments();
                     App.stopPreload();
                     self.renderProformRevenue();
-                    self.getInvoiceStats();
                     self.activeTab();
                 });
 

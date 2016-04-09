@@ -427,14 +427,6 @@ define([
                 currencySplitter   : helpers.currencySplitter
             }));
 
-            dataService.getData("/workflow/fetch", {
-                wId         : 'Sales Invoice',
-                source      : 'purchase',
-                targetSource: 'invoice'
-            }, function (stages) {
-                self.stages = stages;
-            });
-
             this.$el.find("#removeProforma").hide();
             this.$el.find("#saveProforma").hide();
 
