@@ -698,8 +698,10 @@ var Employee = function (event, models) {
                             resArray.push(filtrElement);
                             break;
                         case 'letter':
-                            filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
-                            resArray.push(filtrElement);
+                            if(condition){
+                                filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
+                                resArray.push(filtrElement);
+                            } //if added for fix bug with condition.toLowerCase() => undefined
                             break;
                         case 'department':
                             filtrElement[key] = {$in: condition.objectID()};
