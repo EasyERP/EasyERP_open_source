@@ -401,10 +401,8 @@ define([
                     this.currentModel.destroy({
                         success: function () {
                             $('.edit-invoice-dialog').remove();
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(url, {trigger: true});
-
-                            self.eventChannel.trigger('elemCountChanged');
+                            self.hideDialog();
+                            self.eventChannel.trigger('proformaRemove');
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {

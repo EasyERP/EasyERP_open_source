@@ -403,16 +403,15 @@ define([
                     this.currentModel.destroy({
                         success: function () {
                             $('.edit-invoice-dialog').remove();
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(url, {trigger: true});
 
-                            self.eventChannel.trigger('elemCountChanged');
+                            self.hideDialog();
+                            self.eventChannel.trigger('invoiceRemove');
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {
                                 App.render({
                                     type: 'error',
-                                    message: "You do not have permission to perform this action"
+                                    message: "You do not have permission to perform this action"
                                 });
                             }
                         }

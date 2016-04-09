@@ -505,6 +505,7 @@ define([
         },
 
         deleteItem: function (event) {
+            var self = this;
             var mid = this.forSales ? 62 : 55;
             var url;
             var answer = confirm("Really DELETE items ?!");
@@ -521,11 +522,12 @@ define([
                         // Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         url = window.location.hash;
 
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(url, {trigger: true});
-
                         App.projectInfo = App.projectInfo || {};
                         App.projectInfo.currentTab = 'quotations';
+
+                        self.hideDialog();
+
+                        self.eventChannel.trigger('quotationRemove');
                     },
                     error  : function (model, err) {
                         if (err.status === 403) {

@@ -202,6 +202,8 @@ define([
 
                                         this.invoiceView.showDialog(orderId);
 
+                                        self.eventChannel.trigger('elemCountChanged');
+
                                     };
 
                                     self.collection.unbind();
@@ -370,12 +372,13 @@ define([
                         },
                         patch  : true,
                         success: function (model) {
-                            Backbone.history.fragment = "";
-                            Backbone.history.navigate(window.location.hash, {trigger: true});
                             self.hideDialog();
 
                             App.projectInfo = App.projectInfo || {};
                             App.projectInfo.currentTab = 'orders';
+
+                            self.hideDialog();
+                            self.eventChannel.trigger('orderUpdate');
 
                             if (invoiceCb && typeof invoiceCb === 'function') {
                                 return invoiceCb(null);
@@ -418,11 +421,11 @@ define([
                         success: function () {
                             $('.edit-product-dialog').remove();
 
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(url, {trigger: true});
-
                             App.projectInfo = App.projectInfo || {};
                             App.projectInfo.currentTab = 'orders';
+
+                            self.hideDialog();
+                            self.eventChannel.trigger('orderRemove');
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {

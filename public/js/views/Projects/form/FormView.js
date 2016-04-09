@@ -134,11 +134,21 @@ define([
 
                 this.listenTo(eventChannel, 'newPayment', this.newPayment);
                 this.listenTo(eventChannel, 'paymentRemoved', this.newPayment);
+
                 this.listenTo(eventChannel, 'elemCountChanged', this.renderTabCounter);
+
                 this.listenTo(eventChannel, 'newProforma', this.createProforma);
                 this.listenTo(eventChannel, 'proformaRemove', this.createProforma);
                 this.listenTo(eventChannel, 'savedProforma', this.createProforma);
+
                 this.listenTo(eventChannel, 'quotationUpdated', this.getQuotations);
+                this.listenTo(eventChannel, 'quotationRemove', this.getQuotations);
+
+                this.listenTo(eventChannel, 'orderRemove', this.getOrders);
+                this.listenTo(eventChannel, 'orderUpdate', this.getOrders);
+
+                this.listenTo(eventChannel, 'invoiceRemove', this.getInvoice);
+                this.listenTo(eventChannel, 'invoiceRemove', this.getOrders);
             },
 
             viewQuotation: function (e) {
@@ -1065,7 +1075,7 @@ define([
                         model       : self.iCollection,
                         filter      : filter,
                         eventChannel: self.eventChannel
-                    }).render();
+                    });
 
                     self.iCollection.toJSON().forEach(function (element) {
                         if (element.payments) {
@@ -1077,6 +1087,8 @@ define([
 
                     self.payments = self.payments || {};
                     self.payments.fromInvoces = payments;
+
+                    self.renderTabCounter();
 
                     callback();
                 }
@@ -1117,7 +1129,7 @@ define([
                         model       : self.pCollection,
                         filter      : filter,
                         eventChannel: self.eventChannel
-                    }).render();
+                    });
 
                     if (quotationId) {
                         proformaView.showDialog(quotationId);
@@ -1225,6 +1237,8 @@ define([
                         eventChannel    : self.eventChannel
                     }).render();
 
+                    self.renderTabCounter();
+
                 };
 
                 this.qCollection.bind('reset', createView);
@@ -1255,8 +1269,10 @@ define([
                 });
 
                 function createView() {
+                    if (cb) {
+                        cb();
+                    }
 
-                    cb();
                     new oredrView({
                         collection    : self.ordersCollection,
                         projectId     : _id,
@@ -1264,7 +1280,9 @@ define([
                         projectManager: self.formModel.toJSON().projectmanager,
                         filter        : filter,
                         eventChannel  : self.eventChannel
-                    }).render();
+                    });
+
+                    self.renderTabCounter();
 
                 }
 
@@ -1560,7 +1578,6 @@ define([
                     self.getPayments();
                     App.stopPreload();
                     self.renderProformRevenue();
-                    self.getInvoiceStats();
                     self.activeTab();
                 });
 
