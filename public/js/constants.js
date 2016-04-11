@@ -490,7 +490,8 @@ define([], function () {
         },
 
         INVOICE_APPROVE_PROFILES: [
-            '1387275598000'
+            1387275598000,
+            1438768659000
         ],
 
         EXPENSESCAREGORY: "56459202624e48551dfe3b24",

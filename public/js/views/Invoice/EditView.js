@@ -1,4 +1,5 @@
 define([
+        'jQuery',
         'text!templates/Invoice/EditTemplate.html',
         'views/Assignees/AssigneesView',
         'views/Invoice/InvoiceProductItems',
@@ -12,7 +13,7 @@ define([
         'constants',
         'helpers'
     ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+    function ($, EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({
@@ -31,6 +32,7 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .details"                                                  : "showDetailsBox",
                 "click .newPayment"                                               : "newPayment",
+                "click .approve"                                                  : "approve",
                 "click .cancelInvoice"                                            : "cancelInvoice",
                 // "click .refund": "refund",
                 "click .setDraft"                                                 : "setDraft"
@@ -89,6 +91,43 @@ define([
                             mid       : 56,
                             currency  : currency,
                             eventChannel: self.eventChannel
+                        });
+                    }
+                });
+            },
+
+            approve: function (e) {
+                var self = this;
+                var data;
+                var url;
+                var invoiceId;
+                var $li;
+                var payBtnHtml;
+
+                e.preventDefault();
+
+                $li = $('button.approve').parent('li');
+
+                App.startPreload();
+
+                payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
+
+                invoiceId = self.currentModel.get('_id');
+                url = '/invoice/approve';
+                data = {
+                    invoiceId : invoiceId
+                };
+
+                dataService.patchData(url, data, function(err, response) {
+                    if (!err) {
+                        self.currentModel.set({approved: true});
+                        $li.html(payBtnHtml);
+
+                        App.stopPreload();
+                    } else {
+                        App.render({
+                            type: 'error',
+                            message: 'Approve fail'
                         });
                     }
                 });

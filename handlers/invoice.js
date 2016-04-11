@@ -560,6 +560,31 @@ var Invoice = function (models, event) {
         }
     };
 
+    this.approve = function (req, res, next) {
+        var db = req.session.lastDb;
+        var id = req.body.invoiceId;
+        var moduleId = 64;
+
+        var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
+                if (access) {
+
+                    Invoice.findByIdAndUpdate(id, {$set: {approved: true}}, {new: true}, function (err, resp) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.status(200).send(resp);
+                    });
+
+                } else {
+                    res.status(401).send();
+                }
+            });
+        }
+    };
+
     this.getAll = function (req, res, next) {
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var query = {};
