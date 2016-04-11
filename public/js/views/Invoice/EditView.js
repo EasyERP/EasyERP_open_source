@@ -42,7 +42,7 @@ define([
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
 
-                this.eventChannel = options.eventChannel || {};
+                this.eventChannel = options.eventChannel;
 
                 this.isWtrack = !!options.isWtrack;
                 this.filter = options.filter;
@@ -352,6 +352,11 @@ define([
                             }
 
                             if (self.redirect) {
+
+                                if (self.eventChannel) {
+                                    self.eventChannel.trigger('invoiceUpdated');
+                                }
+
                                 Backbone.history.navigate(url, {trigger: true});
                                 $dueDateEl = $('#' + result.id).closest('tr').find('[data-content="dueDate"]');
                                 $dueDateEl.text(result.dueDate);

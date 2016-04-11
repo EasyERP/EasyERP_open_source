@@ -2138,6 +2138,20 @@ input::-ms-clear {
     }
   }
 
+  .canReadAndWrite {
+    line-height: 22px;
+    margin: 10px 0 0 0;
+    padding-bottom: 10px;
+    input[type=radio]{
+      margin-top: 6px;
+      margin-right: 10px;
+      clear: both;
+      display: block;
+      float: left;
+      height: 16px;
+    }
+  }
+
   .mainInfo {
     width: auto;
     margin-left: 170px;
@@ -3539,14 +3553,7 @@ button.red, a.red {
 
 }
 
-.canReadAndWrite {
-  margin: 10px 0 0 0;
-  padding-bottom: 10px;
 
-  input {
-    margin-right: 10px;
-  }
-}
 
 #sourceUsers, #sourceGroups {
   margin-left: 150px;
@@ -4073,7 +4080,7 @@ ul.chart-tabs {
       line-height: 20px;
       width: 8px;
       margin-left: -2px;
-      height: 15px;
+      height: 17px;
       display: block;
     }
   }
@@ -4801,14 +4808,19 @@ input::-webkit-inner-spin-button {
   display: none;
 }
 
-.canReadAndWrite {
-  line-height: 22px;
-  input {
-    clear: both;
-    display: block;
-    float: left;
-  }
-}
+//.canReadAndWrite {
+//  line-height: 22px;
+//  margin: 10px 0 0 0;
+//  padding-bottom: 10px;
+//  input[type=radio]{
+//    margin-top: 10px;
+//    margin-right: 10px;
+//    clear: both;
+//    display: block;
+//    float: left;
+//
+//  }
+//}
 
 /*.edit-person-dialog{
 	.form-holder form{
@@ -5964,7 +5976,10 @@ textarea#editInput {
   }
 }
 
-.btn-group .btn + .btn, .btn-group .btn + .btn-group, .btn-group .btn-group + .btn, .btn-group .btn-group + .btn-group {
+.btn-group .btn + .btn,
+.btn-group .btn + .btn-group,
+.btn-group .btn-group + .btn,
+.btn-group .btn-group + .btn-group {
   margin-left: -1px;
 }
 

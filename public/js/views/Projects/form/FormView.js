@@ -149,6 +149,7 @@ define([
 
                 this.listenTo(eventChannel, 'invoiceRemove', this.getInvoice);
                 this.listenTo(eventChannel, 'invoiceRemove', this.getOrders);
+                this.listenTo(eventChannel, 'invoiceUpdated', this.getInvoice);
             },
 
             viewQuotation: function (e) {

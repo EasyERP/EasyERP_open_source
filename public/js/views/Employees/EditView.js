@@ -411,6 +411,7 @@ define([
                 var gender;
                 var coach;
                 var event;
+                var quit;
                 var data;
                 var date;
                 var info;
@@ -487,6 +488,15 @@ define([
                         info       : info
                     });
 
+                    if (!salary) {
+                        App.render({
+                            type: 'error',
+                            message: 'Salary can`t be empty'
+                        });
+                        quit = true;
+                        return false;
+                    }
+
                     if (event === 'fired') {
                         date = moment(date);
                         fireArray.push(date);
@@ -497,6 +507,10 @@ define([
                         hireArray.push(date);
                     }
                 });
+
+                if (quit) {
+                    return;
+                }
 
                 isEmployee = (event === 'hired') || (event === 'updated');
 
