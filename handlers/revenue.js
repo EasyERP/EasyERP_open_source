@@ -3235,17 +3235,17 @@ var wTrack = function (models) {
         var projectionObject = {
             salesPerson: 1,
             paymentInfo: 1,
-            year       : {$year: "$invoiceDate"},
-            month      : {$month: "$invoiceDate"},
-            week       : {$week: "$invoiceDate"}
+            year       : {$year: '$invoiceDate'},
+            month      : {$month: '$invoiceDate'},
+            week       : {$week: '$invoiceDate'}
         };
         var projectionPaymentObject = {
             paidAmount: 1,
             date      : 1,
-            invoice   : {$arrayElemAt: ["$invoice", 0]},
-            year      : {$year: "$date"},
-            month     : {$month: "$date"},
-            week      : {$week: "$date"}
+            invoice   : {$arrayElemAt: ['$invoice', 0]},
+            year      : {$year: '$date'},
+            month     : {$month: '$date'},
+            week      : {$week: '$date'}
         };
         var groupedKey = (query.byWeek && query.byWeek !== 'false') ? 'week' : 'month';
 
@@ -3613,6 +3613,58 @@ var wTrack = function (models) {
                     week          : '$root.root.week'
                 }
             }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'salesPerson',
+                    foreignField: '_id',
+                    as          : 'salesPerson'
+                }
+            }, {
+                $project: {
+                    salesPerson   : {$arrayElemAt: ['$salesPerson', 0]},
+                    revenueBySales: 1,
+                    date          : 1,
+                    revenue       : 1,
+                    year          : 1,
+                    month         : 1,
+                    week          : 1
+                }
+            }, {
+                $project: {
+                    salesPerson   : {
+                        _id : '$salesPerson._id',
+                        name: '$salesPerson.name'
+                    },
+                    revenueBySales: 1,
+                    date          : 1,
+                    revenue       : 1,
+                    year          : 1,
+                    month         : 1,
+                    week          : 1
+                }
+            }, {
+                $group: {
+                    _id       : null,
+                    salesArray: {
+                        $addToSet: '$salesPerson'
+                    },
+                    root      : {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    _id           : 0,
+                    salesArray    : 1,
+                    revenueBySales: '$root.revenueBySales',
+                    date          : '$root.date',
+                    revenue       : '$root.revenue',
+                    year          : '$root.year',
+                    month         : '$root.month',
+                    week          : '$root.week',
+                    salesPerson: '$root.salesPerson._id'
+                }
+            }, {
                 $group: {
                     _id           : {
                         date   : '$date',
@@ -3623,18 +3675,20 @@ var wTrack = function (models) {
                             salesPerson   : '$$ROOT.salesPerson',
                             revenueBySales: '$$ROOT.revenueBySales'
                         }
-                    }
+                    },
+                    salesArray    : {$first: '$salesArray'}
                 }
             }, {
                 $project: {
                     date          : '$_id.date',
                     revenue       : '$_id.revenue',
                     revenueBySales: 1,
-                    _id           : 0
+                    _id           : 0,
+                    salesArray    : 1
                 }
             }], parallelCb);
 
-        };
+        }
 
         async.parallel({
             invoiced: invoiceGrouper,
@@ -3665,7 +3719,8 @@ var wTrack = function (models) {
 
             sales = response.invoiced[0] ? response.invoiced[0].salesArray : [];
             _sales = response.paid[0] ? response.paid[0].salesArray : [];
-
+            sales = sales.concat(_sales);
+            _sales = response.revenue[0] ? response.revenue[0].salesArray : [];
             sales = sales.concat(_sales);
             sales = _.uniq(sales, function (elm) {
                 if (elm._id) {
@@ -3679,7 +3734,7 @@ var wTrack = function (models) {
             response.invoiced = _.sortBy(response.invoiced, 'date');
 
             res.status(200).send({payments: response.invoiced, sales: sales});
-            /*res.status(200).send(response);*/
+            //res.status(200).send(response);
         });
     };
 };
