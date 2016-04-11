@@ -568,7 +568,7 @@ var Invoice = function (models, event) {
         var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
+            access.getApproveAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
 
                     Invoice.findByIdAndUpdate(id, {$set: {approved: true}}, {new: true}, function (err, resp) {
