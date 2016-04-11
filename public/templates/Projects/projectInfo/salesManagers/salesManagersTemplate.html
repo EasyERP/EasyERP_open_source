@@ -3,11 +3,13 @@
         <col width="2%"/>
         <col width="20%"/>
         <col width="20%"/>
+        <col width="20%"/>
     </colgroup>
     <thead>
     <tr >
         <th class="centerCell">X</th>
-        <th>Date</th>
+        <th>Start Date</th>
+        <th>End Date</th>
         <th>Sales Manager</th>
         <th></th>
     </tr>
@@ -20,13 +22,10 @@
     <tr data-id="<%=salesManager.manager ? salesManager.manager._id : ''%>">
 
         <td class="centerCell deleteItem"></td>
-        <td class="salesManagerDate">
-            <%= salesManager.date ? utcDateToLocaleDate(salesManager.date) : ''%>
-        </td>
+        <td class="startDateSM"><%= salesManager.startDate ? utcDateToLocaleDate(salesManager.startDate) : 'From start of project'%></td>
+        <td class="endDateSM"><%= salesManager.endDate ? utcDateToLocaleDate(salesManager.endDate) : 'To end of project'%></td>
 
-        <td>
-            <%=salesManager.manager ? salesManager.manager.fullName : '' %>
-        </td>
+        <td><%=salesManager.manager ? salesManager.manager.fullName : '' %></td>
 
 
     </tr>

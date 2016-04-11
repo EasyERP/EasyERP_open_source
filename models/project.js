@@ -13,8 +13,9 @@ module.exports = (function () {
         projectmanager  : {type: ObjectId, ref: 'Employees', default: null},
         salesmanager  : {type: ObjectId, ref: 'Employees', default: null},
         salesManagers   : [{
-            manager : {type: ObjectId, ref: 'Employees', default: null},
-            date: {type: Date}
+            manager  : {type: ObjectId, ref: 'Employees', default: null},
+            startDate: {type : Date, default: null},
+            endDate  : {type : Date, default: null}
         }],
         projectManagers : [{
             manager : {type: ObjectId, ref: 'Employees', default: null},

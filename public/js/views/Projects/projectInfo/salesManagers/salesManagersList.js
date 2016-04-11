@@ -6,8 +6,9 @@ define([
     'text!templates/Projects/projectInfo/salesManagers/updateSalesManager.html',
     'views/selectView/selectView',
     'common',
-    'dataService'
-], function (Backbone, $, _, salesManagersTemplate, updateSalesManager, SelectView, common, dataService) {
+    'dataService',
+    'moment'
+], function (Backbone, $, _, salesManagersTemplate, updateSalesManager, SelectView, common, dataService, moment) {
     'use strict';
 
     var SalesManagersView = Backbone.View.extend({
@@ -39,9 +40,9 @@ define([
 
             if (trs.length > 1){
                 trs.last().find('td').first().html(removeBtn);
+                trs.last().find('.startDateSM').addClass('editable');
             }
 
-            trs.last().find('.salesManagerDate').addClass('editable');
             lastSales = trs.last().find('td').last().text();
             trs.last().find('td').last().html('<a id="employee" class="current-selected" href="javascript:;">' + lastSales +'</a>');
         },
@@ -49,9 +50,13 @@ define([
         editNewRow: function (e) {
             var target = $(e.target);
             var row = target.parent('tr');
-            var prevSalesDate = row.prev().find('.salesManagerDate').text();
-            var prevDate = common.utcDateToLocaleDate(prevSalesDate);
+            var prevRow = row.prev().find('.startDateSM');
+            var prevSalesDate = prevRow.text() === 'From start of project' ? this.model.get('StartDate') : row.prev().find('.startDateSM').text();
+            var prevDate = new Date(prevSalesDate);
+            var nextDay = moment(prevDate).add(1, 'd');
+            var startDate = common.utcDateToLocaleDate(nextDay.toDate());
             var text;
+
             if (target.prop('tagName') !== 'INPUT') {
                 this.hideNewSelect();
             }
@@ -63,10 +68,14 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : prevDate || this.model.get('StartDate'),
+                minDate    : startDate ,
                 onSelect   : function (dateText) {
                     var $editedCol = target.closest('td');
+                    var date = new Date(dateText);
+                    var prevDay = moment(date).subtract(1, 'd');
+                    var $prSmEndDate = target.closest('tr').prev().find('.endDateSM');
                     $editedCol.text(dateText);
+                    $prSmEndDate.text(common.utcDateToLocaleDate(prevDay.toDate()));
                     $('#top-bar-saveBtn').show();
                 }
             });
@@ -138,10 +147,9 @@ define([
         addSalesManager: function (e) {
             var employeeSelect = this.$el.find('.current-selected');
             var newElements = this.$el.find('[data-id="false"]');
-            var prevDate = this.$el.find('#salesManagersTable .salesManagerDate').last().text();
-            var date = common.utcDateToLocaleDate(prevDate || this.model.get('StartDate'));
-
+            var startD = this.$el.find('.startDateSM').last();
             e.preventDefault();
+
 
             if (newElements.length) {
                 return App.render({
@@ -149,14 +157,22 @@ define([
                     message: 'Please select Sales Manager first.'
                 });
             }
+            if (startD.text() === 'Choose Date') {
+                return App.render({
+                    type   : 'error',
+                    message: 'Please, choose Date first.'
+                });
+            }
 
-            if (this.$el.find('.editable').length && employeeSelect.length) {
+            if (employeeSelect.length) {
                 this.$el.find('.editable').removeClass('editable');
                 employeeSelect.parent('td').text(employeeSelect.text());
                 employeeSelect.remove();
             }
 
-            this.$el.find('#salesManagersTable').append(_.template(updateSalesManager, {date: date}));
+            this.$el.find('#salesManagersTable .endDateSM').last().text('');
+            this.$el.find('#salesManagersTable').append(_.template(updateSalesManager));
+
 
             $('#top-bar-saveBtn').show();
             this.editLastSales();
@@ -167,6 +183,7 @@ define([
             var row = target.closest('tr');
 
             e.preventDefault();
+            row.prev().find('.endDateSM').text('To end of project');
             row.remove();
             $('#top-bar-saveBtn').show();
 
