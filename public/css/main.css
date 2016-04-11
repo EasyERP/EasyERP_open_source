@@ -6615,6 +6615,9 @@ ul.dialog-tabs li.right button {
   float: left;
   height: 16px;
 }
+.form-holder form .canReadAndWrite input[type=radio]:focus {
+  box-shadow: none !important;
+}
 .form-holder form .mainInfo {
   width: auto;
   margin-left: 170px;
