@@ -29,6 +29,8 @@ module.exports = function (models, event) {
         handler.removeInvoice(req, res, id);
     });
 
+    router.patch('/approve', handler.approve);
+
     router.patch('/:id', handler.updateOnlySelected);
 
     router.put('/:_id', function (req, res) {
