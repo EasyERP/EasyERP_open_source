@@ -742,6 +742,10 @@ var requestHandler = function (app, event, mainDb) {
 
                         empKeys.forEach(function (empId) {
                             wTRack.forEach(function (wTrack) {
+                                if (!wTrack.employee || !wTrack.employee._id) {
+                                    return;
+                                }
+
                                 var emp = (wTrack.employee._id).toString();
 
                                 nextDate = wTrack.dateByWeek;
