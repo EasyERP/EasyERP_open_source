@@ -294,9 +294,17 @@ var Project = function (models, event) {
                     if (data.customer) {
                         _project.customer = data.customer;
                     }
+                    if (data.salesmanager) {
+                        _project.salesmanager = data.salesmanager;
+                        _project.salesManagers = [{
+                            manager: data.salesmanager,
+                            date   : data.StartDate || new Date().toString()
+                        }];
+                    }
+
                     if (data.projectmanager) {
                         _project.projectmanager = data.projectmanager;
-                        _project.salesManagers = [{
+                        _project.projectManagers = [{
                             manager: data.projectmanager,
                             date   : data.StartDate || new Date().toString()
                         }];
@@ -998,9 +1006,11 @@ var Project = function (models, event) {
             .populate('groups.owner', '_id login')
             .populate('budget.projectTeam')
             .populate('projectmanager', '_id name fullName')
+            .populate('salesmanager', '_id name fullName')
             .populate('customer', '_id name fullName')
             .populate('workflow', '_id name')
-            .populate('salesManagers.manager', '_id name fullName');
+            .populate('salesManagers.manager', '_id name fullName')
+            .populate('projectManagers.manager', '_id name fullName');
 
         query.exec(function (err, project) {
             if (err) {
@@ -1379,7 +1389,10 @@ var Project = function (models, event) {
             data.workflow = data.workflow;
         }
         if (data.salesManagers && data.salesManagers.length) {
-            data.projectmanager = data.salesManagers[data.salesManagers.length - 1].manager;
+            data.salesmanager = data.salesManagers[data.salesManagers.length - 1].manager;
+        }
+        if (data.projectManagers && data.projectManagers.length) {
+            data.projectmanager = data.salesManagers[data.projectManagers.length - 1].manager;
         }
 
         if (data.notes && data.notes.length != 0 && !remove) {

@@ -2,15 +2,15 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Projects/projectInfo/salesManagers/salesManagersTemplate.html',
-    'text!templates/Projects/projectInfo/salesManagers/updateSalesManager.html',
+    'text!templates/Projects/projectInfo/projectManagers/projectManagersTemplate.html',
+    'text!templates/Projects/projectInfo/projectManagers/updateProjectManager.html',
     'views/selectView/selectView',
     'common',
     'dataService'
 ], function (Backbone, $, _, salesManagersTemplate, updateSalesManager, SelectView, common, dataService) {
     'use strict';
 
-    var SalesManagersView = Backbone.View.extend({
+    var ProjectManagersView = Backbone.View.extend({
 
         initialize: function (options) {
             this.model = options.model;
@@ -24,16 +24,16 @@ define([
             'click'                                            : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click a.current-selected'                         : 'showNewSelect',
-            'click #addSalesManager'                           : 'addSalesManager',
+            'click #addPM'                                     : 'addPM',
             'click .editable'                                  : 'editNewRow',
             'click .fa-trash'                                  : 'removeSalesManager'
         },
 
-        editLastSales: function () {
-            var table = this.$el.find('#salesManagersTable');
+        editLastPM: function () {
+            var table = this.$el.find('#projectManagersTable');
             var trs = table.find('tr');
             var removeBtn = '<a href="javascript;" class="fa fa-trash"></a>';
-            var lastSales;
+            var lastPm;
 
             trs.find('td:first-child').text('');
 
@@ -41,9 +41,9 @@ define([
                 trs.last().find('td').first().html(removeBtn);
             }
 
-            trs.last().find('.salesManagerDate').addClass('editable');
-            lastSales = trs.last().find('td').last().text();
-            trs.last().find('td').last().html('<a id="employee" class="current-selected" href="javascript:;">' + lastSales +'</a>');
+            trs.last().find('.projectManagerDate').addClass('editable');
+            lastPm = trs.last().find('td').last().text() || 'Select';
+            trs.last().find('td').last().html('<a id="employee" class="current-selected" href="javascript:;">'+ lastPm +'</a>');
         },
 
         editNewRow: function (e) {
@@ -135,18 +135,18 @@ define([
             return false;
         },
 
-        addSalesManager: function (e) {
+        addPM: function (e) {
             var employeeSelect = this.$el.find('.current-selected');
-            var newElements = this.$el.find('[data-id="false"]');
-            var prevDate = this.$el.find('#salesManagersTable .salesManagerDate').last().text();
+            var emptyPm = this.$el.find('#employee').text() === 'Select';
+            var prevDate = this.$el.find('#projectManagersTable .salesManagerDate').last().text();
             var date = common.utcDateToLocaleDate(prevDate || this.model.get('StartDate'));
 
             e.preventDefault();
 
-            if (newElements.length) {
+            if (emptyPm) {
                 return App.render({
                     type   : 'error',
-                    message: 'Please select Sales Manager first.'
+                    message: 'Please select Project Manager first.'
                 });
             }
 
@@ -156,10 +156,10 @@ define([
                 employeeSelect.remove();
             }
 
-            this.$el.find('#salesManagersTable').append(_.template(updateSalesManager, {date: date}));
+            this.$el.find('#projectManagersTable').append(_.template(updateSalesManager, {date: date}));
 
             $('#top-bar-saveBtn').show();
-            this.editLastSales();
+            this.editLastPM();
         },
 
         removeSalesManager: function (e) {
@@ -170,15 +170,15 @@ define([
             row.remove();
             $('#top-bar-saveBtn').show();
 
-            this.editLastSales();
+            this.editLastPM();
         },
 
         render: function () {
             var self = this;
-            var salesManagers = this.model.get('salesManagers');
+            var projectManagers = this.model.get('projectManagers');
 
             self.$el.html(this.template({
-                salesManagers      : salesManagers,
+                projectManagers      : projectManagers,
                 utcDateToLocaleDate: common.utcDateToLocaleDate
             }));
 
@@ -192,11 +192,11 @@ define([
                 self.responseObj['#employee'] = employees;
             });
 
-            this.editLastSales();
+            this.editLastPM();
 
             return this;
         }
     });
 
-    return SalesManagersView;
+    return ProjectManagersView;
 });

@@ -10,6 +10,7 @@
             <li><a href="javascript:;" class="countable" id="paymentsTab">Payments<span></span></a></li>
             <li><a href="javascript:;" class="" id="commentsTab">Comments</a></li>
             <li><a href="javascript:;" class="" id="bonusTab">Bonus</a></li>
+            <li><a href="javascript:;" class="" id=projectManagersTab">Project Managers</a></li>
             <li><a href="javascript:;" class="" id="salesManagersTab">Sales Managers</a></li>
             <li><a href="javascript:;" class="" id="assigneesTab">Assignees</a></li>
         </ul>
@@ -33,7 +34,14 @@
                                    id="projectShortDesc" required value="<%=model.projectShortDesc%>" maxlength="32"/>
                         </dd>
                         <dt>
-                            <label for="projectManager">Sales Manager</label>
+                            <label for="salesManager">Sales Manager</label>
+                        </dt>
+                        <dd>
+                            <a id="salesManager" data-id="<%=model.salesmanager ? model.salesmanager._id:''%>" href="javascript:;"><%=model.salesmanager ? (model.salesmanager.fullName):''%></a>
+                        </dd>
+
+                        <dt>
+                            <label for="projectManager">Project Manager</label>
                         </dt>
                         <dd>
                             <a id="projectManager" data-id="<%=model.projectmanager?model.projectmanager._id:''%>" href="javascript:;"><%=model.projectmanager?(model.projectmanager.fullName):''%></a>
@@ -136,6 +144,12 @@
             <div class="dialog-tabs-item">
                 <div id="bonus">
                     <div id="bonus-container"></div>
+                </div>
+            </div>
+            <div class="clearfix"></div>
+            <div class="dialog-tabs-item">
+                <div id="projectManagers">
+                    <div id="projectManagers-container"></div>
                 </div>
             </div>
             <div class="clearfix"></div>

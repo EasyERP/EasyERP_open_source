@@ -11,7 +11,12 @@ module.exports = (function () {
         task            : [{type: ObjectId, ref: 'Tasks', default: null}],
         customer        : {type: ObjectId, ref: 'Customers', default: null},
         projectmanager  : {type: ObjectId, ref: 'Employees', default: null},
+        salesmanager  : {type: ObjectId, ref: 'Employees', default: null},
         salesManagers   : [{
+            manager : {type: ObjectId, ref: 'Employees', default: null},
+            date: {type: Date}
+        }],
+        projectManagers : [{
             manager : {type: ObjectId, ref: 'Employees', default: null},
             date: {type: Date}
         }],
