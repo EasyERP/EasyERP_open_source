@@ -4740,13 +4740,6 @@ a.red:hover {
 .userPagination.targetPagination {
   margin-left: 5px;
 }
-.canReadAndWrite {
-  margin: 10px 0 0 0;
-  padding-bottom: 10px;
-}
-.canReadAndWrite input {
-  margin-right: 10px;
-}
 #sourceUsers,
 #sourceGroups {
   margin-left: 150px;
@@ -6609,6 +6602,19 @@ ul.dialog-tabs li.right button {
   outline: medium none;
   border: 1px solid #66b5d4;
 }
+.form-holder form .canReadAndWrite {
+  line-height: 22px;
+  margin: 10px 0 0 0;
+  padding-bottom: 10px;
+}
+.form-holder form .canReadAndWrite input[type=radio] {
+  margin-top: 6px;
+  margin-right: 10px;
+  clear: both;
+  display: block;
+  float: left;
+  height: 16px;
+}
 .form-holder form .mainInfo {
   width: auto;
   margin-left: 170px;
@@ -8219,14 +8225,6 @@ input::-webkit-inner-spin-button {
 }
 #convert-dialog-form {
   display: none;
-}
-.canReadAndWrite {
-  line-height: 22px;
-}
-.canReadAndWrite input {
-  clear: both;
-  display: block;
-  float: left;
 }
 /*.edit-person-dialog{
 	.form-holder form{
