@@ -58,7 +58,8 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         },
         invoiced : {type: Boolean, default: false},
-        removable: {type: Boolean, default: true}
+        removable: {type: Boolean, default: true},
+        approved : {type: Boolean, default: false}
     }, {collection: 'Invoice', discriminatorKey: '_type'});
 
     var jobsInvoiceSchema = baseSchema.extend({

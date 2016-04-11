@@ -435,6 +435,7 @@ define([
                 var wTracksDom;
                 var buttons;
                 var invoiceDate;
+                var isFinancial;
 
                 model = this.currentModel.toJSON();
                 invoiceDate = model.invoiceDate;
@@ -463,7 +464,8 @@ define([
                     assigned        : assigned,
                     customer        : customer,
                     total           : total,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    isFinancial     : isFinancial
                 });
 
                 if (this.isWtrack || this.isPaid) {
