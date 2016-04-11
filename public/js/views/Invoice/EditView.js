@@ -454,6 +454,8 @@ define([
                     total = model.paymentInfo ? model.paymentInfo.total : '0.00';
                 }
 
+                isFinancial = CONSTANTS.INVOICE_APPROVE_PROFILES.indexOf(App.currentUser.profile._id) !== -1;
+
                 formString = this.template({
                     model           : this.currentModel.toJSON(),
                     isWtrack        : self.isWtrack,
