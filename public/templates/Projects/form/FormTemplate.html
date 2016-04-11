@@ -10,7 +10,7 @@
             <li><a href="javascript:;" class="countable" id="paymentsTab">Payments<span></span></a></li>
             <li><a href="javascript:;" class="" id="commentsTab">Comments</a></li>
             <li><a href="javascript:;" class="" id="bonusTab">Bonus</a></li>
-            <li><a href="javascript:;" class="" id="salesManagersTab">Sales Managers</a></li>
+            <li><a href="javascript:;" class="" id="managersTab">Managers</a></li>
             <li><a href="javascript:;" class="" id="assigneesTab">Assignees</a></li>
         </ul>
         <div class="clearfix"></div>
@@ -33,11 +33,19 @@
                                    id="projectShortDesc" required value="<%=model.projectShortDesc%>" maxlength="32"/>
                         </dd>
                         <dt>
+                            <label for="projectM">Project Manager</label>
+                        </dt>
+                        <dd>
+                            <a id="projectM" data-id="<%=projectM ? projectM._id :''%>" href="javascript:;"><%= projectM ? projectM.fullName :''%></a>  <!--added in case of busy projectManager id-->
+                        </dd>
+                        <dt>
                             <label for="projectManager">Sales Manager</label>
                         </dt>
                         <dd>
-                            <a id="projectManager" data-id="<%=model.projectmanager?model.projectmanager._id:''%>" href="javascript:;"><%=model.projectmanager?(model.projectmanager.fullName):''%></a>
+                            <a id="projectManager" data-id="<%=model.projectmanager ? model.projectmanager._id:''%>" href="javascript:;"><%=model.projectmanager ? (model.projectmanager.fullName):''%></a>
                         </dd>
+
+
 
                         <dt><label for="projectTypeDD">Project Type </label></dt>
                         <dd>
@@ -140,7 +148,14 @@
             </div>
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div id="salesManagers">
+                <div id="managers">
+                    <br>
+                    <h4>Project Managers</h4>
+
+                    <div id="projectManagers-container"></div>
+                    <br>
+                    <h4>Sales Managers</h4>
+
                     <div id="salesManagers-container"></div>
                 </div>
             </div>

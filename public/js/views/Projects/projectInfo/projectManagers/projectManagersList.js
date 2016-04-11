@@ -8,10 +8,10 @@ define([
     'common',
     'dataService',
     'moment'
-], function (Backbone, $, _, salesManagersTemplate, updateSalesManager, SelectView, common, dataService, moment) {
+], function (Backbone, $, _, managersTemplate, updateManager, SelectView, common, dataService, moment) {
     'use strict';
 
-    var SalesManagersView = Backbone.View.extend({
+    var PMView = Backbone.View.extend({
 
         initialize: function (options) {
             this.model = options.model;
@@ -19,22 +19,22 @@ define([
             this.modelJSON = this.model.id ? this.model.toJSON() : this.model;
         },
 
-        template: _.template(salesManagersTemplate),
+        template: _.template(managersTemplate),
 
         events: {
             'click'                                            : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click a.current-selected'                         : 'showNewSelect',
-            'click #addManager'                                : 'addSalesManager',
+            'click #addManager'                                : 'addManager',
             'click .editable'                                  : 'editNewRow',
-            'click .fa-trash'                                  : 'removeSalesManager'
+            'click .fa-trash'                                  : 'removeManager'
         },
 
-        editLastSales: function () {
-            var table = this.$el.find('#salesManagersTable');
+        editLastPM: function () {
+            var table = this.$el.find('#projectManagersTable');
             var trs = table.find('tr');
             var removeBtn = '<a href="javascript;" class="fa fa-trash"></a>';
-            var lastSales;
+            var lastPM;
 
             trs.find('td:first-child').text('');
 
@@ -43,8 +43,8 @@ define([
                 trs.last().find('.startDateManager').addClass('editable');
             }
 
-            lastSales = trs.last().find('td').last().text();
-            trs.last().find('td').last().html('<a id="employee" class="current-selected" href="javascript:;">' + lastSales +'</a>');
+            lastPM = trs.last().find('td').last().text();
+            trs.last().find('td').last().html('<a id="employee" class="current-selected" href="javascript:;">' + lastPM +'</a>');
         },
 
         editNewRow: function (e) {
@@ -79,6 +79,7 @@ define([
                     $('#top-bar-saveBtn').show();
                 }
             });
+
             this.$el.find('#date').datepicker('show');
 
             return false;
@@ -129,7 +130,7 @@ define([
             if (prevSales === id) {
                 return App.render({
                     type   : 'error',
-                    message: 'Please choose another Sales Manager'
+                    message: 'Please choose another Project Manager'
                 });
             }
 
@@ -144,7 +145,7 @@ define([
             return false;
         },
 
-        addSalesManager: function (e) {
+        addManager: function (e) {
             var employeeSelect = this.$el.find('.current-selected');
             var newElements = this.$el.find('[data-id="false"]');
             var startD = this.$el.find('.startDateManager').last();
@@ -154,9 +155,10 @@ define([
             if (newElements.length) {
                 return App.render({
                     type   : 'error',
-                    message: 'Please select Sales Manager first.'
+                    message: 'Please select Project Manager first.'
                 });
             }
+
             if (startD.text() === 'Choose Date') {
                 return App.render({
                     type   : 'error',
@@ -170,15 +172,15 @@ define([
                 employeeSelect.remove();
             }
 
-            this.$el.find('#salesManagersTable .endDateManager').last().text('');
-            this.$el.find('#salesManagersTable').append(_.template(updateSalesManager));
+            this.$el.find('#projectManagersTable .endDateManager').last().text('');
+            this.$el.find('#projectManagersTable').append(_.template(updateManager));
 
 
             $('#top-bar-saveBtn').show();
-            this.editLastSales();
+            this.editLastPM();
         },
 
-        removeSalesManager: function (e) {
+        removeManager: function (e) {
             var target = $(e.target);
             var row = target.closest('tr');
 
@@ -187,17 +189,17 @@ define([
             row.remove();
             $('#top-bar-saveBtn').show();
 
-            this.editLastSales();
+            this.editLastPM();
         },
 
         render: function () {
             var self = this;
-            var salesManagers = this.model.get('salesManagers');
+            var projectManagers = this.model.get('projectManagers');
 
             self.$el.html(this.template({
-                managers           : salesManagers,
+                managers           : projectManagers,
                 utcDateToLocaleDate: common.utcDateToLocaleDate,
-                PM                 : false
+                PM                 : true
             }));
 
             dataService.getData('/employee/getForDD', {salesDepartments: true, isEmployee: true}, function (employees) {
@@ -210,11 +212,11 @@ define([
                 self.responseObj['#employee'] = employees;
             });
 
-            this.editLastSales();
+            this.editLastPM();
 
             return this;
         }
     });
 
-    return SalesManagersView;
+    return PMView;
 });

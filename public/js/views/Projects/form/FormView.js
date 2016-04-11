@@ -23,6 +23,7 @@ define([
         'views/Bonus/BonusView',
         'views/Projects/projectInfo/wTracks/wTrackView',
         'views/Projects/projectInfo/salesManagers/salesManagersList',
+        'views/Projects/projectInfo/projectManagers/projectManagersList',
         'views/Projects/projectInfo/payments/paymentView',
         'views/Projects/projectInfo/invoices/invoiceView',
         'views/Projects/projectInfo/proformas/proformaView',
@@ -65,6 +66,7 @@ define([
               BonusView,
               wTrackView,
               SalesManagersView,
+              ProjectManagersView,
               PaymentView,
               InvoiceView,
               ProformaView,
@@ -540,7 +542,6 @@ define([
                 var projectName = $.trim(thisEl.find('#projectName').val());
                 var projectShortDesc = $.trim(thisEl.find('#projectShortDesc').val());
                 var customer = {};
-                var projectmanager = {};
                 var workflow = {};
 
                 var projecttype = thisEl.find('#projectTypeDD').data('id');
@@ -554,6 +555,9 @@ define([
                 var salesManagersContainer = $('#salesManagersTable');
                 var salesManagerRow = salesManagersContainer.find('tr');
                 var salesManagers = [];
+                var projectManagersContainer = $('#projectManagersTable');
+                var projectManagerRow = projectManagersContainer.find('tr');
+                var projectManagers = [];
 
                 var budget = this.formModel.get('budget');
 
@@ -568,7 +572,6 @@ define([
                     projectName     : projectName,
                     projectShortDesc: projectShortDesc,
                     customer        : customer ? customer : null,
-                    projectmanager  : projectmanager ? projectmanager : null,
                     workflow        : workflow ? workflow : null,
                     projecttype     : projecttype ? projecttype : '',
                     description     : description,
@@ -587,14 +590,12 @@ define([
                     TargetEndDate   : _targetEndDate,
                     bonus           : bonus,
                     salesManagers   : salesManagers,
+                    projectManagers : projectManagers,
                     budget          : budget
                 };
 
                 customer._id = thisEl.find('#customerDd').data('id');
                 customer.name = thisEl.find('#customerDd').text();
-
-                projectmanager._id = thisEl.find('#projectManagerDD').data('id');
-                projectmanager.name = thisEl.find('#projectManagerDD').text();
 
                 workflow._id = thisEl.find('#workflowsDd').data('id');
                 workflow.name = thisEl.find('#workflowsDd').text();
@@ -642,15 +643,18 @@ define([
 
                 salesManagerRow.each(function (key, val) {
                     var employeeId = $(val).attr('data-id');
-                    var dateEl = $(val).find('.salesManagerDate');
-                    var inputInside = dateEl.find('input');
-                    var date;
+                    var startD = $(val).find('.startDateManager');
+                    var endD = $(val).find('.endDateManager');
+                    var startDText;
+                    var endDText;
+                    var inputInside = startD.find('input');
 
                     if (inputInside.length) {
-                        dateEl.text(inputInside.val());
+                        startD.text(inputInside.val());
                     }
 
-                    date = dateEl.text();
+                    startDText = (startD.text() !== 'From start of project') ? startD.text() : null;
+                    endDText = (endD.text() !== 'To end of project') ? endD.text() : null;
 
                     if (employeeId === 'false') {
                         App.render({
@@ -660,10 +664,60 @@ define([
                         validation = false;
                     }
 
+                    if (startD.text() === 'Choose Date') {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please, choose Date.'
+                        });
+                        validation = false;
+                    }
+
                     salesManagers.push({
-                        manager: employeeId,
-                        date   : date
+                        manager   : employeeId,
+                        startDate : startDText,
+                        endDate   : endDText
                     });
+                });
+
+                projectManagerRow.each(function (key, val) {
+                    var employeeId = $(val).attr('data-id');
+                    var startD = $(val).find('.startDateManager');
+                    var endD = $(val).find('.endDateManager');
+                    var emptyPM = $(val).find('#employee').text() === 'Select';
+                    var startDText;
+                    var endDText;
+                    var inputInside = startD.find('input');
+
+                    if (inputInside.length) {
+                        startD.text(inputInside.val());
+                    }
+
+                    startDText = (startD.text() !== 'From start of project') ? startD.text() : null;
+                    endDText = (endD.text() !== 'To end of project') ? endD.text() : null;
+
+                    if (employeeId === 'false') {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please, select Project Manager first.'
+                        });
+                        validation = false;
+                    }
+
+
+                    if (startD.text() === 'Choose Date') {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please, choose Date.'
+                        });
+                        validation = false;
+                    }
+                    if (!emptyPM) {
+                        projectManagers.push({
+                            manager  : employeeId,
+                            startDate: startDText,
+                            endDate  : endDText
+                        });
+                    }
                 });
 
                 $(".groupsAndUser tr").each(function () {
@@ -1509,6 +1563,10 @@ define([
                 var bonusView;
                 var container;
                 var salesManagersView;
+                var projectManagersView;
+                var projectManagers;
+                var ProjectMs = formModel.projectManagers;
+                var PM = ProjectMs.length ? ProjectMs[ProjectMs.length -1].manager : ''; // choose PM from Array
 
                 App.startPreload();
 
@@ -1522,7 +1580,8 @@ define([
                 }).render().el;
 
                 thisEl.html(templ({
-                    model: formModel
+                    model: formModel,
+                    projectM : PM
                 }));
 
                 App.projectInfo = App.projectInfo || {};
@@ -1555,6 +1614,17 @@ define([
                     salesManagersView.render().el
                 );
                 salesManagersView.bind('save', function () {
+                    self.saveItem();
+                });
+
+                projectManagers = thisEl.find('#projectManagers-container');
+                projectManagersView = new ProjectManagersView({
+                    model: this.formModel
+                });
+                projectManagers.html(
+                    projectManagersView.render().el
+                );
+                projectManagersView.bind('save', function () {
                     self.saveItem();
                 });
 
