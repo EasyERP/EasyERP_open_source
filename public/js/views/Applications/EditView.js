@@ -363,6 +363,7 @@
             var salary;
             var coach;
             var event;
+            var quit;
             var data;
             var date;
             var info;
@@ -455,6 +456,15 @@
                     info       : info
                 });
 
+                if (!salary) {
+                    App.render({
+                        type: 'error',
+                        message: 'Salary can`t be empty'
+                    });
+                    quit = true;
+                    return false;
+                }
+
                 if (event === 'fired') {
                     date = moment(date);
                     fireArray.push(date);
@@ -465,6 +475,10 @@
                     hireArray.push(date);
                 }
             });
+
+            if (quit) {
+                return;
+            }
 
             if (!transferArray.length) {
                 el = $('.edit-employee-info');
