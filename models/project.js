@@ -12,8 +12,9 @@ module.exports = (function () {
         customer        : {type: ObjectId, ref: 'Customers', default: null},
         projectmanager  : {type: ObjectId, ref: 'Employees', default: null},
         salesManagers   : [{
-            manager : {type: ObjectId, ref: 'Employees', default: null},
-            date: {type: Date}
+            manager  : {type: ObjectId, ref: 'Employees', default: null},
+            startDate: {type : Date, default: null},
+            endDate  : {type : Date, default: null}
         }],
         description     : String,
         whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},

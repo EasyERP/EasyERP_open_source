@@ -631,15 +631,18 @@ define([
 
                 salesManagerRow.each(function (key, val) {
                     var employeeId = $(val).attr('data-id');
-                    var dateEl = $(val).find('.salesManagerDate');
-                    var inputInside = dateEl.find('input');
-                    var date;
+                    var startD = $(val).find('.startDateSM');
+                    var endD = $(val).find('.endDateSM');
+                    var startDText;
+                    var endDText;
+                    var inputInside = startD.find('input');
 
                     if (inputInside.length) {
-                        dateEl.text(inputInside.val());
+                        startD.text(inputInside.val());
                     }
 
-                    date = dateEl.text();
+                    startDText = (startD.text() !== 'From start of project') ? startD.text() : null;
+                    endDText = (endD.text() !== 'To end of project') ? endD.text() : null;
 
                     if (employeeId === 'false') {
                         App.render({
@@ -649,9 +652,18 @@ define([
                         validation = false;
                     }
 
+                    if (startD.text() === 'Choose Date') {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please, choose Date.'
+                        });
+                        validation = false;
+                    }
+
                     salesManagers.push({
-                        manager: employeeId,
-                        date   : date
+                        manager   : employeeId,
+                        startDate : startDText,
+                        endDate   : endDText
                     });
                 });
 
