@@ -31,7 +31,7 @@ define(['Validation', 'common'], function (Validation, common) {
                     balance = response.paymentInfo.balance || 0;
                     total = response.paymentInfo.total || 0;
                     unTaxed = response.paymentInfo.unTaxed || 0;
-                    paid = /*response.paymentInfo.unTaxed || 0;*/total - balance
+                    paid = total - balance;
                 }
 
                 if (isNaN(paid)) {
@@ -44,8 +44,9 @@ define(['Validation', 'common'], function (Validation, common) {
                 unTaxed = (unTaxed / 100).toFixed(2);
 
                 response.paymentInfo.balance = balance;
-                response.paymentInfo.unTaxed = paid !== "0.00" ? paid : unTaxed;
+                response.paymentInfo.unTaxed = unTaxed;
                 response.paymentInfo.total = total;
+                response.paymentInfo.paid = paid;
 
                 if (response.invoiceDate) {
                     response.invoiceDate = common.utcDateToLocaleDate(response.invoiceDate);
@@ -113,7 +114,8 @@ define(['Validation', 'common'], function (Validation, common) {
             paymentInfo: {
                 total  : 0,
                 unTaxed: 0,
-                balance: 0
+                balance: 0,
+                paid   : 0
             }
 
         },

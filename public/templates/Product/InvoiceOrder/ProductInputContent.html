@@ -4,7 +4,7 @@
             products[0] ? products[0].name : 'Select'%></a>
     </td>
     <% if (forSales) {%>
-    <td data-name="jobs" class="jobs">
+    <td data-name="jobs" class="jobs text-overflow">
         <a class="current-selected jobs" data-id="jobs" href="javascript:;">Select</a>
     </td>
     <% } else { %>
@@ -26,9 +26,7 @@
         </span>
     </td>
     <td data-name="price">
-        <span>
-
-        </span>
+        <input id="editInput" class="statusInfo" maxlength="9" size=10 type="text"/>
     </td>
     <td class="taxes">
         <span>

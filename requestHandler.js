@@ -476,7 +476,7 @@ var requestHandler = function (app, event, mainDb) {
                             var key;
                             var employee = wTrack.employee;
 
-                            if (!(employee._id in employees)) {
+                            if (employee && !(employee._id in employees)) {
                                 employees[employee._id] = employee.name.first + ' ' + employee.name.last;
                             }
 
@@ -493,6 +493,10 @@ var requestHandler = function (app, event, mainDb) {
 
                         empKeys.forEach(function (empId) {
                             wTRack.forEach(function (wTrack) {
+                                if (!wTrack.employee || !wTrack.employee._id) {
+                                    return;
+                                }
+
                                 var emp = (wTrack.employee._id).toString();
 
                                 if (empId === emp) {
@@ -721,7 +725,7 @@ var requestHandler = function (app, event, mainDb) {
                             var key;
                             var employee = wTrack.employee;
 
-                            if (!( employee._id in employees)) {
+                            if (employee && !(employee._id in employees)) {
                                 employees[employee._id] = employee.name.first + ' ' + employee.name.last;
                             }
 
@@ -738,6 +742,10 @@ var requestHandler = function (app, event, mainDb) {
 
                         empKeys.forEach(function (empId) {
                             wTRack.forEach(function (wTrack) {
+                                if (!wTrack.employee || !wTrack.employee._id) {
+                                    return;
+                                }
+
                                 var emp = (wTrack.employee._id).toString();
 
                                 nextDate = wTrack.dateByWeek;

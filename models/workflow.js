@@ -8,7 +8,6 @@ module.exports = (function () {
         wName: String,
         status: String,
         name: String,
-        color: {type: String, default: "#2C3E50"},
         sequence: Number,
         visible: {type: Boolean, default: true}
     }, {collection: 'workflows'});

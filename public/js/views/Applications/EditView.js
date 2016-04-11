@@ -363,10 +363,27 @@
             var salary;
             var coach;
             var event;
+            var quit;
             var data;
             var date;
             var info;
+            var flag;
             var el;
+
+            $('.required').each(function () {
+                if (!$(this).attr('data-id')) {
+                    App.render({
+                        type: 'error',
+                        message: 'Please fill ' + $(this).attr('id')
+                    });
+                    flag = true;
+                    return false;
+                }
+            });
+
+            if (flag) {
+                return;
+            }
 
             self.hideNewSelect();
 
@@ -439,6 +456,15 @@
                     info       : info
                 });
 
+                if (!salary) {
+                    App.render({
+                        type: 'error',
+                        message: 'Salary can`t be empty'
+                    });
+                    quit = true;
+                    return false;
+                }
+
                 if (event === 'fired') {
                     date = moment(date);
                     fireArray.push(date);
@@ -449,6 +475,10 @@
                     hireArray.push(date);
                 }
             });
+
+            if (quit) {
+                return;
+            }
 
             if (!transferArray.length) {
                 el = $('.edit-employee-info');
@@ -718,6 +748,7 @@
 
         chooseOption: function (e) {
             var $target = $(e.target);
+            var $td = $target.closest('td');
             var parentUl = $target.parent();
             var element = $target.closest('a') || parentUl.closest('a');
             var id = element.attr('id') || parentUl.attr('id');
@@ -849,7 +880,7 @@
             });
 
             this.removeIcon = this.$el.find('.fa-trash');
-            this.hireDate = this.currentModel.get('hire')[0].date;
+            this.hireDate = this.currentModel.get('hire')[0];
             this.fireDate = this.$el.find("[data-content='fire']").last().find('.fireDate').text();
 
             this.renderRemoveBtn();

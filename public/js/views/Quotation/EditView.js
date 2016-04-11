@@ -3,19 +3,20 @@ define([
     'jQuery',
     'Underscore',
     "text!templates/Quotation/EditTemplate.html",
+    "views/Projects/projectInfo/proformas/proformaView",
     'views/selectView/selectView',
     'views/Assignees/AssigneesView',
     'views/Product/InvoiceOrder/ProductItems',
     'views/Projects/projectInfo/orders/orderView',
     'collections/Quotation/filterCollection',
+    'collections/Proforma/filterCollection',
     "common",
     "custom",
     "dataService",
     "populate",
     'constants',
     'helpers/keyValidator',
-    'helpers'
-], function (Backbone, $, _, EditTemplate, SelectView, AssigneesView, ProductItemView, OrdersView, QuotationCollection, common, Custom, dataService, populate, CONSTANTS, keyValidator, helpers) {
+    'helpers'], function (Backbone, $, _, EditTemplate, ProformaView, SelectView, AssigneesView, ProductItemView, OrdersView, QuotationCollection, ProformaCollection, common, Custom, dataService, populate, CONSTANTS, keyValidator, helpers) {
     'use strict';
 
     var EditView = Backbone.View.extend({
@@ -26,6 +27,7 @@ define([
         initialize: function (options) {
             if (options) {
                 this.visible = options.visible;
+                this.eventChannel = options.eventChannel || {};
             }
 
             _.bindAll(this, "render", "saveItem");
@@ -45,12 +47,12 @@ define([
         },
 
         events: {
-            'keypress .forNum'                                 : 'keydownHandler',
             'click .dialog-tabs a'                             : 'changeTab',
             "click .current-selected:not(.jobs)"               : "showNewSelect",
             "click"                                            : "hideNewSelect",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .confirmOrder"                              : "confirmOrder",
+            "click .createProforma"                            : "createProforma",
             "click .cancelQuotation"                           : "cancelQuotation",
             "click .setDraft"                                  : "setDraft"
         },
@@ -102,18 +104,6 @@ define([
             }
 
             this.hideNewSelect();
-        },
-
-        keydownHandler: function (e) {
-            var charCode = e.which;
-
-            switch (charCode) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    return keyValidator(e);
-            }
         },
 
         changeTab: function (e) {
@@ -213,7 +203,8 @@ define([
                                                 customerId    : self.customerId,
                                                 projectManager: self.projectManager,
                                                 filter        : filter,
-                                                activeTab     : true
+                                                activeTab     : true,
+                                                eventChannel  : self.eventChannel
                                             });
 
                                             self.ordersView.showOrderDialog(id);
@@ -234,6 +225,46 @@ define([
                                 type   : 'error',
                                 message: CONSTANTS.RESPONSES.CONFIRM_ORDER
                             });
+                        }
+                    });
+                }
+            });
+        },
+
+        createProforma: function (e) {
+            e.preventDefault();
+
+            var self = this;
+            var url = '/proforma/create';
+            var quotationId = this.currentModel.id;
+            var data = {
+                forSales   : this.forSales,
+                quotationId: quotationId,
+                currency   : this.currentModel.currency,
+                journal    : CONSTANTS.PROFORMA_JOURNAL
+            };
+
+            this.saveItem(function (err, res) {
+                var id = res.id;
+                if (!err) {
+
+                    dataService.postData(url, data, function (err, response) {
+                        var tr;
+
+                        if (err) {
+                            App.render({
+                                type   : 'error',
+                                message: 'Can\'t create proforma'
+                            });
+                        } else {
+
+                            App.projectInfo.currentTab = 'proforma';
+
+                            self.eventChannel.trigger('newProforma', response._id);
+
+                            tr = $('[data-id=' + quotationId + ']');
+                            tr.find('.checkbox').addClass('notRemovable');
+                            tr.find('.workflow').find('a').text('Proformed');
                         }
                     });
                 }
@@ -312,7 +343,7 @@ define([
             });
         },
 
-        saveItem: function (orderCb) {
+        saveItem: function (proformaCb /*orderCb*/) {
             var self = this;
             var mid = this.forSales ? 62 : 55;
             var thisEl = this.$el;
@@ -377,7 +408,7 @@ define([
 
                     if (productId) {
                         quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"]').text());
+                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                         taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                         description = targetEl.find('[data-name="productDescr"]').text();
@@ -432,25 +463,28 @@ define([
                         mid: mid
                     },
                     wait   : true,
-                    success: function () {
+                    success: function (res) {
                         var url = window.location.hash;
 
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(url, {trigger: true});
-                        self.hideDialog();
-
-                        App.projectInfo = App.projectInfo || {};
-                        App.projectInfo.currentTab = 'quotations';
-
-                        if (orderCb && typeof orderCb === 'function') {
-                            return orderCb(null);
+                        if (url === '#easyErp/salesQuotation/list') {
+                            self.hideDialog();
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(url, {trigger: true});
+                        } else {
+                            self.hideDialog();
                         }
+
+                        if (proformaCb && typeof proformaCb === 'function') {
+                            return proformaCb(null, res);
+                        }
+
+                        self.eventChannel.trigger('quotationUpdated');
                     },
                     error  : function (model, xhr) {
                         self.errorNotification(xhr);
 
-                        if (orderCb && typeof orderCb === 'function') {
-                            return orderCb(xhr.text);
+                        if (proformaCb && typeof proformaCb === 'function') {
+                            return proformaCb(xhr.text);
                         }
                     }
                 });
@@ -471,6 +505,7 @@ define([
         },
 
         deleteItem: function (event) {
+            var self = this;
             var mid = this.forSales ? 62 : 55;
             var url;
             var answer = confirm("Really DELETE items ?!");
@@ -487,11 +522,12 @@ define([
                         // Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         url = window.location.hash;
 
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(url, {trigger: true});
-
                         App.projectInfo = App.projectInfo || {};
                         App.projectInfo.currentTab = 'quotations';
+
+                        self.hideDialog();
+
+                        self.eventChannel.trigger('quotationRemove');
                     },
                     error  : function (model, err) {
                         if (err.status === 403) {
@@ -611,6 +647,8 @@ define([
 
                 }
             }
+
+            App.stopPreload();
 
             return this;
         }

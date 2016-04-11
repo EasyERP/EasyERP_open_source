@@ -24,7 +24,7 @@
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paymentInfo.balance">Balance<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paymentInfo.unTaxed">Paid<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="paid">Paid<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
@@ -42,15 +42,8 @@
         <%var paid = 0;%>
         <%var total = 0;%>
         <% collection.forEach(function(invoice, index){ %>
-        <tr data-id="<%=invoice._id%>"
-        <%if (invoice.workflow && invoice.workflow.status === 'Cancelled') { %>
-        class="canceledListItem"
-        <%} else if (invoice.workflow && invoice.workflow.status !== 'New'){ %>
-        class="notRemovable"
-        <% } %>>
-        <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%if (invoice.workflow && invoice.workflow.status !== 'New') { %>
-                notRemovable
-                <% } %>"/>
+        <tr data-id="<%=invoice._id%>">
+        <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>"/>
         </td>
         <td class="centerCell"><%=startNumber + index + 1%></td>
         <td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name.first + ' ' +
@@ -58,11 +51,10 @@
         </td>
         <td><%=invoice.name%></td>
         <td><%=invoice.paymentDate%></td>
-        <td><%=(invoice.salesPerson) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
+        <td><%=(invoice.salesPerson && invoice.salesPerson.name) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
         <td data-content="dueDate"><%=invoice.dueDate%></td>
         <td class="money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
-        <td class="unTaxed money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.unTaxed) : '0.00'%>
-        </td>
+        <td class="paid money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid) : '0.00'%></td>
         <td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
         <td id='<%=invoice._id%>'>
             <%if(invoice.workflow){%>
@@ -84,9 +76,10 @@
         <!--</ul>-->
         <!--</td>-->
 
-        <%balance += parseFloat(invoice.paymentInfo.balance)%>
-        <%paid += parseFloat(invoice.paymentInfo.unTaxed)%>
-        <%total += parseFloat(invoice.paymentInfo.total)%>
+        <% var rate = invoice.currency.rate || 1 %>
+        <%balance += parseFloat(invoice.paymentInfo.balance)/rate %>
+        <%paid += parseFloat(invoice.paymentInfo.paid)/rate %>
+        <%total += parseFloat(invoice.paymentInfo.total)/rate %>
         </tr>
         <% }) %>
 

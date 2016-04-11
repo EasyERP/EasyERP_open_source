@@ -10,10 +10,12 @@ define([
         'text!templates/Projects/projectInfo/proformRevenue.html',
         'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
         'text!templates/Projects/projectInfo/invoiceStats.html',
+        'text!templates/Projects/projectInfo/proformaStats.html',
         'views/selectView/selectView',
         'views/salesOrder/EditView',
         'views/salesQuotation/EditView',
         'views/salesInvoice/EditView',
+        'views/Proforma/EditView',
         'views/Projects/EditView',
         'views/Notes/NoteView',
         'views/Notes/AttachView',
@@ -23,6 +25,7 @@ define([
         'views/Projects/projectInfo/salesManagers/salesManagersList',
         'views/Projects/projectInfo/payments/paymentView',
         'views/Projects/projectInfo/invoices/invoiceView',
+        'views/Projects/projectInfo/proformas/proformaView',
         'views/Projects/projectInfo/quotations/quotationView',
         'views/Projects/projectInfo/wTracks/generateWTrack',
         'views/Projects/projectInfo/orders/orderView',
@@ -31,70 +34,134 @@ define([
         'collections/salesInvoice/filterCollection',
         'collections/customerPayments/filterCollection',
         'collections/Jobs/filterCollection',
+        'collections/Proforma/filterCollection',
         'models/QuotationModel',
         'models/InvoiceModel',
         'text!templates/Notes/AddAttachments.html',
-        "common",
+        'common',
         'populate',
         'custom',
         'dataService',
         'async',
-        'helpers'
-    ],
-
-    function (Backbone, $, _, ProjectsFormTemplate, DetailsTemplate, ProformRevenueTemplate, jobsWTracksTemplate, invoiceStats, selectView, EditViewOrder, editViewQuotation, editViewInvoice, EditView, noteView, attachView, AssigneesView, BonusView, wTrackView, SalesManagersView, PaymentView, InvoiceView, QuotationView, GenerateWTrack, oredrView, wTrackCollection, quotationCollection, invoiceCollection, paymentCollection, jobsCollection, quotationModel, invoiceModel, addAttachTemplate, common, populate, custom, dataService, async, helpers) {
+        'helpers'],
+    function (Backbone,
+              $,
+              _,
+              ProjectsFormTemplate,
+              DetailsTemplate,
+              ProformRevenueTemplate,
+              jobsWTracksTemplate,
+              invoiceStats,
+              proformaStats,
+              selectView,
+              EditViewOrder,
+              editViewQuotation,
+              editViewInvoice,
+              editViewProforma,
+              EditView,
+              noteView,
+              attachView,
+              AssigneesView,
+              BonusView,
+              wTrackView,
+              SalesManagersView,
+              PaymentView,
+              InvoiceView,
+              ProformaView,
+              QuotationView,
+              GenerateWTrack,
+              oredrView,
+              wTrackCollection,
+              quotationCollection,
+              invoiceCollection,
+              paymentCollection,
+              jobsCollection,
+              proformaCollection,
+              quotationModel,
+              invoiceModel,
+              addAttachTemplate,
+              common,
+              populate,
+              custom,
+              dataService,
+              async,
+              helpers) {
         "use strict";
 
         var View = Backbone.View.extend({
-            el              : '#content-holder',
-            contentType     : 'Projects',
-            proformRevenue  : _.template(ProformRevenueTemplate),
-            invoiceStatsTmpl: _.template(invoiceStats),
+            el               : '#content-holder',
+            contentType      : 'Projects',
+            proformRevenue   : _.template(ProformRevenueTemplate),
+            invoiceStatsTmpl : _.template(invoiceStats),
+            proformaStatsTmpl: _.template(proformaStats),
 
             events: {
-                'click .chart-tabs'                                                                                                                                                          : 'changeTab',
-                'click .deleteAttach'                                                                                                                                                        : 'deleteAttach',
-                "click #health a:not(.disabled)"                                                                                                                                             : "showHealthDd",
-                "click #health ul li div:not(.disabled)"                                                                                                                                     : "chooseHealthDd",
-                "click .newSelectList li:not(.miniStylePagination):not(.disabled)"                                                                                                           : "chooseOption",
-                "click .current-selected:not(.disabled)"                                                                                                                                     : "showNewSelect",
-                "click #createItem"                                                                                                                                                          : "createDialog",
-                "click #createJob"                                                                                                                                                           : "createJob",
-                "change input:not(.checkbox, .bonus-checkbox, .check_all, #check_all_bonus, .statusCheckbox, #inputAttach, #noteTitleArea)"                                                  : "showSaveButton",  // added id for noteView
-                "change #description"                                                                                                                                                        : "showSaveButton",
-                "click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)"                                                                                                          : "renderJobWTracks",
-                "mouseover #jobsItem"                                                                                                                                                        : "showRemoveButton",
-                "mouseleave #jobsItem"                                                                                                                                                       : "hideRemoveButton",
-                "click .fa.fa-trash"                                                                                                                                                         : "removeJobAndWTracks",
-                "dblclick td.editableJobs"                                                                                                                                                   : "editRow",
-                "click #saveName"                                                                                                                                                            : "saveNewJobName",
-                "keydown input.editing "                                                                                                                                                     : "keyDown",
-                'click'                                                                                                                                                                      : 'hideSelect',
-                'keydown'                                                                                                                                                                    : 'keydownHandler',
-                "click a.quotation"                                                                                                                                                          : "viewQuotation",
-                "click a.invoice"                                                                                                                                                            : "viewInvoice"
+                'click .chart-tabs'                                                                                       : 'changeTab',
+                'click .deleteAttach'                                                                                     : 'deleteAttach',
+                'click #health a:not(.disabled)'                                                                          : 'showHealthDd',
+                'click #health ul li div:not(.disabled)'                                                                  : 'chooseHealthDd',
+                'click .newSelectList li:not(.miniStylePagination):not(.disabled)'                                        : 'chooseOption',
+                'click .current-selected:not(.disabled)'                                                                  : 'showNewSelect',
+                'click #createItem'                                                                                       : 'createDialog',
+                'click #createJob'                                                                                        : 'createJob',
+                'change input:not(.checkbox, .check_all, #check_all_bonus, .statusCheckbox, #inputAttach, #noteTitleArea)': 'showSaveButton',  // added id for noteView
+                'change #description'                                                                                     : 'showSaveButton',
+                'click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)'                                       : 'renderJobWTracks',
+                'mouseover #jobsItem'                                                                                     : 'showRemoveButton',
+                'mouseleave #jobsItem'                                                                                    : 'hideRemoveButton',
+                'click .fa.fa-trash'                                                                                      : 'removeJobAndWTracks',
+                'dblclick td.editableJobs'                                                                                : 'editRow',
+                'click #saveName'                                                                                         : 'saveNewJobName',
+                'keydown input.editing '                                                                                  : 'keyDown',
+                click                                                                                                     : 'hideSelect',
+                keydown                                                                                                   : 'keydownHandler',
+                'click a.quotation'                                                                                       : 'viewQuotation',
+                'click a.invoice'                                                                                         : 'viewInvoice',
+                'click a.proforma'                                                                                        : 'viewProforma'
             },
 
             initialize: function (options) {
+                var eventChannel = {};
+                _.extend(eventChannel, Backbone.Events);
+
+                this.eventChannel = eventChannel;
                 this.formModel = options.model;
                 this.id = this.formModel.id;
                 this.formModel.urlRoot = '/Projects/';
                 this.projectManager = this.formModel.get('projectmanager');
                 this.responseObj = {};
                 this.proformValues = {};
+
+                this.listenTo(eventChannel, 'newPayment', this.newPayment);
+                this.listenTo(eventChannel, 'paymentRemoved', this.newPayment);
+
+                this.listenTo(eventChannel, 'elemCountChanged', this.renderTabCounter);
+
+                this.listenTo(eventChannel, 'newProforma', this.createProforma);
+                this.listenTo(eventChannel, 'proformaRemove', this.createProforma);
+                this.listenTo(eventChannel, 'savedProforma', this.createProforma);
+
+                this.listenTo(eventChannel, 'quotationUpdated', this.getQuotations);
+                this.listenTo(eventChannel, 'quotationRemove', this.getQuotations);
+
+                this.listenTo(eventChannel, 'orderRemove', this.getOrders);
+                this.listenTo(eventChannel, 'orderUpdate', this.getOrders);
+
+                this.listenTo(eventChannel, 'invoiceRemove', this.getInvoice);
+                this.listenTo(eventChannel, 'invoiceRemove', this.getOrders);
+                this.listenTo(eventChannel, 'invoiceUpdated', this.getInvoice);
             },
 
             viewQuotation: function (e) {
-                e.stopPropagation();
                 var self = this;
-
                 var target = e.target;
                 var id = $(target).attr('data-id');
                 var model;
                 var type = $(target).closest('tr').find('#type').text();
                 var onlyView = false;
 
-                if (type === "Quoted") {
+                e.stopPropagation();
+                if (type === 'Quoted') {
                     model = new quotationModel({validate: false});
 
                     model.urlRoot = '/quotation/form/' + id;
@@ -105,7 +172,7 @@ define([
                                 redirect      : true,
                                 pId           : self.id,
                                 projectManager: self.projectManager
-                            })
+                            });
                         },
                         error  : function (xhr) {
                             App.render({
@@ -121,7 +188,7 @@ define([
                     model.fetch({
                         success: function (model) {
 
-                            if (type === "Invoiced") {
+                            if (type === 'Invoiced') {
                                 onlyView = true;
                             }
 
@@ -143,11 +210,12 @@ define([
             },
 
             viewInvoice: function (e) {
-                e.stopPropagation();
-
+                var self = this;
                 var target = e.target;
                 var id = $(target).attr('data-id');
                 var model = new invoiceModel({validate: false});
+
+                e.stopPropagation();
 
                 model.urlRoot = '/Invoice/form';
                 model.fetch({
@@ -157,9 +225,41 @@ define([
                     },
                     success: function (model) {
                         new editViewInvoice({
-                            model    : model,
-                            notCreate: true,
-                            redirect : true
+                            model       : model,
+                            notCreate   : true,
+                            redirect    : true,
+                            eventChannel: self.eventChannel
+                        });
+                    },
+                    error  : function () {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please refresh browser'
+                        });
+                    }
+                });
+            },
+
+            viewProforma: function (e) {
+                var self = this;
+                var target = e.target;
+                var id = $(target).attr('data-id');
+                var model = new invoiceModel({validate: false});
+
+                e.stopPropagation();
+
+                model.urlRoot = '/Invoice/form';
+                model.fetch({
+                    data   : {
+                        id       : id,
+                        currentDb: App.currentDb
+                    },
+                    success: function (model) {
+                        new editViewProforma({
+                            model       : model,
+                            notCreate   : true,
+                            redirect    : true,
+                            eventChannel: self.eventChannel
                         });
                     },
                     error  : function () {
@@ -187,7 +287,7 @@ define([
                 var insertedInput;
 
                 if (el.prop('tagName') !== 'INPUT') {
-                    editedElement = $("#projectTeam").find('.editing');
+                    editedElement = $('#projectTeam').find('.editing');
 
                     if (editedElement.length) {
                         editedCol = editedElement.closest('td');
@@ -214,19 +314,19 @@ define([
                 var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
                 var self = this;
                 var _id = window.location.hash.split('form/')[1];
-                var id = $(e.target).parents("td").closest('tr').attr('data-id');
+                var id = $(e.target).parents('td').closest('tr').attr('data-id');
                 var name = $(e.target).prev('input').val() ? $(e.target).prev('input').val() : $(e.target).val();
 
                 var data = {_id: id, name: name};
                 if (nameRegExp.test(name)) {
-                    dataService.postData("/jobs/update", data, function (err, result) {
+                    dataService.postData('/jobs/update', data, function (err, result) {
                         if (err) {
                             return console.log(err);
                         }
 
                         $('#saveName').hide();
 
-                        $(e.target).parents("td").text(name);
+                        $(e.target).parents('td').text(name);
 
                         $(e.target).prev('input').remove();
 
@@ -234,7 +334,7 @@ define([
                             'projectName': {
                                 key  : 'project._id',
                                 value: [_id],
-                                type : "ObjectId"
+                                type : 'ObjectId'
                             }
                         };
 
@@ -294,10 +394,10 @@ define([
 
                 var data = {_id: id};
 
-                var answer = confirm("Really delete Job ?!");
+                var answer = confirm('Really delete Job ?!');
 
                 if (answer === true) {
-                    dataService.postData("/jobs/remove", data, function (err, result) {
+                    dataService.postData('/jobs/remove', data, function (err, result) {
                         if (err) {
                             return console.log(err);
                         }
@@ -312,7 +412,7 @@ define([
                             'projectName': {
                                 key  : 'project._id',
                                 value: [_id],
-                                type : "ObjectId"
+                                type : 'ObjectId'
                             }
                         };
 
@@ -324,30 +424,30 @@ define([
 
             hideRemoveButton: function (e) {
                 var target = e.target;
-                var tr = $(target).parents("tr");
-                var removeItem = tr.find(".fa.fa-trash");
+                var tr = $(target).parents('tr');
+                var removeItem = tr.find('.fa.fa-trash');
 
                 removeItem.addClass('hidden');
             },
 
             showRemoveButton: function (e) {
                 var target = e.target;
-                var tr = $(target).parents("tr");
-                var removeItem = tr.find(".fa.fa-trash").not('.notRemovable');
+                var tr = $(target).parents('tr');
+                var removeItem = tr.find('.fa.fa-trash').not('.notRemovable');
 
                 removeItem.removeClass('hidden');
             },
 
             renderJobWTracks: function (e) {
                 var target = e.target;
-                var jobId = $(target).parents("tr").attr("data-id");
-                var jobContainer = $(target).parents("tr");
+                var jobId = $(target).parents('tr').attr('data-id');
+                var jobContainer = $(target).parents('tr');
                 var template = _.template(jobsWTracksTemplate);
                 var jobsItems = this.jobsCollection.toJSON();
                 var icon = $(jobContainer).find('.expand');
-                var subId = "subRow-row" + jobId;
+                var subId = 'subRow-row' + jobId;
                 var subRowCheck = $('#' + subId);
-                var name = $(target).parents("tr").find("#jobsName").text();
+                var name = $(target).parents('tr').find('#jobsName').text();
 
                 var job = _.find(jobsItems, function (element) {
                     return element._id === jobId;
@@ -411,8 +511,7 @@ define([
                 return false;
             },
 
-            showNewSelect: function (e, prev, next) {
-                //populate.showSelect(e, prev, next, this);
+            showNewSelect: function (e) {
                 var $target = $(e.target);
                 e.stopPropagation();
 
@@ -431,7 +530,6 @@ define([
 
                 $target.append(this.selectView.render().el);
                 return false;
-                return false;
             },
 
             saveItem: function () {
@@ -439,16 +537,16 @@ define([
                 var validation = true;
                 var self = this;
                 var mid = 39;
-                var projectName = $.trim(thisEl.find("#projectName").val());
-                var projectShortDesc = $.trim(thisEl.find("#projectShortDesc").val());
+                var projectName = $.trim(thisEl.find('#projectName').val());
+                var projectShortDesc = $.trim(thisEl.find('#projectShortDesc').val());
                 var customer = {};
                 var projectmanager = {};
                 var workflow = {};
 
-                var projecttype = thisEl.find("#projectTypeDD").data("id");
-                var $userNodes = $("#usereditDd option:selected");
-                var startDate = $.trim(thisEl.find("#StartDate").val());
-                var endDate = $.trim(thisEl.find("#EndDate").val());
+                var projecttype = thisEl.find('#projectTypeDD').data('id');
+                var $userNodes = $('#usereditDd option:selected');
+                var startDate = $.trim(thisEl.find('#StartDate').val());
+                var endDate = $.trim(thisEl.find('#EndDate').val());
                 var users = [];
                 var bonusContainer = $('#bonusTable');
                 var bonusRow = bonusContainer.find('tr');
@@ -464,21 +562,21 @@ define([
 
                 var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
                 var health = thisEl.find('#health a').data('value');
-                var _targetEndDate = $.trim(thisEl.find("#EndDateTarget").val());
-                var description = $.trim(thisEl.find("#description").val());
+                var _targetEndDate = $.trim(thisEl.find('#EndDateTarget').val());
+                var description = $.trim(thisEl.find('#description').val());
                 var data = {
                     projectName     : projectName,
                     projectShortDesc: projectShortDesc,
                     customer        : customer ? customer : null,
                     projectmanager  : projectmanager ? projectmanager : null,
                     workflow        : workflow ? workflow : null,
-                    projecttype     : projecttype ? projecttype : "",
+                    projecttype     : projecttype ? projecttype : '',
                     description     : description,
                     teams           : {
                         users: users
                     },
                     groups          : {
-                        owner: $("#allUsersSelect").data("id"),
+                        owner: $('#allUsersSelect').data('id'),
                         users: usersId,
                         group: groupsId
                     },
@@ -492,14 +590,14 @@ define([
                     budget          : budget
                 };
 
-                customer._id = thisEl.find("#customerDd").data("id");
-                customer.name = thisEl.find("#customerDd").text();
+                customer._id = thisEl.find('#customerDd').data('id');
+                customer.name = thisEl.find('#customerDd').text();
 
-                projectmanager._id = thisEl.find("#projectManagerDD").data("id");
-                projectmanager.name = thisEl.find("#projectManagerDD").text();
+                projectmanager._id = thisEl.find('#projectManagerDD').data('id');
+                projectmanager.name = thisEl.find('#projectManagerDD').text();
 
-                workflow._id = thisEl.find("#workflowsDd").data("id");
-                workflow.name = thisEl.find("#workflowsDd").text();
+                workflow._id = thisEl.find('#workflowsDd').data('id');
+                workflow.name = thisEl.find('#workflowsDd').text();
 
                 $userNodes.each(function (key, val) {
                     users.push({
@@ -513,8 +611,8 @@ define([
                     var bonusId = $(val).find("[data-content='bonus']").attr('data-id');
                     var value;
 
-                    var startD = $(val).find(".startDate input").val() || null;
-                    var endD = $(val).find(".endDate input").val() || null;
+                    var startD = $(val).find('.startDate input').val() || null;
+                    var endD = $(val).find('.endDate input').val() || null;
 
                     if (!employeeId || !bonusId) {
                         if (!employeeId) {
@@ -563,8 +661,8 @@ define([
                     }
 
                     salesManagers.push({
-                        manager   : employeeId,
-                        date      : date
+                        manager: employeeId,
+                        date   : date
                     });
                 });
 
@@ -572,8 +670,8 @@ define([
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type") == "targetGroups") {
-                        groupsId.push($(this).data("id"));
+                    if ($(this).data('type') == 'targetGroups') {
+                        groupsId.push($(this).data('id'));
                     }
 
                 });
@@ -588,7 +686,7 @@ define([
 
                             self.hideSaveButton();
 
-                            //Backbone.history.fragment = "";
+                            //Backbone.history.fragment = '';
                             //Backbone.history.navigate(url, {trigger: true});
                             App.render({
                                 type   : 'notify',
@@ -607,22 +705,22 @@ define([
                 var data;
                 var attrId = $(e.target).parents("td").find(".current-selected").attr('id');
 
-                $(".newSelectList").hide();
+                $('.newSelectList').hide();
 
-                if ($(e.target).parents("dd").find(".current-selected").length) {
-                    $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+                if ($(e.target).parents('dd').find('.current-selected').length) {
+                    $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
                 } else {
-                    $(e.target).parents("td").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+                    $(e.target).parents('td').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
-                    var id = $(e.target).parents("td").closest('tr').attr('data-id');
+                    var id = $(e.target).parents('td').closest('tr').attr('data-id');
 
                     if (attrId === 'workflow') {
-                        data = {_id: id, workflowId: $(e.target).attr("id")};
+                        data = {_id: id, workflowId: $(e.target).attr('id')};
                     } else if (attrId === 'type') {
                         data = {_id: id, type: $(e.target).text()};
                     }
 
-                    dataService.postData("/jobs/update", data, function (err, result) {
+                    dataService.postData('/jobs/update', data, function (err, result) {
                         if (err) {
                             return console.log(err);
                         }
@@ -634,8 +732,8 @@ define([
             },
 
             hideNewSelect: function () {
-                $(".newSelectList").hide();
-                $("#health ul").hide();
+                $('.newSelectList').hide();
+                $('#health ul').hide();
 
             },
 
@@ -650,13 +748,13 @@ define([
             chooseHealthDd: function (e) {
                 var target = $(e.target);
 
-                target.parents("#health").find("a").attr("class", target.attr("class")).attr("data-value", target.attr("class").replace("health", "")).parent().find("ul").toggle();
+                target.parents('#health').find('a').attr('class', target.attr('class')).attr('data-value', target.attr('class').replace('health', '')).parent().find('ul').toggle();
 
                 this.showSaveButton();
             },
 
             showHealthDd: function (e) {
-                $(e.target).parent().find("ul").toggle();
+                $(e.target).parent().find('ul').toggle();
                 return false;
             },
 
@@ -668,14 +766,14 @@ define([
 
                 App.projectInfo = App.projectInfo || {};
 
-                App.projectInfo.currentTab = $aEllement.attr("id").slice(0, -3);  // todo id
+                App.projectInfo.currentTab = $aEllement.attr('id').slice(0, -3);  // todo id
 
-                target.closest(".chart-tabs").find("a.active").removeClass("active");
-                target.addClass("active");
-                n = target.parents(".chart-tabs").find("li").index(target.parent());
-                dialogHolder = $(".dialog-tabs-items");
-                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
-                dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
+                target.closest('.chart-tabs').find('a.active').removeClass('active');
+                $aEllement.addClass('active');
+                n = target.parents('.chart-tabs').find('li').index($aEllement.parent());
+                dialogHolder = $('.dialog-tabs-items');
+                dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+                dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
             },
 
             keydownHandler: function (e) {
@@ -690,8 +788,8 @@ define([
 
             hideDialog: function () {
                 $('.edit-project-dialog').remove();
-                $(".add-group-dialog").remove();
-                $(".add-user-dialog").remove();
+                $('.add-group-dialog').remove();
+                $('.add-user-dialog').remove();
             },
 
             fileSizeIsAcceptable: function (file) {
@@ -702,9 +800,9 @@ define([
             },
 
             hideSelect: function () {
-                $("#health").find("ul").hide(); // added for hiding list if element in isnt chosen
+                $('#health').find('ul').hide(); // added for hiding list if element in isnt chosen
 
-                if (this.selectView){
+                if (this.selectView) {
                     this.selectView.remove();
                 }
             },
@@ -714,15 +812,15 @@ define([
             },
 
             hideSaveButton: function () {
-                $("#top-bar-saveBtn").hide();
+                $('#top-bar-saveBtn').hide();
             },
 
             renderProjectInfo: function (cb) {
                 var self = this;
                 var _id = window.location.hash.split('form/')[1];
                 var filter = {
-                    "project": {
-                        key  : "project._id",
+                    project: {
+                        key  : 'project._id',
                         value: [_id]
                     }
                 };
@@ -794,18 +892,21 @@ define([
 
                 this.renderProformRevenue();
                 this.getInvoiceStats();
+                this.getProformaStats();
             },
 
             getWTrack: function (cb) {
                 //var _id = this.formModel.id;
                 var self = this;
+                var callback = _.once(cb);
+
                 var _id = window.location.hash.split('form/')[1];
 
                 var filter = {
-                    'projectName': {
+                    projectName: {
                         key  : 'project._id',
                         value: [_id],
-                        type : "ObjectId"
+                        type : 'ObjectId'
                     }
                 };
 
@@ -814,8 +915,6 @@ define([
                     filter  : filter,
                     count   : 100
                 });
-
-                var callback = _.once(cb);
 
                 function createView() {
                     callback();
@@ -838,7 +937,7 @@ define([
 
                 function showMoreContent(newModels) {
                     self.wCollection.reset(newModels.toJSON());
-                };
+                }
 
                 this.wCollection.bind('reset', createView);
                 this.wCollection.bind('showmore', showMoreContent);
@@ -851,10 +950,10 @@ define([
                 var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
 
                 var filter = {
-                    'projectName': {
+                    projectName: {
                         key  : 'project._id',
                         value: [_id],
-                        type : "ObjectId"
+                        type : 'ObjectId'
                     }
                 };
 
@@ -872,19 +971,44 @@ define([
                 this.wCollection.bind('reset', this.createView);
             },
 
-            getInvoiceStats: function () {
+            getInvoiceStats: function (cb) {
                 //ToDo optimize
                 var _id = window.location.hash.split('form/')[1];
                 var self = this;
                 var filter = {
-                    "project": {
-                        key  : "project._id",
+                    project: {
+                        key  : 'project._id',
                         value: [_id]
                     }
                 };
                 dataService.getData('invoice/stats/project', {filter: filter}, function (response) {
                     if (response && response.success) {
                         self.renderInvoiceStats(response.success);
+                    }
+
+                    if (typeof cb === 'function') {
+                        cb();
+                    }
+                });
+            },
+
+            getProformaStats: function (cb) {
+                //ToDo optimize
+                var _id = window.location.hash.split('form/')[1];
+                var self = this;
+                var filter = {
+                    project: {
+                        key  : 'project._id',
+                        value: [_id]
+                    }
+                };
+                dataService.getData('proforma/stats/project', {filter: filter}, function (response) {
+                    if (response && response.success) {
+                        self.renderProformaStats(response.success);
+                    }
+
+                    if (typeof cb === 'function') {
+                        cb();
                     }
                 });
             },
@@ -893,6 +1017,17 @@ define([
                 var statsContainer = this.$el.find('#invoiceStatsContainer');
 
                 statsContainer.html(this.invoiceStatsTmpl({
+                        invoceStats     : data.invoices,
+                        invoceStat      : data,
+                        currencySplitter: helpers.currencySplitter
+                    })
+                );
+            },
+
+            renderProformaStats: function (data) {
+                var statsContainer = this.$el.find('#proformaStatsContainer');
+
+                statsContainer.html(this.proformaStatsTmpl({
                         invoceStats     : data.invoices,
                         invoceStat      : data,
                         currencySplitter: helpers.currencySplitter
@@ -918,7 +1053,7 @@ define([
                 var self = this;
                 var _id = window.location.hash.split('form/')[1];
                 var filter = {
-                    'project': {
+                    project: {
                         key  : 'project._id',
                         value: [_id]
                     }
@@ -935,46 +1070,29 @@ define([
                 function createView() {
                     var payments = [];
 
-                    callback();
-
-                    App.invoiceCollection = self.iCollection;
+                    //App.invoiceCollection = self.iCollection;
 
                     new InvoiceView({
-                        model : self.iCollection,
-                        filter: filter
-                    }).render();
+                        model       : self.iCollection,
+                        filter      : filter,
+                        eventChannel: self.eventChannel
+                    });
 
                     self.iCollection.toJSON().forEach(function (element) {
-                        element.payments.forEach(function (payment) {
-                            payments.push(payment);
-                        });
-                    });
-
-                    var filterPayment = {
-                        'name': {
-                            key  : '_id',
-                            value: payments
+                        if (element.payments) {
+                            element.payments.forEach(function (payment) {
+                                payments.push(payment);
+                            });
                         }
-                    };
-
-                    self.pCollection = new paymentCollection({
-                        count      : 50,
-                        viewType   : 'list',
-                        contentType: 'customerPayments',
-                        filter     : filterPayment
                     });
 
-                    self.pCollection.unbind();
-                    self.pCollection.bind('reset', createPayment);
+                    self.payments = self.payments || {};
+                    self.payments.fromInvoces = payments;
 
-                    function createPayment() {
-                        new PaymentView({
-                            model : self.pCollection,
-                            filter: filterPayment
-                        });
-                    }
+                    self.renderTabCounter();
 
-                };
+                    callback();
+                }
 
                 callback = _.once(cb);
 
@@ -983,12 +1101,113 @@ define([
 
             },
 
+            getProforma: function (cb, quotationId) {
+                var self = this;
+                var _id = window.location.hash.split('form/')[1];
+                var filter = {
+                    project: {
+                        key  : 'project._id',
+                        value: [_id]
+                    }
+                };
+                var callback;
+
+                self.pCollection = new proformaCollection({
+                    count      : 50,
+                    viewType   : 'list',
+                    contentType: 'proforma',
+                    filter     : filter
+                });
+
+                function createView() {
+                    var proformaView;
+                    var payments = [];
+
+                    //App.proformaCollection = self.pCollection;
+
+                    proformaView = new ProformaView({
+                        el          : '#proforma',
+                        model       : self.pCollection,
+                        filter      : filter,
+                        eventChannel: self.eventChannel
+                    });
+
+                    if (quotationId) {
+                        proformaView.showDialog(quotationId);
+                    }
+
+                    self.pCollection.toJSON().forEach(function (element) {
+                        if (element.payments) {
+                            element.payments.forEach(function (payment) {
+                                payments.push(payment);
+                            });
+                        }
+                    });
+
+                    self.payments = self.payments || {};
+                    self.payments.fromProformas = payments;
+
+                    if (typeof(cb) === 'function') {
+                        callback();
+                    }
+                }
+
+                callback = _.once(cb);
+
+                self.pCollection.unbind();
+                self.pCollection.bind('reset', createView);
+
+            },
+
+            getPayments: function (activate) {
+                var self = this;
+                var payFromInvoice;
+                var payFromProforma;
+                var payments;
+
+                self.payments = self.payments || {};
+                payFromInvoice = self.payments.fromInvoces || [];
+                payFromProforma = self.payments.fromProformas || [];
+
+                payments = payFromInvoice.concat(payFromProforma);
+
+                var filterPayment = {
+                    name: {
+                        key  : '_id',
+                        value: payments
+                    }
+                };
+
+                self.payCollection = new paymentCollection({
+                    count      : 50,
+                    viewType   : 'list',
+                    contentType: 'customerPayments',
+                    filter     : filterPayment
+                });
+
+                self.payCollection.unbind();
+                self.payCollection.bind('reset', createPayment);
+
+                function createPayment() {
+                    var data = {
+                        model       : self.payCollection,
+                        filter      : filterPayment,
+                        activate    : activate,
+                        eventChannel: self.eventChannel
+                    };
+
+                    new PaymentView(data);
+
+                    self.renderTabCounter();
+                }
+            },
+
             getQuotations: function (cb) {
                 var _id = window.location.hash.split('form/')[1];
                 var self = this;
 
                 var filter = {
-                    'projectName': {
+                    projectName: {
                         key  : 'project._id',
                         value: [_id]
                     }
@@ -1002,7 +1221,11 @@ define([
                 });
 
                 function createView() {
-                    cb();
+
+                    if (cb) {
+                        cb();
+                    }
+
                     new QuotationView({
                         collection      : self.qCollection,
                         projectId       : _id,
@@ -1011,10 +1234,14 @@ define([
                         filter          : filter,
                         model           : self.formModel,
                         wTrackCollection: self.wCollection,
-                        createJob       : true
+                        createJob       : true,
+                        eventChannel    : self.eventChannel
                     }).render();
 
+                    self.renderTabCounter();
+
                 };
+
                 this.qCollection.bind('reset', createView);
                 this.qCollection.bind('add', self.renderProformRevenue);
                 this.qCollection.bind('remove', self.renderProformRevenue);
@@ -1025,11 +1252,11 @@ define([
                 var _id = window.location.hash.split('form/')[1];
 
                 var filter = {
-                    'projectName': {
+                    projectName: {
                         key  : 'project._id',
                         value: [_id]
                     },
-                    'isOrder'    : {
+                    isOrder    : {
                         key  : 'isOrder',
                         value: ['true']
                     }
@@ -1043,27 +1270,33 @@ define([
                 });
 
                 function createView() {
-                    cb();
+                    if (cb) {
+                        cb();
+                    }
+
                     new oredrView({
                         collection    : self.ordersCollection,
                         projectId     : _id,
                         customerId    : self.formModel.toJSON().customer._id,
                         projectManager: self.formModel.toJSON().projectmanager,
-                        filter        : filter
-                    }).render();
+                        filter        : filter,
+                        eventChannel  : self.eventChannel
+                    });
 
-                };
+                    self.renderTabCounter();
+
+                }
 
                 function showMoreContent(newModels) {
                     self.ordersCollection.reset(newModels.toJSON());
-                };
+                }
 
                 this.ordersCollection.bind('reset', createView);
                 this.ordersCollection.bind('add', self.renderProformRevenue);
                 this.ordersCollection.bind('showmore', showMoreContent);
             },
 
-            renderProformRevenue: function () {
+            renderProformRevenue: function (cb) {
                 var self = this;
                 var proformContainer = this.$el.find('#proformRevenueContainer');
 
@@ -1117,6 +1350,27 @@ define([
                         currencySplitter: helpers.currencySplitter
                     })
                 );
+
+                if (typeof cb === 'function') {
+                    cb();
+                }
+            },
+
+            renderTabCounter: function () {
+                var $tabs = $('.countable');
+                var $table;
+                var count;
+                var id;
+
+                $tabs.each(function () {
+                    var $tab = $(this);
+
+                    id = $tab.attr('id');
+                    id = id.replace('Tab', '');
+                    $table = $('#' + id).find('tbody tr');
+                    count = $table.length;
+                    $tab.find('span').text(' (' + count + ')');
+                });
             },
 
             editItem: function () {
@@ -1131,7 +1385,7 @@ define([
                 textArea.attr('readonly', false);
 
                 $('#StartDate').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat : 'd M, yy',
                     changeMonth: true,
                     changeYear : true,
                     onSelect   : function () {
@@ -1141,7 +1395,7 @@ define([
                     }
                 });
                 $('#EndDate').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat : 'd M, yy',
                     changeMonth: true,
                     changeYear : true,
                     onSelect   : function () {
@@ -1151,30 +1405,30 @@ define([
                     }
                 });
                 $('#EndDateTarget').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat : 'd M, yy',
                     changeMonth: true,
                     changeYear : true,
                     minDate    : (self.formModel.StartDate) ? self.formModel.StartDate : 0
                 });
-                $('#StartDate').datepicker("option", "disabled", false);
-                $('#EndDate').datepicker("option", "disabled", false);
-                $('#EndDateTarget').datepicker("option", "disabled", false);
+                $('#StartDate').datepicker('option', 'disabled', false);
+                $('#EndDate').datepicker('option', 'disabled', false);
+                $('#EndDateTarget').datepicker('option', 'disabled', false);
 
-                $("#top-bar-saveBtn").show();
-                $("#createQuotation").show();
-                $("#createBonus").show();
+                $('#top-bar-saveBtn').show();
+                $('#createQuotation').show();
+                $('#createBonus').show();
             },
 
             deleteItems: function () {
                 var mid = 39;
 
-                this.formModel.urlRoot = "/Projects";
+                this.formModel.urlRoot = '/Projects';
                 this.formModel.destroy({
                     headers: {
                         mid: mid
                     },
                     success: function () {
-                        Backbone.history.navigate("#easyErp/Projects/thumbnails", {trigger: true});
+                        Backbone.history.navigate('#easyErp/Projects/thumbnails', {trigger: true});
                     }
                 });
 
@@ -1189,16 +1443,57 @@ define([
 
                 if (dialogsDiv && App.projectInfo && App.projectInfo.currentTab && App.projectInfo.currentTab !== 'overview') {
                     tabId = App.projectInfo.currentTab;
-                    tabs = $(".chart-tabs");
+                    tabs = $('.chart-tabs');
                     activeTab = tabs.find('.active');
 
                     activeTab.removeClass('active');
-                    tabs.find('#' + tabId + 'Tab').addClass("active");
+                    tabs.find('#' + tabId + 'Tab').addClass('active');
 
-                    dialogHolder = $(".dialog-tabs-items");
-                    dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
-                    dialogHolder.find('div#' + tabId).closest('.dialog-tabs-item').addClass("active"); // added selector div in case finding bad element
+                    dialogHolder = $('.dialog-tabs-items');
+                    dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+                    dialogHolder.find('div#' + tabId).closest('.dialog-tabs-item').addClass('active'); // added selector div in case finding bad element
                 }
+            },
+
+            newPayment: function () {
+                var self = this;
+                var paralellTasks;
+
+                paralellTasks = [
+                    self.getProforma,
+                    self.getInvoice,
+                    self.renderProformRevenue,
+                    self.getInvoiceStats,
+                    self.getProformaStats
+                ];
+
+                App.startPreload();
+
+                async.parallel(paralellTasks, function () {
+                    self.getPayments(true);
+                    App.stopPreload();
+                });
+
+            },
+
+            createProforma: function (quotationId) {
+                var self = this;
+                var paralellTasks;
+
+                paralellTasks = [
+                    self.renderProformRevenue,
+                    self.getProforma,
+                    self.getProformaStats
+                ];
+                App.startPreload();
+
+                async.parallel(paralellTasks, function () {
+                    self.getProforma(null, quotationId);
+                    self.activeTab();
+                    self.renderTabCounter();
+                    App.stopPreload();
+                });
+
             },
 
             render: function () {
@@ -1223,7 +1518,7 @@ define([
 
                 var atachEl = new attachView({
                     model: this.formModel,
-                    url  : "/uploadProjectsFiles"
+                    url  : '/uploadProjectsFiles'
                 }).render().el;
 
                 thisEl.html(templ({
@@ -1233,11 +1528,11 @@ define([
                 App.projectInfo = App.projectInfo || {};
                 App.projectInfo.currentTab = App.projectInfo.currentTab ? App.projectInfo.currentTab : 'overview';
 
-                populate.get("#projectTypeDD", "/projectType", {}, "name", this, false, true);
-                populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this);
-                populate.get2name("#customerDd", "/Customer", {}, this, false, false);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this);
-                populate.getWorkflow("#workflow", "#workflowNames", "/WorkflowsForDd", {id: "Jobs"}, "name", this);
+                populate.get('#projectTypeDD', '/projectType', {}, 'name', this, false, true);
+                populate.get2name('#projectManagerDD', '/getPersonsForDd', {}, this);
+                populate.get2name('#customerDd', '/Customer', {}, this, false, false);
+                populate.getWorkflow('#workflowsDd', '#workflowNamesDd', '/WorkflowsForDd', {id: 'Projects'}, 'name', this);
+                populate.getWorkflow('#workflow', '#workflowNames', '/WorkflowsForDd', {id: 'Jobs'}, 'name', this);
 
                 notDiv = this.$el.find('#divForNote');
                 notDiv.html(notesEl);
@@ -1276,23 +1571,23 @@ define([
                 });
 
                 thisEl.find('#createBonus').hide();
-                _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats');
+                _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
 
-                paralellTasks = [this.renderProjectInfo, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
+                paralellTasks = [this.renderProjectInfo, this.getProforma, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
 
                 async.parallel(paralellTasks, function (err, result) {
+                    self.getPayments();
                     App.stopPreload();
                     self.renderProformRevenue();
-                    self.getInvoiceStats();
                     self.activeTab();
                 });
 
-                $("#top-bar-deleteBtn").hide();
-                $("#createQuotation").show();
-                $("#createBonus").show();
+                $('#top-bar-deleteBtn').hide();
+                $('#createQuotation').show();
+                $('#createBonus').show();
 
                 $('#StartDate').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat : 'd M, yy',
                     changeMonth: true,
                     changeYear : true,
                     onSelect   : function () {
@@ -1305,7 +1600,7 @@ define([
                     }
                 });
                 $('#EndDate').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat : 'd M, yy',
                     changeMonth: true,
                     changeYear : true,
                     minDate    : $('#StartDate').datepicker('getDate'), //added minDate at start
@@ -1318,7 +1613,7 @@ define([
                     }
                 });
                 $('#EndDateTarget').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat : 'd M, yy',
                     changeMonth: true,
                     changeYear : true,
                     minDate    : (self.formModel.StartDate) ? self.formModel.StartDate : 0

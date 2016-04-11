@@ -42,8 +42,16 @@ module.exports = (function () {
         supplier     : {type: ObjectId, ref: 'Customers', default: null},
         paymentMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
         period       : {type: ObjectId, ref: 'Destination', default: null},
-        bonus        : {type: Boolean}
+        bonus        : {type: Boolean},
+        currency: {
+            _id : {type: ObjectId, ref: 'currency', default: null},
+            rate: {type: Number, default: 1}
+        }
     });
+
+    var InvoicePaymentSchema = PaymentSchema.extend({});
+
+    var ProformaPaymentSchema = PaymentSchema.extend({});
 
     var salaryPaymentSchema = basePaymentSchema.extend({
         //invoice      : {
@@ -76,10 +84,16 @@ module.exports = (function () {
     });
 
     mongoose.model('Payment', PaymentSchema);
+    mongoose.model('InvoicePayment', InvoicePaymentSchema);
+    mongoose.model('ProformaPayment', ProformaPaymentSchema);
     mongoose.model('salaryPayment', salaryPaymentSchema);
     mongoose.model('wTrackPayOut', payOutSchema);
 
-    PaymentSchema.pre('save', function (next) {
+    PaymentSchema.pre('save', setName);
+    ProformaPaymentSchema.pre('save', setName);
+    InvoicePaymentSchema.pre('save', setName);
+
+    function setName (next) {
         var payment = this;
         var db = payment.db.db;
 
@@ -104,7 +118,7 @@ module.exports = (function () {
 
                 next();
             });
-    });
+    }
     /*PaymentSchema.post('save', function (doc) {
      var payment = this;
      var paymentDate = new Date(this.date);
@@ -202,6 +216,8 @@ module.exports = (function () {
     }
 
     mongoose.Schemas.Payment = PaymentSchema;
+    mongoose.Schemas.InvoicePayment = InvoicePaymentSchema;
+    mongoose.Schemas.ProformaPayment = ProformaPaymentSchema;
     mongoose.Schemas.salaryPayment = salaryPaymentSchema;
     mongoose.Schemas.wTrackPayOut = payOutSchema;
 })();

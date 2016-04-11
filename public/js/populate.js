@@ -5,7 +5,8 @@ define([
     function (dataService, selectTemplate) {
         var dataFormServer = {};
 
-        var get = function (id, url, data, field, content, isCreate, canBeEmpty, parrrentContentId) {
+        var get = function (id, url, data, field, content, isCreate, canBeEmpty, parrrentContentId, defaultId) {
+            defaultId = defaultId || 0;
             dataService.getData(url, data, function (response) {
                 var curEl = $(id);
 
@@ -24,7 +25,7 @@ define([
                         if (canBeEmpty) {   // took off element Select from responseObj, changed on default select at start
                             curEl.text("Select");
                         } else {
-                            curEl.text(content.responseObj[id][0].name).attr("data-id", content.responseObj[id][0]._id);
+                            curEl.text(content.responseObj[id][defaultId].name).attr("data-id", content.responseObj[id][defaultId]._id);
                         }
                     }
                 }

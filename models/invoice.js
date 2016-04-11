@@ -26,8 +26,8 @@ module.exports = (function () {
         invoiceDate: {type: Date, default: Date.now},
         dueDate    : Date,
         paymentDate: Date,
-        journal: {type: ObjectId, ref: 'journal', default: null},
-        currency: {
+        journal    : {type: ObjectId, ref: 'journal', default: null},
+        currency   : {
             _id : {type: ObjectId, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
         },
@@ -56,7 +56,9 @@ module.exports = (function () {
         editedBy : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
-        }
+        },
+        invoiced : {type: Boolean, default: false},
+        removable: {type: Boolean, default: true}
     }, {collection: 'Invoice', discriminatorKey: '_type'});
 
     var jobsInvoiceSchema = baseSchema.extend({
@@ -73,6 +75,8 @@ module.exports = (function () {
         }],
         project : {type: ObjectId, ref: 'Project', default: null}
     });
+
+    var proformaSchema = jobsInvoiceSchema.extend({});
 
     var payRollInvoiceSchema = baseSchema.extend({
         expense : {type: Boolean, default: true},
@@ -103,10 +107,12 @@ module.exports = (function () {
     jobsInvoiceSchema.set('toJSON', {getters: true});
     payRollInvoiceSchema.set('toJSON', {getters: true});
     invoiceSchema.set('toJSON', {getters: true});
+    proformaSchema.set('toJSON', {getters: true});
 
     mongoose.model('wTrackInvoice', jobsInvoiceSchema);
     mongoose.model('payRollInvoice', payRollInvoiceSchema);
     mongoose.model('Invoice', invoiceSchema);
+    mongoose.model('Proforma', proformaSchema);
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
@@ -115,4 +121,5 @@ module.exports = (function () {
     mongoose.Schemas['wTrackInvoice'] = jobsInvoiceSchema;
     mongoose.Schemas['payRollInvoice'] = payRollInvoiceSchema;
     mongoose.Schemas['Invoice'] = invoiceSchema;
+    mongoose.Schemas['Proforma'] = proformaSchema;
 })();

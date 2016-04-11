@@ -34,7 +34,7 @@
         <%var totalPaidAmount = 0;%>
         <% paymentCollection.forEach(function(payment, index) {%>
         <tr data-id="<%=payment._id%>">
-            <td class="notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox"/></td>
+            <td class="notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox <%=payment.removable ? '' : 'notRemovable'%>"/></td>
             <td class="centerCell"><%=startNumber + index + 1%></td>
             <td><%=(payment && payment.assigned) ? payment.assigned.name.first + ' ' + payment.assigned.name.last:
                 ''%>
@@ -42,7 +42,7 @@
             <td><%=payment.supplier && payment.supplier.name ? payment.supplier.name.first + ' ' +
                 payment.supplier.name.last : ''%>
             </td>
-            <td><%=payment.invoice ? payment.invoice.name : ''%></td>
+            <td data-id="<%=payment.invoice._id%>"><%=payment.invoice ? payment.invoice.name : ''%></td>
             <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
             <td class="totalPaidAmount money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>">
                 <%=currencySplitter(parseFloat(payment.paidAmount).toFixed(2))%>
@@ -51,7 +51,7 @@
             <td class="date" data-content="date">
                 <%=utcDateToLocaleDate(payment.date)%>
             </td>
-            <%totalPaidAmount += parseFloat(payment.paidAmount)%>
+            <%totalPaidAmount += parseFloat(payment.paidAmount)/payment.currency.rate %>
         </tr>
         <%})%>
         <% if (paymentCollection.length) {%>

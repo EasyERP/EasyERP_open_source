@@ -48,6 +48,7 @@ define([
             this.defaultItemsNumber = 50;
             this.page = options.page ? options.page : 1;
             this.startNumber = options.startNumber ? options.startNumber : 1;
+            this.eventChannel = options.eventChannel || {};
 
             if (this.startNumber < 50) {
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
@@ -64,7 +65,12 @@ define([
             model.fetch({
                 data   : {contentType: this.contentType},
                 success: function (model) {
-                    new editView({model: model, redirect: true, projectManager: self.projectManager});
+                    new editView({
+                        model: model,
+                        redirect: true,
+                        projectManager: self.projectManager,
+                        eventChannel: self.eventChannel
+                    });
                 },
                 error  : function () {
                     App.render({
@@ -97,7 +103,8 @@ define([
                         model         : model,
                         redirect      : true,
                         projectManager: self.projectManager,
-                        onlyView      : onlyView
+                        onlyView      : onlyView,
+                        eventChannel: self.eventChannel
                     });
                 },
                 error  : function () {
@@ -367,6 +374,8 @@ define([
                             $("#removeOrder").hide();
                             $('#check_all_orders').prop('checked', false);
 
+                            that.eventChannel.trigger('elemCountChanged');
+
                             //that.deleteItemsRender(that.deleteCounter, that.deletePage);
                         },
                         error  : function (model, res) {
@@ -474,6 +483,8 @@ define([
             }, function (stages) {
                 self.stages = stages;
             });
+
+            self.eventChannel.trigger('elemCountChanged');
 
         }
     });

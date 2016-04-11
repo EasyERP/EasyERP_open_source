@@ -421,9 +421,9 @@ define([
             showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var itemView;
-                var page = holder.find("#currentShowPage").val();
+                var page = parseInt(holder.find('#currentShowPage').val(), 10) || 1; // if filter give 0 elements
 
-                holder.find("#listTable").empty();
+                holder.find('#listTable').empty();
 
                 itemView = new this.listItemView({
                     collection : newModels,
@@ -558,7 +558,7 @@ define([
             renderCheckboxes: function () {
                 var self = this;
                 $('#check_all').click(function () {
-                    $(':checkbox').prop('checked', this.checked);
+                    $(':checkbox:not(.notRemovable)').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
                     } else {

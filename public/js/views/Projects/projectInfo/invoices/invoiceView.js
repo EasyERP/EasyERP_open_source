@@ -27,18 +27,20 @@ define([
             this.collection = options.model;
             this.filter = options.filter ? options.filter : {};
 
+            this.eventChannel = options.eventChannel || {};
+
             this.render(options);
         },
 
         template: _.template(invoiceTemplate),
 
         events: {
-            "click .checkbox"                          : "checked",
-            "click  .list td:not(.notForm, .validated)": "goToEditDialog",
-            "click #removeInvoice"                     : "deleteItems",
-            "click #saveInvoice"                       : "saveItems",
-            "click .selectList"                        : "showSelects",
-            "click .newSelectList li"                  : "chooseOption"
+            "click .checkbox"                               : "checked",
+            //"click .list tbody td:not(.notForm, .validated)": "goToEditDialog",
+            "click #removeInvoice"                          : "deleteItems",
+            "click #saveInvoice"                            : "saveItems",
+            "click .selectList"                             : "showSelects",
+            "click .newSelectList li"                       : "chooseOption"
         },
 
         showSelects: function (e) {
@@ -140,6 +142,7 @@ define([
             var id;
             var tr;
             var listTableCheckedInput;
+            var payments;
             var table = this.$el.find('#listTable');
             listTableCheckedInput = table.find("input:not('#check_all_invoice'):checked");
 
@@ -152,6 +155,7 @@ define([
                         orderId = model.get("sourceDocument");
                         orderId = orderId && orderId._id ? orderId._id : orderId;
                         id = model.get('_id');
+                        payments = model.get('payments');
                         tr = $("[data-id=" + orderId + "]");
 
                         table.find('[data-id="' + id + '"]').remove();
@@ -163,6 +167,11 @@ define([
 
                         $("#removeInvoice").hide();
                         $('#check_all_invoice').prop('checked', false);
+
+                        payments.forEach(function (payment) {
+                            $('.payment-list').find("[data-id=" + payment + "]").find('.checkbox').removeClass('notRemovable');
+                        });
+
 
                         that.collection.remove(checkbox.value);
 
@@ -210,6 +219,7 @@ define([
         },
 
         showDialog: function (orderId) {
+            var self = this;
             var invoice = _.find(this.collection.toJSON(), function (el) {
                 return (el.sourceDocument ? el.sourceDocument._id.toString() === orderId.toString() : null)
             });
@@ -223,7 +233,13 @@ define([
                     currentDb: App.currentDb
                 },
                 success: function (model) {
-                    new editView({model: model, redirect: true, collection: this.collection, notCreate: true});
+                    new editView({
+                        model: model,
+                        redirect: true,
+                        collection: this.collection,
+                        notCreate: true,
+                        eventChannel: self.eventChannel
+                    });
                 },
                 error  : function () {
                     App.render({
@@ -236,10 +252,11 @@ define([
         },
 
         goToEditDialog: function (e) {
-            e.preventDefault();
-
+            var self = this;
             var id = $(e.target).closest('tr').data("id");
             var model = new invoiceModel({validate: false});
+
+            e.preventDefault();
 
             model.urlRoot = '/Invoice/form';
             model.fetch({
@@ -250,7 +267,12 @@ define([
                 success: function (model) {
                     // var isWtrack = App.weTrack;
 
-                    new editView({model: model, redirect: true, collection: this.collection, notCreate: true});
+                    new editView({model: model,
+                        redirect: true,
+                        collection: this.collection,
+                        notCreate: true,
+                        eventChannel: self.eventChannel
+                    });
                 },
                 error  : function () {
                     App.render({

@@ -42,6 +42,8 @@ define([
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
 
+                this.eventChannel = options.eventChannel;
+
                 this.isWtrack = !!options.isWtrack;
                 this.filter = options.filter;
 
@@ -54,7 +56,7 @@ define([
 
                 this.notCreate = options.notCreate ? false : true;
 
-                if (!App || !App.currentDb) {
+                /*if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
@@ -67,9 +69,9 @@ define([
                     });
                 } else {
                     this.render();
-                }
+                }*/
 
-                /* this.render();*/
+                this.render();
             },
 
             newPayment: function (e) {
@@ -78,12 +80,15 @@ define([
 
                 e.preventDefault();
 
-                this.saveItem(function (err) {
+                this.saveItem(function (err, currency) {
                     if (!err) {
                         paymentView = new PaymentCreateView({
                             model     : self.currentModel,
                             redirect  : self.redirect,
-                            collection: self.collection
+                            collection: self.collection,
+                            mid       : 56,
+                            currency  : currency,
+                            eventChannel: self.eventChannel
                         });
                     }
                 });
@@ -234,7 +239,7 @@ define([
                 var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
                 var currency = {
                     _id : $thisEl.find('#currencyDd').attr('data-id'),
-                    name: $thisEl.find('#currencyDd').text()
+                    name: $.trim($thisEl.find('#currencyDd').text())
                 };
 
                 var invoiceDate = $thisEl.find("#invoice_date").val();
@@ -306,7 +311,7 @@ define([
                     //sourceDocument: $.trim(this.$el.find('#source_document').val()),
                     //supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
                     name            : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
-                    paymentReference: $.trim(this.$el.find('#payment_reference').val()),
+                    //paymentReference: $.trim(this.$el.find('#payment_reference').val()),
                     invoiceDate     : invoiceDate,
                     dueDate         : dueDate,
                     account         : null,
@@ -343,10 +348,15 @@ define([
                             self.hideDialog();
 
                             if (paymentCb && typeof paymentCb === 'function') {
-                                return paymentCb(null);
+                                return paymentCb(null, currency);
                             }
 
                             if (self.redirect) {
+
+                                if (self.eventChannel) {
+                                    self.eventChannel.trigger('invoiceUpdated');
+                                }
+
                                 Backbone.history.navigate(url, {trigger: true});
                                 $dueDateEl = $('#' + result.id).closest('tr').find('[data-content="dueDate"]');
                                 $dueDateEl.text(result.dueDate);
@@ -387,6 +397,7 @@ define([
 
             deleteItem: function (event) {
                 var url = window.location.hash;
+                var self = this;
 
                 // var redirectUrl = this.forSales ? url : "easyErp/Invoice";
 
@@ -397,14 +408,15 @@ define([
                     this.currentModel.destroy({
                         success: function () {
                             $('.edit-invoice-dialog').remove();
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(url, {trigger: true});
+
+                            self.hideDialog();
+                            self.eventChannel.trigger('invoiceRemove');
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {
                                 App.render({
                                     type: 'error',
-                                    message: "You do not have permission to perform this action"
+                                    message: "You do not have permission to perform this action"
                                 });
                             }
                         }
@@ -522,20 +534,41 @@ define([
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
                 populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
-                this.$el.find('#invoice_date').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    maxDate    : 0,
-                    onSelect   : function () {
-                        var dueDatePicker = $('#due_date');
-                        var endDate = $(this).datepicker('getDate');
 
-                        endDate.setDate(endDate.getDate());
 
-                        dueDatePicker.datepicker('option', 'minDate', endDate);
-                    }
-                });
+                if (model.workflow.status !== 'New') {
+                    this.$el.find('#invoice_date').datepicker({
+                        dateFormat : "d M, yy",
+                        changeMonth: true,
+                        changeYear : true,
+                        disabled   : true,
+                        maxDate    : 0,
+                        onSelect   : function () {
+                            var dueDatePicker = $('#due_date');
+                            var endDate = $(this).datepicker('getDate');
+
+                            endDate.setDate(endDate.getDate());
+
+                            dueDatePicker.datepicker('option', 'minDate', endDate);
+                        }
+                    });
+                } else {
+                    this.$el.find('#invoice_date').datepicker({
+                        dateFormat : "d M, yy",
+                        changeMonth: true,
+                        changeYear : true,
+                        minDate    : new Date(model.sourceDocument.orderDate),
+                        maxDate    : 0,
+                        onSelect   : function () {
+                            var dueDatePicker = $('#due_date');
+                            var endDate = $(this).datepicker('getDate');
+
+                            endDate.setDate(endDate.getDate());
+
+                            dueDatePicker.datepicker('option', 'minDate', endDate);
+                        }
+                    });
+                }
 
                 this.$el.find('#due_date').datepicker({
                     defaultValue: invoiceDate,
