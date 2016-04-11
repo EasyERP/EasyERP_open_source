@@ -118,7 +118,7 @@ var Employee = function (models) {
         var year = query.year;
         var date = moment().year(year).month(month - 1).date(1);
 
-        Employee.findById(_id, {hire: 1, fire: 1}, function (err, result) {
+        Employee.findById(_id, {transfer: 1}, function (err, result) {
             var salary = 0;
             var hire;
             var i;
@@ -129,7 +129,7 @@ var Employee = function (models) {
             }
 
             if (result){
-                hire = result.hire;
+                hire = result.transfer;
                 length = hire.length;
 
                 for (i = length - 1; i >= 0; i--){
@@ -155,7 +155,7 @@ var Employee = function (models) {
             $unwind: '$hire'
         }, {
             $project: {
-                date: '$hire.date'
+                date: '$hire'
             }
         }, {
             $group: {

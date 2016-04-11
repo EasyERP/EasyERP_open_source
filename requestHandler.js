@@ -279,7 +279,7 @@ var requestHandler = function (app, event, mainDb) {
                         {
                             '_id': {$in: result}
                         }, {
-                            hire: 1
+                            transfer: 1
                         })
                     .lean();
                 query.exec(function (err, salary) {
@@ -291,7 +291,7 @@ var requestHandler = function (app, event, mainDb) {
 
                     var result = _.map(salary, function (element) {
                         var obj = {};
-                        var hire = element.hire;
+                        var hire = element.transfer;
                         var length = hire.length;
                         for (i = length - 1; i >= 0; i--) {
                             if (date >= hire[i].date) {
@@ -396,7 +396,7 @@ var requestHandler = function (app, event, mainDb) {
                     console.log(err);
                 }
 
-                var date = employee.hire[0].date;
+                var date = employee.hire[0];
 
                 journalEntry.setReconcileDate(req, date);
             });

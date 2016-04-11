@@ -777,7 +777,7 @@ var Module = function (models, event) {
             if (err) {
                 return console.log(err);
             }
-            var dateResult = result.date;
+            var dateResult = result ? result.date : new Date();
             var newDae = moment(date);
             var newReconcileDate = moment(dateResult);
             var lessDate = newDae.isBefore(newReconcileDate) ? true : false;
@@ -982,7 +982,7 @@ var Module = function (models, event) {
                                 vars: {
                                     lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
                                 },
-                                in  : {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
+                                in  : {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
                             }
                         }
                     }
@@ -1181,12 +1181,12 @@ var Module = function (models, event) {
                     };
 
                     findSalary = function (pcb) {
-                        Employee.findById(employeeId, {hire: 1}, function (err, result) {
+                        Employee.findById(employeeId, {transfer: 1}, function (err, result) {
                             if (err) {
                                 return pcb(err);
                             }
 
-                            var hire = result.hire;
+                            var hire = result.transfer;
                             var length = hire.length;
                             var i;
 

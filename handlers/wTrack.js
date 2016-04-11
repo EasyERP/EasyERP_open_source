@@ -976,6 +976,8 @@ var wTrack = function (event, models) {
                 var startDate = moment(new Date(options.startDate));
                 var startIsoYear = startDate.isoWeekYear();
 
+                journalEntry.setReconcileDate(req, startDate);
+
                 var endDate = moment(new Date(options.endDate));
                 var endIsoYear = options.endDate ? endDate.isoWeekYear() : startIsoYear + 1;
                 var hours = parseInt(options.hours, 10);
@@ -1220,8 +1222,6 @@ var wTrack = function (event, models) {
                     var total = 0;
                     var employee = options.employee;
                     var j;
-
-                    journalEntry.setReconcileDate(req, stDate);
 
                     for (j = 7; j >= 1; j--) {
                         options[j] = parseInt(options[j]);

@@ -8,7 +8,7 @@ var CONSTANTS = require('../../constants/mainConstants');
 var moment = require('../../public/js/libs/moment/moment');
 var async = require('async');
 var journalEntrySchema = mongoose.Schemas.journalEntry;
-var MonthHoursSchema = mongoose.Schemas.monthHours;
+var MonthHoursSchema = mongoose.Schemas.MonthHours;
 var wTrackSchema = mongoose.Schemas.wTrack;
 var employeeSchema = mongoose.Schemas.Employee;
 var invoiceSchema = mongoose.Schemas.Invoice;
@@ -213,7 +213,7 @@ dbObject.once('open', function callback() {
      });
      };*/
 
-    var weeksArray = [/*1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,*/21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40];
+    var weeksArray = [/*1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,*//*21,22,23,24,25,26,27,28,29,30,*/31, 32, 33,34,35,36,37,38,39,40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52];
 
     weeksArray.forEach(function (week) {
         console.log('start week ', week);
@@ -237,7 +237,7 @@ dbObject.once('open', function callback() {
             var wTracks;
 
             wTrackFinder = function (wfcallback) {
-                WTrack.find({year: 2015, week: week}, function (err, result) {
+                WTrack.find({year: 2014, week: week}, function (err, result) {
                     if (err) {
                         return wfcallback(err);
                     }
@@ -278,7 +278,6 @@ dbObject.once('open', function callback() {
                 var employeesArray = wTrackResultObject.employeesIds;
                 var dateByMonthArray = wTrackResultObject.monthKeys;
 
-
                 if (!wTrackIds.length) {
                     return wfcallback();
                 }
@@ -293,7 +292,7 @@ dbObject.once('open', function callback() {
 
                     createDirect = function (createWaterfallCb) {
                         var salaryFinder = function (parallelCb) {
-                            var query = Employee.find({_id: {$in: employeesArray}}, {hire: 1}).lean();
+                            var query = Employee.find({_id: {$in: employeesArray}}, {transfer: 1}).lean();
 
                             query.exec(function (err, employees) {
                                 if (err) {
@@ -301,13 +300,13 @@ dbObject.once('open', function callback() {
                                 }
 
                                 employees.forEach(function (employee) {
-                                    var hireArray = employee.hire;
+                                    var transferArray = employee.transfer;
                                     if (!salaryObject[employee._id]) {
                                         salaryObject[employee._id] = {};
                                     }
 
-                                    hireArray.forEach(function (hireObj) {
-                                        salaryObject[employee._id][hireObj.date] = hireObj.salary || 0;
+                                    transferArray.forEach(function (transferObj) {
+                                        salaryObject[employee._id][transferObj.date] = transferObj.salary || 0;
                                     });
                                 });
 
@@ -642,6 +641,7 @@ dbObject.once('open', function callback() {
                                     $project: {
                                         isEmployee: 1,
                                         hire      : 1,
+                                        transfer  : 1,
                                         name      : 1,
                                         lastFire  : 1,
                                         lastHire  : {
@@ -649,7 +649,7 @@ dbObject.once('open', function callback() {
                                                 vars: {
                                                     lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
                                                 },
-                                                in  : {$add: [{$multiply: [{$year: '$$lastHired.date'}, 100]}, {$week: '$$lastHired.date'}]}
+                                                in  : {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
                                             }
                                         }
                                     }
@@ -657,8 +657,9 @@ dbObject.once('open', function callback() {
                                  $match: matchObj
                                  },*/ {
                                     $project: {
-                                        _id : 1,
-                                        hire: 1
+                                        _id     : 1,
+                                        hire    : 1,
+                                        transfer: 1
                                     }
                                 }], function (err, result) {
                                     if (err) {
@@ -687,7 +688,7 @@ dbObject.once('open', function callback() {
                                         if (!monthHoursObject[key]) {
                                             monthHoursObject[key] = {};
                                         }
-                                        
+
                                         monthHoursObject[key] = result && result[0] ? result[0] : {};
                                         asyncCb();
                                     })
@@ -752,7 +753,7 @@ dbObject.once('open', function callback() {
                                         var employeeNotTracked = _.find(employeesWithSalary, function (elem) {
                                             return elem._id.toString() === employee.toString();
                                         });
-                                        var hireArray = employeeNotTracked ? employeeNotTracked.hire : [];
+                                        var hireArray = employeeNotTracked ? employeeNotTracked.transfer : [];
                                         var length = hireArray.length;
                                         var j;
                                         var costHour = 0;
@@ -768,7 +769,7 @@ dbObject.once('open', function callback() {
                                             }
                                         }
 
-                                        if (employee.toString() === '55b92ad221e4b7c40f00007f' && dateKey === '20150102'){
+                                        if (employee.toString() === '55b92ad221e4b7c40f00007f' && dateKey === '20150102') {
                                             console.log('ddd');
 
                                         }
@@ -800,7 +801,6 @@ dbObject.once('open', function callback() {
 
                                         bodySalaryIdle.sourceDocument._id = employee;
 
-
                                         if (totalWorkedForDay - HOURSCONSTANT < 0) {
                                             if (!vacation) {
                                                 if (totalWorkedForDay - HOURSCONSTANT >= 0) {
@@ -817,7 +817,6 @@ dbObject.once('open', function callback() {
                                             bodySalaryIdle.amount = 0;
                                         }
 
-
                                         if (createVacation) {
                                             bodySalaryIdle.amount = costHour * HOURSCONSTANT * 100;
                                             bodySalaryIdle.journal = CONSTANTS.VACATION_PAYABLE;
@@ -833,8 +832,8 @@ dbObject.once('open', function callback() {
                                             bodySalaryIdle.amount = 0;
                                         }
 
-                                        if ((bodySalaryIdle.amount > 0) && (bodySalaryIdle.journal === CONSTANTS.VACATION_PAYABLE)){
-                                            if (!employeesObjects[employee]){
+                                        if ((bodySalaryIdle.amount > 0) && (bodySalaryIdle.journal === CONSTANTS.VACATION_PAYABLE)) {
+                                            if (!employeesObjects[employee]) {
                                                 employeesObjects[employee] = {};
                                             }
 
@@ -902,7 +901,7 @@ dbObject.once('open', function callback() {
 
         async.parallel(parallelTasks, function (err, result) {
             if (err) {
-                return next(err);
+                return console.log(err);
             }
 
             console.log(week);

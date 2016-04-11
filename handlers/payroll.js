@@ -821,7 +821,7 @@ var PayRoll = function (models) {
                 }
             };
 
-            var query = Employee.find(queryObject, {hire: 1}).lean();
+            var query = Employee.find(queryObject, {transfer: 1}).lean();
 
             query.exec(function (err, result) {
                 if (err) {
@@ -832,7 +832,7 @@ var PayRoll = function (models) {
 
                 result.forEach(function (elem) {
                     var salary = 0;
-                    var hire = elem.hire;
+                    var hire = elem.transfer;
                     var length = hire.length;
                     var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hours: 18, minutes: 1, seconds: 0}));
 
