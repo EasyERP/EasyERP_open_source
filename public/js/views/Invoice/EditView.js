@@ -102,17 +102,20 @@ define([
                 var url;
                 var invoiceId;
                 var $li;
+                var $tr;
+                var $span;
                 var payBtnHtml;
 
                 e.preventDefault();
 
+                invoiceId = self.currentModel.get('_id');
                 $li = $('button.approve').parent('li');
+                $tr = $('tr[data-id='+ invoiceId +']');
+                $span = $tr.find('td').eq(10).find('span');
 
                 App.startPreload();
 
                 payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
-
-                invoiceId = self.currentModel.get('_id');
                 url = '/invoice/approve';
                 data = {
                     invoiceId : invoiceId
@@ -124,6 +127,10 @@ define([
                         $li.html(payBtnHtml);
 
                         App.stopPreload();
+
+                        $span.text('Unpaid');
+                        $span.removeClass();
+                        $span.addClass('new');
                     } else {
                         App.render({
                             type: 'error',
