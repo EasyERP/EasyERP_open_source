@@ -632,8 +632,8 @@ define([
 
                 salesManagerRow.each(function (key, val) {
                     var employeeId = $(val).attr('data-id');
-                    var startD = $(val).find('.startDateSM');
-                    var endD = $(val).find('.endDateSM');
+                    var startD = $(val).find('.startDateManager');
+                    var endD = $(val).find('.endDateManager');
                     var startDText;
                     var endDText;
                     var inputInside = startD.find('input');
@@ -670,28 +670,41 @@ define([
 
                 projectManagerRow.each(function (key, val) {
                     var employeeId = $(val).attr('data-id');
+                    var startD = $(val).find('.startDateManager');
+                    var endD = $(val).find('.endDateManager');
                     var emptyPM = $(val).find('#employee').text() === 'Select';
-                    var dateEl = $(val).find('.projectManagerDate');
-                    var inputInside = dateEl.find('input');
-                    var date;
+                    var startDText;
+                    var endDText;
+                    var inputInside = startD.find('input');
+
+                    if (inputInside.length) {
+                        startD.text(inputInside.val());
+                    }
+
+                    startDText = (startD.text() !== 'From start of project') ? startD.text() : null;
+                    endDText = (endD.text() !== 'To end of project') ? endD.text() : null;
+
                     if (employeeId === 'false') {
                         App.render({
                             type   : 'error',
-                            message: 'Please, select Sales Manager first.'
+                            message: 'Please, select Project Manager first.'
                         });
                         validation = false;
                     }
 
+
+                    if (startD.text() === 'Choose Date') {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please, choose Date.'
+                        });
+                        validation = false;
+                    }
                     if (!emptyPM) {
-                        if (inputInside.length) {
-                            dateEl.text(inputInside.val());
-                        }
-
-                        date = dateEl.text();
-
                         projectManagers.push({
-                            manager: employeeId,
-                            date   : date
+                            manager  : employeeId,
+                            startDate: startDText,
+                            endDate  : endDText
                         });
                     }
                 });
@@ -1533,6 +1546,8 @@ define([
                 var salesManagersView;
                 var projectManagersView;
                 var projectManagers;
+                var ProjectMs = formModel.projectManagers;
+                var PM = ProjectMs.length ? ProjectMs[ProjectMs.length -1].manager : ''; // choose PM from Array
 
                 App.startPreload();
 
@@ -1546,7 +1561,8 @@ define([
                 }).render().el;
 
                 thisEl.html(templ({
-                    model: formModel
+                    model: formModel,
+                    projectM : PM
                 }));
 
                 App.projectInfo = App.projectInfo || {};

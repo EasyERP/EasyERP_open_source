@@ -11,8 +11,7 @@ var projectSchema = mongoose.Schema({
     projectmanager  : {type: ObjectId, ref: 'Employees', default: null},
     salesManagers   : [{
         manager  : {type: ObjectId, ref: 'Employees', default: null},
-        startDate: {type : Date},
-        endDate  : {type : Date}
+        date      : {type : Date}
     }],
     description     : String,
     whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
@@ -116,7 +115,8 @@ query.exec(function (error, _res) {
         }];
 
         objectToSave = {
-            salesManagers: salesMananagers
+            salesManagers   : salesMananagers,
+            projectManagers : []
         };
 
         Project.update({_id: project._id}, {$set: objectToSave}, function (err) {

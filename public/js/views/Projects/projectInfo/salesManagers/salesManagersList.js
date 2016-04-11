@@ -2,8 +2,8 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Projects/projectInfo/salesManagers/salesManagersTemplate.html',
-    'text!templates/Projects/projectInfo/salesManagers/updateSalesManager.html',
+    'text!templates/Projects/projectInfo/managers/managersTemplate.html',
+    'text!templates/Projects/projectInfo/managers/updateManager.html',
     'views/selectView/selectView',
     'common',
     'dataService',
@@ -25,7 +25,7 @@ define([
             'click'                                            : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click a.current-selected'                         : 'showNewSelect',
-            'click #addSalesManager'                           : 'addSalesManager',
+            'click #addManager'                                : 'addSalesManager',
             'click .editable'                                  : 'editNewRow',
             'click .fa-trash'                                  : 'removeSalesManager'
         },
@@ -40,7 +40,7 @@ define([
 
             if (trs.length > 1){
                 trs.last().find('td').first().html(removeBtn);
-                trs.last().find('.startDateSM').addClass('editable');
+                trs.last().find('.startDateManager').addClass('editable');
             }
 
             lastSales = trs.last().find('td').last().text();
@@ -50,8 +50,8 @@ define([
         editNewRow: function (e) {
             var target = $(e.target);
             var row = target.parent('tr');
-            var prevRow = row.prev().find('.startDateSM');
-            var prevSalesDate = prevRow.text() === 'From start of project' ? this.model.get('StartDate') : row.prev().find('.startDateSM').text();
+            var prevRow = row.prev().find('.startDateManager');
+            var prevSalesDate = prevRow.text() === 'From start of project' ? this.model.get('StartDate') : row.prev().find('.startDateManager').text();
             var prevDate = new Date(prevSalesDate);
             var nextDay = moment(prevDate).add(1, 'd');
             var startDate = common.utcDateToLocaleDate(nextDay.toDate());
@@ -73,7 +73,7 @@ define([
                     var $editedCol = target.closest('td');
                     var date = new Date(dateText);
                     var prevDay = moment(date).subtract(1, 'd');
-                    var $prSmEndDate = target.closest('tr').prev().find('.endDateSM');
+                    var $prSmEndDate = target.closest('tr').prev().find('.endDateManager');
                     $editedCol.text(dateText);
                     $prSmEndDate.text(common.utcDateToLocaleDate(prevDay.toDate()));
                     $('#top-bar-saveBtn').show();
@@ -147,7 +147,7 @@ define([
         addSalesManager: function (e) {
             var employeeSelect = this.$el.find('.current-selected');
             var newElements = this.$el.find('[data-id="false"]');
-            var startD = this.$el.find('.startDateSM').last();
+            var startD = this.$el.find('.startDateManager').last();
             e.preventDefault();
 
 
@@ -170,7 +170,7 @@ define([
                 employeeSelect.remove();
             }
 
-            this.$el.find('#salesManagersTable .endDateSM').last().text('');
+            this.$el.find('#salesManagersTable .endDateManager').last().text('');
             this.$el.find('#salesManagersTable').append(_.template(updateSalesManager));
 
 
@@ -183,7 +183,7 @@ define([
             var row = target.closest('tr');
 
             e.preventDefault();
-            row.prev().find('.endDateSM').text('To end of project');
+            row.prev().find('.endDateManager').text('To end of project');
             row.remove();
             $('#top-bar-saveBtn').show();
 
@@ -195,8 +195,9 @@ define([
             var salesManagers = this.model.get('salesManagers');
 
             self.$el.html(this.template({
-                salesManagers      : salesManagers,
-                utcDateToLocaleDate: common.utcDateToLocaleDate
+                managers           : salesManagers,
+                utcDateToLocaleDate: common.utcDateToLocaleDate,
+                PM                 : false
             }));
 
             dataService.getData('/employee/getForDD', {salesDepartments: true, isEmployee: true}, function (employees) {

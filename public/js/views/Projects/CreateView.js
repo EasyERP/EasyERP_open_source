@@ -128,6 +128,7 @@ define([
                 var customer = this.$el.find("#customerDd").attr("data-id");
 
                 var projectmanager = this.$el.find("#projectManagerDD").data("id");
+                var salesmanager = this.$el.find("#salesManagerDD").data("id");
 
                 var projecttype = this.$el.find("#projectTypeDD").data("id");
                 var workflow = this.$el.find("#workflowsDd").data("id");
@@ -201,7 +202,8 @@ define([
                             projectName     : $.trim(this.$el.find("#projectName").val()),
                             projectShortDesc: $.trim(this.$el.find("#projectShortDesc").val()),
                             customer        : customer ? customer : "",
-                            projectmanager  : projectmanager ? projectmanager : "",
+                            projectmanager  : projectmanager || '',
+                            salesmanager    : salesmanager || '',
                             workflow        : workflow ? workflow : "",
                             projecttype     : projecttype ? projecttype : "",
                             description     : description,

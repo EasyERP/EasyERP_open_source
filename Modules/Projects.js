@@ -295,18 +295,19 @@ var Project = function (models, event) {
                         _project.customer = data.customer;
                     }
                     if (data.salesmanager) {
-                        _project.salesmanager = data.salesmanager;
+                        _project.projectmanager = data.salesmanager; // toDO fix field
                         _project.salesManagers = [{
                             manager: data.salesmanager,
-                            date   : data.StartDate || new Date().toString()
+                            startDate   : null,
+                            endDate    : null
                         }];
                     }
 
                     if (data.projectmanager) {
-                        _project.projectmanager = data.projectmanager;
                         _project.projectManagers = [{
                             manager: data.projectmanager,
-                            date   : data.StartDate || new Date().toString()
+                            startDate   : null,
+                            endDate    : null
                         }];
                     }
 
@@ -1389,10 +1390,7 @@ var Project = function (models, event) {
             data.workflow = data.workflow;
         }
         if (data.salesManagers && data.salesManagers.length) {
-            data.salesmanager = data.salesManagers[data.salesManagers.length - 1].manager;
-        }
-        if (data.projectManagers && data.projectManagers.length) {
-            data.projectmanager = data.salesManagers[data.projectManagers.length - 1].manager;
+            data.projectmanager = data.salesManagers[data.salesManagers.length - 1].manager;
         }
 
         if (data.notes && data.notes.length != 0 && !remove) {
