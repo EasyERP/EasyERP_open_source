@@ -147,8 +147,8 @@ define([
 
         addManager: function (e) {
             var employeeSelect = this.$el.find('.current-selected');
-            var newElements = this.$el.find('[data-id="false"]');
-            var startD = this.$el.find('.startDateManager').last();
+            var newElements = this.$el.find('td:contains("Select")');
+            var startD = this.$el.find('td:contains("Choose Date")');
             e.preventDefault();
 
 
@@ -159,7 +159,7 @@ define([
                 });
             }
 
-            if (startD.text() === 'Choose Date') {
+            if (startD.length) {
                 return App.render({
                     type   : 'error',
                     message: 'Please, choose Date first.'
