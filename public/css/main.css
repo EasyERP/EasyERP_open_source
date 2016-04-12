@@ -9673,6 +9673,12 @@ textarea#editInput {
   line-height: 30px;
   font-size: 18px;
 }
+.trash:hover .fa-trash-o {
+  display: inline-block;
+}
+.trash .fa-trash-o {
+  display: none;
+}
 .alert {
   padding: 15px 15px 15px 35px;
   position: relative;
