@@ -88,7 +88,7 @@
         <% totalHours += budgetTotal.hoursSum %>
         <% totalCost += budgetTotal.costSum %>
         <% totalRevenue += budgetTotal.revenueSum%>
-        <% totalProfit += budgetTotal.profitSum%>
+        <% totalProfit = (totalRevenue - totalCost)/100%>
         <% } %>
         <% })%>
 
@@ -105,9 +105,9 @@
             <td>&nbsp</td>
             <td>&nbsp</td>
             <td id="totalHours" data-value="<%=totalHours%>"><%= currencySplitter(totalHours.toFixed())%></td>
-            <td id="totalCost" data-value="<%=totalCost%>"><%= currencySplitter(totalCost.toFixed())%></td>
-            <td id="totalRevenue" data-value="<%=totalRevenue%>"><%= currencySplitter(totalRevenue.toFixed())%></td>
-            <td id="totalProfit" data-value="<%=totalProfit%>"><%= currencySplitter(totalProfit.toFixed())%></td>
+            <td id="totalCost" data-value="<%=totalCost%>"><%= currencySplitter((totalCost/100).toFixed())%></td>
+            <td id="totalRevenue" data-value="<%=totalRevenue%>"><%= currencySplitter((totalRevenue/100).toFixed(2))%></td>
+            <td id="totalProfit" data-value="<%=totalProfit%>"><%= currencySplitter(totalProfit.toFixed(2))%></td>
         </tr>
 
         </tfoot>
