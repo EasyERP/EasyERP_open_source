@@ -12,13 +12,14 @@ module.exports = (function () {
         customer        : {type: ObjectId, ref: 'Customers', default: null},
         projectmanager  : {type: ObjectId, ref: 'Employees', default: null}, //todo fix usage from SM to PM or delete
         salesManagers   : [{
+            _id      : false,
             manager  : {type: ObjectId, ref: 'Employees', default: null},
             startDate: {type : Date, default: null},
             endDate  : {type : Date, default: null}
         }],
         projectManagers : [{
-            _id: false,
-            manager : {type: ObjectId, ref: 'Employees', default: null},
+            _id      : false,
+            manager  : {type: ObjectId, ref: 'Employees', default: null},
             startDate: {type : Date, default: null},
             endDate  : {type : Date, default: null}
         }],
