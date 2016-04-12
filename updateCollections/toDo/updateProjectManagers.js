@@ -83,13 +83,13 @@ var ProjectSchemaOld = mongoose.Schemas['ProjectOld'];
 //var dbObject = mongoose.createConnection('localhost', 'production');
 
 var connectOptions = {
-    user  : 'easyerp',
+    user  : 'easyErp',
     pass  : '1q2w3e!@#',
     w     : 1,
     j     : true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
 //var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
@@ -110,8 +110,8 @@ query.exec(function (error, _res) {
         var objectToSave;
         var salesMananagers = [{
             manager: project.projectmanager,
-            startDate   : null,
-            endDate     : null
+            startDate   : project.StartDate || null,
+            endDate     : project.EndDate || null
         }];
 
         objectToSave = {
