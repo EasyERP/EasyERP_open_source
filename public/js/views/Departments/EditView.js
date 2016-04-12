@@ -144,6 +144,7 @@ define([
             saveItem  : function () {
                 var self = this;
                 var mid = 39;
+                var isDevelopment = this.$el.find("#isDevelopment").prop('checked');
                 var departmentName = $.trim($("#departmentName").val());
                 var parentDepartment = this.$("#parentDepartment").data("id") ? this.$("#parentDepartment").data("id") : null;
                 if (parentDepartment == "") {
@@ -170,6 +171,7 @@ define([
                     parentDepartment : parentDepartment,
                     departmentManager: departmentManager,
                     nestingLevel     : nestingLevel,
+                    isDevelopment    : isDevelopment,
                     users            : users,
                     isAllUpdate      : nestingLevel != this.currentModel.toJSON().nestingLevel,
                     sequence         : res.length
