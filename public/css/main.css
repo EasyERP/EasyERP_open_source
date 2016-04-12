@@ -9082,18 +9082,23 @@ textarea#editInput {
 .hrTop tr td.vcenter {
   vertical-align: middle;
 }
-.hrTop tr.double td span {
+.hrTop tr td:first-child span {
+  border-bottom: none;
+  background-color: inherit;
+}
+.hrTop tr.double span {
   padding: 5px 8px 5px 8px;
   height: 40px;
+  min-width: 130px;
   line-height: 15px;
   border-bottom: 1px solid #7f7f80;
   position: relative;
 }
-.hrTop tr.double td span.large {
+.hrTop tr.double span.large {
   line-height: 29px;
 }
-.hrTop tr.double td span.top,
-.hrTop tr.double td span.bottom {
+.hrTop tr.double span.top,
+.hrTop tr.double span.bottom {
   padding: 0 3px !important;
   height: 19px;
   line-height: 19px;
@@ -9104,20 +9109,16 @@ textarea#editInput {
   text-align: right;
   border-right: 1px solid #7f7f80;
 }
-.hrTop tr.double td span.top {
+.hrTop tr.double span.top {
   top: 0px;
   border-bottom: 1px solid #7f7f80;
 }
-.hrTop tr.double td span.bottom {
+.hrTop tr.double span.bottom {
   top: 20px;
 }
-.hrTop tr.double td span:last-child {
+.hrTop tr.double span:last-child {
   padding: 5px 8px 5px 8px;
   border-bottom: none;
-}
-.hrTop tr.double td:first-child span {
-  border-bottom: none;
-  background-color: inherit;
 }
 .search-field {
   box-sizing: border-box;
