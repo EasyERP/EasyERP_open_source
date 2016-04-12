@@ -126,6 +126,9 @@ define([
                 var eventChannel = {};
                 _.extend(eventChannel, Backbone.Events);
 
+                App.projectInfo = App.projectInfo || {};
+                App.projectInfo.projectId = options.model.get('_id');
+
                 this.eventChannel = eventChannel;
                 this.formModel = options.model;
                 this.id = this.formModel.id;
