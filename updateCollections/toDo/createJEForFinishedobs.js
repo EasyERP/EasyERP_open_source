@@ -151,7 +151,7 @@ dbObject.once('open', function callback() {
                     date          : new Date(date),
                     sourceDocument: {
                         model: 'jobs',
-                        _id  : result._id
+                        _id  : model._id
                     },
                     amount        : 0
                 };
@@ -162,7 +162,7 @@ dbObject.once('open', function callback() {
                     date          : new Date(moment(date).subtract(1, 'seconds')),
                     sourceDocument: {
                         model: 'jobs',
-                        _id  : result._id
+                        _id  : model._id
                     },
                     amount        : 0
                 };

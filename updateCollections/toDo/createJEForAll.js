@@ -213,7 +213,7 @@ dbObject.once('open', function callback() {
      });
      };*/
 
-    var weeksArray = [1/*, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,*//*21,22,23,24,25,26,27,28,29,30,*//*31, 32, 33,34,35,36,37,38,39,40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52*/];
+    var weeksArray = [/*1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20/*,*/21,22,23,24,25,26,27,28,29,30, 31, 32, 33,34,35,36,37,38,39,40/*, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53*/];
 
     weeksArray.forEach(function (week) {
         console.log('start week ', week);
@@ -237,7 +237,7 @@ dbObject.once('open', function callback() {
             var wTracks;
 
             wTrackFinder = function (wfcallback) {
-                WTrack.find({year: 2014, week: week, month: 12}, function (err, result) {
+                WTrack.find({year: 2015, week: week}, function (err, result) {
                     if (err) {
                         return wfcallback(err);
                     }
@@ -716,6 +716,8 @@ dbObject.once('open', function callback() {
                                 var employeesObjects = objectForDay.employees || [];
                                 var employeesIds = Object.keys(employeesObjects);
 
+                                console.log(dateKey)
+
                                 var stringIds = [];
 
                                 empResult.emps.forEach(function (el) {
@@ -769,7 +771,7 @@ dbObject.once('open', function callback() {
                                             }
                                         }
 
-                                        if (employee.toString() === '55b92ad221e4b7c40f00007f' && dateKey === '20150102') {
+                                        if (employee.toString() === '55b92ad221e4b7c40f000030' && dateKey === '20150330') {
                                             console.log('ddd');
 
                                         }
@@ -786,7 +788,7 @@ dbObject.once('open', function callback() {
                                             }
                                         }
 
-                                        costHour = empObject.costHour || (isFinite(salary / hours) ? (salary / hours) : 0);
+                                        costHour = /*empObject.costHour || */(isFinite(salary / hours) ? (salary / hours) : 0);
 
                                         var bodySalaryIdle = {
                                             currency      : CONSTANTS.CURRENCY_USD,

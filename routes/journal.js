@@ -19,6 +19,7 @@ module.exports = function (models, event) {
     router.get('/journalEntry/getCloseMonth', _journalEntryHandler.getCloseMonth);
     router.get('/journalEntry/getProfitAndLoss', _journalEntryHandler.getProfitAndLoss);
     router.get('/journalEntry/getCashFlow', _journalEntryHandler.getCashFlow);
+    router.get('/journalEntry/getPayrollForReport', _journalEntryHandler.getPayrollForReport);
     router.get('/journalEntry/exportToXlsx/:filter', _journalEntryHandler.exportToXlsx);
     router.get('/journalEntry/exportToCsv/:filter', _journalEntryHandler.exportToCsv);
     router.get('/journalEntry/:viewType', _journalEntryHandler.getForView);
