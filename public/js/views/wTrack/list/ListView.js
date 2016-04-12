@@ -452,7 +452,9 @@ define([
 
                         self.changedModels[editedElementRowId].week = weeks[0].week;
 
-                        self.checkVacHolMonth($tr);
+                        self.checkVacHolMonth($tr, false, function (){
+                            self.setChangedValueToModel($tr);
+                        });
                     });
                 } else {
                     $editedCol.text(editedElementValue);
