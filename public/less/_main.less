@@ -4725,10 +4725,11 @@ h3.dashboard {
 
   }
   .internal-info {
-    .dl-auto(147px, 20%, 30px);
+    .dl-auto(144px, 20%, 30px);
     textarea {
       width: 94%;
       resize: none;
+      padding: 5px;
     }
   }
   .assignees-info {
@@ -5847,55 +5848,107 @@ textarea#editInput {
   }
 }
 
+.hrTop {
+  tr {
+    td {
+      vertical-align: top;
+      text-align: right;
+      &.vcenter {
+        vertical-align: middle;
+      }
+      &:first-child span {
+        border-bottom: none;
+        background-color: inherit;
+      }
+    }
+    &.double {
+      span {
+        padding: 5px 8px 5px 8px;
+        height: 40px;
+        min-width: 130px;
+        line-height: 15px;
+        border-bottom: 1px solid @border-color-main;
+        position: relative;
+        &.large {
+          line-height: 29px;
+        }
+        &.top, &.bottom {
+          padding: 0 3px !important;
+          height: 19px;
+          line-height: 19px;
+          border-bottom: none;
+          position: absolute;
+          left: 0px;
+          width: 30px;
+
+          text-align: right;
+          border-right: 1px solid #7f7f80;
+        }
+        &.top {
+          top: 0px;
+          border-bottom: 1px solid #7f7f80;
+
+        }
+        &.bottom {
+          top: 20px;
+        }
+        &:last-child {
+          padding: 5px 8px 5px 8px;
+          border-bottom: none;
+        }
+      }
+    }
+  }
+}
+
 .hrTop tr td {
-  vertical-align: top;
-  text-align: right;
+
 }
 
 .hrTop tr td.vcenter {
-  vertical-align: middle;
+
 }
 
-.hrTop tr.double td span {
-  padding: 5px 8px 5px 8px;
-  height: 40px;
-  line-height: 15px;
-  border-bottom: 1px solid @border-color-main;
-  position: relative;
-  &.large {
-    line-height: 29px;
-  }
-  &.top, &.bottom {
-    padding: 0 3px !important;
-    height: 19px;
-    line-height: 19px;
-    border-bottom: none;
-    position: absolute;
-    left: 0px;
-    width: 30px;
+//.hrTop tr.double td span {
+//  padding: 5px 8px 5px 8px;
+//  height: 40px;
+//  line-height: 15px;
+//  border-bottom: 1px solid @border-color-main;
+//  position: relative;
+//  &.large {
+//    line-height: 29px;
+//  }
+//  &.top, &.bottom {
+//    padding: 0 3px !important;
+//    height: 19px;
+//    line-height: 19px;
+//    border-bottom: none;
+//    position: absolute;
+//    left: 0px;
+//    width: 30px;
+//
+//    text-align: right;
+//    border-right: 1px solid #7f7f80;
+//  }
+//  &.top {
+//    top: 0px;
+//    border-bottom: 1px solid #7f7f80;
+//
+//  }
+//  &.bottom {
+//    top: 20px;
+//  }
+//}
 
-    text-align: right;
-    border-right: 1px solid #7f7f80;
-  }
-  &.top {
-    top: 0px;
-    border-bottom: 1px solid #7f7f80;
+//.hrTop tr.double td span:last-child {
+//  padding: 5px 8px 5px 8px;
+//  border-bottom: none;
+//}
 
-  }
-  &.bottom {
-    top: 20px;
-  }
-}
-
-.hrTop tr.double td span:last-child {
-  padding: 5px 8px 5px 8px;
-  border-bottom: none;
-}
-
-.hrTop tr.double td:first-child span {
-  border-bottom: none;
-  background-color: inherit;
-}
+//.hrTop tr.double td:first-child span {
+//  border-bottom: none;
+//  background-color: inherit;
+//}
 
 .search-field {
   box-sizing: border-box;

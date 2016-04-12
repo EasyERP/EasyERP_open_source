@@ -2777,7 +2777,7 @@ dl dd span.ui-spinner {
   padding: 1px;
   margin: -1px;
   width: 20%;
-  max-width: 147px;
+  max-width: 144px;
   float: left;
   clear: both;
   line-height: 30px;
@@ -2828,6 +2828,7 @@ dl dd span.ui-spinner {
 .form .internal-info textarea {
   width: 94%;
   resize: none;
+  padding: 5px;
 }
 .form .assignees-info {
   clear: both;
@@ -8054,7 +8055,7 @@ a.cancelled {
   padding: 1px;
   margin: -1px;
   width: 20%;
-  max-width: 147px;
+  max-width: 144px;
   float: left;
   clear: both;
   line-height: 30px;
@@ -8105,6 +8106,7 @@ a.cancelled {
 .form .internal-info textarea {
   width: 94%;
   resize: none;
+  padding: 5px;
 }
 .form .assignees-info {
   clear: both;
@@ -9082,18 +9084,23 @@ textarea#editInput {
 .hrTop tr td.vcenter {
   vertical-align: middle;
 }
-.hrTop tr.double td span {
+.hrTop tr td:first-child span {
+  border-bottom: none;
+  background-color: inherit;
+}
+.hrTop tr.double span {
   padding: 5px 8px 5px 8px;
   height: 40px;
+  min-width: 130px;
   line-height: 15px;
   border-bottom: 1px solid #7f7f80;
   position: relative;
 }
-.hrTop tr.double td span.large {
+.hrTop tr.double span.large {
   line-height: 29px;
 }
-.hrTop tr.double td span.top,
-.hrTop tr.double td span.bottom {
+.hrTop tr.double span.top,
+.hrTop tr.double span.bottom {
   padding: 0 3px !important;
   height: 19px;
   line-height: 19px;
@@ -9104,20 +9111,16 @@ textarea#editInput {
   text-align: right;
   border-right: 1px solid #7f7f80;
 }
-.hrTop tr.double td span.top {
+.hrTop tr.double span.top {
   top: 0px;
   border-bottom: 1px solid #7f7f80;
 }
-.hrTop tr.double td span.bottom {
+.hrTop tr.double span.bottom {
   top: 20px;
 }
-.hrTop tr.double td span:last-child {
+.hrTop tr.double span:last-child {
   padding: 5px 8px 5px 8px;
   border-bottom: none;
-}
-.hrTop tr.double td:first-child span {
-  border-bottom: none;
-  background-color: inherit;
 }
 .search-field {
   box-sizing: border-box;
