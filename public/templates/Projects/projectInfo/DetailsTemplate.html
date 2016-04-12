@@ -81,7 +81,7 @@
             <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
             <td><%= budgetTotal.costSum ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.revenueSum.toFixed()) : 0%></td>
-            <td><%= budgetTotal.profitSum ? currencySplitter(budgetTotal.profitSum.toFixed()) : 0%></td>
+            <td><%= currencySplitter((budgetTotal.revenueSum - budgetTotal.costSum).toFixed())%></td>
 
         </tr>
         <% count++ %>

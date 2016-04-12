@@ -18,14 +18,14 @@
         <%var projectTeam = jobItem.budget.projectTeam%>
         <% projectTeam.forEach(function(element,i){ %>
         <%var budget = jobItem.budget.projectTeam[i].budget%>
-        <tr data-id="<%=element.employee._id%>" id="<%=projectTeam[i] + employee._id%>">
+        <tr data-id="<%=element.employee._id%>" id="<%=element.employee._id%>">
             <td><%=element.employee.name.first + ' ' + element.employee.name.last%></td>
             <td><%=element.employee.jobPosition.name%></td>
             <td><%=element.department.departmentName%></td>
             <td><%=currencySplitter(budget.hoursSum.toFixed())%></td>
             <td><%=currencySplitter(budget.costSum ? budget.costSum.toFixed() : '0')%></td>
             <td><%=currencySplitter(budget.revenueSum.toFixed())%></td>
-            <td><%=currencySplitter('0')%></td>
+            <td><%=currencySplitter((budget.revenueSum - budget.costSum).toFixed())%></td>
         </tr>
         <% count++ %>
         <% })%>
