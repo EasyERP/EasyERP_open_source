@@ -632,7 +632,7 @@ define([
             month = (tr.find('[data-content="month"]').text()) ? tr.find('[data-content="month"]').text() : tr.find('.editing').val();
 
             if (wTrackId.length < 24) {
-                employeeId = this.changedModels[wTrackId].employee || $(e.target).attr("data-id");
+                employeeId = this.changedModels[wTrackId].employee._id || $(e.target).attr("data-id");
 
                 year = (tr.find('[data-content="year"]').text()) ? tr.find('[data-content="year"]').text() : tr.find('.editing').val();
                 trackWeek = tr.find('[data-content="worked"]').text();
@@ -649,7 +649,7 @@ define([
 
             async.parallel([getBaseSalary, getMonthData], function callback(err, results) {
                 var baseSalary = results[0];
-                var coefficients = results[1][0];
+                var coefficients = (results[1] && results[1][0]) || {};
 
                 if (err || !baseSalary || !coefficients) {
                     costElement.text('');

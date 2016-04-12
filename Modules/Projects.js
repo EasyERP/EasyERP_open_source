@@ -294,11 +294,20 @@ var Project = function (models, event) {
                     if (data.customer) {
                         _project.customer = data.customer;
                     }
-                    if (data.projectmanager) {
-                        _project.projectmanager = data.projectmanager;
+                    if (data.salesmanager) {
+                        _project.projectmanager = data.salesmanager; // toDO fix field
                         _project.salesManagers = [{
+                            manager: data.salesmanager,
+                            startDate   : null,
+                            endDate    : null
+                        }];
+                    }
+
+                    if (data.projectmanager) {
+                        _project.projectManagers = [{
                             manager: data.projectmanager,
-                            date   : data.StartDate || new Date().toString()
+                            startDate   : null,
+                            endDate    : null
                         }];
                     }
 
@@ -998,9 +1007,11 @@ var Project = function (models, event) {
             .populate('groups.owner', '_id login')
             .populate('budget.projectTeam')
             .populate('projectmanager', '_id name fullName')
+            .populate('salesmanager', '_id name fullName')
             .populate('customer', '_id name fullName')
             .populate('workflow', '_id name')
-            .populate('salesManagers.manager', '_id name fullName');
+            .populate('salesManagers.manager', '_id name fullName')
+            .populate('projectManagers.manager', '_id name fullName');
 
         query.exec(function (err, project) {
             if (err) {

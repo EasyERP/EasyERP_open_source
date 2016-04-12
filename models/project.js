@@ -10,10 +10,18 @@ module.exports = (function () {
         projectName     : {type: String, default: 'emptyProject', unique: true},
         task            : [{type: ObjectId, ref: 'Tasks', default: null}],
         customer        : {type: ObjectId, ref: 'Customers', default: null},
-        projectmanager  : {type: ObjectId, ref: 'Employees', default: null},
+        projectmanager  : {type: ObjectId, ref: 'Employees', default: null}, //todo fix usage from SM to PM or delete
         salesManagers   : [{
-            manager : {type: ObjectId, ref: 'Employees', default: null},
-            date: {type: Date}
+            _id      : false,
+            manager  : {type: ObjectId, ref: 'Employees', default: null},
+            startDate: {type : Date, default: null},
+            endDate  : {type : Date, default: null}
+        }],
+        projectManagers : [{
+            _id      : false,
+            manager  : {type: ObjectId, ref: 'Employees', default: null},
+            startDate: {type : Date, default: null},
+            endDate  : {type : Date, default: null}
         }],
         description     : String,
         whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},

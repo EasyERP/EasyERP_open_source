@@ -885,6 +885,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .invisible_border {
   border: 1px solid transparent !important;
 }
+.hireFireTable {
+  margin-bottom: 10px;
+}
 .vacation-list {
   font-family: inherit;
   text-shadow: none;
@@ -6614,6 +6617,9 @@ ul.dialog-tabs li.right button {
   display: block;
   float: left;
   height: 16px;
+}
+.form-holder form .canReadAndWrite input[type=radio]:focus {
+  box-shadow: none !important;
 }
 .form-holder form .mainInfo {
   width: auto;
