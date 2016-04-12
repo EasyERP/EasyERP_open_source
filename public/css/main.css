@@ -2777,7 +2777,7 @@ dl dd span.ui-spinner {
   padding: 1px;
   margin: -1px;
   width: 20%;
-  max-width: 147px;
+  max-width: 144px;
   float: left;
   clear: both;
   line-height: 30px;
@@ -2828,6 +2828,7 @@ dl dd span.ui-spinner {
 .form .internal-info textarea {
   width: 94%;
   resize: none;
+  padding: 5px;
 }
 .form .assignees-info {
   clear: both;
@@ -8054,7 +8055,7 @@ a.cancelled {
   padding: 1px;
   margin: -1px;
   width: 20%;
-  max-width: 147px;
+  max-width: 144px;
   float: left;
   clear: both;
   line-height: 30px;
@@ -8105,6 +8106,7 @@ a.cancelled {
 .form .internal-info textarea {
   width: 94%;
   resize: none;
+  padding: 5px;
 }
 .form .assignees-info {
   clear: both;
