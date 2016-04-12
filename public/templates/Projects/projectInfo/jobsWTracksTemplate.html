@@ -16,16 +16,16 @@
         <%var count = 0;%>
         <%var budgetTotal = jobItem.budget.budgetTotal%>
         <%var projectTeam = jobItem.budget.projectTeam%>
-        <%var budget = jobItem.budget.budget%>
         <% projectTeam.forEach(function(element,i){ %>
-        <tr data-id="<%=element._id%>" id="projectTeam">
-            <td><%=element.name.first + ' ' + element.name.last%></td>
-            <td><%=element.jobPosition.name%></td>
+        <%var budget = jobItem.budget.projectTeam[i].budget%>
+        <tr data-id="<%=element.employee._id%>" id="<%=projectTeam[i] + employee._id%>">
+            <td><%=element.employee.name.first + ' ' + element.employee.name.last%></td>
+            <td><%=element.employee.jobPosition.name%></td>
             <td><%=element.department.departmentName%></td>
-            <td><%=currencySplitter(budget[i].hours.toFixed())%></td>
-            <td><%=currencySplitter(budget[i].cost ? budget[i].cost.toFixed() : '0')%></td>
-            <td><%=currencySplitter(budget[i].revenue.toFixed())%></td>
-            <td><%=currencySplitter(budget[i].profit ? budget[i].profit.toFixed() : '0')%></td>
+            <td><%=currencySplitter(budget.hoursSum.toFixed())%></td>
+            <td><%=currencySplitter(budget.costSum ? budget.costSum.toFixed() : '0')%></td>
+            <td><%=currencySplitter(budget.revenueSum.toFixed())%></td>
+            <td><%=currencySplitter('0')%></td>
         </tr>
         <% count++ %>
         <% })%>

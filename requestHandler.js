@@ -691,7 +691,7 @@ var requestHandler = function (app, event, mainDb) {
 
             {$project: {
                 wTrack : {$arrayElemAt: ["$wTrack", 0]},
-                budget: 1
+                budget: 1,
             }},
 
             {$group: {
@@ -734,12 +734,33 @@ var requestHandler = function (app, event, mainDb) {
                 minDate:  1
             }},
 
+            {$lookup: {
+                from:"JobPosition",
+                localField: "employee.jobPosition",
+                foreignField: "_id",
+                as: "employee.jobPosition"
+            }
+            },
+
             {$project: {
                 _id: "$_id",
                 "department._id" : "$department._id",
                 "department.departmentName" : "$department.departmentName",
                 "employee._id" : "$employee._id",
                 "employee.name" : "$employee.name",
+                "employee.jobPosition" : {$arrayElemAt: ["$employee.jobPosition", 0]},
+                budget : "$budget",
+                maxDate:  1,
+                minDate:  1
+            }},
+
+            {$project: {
+                _id: "$_id",
+                "department" : "$department",
+                "employee._id" : "$employee._id",
+                "employee.name" : "$employee.name",
+                "employee.jobPosition._id" : "$employee.jobPosition._id",
+                "employee.jobPosition.name" : "$employee.jobPosition.name",
                 budget : "$budget",
                 maxDate:  1,
                 minDate:  1
@@ -764,14 +785,7 @@ var requestHandler = function (app, event, mainDb) {
                 "budgetTotal.revenueSum": "$budgetTotalRevenue",
                 "budgetTotal.hoursSum": "$budgetTotalHoursSum",
                 "budgetTotal.maxDate": "$maxDate",
-                "budgetTotal.minDate": "$minDate"
-            }
-            },
-
-            {$project : {
-                _id: "$_id",
-                projectTeam: "$projectTeam",
-                "budgetTotal": "$budgetTotal"
+                "budgetTotal.minDate": "$minDate",
             }
             }
         ], function(err, result){
