@@ -1420,15 +1420,17 @@ var Employee = function (event, models) {
                     return depId.toString();
                 });
 
-                data.transfer = data.transfer.map(function (tr) {
-                    if (adminDeps.indexOf(tr.department.toString()) !== -1) {
-                        tr.isDeveloper = false;
-                    } else {
-                        tr.isDeveloper = true;
-                    }
+                if (data.transfer) {
+                    data.transfer = data.transfer.map(function (tr) {
+                        if (adminDeps.indexOf(tr.department.toString()) !== -1) {
+                            tr.isDeveloper = false;
+                        } else {
+                            tr.isDeveloper = true;
+                        }
+                        return tr;
+                    });
+                }
 
-                    return tr;
-                });
 
                 models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
                     if (!err) {
