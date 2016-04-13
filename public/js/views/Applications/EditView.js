@@ -456,7 +456,7 @@
                     info       : info
                 });
 
-                if (!salary) {
+                if (!salary && self.isSalary) {
                     App.render({
                         type: 'error',
                         message: 'Salary can`t be empty'
