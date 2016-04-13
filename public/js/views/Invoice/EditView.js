@@ -456,7 +456,7 @@ define([
                             $('.edit-invoice-dialog').remove();
 
                             self.hideDialog();
-                            self.eventChannel.trigger('invoiceRemove');
+                            self.eventChannel && self.eventChannel.trigger('invoiceRemove');
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {

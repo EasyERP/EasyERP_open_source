@@ -31,7 +31,7 @@ define([
                     this.projectModel = options.projectModel;
                     this.wTrackCollection = options.wTrackCollection;
                     this.createJob = options.createJob;
-                    this.eventChannel = options.eventChannel || {};
+                    this.eventChannel = options.eventChannel;
                 }
 
                 this.populate = true;
@@ -193,7 +193,7 @@ define([
                         wait   : true,
                         success: function (model) {
                             self.redirectAfterSave(self, model);
-                            self.eventChannel.trigger('elemCountChanged');
+                            self.eventChannel && self.eventChannel.trigger('elemCountChanged');
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
