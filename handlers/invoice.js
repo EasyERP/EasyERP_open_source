@@ -386,7 +386,7 @@ var Invoice = function (models, event) {
         }
 
         parallelTasks = [findOrder, fetchFirstWorkflow, findProformaPayments, changeProformaWorkflow, getRates];
-        waterFallTasks = [parallel, createInvoice, createJournalEntry];
+        waterFallTasks = [parallel, createInvoice/*, createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
             if (err) {
@@ -567,6 +567,9 @@ var Invoice = function (models, event) {
                         if (err) {
                             return next(err);
                         }
+
+                        journalEntryComposer(resp, req.session.lastDb, function () {}, req.session.uId);
+
                         res.status(200).send(resp);
                     });
 
