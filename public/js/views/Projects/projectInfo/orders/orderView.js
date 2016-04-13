@@ -48,7 +48,7 @@ define([
             this.defaultItemsNumber = 50;
             this.page = options.page ? options.page : 1;
             this.startNumber = options.startNumber ? options.startNumber : 1;
-            this.eventChannel = options.eventChannel || {};
+            this.eventChannel = options.eventChannel;
 
             if (this.startNumber < 50) {
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
@@ -374,7 +374,7 @@ define([
                             $("#removeOrder").hide();
                             $('#check_all_orders').prop('checked', false);
 
-                            that.eventChannel.trigger('elemCountChanged');
+                            self.eventChannel && that.eventChannel.trigger('elemCountChanged');
 
                             //that.deleteItemsRender(that.deleteCounter, that.deletePage);
                         },
@@ -484,7 +484,7 @@ define([
                 self.stages = stages;
             });
 
-            self.eventChannel.trigger('elemCountChanged');
+            self.eventChannel && self.eventChannel.trigger('elemCountChanged');
 
         }
     });

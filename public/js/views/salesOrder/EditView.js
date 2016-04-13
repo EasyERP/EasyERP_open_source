@@ -33,7 +33,7 @@ define([
                 this.onlyView = !!options.onlyView;
 
                 this.projectManager = options.projectManager;
-                this.eventChannel = options.eventChannel || {};
+                this.eventChannel = options.eventChannel;
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
@@ -202,7 +202,7 @@ define([
 
                                         this.invoiceView.showDialog(orderId);
 
-                                        self.eventChannel.trigger('elemCountChanged');
+                                        self.eventChannel && self.eventChannel.trigger('elemCountChanged');
 
                                     };
 
@@ -378,7 +378,7 @@ define([
                             App.projectInfo.currentTab = 'orders';
 
                             self.hideDialog();
-                            self.eventChannel.trigger('orderUpdate');
+                            self.eventChannel && self.eventChannel.trigger('orderUpdate');
 
                             if (invoiceCb && typeof invoiceCb === 'function') {
                                 return invoiceCb(null);
@@ -425,7 +425,7 @@ define([
                             App.projectInfo.currentTab = 'orders';
 
                             self.hideDialog();
-                            self.eventChannel.trigger('orderRemove');
+                            self.eventChannel && self.eventChannel.trigger('orderRemove');
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {
