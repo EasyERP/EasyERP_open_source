@@ -9682,10 +9682,10 @@ textarea#editInput {
 .managers .btn_holder {
   margin-top: 10px;
 }
-.trash:hover .fa-trash-o {
+.deleteRow:hover .fa-trash-o {
   display: inline-block;
 }
-.trash .fa-trash-o {
+.deleteRow .fa-trash-o {
   display: none;
 }
 .alert {
