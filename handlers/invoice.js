@@ -264,7 +264,6 @@ var Invoice = function (models, event) {
             var workflow;
             var err;
             var invoice;
-            var supplier;
             var invoiceCurrency;
             var query;
             var paidAmount = 0;
@@ -395,16 +394,15 @@ var Invoice = function (models, event) {
             }
             var project;
             var invoiceId = result._id;
-            var name = result.name;
             var products = result.products;
 
             Order.findByIdAndUpdate(id, {
                 $set: {
                     workflow: CONSTANTS.ORDERDONE
                 }
-            }, {new: true}, function (err, result) {
+            }, {new: true}, function (err) {
                 if (err) {
-                    return next(err)
+                    return next(err);
                 }
             });
 
@@ -449,12 +447,11 @@ var Invoice = function (models, event) {
         var isProforma;
         var journalId = data.journal;
         var moduleId = 64;
-        var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);;
+        var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
         var date;
         var updateName = false;
         var JobsModel = models.get(db, 'jobs', JobsSchema);
         var PaymentModel = models.get(db, 'Payment', PaymentSchema);
-        var optionsForPayments;
         var Customer = models.get(db, 'Customers', CustomerSchema);
         var query;
         var model;
@@ -463,11 +460,6 @@ var Invoice = function (models, event) {
 
         date = moment(new Date(data.invoiceDate));
         date = date.format('YYYY-MM-DD');
-
-        if (data.proforma) {
-            isProforma = true;
-            delete data.proforma;
-        }
 
         Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
 
