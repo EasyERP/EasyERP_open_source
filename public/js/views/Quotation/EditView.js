@@ -415,16 +415,23 @@ define([
                         jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
                         subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
 
-                        products.push({
-                            product      : productId,
-                            unitPrice    : price,
-                            quantity     : quantity,
-                            scheduledDate: scheduledDate,
-                            taxes        : taxes,
-                            description  : description,
-                            subTotal     : subTotal,
-                            jobs         : jobs
-                        });
+                        if (jobs) {
+                            products.push({
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
+                                scheduledDate: scheduledDate,
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal,
+                                jobs         : jobs
+                            });
+                        } else {
+                            return App.render({
+                                type   : 'notify',
+                                message: "Jobs can't be empty."
+                            });
+                        }
                     }
                 }
             }
