@@ -9,7 +9,7 @@ var ObjectId = mongoose.Schema.Types.ObjectId;
 var Schema = mongoose.Schema;
 var currencyHalper = require('../../helpers/currency');
 
-var dbObject = mongoose.createConnection('erp.thinkmobiles.com', 'production');
+var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");

@@ -27,7 +27,7 @@ define([
         initialize: function (options) {
             if (options) {
                 this.visible = options.visible;
-                this.eventChannel = options.eventChannel || {};
+                this.eventChannel = options.eventChannel;
             }
 
             _.bindAll(this, "render", "saveItem");
@@ -258,9 +258,11 @@ define([
                             });
                         } else {
 
-                            App.projectInfo.currentTab = 'proforma';
+                            if (App.projectInfo){
+                                App.projectInfo.currentTab = 'proforma';
+                            }
 
-                            self.eventChannel.trigger('newProforma', response._id);
+                            self.eventChannel && self.eventChannel.trigger('newProforma', response._id);
 
                             tr = $('[data-id=' + quotationId + ']');
                             tr.find('.checkbox').addClass('notRemovable');
@@ -485,7 +487,7 @@ define([
                             return proformaCb(null, res);
                         }
 
-                        self.eventChannel.trigger('quotationUpdated');
+                        self.eventChannel && self.eventChannel.trigger('quotationUpdated');
                     },
                     error  : function (model, xhr) {
                         self.errorNotification(xhr);
@@ -534,7 +536,7 @@ define([
 
                         self.hideDialog();
 
-                        self.eventChannel.trigger('quotationRemove');
+                        self.eventChannel && self.eventChannel.trigger('quotationRemove');
                     },
                     error  : function (model, err) {
                         if (err.status === 403) {

@@ -32,7 +32,7 @@ define([
                 this.render();
             }
 
-            this.eventChannel = options.eventChannel || {};
+            this.eventChannel = options.eventChannel;
 
         },
 
@@ -94,7 +94,7 @@ define([
                     }
                 });
             }, function (err) {
-                that.eventChannel.trigger('paymentRemoved');
+                self.eventChannel && that.eventChannel.trigger('paymentRemoved');
             });
         },
 

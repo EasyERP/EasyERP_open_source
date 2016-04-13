@@ -19,7 +19,7 @@ define([
                 this.redirect = options.redirect;
                 this.collection = options.collection;
                 this.hidePrAndCust = options.hidePrAndCust || false;
-                this.eventChannel = options.eventChannel || {};
+                this.eventChannel = options.eventChannel;
 
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
