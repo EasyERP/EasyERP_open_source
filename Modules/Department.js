@@ -44,9 +44,11 @@ var Department = function (event, models) {
                     if (data.parentDepartment) {
                         _department.parentDepartment = data.parentDepartment;
                     }
+                    if (data.isDevelopment) {
+                        _department.isDevelopment = data.isDevelopment;
+                    }
                     if (data.departmentManager) {
                         _department.departmentManager = data.departmentManager;
-
                     }
                     if (data.nestingLevel) {
                         _department.nestingLevel = data.nestingLevel;

@@ -123,6 +123,7 @@ define([
                 var parentDepartment = this.$("#parentDepartment").data("id") ? this.$("#parentDepartment").data("id") : null;
                 var nestingLevel = this.$("#parentDepartment").data('level');
                 var departmentManager = this.$("#departmentManager").data("id");
+                var isDevelopment = this.$el.find("#isDevelopment").prop('checked');
                 var users = this.$el.find("#targetUsers li");
                 var res = _.filter(this.responseObj["#parentDepartment"], function (item) {
                     return item.parentDepartment === parentDepartment;
@@ -136,6 +137,7 @@ define([
                         departmentManager: departmentManager,
                         nestingLevel     : ++nestingLevel,
                         users            : users,
+                        isDevelopment    : isDevelopment,
                         sequence         : res.length
                     },
                     {

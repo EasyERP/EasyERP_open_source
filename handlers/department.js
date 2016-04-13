@@ -17,7 +17,7 @@ var Department = function (models) {
         var query = req.query;
         var matchQuery = {};
         if (query.devDepartments){
-            matchQuery.parentDepartment = objectId(CONSTANTS.PARENT_DEV);
+            matchQuery.isDevelopment = true;
         }
 
         Department
