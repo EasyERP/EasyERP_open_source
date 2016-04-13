@@ -327,7 +327,11 @@ var Invoice = function (models, event) {
 
             if (paidAmount === order.paymentInfo.total) {
                 invoice.workflow = objectId(CONSTANTS.INVOICE_PAID);
-                invoice.dueDate = proforma.dueDate;
+
+                if (proforma) {
+                    invoice.dueDate = proforma.dueDate;
+                }
+
             } else if (paidAmount) {
                 invoice.workflow = objectId(CONSTANTS.INVOICE_PARTIALY_PAID);
             } else {
