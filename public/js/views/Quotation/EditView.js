@@ -258,7 +258,9 @@ define([
                             });
                         } else {
 
-                            App.projectInfo.currentTab = 'proforma';
+                            if (App.projectInfo){
+                                App.projectInfo.currentTab = 'proforma';
+                            }
 
                             self.eventChannel && self.eventChannel.trigger('newProforma', response._id);
 
