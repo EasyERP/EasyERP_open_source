@@ -503,6 +503,8 @@ define([
                     info       : info
                 }];
 
+                hireArray.push(date);
+
                 date = moment(date);
                 fireArray.push(date);
                 lastFire = date.year() * 100 + date.isoWeek();

@@ -1131,7 +1131,7 @@ var requestHandler = function (app, event, mainDb) {
             return false;
         }
 
-        totalAmount = quotation.paymentInfo.total;
+       // totalAmount = quotation.paymentInfo.total;
 
         async.each(quotation.products, wTrackUpdater, function (err) {
             if (err) {
@@ -1179,6 +1179,8 @@ var requestHandler = function (app, event, mainDb) {
                     if (err) {
                         return waterfallCb(err);
                     }
+
+                    totalAmount = product.unitPrice;
 
                     async.each(wTracks, function (wTrack, cb) {
                         var revenue = (wTrack.worked / totalWorked) * totalAmount * 100;
