@@ -156,7 +156,7 @@ var wTrack = function (event, models) {
                     }
 
                     if (tCard) {
-                        event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
+                        event.emit('setReconcileTimeCard', {req: req, week: tCard.week, year: tCard.year});
                         event.emit('updateRevenue', {wTrack: tCard, req: req});
                         event.emit('updateProjectDetails', {req: req, _id: tCard.project});
                         event.emit('recollectProjectInfo');
