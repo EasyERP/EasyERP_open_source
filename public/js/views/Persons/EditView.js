@@ -148,7 +148,7 @@ define([
                     },
                     website       : $.trim(thisEl.find('#websiteInput').val()),
                     jobPosition   : jobPosition,
-                    skype         : $.trim(thisEl.find('#skype').val()),
+                    skype         : $.trim(thisEl.find('#skypeInputEdit').val()),
                     phones        : {
                         phone : $.trim(thisEl.find('#phoneInput').val()),
                         mobile: $.trim(thisEl.find('#mobileInput').val()),

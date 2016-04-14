@@ -144,7 +144,7 @@ define([
                         city   : $.trim($('#cityInput').val()),
                         state  : $.trim($('#stateInput').val()),
                         zip    : $.trim($('#zipInput').val()),
-                        country: $.trim(this.$el.find('#countryInput').val())
+                        country: $.trim(this.$el.find('#countryInputCreate').val())
                     },
                     website       : $.trim($('#websiteInput').val()),
                     jobPosition   : $.trim($('#jobPositionInput').val()),
