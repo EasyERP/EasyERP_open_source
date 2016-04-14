@@ -25,7 +25,7 @@
                         <div class="clearfix"></div>
                         <div class="half-block left">
                             <dl class="opp-info">
-                                <dt><label>Subject </label></dt>
+                                <dt><label for="name">Subject </label></dt>
                                 <dd>
                                     <input type="text" class="title-input" id="name" value="<%=model.name%>" placeholder="Subject" required maxlength="48"/>
                                 </dd>
@@ -57,7 +57,7 @@
                                 <dd><input type="text" class="name" id="first" placeholder="First Name" value="<%=(model.contactName) ? model.contactName.first : ''%>" maxlength="32"/></dd>
                                 <dt><label for="last">Last Name</label></dt>
                                 <dd><input type="text" class="name" id="last" placeholder="Last Name" value="<%=(model.contactName) ? model.contactName.last : ''%>" maxlength="32"/></dd>
-                                <dt><label for="email">Email</label></dt>
+                                <dt><label for="email_person">Email</label></dt>
                                 <dd><input type="text" id="email_person" value="<%=model.email%>" placeholder="e.g. email@site.com" maxlength="48"/></dd>
                                 <dt><label for="phone">Phone </label></dt>
                                 <dd><input type="text" id="phone" value="<%=model.phones.phone%>" placeholder="Phone number" maxlength="32"/></dd>
