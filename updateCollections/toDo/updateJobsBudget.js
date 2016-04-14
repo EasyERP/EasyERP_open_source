@@ -6,6 +6,7 @@
 var mongoose = require('mongoose');
 require('../../models/index.js');
 var _ = require('../../node_modules/underscore/underscore');
+var async = require('async');
 var JobsSchema = mongoose.Schemas['jobs'];
 
 var connectOptions = {
@@ -25,7 +26,7 @@ dbObject.once('open', function callback() {
     var i;
     var jobId;
 
-    console.log("Connection to production is success");
+    console.log("Connection to DB is success");
 
     var Job = dbObject.model("jobs", JobsSchema);
 
@@ -33,8 +34,9 @@ dbObject.once('open', function callback() {
         function (err, result) {
             arrayJobs = result;
 
-            for (i = 0; i < arrayJobs.length; i++) {
-                jobId = arrayJobs[i]._id;
+            async.each(arrayJobs, function(job, cb){
+
+                jobId = job._id;
 
                 Job.aggregate([
                     {$match: {_id: jobId}},
@@ -158,10 +160,10 @@ dbObject.once('open', function callback() {
                         return console.log(err);
                     }
 
-                    //var jobId = jobObj._id;
+                    var _jobId = jobObj[0]._id;
                     var jobBudget = jobObj[0].budget;
 
-                    Job.update({_id: jobId}, {$set: {"budget": jobBudget}}, function(err, res){
+                    Job.update({_id: _jobId}, {$set: {"budget": jobBudget}}, function(err, res){
                         if(!err){
                             console.log(res);
                         } else {
@@ -170,6 +172,6 @@ dbObject.once('open', function callback() {
 
                     });
                 });
-            }
+            });
         });
 });
