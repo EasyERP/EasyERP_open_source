@@ -9,8 +9,7 @@
             <li><a href="javascript:;" class="countable" id="invoicesTab">Invoices<span></span></a></li>
             <li><a href="javascript:;" class="countable" id="paymentsTab">Payments<span></span></a></li>
             <li><a href="javascript:;" class="" id="commentsTab">Comments</a></li>
-            <li><a href="javascript:;" class="" id="bonusTab">Bonus</a></li>
-            <li><a href="javascript:;" class="" id="managersTab">Managers</a></li>
+            <li><a href="javascript:;" class="" id="projectMembersTab">Members</a></li>
             <li><a href="javascript:;" class="" id="assigneesTab">Assignees</a></li>
         </ul>
         <div class="clearfix"></div>
@@ -31,12 +30,6 @@
                         <dd>
                             <input type="text" class="title-input blueback" name="projectShortDesc"
                                    id="projectShortDesc" required value="<%=model.projectShortDesc%>" maxlength="32"/>
-                        </dd>
-                        <dt>
-                            <label for="projectM">Project Manager</label>
-                        </dt>
-                        <dd>
-                            <a id="projectM" data-id="<%=projectM ? projectM._id :''%>" href="javascript:;"><%= projectM ? projectM.fullName :''%></a>  <!--added in case of busy projectManager id-->
                         </dd>
                         <dt>
                             <label for="projectManager">Sales Manager</label>
@@ -142,21 +135,8 @@
 
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div id="bonus">
-                    <div id="bonus-container"></div>
-                </div>
-            </div>
-            <div class="clearfix"></div>
-            <div class="dialog-tabs-item">
-                <div id="managers" class="managers">
-                    <br>
-                    <h4>Project Managers</h4>
-
-                    <div id="projectManagers-container"></div>
-                    <br>
-                    <h4>Sales Managers</h4>
-
-                    <div id="salesManagers-container"></div>
+                <div id="projectMembers" class="projectMembers">
+                    <div id="projectMembers-container"></div>
                 </div>
             </div>
             <div class="clearfix"></div>

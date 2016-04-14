@@ -10,36 +10,30 @@
         <th class="centerCell">x</th>
         <th>Start Date</th>
         <th>End Date</th>
-        <th><%= PM ? 'Project Manager' : 'Sales Manager' %></th>
-        <th></th>
+        <th>Project Member</th>
+        <th>Position</th>
+        <th>Bonus</th>
     </tr>
 
     </thead>
-    <tbody id="<%=PM ? 'projectManagersTable' : 'salesManagersTable'%>">
+    <tbody id="projectMembersTable">
 
-    <% if (managers.length) { managers.forEach(function(elem, index){ %>
+    <% if (members.length) { members.forEach(function(elem, index){ %>
 
-    <tr data-id="<%=elem.manager ? elem.manager._id : ''%>">
+    <tr data-id="<%=elem.manager ? elem.manager._id : ''%>" >
 
-        <td class="centerCell deleteItem"></td>
+        <td class="centerCell">
+            <span title="Delete" class="fa fa-trash-o"></span>
+        </td>
         <td class="startDateManager"><%= elem.startDate ? utcDateToLocaleDate(elem.startDate) : 'From start of project'%></td>
         <td class="endDateManager"><%= elem.endDate ? utcDateToLocaleDate(elem.endDate) : 'To end of project'%></td>
 
-        <td><%=elem.manager ? elem.manager.fullName : '' %></td>
-
+        <td><%=elem.employeeId ? elem.employeeId.fullName : '' %></td>
+        <td><%=elem.projectPositionId ? elem.projectPositionId.name : '' %></td>
+        <td><%=elem.bonusId ? elem.bonusId.name : '' %></td>
 
     </tr>
-
-    <% }) } else { %>
-        <tr>
-
-         <td class="centerCell deleteItem"></td>
-            <td class="startDateManager">From start of project</td>
-         <td class="endDateManager">To end of project</td>
-            <td>Select</td>
-        </tr>
-    <% } %>
-
+    <% }) }%>
     </tbody>
 
 </table>

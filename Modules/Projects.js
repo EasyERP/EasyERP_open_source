@@ -7,6 +7,9 @@ var Project = function (models, event) {
     var tasksSchema = mongoose.Schemas['Task'];
     var projectSchema = mongoose.Schemas['Project'];
     var projectTypeSchema = mongoose.Schemas['projectType'];
+    var projectPositionSchema = mongoose.Schemas['projectPosition'];
+    var BonusTypeSchema = mongoose.Schemas['bonusType'];
+    var EmployeeSchema = mongoose.Schemas['Employee'];
     var prioritySchema = mongoose.Schemas['Priority'];
     var userSchema = mongoose.Schemas['User'];
     var fs = require('fs');
@@ -996,7 +999,9 @@ var Project = function (models, event) {
 
     function getById(req, data, response) {
         var query = models.get(req.session.lastDb, 'Project', projectSchema).findById(data.id);
-
+        var projectPosition = models.get(req.session.lastDb, 'projectPosition', projectPositionSchema);
+        var bonusType = models.get(req.session.lastDb, 'bonusType', BonusTypeSchema);
+        var employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         query.populate('bonus.employeeId', '_id name')
             .populate('bonus.bonusId', '_id name value isPercent')
             .populate('createdBy.user', '_id login')
@@ -1010,15 +1015,37 @@ var Project = function (models, event) {
             .populate('salesmanager', '_id name fullName')
             .populate('customer', '_id name fullName')
             .populate('workflow', '_id name')
-            .populate('salesManagers.manager', '_id name fullName')
-            .populate('projectManagers.manager', '_id name fullName');
+            .populate('projectMembers');
 
         query.exec(function (err, project) {
             if (err) {
                 logWriter.log("Project.js getProjectById project.find " + err);
                 response.send(500, {error: "Can't find Project"});
             } else {
-                response.send(project);
+                async.parallel([function (cb) {
+                    projectPosition.populate(project.projectMembers, {
+                        path  : 'projectPositionId',
+                        select: '_id name'
+                    }, cb);
+                }, function (cb) {
+                    employee.populate(project.projectMembers, {
+                        path  : 'employeeId',
+                        select: '_id name'
+                    }, cb);
+                }, function (cb) {
+                    bonusType.populate(project.projectMembers, {
+                        path  : 'bonusId',
+                        select: '_id name value isPercent'
+                    }, cb);
+                }], function (err, res) {
+                    if (err) {
+                        logWriter.log("Project.js getProjectById project.find " + err);
+                        response.send(500, {error: "Can't find Project"});
+                    } else {
+                        response.status(200).send(project);
+                    }
+                });
+
             }
         });
     };

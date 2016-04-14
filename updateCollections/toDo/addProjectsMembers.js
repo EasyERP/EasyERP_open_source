@@ -111,14 +111,14 @@ var ProjectOld = dbObject.model("ProjectOld", ProjectSchemaOld);
 var ProjectMember = dbObject.model("ProjectMember", projectMemberSchema);
 
 
-var query = ProjectOld.find({projectName : '360CamSDK'}).lean();
+var query = ProjectOld.find({}).lean();
 
 query.exec(function (error, _res) {
     if (error) {
         return console.dir(error);
     }
 
-    async.eachLimit(_res, 50, function (project, callback) {
+    async.eachSeries(_res, function (project, callback) {
         var parallelTasks = [];
         var fieldsToDelete = {
             'salesManagers'  : '',
@@ -149,9 +149,10 @@ query.exec(function (error, _res) {
                 projectMember.save(function (err, doc) {
                     if (err) {
                         prCallback(err);
-                        return;
+                    } else {
+                        prCallback(null, doc._id);
                     }
-                    prCallback(null, doc._id);
+
                 });
 
             });

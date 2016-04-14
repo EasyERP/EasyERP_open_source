@@ -2,13 +2,13 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    'text!templates/Projects/projectInfo/managers/managersTemplate.html',
-    'text!templates/Projects/projectInfo/managers/updateManager.html',
+    'text!templates/Projects/projectInfo/members/membersTemplate.html',
+    'text!templates/Projects/projectInfo/members/createMember.html',
     'views/selectView/selectView',
     'common',
     'dataService',
     'moment'
-], function (Backbone, $, _, managersTemplate, updateManager, SelectView, common, dataService, moment) {
+], function (Backbone, $, _, membersTemplate, createMember, SelectView, common, dataService, moment) {
     'use strict';
 
     var PMView = Backbone.View.extend({
@@ -19,7 +19,7 @@ define([
             this.modelJSON = this.model.id ? this.model.toJSON() : this.model;
         },
 
-        template: _.template(managersTemplate),
+        template: _.template(membersTemplate),
 
         events: {
             'click'                                            : 'hideNewSelect',
@@ -173,7 +173,7 @@ define([
             }
 
             this.$el.find('#projectManagersTable .endDateManager').last().text('');
-            this.$el.find('#projectManagersTable').append(_.template(updateManager));
+            this.$el.find('#projectManagersTable').append(_.template(createMember));
 
 
             $('#top-bar-saveBtn').show();
@@ -194,12 +194,11 @@ define([
 
         render: function () {
             var self = this;
-            var projectManagers = this.model.get('projectManagers');
+            var projectMembers = this.model.get('projectMembers');
 
             self.$el.html(this.template({
-                managers           : projectManagers,
-                utcDateToLocaleDate: common.utcDateToLocaleDate,
-                PM                 : true
+                members            : projectMembers,
+                utcDateToLocaleDate: common.utcDateToLocaleDate
             }));
 
             dataService.getData('/employee/getForDD', {salesDepartments: true, isEmployee: true}, function (employees) {
