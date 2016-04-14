@@ -382,7 +382,7 @@ var PayRoll = function (models) {
         var id = req.query.id;
         var data = req.query;
         var error;
-        var sort = data.sort || {"employee.name": 1};
+        var sort = data.sort || {"employee.name.first": 1, "employee.name.last" : 1};
         var sortKeys = Object.keys(sort);
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 

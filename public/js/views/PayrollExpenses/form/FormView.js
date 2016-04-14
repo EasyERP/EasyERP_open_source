@@ -7,6 +7,7 @@ define([
         'text!templates/PayrollExpenses/form/FormTemplate.html',
         'text!templates/PayrollExpenses/form/sortTemplate.html',
         'text!templates/PayrollExpenses/form/cancelEdit.html',
+        'views/PayrollExpenses/form/dialogView',
         'collections/PayrollExpenses/editCollection',
         'collections/PayrollExpenses/sortCollection',
         'collections/PayrollPayments/editCollection',
@@ -22,7 +23,7 @@ define([
         'common'
     ],
 
-    function (Backbone, PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async, common) {
+    function (Backbone, PayrollTemplate, sortTemplate, cancelEdit, ReportView, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async, common) {
         var PayrollExpanses = Backbone.View.extend({
 
             el           : '#content-holder',
@@ -36,20 +37,28 @@ define([
             },
 
             events: {
-                "click .checkbox"                   : "checked",
-                "click td.editable"                 : "editRow",
-                "click .newSelectList li"           : "chooseOption",
-                "change .autoCalc"                  : "autoCalc",
-                "change .editable"                  : "setEditable",
-                "keydown input.editing"             : "keyDown",
-                "click"                             : "removeNewSelect",
-                "click .diff"                       : "newPayment",
-                // "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .oe_sortable"                : "goSort"
-                //'click tr.mainTr td:not(td.notForm)': 'showHidden'
+                "click .checkbox"        : "checked",
+                "click td.editable"      : "editRow",
+                "click .newSelectList li": "chooseOption",
+                "change .autoCalc"       : "autoCalc",
+                "change .editable"       : "setEditable",
+                "keydown input.editing"  : "keyDown",
+                "click"                  : "removeNewSelect",
+                "click .diff"            : "newPayment",
+                "click .oe_sortable"     : "goSort",
+                'click .expand'          : 'renderDialogView'
 
             },
+
+            renderDialogView: function (e) {
+                App.startPreload();
+
+                var self = this;
+                var tr = $(e.target).closest('tr');
+                var id = tr.attr('data-id');
+                new ReportView({_id: id, dataKey: self.dataKey});
+            },
+
 
             recount: function () {
                 var self = this;
@@ -247,7 +256,7 @@ define([
                     }
                 } else if (target) {
                     tr = $(target).closest('tr');
-                     dataId = tr.attr('data-id');
+                    dataId = tr.attr('data-id');
 
                     model = this.editCollection.get(dataId);
                     jsonModel = model.toJSON();
@@ -1110,27 +1119,6 @@ define([
             //    childTr.toggleClass();
             //},
 
-            asyncRender: function (asyncKeys) {
-                var self = this;
-                var body = this.$el.find('#payRoll-listTable');
-
-                async.each(asyncKeys, function (asyncDate) {
-                    dataService.getData('/payroll/getAsyncData', {
-                        dataKey: self.dataKey,
-                        _id    : asyncDate
-                    }, function (result) {
-                        self[asyncDate] = result;
-
-                        //var mainTr = body.find("[data-id='" + asyncDate + "']");
-                        //result.forEach(function (entry) {
-                        //    mainTr.after("<tr data-main='" + asyncDate + "' class='hidden'><td colspan='4'>" + (entry.employee.name.first + ' ' + entry.employee.name.last) + "</td><td>" + common.utcDateToLocaleFullDateTime(entry.date) + "</td><td>" + entry.type.name + "</td><td class='money'>" + helpers.currencySplitter(entry.calc.toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(entry.paid.toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(entry.diff.toFixed(2)) + "</td></tr>");
-                        //});
-                    });
-
-                });
-
-            },
-
             render: function () {
                 var self = this;
                 var collection = this.collection.toJSON();
@@ -1146,12 +1134,6 @@ define([
                 this.hideSaveCancelBtns();
 
                 this.filterEmployeesForDD(this);
-
-                collection.forEach(function (el) {
-                    asyncKeys.push(el._id);
-                });
-
-                this.asyncRender(asyncKeys);
 
                 $('.check_all').click(function (e) {
                     var totalOld = 0;

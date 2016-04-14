@@ -392,7 +392,14 @@ dbObject.once('open', function callback() {
                                 var employeeSubject = wTrackModel.employee;
                                 var sourceDocumentId = wTrackModel._id;
                                 var methodCb;
-                                var date = moment().year(wTrackModel.year).month(wTrackModel.month - 1).isoWeek(wTrackModel.week).startOf('isoWeek');
+
+                                var year = wTrackModel.year;
+
+                                if (wTrackModel.isoYear && wTrackModel.isoYear !== year){
+                                    year = wTrackModel.isoYear;
+                                }
+
+                                var date = moment().isoWeekYear(year).month(wTrackModel.month - 1).isoWeek(wTrackModel.week).startOf('isoWeek');
 
                                 for (j = 5; j >= 1; j--) {
                                     date = moment(date).day(j);

@@ -14,7 +14,7 @@ define([
     function (Backbone, _, $, template, dataService, helpers, common, async) {
         "use strict";
         var CreateView = Backbone.View.extend({
-                el           : '#content-holder',
+                el         : '#content-holder',
                 template   : _.template(template),
                 responseObj: {},
 
@@ -25,8 +25,9 @@ define([
                 initialize: function (options) {
                     var self = this;
                     this._id = options._id;
+                    this.dataKey = options.dataKey;
 
-                    dataService.getData('journal/journalEntry/getPayrollForReport', {_id: self._id}, function (result) {
+                    dataService.getData('journal/journalEntry/getPayrollForReport', {_id: self._id, dataKey: self.dataKey}, function (result) {
                         self.render(result);
                     });
                 },
@@ -39,7 +40,7 @@ define([
                     var childTr = $body.find("[data-main='" + dataId + "']");
                     var sign = $.trim($tr.find('.expand').text());
 
-                    if (sign === '+'){
+                    if (sign === '+') {
                         $tr.find('.expand').text('-');
                     } else {
                         $tr.find('.expand').text('+');
@@ -76,7 +77,7 @@ define([
                     var self = this;
                     this.data = options.data;
                     var asyncKeys = [];
-                    var wagesPayable = this.data.wagesPayable;
+                    var wagesPayable = this.data;
                     var dialog = this.template({
                         wagesPayable    : wagesPayable,
                         currencySplitter: helpers.currencySplitter,
@@ -112,4 +113,4 @@ define([
             })
             ;
         return CreateView;
-    })
+    });
