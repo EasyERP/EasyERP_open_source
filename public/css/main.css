@@ -3710,9 +3710,10 @@ dl dd span.ui-spinner {
   color: #777;
 }
 .noteWrapper #noteBody .noteContainer .noteTitle {
-  word-break: break-word;
+  font-size: 15px;
 }
-.noteWrapper #noteBody .noteContainer .noteText {
+.noteWrapper #noteBody .noteContainer .noteText,
+.noteWrapper #noteBody .noteContainer .noteTitle {
   word-break: break-word;
   color: #cdcdcd;
   margin-bottom: 10px;
@@ -4094,8 +4095,8 @@ dl dd span.ui-spinner {
   max-width: 190px !important;
 }
 .half-block {
-  width: 49%;
-  margin-right: 1%;
+  width: 45%;
+  margin-right: 5%;
 }
 .half-block.withPaddingRightProject .inner {
   padding-top: 5px;
@@ -6090,8 +6091,8 @@ ul.dialog-tabs li.right button {
   display: none;
 }
 .ui-dialog .app-block {
-  width: 49%;
-  margin-right: 1%;
+  width: 45%;
+  margin-right: 5%;
 }
 .ui-dialog .app-block.withPaddingRightProject .inner {
   padding-top: 5px;
