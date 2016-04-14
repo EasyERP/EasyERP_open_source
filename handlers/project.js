@@ -692,7 +692,20 @@ var Project = function (models) {
 
                     totalObj.revenueSum += job.budget.budgetTotal ? job.budget.budgetTotal.revenueSum : 0;
                     totalObj.costSum += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
-                    totalObj.profitSum += job.budget.budgetTotal ? job.budget.budgetTotal.profitSum : 0;
+
+                    //totalObj.profitSum = job.budget.budgetTotal ? (job.budget.budgetTotal.revenueSum - job.budget.budgetTotal.costSum) : 0;
+
+                    if(job.budget.budgetTotal){
+                        if(job.budget.budgetTotal.revenueSum){
+                            if(job.budget.budgetTotal.costSum){
+                                totalObj.profitSum += job.budget.budgetTotal.revenueSum - job.budget.budgetTotal.costSum;
+                            }else {
+                                totalObj.profitSum += job.budget.budgetTotal.revenueSum
+                            }
+                        }
+                    } else {
+                        totalObj.profitSum = 0;
+                    }
                     totalObj.hoursSum += job.budget.budgetTotal ? job.budget.budgetTotal.hoursSum : 0;
                     //totalObj.rateSum.byDev += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byDev : 0;
                     //totalObj.rateSum.byQA += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byQA : 0;
