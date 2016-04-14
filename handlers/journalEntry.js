@@ -1299,15 +1299,21 @@ var Module = function (models, event) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var body = req.body;
 
-        body.forEach(function (date) {
+        async.each(body, function (date, cb) {
             Model.remove({
                 journal: {$in: CONSTANTS.CLOSE_MONTH_JOURNALS},
                 date   : new Date(date)
             }, function (err, result) {
                 var month = moment(date).month() + 1;
                 var year = moment(date).year();
-                closeMonth(req, res, next, {month: month, year: year});
+                closeMonth(req, res, next, {month: month, year: year}, cb);
             });
+        }, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send();
         });
     };
 
@@ -1315,7 +1321,7 @@ var Module = function (models, event) {
         closeMonth(req, res, next);
     };
 
-    function closeMonth(req, res, next, dateObject) {
+    function closeMonth(req, res, next, dateObject, cb) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var query = dateObject || req.body;
         var month = parseInt(query.month, 10);
@@ -1624,8 +1630,9 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-
-            if (!dateObject){
+            if (cb) {
+                cb(null, result);
+            } else {
                 res.status(200).send({'success': true});
             }
         })
@@ -5685,21 +5692,59 @@ var Module = function (models, event) {
         function matchEmployee(pcb) {
             Model.aggregate([{
                 $match: {
-                  //  'sourceDocument.model': "Employees",
+                    'sourceDocument.model': "Employees",
                     'sourceDocument._id'  : objectId(sourceDocument),
                     date                  : {
                         $gte: new Date(date),
                         $lte: new Date(endDate)
-                    }
+                    },
+                    debit                 : {$gt: 0}
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "sourceDocument._id",
+                    foreignField: "_id", as: "employee"
+                }
+            }, {
+                $lookup: {
+                    from        : "journals",
+                    localField  : "journal",
+                    foreignField: "_id", as: "journal"
                 }
             }, {
                 $project: {
-                    employee: '$sourceDocument._id',
-                    debit   : {$divide: ['$debit', 100]},
-                    credit  : {$divide: ['$credit', 100]},
-                    journal : 1,
-                    date    : 1
+                    date          : 1,
+                    currency      : 1,
+                    debit         : {$divide: ['$debit', '$currency.rate']},
+                    credit        : {$divide: ['$credit', '$currency.rate']},
+                    sourceDocument: {$arrayElemAt: ["$employee", 0]},
+                    journal       : {$arrayElemAt: ["$journal", 0]}
                 }
+            }, {
+                $lookup: {
+                    from        : "chartOfAccount",
+                    localField  : "journal.debitAccount",
+                    foreignField: "_id", as: "journal.debitAccount"
+                }
+            }, {
+                $lookup: {
+                    from        : "chartOfAccount",
+                    localField  : "journal.creditAccount",
+                    foreignField: "_id", as: "journal.creditAccount"
+                }
+            }, {
+                $project: {
+                    date                   : 1,
+                    debit                  : {$divide: ['$debit', 100]},
+                    credit                 : {$divide: ['$credit', 100]},
+                    'journal.creditAccount': {$arrayElemAt: ["$journal.creditAccount", 0]},
+                    'journal.debitAccount' : {$arrayElemAt: ["$journal.debitAccount", 0]},
+                    employee               : {$concat: ['$sourceDocument.name.first', ' ', '$sourceDocument.name.last']},
+                    journalName            : '$journal.name'
+                }
+            }, {
+                $sort: {'date': 1}
             }], function (err, result) {
                 if (err) {
                     return pcb(err);
@@ -5717,7 +5762,8 @@ var Module = function (models, event) {
                     date                  : {
                         $gte: new Date(date),
                         $lte: new Date(endDate)
-                    }
+                    },
+                    credit                : {$gt: 0}
                 }
             }, {
                 $lookup: {
@@ -5726,25 +5772,83 @@ var Module = function (models, event) {
                     foreignField: "_id", as: "sourceDocument"
                 }
             }, {
-                $project: {
-                    debit  : {$divide: ['$debit', 100]},
-                    credit : {$divide: ['$credit', 100]},
-                    journal: 1,
-                    wTrack : {$arrayElemAt: ["$sourceDocument", 0]},
-                    date   : 1
+                $lookup: {
+                    from        : "journals",
+                    localField  : "journal",
+                    foreignField: "_id", as: "journal"
                 }
             }, {
                 $project: {
-                    debit   : '$debit',
-                    credit  : '$credit',
-                    journal : 1,
-                    employee: '$wTrack.employee',
-                    date    : 1
+                    date          : 1,
+                    currency      : 1,
+                    debit         : {$divide: ['$debit', '$currency.rate']},
+                    credit        : {$divide: ['$credit', '$currency.rate']},
+                    sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]},
+                    journal       : {$arrayElemAt: ["$journal", 0]}
+                }
+            }, {
+                $lookup: {
+                    from        : "chartOfAccount",
+                    localField  : "journal.debitAccount",
+                    foreignField: "_id", as: "journal.debitAccount"
+                }
+            }, {
+                $lookup: {
+                    from        : "chartOfAccount",
+                    localField  : "journal.creditAccount",
+                    foreignField: "_id", as: "journal.creditAccount"
+                }
+            }, {
+                $project: {
+                    debit                  : {$divide: ['$debit', 100]},
+                    credit                 : {$divide: ['$credit', 100]},
+                    'journal.creditAccount': {$arrayElemAt: ["$journal.creditAccount", 0]},
+                    'journal.debitAccount' : {$arrayElemAt: ["$journal.debitAccount", 0]},
+                    journalName            : '$journal.name',
+                    wTrack                 : "$sourceDocument",
+                    date                   : 1
+                }
+            }, {
+                $project: {
+                    debit      : '$debit',
+                    credit     : '$credit',
+                    journal    : 1,
+                    journalName: 1,
+                    employee   : '$wTrack.employee',
+                    date       : 1
                 }
             }, {
                 $match: {
                     employee: objectId(sourceDocument)
                 }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "employee",
+                    foreignField: "_id", as: "employee"
+                }
+            }, {
+                $project: {
+                    date                   : 1,
+                    debit                  : 1,
+                    credit                 : 1,
+                    'journal.creditAccount': 1,
+                    'journal.debitAccount' : 1,
+                    employee               : {$arrayElemAt: ["$employee", 0]},
+                    journalName            : 1
+                }
+            }, {
+                $project: {
+                    date                   : 1,
+                    debit                  : 1,
+                    credit                 : 1,
+                    'journal.creditAccount': 1,
+                    'journal.debitAccount' : 1,
+                    employee               : {$concat: ['$employee.name.first', ' ', '$employee.name.last']},
+                    journalName            : 1
+                }
+            }, {
+                $sort: {'date': 1}
             }], function (err, result) {
                 if (err) {
                     return pcb(err);
@@ -5762,10 +5866,7 @@ var Module = function (models, event) {
             var empIds = result[0];
             var empIdsSecond = result[1];
 
-            res.status(200).send({
-                resultByEmployee: result[0],
-                resultByWTrack  : result[1]
-            });
+            res.status(200).send({data: _.union(empIds, empIdsSecond)});
         });
     };
 

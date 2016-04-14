@@ -54,7 +54,7 @@ define([
                 App.startPreload();
 
                 var self = this;
-                var tr = $(e.target).closest('tr');
+                var tr = $(e.target).closest('tr').find('[data-content="employee"]');
                 var id = tr.attr('data-id');
                 new ReportView({_id: id, dataKey: self.dataKey});
             },

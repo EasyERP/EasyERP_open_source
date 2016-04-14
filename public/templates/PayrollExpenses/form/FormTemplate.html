@@ -51,7 +51,7 @@
                             <td data-content="number"><%=index+1%></td>
                             <td class="notForm centerCell"><input id="<%=model._id%>" type="checkbox" value="<%=model._id%>" class="checkbox"/></td>
                             <td class="centerCell expand"><span class="centerCell fa fa-university"></span></td>
-                            <td class="" data-content="employee"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last : ''%></td>
+                            <td class="" data-id="<%=model.employee._id%>" data-content="employee"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last : ''%></td>
                             <td data-content="dataKey"><%=model.month + '/' + model.year%></td>
 
                             <td data-type="input" class="autoCalc cash calc money" data-content="onCash"
