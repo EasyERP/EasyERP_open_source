@@ -324,7 +324,7 @@ var requestHandler = function (app, event, mainDb) {
                     if (err) {
                         return cb(err);
                     }
-                    jobsArray.push(result.jobs);
+                    jobsArray = result.budget.projectTeam;
                     cb(null, jobsArray);
                 });
             }
@@ -532,7 +532,7 @@ var requestHandler = function (app, event, mainDb) {
                         if (keys.length > 0) {
 
                             keys.forEach(function (key) {
-                                budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
+                                budgetTotal.profitSum += parseFloat(projectTeam[key].revenue - projectTeam[key].cost);
                                 budgetTotal.costSum += parseFloat(projectTeam[key].cost);
                                 budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
                                 budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
@@ -573,7 +573,7 @@ var requestHandler = function (app, event, mainDb) {
 
                                 response = response || [];
 
-                                /*bonuses.forEach(function (element) {
+                                bonuses.forEach(function (element) {
                                  var objToSave = {};
 
                                  objToSave.bonus = 0;
@@ -614,13 +614,12 @@ var requestHandler = function (app, event, mainDb) {
                                  }
 
                                  //console.log('success');
-                                 });*/
+                                 });
                             });
                         }
                     });
                 });
 
-                //console.log('success');
 
                 wTrack.aggregate([{
                     $match: {
@@ -849,52 +848,6 @@ var requestHandler = function (app, event, mainDb) {
 
                         projectId = res._id._id;
                         var jobIds = res.jobIds;
-
-                        var bonuses = res._id.bonus;
-
-                        /*
-                         bonuses.forEach(function (element) {
-                         var objToSave = {};
-
-                         objToSave.bonus = 0;
-                         objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
-                         objToSave.percentage = element.bonusId.name;
-
-                         if (element.bonusId.isPercent) {
-                         objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
-                         bonus.push(objToSave);
-                         } else {
-                         monthHours.forEach(function (month) {
-                         objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
-                         });
-
-                         objToSave.bonus = objToSave.bonus * 100;
-                         bonus.push(objToSave);
-                         }
-
-                         });
-
-                         var keysForPT = Object.keys(projectTeam);
-
-                         response.forEach(function (employee) {
-                         keysForPT.forEach(function (id) {
-                         if ((employee._id).toString() === id) {
-                         sortBudget.push(projectTeam[id]);
-                         }
-                         });
-                         });
-
-                         budget = {
-                         bonus: bonus
-                         };
-
-                         Project.update({_id: project._id}, {$set: {"budget.bonus": budget.bonus}}, function (err, result) {
-                         if (err) {
-                         return console.log(err);
-                         }
-                         });
-                         */
-
 
                         Project.findByIdAndUpdate(projectId, {$set: {"budget.projectTeam": jobIds}}, {new: true}, function (err, result) {
                             if (err) {

@@ -918,7 +918,7 @@ define([
                     var budgetTotal = projectTeam.budget.budgetTotal;
 
                     self.projectValues.revenue += budgetTotal ? budgetTotal.revenueSum : 0;
-                    self.projectValues.profit += budgetTotal ? budgetTotal.profitSum : 0;
+                    self.projectValues.profit += budgetTotal ? (budgetTotal.revenueSum - budgetTotal.costSum) : 0;
                     self.projectValues.cost += budgetTotal ? budgetTotal.costSum : 0;
 
                 });
@@ -1020,7 +1020,7 @@ define([
                     filter     : filter,
                     startNumber: startNumber,
                     project    : self.formModel
-                }).render();
+                });
 
                 this.wCollection.bind('reset', this.createView);
             },
