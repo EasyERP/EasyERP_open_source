@@ -23,6 +23,7 @@ module.exports = (function () {
             startDate: {type : Date, default: null},
             endDate  : {type : Date, default: null}
         }],
+        projectMembers  : [{type: ObjectId, ref: 'ProjectMembers', default: null}],
         description     : String,
         whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         groups          : {

@@ -2844,10 +2844,10 @@ dl {
       }
 
       .noteTitle {
-        word-break: break-word;
+        font-size: 15px;
       }
 
-      .noteText {
+      .noteText, .noteTitle {
         word-break: break-word;
         color: @mainText-color;
         margin-bottom: 10px;
@@ -2980,8 +2980,8 @@ dl {
 }
 
 .half-block {
-  width: 49%;
-  margin-right: 1%; // for job position
+  width: 45%;
+  margin-right: 5%; // for job position
   &.withPaddingRightProject {
     .inner {
       padding-top: 5px;
@@ -6624,6 +6624,17 @@ textarea#editInput {
   }
   .btn_holder {
     margin-top: 10px;
+  }
+}
+
+.deleteRow {
+  &:hover {
+    .fa-trash-o{
+      display: inline-block;
+    }
+  }
+  .fa-trash-o{
+    display: none;
   }
 }
 

@@ -12,7 +12,7 @@
     <% var editable = model.workflow && model.workflow.name !== 'Invoiced' && model.workflow.name !== 'Paid'%>
     <td data-name="price" class="<%= editable ? 'editable' : ''%> forNum">
         <% if(editable) { %>
-        <input id="editInput" maxlength="9" size=7 type="text" value="<%=product.unitPrice%>" />
+        <input id="editInput" maxlength="9" class="statusInfo" size=7 type="text" value="<%=product.unitPrice%>" />
         <% } else { %>
         <span><%=product.unitPrice%></span>
         <% } %>

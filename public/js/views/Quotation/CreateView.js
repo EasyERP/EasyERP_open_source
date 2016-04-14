@@ -222,6 +222,11 @@ define([
                             });
                         }
                     }
+                } else { // added in case of no rows
+                    return App.render({
+                        type   : 'notify',
+                        message: "Products can't be empty."
+                    });
                 }
 
                 data = {

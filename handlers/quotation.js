@@ -764,7 +764,7 @@ var Quotation = function (models, event) {
                 return next(err);
             }
 
-            var products = quotation.get('products');
+            var products = quotation ? quotation.get('products') : [];
 
             async.each(products, function (product, cb) {
 
@@ -780,7 +780,7 @@ var Quotation = function (models, event) {
                     }
 
                     project = result ? result.get('project') : null;
-                    wTracks = result.wTracks;
+                    wTracks = result ? result.wTracks : [];
 
                     async.each(wTracks, function (wTr, callback) {
                         wTrack.findByIdAndUpdate(wTr, {$set: {revenue: 0}}, callback);
