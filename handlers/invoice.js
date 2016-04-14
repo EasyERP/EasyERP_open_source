@@ -404,7 +404,7 @@ var Invoice = function (models, event) {
                 }
             }, {new: true}, function (err, result) {
                 if (err) {
-                    return next(err)
+                    return next(err);
                 }
             });
 
