@@ -815,7 +815,7 @@ var PayRoll = function (models) {
 
         function getEmployees(callback) {
             var queryObject = {
-                isEmployee: true,
+              //  isEmployee: true,
                 department: {
                     $in: departmentArray
                 }
@@ -834,17 +834,29 @@ var PayRoll = function (models) {
                     var salary = 0;
                     var hire = elem.transfer;
                     var length = hire.length;
+                    var dateToCreate;
                     var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hours: 18, minutes: 1, seconds: 0}));
+                    var daysInMonth;
+                    var payForDay;
 
                     journalEntry.removeByDocId({'sourceDocument._id': elem._id, journal: CONSTANTS.ADMIN_SALARY_JOURNAL, date: localDate}, req.session.lastDb, function (err, result) {
 
                     });
 
+                    dateToCreate = endDate;
+
                     for (i = length - 1; i >= 0; i--) {
-                        if (date >= hire[i].date) {
+                        if (dateToCreate >= hire[i].date) {
                             salary = hire[i].salary;
                             break;
                         }
+                    }
+
+                    if ((moment(new Date(hire[0].date)).month() === moment(dateToCreate).month()) && (moment(new Date(hire[0].date)).year() === moment(dateToCreate).year())){
+                        daysInMonth = moment(dateToCreate).endOf('month').date();
+                        payForDay = salary / daysInMonth;
+
+                        salary = payForDay * (daysInMonth - moment(new Date(hire[0].date)).date());
                     }
 
                     if (salary) {
@@ -986,9 +998,9 @@ var PayRoll = function (models) {
                         }
                     };
 
-                    if (employee.toString() === '55b92ad221e4b7c40f000030'){
-                        return asyncCb();
-                    }
+                    //if (employee.toString() === '55b92ad221e4b7c40f000030'){
+                    //    return asyncCb();
+                    //}
 
                     newPayroll = new Payroll(startBody);
 

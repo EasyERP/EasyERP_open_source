@@ -109,11 +109,12 @@ module.exports = {
     HR_VAC_YEAR_BEFORE: 2,
     HR_VAC_YEAR_AFTER : 1,
 
-    NOT_DEV_ARRAY: [ //HR, Marketing, Business, Finance
+    NOT_DEV_ARRAY: [ //HR, Marketing, Business, Finance, PM
         "560c0b83a5d4a2e20ba5068c",
         "55b92ace21e4b7c40f000013",
         "55b92ace21e4b7c40f000014",
-        "55b92ace21e4b7c40f000015"
+        "55b92ace21e4b7c40f000015",
+        '55bb1f40cb76ca630b000007'
     ],
 
     CREDIT_IS        : '56f5383a9c85020807b40020',
