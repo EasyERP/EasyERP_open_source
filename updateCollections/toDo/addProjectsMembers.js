@@ -127,34 +127,31 @@ query.exec(function (error, _res) {
         };
 
         function SalesMember(prCallback) {
-            project.salesManagers.forEach(function (manager) {
-                var bonusId = null;
-                var projectMember;
-                if (project.bonus && project.bonus.length) {
-                    project.bonus.forEach(function (bonus) {
-                        if (bonus.employeeId.toString() === manager.manager.toString()) {
-                            bonusId = bonus.bonusId;
-                            return;
-                        }
-                    });
-                }
-                projectMember = new ProjectMember({
-                    projectId        : project._id,
-                    employeeId       : manager.manager,
-                    bonusId          : bonusId,
-                    projectPositionId: "570e9a75785753b3f1d9c86e",
-                    startDate        : manager.startDate,
-                    endDate          : manager.endDate
-                });
-                projectMember.save(function (err, doc) {
-                    if (err) {
-                        prCallback(err);
-                    } else {
-                        prCallback(null, doc._id);
+            var manager = project.salesManagers[0];
+
+            var bonusId = null;
+            var projectMember;
+            if (project.bonus && project.bonus.length) {
+                project.bonus.forEach(function (bonus) {
+                    if (bonus.employeeId.toString() === manager.manager.toString()) {
+                        bonusId = bonus.bonusId;
+                        return;
                     }
-
                 });
-
+            }
+            projectMember = new ProjectMember({
+                projectId        : project._id,
+                employeeId       : manager.manager,
+                bonusId          : bonusId,
+                projectPositionId: "570e9a75785753b3f1d9c86e",
+                startDate        : manager.startDate,
+                endDate          : manager.endDate
+            });
+            projectMember.save(function (err, doc) {
+                if (err) {
+                    prCallback(err);
+                }
+                prCallback(null, doc._id);
             });
         }
 
