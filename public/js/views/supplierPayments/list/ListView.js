@@ -253,17 +253,27 @@ define([
 
             saveItem: function () {
                 var model;
-                var modelJSON;
+                var id;
+                var errors = this.$el.find('.errorContent');
 
                 this.setChangedValueToModel();
 
-                for (var id in this.changedModels) {
-                    model = this.editCollection.get(id);
-                    modelJSON = model.toJSON();
+                for (id in this.changedModels) {
+                    model = this.editCollection.get(id) || this.collection.get(id);
                     model.changed = this.changedModels[id];
-                    model.changed.differenceAmount = this.changedModels[id].paidAmount - this.changedModels[id].paid;
+                    model.changed.differenceAmount = parseFloat(this.changedModels[id].paidAmount) - parseFloat(this.changedModels[id].paid);
                 }
+
+                if (errors.length) {
+                    return;
+                }
+
                 this.editCollection.save();
+
+                for (id in this.changedModels) {
+                    delete this.changedModels[id];
+                    this.editCollection.remove(id);
+                }
             },
 
             updatedOptions: function () {
@@ -357,25 +367,31 @@ define([
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-                var editPaymentModel;
+                var editModel;
+                var editValue;
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
-                    editedElementRowId = editedElement.closest('tr').attr('data-id');
-                    editedElementContent = editedCol.attr('data-content');
+                    editedElementRowId = editedElement.closest('tr').data('id');
+                    editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
-                 //   editPaymentModel = this.collection.get(editedElementRowId);
+                    if (editedElementRowId.length >= 24) {
+                        editModel = this.collection.get(editedElementRowId);
+                        editValue = editModel.get(editedElementContent);
 
-                    if (!this.changedModels[editedElementRowId]) {
-                        /*if (editPaymentModel && editPaymentModel.id) {  // took off for correct work of this.collection
-                            this.changedModels[editedElementRowId] = editPaymentModel.attributes;
-                        } else {*/
+                        if (editedElementValue !== editValue) {
+                            if (!this.changedModels[editedElementRowId]) {
+                                this.changedModels[editedElementRowId] = {};
+                            }
+                            this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                        }
+                    } else {
+                        if (!this.changedModels[editedElementRowId]) {
                             this.changedModels[editedElementRowId] = {};
-                        /*}*/
+                        }
+                        this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                     }
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-
                     editedCol.text(editedElementValue);
                     editedElement.remove();
                 }
@@ -474,42 +490,33 @@ define([
                 var self = this;
                 var edited = this.edited;
                 var collection = this.collection;
-                var editedCollectin = this.editCollection;
-                var copiedCreated;
-                var dataId;
                 var createItem;
+                var dataId;
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
-                    var rowNumber = tr.find('.centerCell').text();
-                    var id = tr.data('id');
+                    var rowNumber = tr.find('[data-content="number"]').text();
+                    var id = tr.attr('data-id');
                     var template = _.template(cancelEdit);
                     var model;
 
-                    if (!id) {
+                    if (!id || id.length < 24) {
                         return cb('Empty id');
-                    } else if (id.length < 24) {
-                        tr.remove();
-                        model = self.changedModels;
-
-                        if (model) {
-                            delete model[id];
-                        }
-
-                        return cb();
                     }
 
-                    model = collection.get(id);
+                    model = self.editCollection.get(id) || collection.get(id);
                     model = model.toJSON();
                     model.startNumber = rowNumber;
-                    tr.replaceWith(template({model: model, currencySplitter : helpers.currencySplitter})); // added for work properly
+                    tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter}));
+
+                    delete self.changedModels[id];
+
                     cb();
                 }, function (err) {
                     if (!err) {
-                        /*self.editCollection = new EditCollection(collection.toJSON());*/
                         self.bindingEventsToEditedCollection(self);
-                        self.hideSaveCancelBtns();
                     }
+                    self.hideSaveCancelBtns();
                 });
 
                 if (this.createdItem) {
@@ -522,6 +529,7 @@ define([
                     this.createdItem = false;
                 }
             },
+
             deleteItems: function () {  // method from listViewBase,  cancelChanges added
                 var that = this;
                 var mid = 39;
