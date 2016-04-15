@@ -1326,8 +1326,8 @@ var Module = function (models, event) {
         var query = dateObject || req.body;
         var month = parseInt(query.month, 10);
         var year = parseInt(query.year, 10);
-        var startDate = moment().isoWeekYear(year).month(month - 1).startOf('month');
-        var endDate = moment().isoWeekYear(year).month(month - 1).endOf('month');
+        var startDate = moment().isoWeekYear(year).month(month - 1).startOf('month').subtract(3, 'hours');
+        var endDate = moment().isoWeekYear(year).month(month - 1).endOf('month').subtract(3, 'hours');
         var waterlallTasks;
         var productSales;
         var COGS;
