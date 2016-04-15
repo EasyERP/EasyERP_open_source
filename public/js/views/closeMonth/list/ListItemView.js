@@ -2,7 +2,7 @@
  * Created by liliy on 25.03.2016.
  */
 define([
-    'text!templates/closeMonth/list/listTemplate.html',
+    'text!templates/closeMonth/list/ListTemplate.html',
     'moment',
     'helpers'
 ], function (listTemplate, moment, helpers) {
