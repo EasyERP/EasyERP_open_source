@@ -51,7 +51,6 @@
                 "click .removeFilterButton" : "removeFilter"
             },
 
-            //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/totalCollectionLength/Employees', {
                     currentNumber: currentNumber,
@@ -129,7 +128,6 @@
                 var self = this;
                 var $currentEl = this.$el;
                 var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
-                var FilterView;
 
                 $currentEl.html('');
 
