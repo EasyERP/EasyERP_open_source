@@ -183,7 +183,7 @@ define([
                 });
 
                 whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-                website = this.$el.find('#website').val();
+                website = this.$el.find('#websiteEdit').val();
 
                 website.replace('http://', '');
                 data = {
@@ -196,7 +196,7 @@ define([
                         LI: $.trim(thisEl.find('#LI').val()),
                         FB: $.trim(thisEl.find('#FB').val())
                     },
-                    email        : this.$el.find("#email").val(),
+                    email        : this.$el.find("#emailEdit").val(),
                     phones       : {
                         phone : this.$el.find("#phone").val(),
                         mobile: this.$el.find("#mobile").val(),
@@ -209,7 +209,7 @@ define([
                         zip    : this.$el.find('#zip').val(),
                         country: this.$el.find('#country').val()
                     },
-                    website      : this.$el.find('#website').val(),
+                    website      : this.$el.find('#websiteEdit').val(),
                     internalNotes: $.trim(this.$el.find("#internalNotes").val()),
 
                     salesPurchases: {

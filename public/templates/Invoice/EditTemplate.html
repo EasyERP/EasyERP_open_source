@@ -18,7 +18,7 @@
                                             <span>Approve</span>
                                         </button>
                                     <%} else {%>
-                                        <span>Not Approved</span>
+                                        <span>Draft</span>
                                     <%}%>
                                 <%}%>
                             <%} else if(model.workflow.status === 'Done'){%>
@@ -140,7 +140,7 @@
                                 <dt><label for="currencyDd">Currency</label></dt>
                                 <dd>
                                     <a id="currencyDd" class=""
-                                       data-id="<%= model.currency && model.currency._id ? model.currency._id._id : null%>"
+                                       data-id="<%= model.currency && model.currency._id ? model.currency._id : null%>"
                                        href="javascript:;"><%= model.currency && model.currency._id ?
                                         model.currency._id.name : ''%></a>
                                 </dd>

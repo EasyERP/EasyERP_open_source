@@ -27,7 +27,7 @@ define([
             this.collection = options.model;
             this.filter = options.filter ? options.filter : {};
 
-            this.eventChannel = options.eventChannel || {};
+            this.eventChannel = options.eventChannel;
 
             this.render(options);
         },
@@ -183,7 +183,7 @@ define([
                 });
 
             }, function () {
-                that.eventChannel.trigger('proformaRemove');
+                self.eventChannel && that.eventChannel.trigger('proformaRemove');
                 if (that.collection.length) {
                     that.recalcTotal();
                 } else {

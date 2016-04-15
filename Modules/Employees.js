@@ -942,49 +942,49 @@ var Employee = function (event, models) {
                                                 }
 
                                                 project = {
-                                                    manager         : {$arrayElemAt: ["$manager", 0]},
-                                                    jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
-                                                    department      : {$arrayElemAt: ["$department", 0]},
-                                                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                                                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
-                                                    name            : 1,
-                                                    'editedBy.date' : 1,
-                                                    'createdBy.date': 1,
-                                                    dateBirth       : 1,
-                                                    skype           : 1,
-                                                    workEmail       : 1,
-                                                    workPhones      : 1,
-                                                    jobType         : 1,
-                                                    isEmployee      : 1,
-                                                    creationDate    : 1,
-                                                    workflow        : {$arrayElemAt: ["$workflow", 0]},
-                                                    personalEmail   : 1,
-                                                    sequence        : 1,
-                                                    hire            : 1,
-                                                    fire            : 1
+                                                    manager            : {$arrayElemAt: ["$manager", 0]},
+                                                    jobPosition        : {$arrayElemAt: ["$jobPosition", 0]},
+                                                    department         : {$arrayElemAt: ["$department", 0]},
+                                                    'createdBy.user'   : {$arrayElemAt: ["$createdBy.user", 0]},
+                                                    'editedBy.user'    : {$arrayElemAt: ["$editedBy.user", 0]},
+                                                    name               : 1,
+                                                    'editedBy.date'    : 1,
+                                                    'createdBy.date'   : 1,
+                                                    dateBirth          : 1,
+                                                    skype              : 1,
+                                                    workEmail          : 1,
+                                                    workPhones         : 1,
+                                                    jobType            : 1,
+                                                    isEmployee         : 1,
+                                                    creationDate       : 1,
+                                                    workflow           : {$arrayElemAt: ["$workflow", 0]},
+                                                    personalEmail      : 1,
+                                                    sequence           : 1,
+                                                    hire               : 1,
+                                                    fire               : 1
                                                 };
 
                                                 projectSecond = {
-                                                    manager         : 1,
-                                                    jobPosition     : 1,
-                                                    department      : 1,
-                                                    'createdBy.user': 1,
-                                                    'editedBy.user' : 1,
-                                                    'editedBy.date' : 1,
-                                                    'createdBy.date': 1,
-                                                    name            : 1,
-                                                    dateBirth       : 1,
-                                                    skype           : 1,
-                                                    workEmail       : 1,
-                                                    workPhones      : 1,
-                                                    jobType         : 1,
-                                                    isEmployee      : 1,
-                                                    creationDate    : 1,
-                                                    workflow        : 1,
-                                                    personalEmail   : 1,
-                                                    sequence        : 1,
-                                                    hire            : 1,
-                                                    fire            : 1
+                                                    manager            : 1,
+                                                    jobPosition        : 1,
+                                                    department         : 1,
+                                                    'createdBy.user'   : 1,
+                                                    'editedBy.user'    : 1,
+                                                    'editedBy.date'    : 1,
+                                                    'createdBy.date'   : 1,
+                                                    name               : 1,
+                                                    dateBirth          : 1,
+                                                    skype              : 1,
+                                                    workEmail          : 1,
+                                                    workPhones         : 1,
+                                                    jobType            : 1,
+                                                    isEmployee         : 1,
+                                                    creationDate       : 1,
+                                                    workflow           : 1,
+                                                    personalEmail      : 1,
+                                                    sequence           : 1,
+                                                    hire               : 1,
+                                                    fire               : 1
                                                 };
 
                                             }
@@ -1420,71 +1420,86 @@ var Employee = function (event, models) {
                     return depId.toString();
                 });
 
-                data.transfer = data.transfer.map(function (tr) {
-                    if (adminDeps.indexOf(tr.department.toString()) !== -1) {
-                        tr.isDeveloper = false;
-                    } else {
-                        tr.isDeveloper = true;
+                if (data.transfer) {
+                    data.transfer = data.transfer.map(function (tr) {
+                        if (adminDeps.indexOf(tr.department.toString()) !== -1) {
+                            tr.isDeveloper = false;
+                        } else {
+                            tr.isDeveloper = true;
+                        }
+                        return tr;
+                    });
+                }
+
+                models.get(req.session.lastDb, 'Employees', employeeSchema).findById(_id, function (err, emp) {
+                    if (err) {
+                        return res.send(500, {error: "Can't update Employees"});
                     }
 
-                    return tr;
-                });
+                    if (ids.indexOf(req.session.uId) === -1) {
+                        data.transfer = data.transfer.map(function (tr, i) {
+                            tr.salary = (emp.transfer[i] && emp.transfer[i].salary) || emp.transfer[i - 1].salary;
+                            return tr;
+                        });
+                    }
 
-                models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
-                    if (!err) {
-                        if (data.dateBirth || data.hired) {
-                            event.emit('recalculate', req);
-                        }
-                        if (fileName) {
-                            var os = require("os");
-                            var osType = (os.type().split('_')[0]);
-                            var path;
-                            var dir;
-                            switch (osType) {
-                                case "Windows":
-                                {
-                                    var newDirname = __dirname.replace("\\Modules", "");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
-                                    }
-                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                    dir = newDirname + "\/uploads\/" + _id;
-                                }
-                                    break;
-                                case "Linux":
-                                {
-                                    var newDirname = __dirname.replace("/Modules", "");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
-                                    }
-                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                    dir = newDirname + "\/uploads\/" + _id;
-                                }
+                    models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+                        if (!err) {
+                            if (data.dateBirth || data.hired) {
+                                event.emit('recalculate', req);
                             }
-
-                            fs.unlink(path, function (err) {
-                                console.log(err);
-                                fs.readdir(dir, function (err, files) {
-                                    if (files && files.length === 0) {
-                                        fs.rmdir(dir, function () {
-                                        });
+                            if (fileName) {
+                                var os = require("os");
+                                var osType = (os.type().split('_')[0]);
+                                var path;
+                                var dir;
+                                switch (osType) {
+                                    case "Windows":
+                                    {
+                                        var newDirname = __dirname.replace("\\Modules", "");
+                                        while (newDirname.indexOf("\\") !== -1) {
+                                            newDirname = newDirname.replace("\\", "\/");
+                                        }
+                                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                        dir = newDirname + "\/uploads\/" + _id;
                                     }
+                                        break;
+                                    case "Linux":
+                                    {
+                                        var newDirname = __dirname.replace("/Modules", "");
+                                        while (newDirname.indexOf("\\") !== -1) {
+                                            newDirname = newDirname.replace("\\", "\/");
+                                        }
+                                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                        dir = newDirname + "\/uploads\/" + _id;
+                                    }
+                                }
+
+                                fs.unlink(path, function (err) {
+                                    console.log(err);
+                                    fs.readdir(dir, function (err, files) {
+                                        if (files && files.length === 0) {
+                                            fs.rmdir(dir, function () {
+                                            });
+                                        }
+                                    });
                                 });
-                            });
 
+                            }
+                            event.emit('dropHoursCashes', req);
+                            event.emit('recollectVacationDash');
+
+                            res.send(200, {success: 'Employees updated', result: result});
+
+                            payrollHandler.composeSalaryReport(req);
+
+                        } else {
+                            res.send(500, {error: "Can't update Employees"});
                         }
-                        event.emit('dropHoursCashes', req);
-                        event.emit('recollectVacationDash');
 
-                        res.send(200, {success: 'Employees updated', result: result});
+                    });
 
-                        payrollHandler.composeSalaryReport(req);
-
-                    } else {
-                        res.send(500, {error: "Can't update Employees"});
-                    }
-
-                });
+            });
 
             });
         }

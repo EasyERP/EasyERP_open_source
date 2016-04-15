@@ -7,7 +7,7 @@ module.exports = function (models) {
     var handler = new DepartmentHandler(models);
 
     router.get('/getForDD', handler.getForDD);
-    router.get('/exportToXlsx', handler.exportToXlsx);
-    router.get('/exportToCsv',handler.exportToCsv)
+    //router.get('/exportToXlsx', handler.exportToXlsx);
+    //router.get('/exportToCsv',handler.exportToCsv)
     return router;
 };

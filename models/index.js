@@ -56,4 +56,6 @@ module.exports = (function () {
     require('./paymentType.js');
     require('./chartAccount.js');
     require('./currency.js');
+    require('./projectPosition.js');
+    require('./projectMember.js');
 })();

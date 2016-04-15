@@ -17,9 +17,9 @@ var Products = function (models) {
         var exportDecorator = require('../helpers/exporter/exportDecorator');
         var exportMap = require('../helpers/csvMap').Products;
 
-        exportDecorator.addExportFunctionsToHandler(this, function (req) {
-            return models.get(req.session.lastDb, 'Product', ProductSchema);
-        }, exportMap, 'Products');
+        //exportDecorator.addExportFunctionsToHandler(this, function (req) {
+        //    return models.get(req.session.lastDb, 'Product', ProductSchema)
+        //}, exportMap, 'Products');
 
         this.create = function (req, res, next) {
             var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
@@ -243,7 +243,7 @@ var Products = function (models) {
 
                 switch (filterName) {
                     case 'letter':
-                        filtrElement['name'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
+                        filtrElement['name'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
                         resArray.push(filtrElement);
                         break;
                     case 'name':

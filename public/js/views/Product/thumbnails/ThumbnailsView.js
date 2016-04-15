@@ -42,19 +42,18 @@
 
             events        : {
                 "click #showMore"           : "showMore",
-                /*"click .thumbnailwithavatar": "gotoForm",*/
                 "click .thumbnailwithavatar": "gotoEditForm",
                 "click .letter:not(.empty)" : "alpabeticalRender",
                 "click .saveFilterButton"   : "saveFilter",
-                "click .removeFilterButton" : "removeFilter",
+                "click .removeFilterButton" : "removeFilter"
             },
 
-            //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/product/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter       : filter,
-                    newCollection: newCollection
+                    newCollection: newCollection,
+                    contentType  : this.contentType
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {
@@ -77,26 +76,40 @@
                 common.getImages(ids, "/product/getProductsImages");
             },
 
-            //modified for filter Vasya
             alpabeticalRender: function (e) {
                 var selectedLetter;
                 var target;
 
-                this.filter = {};
                 if (e && e.target) {
                     target = $(e.target);
                     selectedLetter = $(e.target).text();
 
-                    this.filter['letter'] = selectedLetter;
+                    if (!this.filter) {
+                        this.filter = {};
+                    }
+                    this.filter['letter'] = {
+                        key  : 'letter',
+                        value: selectedLetter,
+                        type : null
+                    };
 
                     target.parent().find(".current").removeClass("current");
                     target.addClass("current");
-                    if ($(e.target).text() == "All") {
-                        selectedLetter = "";
-                        this.filter = {};
+                    if ($(e.target).text() === "All") {
+                        delete this.filter;
+                        delete App.filter.letter;
+                    } else {
+                        App.filter.letter = this.filter.letter;
                     }
                 }
-                ;
+
+                this.filter = App.filter;
+
+                this.filterView.renderFilterContent(this.filter);
+                _.debounce(
+                    function () {
+                        this.trigger('filter', App.filter);
+                    }, 10);
 
                 this.startTime = new Date();
                 this.newCollection = false;
@@ -115,7 +128,6 @@
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                 }
-                ;
             },
 
             render: function () {
@@ -125,13 +137,13 @@
 
                 $currentEl.html('');
                 common.buildAphabeticArray(this.collection, function (arr) {
-                    $("#startLetter").remove();
                     self.alphabeticArray = arr;
-                    $('#searchContainer').after(_.template(AphabeticTemplate, {
+                    $('#startLetter').remove();
+                    $("#searchContainer").after(_.template(AphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
-                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter : "All";
+                    var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : "All";
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
@@ -153,10 +165,10 @@
                 self.filterView = new filterView({contentType: self.contentType});
 
                 self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter)
+                    self.showFilteredPage(filter, self)
                 });
                 self.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({});
+                    self.showFilteredPage({}, self);
                 });
 
                 self.filterView.render();
@@ -164,27 +176,22 @@
                 return this;
             },
 
-            showFilteredPage: function (filter) {
-                var itemsNumber = $("#itemsNumber").text();
-
-                var alphaBet = this.$el.find('#startLetter');
-                var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-
+            showFilteredPage: function (filter, context) {
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
-                this.startTime = new Date();
-                this.newCollection = false;
+                context.startTime = new Date();
+                context.newCollection = false;
 
                 if (Object.keys(filter).length === 0) {
                     this.filter = {};
                 }
                 this.defaultItemsNumber = 0;
-                this.$el.find('.thumbnailwithavatar').remove();
+                context.$el.find('.thumbnailwithavatar').remove();
 
-                this.changeLocationHash(null, this.defaultItemsNumber, filter);
-                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: filter});
-                this.getTotalLength(this.defaultItemsNumber, filter);
+                context.changeLocationHash(null, context.defaultItemsNumber, filter);
+                context.collection.showMoreAlphabet({count: context.defaultItemsNumber, page: 1, filter: filter});
+                context.getTotalLength(this.defaultItemsNumber, filter);
             },
 
             gotoForm: function (e) {
@@ -226,7 +233,6 @@
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
 
-            //modified for filter Vasya
             showMoreContent : function (newModels) {
                 var holder = this.$el;
                 var content = holder.find("#thumbnailContent");
@@ -250,7 +256,6 @@
                 this.filterView.renderFilterContent();
             },
 
-            //modified for filter Vasya
             showMoreAlphabet: function (newModels) {
                 var holder = this.$el;
                 var created = holder.find('#timeRecivingDataFromServer');

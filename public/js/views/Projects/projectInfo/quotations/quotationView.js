@@ -41,7 +41,7 @@ define([
             this.filter = options.filter ? options.filter : {};
             this.defaultItemsNumber = 50;
             this.page = options.page ? options.page : 1;
-            this.eventChannel = options.eventChannel || {};
+            this.eventChannel = options.eventChannel;
         },
 
         chooseOption: function (e) {
@@ -265,7 +265,7 @@ define([
                             $("#removeQuotation").hide();
                             $('#check_all_quotations').prop('checked', false);
 
-                            that.eventChannel.trigger('elemCountChanged');
+                            self.eventChannel && that.eventChannel.trigger('elemCountChanged');
 
                             //that.deleteItemsRender(that.deleteCounter, that.deletePage);
                         },

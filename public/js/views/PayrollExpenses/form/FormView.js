@@ -1,10 +1,13 @@
 /**
  * Created by lilya on 16/11/15.
  */
+'use strict';
 define([
+        'Backbone',
         'text!templates/PayrollExpenses/form/FormTemplate.html',
         'text!templates/PayrollExpenses/form/sortTemplate.html',
         'text!templates/PayrollExpenses/form/cancelEdit.html',
+        'views/PayrollExpenses/form/dialogView',
         'collections/PayrollExpenses/editCollection',
         'collections/PayrollExpenses/sortCollection',
         'collections/PayrollPayments/editCollection',
@@ -16,10 +19,11 @@ define([
         "moment",
         "populate",
         "dataService",
-        "async"
+        "async",
+        'common'
     ],
 
-    function (PayrollTemplate, sortTemplate, cancelEdit, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async) {
+    function (Backbone, PayrollTemplate, sortTemplate, cancelEdit, ReportView, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async, common) {
         var PayrollExpanses = Backbone.View.extend({
 
             el           : '#content-holder',
@@ -33,18 +37,39 @@ define([
             },
 
             events: {
-                "click .checkbox"                                                 : "checked",
-                "click td.editable"                                               : "editRow",
-                "click .newSelectList li"                                         : "chooseOption",
-                "change .autoCalc"                                                : "autoCalc",
-                "change .editable"                                                : "setEditable",
-                "keydown input.editing"                                           : "keyDown",
-                "click #expandAll"                                                : "expandAll",
-                "click"                                                           : "removeNewSelect",
-                "click .diff"                                                     : "newPayment",
-               // "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                //"click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .oe_sortable"                                              : "goSort"
+                "click .checkbox"        : "checked",
+                "click td.editable"      : "editRow",
+                "click .newSelectList li": "chooseOption",
+                "change .autoCalc"       : "autoCalc",
+                "change .editable"       : "setEditable",
+                "keydown input.editing"  : "keyDown",
+                "click"                  : "removeNewSelect",
+                "click .diff"            : "newPayment",
+                "click .oe_sortable"     : "goSort",
+                'click .expand'          : 'renderDialogView'
+
+            },
+
+            renderDialogView: function (e) {
+                App.startPreload();
+
+                var self = this;
+                var tr = $(e.target).closest('tr').find('[data-content="employee"]');
+                var id = tr.attr('data-id');
+                new ReportView({_id: id, dataKey: self.dataKey});
+            },
+
+
+            recount: function () {
+                var self = this;
+                App.startPreload();
+
+                dataService.postData('/payroll/recount', {dataKey: self.dataKey}, function () {
+                    App.stopPreload();
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate(window.location.hash, {trigger: true, replace: true});
+                });
+
             },
 
             cancelChanges: function (e) {
@@ -190,7 +215,7 @@ define([
             hideNewSelect: function () {
                 $(".newSelectList").remove();
 
-                if (this.selectView){
+                if (this.selectView) {
                     this.selectView.remove();
                 }
             },
@@ -211,16 +236,16 @@ define([
                         model = this.editCollection.get(dataId);
                         jsonModel = model.toJSON();
 
-                        if (jsonModel.diff < 0) {
+                        if (jsonModel.diff > 0) {
 
                             modelPayment = {
-                                paidAmount      : jsonModel.diff * (-1),
+                                paidAmount      : jsonModel.diff,
                                 workflow        : "Draft",
                                 differenceAmount: 0,
                                 month           : jsonModel.month,
                                 year            : jsonModel.year,
                                 supplier        : jsonModel.employee,
-                                paymentMethod   : jsonModel.type,
+                                //paymentMethod   : jsonModel.type,
                                 period          : jsonModel.year + '-' + jsonModel.month + '-01',
                                 paymentRef      : dataId
                             };
@@ -236,16 +261,16 @@ define([
                     model = this.editCollection.get(dataId);
                     jsonModel = model.toJSON();
 
-                    if (jsonModel.diff < 0) {
+                    if (jsonModel.diff > 0) {
 
                         modelPayment = {
-                            paidAmount      : jsonModel.diff * (-1),
+                            paidAmount      : jsonModel.diff,
                             workflow        : "Draft",
                             differenceAmount: 0,
                             month           : jsonModel.month,
                             year            : jsonModel.year,
                             supplier        : jsonModel.employee,
-                            paymentMethod   : jsonModel.type,
+                            //paymentMethod   : jsonModel.type,
                             period          : jsonModel.year + '-' + jsonModel.month + '-01',
                             paymentRef      : dataId
                         };
@@ -261,7 +286,7 @@ define([
                     });
                 } else {
                     return App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: "Please, check at most one unpaid item."
                     });
                 }
@@ -373,7 +398,7 @@ define([
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 App.render({
-                                    type: 'error',
+                                    type   : 'error',
                                     message: "You do not have permission to perform this action"
                                 });
                             }
@@ -546,7 +571,7 @@ define([
             removeNewSelect: function () {
                 $('.newSelectList').remove();
 
-                if (this.selectView){
+                if (this.selectView) {
                     this.selectView.remove()
                 }
             },
@@ -837,8 +862,8 @@ define([
                 } else if (!isInput) {
                     tempContainer = target.text();
                     inputHtml = '<input class="editing" type="text" data-value="' +
-                    tempContainer + '" value="' + tempContainer +
-                    '"  maxLength="4" style="display: block;" />';
+                        tempContainer + '" value="' + tempContainer +
+                        '"  maxLength="4" style="display: block;" />';
 
                     target.html(inputHtml);
 
@@ -853,6 +878,8 @@ define([
             },
 
             checked: function (e) {
+                e.stopPropagation();
+
                 if (this.$el.find('#false').length) {
                     return false;
                 }
@@ -970,6 +997,7 @@ define([
                 var cancelBtnEl = $('#top-bar-deleteBtn');
                 var copyBtnEl = $('#top-bar-copy');
                 var generate = $('#top-bar-generate');
+                var recount = $('#top-bar-recount');
                 var paymentBtnEl = $('#topBarPaymentGenerate');
 
                 this.changed = false;
@@ -980,6 +1008,7 @@ define([
                 copyBtnEl.hide();
                 paymentBtnEl.hide();
                 generate.hide();
+                recount.show();
 
                 return false;
             },
@@ -1073,9 +1102,27 @@ define([
                 });
             },
 
+            //showHidden: function (e) {
+            //    var $target = $(e.target);
+            //    var $tr = $target.closest('tr');
+            //    var dataId = $tr.attr('data-id');
+            //    var $body = this.$el.find('#payRoll-listTable');
+            //    var childTr = $body.find("[data-main='" + dataId + "']");
+            //    var sign = $.trim($tr.find('.expand').text());
+            //
+            //    if (sign === '+') {
+            //        $tr.find('.expand').text('-');
+            //    } else {
+            //        $tr.find('.expand').text('+');
+            //    }
+            //
+            //    childTr.toggleClass();
+            //},
+
             render: function () {
                 var self = this;
                 var collection = this.collection.toJSON();
+                var asyncKeys = [];
 
                 this.$el.html(_.template(PayrollTemplate, {
                     collection      : collection,

@@ -32,12 +32,6 @@ var Invoice = function (models, event) {
 
     oxr.set({app_id: process.env.OXR_APP_ID});
 
-    function checkDb(db) {
-        var validDbs = ["weTrack", "production", "development", "maxdb"];
-
-        return validDbs.indexOf(db) !== -1;
-    }
-
     function journalEntryComposer(invoice, dbIndex, waterfallCb, uId) {
         var journalEntryBody = {};
         var beforeInvoiceBody = {};
@@ -60,9 +54,9 @@ var Invoice = function (models, event) {
             beforeInvoiceBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total - invoice.paymentInfo.balance : 0;
             beforeInvoiceBody.sourceDocument = {};
             beforeInvoiceBody.sourceDocument._id = invoice._id;
-            beforeInvoiceBody.sourceDocument.model = 'proforma';
+            beforeInvoiceBody.sourceDocument.model = 'Proforma';
 
-            _journalEntryHandler.create(journalEntryBody, dbIndex, cb, uId);
+            _journalEntryHandler.create(beforeInvoiceBody, dbIndex, cb, uId);
         }
 
         _journalEntryHandler.create(journalEntryBody, dbIndex, cb, uId);
@@ -264,7 +258,6 @@ var Invoice = function (models, event) {
             var workflow;
             var err;
             var invoice;
-            var supplier;
             var invoiceCurrency;
             var query;
             var paidAmount = 0;
@@ -327,7 +320,7 @@ var Invoice = function (models, event) {
 
             if (paidAmount === order.paymentInfo.total) {
                 invoice.workflow = objectId(CONSTANTS.INVOICE_PAID);
-                invoice.dueDate = proforma.dueDate;
+
             } else if (paidAmount) {
                 invoice.workflow = objectId(CONSTANTS.INVOICE_PARTIALY_PAID);
             } else {
@@ -387,7 +380,7 @@ var Invoice = function (models, event) {
         }
 
         parallelTasks = [findOrder, fetchFirstWorkflow, findProformaPayments, changeProformaWorkflow, getRates];
-        waterFallTasks = [parallel, createInvoice, createJournalEntry];
+        waterFallTasks = [parallel, createInvoice/*, createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
             if (err) {
@@ -395,16 +388,15 @@ var Invoice = function (models, event) {
             }
             var project;
             var invoiceId = result._id;
-            var name = result.name;
             var products = result.products;
 
             Order.findByIdAndUpdate(id, {
                 $set: {
                     workflow: CONSTANTS.ORDERDONE
                 }
-            }, {new: true}, function (err, result) {
+            }, {new: true}, function (err) {
                 if (err) {
-                    return next(err)
+                    return next(err);
                 }
             });
 
@@ -424,6 +416,9 @@ var Invoice = function (models, event) {
                             return cb(err);
                         }
                         project = job.project || null;
+
+                        _journalEntryHandler.checkAndCreateForJob({req: req, jobId: jobs, workflow: CONSTANTS.JOBSFINISHED, wTracks: job.wTracks, date: result.invoiceDate});
+
                         cb();
                     });
 
@@ -449,12 +444,11 @@ var Invoice = function (models, event) {
         var isProforma;
         var journalId = data.journal;
         var moduleId = 64;
-        var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);;
+        var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
         var date;
         var updateName = false;
         var JobsModel = models.get(db, 'jobs', JobsSchema);
         var PaymentModel = models.get(db, 'Payment', PaymentSchema);
-        var optionsForPayments;
         var Customer = models.get(db, 'Customers', CustomerSchema);
         var query;
         var model;
@@ -463,11 +457,6 @@ var Invoice = function (models, event) {
 
         date = moment(new Date(data.invoiceDate));
         date = date.format('YYYY-MM-DD');
-
-        if (data.proforma) {
-            isProforma = true;
-            delete data.proforma;
-        }
 
         Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
 
@@ -575,6 +564,9 @@ var Invoice = function (models, event) {
                         if (err) {
                             return next(err);
                         }
+
+                        journalEntryComposer(resp, req.session.lastDb, function () {}, req.session.uId);
+
                         res.status(200).send(resp);
                     });
 
@@ -1101,6 +1093,8 @@ var Invoice = function (models, event) {
                                     if (err) {
                                         return console.log(err);
                                     }
+
+                                    _journalEntryHandler.checkAndCreateForJob({req: req, jobId: id, workflow: CONSTANTS.JOBSINPROGRESS, wTracks: result.wTracks, date: invoiceDeleted.invoiceDate});
 
                                     project = result ? result.project : null;
                                     array = result ? result.wTracks : [];

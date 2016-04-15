@@ -11,6 +11,7 @@ define([
         'text!templates/Projects/projectInfo/jobsWTracksTemplate.html',
         'text!templates/Projects/projectInfo/invoiceStats.html',
         'text!templates/Projects/projectInfo/proformaStats.html',
+        'views/Projects/projectInfo/journalEntriesForJob/dialogView',
         'views/selectView/selectView',
         'views/salesOrder/EditView',
         'views/salesQuotation/EditView',
@@ -54,6 +55,7 @@ define([
               jobsWTracksTemplate,
               invoiceStats,
               proformaStats,
+              ReportView,
               selectView,
               EditViewOrder,
               editViewQuotation,
@@ -119,12 +121,16 @@ define([
                 keydown                                                                                                   : 'keydownHandler',
                 'click a.quotation'                                                                                       : 'viewQuotation',
                 'click a.invoice'                                                                                         : 'viewInvoice',
-                'click a.proforma'                                                                                        : 'viewProforma'
+                'click a.proforma'                                                                                        : 'viewProforma',
+                "click .report"                                                                                           : "showReport",
             },
 
             initialize: function (options) {
                 var eventChannel = {};
                 _.extend(eventChannel, Backbone.Events);
+
+                App.projectInfo = App.projectInfo || {};
+                App.projectInfo.projectId = options.model.get('_id');
 
                 this.eventChannel = eventChannel;
                 this.formModel = options.model;
@@ -277,6 +283,16 @@ define([
                 if (e.which === 13) {
                     this.saveNewJobName(e);
                 }
+            },
+
+            showReport: function (e) {
+                App.startPreload();
+
+                var tr = $(e.target).closest('tr');
+                var id = tr.attr('data-id');
+
+                new ReportView({_id: id});
+
             },
 
             editRow: function (e) {

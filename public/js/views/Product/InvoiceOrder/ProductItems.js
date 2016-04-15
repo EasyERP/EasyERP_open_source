@@ -32,8 +32,6 @@ define([
             "click .current-selected.jobs"                                            : "showSelect",
             "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
             "mouseleave .editable"                                                    : "removeEdit",
-            "mouseover  .jobs"                                                        : "showDelete",
-            "mouseleave  .jobs"                                                       : "hideDelete",
             "click #cancelSpan"                                                       : "cancelClick",
             "click #saveSpan"                                                         : "saveClick",
             "click #editSpan"                                                         : "editClick",
@@ -142,14 +140,6 @@ define([
             }
 
             tr.remove();
-        },
-
-        showDelete: function (e) {
-            $(e.target).find('.fa-trash-o').removeClass('hidden');
-        },
-
-        hideDelete: function (e) {
-            $(e.target).find('.fa-trash-o').addClass('hidden');
         },
 
         generatedWtracks: function () {
@@ -379,8 +369,6 @@ define([
 
                     $parrent.find(".jobs").text($target.text()).attr("data-id", jobId);
                     $parrent.attr("data-content", jobId); // in case of getting id  on edit quotation
-                    $parrent.append('<span title="Delete" class="fa fa-trash-o hidden"></span>');
-
                     $hoursContainer.text(currentJob.budget.budgetTotal.hoursSum);
 
                     model = this.products.get(_id);

@@ -9,7 +9,7 @@
 </thead>
 <tbody>
     <tr class="revenueBySales">
-        <td colspan="<%= count + 1%>">Synthetic Sales</td>
+        <td colspan="<%= count + 1%>">Synthetic Workload</td>
     </tr>
     <%collection.sales.forEach(function(sales){
     if(sales._id) {%>
@@ -31,7 +31,7 @@
         <td colspan="<%= count + 1%>">&nbsp;</td>
     </tr>
     <tr class="totalBySales">
-        <td colspan="<%= count + 1%>">Sales</td>
+        <td colspan="<%= count + 1%>">Sales Invoices</td>
     </tr>
     <%collection.sales.forEach(function(sales){
         if(sales._id) {%>
@@ -53,7 +53,7 @@
         <td colspan="<%= count + 1%>">&nbsp;</td>
     </tr>
     <tr class="paidBySales">
-        <td colspan="<%= count + 1%>">Income Payments</td>
+        <td colspan="<%= count + 1%>">Payments incoming</td>
     </tr>
     <%collection.sales.forEach(function(sales){
         if(sales._id) {%>

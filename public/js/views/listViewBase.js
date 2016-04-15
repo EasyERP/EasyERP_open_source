@@ -7,10 +7,11 @@ define([
         'text!templates/Notes/importTemplate.html',
         'views/Notes/AttachView',
         'common',
-        'dataService'
+        'dataService',
+        'helpers'
     ],
 
-    function ($, _, Backbone, paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService) {
+    function ($, _, Backbone, paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService, helpers) {
         'use strict';
         var ListViewBase = Backbone.View.extend({
             el                : '#content-holder',
@@ -137,6 +138,10 @@ define([
                         context.page = page = Math.ceil(length / itemsNumber);
                         context.fetchSortCollection(context.sort);
                         context.changeLocationHash(page, context.defaultItemsNumber, filter);
+                    }
+
+                    if (response.totalValue) {
+                        context.$el.find('#totalDebit').text(helpers.currencySplitter((response.totalValue / 100).toFixed(2)));
                     }
 
                     context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
@@ -670,25 +675,39 @@ define([
 
             exportToCsv: function () {
                 //todo change after routes refactoring
+                var filterString = '';
+
                 if (this.exportToCsvUrl) {
+                    if (this.filter) {
+                        this.exportToCsvUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
                     window.location = this.exportToCsvUrl;
                 } else {
                     if (this.collection) {
-                        window.location = this.collection.url + '/exportToCsv';
+                        filterString += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = this.collection.url + '/exportToCsv' + filterString;
+                }
+            },
+
+            exportToXlsx: function () {
+                var filterString = '';
+                //todo change after routes refactoring
+                if (this.exportToXlsxUrl) {
+                    if (this.filter) {
+                        this.exportToXlsxUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = this.exportToXlsxUrl;
+                } else {
+                    if (this.collection) {
+                        if (this.filter) {
+                            filterString += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                        }
+                        window.location = this.collection.url + '/exportToXlsx' + filterString;
                     }
                 }
             },
 
-            exportToXlsx        : function () {
-                //todo change after routes refactoring
-                if (this.exportToXlsxUrl) {
-                    window.location = this.exportToXlsxUrl;
-                } else {
-                    if (this.collection) {
-                        window.location = this.collection.url + '/exportToXlsx';
-                    }
-                }
-            },
             fileSizeIsAcceptable: function (file) {
                 if (!file) {
                     return false;

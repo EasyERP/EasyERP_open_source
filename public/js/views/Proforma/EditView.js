@@ -42,7 +42,7 @@ define([
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
 
-                this.eventChannel = options.eventChannel || {};
+                this.eventChannel = options.eventChannel;
 
                 this.isWtrack = !!options.isWtrack;
                 this.filter = options.filter;
@@ -354,7 +354,7 @@ define([
                                 return paymentCb(null, currency);
                             }
 
-                            self.eventChannel.trigger('savedProforma');
+                            self.eventChannel && self.eventChannel.trigger('savedProforma');
 
                         },
                         error  : function (model, xhr) {
@@ -402,7 +402,7 @@ define([
                         success: function () {
                             $('.edit-invoice-dialog').remove();
                             self.hideDialog();
-                            self.eventChannel.trigger('proformaRemove');
+                            self.eventChannel && self.eventChannel.trigger('proformaRemove');
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {

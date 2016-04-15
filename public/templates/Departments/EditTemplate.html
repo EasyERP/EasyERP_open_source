@@ -27,6 +27,10 @@
                                     <a id="departmentManager"
                                        data-id="<%=(model.departmentManager)?model.departmentManager._id:''%>" class="current-selected" href="javascript:;"><%=(model.departmentManager)?(model.departmentManager.name.first+""+model.departmentManager.name.last):"Select"%></a>
                                 </dd>
+                                <dt><label for="isDevelopment">Show in Development</label></dt>
+                                <dd>
+                                    <input type="checkbox" id="isDevelopment" <%=model.isDevelopment ? 'checked':''%>></input>
+                                </dd>
                             </dl>
                         </div>
                     </div>

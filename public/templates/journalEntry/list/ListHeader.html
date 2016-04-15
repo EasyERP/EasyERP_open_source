@@ -1,24 +1,33 @@
-﻿<table class="list task-list">
-    <thead>
-    <tr>
-        <!--<th class="centerCell"><input type="checkbox" id="check_all"/></th>-->
-        <th class="centerCell">N</th>
-        <th>Code</th>
-        <th>Journal</th>
-        <th>Accounting date</th>
-        <th>Client</th>
-        <th>Source document</th>
-        <th>Debit</th>
-        <th>Credit</th>
-    </tr>
-    </thead>
-    <tbody id="listTable" class="enableTableOdd"></tbody>
-    <tfoot id="listFooter">
-    <tr>
-        <td colspan="3"></td>
-        <td id="totalDebit"></td>
-        <td id="totalCredit"></td>
-    </tr>
-    </tfoot>
+﻿<div id="searchContainer"></div>
+<div>
+    <table class="list task-list">
+        <thead>
+        <tr>
+            <!--<th class="centerCell"><input type="checkbox" id="check_all"/></th>-->
+            <th class="centerCell">N</th>
+            <th class="oe_sortable" data-sort="journal.name">Journal<span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="date">Accounting date<span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="sourceDocument.subject.name.first">Subject<span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="sourceDocument.name">Source document<span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="journal.debitAccount.name">Debit Account<span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="journal.creditAccount.name">Credit Account<span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="debit">Sum<span class="arrow down">7</span><span
+                class="arrow up">v</span></th>
+        </tr>
+        </thead>
+        <tbody id="listTable" class="enableTableOdd"></tbody>
+        <tfoot id="listFooter">
+        <tr>
+            <td colspan="7"></td>
+            <td id="totalDebit"></td>
+        </tr>
+        </tfoot>
 
-</table>
+    </table>
+</div>

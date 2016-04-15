@@ -40,7 +40,7 @@ define([
 
         initialize: function (options) {
 
-            this.eventChannel = options.eventChannel || {};
+            this.eventChannel = options.eventChannel;
 
             if (options) {
                 this.invoiceModel = options.model;
@@ -195,7 +195,7 @@ define([
                         self.hideDialog();
 
                         if (self.redirect) {
-                            self.eventChannel.trigger('newPayment');
+                            self.eventChannel && self.eventChannel.trigger('newPayment');
                         } else {
                             Backbone.history.navigate(redirectUrl, {trigger: true});
                         }

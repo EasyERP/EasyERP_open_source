@@ -27,9 +27,13 @@ var wTrack = function (event, models) {
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').wTrack;
 
-    exportDecorator.addExportFunctionsToHandler(this, function (req) {
-        return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-    }, exportMap, 'wTrack');
+    var JournalEntryHandler = require('./journalEntry');
+    var journalEntry = new JournalEntryHandler(models);
+
+    //
+    //exportDecorator.addExportFunctionsToHandler(this, function (req) {
+    //    return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+    //}, exportMap, "wTrack");
 
     this.create = function (req, res, next) {
         access.getEditWritAccess(req, req.session.uId, 75, function (success) {
@@ -51,6 +55,7 @@ var wTrack = function (event, models) {
                             return next(err);
                         }
 
+                        event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
                         event.emit('updateRevenue', {wTrack: _wTrack, req: req});
                         event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
                         event.emit('dropHoursCashes', req);
@@ -95,6 +100,7 @@ var wTrack = function (event, models) {
                     }
 
                     if (tCard) {
+                        event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
                         event.emit('updateRevenue', {wTrack: tCard, req: req});
                         event.emit('updateProjectDetails', {req: req, _id: tCard.project});
                         event.emit('recollectProjectInfo');
@@ -150,6 +156,7 @@ var wTrack = function (event, models) {
                     }
 
                     if (tCard) {
+                        event.emit('setReconcileTimeCard', {req: req, week: tCard.week, year: tCard.year});
                         event.emit('updateRevenue', {wTrack: tCard, req: req});
                         event.emit('updateProjectDetails', {req: req, _id: tCard.project});
                         event.emit('recollectProjectInfo');
@@ -714,8 +721,11 @@ var wTrack = function (event, models) {
 
                     projectId = tCard ? tCard.project : null;
 
+                    journalEntry.removeBySourceDocument(req, wTrack._id);
+
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
+                    event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
                     event.emit('updateRevenue', {wTrack: tCard, req: req});
 
                     if (projectId) {
@@ -965,6 +975,8 @@ var wTrack = function (event, models) {
             async.each(data, function (options, asyncCb) {
                 var startDate = moment(new Date(options.startDate));
                 var startIsoYear = startDate.isoWeekYear();
+
+                journalEntry.setReconcileDate(req, startDate);
 
                 var endDate = moment(new Date(options.endDate));
                 var endIsoYear = options.endDate ? endDate.isoWeekYear() : startIsoYear + 1;

@@ -188,7 +188,19 @@ define([
             var lastTransfer = employee.lastTransferDate;
             var _lastTransfer = moment(employee.lastTransfer);
 
-            var isTransfer = employee.isTransfer.indexOf('transfer') !== -1;
+            // var isTransfer = employee.isTransfer.indexOf('transfer') !== -1;
+            var transferArr = employee.transferArr;
+            var updateArr = employee.isTransfer;
+            var lastUpdate;
+
+            var isTransfer = !!transferArr.length;
+            var lastUpdateDate;
+            var _transfer;
+            var i;
+
+            lastUpdate = updateArr[updateArr.length - 1];
+            lastUpdateDate = moment(lastUpdate.date);
+            lastUpdateDate = lastUpdateDate.isoWeekYear() * 100 + lastUpdateDate.isoWeek();
 
             date = week.dateByWeek;
 
@@ -205,11 +217,25 @@ define([
             }
 
             if (isEmployee) {
-                if (firstTransfer === lastTransfer) {
+                if (firstTransfer === lastTransfer && !isTransfer) {
                     return date >= firstTransfer;
                 }
-                if (date >= firstTransfer) {
-                    return date <= lastTransfer || (lastTransfer === _lastTransfer && !isTransfer);
+                if (date >= firstTransfer && !isTransfer) {
+                    return date <= lastTransfer || lastTransfer === _lastTransfer;
+                }
+
+                for (i = transferArr.length - 1; i >= 0; i--) {
+                    _transfer = transferArr[i] ? transferArr[i].date : null;
+                    _transfer = moment(_transfer);
+                    _transfer = _transfer.isoWeekYear() * 100 + _transfer.isoWeek();
+
+                    if (date >= firstTransfer && date <= _transfer) {
+                        return true;
+                    }
+                    if (date >= lastUpdateDate && lastUpdate.status !== 'transfer') {
+                        return true;
+                    }
+
                 }
             } else {
                 return (date >= firstTransfer && date <= lastTransfer);
@@ -233,7 +259,7 @@ define([
             } else if (hours > 19) {
                 s += 'yellow ';
             } else if (hours > 8) {
-                s += week.hours ? 'pink ' : ((self.dateByWeek >= week.dateByWeek) ? "red" : "");
+                s += week.hours ? 'pink ' : ((self.dateByWeek >= week.dateByWeek) ? "red " : "");
             } else if (self.dateByWeek >= week.dateByWeek) {
                 s += 'red ';
             }

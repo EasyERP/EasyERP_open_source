@@ -8,16 +8,16 @@ var Department = function (models) {
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Department;
 
-    exportDecorator.addExportFunctionsToHandler(this, function (req) {
-        return models.get(req.session.lastDb, 'Department', DepartmentSchema)
-    }, exportMap, "Department");
+    //exportDecorator.addExportFunctionsToHandler(this, function (req) {
+    //    return models.get(req.session.lastDb, 'Department', DepartmentSchema)
+    //}, exportMap, "Department");
 
     this.getForDD = function (req, res, next) {
         var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
         var query = req.query;
         var matchQuery = {};
         if (query.devDepartments){
-            matchQuery.parentDepartment = objectId(CONSTANTS.PARENT_DEV);
+            matchQuery.isDevelopment = true;
         }
 
         Department

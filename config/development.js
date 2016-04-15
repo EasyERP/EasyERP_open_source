@@ -6,6 +6,7 @@ process.env.MAIN_DB_NAME = 'mainDB';
 process.env.DB_PORT = 28017;
 process.env.DB_USER = 'admin';
 process.env.DB_PASS = '1q2w3e!@#';
+process.env.OXR_APP_ID = 'ad72fd3d827344b9bf41b5fe1dfc7dd4';
 
 process.env.OXR_APP_ID = '20cee8fa50cb4cb09bc6e54c7e5b901c';
 
