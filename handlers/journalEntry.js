@@ -1327,7 +1327,8 @@ var Module = function (models, event) {
         var month = parseInt(query.month, 10);
         var year = parseInt(query.year, 10);
         var startDate = moment().isoWeekYear(year).month(month - 1).startOf('month');
-        var endDate = moment().isoWeekYear(year).month(month - 1).endOf('month').add(3, 'hours');
+        var localDate = moment().isoWeekYear(year).month(month - 1).endOf('month');
+        var endDate = moment(localDate).add(3, 'hours');
         var waterlallTasks;
         var productSales;
         var COGS;
@@ -1364,7 +1365,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CREDIT_IS,
-                        date          : new Date(moment(endDate).subtract(3, 'hours')),
+                        date          : new Date(moment(localDate).subtract(3, 'hours')),
                         sourceDocument: {
                             model: 'closeMonth',
                             _id  : null
@@ -1405,7 +1406,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_COGS,
-                        date          : new Date(moment(endDate).subtract(3, 'hours')),
+                        date          : new Date(moment(localDate).subtract(3, 'hours')),
                         sourceDocument: {
                             model: 'closeMonth',
                             _id  : null
@@ -1444,7 +1445,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_VAC_EXP,
-                        date          : new Date(moment(endDate).subtract(3, 'hours')),
+                        date          : new Date(moment(localDate).subtract(3, 'hours')),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1483,7 +1484,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_IDLE_EXP,
-                        date          : new Date(moment(endDate).subtract(3, 'hours')),
+                        date          : new Date(moment(localDate).subtract(3, 'hours')),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1521,7 +1522,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_ADMIN_EXP,
-                        date          : new Date(moment(endDate).subtract(3, 'hours')),
+                        date          : new Date(moment(localDate).subtract(3, 'hours')),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1564,7 +1565,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_ADMIN_BUD,
-                        date          : new Date(moment(endDate).subtract(3, 'hours')),
+                        date          : new Date(moment(localDate).subtract(3, 'hours')),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1612,7 +1613,7 @@ var Module = function (models, event) {
                 var body = {
                     currency      : CONSTANTS.CURRENCY_USD,
                     journal       : CONSTANTS.RETAINED_EARNINGS,
-                    date          : new Date(moment(endDate).subtract(3, 'hours')),
+                    date          : new Date(moment(localDate).subtract(3, 'hours')),
                     sourceDocument: {
                         model: 'closeMonth'
                     },
