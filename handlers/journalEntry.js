@@ -457,7 +457,7 @@ var Module = function (models, event) {
         var endDate = filter.endDate.value;
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
 
         var matchObject = {
             date: {
@@ -608,7 +608,7 @@ var Module = function (models, event) {
         var endDate = filter.endDate.value;
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
 
         var matchObject = {
             date: {
@@ -1326,8 +1326,8 @@ var Module = function (models, event) {
         var query = dateObject || req.body;
         var month = parseInt(query.month, 10);
         var year = parseInt(query.year, 10);
-        var startDate = moment().isoWeekYear(year).month(month - 1).startOf('month').subtract(3, 'hours');
-        var endDate = moment().isoWeekYear(year).month(month - 1).endOf('month').subtract(3, 'hours');
+        var startDate = moment().isoWeekYear(year).month(month - 1).startOf('month');
+        var endDate = moment().isoWeekYear(year).month(month - 1).endOf('month');
         var waterlallTasks;
         var productSales;
         var COGS;
@@ -1364,7 +1364,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CREDIT_IS,
-                        date          : new Date(endDate),
+                        date          : new Date(endDate.subtract(3, 'hours')),
                         sourceDocument: {
                             model: 'closeMonth',
                             _id  : null
@@ -1405,7 +1405,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_COGS,
-                        date          : new Date(endDate),
+                        date          : new Date(endDate.subtract(3, 'hours')),
                         sourceDocument: {
                             model: 'closeMonth',
                             _id  : null
@@ -1444,7 +1444,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_VAC_EXP,
-                        date          : new Date(endDate),
+                        date          : new Date(endDate.subtract(3, 'hours')),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1483,7 +1483,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_IDLE_EXP,
-                        date          : new Date(endDate),
+                        date          : new Date(endDate.subtract(3, 'hours')),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1521,7 +1521,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_ADMIN_EXP,
-                        date          : new Date(endDate),
+                        date          : new Date(endDate.subtract(3, 'hours')),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1564,7 +1564,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_ADMIN_BUD,
-                        date          : new Date(endDate),
+                        date          : new Date(endDate.subtract(3, 'hours')),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1612,7 +1612,7 @@ var Module = function (models, event) {
                 var body = {
                     currency      : CONSTANTS.CURRENCY_USD,
                     journal       : CONSTANTS.RETAINED_EARNINGS,
-                    date          : new Date(endDate),
+                    date          : new Date(endDate.subtract(3, 'hours')),
                     sourceDocument: {
                         model: 'closeMonth'
                     },
@@ -4581,7 +4581,7 @@ var Module = function (models, event) {
         var allAssets = _.union(CONSTANTS.BANK_AND_CASH, currentAssets);
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
 
         getAssets = function (cb) {
             Model.aggregate([{
@@ -4755,7 +4755,7 @@ var Module = function (models, event) {
         var endDate = query.endDate;
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
 
         getOperating = function (cb) {
 
@@ -5514,7 +5514,7 @@ var Module = function (models, event) {
         var endDate = query.endDate;
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
 
         getGrossFit = function (cb) {
             Model.aggregate([{
@@ -5626,7 +5626,7 @@ var Module = function (models, event) {
         var endDate = query.endDate;
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
 
         // var filter = query.filter;
 
@@ -6199,7 +6199,7 @@ var Module = function (models, event) {
         var findSalaryPayments;
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
 
         var matchObject = {
             date: {
