@@ -1328,7 +1328,7 @@ var Module = function (models, event) {
         var year = parseInt(query.year, 10);
         var startDate = moment().isoWeekYear(year).month(month - 1).startOf('month');
         var localDate = moment().isoWeekYear(year).month(month - 1).endOf('month');
-        var endDate = moment(localDate).add(3, 'hours');
+        var endDate = moment(localDate);
         var waterlallTasks;
         var productSales;
         var COGS;
@@ -4582,7 +4582,7 @@ var Module = function (models, event) {
         var allAssets = _.union(CONSTANTS.BANK_AND_CASH, currentAssets);
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
+        endDate = moment(new Date(endDate)).endOf('day');
 
         getAssets = function (cb) {
             Model.aggregate([{
@@ -4756,7 +4756,7 @@ var Module = function (models, event) {
         var endDate = query.endDate;
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
+        endDate = moment(new Date(endDate)).endOf('day');
 
         getOperating = function (cb) {
 
@@ -5515,7 +5515,7 @@ var Module = function (models, event) {
         var endDate = query.endDate;
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
+        endDate = moment(new Date(endDate)).endOf('day');
 
         getGrossFit = function (cb) {
             Model.aggregate([{
@@ -5627,7 +5627,7 @@ var Module = function (models, event) {
         var endDate = query.endDate;
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
+        endDate = moment(new Date(endDate)).endOf('day');
 
         // var filter = query.filter;
 
@@ -6200,7 +6200,7 @@ var Module = function (models, event) {
         var findSalaryPayments;
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
+        endDate = moment(new Date(endDate)).endOf('day');
 
         var matchObject = {
             date: {
