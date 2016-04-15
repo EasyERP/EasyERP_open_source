@@ -4,7 +4,7 @@ var RESPONSES = require('../constants/responses');
 var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
-var fileUploader = require('../helpers/fileUploader');
+// var fileUploader = require('../helpers/fileUploader');
 
 var Invoice = function (models, event) {
     "use strict";
@@ -32,12 +32,6 @@ var Invoice = function (models, event) {
     var _journalEntryHandler = new JournalEntryHandler(models);
 
     oxr.set({app_id: process.env.OXR_APP_ID});
-
-    function checkDb(db) {
-        var validDbs = ["weTrack", "production", "development", "maxdb"];
-
-        return validDbs.indexOf(db) !== -1;
-    }
 
     function journalEntryComposer(invoice, dbIndex, waterfallCb, uId) {
         var journalEntryBody = {};
@@ -442,6 +436,8 @@ var Invoice = function (models, event) {
     };
 
     this.attach = function (req, res, next) {
+       console.log(req.files.url);
+        res.status(200);
         //fileUploader
     };
 
