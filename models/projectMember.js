@@ -6,7 +6,7 @@
 		projectId        : {type: ObjectId, ref: 'Project'},
 		employeeId       : {type: ObjectId, ref: 'Employees'},
 		bonusId          : {type: ObjectId, ref: 'bonusType'},
-		projectPositionId: {type: ObjectId, ref: 'projectPositions'},
+		projectPositionId: {type: ObjectId, ref: 'projectPosition'},
 		startDate        : {type: Date},
 		endDate          : {type: Date}
 

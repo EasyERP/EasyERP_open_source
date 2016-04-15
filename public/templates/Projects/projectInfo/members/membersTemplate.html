@@ -1,3 +1,7 @@
+<div id="createBtnHolder">
+    <a href="javascript;" class="fa fa-check" title="Save" id="saveMember"></a>
+    <a href="javascript;" class="fa fa-plus" title="Create" id="addMember"></a>
+</div>
 <table class="list">
     <colgroup>
         <col width="2%"/>
@@ -20,26 +24,21 @@
 
     <% if (members.length) { members.forEach(function(elem, index){ %>
 
-    <tr data-id="<%=elem.manager ? elem.manager._id : ''%>" >
+    <tr data-id="<%=elem ? elem._id : ''%>" >
 
         <td class="centerCell">
             <span title="Delete" class="fa fa-trash-o"></span>
         </td>
-        <td class="startDateManager"><%= elem.startDate ? utcDateToLocaleDate(elem.startDate) : 'From start of project'%></td>
-        <td class="endDateManager"><%= elem.endDate ? utcDateToLocaleDate(elem.endDate) : 'To end of project'%></td>
+        <td class="startDateManager editable"><%= elem.startDate ? utcDateToLocaleDate(elem.startDate) : 'From start of project'%></td>
+        <td class="endDateManager editable"><%= elem.endDate ? utcDateToLocaleDate(elem.endDate) : 'To end of project'%></td>
 
-        <td><%=elem.employeeId ? elem.employeeId.fullName : '' %></td>
-        <td><%=elem.projectPositionId ? elem.projectPositionId.name : '' %></td>
-        <td><%=elem.bonusId ? elem.bonusId.name : '' %></td>
+        <td data-id="elem.employeeId ? elem.employeeId._id : ''"> <a id="employee" class="current-selected" href="javascript:;"><%=elem.employeeId ? elem.employeeId.fullName : 'Empty' %></a></td>
+        <td data-id="elem.projectPositionId ? elem.projectPositionId._id : ''"><a id="projectPosition" class="current-selected" href="javascript:;"><%=elem.projectPositionId ? elem.projectPositionId.name : 'Empty' %></a></td>
+        <td data-id="elem.bonusId ? elem.bonusId._id : ''"> <a id="bonus" class="current-selected" href="javascript:;"><%=elem.bonusId ? elem.bonusId.name : 'No bonus' %></a></td>
 
     </tr>
     <% }) }%>
     </tbody>
 
 </table>
-<div class="btn_holder">
-    <button class="btn" title="Add" id="addManager">
-        <span>Add</span>
-    </button>
-</div>
 <!--<a href="javascript;" title="Add" id="addManager">Add</a>-->

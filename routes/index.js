@@ -33,6 +33,7 @@ module.exports = function (app, mainDb) {
     //var importDataRouter = require('./importData')(models);
     var projectRouter = require('./project')(models);
     var employeeRouter = require('./employee')(models);
+    var projectMemberRouter = require('./projectMember')(models, event);
     var departmentRouter = require('./department')(models);
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(event, models);
@@ -56,6 +57,7 @@ module.exports = function (app, mainDb) {
     var jobsRouter = require('./jobs')(models, event);
     var chartOfAccountRouter = require('./chartOfAccount')(models);
     var currencyRouter = require('./currency')(models);
+    var prPositionRouter = require('./projectPosition')(models);
     var journalRouter = require('./journal')(models);
     var salaryReportRouter = require('./salaryReport')(models);
     var userRouter = require('./user')(event, models);
@@ -201,6 +203,8 @@ module.exports = function (app, mainDb) {
     app.use('/payrollExprnses', payrollExprnsesRouter);
     app.use('/chartOfAccount', chartOfAccountRouter);
     app.use('/currency', currencyRouter);
+    app.use('/projectPosition', prPositionRouter);
+    app.use('/projectMember', projectMemberRouter);
     app.use('/journal', journalRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});

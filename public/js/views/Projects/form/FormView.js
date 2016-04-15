@@ -34,6 +34,7 @@ define([
         'collections/customerPayments/filterCollection',
         'collections/Jobs/filterCollection',
         'collections/Proforma/filterCollection',
+        'collections/projectMembers/editCollection',
         'models/QuotationModel',
         'models/InvoiceModel',
         'text!templates/Notes/AddAttachments.html',
@@ -75,6 +76,7 @@ define([
               paymentCollection,
               jobsCollection,
               proformaCollection,
+              projectMembersCol,
               quotationModel,
               invoiceModel,
               addAttachTemplate,
@@ -1130,6 +1132,32 @@ define([
                 }
             },
 
+            getProjectMembers: function (cb) {
+                var self = this;
+
+                self.pMCollection = new projectMembersCol({
+                    project: self.formModel.id
+                });
+
+                self.pMCollection.bind('reset', createPM);
+
+                function createPM() {
+
+                    var data = {
+                        collection: self.pMCollection,
+                        project   : self.formModel.id
+                    };
+
+                    if (cb) {
+                        cb();
+                    }
+
+                    new ProjectManagersView(data).render();
+
+                    self.renderTabCounter();
+                }
+            },
+
             getQuotations: function (cb) {
                 var _id = window.location.hash.split('form/')[1];
                 var self = this;
@@ -1472,20 +1500,9 @@ define([
                     }).render().el
                 );
 
-                projectMembers = thisEl.find('#projectMembers-container');
-                projectMembersView = new ProjectManagersView({
-                    model: this.formModel
-                });
-                projectMembers.html(
-                    projectMembersView.render().el
-                );
-                projectMembersView.bind('save', function () {
-                    self.saveItem();
-                });
+                _.bindAll(this, 'getQuotations','getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
 
-                _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
-
-                paralellTasks = [this.renderProjectInfo, this.getProforma, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
+                paralellTasks = [this.renderProjectInfo, this.getProforma, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders, this.getProjectMembers];
 
                 async.parallel(paralellTasks, function (err, result) {
                     self.getPayments();
