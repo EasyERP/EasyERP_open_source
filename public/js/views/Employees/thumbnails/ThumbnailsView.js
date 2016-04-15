@@ -51,7 +51,6 @@
                 "click .removeFilterButton" : "removeFilter"
             },
 
-            //modified for filter Vasya
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/totalCollectionLength/Employees', {
                     currentNumber: currentNumber,

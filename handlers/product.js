@@ -243,7 +243,7 @@ var Products = function (models) {
 
                 switch (filterName) {
                     case 'letter':
-                        filtrElement['name'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
+                        filtrElement['name'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
                         resArray.push(filtrElement);
                         break;
                     case 'name':
