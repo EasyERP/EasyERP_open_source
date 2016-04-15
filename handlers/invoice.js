@@ -4,6 +4,7 @@ var RESPONSES = require('../constants/responses');
 var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
+var fileUploader = require('../helpers/fileUploader');
 
 var Invoice = function (models, event) {
     "use strict";
@@ -438,6 +439,10 @@ var Invoice = function (models, event) {
 
         });
 
+    };
+
+    this.attach = function (req, res, next) {
+        //fileUploader
     };
 
     this.updateOnlySelected = function (req, res, next) {

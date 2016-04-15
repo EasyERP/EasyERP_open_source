@@ -1,16 +1,16 @@
 define([
-        "text!templates/salesOrder/EditTemplate.html",
-        "text!templates/salesOrder/ViewTemplate.html",
+        'text!templates/salesOrder/EditTemplate.html',
+        'text!templates/salesOrder/ViewTemplate.html',
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
-        "views/Projects/projectInfo/invoices/invoiceView",
+        'views/Projects/projectInfo/invoices/invoiceView',
         'collections/salesInvoice/filterCollection',
-        "common",
-        "custom",
-        "dataService",
-        "populate",
-        "constants",
-        "helpers"
+        'common',
+        'custom',
+        'dataService',
+        'populate',
+        'constants',
+        'helpers'
     ],
     function (EditTemplate, ViewTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS, helpers) {
 
@@ -42,17 +42,18 @@ define([
             },
 
             events: {
-                'keydown'                                                         : 'keydownHandler',
+                keydown                                                           : 'keydownHandler',
                 'click .dialog-tabs a'                                            : 'changeTab',
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .receiveInvoice"                                           : "receiveInvoice",
-                "click .cancelOrder"                                              : "cancelOrder",
-                "click .setDraft"                                                 : "setDraft"
+                'click .current-selected'                                         : 'showNewSelect',
+                click                                                             : 'hideNewSelect',
+                'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
+                'click .newSelectList li.miniStylePagination'                     : 'notHide',
+                'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
+                'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
+                'click .receiveInvoice'                                           : 'createInvoice',
+                'change #invoiceAttachment'                                       : 'uploadAttachment',
+                'click .cancelOrder'                                              : 'cancelOrder',
+                'click .setDraft'                                                 : 'setDraft'
             },
 
             showNewSelect: function (e, prev, next) {
@@ -139,6 +140,85 @@ define([
                         }
                     });
                 });
+            },
+
+            createInvoice: function(e) {
+                var self = this;
+                var $attachment;
+
+                e.preventDefault();
+
+                $attachment = self.$el.find('#invoiceAttachment');
+
+                if (!$attachment.length) {
+                    self.$el.prepend('<input type="file" id="invoiceAttachment" accept="application/pdf" name="attachment">');
+                    $attachment = self.$el.find('#invoiceAttachment');
+                }
+
+                $attachment.click();
+                $attachment.hide();
+
+            },
+
+            uploadAttachment: function (event) {
+                var self = this;
+                var currentModel = this.model;
+                var elementId = this.elementId || 'addAttachments';
+                var currentModelId = currentModel ? currentModel["id"] : null;
+                var addFrmAttach = $("#" + elementId);
+                var addInptAttach;
+
+                addInptAttach = self.$el.find("#invoiceAttachment")[0].files[0];
+
+                if (!this.fileSizeIsAcceptable(addInptAttach)) {
+                    this.$el.find('#inputAttach').val('');
+                    return App.render({
+                        type   : 'error',
+                        message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
+                    });
+                }
+
+                addFrmAttach.submit(function (e) {
+                    var formURL;
+
+                    formURL = "http://" + window.location.host + ((self.url) ? self.url : "/invoice/attach");
+
+                    e.preventDefault();
+                    addFrmAttach.ajaxSubmit({
+                        url        : formURL,
+                        type       : "POST",
+                        processData: false,
+                        contentType: false,
+                        data       : [addInptAttach],
+
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("id", currentModelId);
+                            xhr.setRequestHeader("modelname", self.contentType);
+
+                        },
+
+                        uploadProgress: function (event, position, total, statusComplete) {
+
+                        },
+
+                        success: function (data) {
+
+                        },
+
+                        error: function (xhr) {
+
+                        }
+                    });
+                });
+                addFrmAttach.submit();
+                addFrmAttach.off('submit');
+            },
+
+            fileSizeIsAcceptable: function (file) {
+                if (!file) {
+                    return false;
+                }
+                return file.size < App.File.MAXSIZE;
             },
 
             receiveInvoice: function (e) {
