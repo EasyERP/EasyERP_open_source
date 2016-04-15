@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var async = require('async');
+var redisStore = require('../helpers/redisClient');
 
 var MonthHours = function (event, models) {
     'use strict';
@@ -7,6 +8,33 @@ var MonthHours = function (event, models) {
     var MonthHoursSchema = mongoose.Schemas['MonthHours'];
     var access = require("../Modules/additions/access.js")(models);
     var CONSTANTS = require('../constants/mainConstants.js');
+
+    var JournalEntryHandler = require('./journalEntry');
+    var journalEntry = new JournalEntryHandler(models);
+
+    function composeAndCash(req) {
+        var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
+
+        MonthHoursModel.aggregate([{
+                $group: {
+                    _id : {$sum: [{$multiply: ['$year', 100]}, '$month']},
+                    root: {$push: "$$ROOT"}
+                }
+            }
+            ],
+            function (err, result) {
+                if (err) {
+                    return console.log(err);
+                }
+
+                result.forEach(function (el) {
+                    redisStore.writeToStorage('monthHours', el._id, JSON.stringify(el.root));
+                });
+
+            }
+        )
+        ;
+    };
 
     this.create = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
@@ -20,6 +48,8 @@ var MonthHours = function (event, models) {
                     if (err) {
                         return next(err);
                     }
+                    composeAndCash(req);
+                    event.emit('setReconcileTimeCard', {req: req, month: monthHours.month, year: monthHours.year});
 
                     event.emit('dropHoursCashes', req);
                     var params = {
@@ -64,6 +94,7 @@ var MonthHours = function (event, models) {
                                 hours             : result.hours
                             };
                             event.emit('updateCost', params);
+                            event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
                             cb(null, result);
                         });
 
@@ -72,6 +103,7 @@ var MonthHours = function (event, models) {
                             return next(err);
                         }
 
+                        composeAndCash(req);
                         event.emit('dropHoursCashes', req);
                         res.status(200).send({success: 'updated'});
                     });
@@ -138,10 +170,10 @@ var MonthHours = function (event, models) {
         //    if (access) {
         MonthHoursModel
             .aggregate(
-            [{
-                $match: queryObj
-            }]
-        )
+                [{
+                    $match: queryObj
+                }]
+            )
             .exec(function (err, data) {
                 if (err) {
                     return next(err);
@@ -176,7 +208,10 @@ var MonthHours = function (event, models) {
                         return next(err);
                     }
 
+                    composeAndCash(req);
                     event.emit('dropHoursCashes', req);
+                    event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
+
                     res.status(200).send({success: result});
 
                 });

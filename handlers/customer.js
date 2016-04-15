@@ -12,9 +12,9 @@ var Customers = function (models) {
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
 
-    exportDecorator.addExportFunctionsToHandler(this, function (req) {
-        return models.get(req.session.lastDb, 'Customer', CustomerSchema)
-    }, exportMap);
+    //exportDecorator.addExportFunctionsToHandler(this, function (req) {
+    //    return models.get(req.session.lastDb, 'Customer', CustomerSchema)
+    //}, exportMap);
 
     this.getSuppliersForDD = function (req, res, next) {
         /**

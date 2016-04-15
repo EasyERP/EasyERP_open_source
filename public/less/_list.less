@@ -305,6 +305,10 @@
     text-align: center;
   }
 
+  .leftBorderNone {
+    border-left: none;
+  }
+
   .cancelled {
     a {
       text-decoration: line-through;
@@ -373,6 +377,22 @@
 .invisible_border {
   // invisible border for td
   border: 1px solid transparent !important;
+}
+
+//Class for jobDashboard-jornalEntry
+
+.report-list {
+    tr {
+      td {
+        &:first-child {
+          padding: 0;
+        }
+      }
+    }
+}
+
+.forCaption {
+  background-color: #7a7e8d;
 }
 
 .hireFireTable {

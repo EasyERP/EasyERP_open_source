@@ -1,13 +1,13 @@
 define([
+        'Backbone',
         'jQuery',
         'Underscore',
-        'Backbone',
-        "text!templates/journal/CreateTemplate.html",
+        'text!templates/journal/CreateTemplate.html',
         'models/JournalModel',
         'populate'
     ],
-    function ($, _, Backbone, CreateTemplate, JournalModel, populate) {
-        "use strict";
+    function (Backbone, $, _, CreateTemplate, JournalModel, populate) {
+        'use strict';
 
         var CreateView = Backbone.View.extend({
             el         : '#content-holder',
@@ -86,8 +86,8 @@ define([
                 });
             },
 
-            redirectAfterSave: function (content, model) {
-                var redirectUrl = content.forSales ? "easyErp/journal" : "easyErp/journal";
+            redirectAfterSave: function (content) {
+                var redirectUrl = "easyErp/journal";
 
                 content.hideDialog();
                 Backbone.history.navigate(redirectUrl, {trigger: true});

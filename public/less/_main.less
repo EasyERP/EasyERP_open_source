@@ -133,7 +133,6 @@ figcaption,
 figure,
 footer,
 header,
-hgroup,
 nav,
 section {
   display: block;
@@ -2893,7 +2892,7 @@ dl {
 #wrapper {
   .fullsize;
   min-width: 100%;
-  height: 100 hv;
+  height: 100vh;
   position: absolute;
   clear: both;
   box-sizing: border-box;
@@ -3049,6 +3048,29 @@ dl {
     &:last-child {
       padding-right: 16px;
     }
+  }
+
+  &.checked {
+    display: block;
+    text-align: left !important;  // need refactor important. use now because must have.
+    font-size: 14px !important; // need refactor important. use now because must have.
+    line-height: 16px;
+    padding-left: 20px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  &.checkedValue {
+    position: relative;
+    &:before {
+      content: '\2713';
+      color: @mainText-color;
+      position: absolute;
+      top: 0;
+      left: 4px;
+    }   // need refactor before. use now because must have.
   }
 }
 
@@ -3834,7 +3856,7 @@ table#workflows {
 
 .createBtnHolder, #createBtnHolder {
   float: left;
-  margin-top: 6px;
+  //margin-top: 6px;
   margin-left: 5px;
   /*.add {
         font-size: 22px !important;
@@ -3844,14 +3866,14 @@ table#workflows {
   a {
     float: left;
     display: block;
-    width: 18px;
-    height: 18px;
+    //width: 18px;
+    //height: 18px;
     overflow: hidden;
     margin-right: 3px;
     cursor: pointer;
     vertical-align: baseline;
     color: @creatBtn-color;
-    line-height: 18px;
+    line-height: 29px; //it was 18px
 
     &:hover {
       color: @creatBtn-color + #333;
@@ -3873,7 +3895,7 @@ table#workflows {
       float: left;
       margin-right: 10px;
       .btn {
-        padding: .2em 1em;
+        //padding: .2em 1em;
       }
       a {
         display: inline-block;
@@ -3884,6 +3906,9 @@ table#workflows {
         &:hover {
           text-decoration: none;
         }
+      }
+      .dateReconcileDate {
+        line-height: 29px;
       }
     }
   }
@@ -4688,7 +4713,7 @@ h3.dashboard {
           padding-right: 5px;
         }
       }
-      div.status, {
+      div.status {
         width: 90px;
       }
     }

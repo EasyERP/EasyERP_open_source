@@ -8,8 +8,8 @@ module.exports = function (event, models) {
     var handler = new wTrackHandler(event, models);
 
     router.get('/getForProjects', handler.getForProjects);
-    router.get('/exportToXlsx',handler.exportToXlsx);
-    router.get('/exportToCsv',handler.exportToCsv);
+    //router.get('/exportToXlsx',handler.exportToXlsx);
+    //router.get('/exportToCsv',handler.exportToCsv);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/dash', handler.getForDashVacation);
     router.get('/:viewType', handler.getByViewType);

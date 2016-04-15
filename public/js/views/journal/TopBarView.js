@@ -1,10 +1,15 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/journal/TopBarTemplate.html',
         'custom',
         'common',
         'constants'
     ],
-    function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+    function (Backbone, $, _, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+        'use strict';
+
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: CONSTANTS.JOURNAL,

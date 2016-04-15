@@ -499,6 +499,8 @@ define([
                     return false;
                 }
 
+                year = year.slice(0, 4);
+
                 if (wTrackId && el.prop('tagName') !== 'INPUT') {
                     this.wTrackId = wTrackId;
                     this.setChangedValueToModel();

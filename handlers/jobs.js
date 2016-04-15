@@ -492,6 +492,7 @@ var Jobs = function (models, event) {
                 }
 
                 event.emit('recollectVacationDash');
+
                 res.status(200).send(result)
             });
         } else if (data.products && data.products.length) {

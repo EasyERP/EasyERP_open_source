@@ -56,7 +56,7 @@ module.exports = function (app, mainDb) {
     var jobsRouter = require('./jobs')(models, event);
     var chartOfAccountRouter = require('./chartOfAccount')(models);
     var currencyRouter = require('./currency')(models);
-    var journalRouter = require('./journal')(models);
+    var journalRouter = require('./journal')(models, event);
     var salaryReportRouter = require('./salaryReport')(models);
     var userRouter = require('./user')(event, models);
 

@@ -12,7 +12,7 @@ module.exports = (function () {
     };
 
     var productForJobs = {type: ObjectId, ref: 'Product', default: null};
-    var productForPayRolls = {type: ObjectId, ref: 'PayRoll', default: null};
+    var productForPayRolls = [{type: ObjectId, ref: 'PayRoll', default: null}];
     var product = {type: ObjectId, ref: 'Product', default: null};
 
     var baseSchema = new mongoose.Schema({
