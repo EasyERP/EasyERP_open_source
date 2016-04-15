@@ -29,6 +29,8 @@
                         <dl class="customer-info company">
                             <dt><span>Website</span></dt>
                             <dd id="website" class="editable" title="<%=website%>"><a class="no-long" href="http://<%=website%>"><%=website%></a></dd>
+                            <dt><span>Email</span></dt>
+                            <dd id="email" class="editable" title="<%=email%>"><a class="no-long" href="javascript:;" data-maxlength="48"><%=email%></a></dd>
                             <dt><span>LinkedIn</span></dt>
                             <dd id="social_LI" class="editable" title="<%=social.LI%>"><a class="no-long" id="socialLi" data-maxlength="50" href="<%=social.LI%>"><%=social.LI%></a></dd>
                             <dt><span>Facebook</span></dt>
@@ -37,8 +39,6 @@
                             <dd id="phones_phone" class="editable" data-maxlength="20" title="<%=phones.phone%>"><a id="phones_phone" href="skype:<%=phones.phone%>?call"  class="no-long"><%=phones.phone%></a></dd>
                             <dt><span>Mobile</span></dt>
                             <dd id="phones_mobile" class="editable" data-maxlength="20" title="<%=phones.mobile%>"><a id="phones_mobile" href="skype:<%=phones.mobile%>?call"  class="no-long"><%=phones.mobile%></a></dd>
-                            <dt><span>Email</span></dt>
-                            <dd id="email" class="editable" title="<%=email%>"><a class="no-long" href="javascript:;" data-maxlength="48"><%=email%></a></dd>
                             <dt><span>Assigned to</span></dt>
                             <dd title="<%=(salesPurchases.salesPerson) ? salesPurchases.salesPerson.name.first + ' ' + salesPurchases.salesPerson.name.last: ''%>"><%=(salesPurchases.salesPerson) ? salesPurchases.salesPerson.name.first + ' ' + salesPurchases.salesPerson.name.last: ''%></dd>
 
