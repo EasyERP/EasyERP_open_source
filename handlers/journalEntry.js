@@ -87,7 +87,7 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
-                debit                   : 1,
+                debit                   : {$divide: ['$debit', 100]},
                 'journal.debitAccount'  : {$arrayElemAt: ["$journal.debitAccount", 0]},
                 'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
                 'journal.name'          : 1,
@@ -172,7 +172,7 @@ var Module = function (models, event) {
         }
     }, {
         $project: {
-            debit                        : 1,
+            debit                        : {$divide: ['$debit', 100]},
             'journal.debitAccount'       : 1,
             'journal.creditAccount'      : 1,
             'sourceDocument._id'         : 1,
@@ -237,7 +237,7 @@ var Module = function (models, event) {
         }
     }, {
         $project: {
-            debit                   : 1,
+            debit                   : {$divide: ['$debit', 100]},
             'journal.debitAccount'  : {$arrayElemAt: ["$journal.debitAccount", 0]},
             'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
             'journal.name'          : 1,
@@ -308,7 +308,7 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
-                debit                   : 1,
+                debit                   : {$divide: ['$debit', 100]},
                 currency                : 1,
                 'journal.debitAccount'  : {$arrayElemAt: ["$journal.debitAccount", 0]},
                 'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
@@ -391,7 +391,7 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
-                debit                   : 1,
+                debit                   : {$divide: ['$debit', 100]},
                 'journal.debitAccount'  : {$arrayElemAt: ["$journal.debitAccount", 0]},
                 'journal.creditAccount' : {$arrayElemAt: ["$journal.creditAccount", 0]},
                 'journal.name'          : 1,

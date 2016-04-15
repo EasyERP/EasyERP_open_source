@@ -921,6 +921,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .forCaption {
   background-color: #7a7e8d;
 }
+.hireFireTable {
+  margin-bottom: 10px;
+}
 .vacation-list {
   font-family: inherit;
   text-shadow: none;
