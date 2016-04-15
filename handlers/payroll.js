@@ -835,7 +835,7 @@ var PayRoll = function (models) {
                     var hire = elem.transfer;
                     var length = hire.length;
                     var dateToCreate;
-                    var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hour: 18, minute: 1, second: 0}));
+                    var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hour: 15, minute: 1, second: 0}));
                     var daysInMonth;
                     var payForDay;
 
@@ -979,7 +979,7 @@ var PayRoll = function (models) {
                 dataKey: dataKey,
                 paid   : 0
             };
-            var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hour: 18, minute: 1, second: 0}));
+            var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hour: 15, minute: 1, second: 0}));
 
             function createForNotDev(pCb) {
                 async.each(empKeys, function (employee, asyncCb) {
