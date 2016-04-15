@@ -526,7 +526,7 @@ var requestHandler = function (app, event, mainDb) {
                             var key;
                             var employee = wTrack.employee;
 
-                            if (!(employee._id in employees)) {
+                            if (employee && !(employee._id in employees)) {
                                 employees[employee._id] = employee.name.first + ' ' + employee.name.last;
                             }
 
@@ -543,6 +543,10 @@ var requestHandler = function (app, event, mainDb) {
 
                         empKeys.forEach(function (empId) {
                             wTRack.forEach(function (wTrack) {
+                                if (!wTrack.employee || !wTrack.employee._id) {
+                                    return;
+                                }
+
                                 var emp = (wTrack.employee._id).toString();
 
                                 if (empId === emp) {
@@ -771,7 +775,7 @@ var requestHandler = function (app, event, mainDb) {
                             var key;
                             var employee = wTrack.employee;
 
-                            if (!( employee._id in employees)) {
+                            if (employee && !(employee._id in employees)) {
                                 employees[employee._id] = employee.name.first + ' ' + employee.name.last;
                             }
 
@@ -788,6 +792,10 @@ var requestHandler = function (app, event, mainDb) {
 
                         empKeys.forEach(function (empId) {
                             wTRack.forEach(function (wTrack) {
+                                if (!wTrack.employee || !wTrack.employee._id) {
+                                    return;
+                                }
+
                                 var emp = (wTrack.employee._id).toString();
 
                                 nextDate = wTrack.dateByWeek;
@@ -1177,7 +1185,7 @@ var requestHandler = function (app, event, mainDb) {
             return false;
         }
 
-        totalAmount = quotation.paymentInfo.total;
+       // totalAmount = quotation.paymentInfo.total;
 
         async.each(quotation.products, wTrackUpdater, function (err) {
             if (err) {
@@ -1225,6 +1233,8 @@ var requestHandler = function (app, event, mainDb) {
                     if (err) {
                         return waterfallCb(err);
                     }
+
+                    totalAmount = product.unitPrice;
 
                     async.each(wTracks, function (wTrack, cb) {
                         var revenue = (wTrack.worked / totalWorked) * totalAmount * 100;

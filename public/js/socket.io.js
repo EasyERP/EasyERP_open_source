@@ -69,7 +69,15 @@ define([
     }
 
     function fetchInvoice(options) {
-        var invoiceCollection;
+
+        if (options.project === App.projectInfo.projectId) {
+            App.render({
+                type: 'notify',
+                message: 'Invoices data updated.'
+            });
+        }
+
+        /*var invoiceCollection;
 
         var filter = {
             project: {
@@ -84,7 +92,7 @@ define([
             count   : 50
         });
 
-        return invoiceCollection;
+        return invoiceCollection;*/
     }
 
     function fetchData() {

@@ -27,7 +27,7 @@ define([
             this.collection = options.model;
             this.filter = options.filter ? options.filter : {};
 
-            this.eventChannel = options.eventChannel || {};
+            this.eventChannel = options.eventChannel;
 
             this.render(options);
         },

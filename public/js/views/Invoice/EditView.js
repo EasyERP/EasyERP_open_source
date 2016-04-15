@@ -1,4 +1,5 @@
 define([
+        'jQuery',
         'text!templates/Invoice/EditTemplate.html',
         'views/Assignees/AssigneesView',
         'views/Invoice/InvoiceProductItems',
@@ -12,7 +13,7 @@ define([
         'constants',
         'helpers'
     ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+    function ($, EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({
@@ -31,6 +32,7 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .details"                                                  : "showDetailsBox",
                 "click .newPayment"                                               : "newPayment",
+                "click .approve"                                                  : "approve",
                 "click .cancelInvoice"                                            : "cancelInvoice",
                 // "click .refund": "refund",
                 "click .setDraft"                                                 : "setDraft"
@@ -42,7 +44,7 @@ define([
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
 
-                this.eventChannel = options.eventChannel || {};
+                this.eventChannel = options.eventChannel;
 
                 this.isWtrack = !!options.isWtrack;
                 this.filter = options.filter;
@@ -89,6 +91,50 @@ define([
                             mid       : 56,
                             currency  : currency,
                             eventChannel: self.eventChannel
+                        });
+                    }
+                });
+            },
+
+            approve: function (e) {
+                var self = this;
+                var data;
+                var url;
+                var invoiceId;
+                var $li;
+                var $tr;
+                var $span;
+                var payBtnHtml;
+
+                e.preventDefault();
+
+                invoiceId = self.currentModel.get('_id');
+                $li = $('button.approve').parent('li');
+                $tr = $('tr[data-id='+ invoiceId +']');
+                $span = $tr.find('td').eq(10).find('span');
+
+                App.startPreload();
+
+                payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
+                url = '/invoice/approve';
+                data = {
+                    invoiceId : invoiceId
+                };
+
+                dataService.patchData(url, data, function(err, response) {
+                    if (!err) {
+                        self.currentModel.set({approved: true});
+                        $li.html(payBtnHtml);
+
+                        App.stopPreload();
+
+                        $span.text('Unpaid');
+                        $span.removeClass();
+                        $span.addClass('new');
+                    } else {
+                        App.render({
+                            type: 'error',
+                            message: 'Approve fail'
                         });
                     }
                 });
@@ -352,6 +398,11 @@ define([
                             }
 
                             if (self.redirect) {
+
+                                if (self.eventChannel) {
+                                    self.eventChannel.trigger('invoiceUpdated');
+                                }
+
                                 Backbone.history.navigate(url, {trigger: true});
                                 $dueDateEl = $('#' + result.id).closest('tr').find('[data-content="dueDate"]');
                                 $dueDateEl.text(result.dueDate);
@@ -403,16 +454,15 @@ define([
                     this.currentModel.destroy({
                         success: function () {
                             $('.edit-invoice-dialog').remove();
-                            Backbone.history.fragment = '';
-                            Backbone.history.navigate(url, {trigger: true});
 
-                            self.eventChannel.trigger('elemCountChanged');
+                            self.hideDialog();
+                            self.eventChannel && self.eventChannel.trigger('invoiceRemove');
                         },
                         error  : function (model, err) {
                             if (err.status === 403) {
                                 App.render({
                                     type: 'error',
-                                    message: "You do not have permission to perform this action"
+                                    message: "You do not have permission to perform this action"
                                 });
                             }
                         }
@@ -436,6 +486,7 @@ define([
                 var wTracksDom;
                 var buttons;
                 var invoiceDate;
+                var isFinancial;
 
                 model = this.currentModel.toJSON();
                 invoiceDate = model.invoiceDate;
@@ -454,6 +505,8 @@ define([
                     total = model.paymentInfo ? model.paymentInfo.total : '0.00';
                 }
 
+                isFinancial = CONSTANTS.INVOICE_APPROVE_PROFILES.indexOf(App.currentUser.profile._id) !== -1;
+
                 formString = this.template({
                     model           : this.currentModel.toJSON(),
                     isWtrack        : self.isWtrack,
@@ -464,7 +517,8 @@ define([
                     assigned        : assigned,
                     customer        : customer,
                     total           : total,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    isFinancial     : isFinancial
                 });
 
                 if (this.isWtrack || this.isPaid) {

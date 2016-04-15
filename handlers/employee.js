@@ -51,7 +51,7 @@ var Employee = function (models) {
 
         if (query) {
             if (query.devDepartments) {
-                matchQuery['department.parentDepartment'] = objectId(CONSTANTS.PARENT_DEV);
+                matchQuery['department.isDevelopment'] = true;
             }
             if (query.isEmployee) {
                 matchQuery.isEmployee = true;

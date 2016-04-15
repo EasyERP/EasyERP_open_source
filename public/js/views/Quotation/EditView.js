@@ -27,7 +27,7 @@ define([
         initialize: function (options) {
             if (options) {
                 this.visible = options.visible;
-                this.eventChannel = options.eventChannel || {};
+                this.eventChannel = options.eventChannel;
             }
 
             _.bindAll(this, "render", "saveItem");
@@ -258,9 +258,11 @@ define([
                             });
                         } else {
 
-                            App.projectInfo.currentTab = 'proforma';
+                            if (App.projectInfo){
+                                App.projectInfo.currentTab = 'proforma';
+                            }
 
-                            self.eventChannel.trigger('newProforma', response._id);
+                            self.eventChannel && self.eventChannel.trigger('newProforma', response._id);
 
                             tr = $('[data-id=' + quotationId + ']');
                             tr.find('.checkbox').addClass('notRemovable');
@@ -415,16 +417,23 @@ define([
                         jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
                         subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
 
-                        products.push({
-                            product      : productId,
-                            unitPrice    : price,
-                            quantity     : quantity,
-                            scheduledDate: scheduledDate,
-                            taxes        : taxes,
-                            description  : description,
-                            subTotal     : subTotal,
-                            jobs         : jobs
-                        });
+                        if (jobs) {
+                            products.push({
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
+                                scheduledDate: scheduledDate,
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal,
+                                jobs         : jobs
+                            });
+                        } else {
+                            return App.render({
+                                type   : 'notify',
+                                message: "Jobs can't be empty."
+                            });
+                        }
                     }
                 }
             }
@@ -478,7 +487,7 @@ define([
                             return proformaCb(null, res);
                         }
 
-                        self.eventChannel.trigger('quotationUpdated');
+                        self.eventChannel && self.eventChannel.trigger('quotationUpdated');
                     },
                     error  : function (model, xhr) {
                         self.errorNotification(xhr);
@@ -505,6 +514,7 @@ define([
         },
 
         deleteItem: function (event) {
+            var self = this;
             var mid = this.forSales ? 62 : 55;
             var url;
             var answer = confirm("Really DELETE items ?!");
@@ -521,11 +531,12 @@ define([
                         // Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         url = window.location.hash;
 
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(url, {trigger: true});
-
                         App.projectInfo = App.projectInfo || {};
                         App.projectInfo.currentTab = 'quotations';
+
+                        self.hideDialog();
+
+                        self.eventChannel && self.eventChannel.trigger('quotationRemove');
                     },
                     error  : function (model, err) {
                         if (err.status === 403) {

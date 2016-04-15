@@ -2137,6 +2137,23 @@ input::-ms-clear {
     }
   }
 
+  .canReadAndWrite {
+    line-height: 22px;
+    margin: 10px 0 0 0;
+    padding-bottom: 10px;
+    input[type=radio]{
+      margin-top: 6px;
+      margin-right: 10px;
+      clear: both;
+      display: block;
+      float: left;
+      height: 16px;
+      &:focus {
+        box-shadow: none !important;
+      }
+    }
+  }
+
   .mainInfo {
     width: auto;
     margin-left: 170px;
@@ -2826,11 +2843,11 @@ dl {
       }
 
       .noteTitle {
-        //word-break: break-word;
+        font-size: 15px;
       }
 
-      .noteText {
-        //word-break: break-word;
+      .noteText, .noteTitle {
+        word-break: break-word;
         color: @mainText-color;
         margin-bottom: 10px;
       }
@@ -2962,8 +2979,8 @@ dl {
 }
 
 .half-block {
-  width: 49%;
-  margin-right: 1%; // for job position
+  width: 45%;
+  margin-right: 5%; // for job position
   &.withPaddingRightProject {
     .inner {
       padding-top: 5px;
@@ -3561,14 +3578,7 @@ button.red, a.red {
 
 }
 
-.canReadAndWrite {
-  margin: 10px 0 0 0;
-  padding-bottom: 10px;
 
-  input {
-    margin-right: 10px;
-  }
-}
 
 #sourceUsers, #sourceGroups {
   margin-left: 150px;
@@ -4098,7 +4108,7 @@ ul.chart-tabs {
       line-height: 20px;
       width: 8px;
       margin-left: -2px;
-      height: 15px;
+      height: 17px;
       display: block;
     }
   }
@@ -4740,10 +4750,11 @@ h3.dashboard {
 
   }
   .internal-info {
-    .dl-auto(147px, 20%, 30px);
+    .dl-auto(144px, 20%, 30px);
     textarea {
       width: 94%;
       resize: none;
+      padding: 5px;
     }
   }
   .assignees-info {
@@ -4826,14 +4837,19 @@ input::-webkit-inner-spin-button {
   display: none;
 }
 
-.canReadAndWrite {
-  line-height: 22px;
-  input {
-    clear: both;
-    display: block;
-    float: left;
-  }
-}
+//.canReadAndWrite {
+//  line-height: 22px;
+//  margin: 10px 0 0 0;
+//  padding-bottom: 10px;
+//  input[type=radio]{
+//    margin-top: 10px;
+//    margin-right: 10px;
+//    clear: both;
+//    display: block;
+//    float: left;
+//
+//  }
+//}
 
 /*.edit-person-dialog{
 	.form-holder form{
@@ -5857,55 +5873,107 @@ textarea#editInput {
   }
 }
 
+.hrTop {
+  tr {
+    td {
+      vertical-align: top;
+      text-align: right;
+      &.vcenter {
+        vertical-align: middle;
+      }
+      &:first-child span {
+        border-bottom: none;
+        background-color: inherit;
+      }
+    }
+    &.double {
+      span {
+        padding: 5px 8px 5px 8px;
+        height: 40px;
+        min-width: 130px;
+        line-height: 15px;
+        border-bottom: 1px solid @border-color-main;
+        position: relative;
+        &.large {
+          line-height: 29px;
+        }
+        &.top, &.bottom {
+          padding: 0 3px !important;
+          height: 19px;
+          line-height: 19px;
+          border-bottom: none;
+          position: absolute;
+          left: 0px;
+          width: 30px;
+
+          text-align: right;
+          border-right: 1px solid #7f7f80;
+        }
+        &.top {
+          top: 0px;
+          border-bottom: 1px solid #7f7f80;
+
+        }
+        &.bottom {
+          top: 20px;
+        }
+        &:last-child {
+          padding: 5px 8px 5px 8px;
+          border-bottom: none;
+        }
+      }
+    }
+  }
+}
+
 .hrTop tr td {
-  vertical-align: top;
-  text-align: right;
+
 }
 
 .hrTop tr td.vcenter {
-  vertical-align: middle;
+
 }
 
-.hrTop tr.double td span {
-  padding: 5px 8px 5px 8px;
-  height: 40px;
-  line-height: 15px;
-  border-bottom: 1px solid @border-color-main;
-  position: relative;
-  &.large {
-    line-height: 29px;
-  }
-  &.top, &.bottom {
-    padding: 0 3px !important;
-    height: 19px;
-    line-height: 19px;
-    border-bottom: none;
-    position: absolute;
-    left: 0px;
-    width: 30px;
+//.hrTop tr.double td span {
+//  padding: 5px 8px 5px 8px;
+//  height: 40px;
+//  line-height: 15px;
+//  border-bottom: 1px solid @border-color-main;
+//  position: relative;
+//  &.large {
+//    line-height: 29px;
+//  }
+//  &.top, &.bottom {
+//    padding: 0 3px !important;
+//    height: 19px;
+//    line-height: 19px;
+//    border-bottom: none;
+//    position: absolute;
+//    left: 0px;
+//    width: 30px;
+//
+//    text-align: right;
+//    border-right: 1px solid #7f7f80;
+//  }
+//  &.top {
+//    top: 0px;
+//    border-bottom: 1px solid #7f7f80;
+//
+//  }
+//  &.bottom {
+//    top: 20px;
+//  }
+//}
 
-    text-align: right;
-    border-right: 1px solid #7f7f80;
-  }
-  &.top {
-    top: 0px;
-    border-bottom: 1px solid #7f7f80;
+//.hrTop tr.double td span:last-child {
+//  padding: 5px 8px 5px 8px;
+//  border-bottom: none;
+//}
 
-  }
-  &.bottom {
-    top: 20px;
-  }
-}
-
-.hrTop tr.double td span:last-child {
-  padding: 5px 8px 5px 8px;
-  border-bottom: none;
-}
-
-.hrTop tr.double td:first-child span {
-  border-bottom: none;
-  background-color: inherit;
-}
+//.hrTop tr.double td:first-child span {
+//  border-bottom: none;
+//  background-color: inherit;
+//}
 
 .search-field {
   box-sizing: border-box;
@@ -5989,7 +6057,10 @@ textarea#editInput {
   }
 }
 
-.btn-group .btn + .btn, .btn-group .btn + .btn-group, .btn-group .btn-group + .btn, .btn-group .btn-group + .btn-group {
+.btn-group .btn + .btn,
+.btn-group .btn + .btn-group,
+.btn-group .btn-group + .btn,
+.btn-group .btn-group + .btn-group {
   margin-left: -1px;
 }
 
@@ -6571,3 +6642,24 @@ textarea#editInput {
     font-size: 18px;
   }
 }
+
+.managers {
+  h4 {
+    color: @mainText-color;
+  }
+  .btn_holder {
+    margin-top: 10px;
+  }
+}
+
+.deleteRow {
+  &:hover {
+    .fa-trash-o{
+      display: inline-block;
+    }
+  }
+  .fa-trash-o{
+    display: none;
+  }
+}
+

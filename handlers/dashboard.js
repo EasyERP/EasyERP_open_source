@@ -306,7 +306,7 @@ var wTrack = function (models) {
             }
 
             async.each(employeesByDep, departmentMapper, sendResponse);
-            // res.status(200).send(employeesByDep);
+            //res.status(200).send(employeesByDep);
         }
 
         function holidaysComposer(parallelCb) {
@@ -414,7 +414,7 @@ var wTrack = function (models) {
                     name        : 1,
                     lastFire    : 1,
                     transfer    : 1,
-                    lastTransfer: {$max: '$transfer'},
+                    lastTransfer: {$max: '$transfer.date'},
                     hireCount   : {$size: '$hire'},
                     lastHire    : {
                         $let: {
@@ -443,9 +443,30 @@ var wTrack = function (models) {
                     },
                     firstTransferDate: {$min: '$transfer.date'},
                     lastTransferDate : {$max: '$transfer.date'},
-                    isTransfer       : {$addToSet: '$transfer.status'},
+                    isTransfer       : {
+                        $addToSet: {
+                            status: '$transfer.status',
+                            date  : '$transfer.date'
+                        }
+                    },
                     name             : {$first: {$concat: ['$name.first', ' ', '$name.last']}},
-                    lastTransfer     : {$first: '$lastTransfer.date'},
+                    lastTransfer     : {$first: '$lastTransfer'},
+                    lastHire         : {$first: '$lastHire'}
+                }
+            }, {
+                $unwind: '$isTransfer'
+            }, {
+                $sort: {'isTransfer.date': 1}
+            }, {
+                $group: {
+                    _id              : '$_id',
+                    firstTransferDate: {$first: '$firstTransferDate'},
+                    lastTransferDate : {$first: '$lastTransferDate'},
+                    isTransfer       : {
+                        $push: '$isTransfer'
+                    },
+                    name             : {$first: '$name'},
+                    lastTransfer     : {$first: '$lastTransfer'},
                     lastHire         : {$first: '$lastHire'}
                 }
             }, {
@@ -463,10 +484,10 @@ var wTrack = function (models) {
                 $match: {
                     $or: [
                         {
-                            _lastTransferDate: {$gte: startDate},
-                            isTransfer       : 'transfer'
+                            _lastTransferDate  : {$gte: startDate},
+                            'isTransfer.status': 'transfer'
                         }, {
-                            isTransfer: {$nin: ['transfer']}
+                            'isTransfer.status': {$nin: ['transfer']}
                         }
                     ]
                 }
@@ -476,6 +497,13 @@ var wTrack = function (models) {
                     isEmployee       : '$_id.isEmployee',
                     isLead           : '$_id.isLead',
                     _id              : '$_id._id',
+                    transferArr      : {
+                        $filter: {
+                            input: '$isTransfer',
+                            as   : 'transfer',
+                            cond : {$eq: ['$$transfer.status', 'transfer']}
+                        }
+                    },
                     isTransfer       : 1,
                     firstTransferDate: 1,
                     lastTransferDate : 1,
@@ -496,6 +524,7 @@ var wTrack = function (models) {
                             lastTransfer     : '$lastTransfer',
                             name             : '$name',
                             isTransfer       : '$isTransfer',
+                            transferArr      : '$transferArr',
                             _id              : '$_id'
                         }
                     }

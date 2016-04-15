@@ -1,5 +1,6 @@
 <% products.forEach(function(product){ %>
 <tr class="productItem" data-id="<%=product.product._id%>">
+    <td></td>
     <td data-name="productName" class="width20">
         <%if(editable) {%>
         <a class="current-selected productsDd" href="javascript:; " data-id="<%= product ? product.product._id : null%>"><%=product.product.name%></a>
@@ -8,7 +9,7 @@
         <%}%>
     </td>
     <% if (forSales) {%>
-    <td data-name="jobs" data-content="<%=product.jobs._id%>">
+    <td data-name="jobs" data-content="<%=product.jobs._id%>" class="text-overflow">
         <a class="<%=editable ? 'current-selected' : ''%>" id="jobs" href="javascript:;"><%=product.jobs.name%></a>
     </td>
     <% } else {%>
@@ -31,7 +32,7 @@
     </td>
     <td data-name="price" class="<%=editable  ? 'editable' : ''%> forNum">
         <% if(editable) { %>
-        <input id="editInput" maxlength="9" size=7 type="text" value="<%=product.unitPrice%>" />
+        <input id="editInput" class="statusInfo" maxlength="9" size=7 type="text" value="<%=product.unitPrice%>" />
         <% } else { %>
         <span><%=product.unitPrice%></span>
         <% } %>
@@ -50,7 +51,7 @@
 <% }); %>
 <%if(editable) {%>
 <tr>
-    <td colspan="6" class="addProductItem">
+    <td colspan="7" class="addProductItem">
         <a href="javascript:;">Add an item</a>
     </td>
 </tr>

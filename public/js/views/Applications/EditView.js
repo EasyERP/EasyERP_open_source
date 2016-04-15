@@ -155,6 +155,9 @@
             var dataId = $target.attr('data-id');
             var tr = $target.closest('tr');
             var tempContainer;
+            var $tr = $target.parent('tr');
+            var trNum = $tr.attr('data-id');
+            var minDate = new Date('1995-01-01');
             var maxDate = null;
 
             tempContainer = ($target.text()).trim();
@@ -164,21 +167,25 @@
                 return false;
             }
 
-            if (tr.attr('data-content') !== 'fire') {
-                maxDate = this.fireDate;
+            if (parseInt(trNum) > 0) {
+                minDate = $tr.prev().find('td.date').text();
+            }
+
+            if ($tr.next()) {
+                maxDate = $tr.next().find('td.date').text();
             }
 
             $target.find('.editing').datepicker({
-                dateFormat : "d M, yy",
+                dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : self.hireDate,
+                minDate    : minDate,
                 maxDate    : maxDate,
                 onSelect   : function () {
                     var editingDates = self.$el.find('.editing');
 
                     editingDates.each(function () {
-                        $(this).parent().text($(this).val());
+                        $(this).parent().text($(this).val()).removeClass('changeContent');
                         $(this).remove();
                     });
                 }
@@ -363,10 +370,27 @@
             var salary;
             var coach;
             var event;
+            var quit;
             var data;
             var date;
             var info;
+            var flag;
             var el;
+
+            $('.required').each(function () {
+                if (!$(this).attr('data-id')) {
+                    App.render({
+                        type: 'error',
+                        message: 'Please fill ' + $(this).attr('id')
+                    });
+                    flag = true;
+                    return false;
+                }
+            });
+
+            if (flag) {
+                return;
+            }
 
             self.hideNewSelect();
 
@@ -412,11 +436,11 @@
                 }
 
                 if (previousDep !== department) {
-                    $previousTr = $jobTrs[i - 1];
+                    $previousTr = $($jobTrs[i - 1]);
 
                     transferArray.push({
                         status     : 'transfer',
-                        date       : date,
+                        date       : moment(date).subtract(1, 'day'),
                         department : previousDep,
                         jobPosition: $previousTr.find('#jobPositionDd').attr('data-id') || null,
                         manager    : $previousTr.find('#projectManagerDD').attr('data-id') || null,
@@ -439,6 +463,15 @@
                     info       : info
                 });
 
+                if (!salary && self.isSalary) {
+                    App.render({
+                        type: 'error',
+                        message: 'Salary can`t be empty'
+                    });
+                    quit = true;
+                    return false;
+                }
+
                 if (event === 'fired') {
                     date = moment(date);
                     fireArray.push(date);
@@ -448,6 +481,14 @@
                 if (event === 'hired') {
                     hireArray.push(date);
                 }
+            });
+
+            if (quit) {
+                return;
+            }
+
+            transferArray = transferArray.sort(function (a, b) {
+                return a.date - b.date;
             });
 
             if (!transferArray.length) {
@@ -680,11 +721,10 @@
         },
 
         hideNewSelect: function (e) {
-            var editingDates = this.$el.find('.editing');
+            var editingDates = this.$el.find('td.date');
 
             editingDates.each(function () {
-                $(this).parent().text($(this).val());
-                $(this).remove();
+                $(this).text($(this).find('input').val());
             });
 
             this.$el.find('.newSelectList').hide();
@@ -718,6 +758,7 @@
 
         chooseOption: function (e) {
             var $target = $(e.target);
+            var $td = $target.closest('td');
             var parentUl = $target.parent();
             var element = $target.closest('a') || parentUl.closest('a');
             var id = element.attr('id') || parentUl.attr('id');
@@ -849,7 +890,7 @@
             });
 
             this.removeIcon = this.$el.find('.fa-trash');
-            this.hireDate = this.currentModel.get('hire')[0].date;
+            this.hireDate = this.currentModel.get('hire')[0];
             this.fireDate = this.$el.find("[data-content='fire']").last().find('.fireDate').text();
 
             this.renderRemoveBtn();

@@ -203,9 +203,6 @@ td,
 th {
   padding: 0;
 }
-.containerContent {
-  padding: 20px 0;
-}
 * html .ui-autocomplete {
   width: 1px;
 }
@@ -914,6 +911,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .invisible_border {
   border: 1px solid transparent !important;
+}
+.hireFireTable {
+  margin-bottom: 10px;
 }
 .report-list tr td:first-child {
   padding: 0;
@@ -2817,7 +2817,7 @@ dl dd span.ui-spinner {
   padding: 1px;
   margin: -1px;
   width: 20%;
-  max-width: 147px;
+  max-width: 144px;
   float: left;
   clear: both;
   line-height: 30px;
@@ -2868,6 +2868,7 @@ dl dd span.ui-spinner {
 .form .internal-info textarea {
   width: 94%;
   resize: none;
+  padding: 5px;
 }
 .form .assignees-info {
   clear: both;
@@ -3748,7 +3749,12 @@ dl dd span.ui-spinner {
   font-size: 11px;
   color: #777;
 }
-.noteWrapper #noteBody .noteContainer .noteText {
+.noteWrapper #noteBody .noteContainer .noteTitle {
+  font-size: 15px;
+}
+.noteWrapper #noteBody .noteContainer .noteText,
+.noteWrapper #noteBody .noteContainer .noteTitle {
+  word-break: break-word;
   color: #cdcdcd;
   margin-bottom: 10px;
 }
@@ -4129,8 +4135,8 @@ dl dd span.ui-spinner {
   max-width: 190px !important;
 }
 .half-block {
-  width: 49%;
-  margin-right: 1%;
+  width: 45%;
+  margin-right: 5%;
 }
 .half-block.withPaddingRightProject .inner {
   padding-top: 5px;
@@ -4798,13 +4804,6 @@ a.red:hover {
 }
 .userPagination.targetPagination {
   margin-left: 5px;
-}
-.canReadAndWrite {
-  margin: 10px 0 0 0;
-  padding-bottom: 10px;
-}
-.canReadAndWrite input {
-  margin-right: 10px;
 }
 #sourceUsers,
 #sourceGroups {
@@ -6162,8 +6161,8 @@ ul.dialog-tabs li.right button {
   display: none;
 }
 .ui-dialog .app-block {
-  width: 49%;
-  margin-right: 1%;
+  width: 45%;
+  margin-right: 5%;
 }
 .ui-dialog .app-block.withPaddingRightProject .inner {
   padding-top: 5px;
@@ -6678,6 +6677,22 @@ ul.dialog-tabs li.right button {
   outline: medium none;
   border: 1px solid #66b5d4;
 }
+.form-holder form .canReadAndWrite {
+  line-height: 22px;
+  margin: 10px 0 0 0;
+  padding-bottom: 10px;
+}
+.form-holder form .canReadAndWrite input[type=radio] {
+  margin-top: 6px;
+  margin-right: 10px;
+  clear: both;
+  display: block;
+  float: left;
+  height: 16px;
+}
+.form-holder form .canReadAndWrite input[type=radio]:focus {
+  box-shadow: none !important;
+}
 .form-holder form .mainInfo {
   width: auto;
   margin-left: 170px;
@@ -6969,7 +6984,7 @@ ul.chart-tabs .withEndContract .arrow {
   line-height: 20px;
   width: 8px;
   margin-left: -2px;
-  height: 15px;
+  height: 17px;
   display: block;
 }
 .chart-tabs-items {
@@ -8111,7 +8126,7 @@ a.cancelled {
   padding: 1px;
   margin: -1px;
   width: 20%;
-  max-width: 147px;
+  max-width: 144px;
   float: left;
   clear: both;
   line-height: 30px;
@@ -8162,6 +8177,7 @@ a.cancelled {
 .form .internal-info textarea {
   width: 94%;
   resize: none;
+  padding: 5px;
 }
 .form .assignees-info {
   clear: both;
@@ -8288,14 +8304,6 @@ input::-webkit-inner-spin-button {
 }
 #convert-dialog-form {
   display: none;
-}
-.canReadAndWrite {
-  line-height: 22px;
-}
-.canReadAndWrite input {
-  clear: both;
-  display: block;
-  float: left;
 }
 /*.edit-person-dialog{
 	.form-holder form{
@@ -9147,18 +9155,23 @@ textarea#editInput {
 .hrTop tr td.vcenter {
   vertical-align: middle;
 }
-.hrTop tr.double td span {
+.hrTop tr td:first-child span {
+  border-bottom: none;
+  background-color: inherit;
+}
+.hrTop tr.double span {
   padding: 5px 8px 5px 8px;
   height: 40px;
+  min-width: 130px;
   line-height: 15px;
   border-bottom: 1px solid #7f7f80;
   position: relative;
 }
-.hrTop tr.double td span.large {
+.hrTop tr.double span.large {
   line-height: 29px;
 }
-.hrTop tr.double td span.top,
-.hrTop tr.double td span.bottom {
+.hrTop tr.double span.top,
+.hrTop tr.double span.bottom {
   padding: 0 3px !important;
   height: 19px;
   line-height: 19px;
@@ -9169,20 +9182,16 @@ textarea#editInput {
   text-align: right;
   border-right: 1px solid #7f7f80;
 }
-.hrTop tr.double td span.top {
+.hrTop tr.double span.top {
   top: 0px;
   border-bottom: 1px solid #7f7f80;
 }
-.hrTop tr.double td span.bottom {
+.hrTop tr.double span.bottom {
   top: 20px;
 }
-.hrTop tr.double td span:last-child {
+.hrTop tr.double span:last-child {
   padding: 5px 8px 5px 8px;
   border-bottom: none;
-}
-.hrTop tr.double td:first-child span {
-  border-bottom: none;
-  background-color: inherit;
 }
 .search-field {
   box-sizing: border-box;
@@ -9737,6 +9746,18 @@ textarea#editInput {
   text-decoration: underline;
   line-height: 30px;
   font-size: 18px;
+}
+.managers h4 {
+  color: #cdcdcd;
+}
+.managers .btn_holder {
+  margin-top: 10px;
+}
+.deleteRow:hover .fa-trash-o {
+  display: inline-block;
+}
+.deleteRow .fa-trash-o {
+  display: none;
 }
 .alert {
   padding: 15px 15px 15px 35px;

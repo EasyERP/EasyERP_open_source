@@ -57,14 +57,11 @@
         <td class="paid money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid) : '0.00'%></td>
         <td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
         <td id='<%=invoice._id%>'>
-            <%if(invoice.workflow){%>
-            <!--<%if(invoice.workflow.status !== 'Done'){%>
-            <a href="javascript:;" class="stageSelect <%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></a>
-            <% } else {%>
-            <span class="done"><%=invoice.workflow.name%></span>
-            <%}%>-->
-            <span  class=" <%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></span>
-            <% } else {%>
+            <%if(invoice.workflow && invoice.approved){%>
+            <span class=" <%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></span>
+            <% } else if (!invoice.approved) {%>
+            <span class="notApproved">Not Approved</span>
+            <%} else {%>
             <span> </span>
             <%}%>
         </td>

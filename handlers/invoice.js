@@ -258,7 +258,6 @@ var Invoice = function (models, event) {
             var workflow;
             var err;
             var invoice;
-            var supplier;
             var invoiceCurrency;
             var query;
             var paidAmount = 0;
@@ -321,7 +320,7 @@ var Invoice = function (models, event) {
 
             if (paidAmount === order.paymentInfo.total) {
                 invoice.workflow = objectId(CONSTANTS.INVOICE_PAID);
-                invoice.dueDate = proforma.dueDate;
+
             } else if (paidAmount) {
                 invoice.workflow = objectId(CONSTANTS.INVOICE_PARTIALY_PAID);
             } else {
@@ -381,7 +380,7 @@ var Invoice = function (models, event) {
         }
 
         parallelTasks = [findOrder, fetchFirstWorkflow, findProformaPayments, changeProformaWorkflow, getRates];
-        waterFallTasks = [parallel, createInvoice, createJournalEntry];
+        waterFallTasks = [parallel, createInvoice/*, createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
             if (err) {
@@ -389,16 +388,15 @@ var Invoice = function (models, event) {
             }
             var project;
             var invoiceId = result._id;
-            var name = result.name;
             var products = result.products;
 
             Order.findByIdAndUpdate(id, {
                 $set: {
                     workflow: CONSTANTS.ORDERDONE
                 }
-            }, {new: true}, function (err, result) {
+            }, {new: true}, function (err) {
                 if (err) {
-                    return next(err)
+                    return next(err);
                 }
             });
 
@@ -446,12 +444,11 @@ var Invoice = function (models, event) {
         var isProforma;
         var journalId = data.journal;
         var moduleId = 64;
-        var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);;
+        var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
         var date;
         var updateName = false;
         var JobsModel = models.get(db, 'jobs', JobsSchema);
         var PaymentModel = models.get(db, 'Payment', PaymentSchema);
-        var optionsForPayments;
         var Customer = models.get(db, 'Customers', CustomerSchema);
         var query;
         var model;
@@ -460,11 +457,6 @@ var Invoice = function (models, event) {
 
         date = moment(new Date(data.invoiceDate));
         date = date.format('YYYY-MM-DD');
-
-        if (data.proforma) {
-            isProforma = true;
-            delete data.proforma;
-        }
 
         Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
 
@@ -554,6 +546,34 @@ var Invoice = function (models, event) {
             });
         } else {
             res.status(401).send();
+        }
+    };
+
+    this.approve = function (req, res, next) {
+        var db = req.session.lastDb;
+        var id = req.body.invoiceId;
+        var moduleId = 64;
+
+        var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
+
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getApproveAccess(req, req.session.uId, moduleId, function (access) {
+                if (access) {
+
+                    Invoice.findByIdAndUpdate(id, {$set: {approved: true}}, {new: true}, function (err, resp) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        journalEntryComposer(resp, req.session.lastDb, function () {}, req.session.uId);
+
+                        res.status(200).send(resp);
+                    });
+
+                } else {
+                    res.status(401).send();
+                }
+            });
         }
     };
 
@@ -794,6 +814,7 @@ var Invoice = function (models, event) {
                                     paymentDate     : 1,
                                     dueDate         : 1,
                                     payments        : 1,
+                                    approved        : 1,
                                     _type           : 1,
                                     removable       : 1,
                                     paid            : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}

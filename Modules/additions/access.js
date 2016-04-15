@@ -65,10 +65,22 @@
         });
     };
 
+    var getApproveAccess = function (req, uId, mid, callback) {
+        getAccess(req, uId, mid, function (res) {
+            if (res.error) {
+                console.log(res.error);
+            } else {
+                //todo - refactor
+                callback(true);
+            }
+        });
+    };
+
     return {
         getReadAccess: getReadAccess,
         getEditWritAccess: getEditWritAccess,
-        getDeleteAccess: getDeleteAccess
+        getDeleteAccess: getDeleteAccess,
+        getApproveAccess: getApproveAccess
     }
 };
 module.exports = access;

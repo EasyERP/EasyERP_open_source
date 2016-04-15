@@ -698,8 +698,10 @@ var Employee = function (event, models) {
                             resArray.push(filtrElement);
                             break;
                         case 'letter':
-                            filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
-                            resArray.push(filtrElement);
+                            if(condition){
+                                filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
+                                resArray.push(filtrElement);
+                            } //if added for fix bug with condition.toLowerCase() => undefined
                             break;
                         case 'department':
                             filtrElement[key] = {$in: condition.objectID()};
@@ -1418,71 +1420,86 @@ var Employee = function (event, models) {
                     return depId.toString();
                 });
 
-                data.transfer = data.transfer.map(function (tr) {
-                    if (adminDeps.indexOf(tr.department.toString()) !== -1) {
-                        tr.isDeveloper = false;
-                    } else {
-                        tr.isDeveloper = true;
+                if (data.transfer) {
+                    data.transfer = data.transfer.map(function (tr) {
+                        if (adminDeps.indexOf(tr.department.toString()) !== -1) {
+                            tr.isDeveloper = false;
+                        } else {
+                            tr.isDeveloper = true;
+                        }
+                        return tr;
+                    });
+                }
+
+                models.get(req.session.lastDb, 'Employees', employeeSchema).findById(_id, function (err, emp) {
+                    if (err) {
+                        return res.send(500, {error: "Can't update Employees"});
                     }
 
-                    return tr;
-                });
+                    if (ids.indexOf(req.session.uId) === -1) {
+                        data.transfer = data.transfer.map(function (tr, i) {
+                            tr.salary = (emp.transfer[i] && emp.transfer[i].salary) || emp.transfer[i - 1].salary;
+                            return tr;
+                        });
+                    }
 
-                models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
-                    if (!err) {
-                        if (data.dateBirth || data.hired) {
-                            event.emit('recalculate', req);
-                        }
-                        if (fileName) {
-                            var os = require("os");
-                            var osType = (os.type().split('_')[0]);
-                            var path;
-                            var dir;
-                            switch (osType) {
-                                case "Windows":
-                                {
-                                    var newDirname = __dirname.replace("\\Modules", "");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
-                                    }
-                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                    dir = newDirname + "\/uploads\/" + _id;
-                                }
-                                    break;
-                                case "Linux":
-                                {
-                                    var newDirname = __dirname.replace("/Modules", "");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
-                                    }
-                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                    dir = newDirname + "\/uploads\/" + _id;
-                                }
+                    models.get(req.session.lastDb, 'Employees', employeeSchema).findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+                        if (!err) {
+                            if (data.dateBirth || data.hired) {
+                                event.emit('recalculate', req);
                             }
-
-                            fs.unlink(path, function (err) {
-                                console.log(err);
-                                fs.readdir(dir, function (err, files) {
-                                    if (files && files.length === 0) {
-                                        fs.rmdir(dir, function () {
-                                        });
+                            if (fileName) {
+                                var os = require("os");
+                                var osType = (os.type().split('_')[0]);
+                                var path;
+                                var dir;
+                                switch (osType) {
+                                    case "Windows":
+                                    {
+                                        var newDirname = __dirname.replace("\\Modules", "");
+                                        while (newDirname.indexOf("\\") !== -1) {
+                                            newDirname = newDirname.replace("\\", "\/");
+                                        }
+                                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                        dir = newDirname + "\/uploads\/" + _id;
                                     }
+                                        break;
+                                    case "Linux":
+                                    {
+                                        var newDirname = __dirname.replace("/Modules", "");
+                                        while (newDirname.indexOf("\\") !== -1) {
+                                            newDirname = newDirname.replace("\\", "\/");
+                                        }
+                                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                        dir = newDirname + "\/uploads\/" + _id;
+                                    }
+                                }
+
+                                fs.unlink(path, function (err) {
+                                    console.log(err);
+                                    fs.readdir(dir, function (err, files) {
+                                        if (files && files.length === 0) {
+                                            fs.rmdir(dir, function () {
+                                            });
+                                        }
+                                    });
                                 });
-                            });
 
+                            }
+                            event.emit('dropHoursCashes', req);
+                            event.emit('recollectVacationDash');
+
+                            res.send(200, {success: 'Employees updated', result: result});
+
+                            payrollHandler.composeSalaryReport(req);
+
+                        } else {
+                            res.send(500, {error: "Can't update Employees"});
                         }
-                        event.emit('dropHoursCashes', req);
-                        event.emit('recollectVacationDash');
 
-                        res.send(200, {success: 'Employees updated', result: result});
+                    });
 
-                        payrollHandler.composeSalaryReport(req);
-
-                    } else {
-                        res.send(500, {error: "Can't update Employees"});
-                    }
-
-                });
+            });
 
             });
         }

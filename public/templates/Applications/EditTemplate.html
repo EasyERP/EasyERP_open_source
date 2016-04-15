@@ -19,12 +19,14 @@
                         </a>
                     </li>
 
+                    <% if (model.transfer.length) { %>
                     <li>
                         <a href="javascript:;"
                            class="">
                             Job
                         </a>
                     </li>
+                    <% } %>
 
                     <li>
                         <a href="javascript:;">Assignees</a>
@@ -270,7 +272,7 @@
                                         <label for="jobPositionDd">Job position</label></dt>
                                     <dd>
                                         <a id="jobPositionDd"
-                                           class="current-selected"
+                                           class="current-selected required"
                                            href="javascript:;"
                                            data-id="<%= model.jobPosition ? model.jobPosition._id : '' %>">
                                             <%= model.jobPosition ? model.jobPosition.name : 'select position' %>
@@ -282,7 +284,7 @@
                                     </dt>
                                     <dd>
                                         <a id="departmentsDd"
-                                           class="current-selected"
+                                           class="current-selected required"
                                            href="javascript:;"
                                            data-id="<%= model.department ? model.department._id : '' %>">
                                             <%= model.department ? model.department.departmentName : 'select department'%>
@@ -294,7 +296,7 @@
                                     </dt>
                                     <dd>
                                         <a id="projectManagerDD"
-                                           class="current-selected"
+                                           class="current-selected required"
                                            href="javascript:;"
                                            data-id="<%=model.manager ? model.manager._id : ''%>">
                                             <%=model.manager ? model.manager.fullName : "select manager"%>
@@ -306,7 +308,7 @@
                                     </dt>
                                     <dd>
                                         <a id="jobTypeDd"
-                                           class="current-selected"
+                                           class="current-selected required"
                                            href="javascript:;"
                                            data-id="<%=model.jobType ? model.jobType : ''%>">
                                             <%=model.jobType ? model.jobType : 'select job type'%>

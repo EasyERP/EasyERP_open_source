@@ -508,6 +508,11 @@ define([], function () {
             DOUBLE_EMPLOYEE_VACATION: 'Current Employee already has vacation line'
         },
 
+        INVOICE_APPROVE_PROFILES: [
+            1387275598000,
+            1438768659000
+        ],
+
         EXPENSESCAREGORY: "56459202624e48551dfe3b24",
 
         WTRACK_DB_NAME   : 'weTrack',
