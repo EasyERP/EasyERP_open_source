@@ -178,7 +178,7 @@ define([
 
             //targetRow.attr('data-id', id);
 
-            dataType = targetElement.attr('id') + 'Id';
+            dataType = targetElement.data('content') + 'Id';
             if (!this.changedModels[rowId]) {
                 this.changedModels[rowId] = {};
             }
