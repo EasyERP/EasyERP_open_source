@@ -894,7 +894,7 @@ var Module = function (models, event) {
                 var i;
 
                 for (i = endOfMonth; i >= 1; i--) {
-                    var dateEl = date.date(i).set({hour: 15, minute: 1, second: 0});
+                    var dateEl = date.date(i).set({hour: 18, minute: 1, second: 0});
 
                     if ((dateEl.day() !== 0) && (dateEl.day() !== 6)) {
                         dateArrayInMonth.push(new Date(dateEl));
@@ -1326,8 +1326,8 @@ var Module = function (models, event) {
         var query = dateObject || req.body;
         var month = parseInt(query.month, 10);
         var year = parseInt(query.year, 10);
-        var startDate = moment().isoWeekYear(year).month(month - 1).startOf('month').subtract(3, 'hours');
-        var endDate = moment().isoWeekYear(year).month(month - 1).endOf('month').subtract(3, 'hours');
+        var startDate = moment().isoWeekYear(year).month(month - 1).startOf('month');
+        var endDate = moment().isoWeekYear(year).month(month - 1).endOf('month');
         var waterlallTasks;
         var productSales;
         var COGS;
@@ -1650,7 +1650,7 @@ var Module = function (models, event) {
         var date = new Date(body.date);
         var reconcileSalaryEntries;
         var reconcileInvoiceEntries;
-        var timeToSet = {hour: 15, minute: 1, second: 0};
+        var timeToSet = {hour: 18, minute: 1, second: 0};
         var createdDateObject = {};
         var createDirect;
         var parallelTasks;
