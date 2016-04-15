@@ -3692,13 +3692,13 @@ var wTrack = function (models) {
 
         async.parallel({
             invoiced: invoiceGrouper,
-            paid    : paymentGrouper,
-            revenue : revenueGrouper
+            /*paid    : paymentGrouper,
+            revenue : revenueGrouper*/
         }, function (err, response) {
             var sales;
             var _sales;
 
-            function mergeByProperty(arr1, arr2, prop) {
+            /*function mergeByProperty(arr1, arr2, prop) {
                 _.each(arr2, function (arr2obj) {
                     var arr1obj = _.find(arr1, function (arr1obj) {
                         return arr1obj[prop] === arr2obj[prop];
@@ -3733,8 +3733,8 @@ var wTrack = function (models) {
 
             response.invoiced = _.sortBy(response.invoiced, 'date');
 
-            res.status(200).send({payments: response.invoiced, sales: sales});
-            //res.status(200).send(response);
+            res.status(200).send({payments: response.invoiced, sales: sales});*/
+            res.status(200).send(response);
         });
     };
 };

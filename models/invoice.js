@@ -47,7 +47,7 @@ module.exports = (function () {
             group: [{type: ObjectId, ref: 'Department', default: null}]
         },
 
-        creationDate: {type: Date, default: Date.now},
+        creationDate: {type: Date, default: Date.now},//remove it, duplicated by createdAt & invoiceDate
         createdBy   : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
