@@ -306,7 +306,7 @@ var wTrack = function (models) {
             }
 
             async.each(employeesByDep, departmentMapper, sendResponse);
-            //res.status(200).send(employeesByDep);
+            // res.status(200).send(employeesByDep);
         }
 
         function holidaysComposer(parallelCb) {
@@ -471,61 +471,65 @@ var wTrack = function (models) {
                 }
             }, {
                 $project: {
-                    _id              : 1,
-                    isTransfer       : 1,
-                    firstTransferDate: 1,
-                    lastTransferDate : 1,
-                    lastTransfer     : 1,
-                    name             : 1,
-                    lastHire         : 1,
-                    _lastTransferDate: {$add: [{$multiply: [{$year: '$lastTransferDate'}, 100]}, {$week: '$lastTransferDate'}]}
+                    _id               : 1,
+                    isTransfer        : 1,
+                    firstTransferDate : 1,
+                    lastTransferDate  : 1,
+                    lastTransfer      : 1,
+                    name              : 1,
+                    _lastTransferDate : {$add: [{$multiply: [{$year: '$lastTransferDate'}, 100]}, {$week: '$lastTransferDate'}]},
+                    _firstTransferDate: {$add: [{$multiply: [{$year: '$firstTransferDate'}, 100]}, {$week: '$firstTransferDate'}]}
                 }
             }, {
                 $match: {
                     $or: [
                         {
                             _lastTransferDate  : {$gte: startDate},
+                            _firstTransferDate : {$lte: endDate},
                             'isTransfer.status': 'transfer'
                         }, {
-                            'isTransfer.status': {$nin: ['transfer']}
+                            'isTransfer.status': {$nin: ['transfer']},
+                            _firstTransferDate : {$lte: endDate}
                         }
                     ]
                 }
             }, {
                 $project: {
-                    department       : '$_id.department',
-                    isEmployee       : '$_id.isEmployee',
-                    isLead           : '$_id.isLead',
-                    _id              : '$_id._id',
-                    transferArr      : {
+                    department        : '$_id.department',
+                    isEmployee        : '$_id.isEmployee',
+                    isLead            : '$_id.isLead',
+                    _id               : '$_id._id',
+                    transferArr       : {
                         $filter: {
                             input: '$isTransfer',
                             as   : 'transfer',
                             cond : {$eq: ['$$transfer.status', 'transfer']}
                         }
                     },
-                    isTransfer       : 1,
-                    firstTransferDate: 1,
-                    lastTransferDate : 1,
-                    lastTransfer     : 1,
-                    name             : 1,
-                    lastHire         : 1
+                    isTransfer        : 1,
+                    firstTransferDate : 1,
+                    lastTransferDate  : 1,
+                    lastTransfer      : 1,
+                    name              : 1,
+                    _lastTransferDate : 1,
+                    _firstTransferDate: 1
                 }
             }, {
                 $group: {
                     _id      : '$department',
                     employees: {
                         $addToSet: {
-                            isEmployee       : '$isEmployee',
-                            isLead           : '$isLead',
-                            firstTransferDate: '$firstTransferDate',
-                            lastTransferDate : '$lastTransferDate',
-                            lastHire         : '$lastHire',
-                            lastTransfer     : '$lastTransfer',
-                            name             : '$name',
-                            isTransfer       : '$isTransfer',
-                            transferArr      : '$transferArr',
-                            _id              : '$_id'
+                            isEmployee        : '$isEmployee',
+                            isLead            : '$isLead',
+                            firstTransferDate : '$firstTransferDate',
+                            lastTransferDate  : '$lastTransferDate',
+                            _lastTransferDate : '$_lastTransferDate',
+                            _firstTransferDate: '$_firstTransferDate',
+                            lastTransfer      : '$lastTransfer',
+                            name              : '$name',
+                            isTransfer        : '$isTransfer',
+                            transferArr       : '$transferArr',
+                            _id               : '$_id'
                         }
                     }
                 }
