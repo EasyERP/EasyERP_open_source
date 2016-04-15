@@ -223,7 +223,7 @@ dbObject.once('open', function callback() {
             var holidaysObject = {};
             var vacationObject = {};
 
-            var timeToSet = {hour: 18, minute: 1, second: 0};
+            var timeToSet = {hour: 15, minute: 1, second: 0};
             var createdDateObject = {};
             var createDirect;
             var waterfallForSalary;
