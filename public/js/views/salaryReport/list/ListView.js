@@ -136,8 +136,8 @@ define([
                 this.endKey = moment(this.endDate).year() * 100 + moment(this.endDate).month();
 
                 var searchObject = {
-                    startDate: this.startDate,
-                    endDate  : this.endDate,
+                    startDate: stDate,
+                    endDate  : enDate,
                     filter   : this.filter
                 };
 

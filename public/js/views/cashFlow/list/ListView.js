@@ -135,8 +135,8 @@ define([
                 };
 
                 var searchObject = {
-                    startDate: this.startDate,
-                    endDate  : this.endDate,
+                    startDate: stDate,
+                    endDate  : enDate,
                     filter   : this.filter
                 };
 

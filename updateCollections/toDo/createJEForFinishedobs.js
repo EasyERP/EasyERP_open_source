@@ -11,7 +11,7 @@ var JobsSchema = mongoose.Schemas.jobs;
 var journalEntrySchema = mongoose.Schemas.journalEntry;
 var journalSchema = mongoose.Schemas.journal;
 
-var dbObject = mongoose.createConnection('localhost', 'production');
+var dbObject = mongoose.createConnection('erp.thinkmobiles.com', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");

@@ -127,17 +127,17 @@ define([
 
                 this.filter.startDate = {
                     key  : 'startDate',
-                    value: stDate
+                    value: this.startDate
                 };
 
                 this.filter.endDate = {
                     key  : 'endDate',
-                    value: enDate
+                    value: this.endDate
                 };
 
                 var searchObject = {
-                    startDate: this.startDate,
-                    endDate  : this.endDate,
+                    startDate: stDate,
+                    endDate  : enDate,
                     filter   : this.filter
                 };
 
