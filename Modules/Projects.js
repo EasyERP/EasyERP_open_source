@@ -1015,37 +1015,14 @@ var Project = function (models, event) {
             .populate('salesmanager', '_id name fullName')
             .populate('customer', '_id name fullName')
             .populate('workflow', '_id name')
-            .populate('projectMembers');
 
         query.exec(function (err, project) {
             if (err) {
                 logWriter.log("Project.js getProjectById project.find " + err);
                 response.send(500, {error: "Can't find Project"});
-            } else {
-                async.parallel([function (cb) {
-                    projectPosition.populate(project.projectMembers, {
-                        path  : 'projectPositionId',
-                        select: '_id name'
-                    }, cb);
-                }, function (cb) {
-                    employee.populate(project.projectMembers, {
-                        path  : 'employeeId',
-                        select: '_id name'
-                    }, cb);
-                }, function (cb) {
-                    bonusType.populate(project.projectMembers, {
-                        path  : 'bonusId',
-                        select: '_id name value isPercent'
-                    }, cb);
-                }], function (err, res) {
-                    if (err) {
-                        logWriter.log("Project.js getProjectById project.find " + err);
-                        response.send(500, {error: "Can't find Project"});
-                    } else {
-                        response.status(200).send(project);
-                    }
-                });
 
+            } else {
+                response.status(200).send(project);
             }
         });
     };
@@ -1416,7 +1393,8 @@ var Project = function (models, event) {
         if (data.workflow) {
             data.workflow = data.workflow;
         }
-        if (data.salesManagers && data.salesManagers.length) {
+        if (data.projectMembers && data.projectMembers.length) {
+            updateProjectMembers(data.projectMembers);
             data.projectmanager = data.salesManagers[data.salesManagers.length - 1].manager;
         }
 
@@ -1460,6 +1438,10 @@ var Project = function (models, event) {
             }
         });
     };
+
+    function updateProjectMembers(members) {
+
+    }
 
     function updateOnlySelectedFields(req, _id, data, res) {
         var obj;

@@ -7,16 +7,23 @@ define([
     'views/selectView/selectView',
     'common',
     'dataService',
+    'collections/projectMembers/editCollection',
+    'models/ProjectMemberModel',
     'moment'
-], function (Backbone, $, _, membersTemplate, createMember, SelectView, common, dataService, moment) {
+], function (Backbone, $, _, membersTemplate, createMember, SelectView, common, dataService, prMembersCollection, currentModel, moment) {
     'use strict';
 
     var PMView = Backbone.View.extend({
+        el: '#projectMembers',
 
         initialize: function (options) {
-            this.model = options.model;
+            this.project = options.project;
+            this.collection = options.collection;
             this.responseObj = {};
-            this.modelJSON = this.model.id ? this.model.toJSON() : this.model;
+            this.changedModels = {};
+
+            this.collection.on('saved', this.savedNewModel, this);
+            this.collection.on('updated', this.updatedOptions, this);
         },
 
         template: _.template(membersTemplate),
@@ -24,37 +31,25 @@ define([
         events: {
             'click'                                            : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click a.current-selected'                         : 'showNewSelect',
-            'click #addManager'                                : 'addManager',
-            'click .editable'                                  : 'editNewRow',
-            'click .fa-trash'                                  : 'removeManager'
+            'click .selectCurrent'                             : 'showNewSelect',
+            'click #addMember'                                 : 'addMember',
+            'click .editable'                                  : 'editRow',
+            'click #saveMember'                                : 'saveItem',
+            'click .fa-trash-o'                                : 'removeMember'
         },
 
-        editLastPM: function () {
-            var table = this.$el.find('#projectManagersTable');
-            var trs = table.find('tr');
-            var removeBtn = '<a href="javascript;" class="fa fa-trash"></a>';
-            var lastPM;
-
-            trs.find('td:first-child').text('');
-
-            if (trs.length > 1){
-                trs.last().find('td').first().html(removeBtn);
-                trs.last().find('.startDateManager').addClass('editable');
-            }
-
-            lastPM = trs.last().find('td').last().text();
-            trs.last().find('td').last().html('<a id="employee" class="current-selected" href="javascript:;">' + lastPM +'</a>');
-        },
-
-        editNewRow: function (e) {
+        editRow: function (e) {
+            var self = this;
             var target = $(e.target);
             var row = target.parent('tr');
-            var prevRow = row.prev().find('.startDateManager');
-            var prevSalesDate = prevRow.text() === 'From start of project' ? this.model.get('StartDate') : row.prev().find('.startDateManager').text();
-            var prevDate = new Date(prevSalesDate);
-            var nextDay = moment(prevDate).add(1, 'd');
-            var startDate = common.utcDateToLocaleDate(nextDay.toDate());
+            var td = target.parent('td');
+            var rowId = row.data('id');
+
+           // var prevRow = row.prev().find('.startDateManager');
+          //  var prevSalesDate = prevRow.text() === 'From start of project' ? this.model.get('StartDate') : row.prev().find('.startDateManager').text();
+          //  var prevDate = new Date(prevSalesDate);
+          //  var nextDay = moment(prevDate).add(1, 'd');
+          // var startDate = common.utcDateToLocaleDate(nextDay.toDate());
             var text;
 
             if (target.prop('tagName') !== 'INPUT') {
@@ -68,21 +63,49 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : startDate ,
+                //minDate    : startDate ,
                 onSelect   : function (dateText) {
                     var $editedCol = target.closest('td');
+                    var dateType = $editedCol.hasClass('startDateManager') ? 'startDate' : 'endDate';
                     var date = new Date(dateText);
-                    var prevDay = moment(date).subtract(1, 'd');
-                    var $prSmEndDate = target.closest('tr').prev().find('.endDateManager');
+                    if (!self.changedModels[rowId] ) {
+                        self.changedModels[rowId] = {};
+                    }
+                    self.changedModels[rowId][dateType] = dateText;
+                  //  var prevDay = moment(date).subtract(1, 'd');
+                  //  var $prSmEndDate = target.closest('tr').prev().find('.endDateManager');
                     $editedCol.text(dateText);
-                    $prSmEndDate.text(common.utcDateToLocaleDate(prevDay.toDate()));
-                    $('#top-bar-saveBtn').show();
+                    self.$el.find('#saveMember').show();
+                    self.$el.find('#addMember').hide();
+                  //  $prSmEndDate.text(common.utcDateToLocaleDate(prevDay.toDate()));
+                 //   $('#top-bar-saveBtn').show();
                 }
             });
 
             this.$el.find('#date').datepicker('show');
 
             return false;
+        },
+
+        savedNewModel: function (modelObject) {
+            var savedRow = this.$el.find(".false");
+            var oldId = savedRow.data('id');
+            var modelId;
+
+            if (modelObject) {
+                modelId = modelObject._id;
+                savedRow.attr("data-id", modelId);
+                savedRow.removeClass('false');
+            }
+            delete this.changedModels[oldId];
+            this.collection.remove(oldId);
+            this.collection.add(modelObject);
+
+            this.showCreateBtn();
+        },
+
+        updatedOptions : function (){
+            this.showCreateBtn();
         },
 
         hideNewSelect: function () {
@@ -97,8 +120,25 @@ define([
             }
         },
 
-        showNewSelect: function (e) {
+        saveItem : function (e){
+            e.preventDefault();
+            var model;
+            var id;
+
+            for (id in this.changedModels) {
+                model = this.collection.get(id);
+
+                if (model) {
+                    model.changed = this.changedModels[id];
+                }
+            }
+
+            this.collection.save();
+        },
+
+        showNewSelect: function (e, prev, next) {
             var $target = $(e.target);
+
             e.stopPropagation();
 
             if ($target.attr('id') === 'selectInput') {
@@ -108,13 +148,13 @@ define([
             if (this.selectView) {
                 this.selectView.remove();
             }
-            if (Object.keys(this.responseObj).length) {
-                this.selectView = new SelectView({
-                    e          : e,
-                    responseObj: this.responseObj
-                });
-                $target.append(this.selectView.render().el);
-            }
+
+            this.selectView = new SelectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
+
+            $target.append(this.selectView.render().el);
 
             return false;
         },
@@ -123,83 +163,121 @@ define([
             var target = $(e.target);
             var targetElement = target.parents('td');
             var targetRow = target.parents('tr');
+            var rowId = targetRow.data('id');
             var id = target.attr('id');
-            var prevSales = targetRow.prev().attr('data-id');
+           // var prevSales = targetRow.prev().attr('data-id');
             var selectorContainer;
+            var dataType;
 
-            if (prevSales === id) {
+            /*if (prevSales === id) {
                 return App.render({
                     type   : 'error',
                     message: 'Please choose another Project Manager'
                 });
+            }*/
+
+            //targetRow.attr('data-id', id);
+
+            dataType = targetElement.data('content') + 'Id';
+            if (!this.changedModels[rowId]) {
+                this.changedModels[rowId] = {};
+            }
+            if (dataType) {
+                this.changedModels[rowId][dataType] = id;
             }
 
-            targetRow.attr('data-id', id);
-            selectorContainer = targetElement.find('a.current-selected');
-
-            selectorContainer.text(target.text());
-            $('#top-bar-saveBtn').show();
+            targetElement.text(target.text());
+            targetElement.attr('data-id', id);
 
             this.hideNewSelect();
+            this.showSavelBtn();
 
             return false;
         },
 
-        addManager: function (e) {
-            var employeeSelect = this.$el.find('.current-selected');
-            var newElements = this.$el.find('td:contains("Select")');
-            var startD = this.$el.find('td:contains("Choose Date")');
+        addMember: function (e) {
             e.preventDefault();
+            var startData = {
+                projectId : this.project
+            };
 
+            var model = new currentModel(startData);
 
-            if (newElements.length) {
-                return App.render({
-                    type   : 'error',
-                    message: 'Please select Project Manager first.'
+            startData.cid = model.cid;
+            if (!this.changedModels[startData.cid]) {
+                this.changedModels[startData.cid] = {};
+            }
+            this.changedModels[startData.cid].projectId = this.project;
+
+            if (!this.isNewRow()) {
+                /*this.showSaveCancelBtns();*/
+                this.collection.add(model);
+                this.$el.find('#projectMembersTable').append(_.template(createMember, startData));
+                this.showSavelBtn();
+
+            } else {
+                App.render({
+                    type   : 'notify',
+                    message: 'Please confirm or discard changes befor create a new item'
                 });
             }
-
-            if (startD.length) {
-                return App.render({
-                    type   : 'error',
-                    message: 'Please, choose Date first.'
-                });
-            }
-
-            if (employeeSelect.length) {
-                this.$el.find('.editable').removeClass('editable');
-                employeeSelect.parent('td').text(employeeSelect.text());
-                employeeSelect.remove();
-            }
-
-            this.$el.find('#projectManagersTable .endDateManager').last().text('');
-            this.$el.find('#projectManagersTable').append(_.template(createMember));
-
-
-            $('#top-bar-saveBtn').show();
-            this.editLastPM();
         },
 
-        removeManager: function (e) {
+        showSavelBtn: function (){
+            this.$el.find('#saveMember').show();
+            this.$el.find('#addMember').hide();
+        },
+
+        showCreateBtn: function (){
+            this.$el.find('#saveMember').hide();
+            this.$el.find('#addMember').show();
+        },
+
+        isNewRow: function () {
+            var newRow = $('.false');
+
+            return !!newRow.length;
+        },
+
+        removeMember: function (e) {
             var target = $(e.target);
             var row = target.closest('tr');
+            var id = row.data('id');
+            var model = this.collection.get(id);
+            if (model && id.length === 24 ){
+                model.destroy({
+                    wait   : true,
+                    success: function () {
+                        row.remove();
+                    },
+                    error  : function (model, res) {
+                        if (res.status === 403 && index === 0) {
+                            App.render({
+                                type   : 'error',
+                                message: "You do not have permission to perform this action"
+                            });
+                        }
+                        self.deleteItemsRender(1, 1);
 
-            e.preventDefault();
-            row.prev().find('.endDateManager').text('To end of project');
-            row.remove();
-            $('#top-bar-saveBtn').show();
+                    }
+                });
+            } else {
+                row.remove();
+                this.collection.remove(model);
+            }
 
-            this.editLastPM();
         },
 
         render: function () {
             var self = this;
-            var projectMembers = this.model.get('projectMembers');
+            var projectMembers = this.collection.toJSON();
 
             self.$el.html(this.template({
                 members            : projectMembers,
                 utcDateToLocaleDate: common.utcDateToLocaleDate
             }));
+
+
 
             dataService.getData('/employee/getForDD', {salesDepartments: true, isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
@@ -210,8 +288,13 @@ define([
 
                 self.responseObj['#employee'] = employees;
             });
-
-            this.editLastPM();
+            dataService.getData("/bonusType/list", null, function (bonus) {
+                self.responseObj['#bonus'] = bonus;
+            });
+            dataService.getData("/projectPosition/getForDD", null, function (data) {
+                self.responseObj['#projectPosition'] = data.data;
+            });
+            this.$el.find('#saveMember').hide();
 
             return this;
         }
