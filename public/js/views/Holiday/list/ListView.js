@@ -124,6 +124,19 @@ define([
                 var errors = this.$el.find('.errorContent');
                 var keys = Object.keys(this.changedModels);
 
+                var filled = true;
+
+                $(".editable").each(function (index, elem){
+                    if (!$(elem).html()){
+                        filled = false;
+                        return false;
+                    }
+                });
+
+                if (!filled) {
+                    return  App.render({type: 'error', message: 'Fill all fields please'});
+                }
+
                 this.setChangedValueToModel();
 
                 keys.forEach (function(id){
