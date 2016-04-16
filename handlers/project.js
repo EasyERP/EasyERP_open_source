@@ -348,8 +348,8 @@ var Project = function (models) {
                     //budgetTotal.rateSum = 0;
                     budgetTotal.revenueSum = 0;
                     budgetTotal.hoursSum = 0;
-                    budgetTotal.revenueByQA = 0;
-                    budgetTotal.hoursByQA = 0;
+                    //budgetTotal.revenueByQA = 0;
+                    //budgetTotal.hoursByQA = 0;
 
                     wTRack.forEach(function (wTrack) {
                         var key;
@@ -387,10 +387,10 @@ var Project = function (models) {
 
                             if (empId === emp) {
                                 if (projectTeam[empId]) {
-                                    if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
-                                        projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
-                                        projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
-                                    }
+                                    //if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                    //    projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
+                                    //    projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
+                                    //}
                                     projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                     projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
                                     // projectTeam[empId].rate += parseFloat(wTrack.rate);
@@ -399,11 +399,11 @@ var Project = function (models) {
                                 } else {
                                     projectTeam[empId] = {};
 
-                                    if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
-                                        projectTeam[empId].byQA = {};
-                                        projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue) / 100;
-                                        projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
-                                    }
+                                    //if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                    //    projectTeam[empId].byQA = {};
+                                    //    projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue) / 100;
+                                    //    projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
+                                    //}
 
                                     projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                     projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
@@ -426,8 +426,8 @@ var Project = function (models) {
                             budgetTotal.costSum += parseFloat(projectTeam[key].cost);
                             budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
                             budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
-                            budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
-                            budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
+                            //budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
+                            //budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
                         });
                         //budgetTotal.rateSum = {};
                         //var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
@@ -668,45 +668,47 @@ var Project = function (models) {
                 //};
 
                 jobs.forEach(function (job) {
+                    var jobBudgetTotal = job.budget.budgetTotal;
+
                     if (job.workflow.name === "In Progress") {
-                        totalInPr += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
+                        totalInPr += jobBudgetTotal ? jobBudgetTotal.costSum : 0;
                     } else if (job.workflow.name === "Finished") {
-                        totalFinished += job.budget.budgetTotal.costSum;
+                        totalFinished += jobBudgetTotal.costSum;
                     }
 
-                    if (job.budget.budgetTotal && job.budget.budgetTotal.minDate) {
-                        if (job.budget.budgetTotal.minDate <= minDate) {
-                            totalObj.minDate = job.budget.budgetTotal.minDate;
+                    if (jobBudgetTotal && jobBudgetTotal.minDate) {
+                        if (jobBudgetTotal.minDate <= minDate) {
+                            totalObj.minDate = jobBudgetTotal.minDate;
                             minDate = totalObj.minDate;
                         }
                     }
 
-                    if (job.budget.budgetTotal && job.budget.budgetTotal.maxDate) {
-                        if (job.budget.budgetTotal.maxDate >= maxDate) {
-                            totalObj.maxDate = job.budget.budgetTotal.maxDate;
+                    if (jobBudgetTotal && jobBudgetTotal.maxDate) {
+                        if (jobBudgetTotal.maxDate >= maxDate) {
+                            totalObj.maxDate = jobBudgetTotal.maxDate;
                             maxDate = totalObj.maxDate;
                         }
                     }
 
-                    total += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
+                    total += jobBudgetTotal ? jobBudgetTotal.costSum : 0;
 
-                    totalObj.revenueSum += job.budget.budgetTotal ? job.budget.budgetTotal.revenueSum : 0;
-                    totalObj.costSum += job.budget.budgetTotal ? job.budget.budgetTotal.costSum : 0;
+                    totalObj.revenueSum += jobBudgetTotal ? jobBudgetTotal.revenueSum : 0;
+                    totalObj.costSum += jobBudgetTotal ? jobBudgetTotal.costSum : 0;
 
                     //totalObj.profitSum = job.budget.budgetTotal ? (job.budget.budgetTotal.revenueSum - job.budget.budgetTotal.costSum) : 0;
 
-                    if(job.budget.budgetTotal){
-                        if(job.budget.budgetTotal.revenueSum){
-                            if(job.budget.budgetTotal.costSum){
-                                totalObj.profitSum += job.budget.budgetTotal.revenueSum - job.budget.budgetTotal.costSum;
+                    if(jobBudgetTotal){
+                        if(jobBudgetTotal.revenueSum){
+                            if(jobBudgetTotal.costSum){
+                                totalObj.profitSum += jobBudgetTotal.revenueSum - jobBudgetTotal.costSum;
                             }else {
-                                totalObj.profitSum += job.budget.budgetTotal.revenueSum
+                                totalObj.profitSum += jobBudgetTotal.revenueSum
                             }
                         }
                     } else {
                         totalObj.profitSum = 0;
                     }
-                    totalObj.hoursSum += job.budget.budgetTotal ? job.budget.budgetTotal.hoursSum : 0;
+                    totalObj.hoursSum += jobBudgetTotal ? jobBudgetTotal.hoursSum : 0;
                     //totalObj.rateSum.byDev += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byDev : 0;
                     //totalObj.rateSum.byQA += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byQA : 0;
                 });

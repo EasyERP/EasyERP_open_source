@@ -77,7 +77,11 @@
                 ? element.quotation.name: ''%></a></td>
             <td><a data-id="<%=element.invoice ? element.invoice._id : null%>" class="invoice"><%=element.invoice ?
                 element.invoice.name : ''%></a></td>
+            <% if(element.budget && element.budget.projectTeam && element.budget.projectTeam[0].employee){%>
             <td><%= element.budget.projectTeam[0].employee._id ? element.budget.projectTeam.length : 0%></td>
+            <%} else {%>
+            <td>0</td>
+            <%}%>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
             <td><%= budgetTotal.costSum ? currencySplitter((budgetTotal.costSum/100).toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter((budgetTotal.revenueSum/100).toFixed()) : 0%></td>

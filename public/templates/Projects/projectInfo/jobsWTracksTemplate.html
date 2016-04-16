@@ -18,7 +18,7 @@
         <%var projectTeam = jobItem.budget.projectTeam%>
         <% projectTeam.forEach(function(element,i){ %>
         <%var budget = jobItem.budget.projectTeam[i].budget%>
-        <%if(element.employee._id){%>
+        <%if(element && element.employee && element.employee._id){%>
         <tr data-id="<%=element.employee._id%>" id="<%=projectTeam + element.employee._id%>">
             <td><%=element.employee.name.first + ' ' + element.employee.name.last%></td>
             <td><%=element.employee.jobPosition.name%></td>

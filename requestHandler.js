@@ -469,8 +469,8 @@ var requestHandler = function (app, event, mainDb) {
                         budgetTotal.costSum = 0;
                         budgetTotal.revenueSum = 0;
                         budgetTotal.hoursSum = 0;
-                        budgetTotal.revenueByQA = 0;
-                        budgetTotal.hoursByQA = 0;
+                        //budgetTotal.revenueByQA = 0;
+                        //budgetTotal.hoursByQA = 0;
 
                         wTRack.forEach(function (wTrack) {
                             var key;
@@ -501,10 +501,10 @@ var requestHandler = function (app, event, mainDb) {
 
                                 if (empId === emp) {
                                     if (projectTeam[empId]) {
-                                        if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
-                                            projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
-                                            projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
-                                        }
+                                        //if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                        //    projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
+                                        //    projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
+                                        //}
                                         projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                         projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
                                         projectTeam[empId].rate += parseFloat(wTrack.rate);
@@ -513,11 +513,11 @@ var requestHandler = function (app, event, mainDb) {
                                     } else {
                                         projectTeam[empId] = {};
 
-                                        if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
-                                            projectTeam[empId].byQA = {};
-                                            projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
-                                            projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
-                                        }
+                                        //if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                        //    projectTeam[empId].byQA = {};
+                                        //    projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
+                                        //    projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
+                                        //}
                                         projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                         projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
                                         projectTeam[empId].rate = parseFloat(wTrack.rate);
@@ -536,8 +536,8 @@ var requestHandler = function (app, event, mainDb) {
                                 budgetTotal.costSum += parseFloat(projectTeam[key].cost);
                                 budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
                                 budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
-                                budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
-                                budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
+                                //budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
+                                //budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
                             });
                             //budgetTotal.rateSum = {};
                             // var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
@@ -574,47 +574,47 @@ var requestHandler = function (app, event, mainDb) {
                                 response = response || [];
 
                                 bonuses.forEach(function (element) {
-                                 var objToSave = {};
+                                    var objToSave = {};
 
-                                 objToSave.bonus = 0;
-                                 objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
-                                 objToSave.percentage = element.bonusId.name;
+                                    objToSave.bonus = 0;
+                                    objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
+                                    objToSave.percentage = element.bonusId.name;
 
-                                 if (element.bonusId.isPercent) {
-                                 objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
-                                 bonus.push(objToSave);
-                                 } else {
-                                 monthHours.forEach(function (month) {
-                                 objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
-                                 });
+                                    if (element.bonusId.isPercent) {
+                                        objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
+                                        bonus.push(objToSave);
+                                    } else {
+                                        monthHours.forEach(function (month) {
+                                            objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
+                                        });
 
-                                 objToSave.bonus = objToSave.bonus * 100;
-                                 bonus.push(objToSave);
-                                 }
+                                        objToSave.bonus = objToSave.bonus * 100;
+                                        bonus.push(objToSave);
+                                    }
 
-                                 });
+                                });
 
-                                 keysForPT = Object.keys(projectTeam);
+                                keysForPT = Object.keys(projectTeam);
 
-                                 response.forEach(function (employee) {
-                                 keysForPT.forEach(function (id) {
-                                 if ((employee._id).toString() === id) {
-                                 sortBudget.push(projectTeam[id]);
-                                 }
-                                 });
-                                 });
+                                response.forEach(function (employee) {
+                                    keysForPT.forEach(function (id) {
+                                        if ((employee._id).toString() === id) {
+                                            sortBudget.push(projectTeam[id]);
+                                        }
+                                    });
+                                });
 
-                                 budget = {
-                                 bonus: bonus
-                                 };
+                                budget = {
+                                    bonus: bonus
+                                };
 
-                                 Project.update({_id: project._id}, {$set: {"budget.bonus": budget.bonus}}, function (err, result) {
-                                 if (err) {
-                                 return console.log(err);
-                                 }
+                                Project.update({_id: project._id}, {$set: {"budget.bonus": budget.bonus}}, function (err, result) {
+                                    if (err) {
+                                        return console.log(err);
+                                    }
 
-                                 //console.log('success');
-                                 });
+                                    //console.log('success');
+                                });
                             });
                         }
                     });
@@ -686,13 +686,12 @@ var requestHandler = function (app, event, mainDb) {
                 from:"wTrack",
                 localField: "wTracks",
                 foreignField: "_id",
-                as: "wTrack"}},
-
+                as: "wTrack"}
+            },
             {$project: {
                 wTrack : {$arrayElemAt: ["$wTrack", 0]},
-                budget: 1,
-            }},
-
+                budget: 1}
+            },
             {$group: {
                 _id: {
                     _id: "$_id",
@@ -703,25 +702,20 @@ var requestHandler = function (app, event, mainDb) {
                 revenueSum: { $sum: "$wTrack.revenue" },
                 hoursSum: { $sum: "$wTrack.worked" },
                 maxDate: {$max : "$wTrack.dateByWeek"},
-                minDate: {$min : "$wTrack.dateByWeek"}
-            }
+                minDate: {$min : "$wTrack.dateByWeek"}}
             },
-
             {$lookup: {
                 from:"Department",
                 localField: "_id.department",
                 foreignField: "_id",
-                as: "department"
-            }
+                as: "department"}
             },
-
             {$lookup: {
                 from:"Employees",
                 localField: "_id.employee",
                 foreignField: "_id",
-                as: "employee"
-            }},
-
+                as: "employee"}
+            },
             {$project: {
                 _id: "$_id._id",
                 department : {$arrayElemAt: ["$department", 0]},
@@ -730,17 +724,14 @@ var requestHandler = function (app, event, mainDb) {
                 "budget.revenueSum": "$revenueSum",
                 "budget.hoursSum": "$hoursSum",
                 maxDate:  1,
-                minDate:  1
-            }},
-
+                minDate:  1}
+            },
             {$lookup: {
                 from:"JobPosition",
                 localField: "employee.jobPosition",
                 foreignField: "_id",
-                as: "employee.jobPosition"
-            }
+                as: "employee.jobPosition"}
             },
-
             {$project: {
                 _id: "$_id",
                 "department._id" : "$department._id",
@@ -750,9 +741,8 @@ var requestHandler = function (app, event, mainDb) {
                 "employee.jobPosition" : {$arrayElemAt: ["$employee.jobPosition", 0]},
                 budget : "$budget",
                 maxDate:  1,
-                minDate:  1
-            }},
-
+                minDate:  1}
+            },
             {$project: {
                 _id: "$_id",
                 "department" : "$department",
@@ -762,30 +752,25 @@ var requestHandler = function (app, event, mainDb) {
                 "employee.jobPosition.name" : "$employee.jobPosition.name",
                 budget : "$budget",
                 maxDate:  1,
-                minDate:  1
-            }},
-
+                minDate:  1}
+            },
             {$group: {
-                _id: {
-                    _id: "$_id"
-                },
+                _id: "$_id",
                 projectTeam: {$push : {department: "$department", employee: "$employee", budget: "$budget"}},
                 budgetTotalCost: { $sum: "$budget.costSum" },
                 budgetTotalRevenue: { $sum: "$budget.revenueSum" },
                 budgetTotalHoursSum: { $sum: "$budget.hoursSum" },
                 maxDate: { $max: "$maxDate" },
-                minDate: { $min: "$minDate" }
-            }},
-
+                minDate: { $min: "$minDate" }}
+            },
             {$project: {
-                _id: "$_id._id",
+                _id: "$_id",
                 projectTeam: "$projectTeam",
                 "budgetTotal.costSum": "$budgetTotalCost",
                 "budgetTotal.revenueSum": "$budgetTotalRevenue",
                 "budgetTotal.hoursSum": "$budgetTotalHoursSum",
                 "budgetTotal.maxDate": "$maxDate",
-                "budgetTotal.minDate": "$minDate",
-            }
+                "budgetTotal.minDate": "$minDate"}
             }
         ], function(err, result){
             if (err) {
