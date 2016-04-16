@@ -127,7 +127,7 @@ define([
                 this.setChangedValueToModel();
 
                 keys.forEach (function(id){
-                    model = self.editCollection.get(id);
+                    model = self.editCollection.get(id) || self.collection.get(id);
                     modelJSON = model.toJSON();
                     date = new Date(modelJSON.date);
                     model.changed = self.changedModels[id];
@@ -146,7 +146,7 @@ define([
                 keys.forEach (function(id){
                     delete self.changedModels[id];
                     self.editCollection.remove(id);
-                })
+                });
             },
 
             setChangedValueToModel: function () {
@@ -165,7 +165,7 @@ define([
                     editedElementValue = editedElement.val();
 
                     if (editedElementRowId.length >= 24) {
-                        editModel = this.collection.get(editedElementRowId);
+                        editModel = this.collection.get(editedElementRowId) || this.editCollection.get(editedElementRowId);
                         editValue = editModel.get(editedElementContent);
 
                         if (editedElementValue !== editValue) {
@@ -297,7 +297,6 @@ define([
             renderContent: function () {
                 var $currentEl = this.$el;
                 var tBody = $currentEl.find('#listTable');
-                $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
@@ -391,7 +390,8 @@ define([
                     mid = 39,
                     model;
                 var localCounter = 0;
-                var count = $("#listTable input:checked").length;
+                var listTableChecked = $("#listTable input:checked");
+                var count = listTableChecked.length;
                 this.collectionLength = this.collection.length;
 
                 if (!this.changed) {
@@ -399,7 +399,7 @@ define([
                     var value;
 
                     if (answer === true) {
-                        $.each($("#listTable input:checked"), function (index, checkbox) {
+                        $.each(listTableChecked, function (index, checkbox) {
                             value = checkbox.value;
                             that.changedModels = {};
 
