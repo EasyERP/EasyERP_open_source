@@ -252,17 +252,20 @@ define([
             },
 
             saveItem: function () {
+                var self = this;
                 var model;
-                var id;
                 var errors = this.$el.find('.errorContent');
+                var keys = Object.keys(this.changedModels);
+                var changedModelsId;
 
                 this.setChangedValueToModel();
 
-                for (id in this.changedModels) {
-                    model = this.editCollection.get(id) || this.collection.get(id);
-                    model.changed = this.changedModels[id];
-                    model.changed.differenceAmount = parseFloat(this.changedModels[id].paidAmount) - parseFloat(this.changedModels[id].paid);
-                }
+                keys.forEach(function(id){
+                    changedModelsId = self.changedModels[id];
+                    model = self.editCollection.get(id) || self.collection.get(id);
+                    model.changed = changedModelsId;
+                    model.changed.differenceAmount = parseFloat(changedModelsId.paidAmount) - parseFloat(changedModelsId.paid);
+                });
 
                 if (errors.length) {
                     return;
@@ -270,10 +273,10 @@ define([
 
                 this.editCollection.save();
 
-                for (id in this.changedModels) {
-                    delete this.changedModels[id];
-                    this.editCollection.remove(id);
-                }
+                keys.forEach(function(id){
+                    delete self.changedModels[id];
+                    self.editCollection.remove(id);
+                });
             },
 
             updatedOptions: function () {
@@ -299,12 +302,13 @@ define([
             },
 
             bindingEventsToEditedCollection: function (context) {
-                if (context.editCollection) {
-                    context.editCollection.unbind();
+                var contextEditCollection = context.editCollection;
+                if (contextEditCollection) {
+                    contextEditCollection.unbind();
                 }
-                context.editCollection = new editCollection(context.collection.toJSON());
-                context.editCollection.on('saved', context.savedNewModel, context);
-                context.editCollection.on('updated', context.updatedOptions, context);
+                contextEditCollection = new editCollection(context.collection.toJSON());
+                contextEditCollection.on('saved', context.savedNewModel, context);
+                contextEditCollection.on('updated', context.updatedOptions, context);
             },
 
             createItem: function () {
