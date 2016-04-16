@@ -116,64 +116,47 @@ define([
             },
 
             saveItem: function () {
+                var self = this;
                 var model;
                 var modelJSON;
                 var date;
                 var id;
                 var errors = this.$el.find('.errorContent');
+                var keys = Object.keys(this.changedModels);
 
                 this.setChangedValueToModel();
 
-                for (id in this.changedModels) {
-                    model = this.editCollection.get(id);
+                keys.forEach (function(id){
+                    model = self.editCollection.get(id);
                     modelJSON = model.toJSON();
                     date = new Date(modelJSON.date);
-                    model.changed = this.changedModels[id];
-                    if (!this.changedModels[id].date) {
+                    model.changed = self.changedModels[id];
+                    if (!self.changedModels[id].date) {
                         model.changed.date = date;
                     }
                     model.changed.year = moment(date).isoWeekYear();
                     model.changed.week = moment(date).isoWeek();
-                }
+                });
 
                 if (errors.length) {
                     return;
                 }
                 this.editCollection.save();
 
-                for (id in this.changedModels) {
-                    delete this.changedModels[id];
-                    this.editCollection.remove(id);
-                }
+                keys.forEach (function(id){
+                    delete self.changedModels[id];
+                    self.editCollection.remove(id);
+                })
             },
 
-            //saveItem: function () {
-            //    var model;
-            //    var modelJSON;
-            //    var date;
-            //
-            //    for (var id in this.changedModels) {
-            //        model = this.editCollection.get(id);
-            //        modelJSON = model.toJSON();
-            //        date = new Date(modelJSON.date);
-            //        model.changed = this.changedModels[id];
-            //        model.changed.year = moment(date).isoWeekYear();
-            //        model.changed.week = moment(date).isoWeek();
-            //    }
-            //    this.editCollection.save();
-            //},
-
             setChangedValueToModel: function () {
-
                 var editedElement = this.$listTable.find('.editing');
                 var editedCol;
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-
-                if (navigator.userAgent.indexOf("Firefox") > -1) {
-                    this.setEditable(editedElement);
-                }
+                var editModel;
+                var editValue;
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
@@ -181,11 +164,22 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
-                    if (!this.changedModels[editedElementRowId]) {
-                        this.changedModels[editedElementRowId] = {};
-                    }
+                    if (editedElementRowId.length >= 24) {
+                        editModel = this.collection.get(editedElementRowId);
+                        editValue = editModel.get(editedElementContent);
 
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                        if (editedElementValue !== editValue) {
+                            if (!this.changedModels[editedElementRowId]) {
+                                this.changedModels[editedElementRowId] = {};
+                            }
+                            this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                        }
+                    } else {
+                        if (!this.changedModels[editedElementRowId]) {
+                            this.changedModels[editedElementRowId] = {};
+                        }
+                        this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                    }
                     editedCol.text(editedElementValue);
                     editedElement.remove();
                 }
