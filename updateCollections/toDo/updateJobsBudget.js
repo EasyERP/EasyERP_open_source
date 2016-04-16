@@ -42,18 +42,18 @@ dbObject.once('open', function callback() {
                     {$match: {_id: jobId}},
                     {$unwind : {
                         path: "$wTracks",
-                        preserveNullAndEmptyArrays: true}},
+                        preserveNullAndEmptyArrays: true}
+                    },
                     {$lookup : {
                         from:"wTrack",
                         localField: "wTracks",
                         foreignField: "_id",
-                        as: "wTrack"}},
-
+                        as: "wTrack"}
+                    },
                     {$project: {
                         wTrack : {$arrayElemAt: ["$wTrack", 0]},
-                        budget: 1
-                    }},
-
+                        budget: 1}
+                    },
                     {$group: {
                         _id: {
                             _id: "$_id",
@@ -64,25 +64,20 @@ dbObject.once('open', function callback() {
                         revenueSum: { $sum: "$wTrack.revenue" },
                         hoursSum: { $sum: "$wTrack.worked" },
                         maxDate: {$max : "$wTrack.dateByWeek"},
-                        minDate: {$min : "$wTrack.dateByWeek"}
-                    }
+                        minDate: {$min : "$wTrack.dateByWeek"}}
                     },
-
                     {$lookup: {
                         from:"Department",
                         localField: "_id.department",
                         foreignField: "_id",
-                        as: "department"
-                    }
+                        as: "department"}
                     },
-
                     {$lookup: {
                         from:"Employees",
                         localField: "_id.employee",
                         foreignField: "_id",
-                        as: "employee"
-                    }},
-
+                        as: "employee"}
+                    },
                     {$project: {
                         _id: "$_id._id",
                         department : {$arrayElemAt: ["$department", 0]},
@@ -91,17 +86,14 @@ dbObject.once('open', function callback() {
                         "budget.revenueSum": "$revenueSum",
                         "budget.hoursSum": "$hoursSum",
                         maxDate:  1,
-                        minDate:  1
-                    }},
-
+                        minDate:  1}
+                    },
                     {$lookup: {
                         from:"JobPosition",
                         localField: "employee.jobPosition",
                         foreignField: "_id",
-                        as: "employee.jobPosition"
-                    }
+                        as: "employee.jobPosition"}
                     },
-
                     {$project: {
                         _id: "$_id",
                         "department._id" : "$department._id",
@@ -111,9 +103,8 @@ dbObject.once('open', function callback() {
                         "employee.jobPosition" : {$arrayElemAt: ["$employee.jobPosition", 0]},
                         budget : "$budget",
                         maxDate:  1,
-                        minDate:  1
-                    }},
-
+                        minDate:  1}
+                    },
                     {$project: {
                         _id: "$_id",
                         "department" : "$department",
@@ -123,37 +114,30 @@ dbObject.once('open', function callback() {
                         "employee.jobPosition.name" : "$employee.jobPosition.name",
                         budget : "$budget",
                         maxDate:  1,
-                        minDate:  1
-                    }},
-
+                        minDate:  1}
+                    },
                     {$group: {
-                        _id: {
-                            _id: "$_id"
-                        },
+                        _id: "$_id",
                         projectTeam: {$push : {department: "$department", employee: "$employee", budget: "$budget"}},
                         budgetTotalCost: { $sum: "$budget.costSum" },
                         budgetTotalRevenue: { $sum: "$budget.revenueSum" },
                         budgetTotalHoursSum: { $sum: "$budget.hoursSum" },
                         maxDate: { $max: "$maxDate" },
-                        minDate: { $min: "$minDate" }
-                    }},
-
+                        minDate: { $min: "$minDate" }}
+                    },
                     {$project: {
-                        _id: "$_id._id",
+                        _id: "$_id",
                         projectTeam: "$projectTeam",
                         "budgetTotal.costSum": "$budgetTotalCost",
                         "budgetTotal.revenueSum": "$budgetTotalRevenue",
                         "budgetTotal.hoursSum": "$budgetTotalHoursSum",
                         "budgetTotal.maxDate": "$maxDate",
-                        "budgetTotal.minDate": "$minDate"
-                    }
+                        "budgetTotal.minDate": "$minDate"}
                     },
-
                     {$project: {
                         _id: "$_id",
                         "budget.projectTeam": "$projectTeam",
-                        "budget.budgetTotal": "$budgetTotal"
-                    }
+                        "budget.budgetTotal": "$budgetTotal"}
                     }
                 ], function(err, jobObj) {
                     if (err) {
