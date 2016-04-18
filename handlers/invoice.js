@@ -5,6 +5,7 @@ var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
 var fs = require("fs");
+var pathMod = require("path");
 // var fileUploader = require('../helpers/fileUploader');
 
 var Invoice = function (models, event) {
@@ -271,6 +272,8 @@ var Invoice = function (models, event) {
                 order = parallelResponse[0];
                 workflow = parallelResponse[1];
 
+                order.attachments[0].shortPas = order.attachments[0].shortPas.replace('..%2Froutes', '');
+
             } else {
                 err = new Error(RESPONSES.BAD_REQUEST);
                 err.status = 400;
@@ -450,12 +453,12 @@ var Invoice = function (models, event) {
             switch (osType) {
                 case "Windows":
                 {
-                    localPath = __dirname + "\\uploads\\" + req.headers.id;
+                    localPath = pathMod.join(__dirname, "..\\routes\\uploads\\", req.headers.id);
                 }
                     break;
                 case "Linux":
                 {
-                    localPath = __dirname + "\/uploads\/" + req.headers.id;
+                    localPath = pathMod.join(__dirname, "..\/routes\/uploads\/", req.headers.id);
                 }
             }
             fs.readdir(localPath, function (err, files) {
@@ -494,14 +497,14 @@ var Invoice = function (models, event) {
                 switch (osType) {
                     case "Windows":
                     {
-                        path = __dirname + "\\uploads\\" + req.headers.id + "\\" + item.name;
-                        shortPas = "\\uploads\\" + req.headers.id + "\\" + item.name;
+                        path = pathMod.join(__dirname, "..\\routes\\uploads\\", req.headers.id, item.name);
+                        shortPas = pathMod.join("..\\routes\\uploads\\", req.headers.id, item.name);
                     }
                         break;
                     case "Linux":
                     {
-                        path = __dirname + "\/uploads\/" + req.headers.id + "\/" + item.name;
-                        shortPas = "\/uploads\/" + req.headers.id + "\/" + item.name;
+                        path = pathMod.join(__dirname, "..\/routes\/uploads\/", req.headers.id, item.name);
+                        shortPas = pathMod.join("..\/routes\/uploads\/", req.headers.id, item.name);
                     }
                 }
                 fs.writeFile(path, data, function (err) {
@@ -543,12 +546,12 @@ var Invoice = function (models, event) {
         switch (osType) {
             case "Windows":
             {
-                dir = __dirname + "\\uploads\\";
+                dir = pathMod.join(__dirname, '..\\routes\\uploads\\');
             }
                 break;
             case "Linux":
             {
-                dir = __dirname + "\/uploads\/";
+                dir = pathMod.join(__dirname, '..\/routes\/uploads\/');
             }
         }
         fs.readdir(dir, function (err, files) {
@@ -594,7 +597,7 @@ var Invoice = function (models, event) {
                         if (err) {
                             res.send(401);
                         } else {
-                            res.send(200, {success: 'Order updated success', data: response});
+                            res.send(200, {success: 'Order update success', data: response});
                         }
                     });
                 } else {
