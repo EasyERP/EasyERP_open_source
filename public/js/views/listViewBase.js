@@ -282,7 +282,7 @@ define([
                     });
                 }
 
-                $("#top-bar-deleteBtn").hide();
+                //$("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
                 switch (elementId) {

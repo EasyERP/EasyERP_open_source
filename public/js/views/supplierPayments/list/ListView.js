@@ -302,13 +302,12 @@ define([
             },
 
             bindingEventsToEditedCollection: function (context) {
-                var contextEditCollection = context.editCollection;
-                if (contextEditCollection) {
-                    contextEditCollection.unbind();
+                if (context.editCollection) {
+                    context.editCollection.unbind();
                 }
-                contextEditCollection = new editCollection(context.collection.toJSON());
-                contextEditCollection.on('saved', context.savedNewModel, context);
-                contextEditCollection.on('updated', context.updatedOptions, context);
+                context.editCollection = new editCollection(context.collection.toJSON());
+                context.editCollection.on('saved', context.savedNewModel, context);
+                context.editCollection.on('updated', context.updatedOptions, context);
             },
 
             createItem: function () {
@@ -475,10 +474,6 @@ define([
 
                     self.$listTable = $('#listTable');
                 }, 10);
-
-                /*$(document).on("click", function (e) {  // on lisViewBase exist
-                    self.hidePagesPopup(e);
-                });*/
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
