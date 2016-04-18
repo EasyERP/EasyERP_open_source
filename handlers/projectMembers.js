@@ -4,7 +4,9 @@ var async = require('async');
 var ProjectMembers = function (models, events) {
     'use strict';
 
-    var ProjectMembersSchema = mongoose.Schemas['ProjectMembers'];
+    var ProjectMembersSchema = mongoose.Schemas['ProjectMember'];
+    var ProjectSchema = mongoose.Schemas['Project'];
+
 
     this.create = function (req, res, next) {
         var ProjectMemberModel = models.get(req.session.lastDb, 'ProjectMember', ProjectMembersSchema);
@@ -78,6 +80,7 @@ var ProjectMembers = function (models, events) {
             .populate('projectPositionId', '_id name')
             .populate('employeeId', '_id name')
             .populate('bonusId', '_id name value isPercent')
+            .sort({'startDate': -1})
             .exec(function (err, data) {
                 if (err) {
                     return next(err);

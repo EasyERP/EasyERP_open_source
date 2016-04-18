@@ -1145,7 +1145,7 @@ define([
 
                     var data = {
                         collection: self.pMCollection,
-                        project   : self.formModel.id
+                        project   : self.formModel
                     };
 
                     if (cb) {

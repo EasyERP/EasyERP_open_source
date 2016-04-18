@@ -3,11 +3,11 @@
     <td class="centerCell">
         <span title="Delete" class="fa fa-trash-o"></span>
     </td>
-    <td class="startDateManager editable"><%= elem.startDate ? utcDateToLocaleDate(elem.startDate) : 'From start of project'%></td>
-    <td class="endDateManager editable"><%= elem.endDate ? utcDateToLocaleDate(elem.endDate) : 'To end of project'%></td>
+    <td class="startDateManager"><%= elem.startDate ? utcDateToLocaleDate(elem.startDate) : 'From start of project'%></td>
+    <td class="endDateManager"><%= elem.endDate ? utcDateToLocaleDate(elem.endDate) : 'To end of project'%></td>
 
-    <td data-id="elem.employeeId ? elem.employeeId._id : ''" data-content="employee" class="selectCurrent"> <%=elem.employeeId ? elem.employeeId.fullName : '' %></td>
-    <td data-id="elem.projectPositionId ? elem.projectPositionId._id : ''" data-content="projectPosition" class="selectCurrent"><%=elem.projectPositionId ? elem.projectPositionId.name : '' %></td>
-    <td data-id="elem.bonusId ? elem.bonusId._id : ''" data-content="bonus" class="selectCurrent"> <%=elem.bonusId ? elem.bonusId.name : '' %></td>
+    <td data-id="<%=elem.employeeId ? elem.employeeId._id : ''%>" data-content="employee"> <%=elem.employeeId ? elem.employeeId.fullName : ''%></td>
+    <td data-id="<%=elem.projectPositionId ? elem.projectPositionId._id : ''%>" data-content="projectPosition"><%=elem.projectPositionId ? elem.projectPositionId.name : ''%></td>
+    <td data-id="<%=elem.bonusId ? elem.bonusId._id : ''%>" data-content="bonus"> <%=elem.bonusId ? elem.bonusId.name : ''%></td>
 
 </tr>
