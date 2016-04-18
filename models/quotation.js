@@ -53,6 +53,7 @@ module.exports = (function () {
         products      : [products],
         workflow      : {type: ObjectId, ref: 'workflows', default: null},
         whoCanRW      : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
+        attachments   : {type: Array, default: []},
         groups        : {
             owner: {type: ObjectId, ref: 'Users', default: null},
             users: [{type: ObjectId, ref: 'Users', default: null}],

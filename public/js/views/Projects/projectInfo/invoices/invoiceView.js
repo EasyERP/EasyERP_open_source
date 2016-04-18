@@ -168,10 +168,11 @@ define([
                         $("#removeInvoice").hide();
                         $('#check_all_invoice').prop('checked', false);
 
-                        payments.forEach(function (payment) {
-                            $('.payment-list').find("[data-id=" + payment + "]").find('.checkbox').removeClass('notRemovable');
-                        });
-
+                        if (payments || payments.length) {
+                            payments.forEach(function (payment) {
+                                $('.payment-list').find("[data-id=" + payment + "]").find('.checkbox').removeClass('notRemovable');
+                            });
+                        }
 
                         that.collection.remove(checkbox.value);
 

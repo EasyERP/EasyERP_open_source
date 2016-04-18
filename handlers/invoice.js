@@ -450,12 +450,12 @@ var Invoice = function (models, event) {
             switch (osType) {
                 case "Windows":
                 {
-                    localPath = __dirname + "..\\rotes\\uploads\\" + req.headers.id;
+                    localPath = __dirname + "\\uploads\\" + req.headers.id;
                 }
                     break;
                 case "Linux":
                 {
-                    localPath = __dirname + "..\/routes\/uploads\/" + req.headers.id;
+                    localPath = __dirname + "\/uploads\/" + req.headers.id;
                 }
             }
             fs.readdir(localPath, function (err, files) {
@@ -543,12 +543,12 @@ var Invoice = function (models, event) {
         switch (osType) {
             case "Windows":
             {
-                dir = __dirname + "..\\rotes\\uploads\\invoice\\";
+                dir = __dirname + "\\uploads\\";
             }
                 break;
             case "Linux":
             {
-                dir = __dirname + "..\/routes\/uploads\/invoice\/";
+                dir = __dirname + "\/uploads\/";
             }
         }
         fs.readdir(dir, function (err, files) {
@@ -560,7 +560,7 @@ var Invoice = function (models, event) {
                     fs.mkdir(dir, function (errr) {
                         if (!errr) {
                             uploadFileArray(req, res, function (files) {
-                                requestHandler.uploadApplicationFile(req, res, req.headers.id, files);
+                                uploadFile(req, res, req.headers.id, files);
                             });
                         }
                     });
@@ -572,18 +572,38 @@ var Invoice = function (models, event) {
                         fs.mkdir(dir, function (errr) {
                             if (!errr) {
                                 uploadFileArray(req, res, function (files) {
-                                    requestHandler.uploadApplicationFile(req, res, req.headers.id, files);
+                                    uploadFile(req, res, req.headers.id, files);
                                 });
                             }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
-                            requestHandler.uploadApplicationFile(req, res, req.headers.id, files);
+                            uploadFile(req, res, req.headers.id, files);
                         });
                     }
                 });
             }
         });
+    };
+
+    function uploadFile(req, res, id, file) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getEditWritAccess(req, req.session.uId, 63, function (access) {
+                if (access) {
+                    models.get(req.session.lastDb, "Quotation", OrderSchema).findByIdAndUpdate(id, {$set: {attachments: file}}, {new: true}, function (err, response) {
+                        if (err) {
+                            res.send(401);
+                        } else {
+                            res.send(200, {success: 'Order updated success', data: response});
+                        }
+                    });
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
     };
 
     this.updateOnlySelected = function (req, res, next) {

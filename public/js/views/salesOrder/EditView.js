@@ -76,7 +76,6 @@ define([
             prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
-
             keydownHandler: function (e) {
                 switch (e.which) {
                     case 27:
@@ -86,7 +85,6 @@ define([
                         break;
                 }
             },
-
             changeTab: function (e) {
                 var holder = $(e.target);
                 var n;
@@ -106,7 +104,6 @@ define([
                 dialog_holder.find(itemActiveSelector).removeClass("active");
                 dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
-
             cancelOrder: function (e) {
                 e.preventDefault();
 
@@ -141,7 +138,6 @@ define([
                     });
                 });
             },
-
             createInvoice: function(e) {
                 var self = this;
                 var $attachment;
@@ -159,7 +155,6 @@ define([
                 $attachment.hide();
 
             },
-
             uploadAttachment: function (event) {
                 var self = this;
                 var currentModel = this.model;
@@ -192,8 +187,6 @@ define([
 
                         beforeSend: function (xhr) {
                             xhr.setRequestHeader("id", currentModelId);
-                            xhr.setRequestHeader("modelname", self.contentType);
-
                         },
 
                         uploadProgress: function (event, position, total, statusComplete) {
@@ -201,27 +194,32 @@ define([
                         },
 
                         success: function (data) {
-                            //todo add code
+                            self.receiveInvoice();
                         },
 
                         error: function (xhr) {
-                            //todo add code
+                            App.stopPreload();
+                            App.render({
+                                type: 'error',
+                                message: 'Error occurred while image load'
+                            });
                         }
                     });
                 });
+
+                App.startPreload();
+
                 addFrmAttach.submit();
                 addFrmAttach.off('submit');
             },
-
             fileSizeIsAcceptable: function (file) {
                 if (!file) {
                     return false;
                 }
                 return file.size < App.File.MAXSIZE;
             },
-
             receiveInvoice: function (e) {
-                e.preventDefault();
+                e && e.preventDefault();
 
                 var self = this;
                 var url = '/invoice/receive';
@@ -295,7 +293,6 @@ define([
                     }
                 });
             },
-
             setDraft: function (e) {
                 e.preventDefault();
 
@@ -326,7 +323,6 @@ define([
                     });
                 });
             },
-
             saveItem: function (invoiceCb) {
 
                 var self = this;
@@ -479,7 +475,6 @@ define([
                     });
                 }
             },
-
             hideDialog: function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();

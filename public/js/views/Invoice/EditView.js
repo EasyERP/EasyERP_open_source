@@ -74,6 +74,8 @@ define([
                 }*/
 
                 this.render();
+
+                App.stopPreload();
             },
 
             newPayment: function (e) {
