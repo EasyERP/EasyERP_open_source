@@ -151,7 +151,7 @@ define([
                 $attachment = self.$el.find('#invoiceAttachment');
 
                 if (!$attachment.length) {
-                    self.$el.prepend('<input type="file" id="invoiceAttachment" accept="application/pdf" name="attachment">');
+                    self.$el.prepend('<form id="invoiceAttachmentForm"><input type="file" id="invoiceAttachment" accept="application/pdf" name="attachfile"></form>');
                     $attachment = self.$el.find('#invoiceAttachment');
                 }
 
@@ -163,9 +163,8 @@ define([
             uploadAttachment: function (event) {
                 var self = this;
                 var currentModel = this.model;
-                var elementId = this.elementId || 'addAttachments';
                 var currentModelId = currentModel ? currentModel["id"] : null;
-                var addFrmAttach = $("#" + elementId);
+                var addFrmAttach = $("#invoiceAttachmentForm");
                 var addInptAttach;
 
                 addInptAttach = self.$el.find("#invoiceAttachment")[0].files[0];
@@ -198,15 +197,15 @@ define([
                         },
 
                         uploadProgress: function (event, position, total, statusComplete) {
-
+                            //todo add code
                         },
 
                         success: function (data) {
-
+                            //todo add code
                         },
 
                         error: function (xhr) {
-
+                            //todo add code
                         }
                     });
                 });
