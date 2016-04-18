@@ -3,14 +3,16 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Projects/projectInfo/members/membersTemplate.html',
+    'text!templates/Projects/projectInfo/members/cancelEdit.html',
     'text!templates/Projects/projectInfo/members/createMember.html',
     'views/selectView/selectView',
     'common',
     'dataService',
     'collections/projectMembers/editCollection',
     'models/ProjectMemberModel',
-    'moment'
-], function (Backbone, $, _, membersTemplate, createMember, SelectView, common, dataService, prMembersCollection, currentModel, moment) {
+    'moment',
+    'async'
+], function (Backbone, $, _, membersTemplate, cancelEdit, createMember, SelectView, common, dataService, prMembersCollection, currentModel, moment, async) {
     'use strict';
 
     var PMView = Backbone.View.extend({
@@ -33,6 +35,7 @@ define([
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .selectCurrent'                             : 'showNewSelect',
             'click #addMember'                                 : 'addMember',
+            'click #cancelMember'                              : 'deleteItems',
             'click .editable'                                  : 'editRow',
             'click #saveMember'                                : 'saveItem',
             'click .fa-trash-o'                                : 'removeMember'
@@ -44,6 +47,7 @@ define([
             var row = target.parent('tr');
             var td = target.parent('td');
             var rowId = row.data('id');
+            var isNewRow = row.hasClass('false');
 
            // var prevRow = row.prev().find('.startDateManager');
           //  var prevSalesDate = prevRow.text() === 'From start of project' ? this.model.get('StartDate') : row.prev().find('.startDateManager').text();
@@ -63,22 +67,19 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                //minDate    : startDate ,
                 onSelect   : function (dateText) {
                     var $editedCol = target.closest('td');
                     var dateType = $editedCol.hasClass('startDateManager') ? 'startDate' : 'endDate';
-                    var date = new Date(dateText);
                     if (!self.changedModels[rowId] ) {
                         self.changedModels[rowId] = {};
                     }
                     self.changedModels[rowId][dateType] = dateText;
-                  //  var prevDay = moment(date).subtract(1, 'd');
-                  //  var $prSmEndDate = target.closest('tr').prev().find('.endDateManager');
+                    if (!isNewRow) {
+                        row.addClass('edited');
+                    }
+
                     $editedCol.text(dateText);
-                    self.$el.find('#saveMember').show();
-                    self.$el.find('#addMember').hide();
-                  //  $prSmEndDate.text(common.utcDateToLocaleDate(prevDay.toDate()));
-                 //   $('#top-bar-saveBtn').show();
+                    self.showSaveBtn();
                 }
             });
 
@@ -87,8 +88,68 @@ define([
             return false;
         },
 
+        deleteItems: function (e) {
+            var newElements;
+            var id;
+            var editedItems = this.$el.find('.edited');
+
+            e.preventDefault();
+
+            if (editedItems.length) {
+                this.cancelChanges();
+            } else {
+                newElements = this.$el.find('.false');
+                id = newElements.data('id');
+
+                if (id) {
+                    this.collection.remove(id);
+                }
+
+                newElements.remove();
+                this.showCreateBtn();
+            }
+        },
+
+        cancelChanges: function () {
+            var self = this;
+            var edited = this.$el.find('.edited');
+
+            var collection = this.collection;
+
+            async.each(edited, function (el, cb) {
+                var tr = $(el);
+                var id = tr.data('id');
+                var template = _.template(cancelEdit);
+                var model;
+
+                if (!id) {
+                    return cb('Empty id');
+                } else if (id.length < 24) {
+                    tr.remove();
+                    model = self.changedModels;
+
+                    if (model) {
+                        delete model[id];
+                    }
+
+                    return cb();
+                }
+
+                model = collection.get(id);
+                tr.replaceWith(template({
+                    elem               : model.toJSON(),
+                    utcDateToLocaleDate: common.utcDateToLocaleDate
+                }));
+                cb();
+            }, function (err) {
+                if (!err) {
+                    self.showCreateBtn();
+                }
+            });
+        },
+
         savedNewModel: function (modelObject) {
-            var savedRow = this.$el.find(".false");
+            var savedRow = this.$el.find('.false');
             var oldId = savedRow.data('id');
             var modelId;
 
@@ -104,8 +165,9 @@ define([
             this.showCreateBtn();
         },
 
-        updatedOptions : function (){
+        updatedOptions: function () {
             this.showCreateBtn();
+            this.changedModels = {};
         },
 
         hideNewSelect: function () {
@@ -163,6 +225,7 @@ define([
             var target = $(e.target);
             var targetElement = target.parents('td');
             var targetRow = target.parents('tr');
+            var isNewRow = targetRow.hasClass('false');
             var rowId = targetRow.data('id');
             var id = target.attr('id');
            // var prevSales = targetRow.prev().attr('data-id');
@@ -186,11 +249,15 @@ define([
                 this.changedModels[rowId][dataType] = id;
             }
 
+
             targetElement.text(target.text());
             targetElement.attr('data-id', id);
+            if (!isNewRow){
+                targetRow.addClass('edited');
+            }
 
             this.hideNewSelect();
-            this.showSavelBtn();
+            this.showSaveBtn();
 
             return false;
         },
@@ -213,7 +280,7 @@ define([
                 /*this.showSaveCancelBtns();*/
                 this.collection.add(model);
                 this.$el.find('#projectMembersTable').append(_.template(createMember, startData));
-                this.showSavelBtn();
+                this.showSaveBtn();
 
             } else {
                 App.render({
@@ -223,14 +290,17 @@ define([
             }
         },
 
-        showSavelBtn: function (){
+        showSaveBtn: function (){
             this.$el.find('#saveMember').show();
             this.$el.find('#addMember').hide();
+            this.$el.find('#cancelMember').show();
+
         },
 
         showCreateBtn: function (){
             this.$el.find('#saveMember').hide();
             this.$el.find('#addMember').show();
+            this.$el.find('#cancelMember').hide();
         },
 
         isNewRow: function () {
@@ -257,8 +327,6 @@ define([
                                 message: "You do not have permission to perform this action"
                             });
                         }
-                        self.deleteItemsRender(1, 1);
-
                     }
                 });
             } else {
@@ -277,8 +345,6 @@ define([
                 utcDateToLocaleDate: common.utcDateToLocaleDate
             }));
 
-
-
             dataService.getData('/employee/getForDD', {salesDepartments: true, isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
@@ -294,7 +360,9 @@ define([
             dataService.getData("/projectPosition/getForDD", null, function (data) {
                 self.responseObj['#projectPosition'] = data.data;
             });
+
             this.$el.find('#saveMember').hide();
+            this.$el.find('#cancelMember').hide();
 
             return this;
         }
