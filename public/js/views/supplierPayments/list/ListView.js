@@ -380,7 +380,7 @@ define([
                     editedElementValue = editedElement.val();
 
                     if (editedElementRowId.length >= 24) {
-                        editModel = this.collection.get(editedElementRowId);
+                        editModel = this.collection.get(editedElementRowId) || this.editCollection.get(editedElementRowId);
                         editValue = editModel.get(editedElementContent);
 
                         if (editedElementValue !== editValue) {

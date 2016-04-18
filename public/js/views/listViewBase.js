@@ -69,7 +69,7 @@ define([
                 var sortObject;
                 var newRows = this.$el.find('#false');
 
-                if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
+                if ((this.changed && this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
