@@ -429,7 +429,7 @@
                 manager = $tr.find('#projectManagerDD').attr('data-id') || null;
                 info = $tr.find('#statusInfoDd').val();
                 jobType = $.trim($tr.find('#jobTypeDd').text());
-                salary = self.isSalary ? parseInt($tr.find('[data-id="salary"]').text()) : null;
+                salary = self.isSalary ? parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text()) : null;
 
                 if (!previousDep) {
                     previousDep = department;

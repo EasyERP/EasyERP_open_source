@@ -471,7 +471,7 @@ define([
                     var $previousTr;
 
                     $tr = $($tr);
-                    salary = self.isSalary ? parseInt($tr.find('[data-id="salary"]').text()) : null;
+                    salary = self.isSalary ? parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text()) : null;
                     manager = $tr.find('#projectManagerDD').attr('data-id') || null;
                     date = new Date($.trim($tr.find('td').eq(2).text()));
                     jobPosition = $tr.find('#jobPositionDd').attr('data-id');
