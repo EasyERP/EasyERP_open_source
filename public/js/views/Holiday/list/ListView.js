@@ -116,19 +116,50 @@ define([
             },
 
             saveItem: function () {
+                var self = this;
                 var model;
                 var modelJSON;
                 var date;
+                var id;
+                var errors = this.$el.find('.errorContent');
+                var keys = Object.keys(this.changedModels);
 
-                for (var id in this.changedModels) {
-                    model = this.editCollection.get(id);
+                var filled = true;
+
+                $(".editable").each(function (index, elem){
+                    if (!$(elem).html()){
+                        filled = false;
+                        return false;
+                    }
+                });
+
+                if (!filled) {
+                    return  App.render({type: 'error', message: 'Fill all fields please'});
+                }
+
+                this.setChangedValueToModel();
+
+                keys.forEach (function(id){
+                    model = self.editCollection.get(id) || self.collection.get(id);
                     modelJSON = model.toJSON();
                     date = new Date(modelJSON.date);
-                    model.changed = this.changedModels[id];
+                    model.changed = self.changedModels[id];
+                    if (!self.changedModels[id].date) {
+                        model.changed.date = date;
+                    }
                     model.changed.year = moment(date).isoWeekYear();
                     model.changed.week = moment(date).isoWeek();
+                });
+
+                if (errors.length) {
+                    return;
                 }
                 this.editCollection.save();
+
+                keys.forEach (function(id){
+                    delete self.changedModels[id];
+                    self.editCollection.remove(id);
+                });
             },
 
             setChangedValueToModel: function () {
@@ -137,11 +168,8 @@ define([
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-                var editHolidayModel;
-
-                if (navigator.userAgent.indexOf("Firefox") > -1) {
-                    this.setEditable(editedElement);
-                }
+                var editModel;
+                var editValue;
 
                 if (editedElement.length) {
                     editedCol = editedElement.closest('td');
@@ -149,18 +177,22 @@ define([
                     editedElementContent = editedCol.data('content');
                     editedElementValue = editedElement.val();
 
-                   // editHolidayModel = this.editCollection.get(editedElementRowId);
+                    if (editedElementRowId.length >= 24) {
+                        editModel = this.collection.get(editedElementRowId) || this.editCollection.get(editedElementRowId);
+                        editValue = editModel.get(editedElementContent);
 
-                    if (!this.changedModels[editedElementRowId]) {
-                        /*if (!editHolidayModel.id) {
-                            this.changedModels[editedElementRowId] = editHolidayModel.attributes;
-                        } else {*/
+                        if (editedElementValue !== editValue) {
+                            if (!this.changedModels[editedElementRowId]) {
+                                this.changedModels[editedElementRowId] = {};
+                            }
+                            this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                        }
+                    } else {
+                        if (!this.changedModels[editedElementRowId]) {
                             this.changedModels[editedElementRowId] = {};
-                      /*  }*/
+                        }
+                        this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                     }
-
-
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                     editedCol.text(editedElementValue);
                     editedElement.remove();
                 }
@@ -278,7 +310,6 @@ define([
             renderContent: function () {
                 var $currentEl = this.$el;
                 var tBody = $currentEl.find('#listTable');
-                $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
@@ -307,11 +338,13 @@ define([
                 startData._id = model.cid;
 
                 if (!this.isNewRow()) {
-                    //this.showSaveCancelBtns();
+                    this.showSaveCancelBtns();
                     this.editCollection.add(model);
 
                     new createView(startData);
                 }
+
+                this.changed = true;
             },
 
             isNewRow: function () {
@@ -370,7 +403,8 @@ define([
                     mid = 39,
                     model;
                 var localCounter = 0;
-                var count = $("#listTable input:checked").length;
+                var listTableChecked = $("#listTable input:checked");
+                var count = listTableChecked.length;
                 this.collectionLength = this.collection.length;
 
                 if (!this.changed) {
@@ -378,7 +412,7 @@ define([
                     var value;
 
                     if (answer === true) {
-                        $.each($("#listTable input:checked"), function (index, checkbox) {
+                        $.each(listTableChecked, function (index, checkbox) {
                             value = checkbox.value;
                             that.changedModels = {};
 
@@ -437,7 +471,8 @@ define([
                 var self = this;
                 var edited = this.edited;
                 var collection = this.collection;
-                var editedCollectin = this.editCollection;
+                var copiedCreated;
+                var dataId;
 
                 async.each(edited, function (el, cb) {
                     var tr = $(el).closest('tr');
@@ -447,11 +482,12 @@ define([
                     var template = _.template(cancelEdit);
                     var model;
 
-                    if (!id) {
+                    if (!id || (id.length < 24)) {
+                        self.hideSaveCancelBtns();
                         return cb('Empty id');
                     }
 
-                    model = editedCollectin.get(id);
+                    model = collection.get(id);
                     model = model.toJSON();
                     model.index = rowNumber;
                     if (!trId) {
@@ -462,10 +498,24 @@ define([
                     cb();
                 }, function (err) {
                     if (!err) {
-                       // self.editCollection = new editCollection(collection.toJSON()); // took off in case of not hiding saveCancelButtons
                         self.hideSaveCancelBtns();
+                        if (!err) {
+                            self.editCollection = new editCollection(collection.toJSON());
+                            self.editCollection.on('saved', self.savedNewModel, self);
+                            self.editCollection.on('updated', self.updatedOptions, self);
+                        }
                     }
                 });
+
+                copiedCreated = this.$el.find('#false');
+                dataId = copiedCreated.attr('data-id');
+                this.editCollection.remove(dataId);
+                delete this.changedModels[dataId];
+                copiedCreated.remove();
+
+                this.createdCopied = false;
+
+                self.changedModels = {};
             }
 
         });
