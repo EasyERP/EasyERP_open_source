@@ -2,6 +2,8 @@
  * Created by Roman on 17.06.2015.
  */
 define([
+    'Backbone',
+    'Underscore',
     'text!templates/Revenue/index.html',
     'text!templates/Revenue/weeksArray.html',
     'text!templates/Revenue/tableByDep.html',
@@ -30,7 +32,36 @@ define([
     'd3',
     'constants',
     'helpers'
-], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, bonusBySales, allBonus, allBonusByMonth, perMonthForAllBonus, hoursSold, RevenueModel, moment, dataService, async, custom, d3, CONSTANTS, helpers) {
+], function (Backbone,
+             _,
+             mainTemplate,
+             weeksArray,
+             tableByDep,
+             bySalesByDep,
+             perWeek,
+             paidBySales,
+             paidBySalesItems,
+             projectBySalesItems,
+             unpaidBySales,
+             monthsArray,
+             perMonth,
+             perMonthInt,
+             tableSold,
+             hoursByDepItem,
+             hoursByDepTotal,
+             bonusBySales,
+             allBonus,
+             allBonusByMonth,
+             perMonthForAllBonus,
+             hoursSold,
+             RevenueModel,
+             moment,
+             dataService,
+             async,
+             custom,
+             d3,
+             CONSTANTS,
+             helpers) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -70,9 +101,14 @@ define([
         initialize: function () {
             var self = this;
             var currentWeek = moment().week();
-            var nowMonth = parseInt(moment().week(currentWeek).format("MM"));
+            var nowMonth = parseInt(moment().week(currentWeek).format('MM'), 10);
+            var currentStartWeek = currentWeek - 6;
+            var currentYear = moment().weekYear();
+            var currentMonth = parseInt(moment().week(currentStartWeek).format('MM'), 10);
+
             this.revenueTotal = _.after(2, self.changeRevenue);
             this.model = new RevenueModel();
+
             this.listenTo(this.model, 'change:currentYear', this.changeYear);
             this.listenTo(this.model, 'change:currentStartWeek', this.changeWeek);
             this.listenTo(this.model, 'change:weeksArr', this.changeWeeksArr);
@@ -88,12 +124,8 @@ define([
             this.listenTo(this.model, 'change:uncalcBonus', this.changeUnCalcBonusByMonth);
             this.listenTo(this.model, 'change:calcBonus', this.changeCalcBonusByMonth);
             this.listenTo(this.model, 'change:revenueTotal', this.revenueTotal);
-            /**this.listenTo(this.model, 'change:paidBonus', this.changeHoursByDep);
-             this.listenTo(this.model, 'change:balanceBonus', this.changeHoursByDep);*/
-
-            var currentStartWeek = currentWeek - 6;
-            var currentYear = moment().weekYear();
-            var currentMonth = parseInt(moment().week(currentStartWeek).format("MM"));
+            /* this.listenTo(this.model, 'change:paidBonus', this.changeHoursByDep);
+             this.listenTo(this.model, 'change:balanceBonus', this.changeHoursByDep); */
 
             this.changeWeek = _.debounce(this.updateWeek, 500);
 
@@ -114,7 +146,7 @@ define([
         },
 
         getDate: function (num) {
-            return moment().day("Monday").week(num).format("DD.MM");
+            return moment().day('Monday').week(num).format('DD.MM');
         },
 
         getModelValue: function (attr) {
@@ -185,20 +217,20 @@ define([
             }
 
             this.monthArr = _.sortBy(this.monthArr, function (monthObject) {
-                return monthObject.year * 100 + monthObject.month
+                return monthObject.year * 100 + monthObject.month;
             });
 
-            this.fetchPaidBySales();
-            this.fetchUnpaidBySales();
-            this.fetchCancelledBySales();
-            this.fetchProjectBySales();
-            this.fetchEmployeeBySales();
+            /* this.fetchPaidBySales();
+             this.fetchUnpaidBySales();
+             this.fetchCancelledBySales();
+             this.fetchProjectBySales();
+             this.fetchEmployeeBySales(); */
             this.fetchAllBonusByMonth();
-            this.fetchUncalcBonus();
-            this.fetchCalcBonus();
+            /* this.fetchUncalcBonus();
+             this.fetchCalcBonus(); */
             /*
              this.fetchPaidBonus();
-             this.fetchBalanceBonus();*/
+             this.fetchBalanceBonus(); */
         },
 
         changeWeek: function () {
@@ -445,7 +477,7 @@ define([
             }, function (err) {
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -537,7 +569,7 @@ define([
             }, function (err) {
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -607,7 +639,7 @@ define([
 
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -690,7 +722,7 @@ define([
 
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -772,7 +804,7 @@ define([
 
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -892,7 +924,7 @@ define([
 
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -976,7 +1008,7 @@ define([
 
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -1058,7 +1090,7 @@ define([
 
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -1176,7 +1208,7 @@ define([
 
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -1282,7 +1314,7 @@ define([
 
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -1388,7 +1420,7 @@ define([
 
                 if (err) {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: err
                     });
                 }
@@ -1627,11 +1659,11 @@ define([
         },
 
         render: function (employees) {
-            $('title').text(this.contentType);
-
             var self = this;
             var thisEl = this.$el;
             var model = this.model.toJSON();
+
+            $('title').text(this.contentType);
 
             this.employees = employees;
 
@@ -1639,7 +1671,7 @@ define([
 
             this.$el.html(this.template(model));
 
-            this.$el.find("#currentStartWeek").spinner({
+            this.$el.find('#currentStartWeek').spinner({
                 min: 0,
                 max: 54
             });

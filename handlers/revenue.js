@@ -5,19 +5,20 @@ var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 
 var wTrack = function (models) {
-    "use strict";
+    'use strict';
 
-    var access = require("../Modules/additions/access.js")(models);
-    var wTrackSchema = mongoose.Schemas['wTrack'];
-    var ProjectSchema = mongoose.Schemas['Project'];
-    var BonusTypeSchema = mongoose.Schemas['bonusType'];
-    var monthHoursSchema = mongoose.Schemas['MonthHours'];
-    var vacationSchema = mongoose.Schemas['Vacation'];
-    var holidaysSchema = mongoose.Schemas['Holiday'];
-    var employeeSchema = mongoose.Schemas['Employee'];
-    var HoursCashesSchema = mongoose.Schemas['HoursCashes'];
-    var paymentSchema = mongoose.Schemas['Payment'];
-    var invoiceSchema = mongoose.Schemas['wTrackInvoice'];
+    var access = require('../Modules/additions/access.js')(models);
+    var wTrackSchema = mongoose.Schemas.wTrack;
+    var ProjectSchema = mongoose.Schemas.Project;
+    var BonusTypeSchema = mongoose.Schemas.bonusType;
+    var monthHoursSchema = mongoose.Schemas.MonthHours;
+    var vacationSchema = mongoose.Schemas.Vacation;
+    var holidaysSchema = mongoose.Schemas.Holiday;
+    var employeeSchema = mongoose.Schemas.Employee;
+    var HoursCashesSchema = mongoose.Schemas.HoursCashes;
+    var paymentSchema = mongoose.Schemas.Payment;
+    var invoiceSchema = mongoose.Schemas.wTrackInvoice;
+    var journalEntry = mongoose.Schemas.journalEntry;
 
     var constForView = [
         'iOS',
@@ -2427,7 +2428,7 @@ var wTrack = function (models) {
     //            res.status(200).send(departments);
     //        }
     //    });
-    //};
+    // };
 
     this.getFromCash = function (req, res, next) {
         var self = this;
@@ -2842,14 +2843,14 @@ var wTrack = function (models) {
                             {year: 1, month: 1, hours: 1}
                         )
                         .lean()
-                        .exec(parallelCb)
+                        .exec(parallelCb);
                 };
 
                 function holidaysRetriver(parallelCb) {
                     Holidays
                         .find(matchHoliday)
                         .lean()
-                        .exec(parallelCb)
+                        .exec(parallelCb);
                 };
                 function vacationComposer(parallelCb) {
                     Vacation.aggregate([{
@@ -3069,8 +3070,8 @@ var wTrack = function (models) {
         };
 
         function getTotalHours(options, waterfallCB) {
-            var hoursSold = options['hoursSold'];
-            var hoursTotal = options['totalHours'];
+            var hoursSold = options.hoursSold;
+            var hoursTotal = options.totalHours;
             var resultForUnsold = [];
 
             hoursTotal.forEach(function (department) {
@@ -3142,6 +3143,8 @@ var wTrack = function (models) {
 
             query = HoursCashes.find({dateField: dateKey});
             query.exec(function (err, result) {
+                var resForView;
+
                 if (err) {
                     return next(err);
                 }
@@ -3149,9 +3152,9 @@ var wTrack = function (models) {
                 if (result.length === 0) {
 
                     async.parallel({
-                            //hoursByDep: function (callback) {
+                            // hoursByDep: function (callback) {
                             //    getHoursByDep(startWeek, startYear, callback);
-                            //},
+                            // },
                             hoursSold : function (callback) {
                                 getHoursSold(startMonth, yearforMonth, callback);
                             },
@@ -3185,7 +3188,7 @@ var wTrack = function (models) {
                                         }
 
                                         return callback(null, 'Done!');
-                                    })
+                                    });
                                 }
                             ], function (err, results) {
                                 if (err) {
@@ -3193,14 +3196,14 @@ var wTrack = function (models) {
                                 }
 
                             });
-                        })
+                        });
 
                 } else {
-                    var resForView = result[0].toJSON();
+                    resForView = result[0].toJSON();
                     res.status(200).send(resForView.result);
                 }
-            })
-        })
+            });
+        });
     };
 
     this.synthetic = function (req, res, next) {
@@ -3662,7 +3665,7 @@ var wTrack = function (models) {
                     year          : '$root.year',
                     month         : '$root.month',
                     week          : '$root.week',
-                    salesPerson: '$root.salesPerson._id'
+                    salesPerson   : '$root.salesPerson._id'
                 }
             }, {
                 $group: {
@@ -3740,6 +3743,114 @@ var wTrack = function (models) {
 
             res.status(200).send({payments: response.invoiced, sales: sales});
             /*res.status(200).send(response);*/
+        });
+    };
+
+    this.profit = function (req, res, next) {
+        var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntry);
+
+        access.getReadAccess(req, req.session.uId, 67, function (_access) {
+            var options = req.query;
+            var startWeek = parseInt(options.week, 10);
+            var startYear = parseInt(options.year, 10);
+            var endWeek;
+            var endYear;
+            var startDate;
+            var endDate;
+            var match;
+            var groupBy;
+
+            if (!_access) {
+                return res.status(403).send();
+            }
+
+            if (startWeek >= 40) {
+                endWeek = parseInt(startWeek, 10) + 14 - 53;
+                endYear = parseInt(startYear, 10) + 1;
+            } else {
+                endWeek = parseInt(startWeek, 10) + 14;
+                endYear = parseInt(startYear, 10);
+            }
+
+            startDate = startYear * 100 + startWeek;
+            endDate = endYear * 100 + endWeek;
+
+            match = {
+                $and: [
+                    {'project._id': {$exists: true}},
+                    {'project._id': {$ne: null}},
+                    {dateByWeek: {$gte: startDate, $lt: endDate}}
+                ]
+            };
+
+            groupBy = {
+                _id    : {
+                    employee: '$project.projectmanager',
+                    year    : '$year',
+                    week    : '$week'
+                },
+                // revenue: {$sum: {$multiply: ["$rate", {$add: ["$1", "$2", "$3", "$4", "$5", "$6", "$7"]}]}}
+                revenue: {$sum: '$revenue'}
+            };
+
+            JournalEntry.aggregate([{
+                $lookup: {
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id',
+                    as          : 'project'
+                }
+            }, {
+                $project: {
+                    project   : {$arrayElemAt: ['$project', 0]},
+                    year      : 1,
+                    week      : 1,
+                    revenue   : {
+                        $divide: ['$revenue', 100]
+                    },
+                    dateByWeek: 1
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'project.projectmanager',
+                    foreignField: '_id', as: 'employee'
+                }
+            }, {
+                $project: {
+                    project   : 1,
+                    year      : 1,
+                    week      : 1,
+                    employee  : {$arrayElemAt: ["$employee", 0]},
+                    revenue   : 1,
+                    dateByWeek: 1
+                }
+            }, {
+                $match: match
+            }, {
+                $group: groupBy
+            }, {
+                $project: {
+                    year    : "$_id.year",
+                    week    : "$_id.week",
+                    employee: "$_id.employee",
+                    revenue : 1,
+                    _id     : 0
+                }
+            }, {
+                $group: {
+                    _id  : "$employee",
+                    root : {$push: "$$ROOT"},
+                    total: {$sum: "$revenue"}
+                }
+            }], function (err, response) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(response);
+            });
+
         });
     };
 };
