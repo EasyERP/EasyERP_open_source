@@ -652,7 +652,7 @@ define([
                 notDiv.append(
                     new attachView({
                         model: this.currentModel,
-                        url  : "/uploadInvoiceFiles"
+                        url  : "/uploadInvoiceFiles",
                     }).render().el
                 );
 

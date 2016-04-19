@@ -181,6 +181,30 @@ var Invoice = function (models, event) {
             query.exec(callback);
         }
 
+        function renameFolder(orderId, invoiceId) {
+            var os = require("os");
+            var osType = (os.type().split('_')[0]);
+            var dir;
+            var oldDir;
+            var newDir;
+            switch (osType) {
+                case "Windows":
+                {
+                    dir = pathMod.join(__dirname, '..\\routes\\uploads\\');
+                }
+                    break;
+                case "Linux":
+                {
+                    dir = pathMod.join(__dirname, '..\/routes\/uploads\/');
+                }
+            }
+
+            oldDir = dir + orderId;
+            newDir = dir + invoiceId;
+
+            fs.rename(oldDir, newDir);
+        }
+
         function findProformaPayments(callback) {
             Invoice.aggregate([
                 {
@@ -405,36 +429,49 @@ var Invoice = function (models, event) {
                 }
             });
 
-            if (products) {
-                async.each(products, function (result, cb) {
-                    var jobs = result.jobs;
+            result.attachments[0].shortPas = result.attachments[0].shortPas.replace(id.toString(), invoiceId.toString());
 
-                    JobsModel.findByIdAndUpdate(jobs, {
-                        $set: {
-                            invoice : invoiceId,
-                            type    : "Invoiced",
-                            workflow: CONSTANTS.JOBSFINISHED,
-                            editedBy: editedBy
+            Invoice.findByIdAndUpdate(invoiceId, {
+                $set: {
+                    attachments: result.attachments
+                }
+            }, {new: true}, function (err) {
+                if (err) {
+                    return next(err);
+                }
+
+                renameFolder(id.toString(), invoiceId.toString());
+
+                if (products) {
+                    async.each(products, function (result, cb) {
+                        var jobs = result.jobs;
+
+                        JobsModel.findByIdAndUpdate(jobs, {
+                            $set: {
+                                invoice : invoiceId,
+                                type    : "Invoiced",
+                                workflow: CONSTANTS.JOBSFINISHED,
+                                editedBy: editedBy
+                            }
+                        }, {new: true}, function (err, job) {
+                            if (err) {
+                                return cb(err);
+                            }
+                            project = job.project || null;
+                            cb();
+                        });
+
+                    }, function () {
+                        if (project) {
+                            event.emit('fetchJobsCollection', {project: project});
                         }
-                    }, {new: true}, function (err, job) {
-                        if (err) {
-                            return cb(err);
-                        }
-                        project = job.project || null;
-                        cb();
+
+                        res.status(201).send(result);
                     });
-
-                }, function () {
-                    if (project) {
-                        event.emit('fetchJobsCollection', {project: project});
-                    }
-
+                } else {
                     res.status(201).send(result);
-                });
-            } else {
-                res.status(201).send(result);
-            }
-
+                }
+            });
         });
 
     };
@@ -626,6 +663,12 @@ var Invoice = function (models, event) {
         var model;
         var journal;
         var dateForobs;
+        var fileName;
+        var os;
+        var _id;
+        var osType;
+        var path;
+        var dir;
 
         date = moment(new Date(data.invoiceDate));
         date = date.format('YYYY-MM-DD');
@@ -638,54 +681,121 @@ var Invoice = function (models, event) {
             access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
 
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
+                    if (data.fileName) {
 
-                    oxr.historical(date, function () {
-                        fx.rates = oxr.rates;
-                        fx.base = oxr.base;
+                        fileName = data.fileName;
+                        os = require("os");
+                        osType = (os.type().split('_')[0]);
+                        path;
+                        dir;
 
-                        data.currency.rate = oxr.rates[data.currency.name];
+                        _id = id;
+
+                        switch (osType) {
+                            case "Windows":
+                            {
+                                var newDirname = __dirname.replace("handlers", "routes");
+                                while (newDirname.indexOf("\\") !== -1) {
+                                    newDirname = newDirname.replace("\\", "\/");
+                                }
+                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                dir = newDirname + "\/uploads\/" + _id;
+                            }
+                                break;
+                            case "Linux":
+                            {
+                                var newDirname = __dirname.replace("handlers", "routes");
+                                while (newDirname.indexOf("\\") !== -1) {
+                                    newDirname = newDirname.replace("\\", "\/");
+                                }
+                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                dir = newDirname + "\/uploads\/" + _id;
+                            }
+                        }
+
+                        fs.unlink(path, function (err) {
+                            console.log(err);
+                            fs.readdir(dir, function (err, files) {
+                                if (data.attachments && data.attachments.length === 0) {
+                                    fs.rmdir(dir, function () {
+                                    });
+                                }
+                            });
+                        });
+
+                        delete data.fileName;
 
                         Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                             if (err) {
                                 return next(err);
                             }
 
-                            if (invoice._type === 'Proforma') {
-                                model = "Proforma";
+                            res.status(200).send(invoice);
 
-                                query = {"sourceDocument.model": model, journal: CONSTANTS.BEFORE_INVOICE};
+                        });
+
+                    } else {
+
+                        data.editedBy = {
+                            user: req.session.uId,
+                            date: new Date().toISOString()
+                        };
+
+                        oxr.historical(date, function () {
+                            fx.rates = oxr.rates;
+                            fx.base = oxr.base;
+
+                            data.currency.rate = oxr.rates[data.currency.name];
+
+                            Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                if (invoice._type === 'Proforma') {
+                                    model = "Proforma";
+
+                                    query = {"sourceDocument.model": model, journal: CONSTANTS.BEFORE_INVOICE};
+                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
+
+                                    journal = CONSTANTS.PROFORMA_JOURNAL;
+                                } else {
+                                    model = "Invoice";
+                                    journal = CONSTANTS.INVOICE_JOURNAL;
+
+                                    dateForobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
+
+                                    query = {"sourceDocument.model": 'jobs', journal: {$in: [CONSTANTS.JOB_FINISHED, CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]}};
+                                    _journalEntryHandler.changeDate(query, dateForobs, req.session.lastDb, function () {});
+                                }
+
+                                query = {"sourceDocument.model": model, journal: journal};
                                 _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
 
-                                journal = CONSTANTS.PROFORMA_JOURNAL;
-                            } else {
-                                model = "Invoice";
-                                journal = CONSTANTS.INVOICE_JOURNAL;
+                                if (!invoice.journal && journalId) { // todo in case of purchase invoice hasnt journalId
+                                    Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
+                                        if (err) {
+                                            return next(err);
+                                        }
 
-                                dateForobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
+                                        /*journalEntryComposer(invoice, db, function (err, response) {
+										 if (err) {
+										 return next(err);
+										 }
+										 }, req.session.uId);*/
 
-                                query = {"sourceDocument.model": 'jobs', journal: {$in: [CONSTANTS.JOB_FINISHED, CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]}};
-                                _journalEntryHandler.changeDate(query, dateForobs, req.session.lastDb, function () {});
-                            }
+                                        Customer.populate(invoice, {
+                                            path  : 'supplier',
+                                            select: '_id name fullName'
+                                        }, function (err, resp) {
+                                            if (err) {
+                                                return next(err);
+                                            }
 
-                            query = {"sourceDocument.model": model, journal: journal};
-                            _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
-
-                            if (!invoice.journal && journalId) { // todo in case of purchase invoice hasnt journalId
-                                Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-
-                                    /*journalEntryComposer(invoice, db, function (err, response) {
-                                     if (err) {
-                                     return next(err);
-                                     }
-                                     }, req.session.uId);*/
-
+                                            res.status(200).send(invoice);
+                                        });
+                                    });
+                                } else {
                                     Customer.populate(invoice, {
                                         path  : 'supplier',
                                         select: '_id name fullName'
@@ -696,21 +806,10 @@ var Invoice = function (models, event) {
 
                                         res.status(200).send(invoice);
                                     });
-                                });
-                            } else {
-                                Customer.populate(invoice, {
-                                    path  : 'supplier',
-                                    select: '_id name fullName'
-                                }, function (err, resp) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-
-                                    res.status(200).send(invoice);
-                                });
-                            }
+                                }
+                            });
                         });
-                    });
+                    }
 
                 } else {
                     res.status(403).send();
@@ -1232,13 +1331,62 @@ var Invoice = function (models, event) {
                                     },
                                     parallelCb);
                             });
-                        };
+                        }
 
                         function paymentsRemove(parallelCb) {
                             async.each(paymentIds, function (pid, cb) {
                                 Payment.remove({invoice: id}, cb);
                             }, function () {
                                 parallelCb();
+                            });
+                        }
+
+                        function folderRemove(parallelCb) {
+                            var os = require("os");
+                            var osType = (os.type().split('_')[0]);
+                            var dir;
+                            var _id = id;
+
+                            switch (osType) {
+                                case "Windows":
+                                {
+                                    var newDirname = __dirname.replace("handlers", "routes");
+                                    while (newDirname.indexOf("\\") !== -1) {
+                                        newDirname = newDirname.replace("\\", "\/");
+                                    }
+                                    dir = newDirname + "\/uploads\/" + _id;
+                                }
+                                    break;
+                                case "Linux":
+                                {
+                                    var newDirname = __dirname.replace("handlers", "routes");
+                                    while (newDirname.indexOf("\\") !== -1) {
+                                        newDirname = newDirname.replace("\\", "\/");
+                                    }
+                                    dir = newDirname + "\/uploads\/" + _id;
+                                }
+                            }
+
+                            fs.readdir(dir, function (err, files) {
+                                async.each(files, function (file, cb) {
+                                    var file = pathMod.join(dir, file);
+                                    fs.unlink(file, function (err) {
+                                        if (err) {
+                                            return cb(err);
+                                        }
+                                        return cb();
+                                    });
+                                }, function (err) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                    fs.rmdir(dir, function (err) {
+                                        if (err) {
+                                        }
+                                        return next(err);
+                                        parallelCb();
+                                    });
+                                });
                             });
                         }
 
@@ -1295,7 +1443,7 @@ var Invoice = function (models, event) {
                             });
                         }
 
-                        async.parallel([proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks], function (err, result) {
+                        async.parallel([proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove], function (err, result) {
                             if (err) {
                                return next(err);
                             }
