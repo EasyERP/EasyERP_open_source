@@ -567,6 +567,26 @@ th {
 .btn:hover a {
   color: #000000;
 }
+.btnAttention {
+  border-color: #a22a2d;
+}
+.btnAttention:hover {
+  background: #a22a2d;
+}
+.btnAttention:hover span,
+.btnAttention:hover a {
+  color: #cdcdcd;
+}
+.btnSuccess {
+  border-color: #3e7f42;
+}
+.btnSuccess:hover {
+  background: #3e7f42;
+}
+.btnSuccess:hover span,
+.btnSuccess:hover a {
+  color: #cdcdcd;
+}
 /*== Begin Input type number =============*/
 .ui-spinner {
   position: relative;
@@ -689,6 +709,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Btn Color=====================================*/
 /*== VocationDashBoard =============================*/
 /*== Capacity =====================================*/
+/*== btn ===*/
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
@@ -773,6 +794,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 .centerCell {
   text-align: center;
 }
+.list2 .leftBorderNone {
+  border-left: none;
+}
 .list2 .cancelled a {
   text-decoration: line-through;
 }
@@ -855,6 +879,9 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .list2 .centerCell {
   text-align: center;
 }
+.list2 .leftBorderNone {
+  border-left: none;
+}
 .list2 .cancelled a {
   text-decoration: line-through;
 }
@@ -884,6 +911,15 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .invisible_border {
   border: 1px solid transparent !important;
+}
+.hireFireTable {
+  margin-bottom: 10px;
+}
+.report-list tr td:first-child {
+  padding: 0;
+}
+.forCaption {
+  background-color: #7a7e8d;
 }
 .hireFireTable {
   margin-bottom: 10px;
@@ -1161,11 +1197,19 @@ tr.redBorder {
   min-width: 10px;
   border-left: 1px solid #7f7f80;
   border-right-width: 0;
+  cursor: pointer;
+}
+#forInfo .tableProjects .report {
+  min-width: 10px;
+  border-left: 1px solid #7f7f80;
+  border-right-width: 0;
+  cursor: pointer;
 }
 #forInfo .tableProjects .expand {
   border-left-width: 0;
   text-align: center;
   font-size: 14px;
+  cursor: pointer;
 }
 #forInfo .tableProjects .procent {
   position: relative;
@@ -1357,7 +1401,6 @@ figcaption,
 figure,
 footer,
 header,
-hgroup,
 nav,
 section {
   display: block;
@@ -3750,7 +3793,7 @@ dl dd span.ui-spinner {
   width: 100%;
   height: 100%;
   min-width: 100%;
-  height: 100 hv;
+  height: 100vh;
   position: absolute;
   clear: both;
   box-sizing: border-box;
@@ -4154,6 +4197,26 @@ dl dd span.ui-spinner {
 }
 .filterValues > span:last-child {
   padding-right: 16px;
+}
+.filterValues.checked {
+  display: block;
+  text-align: left !important;
+  font-size: 14px !important;
+  line-height: 16px;
+  padding-left: 20px;
+}
+.filterValues.checked:hover {
+  cursor: pointer;
+}
+.filterValues.checkedValue {
+  position: relative;
+}
+.filterValues.checkedValue:before {
+  content: '\2713';
+  color: #cdcdcd;
+  position: absolute;
+  top: 0;
+  left: 4px;
 }
 .removeValues {
   position: absolute;
@@ -5100,10 +5163,15 @@ table#workflows tr td.edit-status {
 #top-bar.banned {
   border-bottom: 0;
 }
+#top-bar #reconcileDate {
+  color: #cdcdcd;
+}
 #top-bar .vocationFilter {
   position: relative;
   float: left;
   margin-left: 15px;
+  height: 100%;
+  width: 210px;
 }
 #top-bar .vocationFilter .dateFilter {
   width: 200px;
@@ -5163,10 +5231,15 @@ table#workflows tr td.edit-status {
 .projectInfoTopBar.banned {
   border-bottom: 0;
 }
+.projectInfoTopBar #reconcileDate {
+  color: #cdcdcd;
+}
 .projectInfoTopBar .vocationFilter {
   position: relative;
   float: left;
   margin-left: 15px;
+  height: 100%;
+  width: 210px;
 }
 .projectInfoTopBar .vocationFilter .dateFilter {
   width: 200px;
@@ -5209,7 +5282,6 @@ table#workflows tr td.edit-status {
 .createBtnHolder,
 #createBtnHolder {
   float: left;
-  margin-top: 6px;
   margin-left: 5px;
   /*.add {
         font-size: 22px !important;
@@ -5221,14 +5293,12 @@ table#workflows tr td.edit-status {
 #createBtnHolder a {
   float: left;
   display: block;
-  width: 18px;
-  height: 18px;
   overflow: hidden;
   margin-right: 3px;
   cursor: pointer;
   vertical-align: baseline;
   color: #cdcdcd;
-  line-height: 18px;
+  line-height: 29px;
 }
 .createBtnHolder a:hover,
 #createBtnHolder a:hover {
@@ -5255,10 +5325,6 @@ table#workflows tr td.edit-status {
   float: left;
   margin-right: 10px;
 }
-.createBtnHolder ul li .btn,
-#createBtnHolder ul li .btn {
-  padding: .2em 1em;
-}
 .createBtnHolder ul li a,
 #createBtnHolder ul li a {
   display: inline-block;
@@ -5270,6 +5336,10 @@ table#workflows tr td.edit-status {
 .createBtnHolder ul li a:hover,
 #createBtnHolder ul li a:hover {
   text-decoration: none;
+}
+.createBtnHolder ul li .dateReconcileDate,
+#createBtnHolder ul li .dateReconcileDate {
+  line-height: 29px;
 }
 /*----------------------------- Login Form --------------------------------*/
 #loginForm {
@@ -5728,6 +5798,9 @@ ul.dialog-tabs li.right button {
 }
 .list .centerCell {
   text-align: center;
+}
+.list .leftBorderNone {
+  border-left: none;
 }
 .list .cancelled a {
   text-decoration: line-through;

@@ -12,8 +12,9 @@ define([
     'populate',
     'async',
     'constants',
-    'text!templates/monthHours/list/cancelEdit.html'
-], function (listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, cancelEdit) {
+    'text!templates/monthHours/list/cancelEdit.html',
+    'helpers'
+], function (listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, cancelEdit, helpers) {
     var monthHoursListView = listViewBase.extend({
         createView              : createView,
         listTemplate            : listTemplate,
@@ -68,7 +69,15 @@ define([
             var editedElementRowId;
             var editedElementContent;
             var editedElementValue;
-            //var editModel;
+            var editModel;
+            var estimatedHours;
+            var adminSalaryBudget;
+            var actualHours;
+            var adminBudget;
+            var vacationBudget;
+            var idleBudget;
+            var hours;
+            var sumBudget = 0;
 
             if (editedElement.length) {
                 editedCol = editedElement.closest('td');
@@ -76,13 +85,35 @@ define([
                 editedElementContent = editedCol.data('content');
                 editedElementValue = editedElement.val();
 
-                //editModel = this.editCollection.get(editedElementRowId);
+                editedElementValue = editedElementValue.replace(/\s+/g, '');
+
+                editModel = this.editCollection.get(editedElementRowId);
 
                 if (!this.changedModels[editedElementRowId]) {
                     this.changedModels[editedElementRowId] = {};
                 }
+
                 this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-                editedCol.text(editedElementValue);
+
+                estimatedHours = this.changedModels[editedElementRowId].estimatedHours || editModel.get('estimatedHours');
+                adminBudget = this.changedModels[editedElementRowId].adminBudget || editModel.get('adminBudget');
+                adminSalaryBudget = this.changedModels[editedElementRowId].adminSalaryBudget || editModel.get('adminSalaryBudget');
+                vacationBudget = this.changedModels[editedElementRowId].vacationBudget || editModel.get('vacationBudget');
+                idleBudget = this.changedModels[editedElementRowId].idleBudget || editModel.get('idleBudget');
+                actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
+                hours = actualHours || estimatedHours;
+                sumBudget = parseFloat(adminBudget) + parseFloat(adminSalaryBudget) + parseFloat(vacationBudget) + parseFloat(idleBudget);
+
+                if (isFinite(sumBudget / hours)) {
+                    this.changedModels[editedElementRowId].overheadRate = sumBudget / hours;
+                    editedElement.closest('tr').find('[data-content="overheadRate"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].overheadRate.toFixed(2)));
+                }
+
+                if (editedElementContent !== 'year') {
+                    editedCol.text(helpers.currencySplitter(editedElementValue));
+                } else {
+                    editedCol.text(editedElementValue);
+                }
                 editedElement.remove();
             }
         },
@@ -126,6 +157,7 @@ define([
             var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
             var tempContainer;
             var width;
+            var insertedInput;
 
             if (mothHoursId && el.prop('tagName') !== 'INPUT') {
                 this.modelId = mothHoursId;
@@ -147,22 +179,48 @@ define([
             var id;
             var model;
             var filled = true;
+            /*var vacationBudget;
+             var estimatedHours;
+             var adminBudget;
+             var actualHours;
+             var overtimeHours;
+             var hoursForAdminCosts;
+             var hoursForVacationCosts;
+             var idleBudget;
+             var hoursForIdleCosts;*/
 
-            $(".editable").each(function (index, elem){
-                if (!$(elem).html()){
+            $(".editable").each(function (index, elem) {
+                if (!$(elem).html()) {
                     filled = false;
                     return false;
                 }
             });
 
             if (!filled) {
-                return  App.render({type: 'error', message: 'Fill all fields please'});
+                return App.render({type: 'error', message: 'Fill all fields please'});
             }
 
             this.setChangedValueToModel();
             for (id in this.changedModels) {
                 model = this.editCollection.get(id);
-                model.changed = this.changedModels[id];
+                if (model) {
+                    model.changed = this.changedModels[id];
+                    /*vacationBudget = model.changed.vacationBudget || model.get('vacationBudget');
+                     adminBudget = model.changed.adminBudget || model.get('adminBudget');
+                     idleBudget = model.changed.idleBudget || model.get('idleBudget');
+                     vacationBudget = parseFloat(vacationBudget);
+                     adminBudget = parseFloat(adminBudget);
+                     idleBudget = parseFloat(idleBudget);
+                     estimatedHours = parseFloat(model.changed.estimatedHours || model.get('estimatedHours'));
+                     actualHours = parseFloat(model.changed.actualHours || model.get('actualHours'));
+                     overtimeHours = parseFloat(model.changed.overtimeHours || model.get('overtimeHours'));
+                     hoursForVacationCosts = actualHours || estimatedHours;
+                     hoursForAdminCosts = (actualHours + overtimeHours) || estimatedHours;
+                     hoursForIdleCosts = actualHours || estimatedHours;
+                     model.changed.vacationCoefficient = isFinite(vacationBudget / hoursForVacationCosts) ? vacationBudget / hoursForVacationCosts : 0;
+                     model.changed.adminCoefficient = isFinite(adminBudget / hoursForAdminCosts) ? adminBudget / hoursForAdminCosts : 0;
+                     model.changed.idleCoefficient = isFinite(idleBudget / hoursForIdleCosts) ? idleBudget / hoursForIdleCosts : 0;*/
+                }
             }
             this.editCollection.save();
         },
@@ -245,7 +303,7 @@ define([
         setChangedValue: function () {
             if (!this.changed) {
                 this.changed = true;
-                this.showSaveCancelBtns()
+                this.showSaveCancelBtns();
             }
         },
 
@@ -389,7 +447,7 @@ define([
                                 error  : function (model, res) {
                                     if (res.status === 403 && index === 0) {
                                         App.render({
-                                            type: 'error',
+                                            type   : 'error',
                                             message: "You do not have permission to perform this action"
                                         });
                                     }
@@ -433,14 +491,14 @@ define([
                 model = collection.get(id);
                 model = model.toJSON();
                 model.startNumber = rowNumber;
-                tr.replaceWith(template({model: model}));
+                tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter}));
                 cb();
             }, function (err) {
+                self.hideSaveCancelBtns();
                 if (!err) {
                     self.editCollection = new EditCollection(collection.toJSON());
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
-                    self.hideSaveCancelBtns();
                 }
             });
 

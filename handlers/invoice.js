@@ -32,12 +32,6 @@ var Invoice = function (models, event) {
 
     oxr.set({app_id: process.env.OXR_APP_ID});
 
-    function checkDb(db) {
-        var validDbs = ["weTrack", "production", "development", "maxdb"];
-
-        return validDbs.indexOf(db) !== -1;
-    }
-
     function journalEntryComposer(invoice, dbIndex, waterfallCb, uId) {
         var journalEntryBody = {};
         var beforeInvoiceBody = {};
@@ -60,9 +54,9 @@ var Invoice = function (models, event) {
             beforeInvoiceBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total - invoice.paymentInfo.balance : 0;
             beforeInvoiceBody.sourceDocument = {};
             beforeInvoiceBody.sourceDocument._id = invoice._id;
-            beforeInvoiceBody.sourceDocument.model = 'proforma';
+            beforeInvoiceBody.sourceDocument.model = 'Proforma';
 
-            _journalEntryHandler.create(journalEntryBody, dbIndex, cb, uId);
+            _journalEntryHandler.create(beforeInvoiceBody, dbIndex, cb, uId);
         }
 
         _journalEntryHandler.create(journalEntryBody, dbIndex, cb, uId);
@@ -422,6 +416,9 @@ var Invoice = function (models, event) {
                             return cb(err);
                         }
                         project = job.project || null;
+
+                        _journalEntryHandler.checkAndCreateForJob({req: req, jobId: jobs, workflow: CONSTANTS.JOBSFINISHED, wTracks: job.wTracks, date: result.invoiceDate});
+
                         cb();
                     });
 
@@ -1096,6 +1093,8 @@ var Invoice = function (models, event) {
                                     if (err) {
                                         return console.log(err);
                                     }
+
+                                    _journalEntryHandler.checkAndCreateForJob({req: req, jobId: id, workflow: CONSTANTS.JOBSINPROGRESS, wTracks: result.wTracks, date: invoiceDeleted.invoiceDate});
 
                                     project = result ? result.project : null;
                                     array = result ? result.wTracks : [];

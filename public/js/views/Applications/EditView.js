@@ -155,6 +155,9 @@
             var dataId = $target.attr('data-id');
             var tr = $target.closest('tr');
             var tempContainer;
+            var $tr = $target.parent('tr');
+            var trNum = $tr.attr('data-id');
+            var minDate = new Date('1995-01-01');
             var maxDate = null;
 
             tempContainer = ($target.text()).trim();
@@ -164,21 +167,25 @@
                 return false;
             }
 
-            if (tr.attr('data-content') !== 'fire') {
-                maxDate = this.fireDate;
+            if (parseInt(trNum) > 0) {
+                minDate = $tr.prev().find('td.date').text();
+            }
+
+            if ($tr.next()) {
+                maxDate = $tr.next().find('td.date').text();
             }
 
             $target.find('.editing').datepicker({
-                dateFormat : "d M, yy",
+                dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : self.hireDate,
+                minDate    : minDate,
                 maxDate    : maxDate,
                 onSelect   : function () {
                     var editingDates = self.$el.find('.editing');
 
                     editingDates.each(function () {
-                        $(this).parent().text($(this).val());
+                        $(this).parent().text($(this).val()).removeClass('changeContent');
                         $(this).remove();
                     });
                 }
@@ -422,18 +429,18 @@
                 manager = $tr.find('#projectManagerDD').attr('data-id') || null;
                 info = $tr.find('#statusInfoDd').val();
                 jobType = $.trim($tr.find('#jobTypeDd').text());
-                salary = self.isSalary ? parseInt($tr.find('[data-id="salary"]').text()) : null;
+                salary = self.isSalary ? parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text()) : null;
 
                 if (!previousDep) {
                     previousDep = department;
                 }
 
                 if (previousDep !== department) {
-                    $previousTr = $jobTrs[i - 1];
+                    $previousTr = $($jobTrs[i - 1]);
 
                     transferArray.push({
                         status     : 'transfer',
-                        date       : date,
+                        date       : moment(date).subtract(1, 'day'),
                         department : previousDep,
                         jobPosition: $previousTr.find('#jobPositionDd').attr('data-id') || null,
                         manager    : $previousTr.find('#projectManagerDD').attr('data-id') || null,
@@ -479,6 +486,10 @@
             if (quit) {
                 return;
             }
+
+            transferArray = transferArray.sort(function (a, b) {
+                return a.date - b.date;
+            });
 
             if (!transferArray.length) {
                 el = $('.edit-employee-info');
@@ -710,11 +721,10 @@
         },
 
         hideNewSelect: function (e) {
-            var editingDates = this.$el.find('.editing');
+            var editingDates = this.$el.find('td.date');
 
             editingDates.each(function () {
-                $(this).parent().text($(this).val());
-                $(this).remove();
+                $(this).text($(this).find('input').val());
             });
 
             this.$el.find('.newSelectList').hide();

@@ -152,6 +152,7 @@ var Holiday = function (models, event) {
                         }
 
                         res.status(200).send({success: 'updated'});
+                        event.emit('setReconcileTimeCard', {req: req, week: response.week, year: response.year});
                         event.emit('recollectVacationDash');
                     });
                 } else {
@@ -192,7 +193,14 @@ var Holiday = function (models, event) {
 
                         delete data._id;
 
-                        Holiday.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
+                        Holiday.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, result) {
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            event.emit('setReconcileTimeCard', {req: req, week: result.week, year: result.year});
+                            cb(null, result);
+                        });
                     }, function (err) {
                         if (err) {
                             return next(err);
@@ -211,7 +219,6 @@ var Holiday = function (models, event) {
     };
 
     this.remove = function (req, res, next) {
-        var self = this;
         var id = req.params.id;
         var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
 
@@ -221,8 +228,11 @@ var Holiday = function (models, event) {
                     if (err) {
                         return next(err);
                     }
-                    res.status(200).send({success: holiday});
+
+                    event.emit('setReconcileTimeCard', {req: req, week: holiday.week, year: holiday.year});
                     event.emit('recollectVacationDash');
+
+                    res.status(200).send({success: holiday});
                 });
             } else {
                 res.status(403).send();
@@ -253,6 +263,7 @@ var Holiday = function (models, event) {
                     }
 
                     res.status(200).send({success: holiday});
+                    event.emit('setReconcileTimeCard', {req: req, week: holiday.week, year: holiday.year});
                     event.emit('recollectVacationDash');
                 });
             } else {

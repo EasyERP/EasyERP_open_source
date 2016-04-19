@@ -71,7 +71,7 @@ module.exports = (function () {
             differenceAmount: {type: Number, default: 0, set: setPrice}
         }],
         paymentMethod: {type: ObjectId, ref: 'ProductCategory', default: null},
-        paymentRef   : {type: ObjectId, ref: 'PayRoll', default: null},//ref to PayRoll
+        paymentRef   : [{type: ObjectId, ref: 'PayRoll', default: null}],//ref to PayRoll
         period       : {type: Date, default: null}
     });
 

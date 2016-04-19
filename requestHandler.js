@@ -51,6 +51,9 @@ var requestHandler = function (app, event, mainDb) {
     var logger = app.get('logger');
     var moment = require('./public/js/libs/moment/moment');
 
+    var JournalEntryHandler = require('./handlers/journalEntry');
+    var journalEntry = new JournalEntryHandler(models);
+
     //binding for remove Workflow
     event.on('removeWorkflow', function (req, wId, id) {
         var query;
@@ -152,10 +155,12 @@ var requestHandler = function (app, event, mainDb) {
             var waterfallTasks = [getWTracks, getBaseSalary];
             var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
             var monthHours = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
+            var keyForRetrive;
 
             if (monthFromSalary && yearFromSalary) {
                 year = parseInt(yearFromSalary);
                 month = parseInt(monthFromSalary);
+                keyForRetrive = year * 100 + month;
             }
 
             async.waterfall(waterfallTasks, function (err, result) {
@@ -186,12 +191,12 @@ var requestHandler = function (app, event, mainDb) {
                             }
 
                             if (monthFromSalary && yearFromSalary) {
-                                var query = monthHours.find({month: month, year: year}).lean();
-
-                                query.exec(function (err, monthHour) {
+                                redisStore.readFromStorage('monthHours', keyForRetrive, function(err, monthHour){
                                     if (err) {
                                         return console.log(err);
                                     }
+
+                                    monthHour = JSON.parse(monthHour);
                                     if (monthHour[0]) {
                                         fixedExpense = parseInt(monthHour[0].fixedExpense);
                                         expenseCoefficient = parseFloat(monthHour[0].expenseCoefficient);
@@ -274,7 +279,7 @@ var requestHandler = function (app, event, mainDb) {
                         {
                             '_id': {$in: result}
                         }, {
-                            hire: 1
+                            transfer: 1
                         })
                     .lean();
                 query.exec(function (err, salary) {
@@ -286,7 +291,7 @@ var requestHandler = function (app, event, mainDb) {
 
                     var result = _.map(salary, function (element) {
                         var obj = {};
-                        var hire = element.hire;
+                        var hire = element.transfer;
                         var length = hire.length;
                         for (i = length - 1; i >= 0; i--) {
                             if (date >= hire[i].date) {
@@ -351,6 +356,51 @@ var requestHandler = function (app, event, mainDb) {
             console.log('Synthetic revenue recalculated');
         });
 
+    });
+
+    event.on('setReconcileTimeCard', function (options) {
+        var req = options.req;
+        var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
+        var employee = options.employee;
+        var month = options.month;
+        var year = options.year;
+        var week = options.week;
+        var dateNow = new Date();
+       // var dateKey = moment(dateNow).isoWeekYear() * 100 + moment(dateNow).isoWeek();
+        var query = {};
+        var date;
+
+         if (month && year) {
+            query = {month: month, year: year};
+            date = moment().isoWeekYear(year).month(month).date(1);
+        } else if (year && week){
+            query = {week: week, year: year};
+            date = moment().isoWeekYear(year).isoWeek(week).day(1);
+        } else if (employee){
+             query.employee = employee;
+         }
+
+
+        wTrackModel.update(query, {$set: {reconcile: true}}, {multi: true}, function (err, result) {
+            if (err) {
+                console.log(err);
+            }
+        });
+
+        if (date) {
+            journalEntry.setReconcileDate(req, date);
+        } else if (employee) {
+            Employee.findById(employee, {hire: 1}, function (err, result) {
+                if (err) {
+                    console.log(err);
+                }
+
+                var date = employee.hire[0];
+
+                journalEntry.setReconcileDate(req, date);
+            });
+        }
     });
 
     event.on('updateProjectDetails', function (options) {
@@ -1119,6 +1169,10 @@ var requestHandler = function (app, event, mainDb) {
 
     event.on('fetchInvoiceCollection', function (options) {
         io.emit('fetchInvoiceCollection', options);
+    });
+
+    event.on('sendMessage', function (options) {
+        io.emit('sendMessage', options);
     });
 
     event.on('recalculateRevenue', function (options) {

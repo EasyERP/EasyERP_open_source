@@ -131,7 +131,7 @@
                                                maxlength="256"/>
                                     </dd>
                                     <dt>
-                                        <label for="LI">Facebook</label>
+                                        <label for="FB">Facebook</label>
                                     </dt>
                                     <dd><input type="text"
                                                id="FB"
@@ -299,30 +299,33 @@
                             <div class="half-block left">
                                 <dl class="edit-employee-info">
                                     <dt>
-                                        <label>Street</label>
+                                        <label for="employeeEditStreet">Street</label>
                                     </dt>
                                     <dd>
                                         <input type="text"
                                                class="homeAddress"
                                                name="street"
+                                               id="employeeEditStreet"
                                                value="<%=model.homeAddress.street%>"
                                                maxlength="32"/></dd>
                                     <dt>
-                                        <label>City</label>
+                                        <label for="employeeEditCity">City</label>
                                     </dt>
                                     <dd>
                                         <input type="text"
                                                class="homeAddress"
                                                name="city"
+                                               id="employeeEditCity"
                                                value="<%=model.homeAddress.city%>"
                                                maxlength="32"/>
                                     </dd>
                                     <dt>
-                                        <label>State</label>
+                                        <label for="employeeEditState">State</label>
                                     </dt>
                                     <dd><input type="text"
                                                class="homeAddress"
                                                name="state"
+                                               id="employeeEditState"
                                                value="<%=model.homeAddress.state%>"
                                                maxlength="32"/>
                                     </dd>
@@ -332,21 +335,23 @@
                             <div class="half-block left">
                                 <dl class="edit-employee-info">
                                     <dt>
-                                        <label>Zip</label>
+                                        <label for="employeeEditZip">Zip</label>
                                     </dt>
                                     <dd>
                                         <input type="text"
                                                class="homeAddress"
                                                name="zip"
+                                               id="employeeEditZip"
                                                value="<%=model.homeAddress.zip%>"
                                                maxlength="32"/>
                                     </dd>
                                     <dt>
-                                        <label>Country</label>
+                                        <label for="employeeEditCountry">Country</label>
                                     </dt>
                                     <dd><input type="text"
                                                class="homeAddress"
                                                name="country"
+                                               id="employeeEditCountry"
                                                value="<%=model.homeAddress.country%>"
                                                maxlength="32"/></dd>
                                 </dl>

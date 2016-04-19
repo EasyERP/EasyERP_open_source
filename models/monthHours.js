@@ -11,7 +11,14 @@ module.exports = (function () {
         hours: {type: Number},
         year: {type: Number},
         expenseCoefficient: {type: Number},
-        fixedExpense: {type: Number}
+        fixedExpense: {type: Number},
+        idleBudget: {type: Number, default: 0},
+        vacationBudget: {type: Number, default: 0},
+        adminBudget: {type: Number, default: 0},
+        adminSalaryBudget: {type: Number, default: 0},
+        estimatedHours: {type: Number, default: 0},
+        actualHours: {type: Number, default: 0},
+        overheadRate: {type: Number, default: 0}
     }, {collection: 'MonthHours'});
 
     mongoose.model('MonthHours', monthHoursSchema);

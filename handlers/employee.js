@@ -16,9 +16,32 @@ var Employee = function (models) {
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
-    exportDecorator.addExportFunctionsToHandler(this, function (req) {
-        return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
-    }, exportMap, 'Employees');
+    //exportDecorator.addExportFunctionsToHandler(this, function (req) {
+    //    return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
+    //}, exportMap, 'Employees');
+
+    this.exportToXlsx = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var filter = req.params.filter;
+        var filterObj = {};
+        var type = req.query.type;
+        var options;
+        var query = [];
+
+        //filter = JSON.parse(filter); //ToDo uncomment when Modules move to handler
+        //
+        //if (filter) {
+        //    filterObj.$and = caseFilter(filter);
+        //}
+
+        options = {
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
+            fileName    : 'Employees'
+        };
+    };
 
     this.getNameAndDepartment = getNameAndDepartment;
 
@@ -72,9 +95,20 @@ var Employee = function (models) {
                 return callback(err);
             }
 
-            callback(null, employees);
-        });
+                callback(null, employees);
+            });
     }
+
+    this.getEmployeesCount = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        Employee.find({isEmployee: true}).count(function (err, result) {
+            if (err){
+                return next(err);
+            }
+
+            res.status(200).send({count: result});
+        });
+    };
 
     this.getSalaryByMonth = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -84,7 +118,7 @@ var Employee = function (models) {
         var year = query.year;
         var date = moment().year(year).month(month - 1).date(1);
 
-        Employee.findById(_id, {hire: 1, fire: 1}, function (err, result) {
+        Employee.findById(_id, {transfer: 1}, function (err, result) {
             var salary = 0;
             var hire;
             var i;
@@ -95,7 +129,7 @@ var Employee = function (models) {
             }
 
             if (result){
-                hire = result.hire;
+                hire = result.transfer;
                 length = hire.length;
 
                 for (i = length - 1; i >= 0; i--){
@@ -121,7 +155,7 @@ var Employee = function (models) {
             $unwind: '$hire'
         }, {
             $project: {
-                date: '$hire.date'
+                date: '$hire'
             }
         }, {
             $group: {

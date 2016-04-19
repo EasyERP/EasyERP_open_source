@@ -1,7 +1,10 @@
 /**
  * Created by Liliya on 23.06.2015.
  */
-define(['text!templates/monthHours/list/listTemplate.html'], function (listTemplate) {
+define([
+    'text!templates/monthHours/list/listTemplate.html',
+    'helpers'
+    ], function (listTemplate, helpers) {
     var monthHoursListItemView = Backbone.View.extend({
         el           : '#listTable',
         newCollection: null,
@@ -19,7 +22,7 @@ define(['text!templates/monthHours/list/listTemplate.html'], function (listTempl
 
         render: function () {
             var collect = this.collection.toJSON();
-            this.$el.append(_.template(listTemplate, {monthHoursCollection: collect, startNumber: this.startNumber}));
+            this.$el.append(_.template(listTemplate, {monthHoursCollection: collect, startNumber: this.startNumber, currencySplitter: helpers.currencySplitter}));
         }
     });
 

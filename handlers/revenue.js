@@ -3235,17 +3235,17 @@ var wTrack = function (models) {
         var projectionObject = {
             salesPerson: 1,
             paymentInfo: 1,
-            year       : {$year: '$invoiceDate'},
-            month      : {$month: '$invoiceDate'},
-            week       : {$week: '$invoiceDate'}
+            year       : {$year: "$invoiceDate"},
+            month      : {$month: "$invoiceDate"},
+            week       : {$week: "$invoiceDate"}
         };
         var projectionPaymentObject = {
             paidAmount: 1,
             date      : 1,
-            invoice   : {$arrayElemAt: ['$invoice', 0]},
-            year      : {$year: '$date'},
-            month     : {$month: '$date'},
-            week      : {$week: '$date'}
+            invoice   : {$arrayElemAt: ["$invoice", 0]},
+            year      : {$year: "$date"},
+            month     : {$month: "$date"},
+            week      : {$week: "$date"}
         };
         var groupedKey = (query.byWeek && query.byWeek !== 'false') ? 'week' : 'month';
 
@@ -3688,7 +3688,7 @@ var wTrack = function (models) {
                 }
             }], parallelCb);
 
-        }
+        };
 
         async.parallel({
             invoiced: invoiceGrouper,
@@ -3733,8 +3733,13 @@ var wTrack = function (models) {
 
             response.invoiced = _.sortBy(response.invoiced, 'date');
 
+            mergeByProperty(response.invoiced, response.paid, 'date');
+            mergeByProperty(response.invoiced, response.revenue, 'date');
+
+            response.invoiced = _.sortBy(response.invoiced, 'date');
+
             res.status(200).send({payments: response.invoiced, sales: sales});
-            //res.status(200).send(response);
+            /*res.status(200).send(response);*/
         });
     };
 };

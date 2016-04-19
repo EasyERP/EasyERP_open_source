@@ -8,7 +8,29 @@ define([
 ], function (Backbone, _, io, JobsCollection, InvoiceCollection, custom) {
     'use strict';
     var socket = io.connect();
-    var fetch;
+    var fetch = _.debounce(fetchData, 500);
+    var fetchProjects = _.debounce(fetchProjects, 500);
+    var fetchJobs = _.debounce(fetchJobs, 500);
+    var fetchInvoice = _.debounce(fetchInvoice, 500);
+    var sendMessage = _.debounce(sendMessage, 500);
+
+    socket.on('recollectVacationDash', fetch);
+    socket.on('recollectProjectInfo', fetchProjects);
+    socket.on('fetchJobsCollection', fetchJobs);
+    socket.on('fetchInvoiceCollection', fetchInvoice);
+    socket.on('sendMessage', sendMessage);
+
+    function sendMessage(options){
+        var view = options.view;
+        var message = options.message;
+        var fragment = Backbone.history.fragment;
+
+        if (fragment && fragment.indexOf(view) !== -1) {
+            App.render({type: 'notify', message: message});
+        }
+
+        return false;
+    }
 
     function fetchProjects() {
         var fragment = Backbone.history.fragment;

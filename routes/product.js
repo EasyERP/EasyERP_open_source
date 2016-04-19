@@ -13,8 +13,8 @@ module.exports = function (models) {
     router.get('/getProductsTypeForDd', handler.getProductsTypeForDd);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/getProductsImages', handler.getProductsImages);
-    router.get('/exportToXlsx',handler.exportToXlsx);
-    router.get('/exportToCsv',handler.exportToCsv);
+    //router.get('/exportToXlsx',handler.exportToXlsx);
+    //router.get('/exportToCsv',handler.exportToCsv);
     router.get('/:viewType', handler.getForView);
     router.post('/', handler.create);
     /*router.post('/uploadProductFiles', multipartMiddleware, handler.uploadProductFiles);*///FixMe
