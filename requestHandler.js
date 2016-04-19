@@ -1234,7 +1234,12 @@ var requestHandler = function (app, event, mainDb) {
                         return waterfallCb(err);
                     }
 
-                    totalAmount = product.unitPrice;
+                    if(quotation.currency && quotation.currency.rate){
+                        totalAmount = product.unitPrice / quotation.currency.rate;
+                    } else {
+                        totalAmount = product.unitPrice;
+                    }
+                    
 
                     async.each(wTracks, function (wTrack, cb) {
                         var revenue = (wTrack.worked / totalWorked) * totalAmount * 100;
