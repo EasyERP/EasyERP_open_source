@@ -3613,6 +3613,58 @@ var wTrack = function (models) {
                     week          : '$root.root.week'
                 }
             }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'salesPerson',
+                    foreignField: '_id',
+                    as          : 'salesPerson'
+                }
+            }, {
+                $project: {
+                    salesPerson   : {$arrayElemAt: ['$salesPerson', 0]},
+                    revenueBySales: 1,
+                    date          : 1,
+                    revenue       : 1,
+                    year          : 1,
+                    month         : 1,
+                    week          : 1
+                }
+            }, {
+                $project: {
+                    salesPerson   : {
+                        _id : '$salesPerson._id',
+                        name: '$salesPerson.name'
+                    },
+                    revenueBySales: 1,
+                    date          : 1,
+                    revenue       : 1,
+                    year          : 1,
+                    month         : 1,
+                    week          : 1
+                }
+            }, {
+                $group: {
+                    _id       : null,
+                    salesArray: {
+                        $addToSet: '$salesPerson'
+                    },
+                    root      : {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    _id           : 0,
+                    salesArray    : 1,
+                    revenueBySales: '$root.revenueBySales',
+                    date          : '$root.date',
+                    revenue       : '$root.revenue',
+                    year          : '$root.year',
+                    month         : '$root.month',
+                    week          : '$root.week',
+                    salesPerson: '$root.salesPerson._id'
+                }
+            }, {
                 $group: {
                     _id           : {
                         date   : '$date',
@@ -3623,14 +3675,16 @@ var wTrack = function (models) {
                             salesPerson   : '$$ROOT.salesPerson',
                             revenueBySales: '$$ROOT.revenueBySales'
                         }
-                    }
+                    },
+                    salesArray    : {$first: '$salesArray'}
                 }
             }, {
                 $project: {
                     date          : '$_id.date',
                     revenue       : '$_id.revenue',
                     revenueBySales: 1,
-                    _id           : 0
+                    _id           : 0,
+                    salesArray    : 1
                 }
             }], parallelCb);
 
@@ -3665,13 +3719,19 @@ var wTrack = function (models) {
 
             sales = response.invoiced[0] ? response.invoiced[0].salesArray : [];
             _sales = response.paid[0] ? response.paid[0].salesArray : [];
-
+            sales = sales.concat(_sales);
+            _sales = response.revenue[0] ? response.revenue[0].salesArray : [];
             sales = sales.concat(_sales);
             sales = _.uniq(sales, function (elm) {
                 if (elm._id) {
                     return elm._id.toString();
                 }
             });
+
+            mergeByProperty(response.invoiced, response.paid, 'date');
+            mergeByProperty(response.invoiced, response.revenue, 'date');
+
+            response.invoiced = _.sortBy(response.invoiced, 'date');
 
             mergeByProperty(response.invoiced, response.paid, 'date');
             mergeByProperty(response.invoiced, response.revenue, 'date');
