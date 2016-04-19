@@ -12,7 +12,7 @@ define([
     'models/ProjectMemberModel',
     'moment',
     'async'
-], function (Backbone, $, _, membersTemplate, cancelEdit, createMember, SelectView, common, dataService, prMembersCollection, currentModel, moment, async) {
+], function (Backbone, $, _, membersTemplate, cancelEdit, createMember, SelectView, common, dataService, prMembersCollection, CurrentModel, moment, async) {
     'use strict';
 
     var PMView = Backbone.View.extend({
@@ -31,7 +31,7 @@ define([
         template: _.template(membersTemplate),
 
         events: {
-            'click'                                            : 'hideNewSelect',
+            click                                              : 'hideNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .selectCurrent'                             : 'showNewSelect',
             'click #addMember'                                 : 'addMember',
@@ -45,20 +45,11 @@ define([
             var self = this;
             var target = $(e.target);
             var row = target.parent('tr');
-            var td = target.parent('td');
             var rowId = row.data('id');
             var isNewRow = row.hasClass('false');
             var text;
 
             var startDate = this.prevStartDate(row) || this.project.startDate;
-
-            if (row.find('[data-content="projectPosition"]').attr('data-id') === 'false') {
-                App.render({
-                    type   : 'error',
-                    message: 'Please choose Project Position'
-                });
-                return false;
-            }
 
             if (target.prop('tagName') !== 'INPUT') {
                 this.hideNewSelect();
@@ -71,7 +62,8 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : startDate ,
+                minDate    : startDate,
+                maxDate    : new Date(),
                 onSelect   : function (dateText) {
                     var $editedCol = target.closest('td');
                     if (!self.changedModels[rowId]) {
@@ -94,14 +86,14 @@ define([
             return false;
         },
 
-        prevStartDate : function (row){
+        prevStartDate: function (row) {
             var content = row.find('[data-content="projectPosition"]').data('id');
             var prevTd = row.nextAll().find('td[data-id="' + content + '"]').first();
             var prevRow;
             var prevStartDate;
             var prevDate;
             var nextDay;
-            if (!prevTd.length){
+            if (!prevTd.length) {
                 return false;
             }
 
@@ -111,7 +103,6 @@ define([
             nextDay = moment(prevDate).add(1, 'd');
 
             return common.utcDateToLocaleDate(nextDay.toDate());
-
         },
 
         editLastMember: function () {
@@ -128,16 +119,21 @@ define([
                 if (tds.length > 1) {
                     tr.find('td.startDateManager').addClass('editable');
                 }
-
                 tr.find('td[data-content]:not([data-content="projectPosition"])').addClass('selectCurrent');
             });
         },
 
-        putPrevDate : function (prPosition){
-           var td = this.$el.find('[data-id="'+ prPosition +'"]').first();
+        putPrevDate: function (prPosition, e) {
+            var td = this.$el.find('[data-id="' + prPosition + '"]').first();
             var row = td.closest('tr');
+            var id = row.data('id');
             var endDate = row.find('.endDateManager');
             endDate.text('To end of project');
+            if (!this.changedModels[id]) {
+                this.changedModels[id] = {};
+            }
+            this.changedModels[id].endDate = null;
+            this.saveItem(e);
         },
 
         updatePrevMembers: function (row, date) {
@@ -159,13 +155,13 @@ define([
         },
 
         deleteItems: function (e) {
-            var newElements = this.$el.find('tr.false');;
+            var newElements = this.$el.find('tr.false');
             var id;
             var editedItems = this.$el.find('.edited');
 
             e.preventDefault();
 
-            if (newElements.length){
+            if (newElements.length) {
                 id = newElements.data('id');
 
                 if (id) {
@@ -231,6 +227,8 @@ define([
                 savedRow.attr('data-id', modelId);
                 savedRow.removeClass('false');
             }
+            this.isChangedSales(modelObject);
+
             delete this.changedModels[oldId];
             this.collection.remove(oldId);
             this.collection.add(modelObject);
@@ -272,7 +270,7 @@ define([
             this.collection.save();
         },
 
-        showNewSelect: function (e, prev, next) {
+        showNewSelect: function (e) {
             var $target = $(e.target);
 
             e.stopPropagation();
@@ -302,19 +300,8 @@ define([
             var isNewRow = targetRow.hasClass('false');
             var rowId = targetRow.data('id');
             var startDate;
-            var id = target.attr('id');
-            // var prevSales = targetRow.prev().attr('data-id');
-            var selectorContainer;
+            var id = target.attr('id') || null;
             var dataType;
-
-            /*if (prevSales === id) {
-             return App.render({
-             type   : 'error',
-             message: 'Please choose another Project Manager'
-             });
-             }*/
-
-            //targetRow.attr('data-id', id);
 
             dataType = targetElement.data('content') + 'Id';
 
@@ -326,9 +313,11 @@ define([
                 this.changedModels[rowId][dataType] = id;
             }
 
-            targetElement.text(target.text());
-
-
+            if (id) {
+                targetElement.text(target.text());
+            } else {
+                targetElement.text('');
+            }
 
             targetElement.attr('data-id', id);
             if (!isNewRow) {
@@ -336,8 +325,10 @@ define([
             }
             if (targetElement.hasClass('errorContent')) {
                 startDate = this.prevStartDate(targetRow);
-                if (startDate){
+                if (startDate) {
                     targetRow.find('.startDateManager').text(startDate);
+                    this.changedModels[rowId].startDate = startDate;
+                    this.updatePrevMembers(targetRow, startDate);
                 }
                 targetElement.removeClass('errorContent');
             }
@@ -350,12 +341,12 @@ define([
         },
 
         addMember: function (e) {
-            e.preventDefault();
             var startData = {
                 projectId: this.project._id
             };
+            var model = new CurrentModel(startData);
 
-            var model = new currentModel(startData);
+            e.preventDefault();
 
             startData.cid = model.cid;
             if (!this.changedModels[startData.cid]) {
@@ -364,7 +355,6 @@ define([
             this.changedModels[startData.cid].projectId = this.project._id;
 
             if (!this.isNewRow()) {
-                /*this.showSaveCancelBtns();*/
                 this.collection.add(model);
                 this.$el.find('#projectMembersTable').prepend(_.template(createMember, startData));
                 this.showSaveBtn();
@@ -396,6 +386,16 @@ define([
             return !!newRow.length;
         },
 
+        isChangedSales: function (model) {
+            if (model.projectPositionId === '570e9a75785753b3f1d9c86e') {
+                App.render({
+                    type   : 'notify',
+                    message: 'Data was changed, please refresh browser'
+                });
+            }
+            return false;
+        },
+
         removeMember: function (e) {
             var target = $(e.target);
             var row = target.closest('tr');
@@ -406,12 +406,12 @@ define([
             if (model && id.length === 24) {
                 model.destroy({
                     wait   : true,
-                    success: function () {
+                    success: function (model, res) {
+                        var delModel = res.success;
                         row.remove();
                         self.editLastMember();
-                        if (content !== 'false'){
-                            self.putPrevDate(content);
-                        }
+                        self.putPrevDate(content, e);
+                        self.isChangedSales(delModel);
                     },
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {
@@ -426,11 +426,8 @@ define([
                 row.remove();
                 this.collection.remove(model);
                 self.editLastMember();
-                if (content !== 'false'){
-                    self.putPrevDate(content);
-                }
+                self.putPrevDate(content, e);
             }
-
         },
 
         render: function () {
@@ -453,13 +450,13 @@ define([
             });
             dataService.getData('/bonusType/list', null, function (bonus) {
                 self.responseObj['#bonus'] = bonus;
+                self.responseObj['#bonus'].push({_id: null, name: 'No bonus'});
             });
             dataService.getData('/projectPosition/getForDD', null, function (data) {
                 self.responseObj['#projectPosition'] = data.data;
                 self.editLastMember();
 
             });
-
 
             this.$el.find('#saveMember').hide();
             this.$el.find('#cancelMember').hide();

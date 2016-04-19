@@ -1,15 +1,42 @@
 var mongoose = require('mongoose');
 var async = require('async');
 
-var ProjectMembers = function (models, events) {
+var ProjectMembers = function (models) {
     'use strict';
 
     var ProjectMembersSchema = mongoose.Schemas['ProjectMember'];
     var ProjectSchema = mongoose.Schemas['Project'];
 
+    function changedSales(db, doc) {
+        var ProjectMemberModel = models.get(db, 'ProjectMember', ProjectMembersSchema);
+        var Project = models.get(db, 'Project', ProjectSchema);
+
+        if (doc.projectPositionId.toString() === '570e9a75785753b3f1d9c86e') {
+            ProjectMemberModel.find({projectId: doc.projectId, projectPositionId: doc.projectPositionId})
+                .sort({startDate: -1})
+                .lean()
+                .exec(function (err, docs) {
+                    var elem;
+                    var employeeId;
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    elem = docs[0];
+                    employeeId = elem ? elem.employeeId : null;
+                    Project.findByIdAndUpdate(doc.projectId, {projectmanager: employeeId}, function (err) {
+                        if (err) {
+                            console.log(err);
+                        }
+                    });
+                });
+        }
+    }
 
     this.create = function (req, res, next) {
-        var ProjectMemberModel = models.get(req.session.lastDb, 'ProjectMember', ProjectMembersSchema);
+        var db = req.session.lastDb;
+        var ProjectMemberModel = models.get(db, 'ProjectMember', ProjectMembersSchema);
+
         var body = req.body;
         var projectMember = new ProjectMemberModel(body);
 
@@ -18,42 +45,28 @@ var ProjectMembers = function (models, events) {
                 return next(err);
             }
 
-           /* event.emit('dropHoursCashes', req);
-            var params = {
-                req               : req,
-                year              : monthHours.year,
-                month             : monthHours.month,
-                fixedExpense      : monthHours.fixedExpense,
-                expenseCoefficient: monthHours.expenseCoefficient,
-                hours             : monthHours.hours
-            };
-            event.emit('updateCost', params);*/
+
+            changedSales(db, doc);
             res.status(200).send(doc);
         });
     };
 
     this.patchM = function (req, res, next) {
         var body = req.body;
-        var ProjectMemberModel = models.get(req.session.lastDb, 'ProjectMember', ProjectMembersSchema);
+        var db = req.session.lastDb;
+        var ProjectMemberModel = models.get(db, 'ProjectMember', ProjectMembersSchema);
 
         async.each(body, function (data, cb) {
             var id = data._id;
             delete data._id;
 
-            ProjectMemberModel.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, result) {
+            ProjectMemberModel.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, doc) {
                 if (err) {
                     return cb(err);
                 }
-               /* var params = {
-                    req               : req,
-                    year              : result.year,
-                    month             : result.month,
-                    fixedExpense      : result.fixedExpense,
-                    expenseCoefficient: result.expenseCoefficient,
-                    hours             : result.hours
-                };
-                event.emit('updateCost', params);*/
-                cb(null, result);
+
+                changedSales(db, doc);
+                cb(null, doc);
             });
 
         }, function (err) {
@@ -61,7 +74,6 @@ var ProjectMembers = function (models, events) {
                 return next(err);
             }
 
-            /*event.emit('dropHoursCashes', req);*/
             res.status(200).send({success: 'updated'});
         });
     };
@@ -76,33 +88,34 @@ var ProjectMembers = function (models, events) {
         }
 
         ProjectMemberModel
-            .find({projectId : project})
+            .find({projectId: project})
             .populate('projectPositionId', '_id name')
             .populate('employeeId', '_id name')
             .populate('bonusId', '_id name value isPercent')
-            .sort({'startDate': -1})
+            .sort({
+                projectPositionId: 1,
+                startDate        : -1
+            })
             .exec(function (err, data) {
                 if (err) {
                     return next(err);
-                } else {
-                    res.status(200).send(data);
                 }
+                res.status(200).send(data);
             });
     };
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
+        var db = req.session.lastDb;
+        var ProjectMemberModel = models.get(db, 'ProjectMember', ProjectMembersSchema);
 
-        var ProjectMemberModel = models.get(req.session.lastDb, 'ProjectMember', ProjectMembersSchema);
-
-        ProjectMemberModel.findByIdAndRemove(id, function (err, result) {
+        ProjectMemberModel.findByIdAndRemove(id, function (err, doc) {
             if (err) {
                 return next(err);
             }
 
-            /*event.emit('dropHoursCashes', req);*/
-            res.status(200).send({success: result});
-
+            changedSales(db, doc);
+            res.status(200).send({success: doc});
         });
     };
 
