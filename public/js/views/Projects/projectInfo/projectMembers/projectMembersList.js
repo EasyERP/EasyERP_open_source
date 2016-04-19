@@ -439,7 +439,7 @@ define([
                 utcDateToLocaleDate: common.utcDateToLocaleDate
             }));
 
-            dataService.getData('/employee/getForDD', {salesDepartments: true, isEmployee: true}, function (employees) {
+            dataService.getData('/employee/getForDD', {isEmployee: true}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 

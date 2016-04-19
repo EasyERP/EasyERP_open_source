@@ -297,22 +297,6 @@ var Project = function (models, event) {
                     if (data.customer) {
                         _project.customer = data.customer;
                     }
-                    if (data.salesmanager) {
-                        _project.projectmanager = data.salesmanager; // toDO fix field
-                        _project.salesManagers = [{
-                            manager: data.salesmanager,
-                            startDate   : null,
-                            endDate    : null
-                        }];
-                    }
-
-                    if (data.projectmanager) {
-                        _project.projectManagers = [{
-                            manager: data.projectmanager,
-                            startDate   : null,
-                            endDate    : null
-                        }];
-                    }
 
                     if (data.notes) {
                         _project.notes = data.notes;
@@ -1012,7 +996,6 @@ var Project = function (models, event) {
             .populate('groups.owner', '_id login')
             .populate('budget.projectTeam')
             .populate('projectmanager', '_id name fullName')
-            .populate('salesmanager', '_id name fullName')
             .populate('customer', '_id name fullName')
             .populate('workflow', '_id name')
 
@@ -1393,10 +1376,6 @@ var Project = function (models, event) {
         if (data.workflow) {
             data.workflow = data.workflow;
         }
-        if (data.projectMembers && data.projectMembers.length) {
-            updateProjectMembers(data.projectMembers);
-            data.projectmanager = data.salesManagers[data.salesManagers.length - 1].manager;
-        }
 
         if (data.notes && data.notes.length != 0 && !remove) {
             var obj = data.notes[data.notes.length - 1];
@@ -1438,10 +1417,6 @@ var Project = function (models, event) {
             }
         });
     };
-
-    function updateProjectMembers(members) {
-
-    }
 
     function updateOnlySelectedFields(req, _id, data, res) {
         var obj;
