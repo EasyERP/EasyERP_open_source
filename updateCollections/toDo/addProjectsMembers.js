@@ -196,12 +196,10 @@ query.exec(function (error, _res) {
                     return;
                 }
 
-                Project.update({_id: project._id}, {$set: {projectMembers: results}, $unset: fieldsToDelete},
-                    {strict: false}, callback);
+                Project.update({_id: project._id}, {$unset: fieldsToDelete}, {strict: false}, callback);
             });
         } else {
-            Project.update({_id: project._id}, {$set: {projectMembers: []}, $unset: fieldsToDelete},
-                {strict: false}, callback);
+            Project.update({_id: project._id}, {$unset: fieldsToDelete}, {strict: false}, callback);
         }
 
     }, function (err) {
