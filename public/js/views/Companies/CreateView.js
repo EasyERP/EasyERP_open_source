@@ -132,7 +132,7 @@ define([
                 var mid = 39;
                 var companyModel = new CompanyModel();
                 var name = {
-                    first: $.trim(this.$el.find("#countryInputCreate").val()),
+                    first: $.trim(this.$el.find("#companyName").val()),
                     last : ''
                 };
                 var address = {};
