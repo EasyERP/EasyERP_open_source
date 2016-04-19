@@ -10,7 +10,7 @@
 		startDate        : {type: Date},
 		endDate          : {type: Date}
 
-	}, {collection: 'ProjectMembers'});
+	}, {collection: 'projectMembers'});
 
 	mongoose.model('ProjectMember', ProjectMemberSchema);
 
