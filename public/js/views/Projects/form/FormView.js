@@ -155,9 +155,9 @@ define([
                 this.listenTo(eventChannel, 'orderRemove', this.getOrders);
                 this.listenTo(eventChannel, 'orderUpdate', this.getOrders);
 
-                this.listenTo(eventChannel, 'invoiceRemove', this.getInvoice);
-                this.listenTo(eventChannel, 'invoiceRemove', this.getOrders);
+                this.listenTo(eventChannel, 'invoiceRemove', this.newPayment);
                 this.listenTo(eventChannel, 'invoiceUpdated', this.getInvoice);
+                this.listenTo(eventChannel, 'invoiceReceive', this.newInvoice);
             },
 
             viewQuotation: function (e) {
@@ -1541,6 +1541,23 @@ define([
 
                 async.parallel(paralellTasks, function () {
                     self.getPayments(true);
+                    App.stopPreload();
+                });
+
+            },
+
+            newInvoice: function () {
+                var self = this;
+                var paralellTasks;
+
+                paralellTasks = [
+                    self.getInvoiceStats,
+                    self.getOrders
+                ];
+
+                App.startPreload();
+
+                async.parallel(paralellTasks, function () {
                     App.stopPreload();
                 });
 
