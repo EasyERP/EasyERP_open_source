@@ -1,47 +1,47 @@
 require('pmx').init();
 
 var requestHandler = function (app, event, mainDb) {
-    "use strict";
+    'use strict';
 
     var dbsObject = mainDb.dbsObject;
     var mongoose = require('mongoose');
     var async = require('async');
     var _ = require('./node_modules/underscore');
-    var logWriter = require("./Modules/additions/logWriter.js")();
-    var models = require("./models.js")(dbsObject);
-    var department = require("./Modules/Department.js")(event, models);
-    var users = require("./Modules/Users.js")(mainDb, models);
-    var profile = require("./Modules/Profile.js")(models);
-    var access = require("./Modules/additions/access.js")(models);
-    var employee = require("./Modules/Employees.js")(event, models);
-    var customer = require("./Modules/Customers.js")(event, models);
-    var workflow = require("./Modules/Workflow.js")(models, event);
-    var project = require("./Modules/Projects.js")(models, event);
-    var jobPosition = require("./Modules/JobPosition.js")(event, models);
-    var degrees = require("./Modules/Degrees.js")(models);
-    var campaigns = require("./Modules/Campaigns.js")(models);
-    var opportunities = require("./Modules/Opportunities.js")(models, event);
-    var modules = require("./Modules/Module.js")(models);
-    var sources = require("./Modules/Sources.js")(models);
-    var languages = require("./Modules/Languages.js")(models);
-    var jobType = require("./Modules/JobType.js")(models);
-    var nationality = require("./Modules/Nationality.js")(models);
-    var birthdays = require("./Modules/Birthdays.js")(models, event);
-    var Scheduler = require("./Modules/Scheduler.js")(dbsObject, models);
+    var logWriter = require('./Modules/additions/logWriter.js')();
+    var models = require('./models.js')(dbsObject);
+    var department = require('./Modules/Department.js')(event, models);
+    var users = require('./Modules/Users.js')(mainDb, models);
+    var profile = require('./Modules/Profile.js')(models);
+    var access = require('./Modules/additions/access.js')(models);
+    var employee = require('./Modules/Employees.js')(event, models);
+    var customer = require('./Modules/Customers.js')(event, models);
+    var workflow = require('./Modules/Workflow.js')(models, event);
+    var project = require('./Modules/Projects.js')(models, event);
+    var jobPosition = require('./Modules/JobPosition.js')(event, models);
+    var degrees = require('./Modules/Degrees.js')(models);
+    var campaigns = require('./Modules/Campaigns.js')(models);
+    var opportunities = require('./Modules/Opportunities.js')(models, event);
+    var modules = require('./Modules/Module.js')(models);
+    var sources = require('./Modules/Sources.js')(models);
+    var languages = require('./Modules/Languages.js')(models);
+    var jobType = require('./Modules/JobType.js')(models);
+    var nationality = require('./Modules/Nationality.js')(models);
+    var birthdays = require('./Modules/Birthdays.js')(models, event);
+    var Scheduler = require('./Modules/Scheduler.js')(dbsObject, models);
     var scheduler = new Scheduler();
 
-    var tasksSchema = mongoose.Schemas['Task'];
-    var projectSchema = mongoose.Schemas['Project'];
-    var employeeSchema = mongoose.Schemas['Employee'];
-    var jobPositionSchema = mongoose.Schemas['JobPosition'];
-    var opportunitiesSchema = mongoose.Schemas['Opportunitie'];
-    var userSchema = mongoose.Schemas['User'];
-    var HoursCashesSchema = mongoose.Schemas['HoursCashes'];
-    var wTrackSchema = mongoose.Schemas['wTrack'];
-    var SalarySchema = mongoose.Schemas['Salary'];
-    var MonthHoursSchema = mongoose.Schemas['MonthHours'];
-    var ProjectSchema = mongoose.Schemas['Project'];
-    var jobsSchema = mongoose.Schemas['jobs'];
+    var tasksSchema = mongoose.Schemas.Task;
+    var projectSchema = mongoose.Schemas.Project;
+    var employeeSchema = mongoose.Schemas.Employee;
+    var jobPositionSchema = mongoose.Schemas.JobPosition;
+    var opportunitiesSchema = mongoose.Schemas.Opportunitie;
+    var userSchema = mongoose.Schemas.User;
+    var HoursCashesSchema = mongoose.Schemas.HoursCashes;
+    var wTrackSchema = mongoose.Schemas.wTrack;
+    var SalarySchema = mongoose.Schemas.Salary;
+    var MonthHoursSchema = mongoose.Schemas.MonthHours;
+    var ProjectSchema = mongoose.Schemas.Project;
+    var jobsSchema = mongoose.Schemas.jobs;
     var ObjectId = mongoose.Types.ObjectId;
     var QuotationSchema = mongoose.Schemas.Quotation;
 
@@ -76,7 +76,7 @@ var requestHandler = function (app, event, mainDb) {
         if (query) {
             query.update({workflow: id}, {workflow: null}, {multi: true}).exec(function (err, result) {
                 if (err) {
-                    logWriter.log("Removed workflow update " + err);
+                    logWriter.log('Removed workflow update ' + err);
                 }
             });
         }
@@ -150,8 +150,8 @@ var requestHandler = function (app, event, mainDb) {
             var monthFromSalary = params.monthFromSalary;
             var yearFromSalary = params.yearFromSalary;
             var waterfallTasks = [getWTracks, getBaseSalary];
-            var wTrack = models.get(req.session.lastDb, "wTrack", wTrackSchema);
-            var monthHours = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
+            var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+            var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
 
             if (monthFromSalary && yearFromSalary) {
                 year = parseInt(yearFromSalary);
@@ -438,7 +438,14 @@ var requestHandler = function (app, event, mainDb) {
                                     cb(null, {wTrack: result, monthHours: months});
                                 });
                             } else {
-                                Project.update({_id: project._id}, {$set: {budget: {projectTeam: [], bonus: []}}}, function (err, result) {
+                                Project.update({_id: project._id}, {
+                                    $set: {
+                                        budget: {
+                                            projectTeam: [],
+                                            bonus      : []
+                                        }
+                                    }
+                                }, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
@@ -469,8 +476,8 @@ var requestHandler = function (app, event, mainDb) {
                         budgetTotal.costSum = 0;
                         budgetTotal.revenueSum = 0;
                         budgetTotal.hoursSum = 0;
-                        //budgetTotal.revenueByQA = 0;
-                        //budgetTotal.hoursByQA = 0;
+/*                        budgetTotal.revenueByQA = 0;
+                        budgetTotal.hoursByQA = 0;*/
 
                         wTRack.forEach(function (wTrack) {
                             var key;
@@ -501,10 +508,10 @@ var requestHandler = function (app, event, mainDb) {
 
                                 if (empId === emp) {
                                     if (projectTeam[empId]) {
-                                        //if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
-                                        //    projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
-                                        //    projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
-                                        //}
+/*                                        if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                            projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
+                                            projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
+                                        }*/
                                         projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                         projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
                                         projectTeam[empId].rate += parseFloat(wTrack.rate);
@@ -513,11 +520,11 @@ var requestHandler = function (app, event, mainDb) {
                                     } else {
                                         projectTeam[empId] = {};
 
-                                        //if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
-                                        //    projectTeam[empId].byQA = {};
-                                        //    projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
-                                        //    projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
-                                        //}
+ /*                                       if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                            projectTeam[empId].byQA = {};
+                                            projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
+                                            projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
+                                        }*/
                                         projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                         projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
                                         projectTeam[empId].rate = parseFloat(wTrack.rate);
@@ -677,102 +684,116 @@ var requestHandler = function (app, event, mainDb) {
             date: new Date()
         };
 
-        Job.aggregate([
-            {$match: {project: ObjectId(pId)}},
-            {$unwind : {
-                path: "$wTracks",
-                preserveNullAndEmptyArrays: true}},
-            {$lookup : {
-                from:"wTrack",
-                localField: "wTracks",
-                foreignField: "_id",
-                as: "wTrack"}
-            },
-            {$project: {
-                wTrack : {$arrayElemAt: ["$wTrack", 0]},
-                budget: 1}
-            },
-            {$group: {
-                _id: {
-                    _id: "$_id",
-                    department: "$wTrack.department",
-                    employee: "$wTrack.employee"
-                },
-                costSum: { $sum: "$wTrack.cost" },
-                revenueSum: { $sum: "$wTrack.revenue" },
-                hoursSum: { $sum: "$wTrack.worked" },
-                maxDate: {$max : "$wTrack.dateByWeek"},
-                minDate: {$min : "$wTrack.dateByWeek"}}
-            },
-            {$lookup: {
-                from:"Department",
-                localField: "_id.department",
-                foreignField: "_id",
-                as: "department"}
-            },
-            {$lookup: {
-                from:"Employees",
-                localField: "_id.employee",
-                foreignField: "_id",
-                as: "employee"}
-            },
-            {$project: {
-                _id: "$_id._id",
-                department : {$arrayElemAt: ["$department", 0]},
-                employee : {$arrayElemAt: ["$employee", 0]},
-                "budget.costSum": "$costSum",
-                "budget.revenueSum": "$revenueSum",
-                "budget.hoursSum": "$hoursSum",
-                maxDate:  1,
-                minDate:  1}
-            },
-            {$lookup: {
-                from:"JobPosition",
-                localField: "employee.jobPosition",
-                foreignField: "_id",
-                as: "employee.jobPosition"}
-            },
-            {$project: {
-                _id: "$_id",
-                "department._id" : "$department._id",
-                "department.departmentName" : "$department.departmentName",
-                "employee._id" : "$employee._id",
-                "employee.name" : "$employee.name",
-                "employee.jobPosition" : {$arrayElemAt: ["$employee.jobPosition", 0]},
-                budget : "$budget",
-                maxDate:  1,
-                minDate:  1}
-            },
-            {$project: {
-                _id: "$_id",
-                "department" : "$department",
-                "employee._id" : "$employee._id",
-                "employee.name" : "$employee.name",
-                "employee.jobPosition._id" : "$employee.jobPosition._id",
-                "employee.jobPosition.name" : "$employee.jobPosition.name",
-                budget : "$budget",
-                maxDate:  1,
-                minDate:  1}
-            },
-            {$group: {
-                _id: "$_id",
-                projectTeam: {$push : {department: "$department", employee: "$employee", budget: "$budget"}},
-                budgetTotalCost: { $sum: "$budget.costSum" },
-                budgetTotalRevenue: { $sum: "$budget.revenueSum" },
-                budgetTotalHoursSum: { $sum: "$budget.hoursSum" },
-                maxDate: { $max: "$maxDate" },
-                minDate: { $min: "$minDate" }}
-            },
-            {$project: {
-                _id: "$_id",
-                projectTeam: "$projectTeam",
-                "budgetTotal.costSum": "$budgetTotalCost",
-                "budgetTotal.revenueSum": "$budgetTotalRevenue",
-                "budgetTotal.hoursSum": "$budgetTotalHoursSum",
-                "budgetTotal.maxDate": "$maxDate",
-                "budgetTotal.minDate": "$minDate"}
+        Job.aggregate([{
+            $match: {project: ObjectId(pId)}
+        }, {
+            $unwind: {
+                path                      : '$wTracks',
+                preserveNullAndEmptyArrays: true
             }
-        ], function(err, result){
+        }, {
+            $lookup: {
+                from        : 'wTrack',
+                localField  : 'wTracks',
+                foreignField: '_id',
+                as          : 'wTrack'
+            }
+        }, {
+            $project: {
+                wTrack: {$arrayElemAt: ['$wTrack', 0]},
+                budget: 1
+            }
+        }, {
+            $group: {
+                _id       : {
+                    _id       : '$_id',
+                    department: '$wTrack.department',
+                    employee  : '$wTrack.employee'
+                },
+                costSum   : {$sum: '$wTrack.cost'},
+                revenueSum: {$sum: '$wTrack.revenue'},
+                hoursSum  : {$sum: '$wTrack.worked'},
+                maxDate   : {$max: '$wTrack.dateByWeek'},
+                minDate   : {$min: '$wTrack.dateByWeek'}
+            }
+        }, {
+            $lookup: {
+                from        : 'Department',
+                localField  : '_id.department',
+                foreignField: '_id',
+                as          : 'department'
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : '_id.employee',
+                foreignField: '_id',
+                as          : 'employee'
+            }
+        }, {
+            $project: {
+                _id                : '$_id._id',
+                department         : {$arrayElemAt: ['$department', 0]},
+                employee           : {$arrayElemAt: ['$employee', 0]},
+                'budget.costSum'   : '$costSum',
+                'budget.revenueSum': '$revenueSum',
+                'budget.hoursSum'  : '$hoursSum',
+                maxDate            : 1,
+                minDate            : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'JobPosition',
+                localField  : 'employee.jobPosition',
+                foreignField: '_id',
+                as          : 'employee.jobPosition'
+            }
+        }, {
+            $project: {
+                _id                        : '$_id',
+                'department._id'           : '$department._id',
+                'department.departmentName': '$department.departmentName',
+                'employee._id'             : '$employee._id',
+                'employee.name'            : '$employee.name',
+                'employee.jobPosition'     : {$arrayElemAt: ['$employee.jobPosition', 0]},
+                budget                     : '$budget',
+                maxDate                    : 1,
+                minDate                    : 1
+            }
+        }, {
+            $project: {
+                _id                        : '$_id',
+                department                 : '$department',
+                'employee._id'             : '$employee._id',
+                'employee.name'            : '$employee.name',
+                'employee.jobPosition._id' : '$employee.jobPosition._id',
+                'employee.jobPosition.name': '$employee.jobPosition.name',
+                budget                     : '$budget',
+                maxDate                    : 1,
+                minDate                    : 1
+            }
+        }, {
+            $group: {
+                _id                : '$_id',
+                projectTeam        : {$push: {department: '$department', employee: '$employee', budget: '$budget'}},
+                budgetTotalCost    : {$sum: '$budget.costSum'},
+                budgetTotalRevenue : {$sum: '$budget.revenueSum'},
+                budgetTotalHoursSum: {$sum: '$budget.hoursSum'},
+                maxDate            : {$max: '$maxDate'},
+                minDate            : {$min: '$minDate'}
+            }
+        }, {
+            $project: {
+                _id                     : '$_id',
+                projectTeam             : '$projectTeam',
+                'budgetTotal.costSum'   : '$budgetTotalCost',
+                'budgetTotal.revenueSum': '$budgetTotalRevenue',
+                'budgetTotal.hoursSum'  : '$budgetTotalHoursSum',
+                'budgetTotal.maxDate'   : '$maxDate',
+                'budgetTotal.minDate'   : '$minDate'
+            }
+        }
+        ], function (err, result) {
             if (err) {
                 return console.log(err);
             }
@@ -806,25 +827,27 @@ var requestHandler = function (app, event, mainDb) {
             }, function () {
                 Job.aggregate([{
                     $match: {
-                        'project': ObjectId(pId)
+                        project: ObjectId(pId)
                     }
                 },
                     {
                         $group: {
-                            _id   : "$project",
+                            _id   : '$project',
                             jobIds: {$addToSet: '$_id'}
                         }
                     },
 
                     {
                         $lookup: {
-                            from:"Project",
-                            localField: "_id",
-                            foreignField: "_id",
-                            as: "_id"
+                            from        : 'Project',
+                            localField  : '_id',
+                            foreignField: '_id',
+                            as          : '_id'
                         }
                     }
                 ], function (err, result) {
+                    var jobIds;
+
                     if (err) {
                         return console.log(err);
                     }
@@ -832,9 +855,9 @@ var requestHandler = function (app, event, mainDb) {
                     async.each(result, function (res, cb) {
 
                         projectId = res._id._id;
-                        var jobIds = res.jobIds;
+                        jobIds = res.jobIds;
 
-                        Project.findByIdAndUpdate(projectId, {$set: {"budget.projectTeam": jobIds}}, {new: true}, function (err, result) {
+                        Project.findByIdAndUpdate(projectId, {$set: {'budget.projectTeam': jobIds}}, {new: true}, function (err, result) {
                             if (err) {
                                 return cb(err);
                             }
@@ -845,9 +868,9 @@ var requestHandler = function (app, event, mainDb) {
                         if (projectId) {
                             event.emit('fetchJobsCollection', {project: projectId});
                         }
-                    })
-                })
-            })
+                    });
+                });
+            });
         });
 
 

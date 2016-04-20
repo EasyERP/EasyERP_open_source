@@ -1,11 +1,11 @@
 var mongoose = require('mongoose');
 var Project = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
-    var ProjectSchema = mongoose.Schemas['Project'];
-    var wTrackSchema = mongoose.Schemas['wTrack'];
-    var MonthHoursSchema = mongoose.Schemas['MonthHours'];
-    var EmployeeSchema = mongoose.Schemas['Employee'];
-    var jobsSchema = mongoose.Schemas['jobs'];
+    var access = require('../Modules/additions/access.js')(models);
+    var ProjectSchema = mongoose.Schemas.Project;
+    var wTrackSchema = mongoose.Schemas.wTrack;
+    var MonthHoursSchema = mongoose.Schemas.MonthHours;
+    var EmployeeSchema = mongoose.Schemas.Employee;
+    var jobsSchema = mongoose.Schemas.jobs;
     var _ = require('../node_modules/underscore');
     var moment = require('../public/js/libs/moment/moment');
     var async = require('async');
@@ -17,9 +17,9 @@ var Project = function (models) {
         var data = req.query;
         var inProgress = data && data.inProgress ? true : false;
         var id = data ? data._id : null;
-        var filter = inProgress ? {"workflow": {$ne: CONSTANTS.PROJECTCLOSED}} : {};
+        var filter = inProgress ? {'workflow': {$ne: CONSTANTS.PROJECTCLOSED}} : {};
 
-        if (id){
+        if (id) {
             filter._id = objectId(id);
         }//add fof Projects in wTrack
 
@@ -34,7 +34,7 @@ var Project = function (models) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send({data: projects})
+                res.status(200).send({data: projects});
             });
     };
 
@@ -78,7 +78,7 @@ var Project = function (models) {
                 switch (key) {
                     case 'project':
                         result[0][key] = _.sortBy(value, function (num) {
-                            return num
+                            return num;
                         });
                         break;
 
@@ -90,219 +90,219 @@ var Project = function (models) {
     };
 
     this.updateAllProjects = function (req, res, next) {
-        //var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
-        //var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-        //var paralellTasks;
-        //var count = 0;
-        //
-        //var query = Project.find({}, {_id: 1, bonus: 1}).lean();
-        //
-        //query.populate('bonus.employeeId', '_id name')
-        //    .populate('bonus.bonusId', '_id name value isPercent');
-        //
-        //query.exec(function (err, result) {
-        //    if (err) {
-        //        return next(err);
-        //    }
-        //
-        //    async.eachLimit(result, 200, function (project) {
-        //        var pID = project._id;
-        //
-        //        paralellTasks = [getwTrackAndMonthHours];
-        //
-        //        function getwTrackAndMonthHours(cb) {
-        //            var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        //            var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
-        //
-        //            var query = WTrack.find({'project._id': project._id}).lean();
-        //            var months = [];
-        //            var years = [];
-        //            var uMonth;
-        //            var uYear;
-        //
-        //            query.exec(function (err, result) {
-        //                if (err) {
-        //                    return cb(err);
-        //                }
-        //
-        //                result.forEach(function (res) {
-        //                    months.push(res.month);
-        //                    years.push(res.year);
-        //                });
-        //
-        //                uMonth = _.uniq(months);
-        //                uYear = _.uniq(years);
-        //
-        //                monthHours.aggregate([{
-        //                    $match: {
-        //                        year : {$in: uYear},
-        //                        month: {$in: uMonth}
-        //                    }
-        //                }, {
-        //                    $project: {
-        //                        date : {$add: [{$multiply: ["$year", 100]}, "$month"]},
-        //                        hours: '$hours'
-        //
-        //                    }
-        //                }, {
-        //                    $group: {
-        //                        _id  : '$date',
-        //                        value: {$addToSet: '$hours'}
-        //                    }
-        //                }], function (err, months) {
-        //                    if (err) {
-        //                        return cb(err);
-        //                    }
-        //
-        //                    cb(null, {wTrack: result, monthHours: months});
-        //                });
-        //
-        //            });
-        //        };
-        //        async.parallel(paralellTasks, function (err, result) {
-        //            var projectTeam = {};
-        //            var bonus = [];
-        //            var projectValues = {};
-        //            var budgetTotal = {};
-        //            var wTRack = result[0] ? result[0]['wTrack'] : [];
-        //            var monthHours = result[0] ? result[0]['monthHours'] : [];
-        //            var bonuses = project.bonus;
-        //            var empKeys;
-        //            var keys;
-        //            var hoursByMonth = {};
-        //            var employees = {};
-        //            var keysForPT;
-        //            var sortBudget = [];
-        //            var budget = {};
-        //
-        //            budgetTotal.profitSum = 0;
-        //            budgetTotal.costSum = 0;
-        //            budgetTotal.rateSum = 0;
-        //            budgetTotal.revenueSum = 0;
-        //            budgetTotal.hoursSum = 0;
-        //
-        //            wTRack.forEach(function (wTrack) {
-        //                var key;
-        //                var employee = wTrack.employee;
-        //
-        //                if (!( employee._id in employees)) {
-        //                    employees[employee._id] = employee.name;
-        //                }
-        //
-        //                key = wTrack.year * 100 + wTrack.month;
-        //
-        //                if (hoursByMonth[key]) {
-        //                    hoursByMonth[key] += parseFloat(wTrack.worked);
-        //                } else {
-        //                    hoursByMonth[key] = parseFloat(wTrack.worked);
-        //                }
-        //            });
-        //
-        //            empKeys = Object.keys(employees);
-        //
-        //            empKeys.forEach(function (empId) {
-        //                wTRack.forEach(function (wTrack) {
-        //                    var emp = (wTrack.employee._id).toString();
-        //
-        //                    if (empId === emp) {
-        //                        if (projectTeam[empId]) {
-        //                            projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
-        //                            projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
-        //                            projectTeam[empId].rate += parseFloat(wTrack.rate);
-        //                            projectTeam[empId].hours += parseFloat(wTrack.worked);
-        //                            projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
-        //                        } else {
-        //                            projectTeam[empId] = {};
-        //                            projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
-        //                            projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
-        //                            projectTeam[empId].rate = parseFloat(wTrack.rate);
-        //                            projectTeam[empId].hours = parseFloat(wTrack.worked);
-        //                            projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
-        //                        }
-        //                    }
-        //                });
-        //            });
-        //
-        //            keys = Object.keys(projectTeam);
-        //            if (keys.length > 0) {
-        //
-        //                keys.forEach(function (key) {
-        //                    budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
-        //                    budgetTotal.costSum += parseFloat(projectTeam[key].cost);
-        //                    budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
-        //                    budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
-        //                });
-        //                budgetTotal.rateSum = parseFloat(budgetTotal.revenueSum) / parseInt(budgetTotal.hoursSum);
-        //
-        //                projectValues.revenue = budgetTotal.revenueSum;
-        //                projectValues.profit = budgetTotal.profitSum;
-        //                projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100).toFixed();
-        //                projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100).toFixed();
-        //
-        //                var empQuery = Employee.find({_id: {$in: keys}}, {
-        //                    'name'            : 1,
-        //                    'jobPosition.name': 1,
-        //                    'department.name' : 1
-        //                }).lean();
-        //                empQuery.exec(function (err, response) {
-        //
-        //                    if (err) {
-        //                        return next(err);
-        //                    }
-        //
-        //                    bonuses.forEach(function (element) {
-        //                        var objToSave = {};
-        //
-        //                        objToSave.bonus = 0;
-        //                        objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
-        //                        objToSave.percentage = element.bonusId.name;
-        //
-        //                        if (element.bonusId.isPercent) {
-        //                            objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
-        //                            bonus.push(objToSave);
-        //                        } else {
-        //                            monthHours.forEach(function (month) {
-        //                                objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
-        //                            });
-        //
-        //                            objToSave.bonus = objToSave.bonus * 100;
-        //                            bonus.push(objToSave);
-        //                        }
-        //
-        //                    });
-        //
-        //                    keysForPT = Object.keys(projectTeam);
-        //
-        //                    response.forEach(function (employee) {
-        //                        keysForPT.forEach(function (id) {
-        //                            if ((employee._id).toString() === id) {
-        //                                sortBudget.push(projectTeam[id]);
-        //                            }
-        //                        })
-        //                    });
-        //
-        //                    budget = {
-        //                        // projectTeam: response,
-        //                        bonus: bonus
-        //                        // budget: sortBudget,
-        //                        // projectValues: projectValues,
-        //                        //budgetTotal: budgetTotal
-        //                    };
-        //
-        //                    Project.update({_id: pID}, {$set: {budget: budget}}, function (err, result) {
-        //                        if (err) {
-        //                            return next(err);
-        //                        }
-        //
-        //                        console.log(count++);
-        //                    })
-        //                });
-        //            }
-        //        });
-        //
-        //    });
-        //    res.status(200).send('success');
-        //});
+        /* var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+         var paralellTasks;
+         var count = 0;
+
+         var query = Project.find({}, {_id: 1, bonus: 1}).lean();
+
+         query.populate('bonus.employeeId', '_id name')
+         .populate('bonus.bonusId', '_id name value isPercent');
+
+         query.exec(function (err, result) {
+         if (err) {
+         return next(err);
+         }
+
+         async.eachLimit(result, 200, function (project) {
+         var pID = project._id;
+
+         paralellTasks = [getwTrackAndMonthHours];
+
+         function getwTrackAndMonthHours(cb) {
+         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+         var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
+
+         var query = WTrack.find({'project._id': project._id}).lean();
+         var months = [];
+         var years = [];
+         var uMonth;
+         var uYear;
+
+         query.exec(function (err, result) {
+         if (err) {
+         return cb(err);
+         }
+
+         result.forEach(function (res) {
+         months.push(res.month);
+         years.push(res.year);
+         });
+
+         uMonth = _.uniq(months);
+         uYear = _.uniq(years);
+
+         monthHours.aggregate([{
+         $match: {
+         year : {$in: uYear},
+         month: {$in: uMonth}
+         }
+         }, {
+         $project: {
+         date : {$add: [{$multiply: ["$year", 100]}, "$month"]},
+         hours: '$hours'
+
+         }
+         }, {
+         $group: {
+         _id  : '$date',
+         value: {$addToSet: '$hours'}
+         }
+         }], function (err, months) {
+         if (err) {
+         return cb(err);
+         }
+
+         cb(null, {wTrack: result, monthHours: months});
+         });
+
+         });
+         };
+         async.parallel(paralellTasks, function (err, result) {
+         var projectTeam = {};
+         var bonus = [];
+         var projectValues = {};
+         var budgetTotal = {};
+         var wTRack = result[0] ? result[0]['wTrack'] : [];
+         var monthHours = result[0] ? result[0]['monthHours'] : [];
+         var bonuses = project.bonus;
+         var empKeys;
+         var keys;
+         var hoursByMonth = {};
+         var employees = {};
+         var keysForPT;
+         var sortBudget = [];
+         var budget = {};
+
+         budgetTotal.profitSum = 0;
+         budgetTotal.costSum = 0;
+         budgetTotal.rateSum = 0;
+         budgetTotal.revenueSum = 0;
+         budgetTotal.hoursSum = 0;
+
+         wTRack.forEach(function (wTrack) {
+         var key;
+         var employee = wTrack.employee;
+
+         if (!( employee._id in employees)) {
+         employees[employee._id] = employee.name;
+         }
+
+         key = wTrack.year * 100 + wTrack.month;
+
+         if (hoursByMonth[key]) {
+         hoursByMonth[key] += parseFloat(wTrack.worked);
+         } else {
+         hoursByMonth[key] = parseFloat(wTrack.worked);
+         }
+         });
+
+         empKeys = Object.keys(employees);
+
+         empKeys.forEach(function (empId) {
+         wTRack.forEach(function (wTrack) {
+         var emp = (wTrack.employee._id).toString();
+
+         if (empId === emp) {
+         if (projectTeam[empId]) {
+         projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
+         projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
+         projectTeam[empId].rate += parseFloat(wTrack.rate);
+         projectTeam[empId].hours += parseFloat(wTrack.worked);
+         projectTeam[empId].revenue += parseFloat((wTrack.revenue / 100).toFixed(2));
+         } else {
+         projectTeam[empId] = {};
+         projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
+         projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
+         projectTeam[empId].rate = parseFloat(wTrack.rate);
+         projectTeam[empId].hours = parseFloat(wTrack.worked);
+         projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
+         }
+         }
+         });
+         });
+
+         keys = Object.keys(projectTeam);
+         if (keys.length > 0) {
+
+         keys.forEach(function (key) {
+         budgetTotal.profitSum += parseFloat(projectTeam[key].profit);
+         budgetTotal.costSum += parseFloat(projectTeam[key].cost);
+         budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
+         budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
+         });
+         budgetTotal.rateSum = parseFloat(budgetTotal.revenueSum) / parseInt(budgetTotal.hoursSum);
+
+         projectValues.revenue = budgetTotal.revenueSum;
+         projectValues.profit = budgetTotal.profitSum;
+         projectValues.markUp = ((budgetTotal.profitSum / budgetTotal.costSum) * 100).toFixed();
+         projectValues.radio = ((budgetTotal.revenueSum / budgetTotal.costSum) * 100).toFixed();
+
+         var empQuery = Employee.find({_id: {$in: keys}}, {
+         'name'            : 1,
+         'jobPosition.name': 1,
+         'department.name' : 1
+         }).lean();
+         empQuery.exec(function (err, response) {
+
+         if (err) {
+         return next(err);
+         }
+
+         bonuses.forEach(function (element) {
+         var objToSave = {};
+
+         objToSave.bonus = 0;
+         objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
+         objToSave.percentage = element.bonusId.name;
+
+         if (element.bonusId.isPercent) {
+         objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
+         bonus.push(objToSave);
+         } else {
+         monthHours.forEach(function (month) {
+         objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
+         });
+
+         objToSave.bonus = objToSave.bonus * 100;
+         bonus.push(objToSave);
+         }
+
+         });
+
+         keysForPT = Object.keys(projectTeam);
+
+         response.forEach(function (employee) {
+         keysForPT.forEach(function (id) {
+         if ((employee._id).toString() === id) {
+         sortBudget.push(projectTeam[id]);
+         }
+         })
+         });
+
+         budget = {
+         // projectTeam: response,
+         bonus: bonus
+         // budget: sortBudget,
+         // projectValues: projectValues,
+         //budgetTotal: budgetTotal
+         };
+
+         Project.update({_id: pID}, {$set: {budget: budget}}, function (err, result) {
+         if (err) {
+         return next(err);
+         }
+
+         console.log(count++);
+         })
+         });
+         }
+         });
+
+         });
+         res.status(200).send('success');
+         });*/
         var projectId;
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -321,9 +321,9 @@ var Project = function (models) {
 
             //async.each(result, function (project, callback) {
             Employee.populate(result, {
-                'path'  : "wTracks.employee",
-                'select': '_id, name',
-                'lean'  : true
+                path  : 'wTracks.employee',
+                select: '_id, name',
+                lean  : true
             }, function (err, result) {
                 async.each(result, function (job, cb) {
                     var jobID = job._id;
@@ -342,6 +342,7 @@ var Project = function (models) {
                     var maxDate = 0;
                     var nextDate;
                     var nextMaxDate;
+                    var empQuery;
 
                     budgetTotal.profitSum = 0;
                     budgetTotal.costSum = 0;
@@ -355,7 +356,7 @@ var Project = function (models) {
                         var key;
                         var employee = wTrack.employee;
 
-                        if (!( employee._id in employees)) {
+                        if (!(employee._id in employees)) {
                             employees[employee._id] = employee.name.first + ' ' + employee.name.last;
                         }
 
@@ -387,10 +388,10 @@ var Project = function (models) {
 
                             if (empId === emp) {
                                 if (projectTeam[empId]) {
-                                    //if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
-                                    //    projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
-                                    //    projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
-                                    //}
+                                    /*                                    if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                     projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
+                                     projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
+                                     }*/
                                     projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                     projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
                                     // projectTeam[empId].rate += parseFloat(wTrack.rate);
@@ -399,11 +400,11 @@ var Project = function (models) {
                                 } else {
                                     projectTeam[empId] = {};
 
-                                    //if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
-                                    //    projectTeam[empId].byQA = {};
-                                    //    projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue) / 100;
-                                    //    projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
-                                    //}
+                                    /*                                    if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                     projectTeam[empId].byQA = {};
+                                     projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue) / 100;
+                                     projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
+                                     }*/
 
                                     projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                     projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
@@ -426,14 +427,14 @@ var Project = function (models) {
                             budgetTotal.costSum += parseFloat(projectTeam[key].cost);
                             budgetTotal.hoursSum += parseFloat(projectTeam[key].hours);
                             budgetTotal.revenueSum += parseFloat(projectTeam[key].revenue);
-                            //budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
-                            //budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);
+                            /*                            budgetTotal.revenueByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.revenue / 100 : 0);
+                             budgetTotal.hoursByQA += parseFloat(projectTeam[key].byQA ? projectTeam[key].byQA.hours : 0);*/
                         });
-                        //budgetTotal.rateSum = {};
-                        //var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
-                        //var valueForDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - budgetTotal.hoursByQA);
-                        //budgetTotal.rateSum.byQA = isFinite(value) ? value : 0;
-                        //budgetTotal.rateSum.byDev = isFinite(valueForDev) ? valueForDev : 0;
+                        /*                        budgetTotal.rateSum = {};
+                         var value = budgetTotal.revenueByQA / budgetTotal.hoursByQA;
+                         var valueForDev = ((parseFloat(budgetTotal.revenueSum) - budgetTotal.revenueByQA)) / (budgetTotal.hoursSum - budgetTotal.hoursByQA);
+                         budgetTotal.rateSum.byQA = isFinite(value) ? value : 0;
+                         budgetTotal.rateSum.byDev = isFinite(valueForDev) ? valueForDev : 0;*/
 
                         projectValues.revenue = budgetTotal.revenueSum;
                         projectValues.profit = budgetTotal.profitSum;
@@ -446,11 +447,11 @@ var Project = function (models) {
                             projectValues.radio = 0;
                         }
 
-                        var empQuery = Employee
+                        empQuery = Employee
                             .find({_id: {$in: keys}}, {
-                                'name'       : 1,
-                                'jobPosition': 1,
-                                'department' : 1
+                                name       : 1,
+                                jobPosition: 1,
+                                department : 1
                             })
                             .populate('department', '_id departmentName')
                             .populate('jobPosition', '_id name')
@@ -468,7 +469,7 @@ var Project = function (models) {
                                     if ((employee._id).toString() === id) {
                                         sortBudget.push(projectTeam[id]);
                                     }
-                                })
+                                });
                             });
 
                             budget = {
@@ -483,7 +484,7 @@ var Project = function (models) {
                                 }
 
                                 console.log(count++);
-                            })
+                            });
                         });
                     } else {
                         budget = {
@@ -499,47 +500,47 @@ var Project = function (models) {
 
                             console.log(count++);
 
-                        })
+                        });
                     }
                     cb();
                 }, function () {
                     res.status(200).send('success');
 
-                    //Job.aggregate([{
-                    //    $match: {
-                    //        'project': ObjectId(pId)
-                    //    }
-                    //},
-                    //    {
-                    //        $group: {
-                    //            _id   : "$project",
-                    //            jobIds: {$addToSet: '$_id'}
-                    //        }
-                    //    }
-                    //], function (err, result) {
-                    //    if (err) {
-                    //        return console.log(err);
-                    //    }
-                    //
-                    //    async.each(result, function (res, cb) {
-                    //
-                    //        projectId = res._id;
-                    //        var jobIds = res.jobIds;
-                    //
-                    //        Project.findByIdAndUpdate(projectId, {$set: {"budget.projectTeam": jobIds}}, {new: true}, function (err, result) {
-                    //            if (err) {
-                    //                console.log(err);
-                    //            }
-                    //            cb();
-                    //        });
-                    //
-                    //    }, function () {
-                    //        callback();
-                    //        if (projectId) {
-                    //            //event.emit('fetchJobsCollection', {project: projectId});
-                    //        }
-                    //    })
-                    //})
+                    /* Job.aggregate([{
+                     $match: {
+                     'project': ObjectId(pId)
+                     }
+                     },
+                     {
+                     $group: {
+                     _id   : "$project",
+                     jobIds: {$addToSet: '$_id'}
+                     }
+                     }
+                     ], function (err, result) {
+                     if (err) {
+                     return console.log(err);
+                     }
+
+                     async.each(result, function (res, cb) {
+
+                     projectId = res._id;
+                     var jobIds = res.jobIds;
+
+                     Project.findByIdAndUpdate(projectId, {$set: {"budget.projectTeam": jobIds}}, {new: true}, function (err, result) {
+                     if (err) {
+                     console.log(err);
+                     }
+                     cb();
+                     });
+
+                     }, function () {
+                     callback();
+                     if (projectId) {
+                     //event.emit('fetchJobsCollection', {project: projectId});
+                     }
+                     })
+                     })*/
                 });
             });
 
@@ -558,12 +559,12 @@ var Project = function (models) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send(projects)
+                res.status(200).send(projects);
             });
     };
 
     this.getProjectPMForDashboard = function (req, res, next) {
-        var Project = models.get(req.session.lastDb, "Project", ProjectSchema);
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var data = {};
         var sort = req.query.sort;
@@ -581,20 +582,20 @@ var Project = function (models) {
             $unwind: '$budget.projectTeam'
         }, {
             $lookup: {
-                from        : "Employees",
-                localField  : "projectmanager",
-                foreignField: "_id", as: "projectmanager"
+                from        : 'Employees',
+                localField  : 'projectmanager',
+                foreignField: '_id', as: 'projectmanager'
             }
         }, {
             $lookup: {
-                from        : "jobs",
-                localField  : "budget.projectTeam",
-                foreignField: "_id", as: "budget.projectTeam"
+                from        : 'jobs',
+                localField  : 'budget.projectTeam',
+                foreignField: '_id', as: 'budget.projectTeam'
             }
         }, {
             $project: {
-                'budget.projectTeam': {$arrayElemAt: ["$budget.projectTeam", 0]},
-                projectmanager      : {$arrayElemAt: ["$projectmanager", 0]},
+                'budget.projectTeam': {$arrayElemAt: ['$budget.projectTeam', 0]},
+                projectmanager      : {$arrayElemAt: ['$projectmanager', 0]},
                 'budget.budgetTotal': 1,
                 projectName         : 1
             }
@@ -624,8 +625,8 @@ var Project = function (models) {
         }, {
             $project: {
                 _id                 : 1,
-                projectmanager      : {$arrayElemAt: ["$projectmanager", 0]},
-                projectName         : {$arrayElemAt: ["$projectName", 0]},
+                projectmanager      : {$arrayElemAt: ['$projectmanager', 0]},
+                projectName         : {$arrayElemAt: ['$projectName', 0]},
                 'budget.projectTeam': '$projectTeam',
                 'budget.budgetTotal': '$budgetTotal'
             }
@@ -647,6 +648,9 @@ var Project = function (models) {
                 var jobs = (project.budget && project.budget.projectTeam) ? project.budget.projectTeam : [];
                 var minDate;
                 var maxDate;
+                var min;
+                var max;
+                var parallelTasks;
 
                 project.total = {};
 
@@ -662,17 +666,17 @@ var Project = function (models) {
                 totalObj.radio = 0;
                 minDate = 1000000;
                 maxDate = 0;
-                //totalObj.rateSum = {
-                //    byDev: 0,
-                //    byQA : 0
-                //};
+                /*                totalObj.rateSum = {
+                 byDev: 0,
+                 byQA : 0
+                 };*/
 
                 jobs.forEach(function (job) {
                     var jobBudgetTotal = job.budget.budgetTotal;
 
-                    if (job.workflow.name === "In Progress") {
+                    if (job.workflow.name === 'In Progress') {
                         totalInPr += jobBudgetTotal ? jobBudgetTotal.costSum : 0;
-                    } else if (job.workflow.name === "Finished") {
+                    } else if (job.workflow.name === 'Finished') {
                         totalFinished += jobBudgetTotal.costSum;
                     }
 
@@ -697,20 +701,18 @@ var Project = function (models) {
 
                     //totalObj.profitSum = job.budget.budgetTotal ? (job.budget.budgetTotal.revenueSum - job.budget.budgetTotal.costSum) : 0;
 
-                    if(jobBudgetTotal){
-                        if(jobBudgetTotal.revenueSum){
-                            if(jobBudgetTotal.costSum){
-                                totalObj.profitSum += jobBudgetTotal.revenueSum - jobBudgetTotal.costSum;
-                            }else {
-                                totalObj.profitSum += jobBudgetTotal.revenueSum
-                            }
+                    if (jobBudgetTotal && jobBudgetTotal.revenueSum) {
+                        if (jobBudgetTotal.costSum) {
+                            totalObj.profitSum += jobBudgetTotal.revenueSum - jobBudgetTotal.costSum;
+                        } else {
+                            totalObj.profitSum += jobBudgetTotal.revenueSum;
                         }
                     } else {
                         totalObj.profitSum = 0;
                     }
                     totalObj.hoursSum += jobBudgetTotal ? jobBudgetTotal.hoursSum : 0;
-                    //totalObj.rateSum.byDev += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byDev : 0;
-                    //totalObj.rateSum.byQA += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byQA : 0;
+                    /*                    totalObj.rateSum.byDev += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byDev : 0;
+                     totalObj.rateSum.byQA += job.budget.budgetTotal ? job.budget.budgetTotal.rateSum.byQA : 0;*/
                 });
 
                 totalObj.totalInPr = totalInPr;
@@ -730,27 +732,32 @@ var Project = function (models) {
                 }
 
                 project.total = totalObj;
-                var min = totalObj.minDate;
-                var max = totalObj.maxDate;
+                min = totalObj.minDate;
+                max = totalObj.maxDate;
 
-                var parallelTasks = [getMinWTrack, getMaxWTrack];
+                parallelTasks = [getMinWTrack, getMaxWTrack];
 
                 function getMinWTrack(cb) {
+                    var newDate;
+                    var wTrack;
+                    var i;
+                    var day;
+
                     WTrack.find({
-                        "project" : project._id,
+                        project   : 'project._id',
                         dateByWeek: min
                     }).sort({worked: -1}).exec(function (err, result) {
                         if (err) {
                             return cb(err);
                         }
 
-                        var wTrack = result ? result[0] : null;
-                        var newDate;
+                        wTrack = result ? result[0] : null;
+
                         if (wTrack) {
                             newDate = moment().year(wTrack.year).isoWeek(wTrack.week);
 
-                            for (var i = 1; i <= 7; i++) {
-                                var day = wTrack[i];
+                            for (i = 1; i <= 7; i++) {
+                                day = wTrack[i];
                                 if (day) {
                                     break;
                                 }
@@ -763,16 +770,19 @@ var Project = function (models) {
                 }
 
                 function getMaxWTrack(cb) {
+                    var wTrack;
+                    var newDate;
+
                     WTrack.find({
-                        "project" : project._id,
+                        project   : project._id,
                         dateByWeek: max
                     }).sort({worked: 1}).exec(function (err, result) {
                         if (err) {
                             return cb(err);
                         }
 
-                        var wTrack = result ? result[0] : null;
-                        var newDate;
+                        wTrack = result ? result[0] : null;
+
                         if (wTrack) {
                             newDate = moment().year(wTrack.year).isoWeek(wTrack.week);
 
@@ -817,9 +827,9 @@ var Project = function (models) {
                 });
             });
 
-            if (collection[0].total.hasOwnProperty(key)){
+            if (collection[0].total.hasOwnProperty(key)) {
 
-                collection.sort(function(a , b){
+                collection.sort(function (a, b) {
 
                     var fieldA = a.total[key] || 0;
                     var fieldB = b.total[key] || 0;
@@ -845,10 +855,10 @@ var Project = function (models) {
             }
 
 
-            data['data'] = collection;
+            data.data = collection;
 
             res.status(200).send(data);
-        })
+        });
     };
 };
 

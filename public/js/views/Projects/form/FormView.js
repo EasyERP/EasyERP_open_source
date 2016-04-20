@@ -673,9 +673,9 @@ define([
                     }
 
                     salesManagers.push({
-                        manager   : employeeId,
-                        startDate : startDText,
-                        endDate   : endDText
+                        manager  : employeeId,
+                        startDate: startDText,
+                        endDate  : endDText
                     });
                 });
 
@@ -899,6 +899,7 @@ define([
                 var _id = window.location.hash.split('form/')[1];
                 var key = 'jobs_projectId:' + _id;
                 var jobsCollection = custom.retriveFromCash(key);
+                var budgetTotal;
 
                 var projectTeam = _.filter(this.jobsCollection.toJSON(), function (el) {
                     return el.project._id === _id;
@@ -915,12 +916,13 @@ define([
                 };
 
                 projectTeam.forEach(function (projectTeam) {
-                    var budgetTotal = projectTeam.budget.budgetTotal;
-
-                    self.projectValues.revenue += budgetTotal ? budgetTotal.revenueSum : 0;
-                    self.projectValues.profit += budgetTotal ? (budgetTotal.revenueSum - budgetTotal.costSum) : 0;
-                    self.projectValues.cost += budgetTotal ? budgetTotal.costSum : 0;
-
+                    if (projectTeam && projectTeam.budget && projectTeam.budget.budgetTotal) {
+                        budgetTotal = projectTeam.budget.budgetTotal;
+                        self.projectValues.revenue += budgetTotal.revenueSum || 0;
+                        self.projectValues.cost += budgetTotal.costSum || 0;
+                        self.projectValues.profit += self.projectValues.revenue - self.projectValues.cost;
+                        /*self.projectValues.profit += budgetTotal ? (budgetTotal.revenueSum - budgetTotal.costSum) : 0;*/
+                    }
                 });
 
                 this.projectValues.markUp = ((this.projectValues.profit / this.projectValues.cost) * 100);
@@ -950,7 +952,6 @@ define([
             },
 
             getWTrack: function (cb) {
-                //var _id = this.formModel.id;
                 var self = this;
                 var callback = _.once(cb);
 
@@ -971,10 +972,11 @@ define([
                 });
 
                 function createView() {
+                    var gridStart = $('#grid-start').text();
                     callback();
 
-                    var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
-                    var itemsNumber = parseInt($('.selectedItemsNumber').text()) || 'all';
+                    var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
+                    var itemsNumber = parseInt($('.selectedItemsNumber').text(), 10) || 'all';
                     var defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
                     if (self.wTrackView) {
                         self.wTrackView.undelegateEvents();
@@ -987,7 +989,7 @@ define([
                         startNumber       : startNumber,
                         project           : self.formModel
                     });
-                };
+                }
 
                 function showMoreContent(newModels) {
                     self.wCollection.reset(newModels.toJSON());
@@ -1000,8 +1002,9 @@ define([
             showMoreContent: function (newModels) {
                 var self = this;
                 var _id = window.location.hash.split('form/')[1];
+                var gridStart = $('#grid-start').text();
 
-                var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
+                var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
 
                 var filter = {
                     projectName: {
@@ -1090,7 +1093,8 @@ define([
             },
 
             createView: function () {
-                var startNumber = $('#grid-start').text() ? (parseInt($('#grid-start').text()) < 1 ) ? 1 : parseInt($('#grid-start').text()) : 1;
+                var gridStart = $('#grid-start').text();
+                var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
 
                 if (this.wTrackView) {
                     this.wTrackView.undelegateEvents();
@@ -1566,22 +1570,24 @@ define([
                 var projectManagersView;
                 var projectManagers;
                 var ProjectMs = formModel.projectManagers;
-                var PM = ProjectMs.length ? ProjectMs[ProjectMs.length -1].manager : ''; // choose PM from Array
+                var PM = ProjectMs.length ? ProjectMs[ProjectMs.length - 1].manager : ''; // choose PM from Array
+                var notesEl;
+                var atachEl;
 
                 App.startPreload();
 
-                var notesEl = new noteView({
+                notesEl = new noteView({
                     model: this.formModel
                 }).render().el;
 
-                var atachEl = new attachView({
+                atachEl = new attachView({
                     model: this.formModel,
                     url  : '/uploadProjectsFiles'
                 }).render().el;
 
                 thisEl.html(templ({
-                    model: formModel,
-                    projectM : PM
+                    model   : formModel,
+                    projectM: PM
                 }));
 
                 App.projectInfo = App.projectInfo || {};
