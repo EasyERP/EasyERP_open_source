@@ -149,7 +149,7 @@ define([
         },
 
         editRow: function (e, prev, next) {
-            $(".newSelectList").hide();
+            //$(".newSelectList").hide();
             var el = $(e.target);
             var tr = $(e.target).closest('tr');
             var mothHoursId = tr.data('id');
@@ -160,8 +160,10 @@ define([
             var insertedInput;
 
             if (mothHoursId && el.prop('tagName') !== 'INPUT') {
+                if (this.modelId) {
+                    this.setChangedValueToModel();
+                }
                 this.modelId = mothHoursId;
-                this.setChangedValueToModel();
             }
 
             if (isSelect) {
@@ -176,18 +178,12 @@ define([
         },
 
         saveItem: function () {
-            var id;
+            var self = this;
             var model;
+            var errors = this.$el.find('.errorContent');
+            var keys = Object.keys(this.changedModels);
+
             var filled = true;
-            /*var vacationBudget;
-             var estimatedHours;
-             var adminBudget;
-             var actualHours;
-             var overtimeHours;
-             var hoursForAdminCosts;
-             var hoursForVacationCosts;
-             var idleBudget;
-             var hoursForIdleCosts;*/
 
             $(".editable").each(function (index, elem) {
                 if (!$(elem).html()) {
@@ -201,43 +197,42 @@ define([
             }
 
             this.setChangedValueToModel();
-            for (id in this.changedModels) {
-                model = this.editCollection.get(id);
-                if (model) {
-                    model.changed = this.changedModels[id];
-                    /*vacationBudget = model.changed.vacationBudget || model.get('vacationBudget');
-                     adminBudget = model.changed.adminBudget || model.get('adminBudget');
-                     idleBudget = model.changed.idleBudget || model.get('idleBudget');
-                     vacationBudget = parseFloat(vacationBudget);
-                     adminBudget = parseFloat(adminBudget);
-                     idleBudget = parseFloat(idleBudget);
-                     estimatedHours = parseFloat(model.changed.estimatedHours || model.get('estimatedHours'));
-                     actualHours = parseFloat(model.changed.actualHours || model.get('actualHours'));
-                     overtimeHours = parseFloat(model.changed.overtimeHours || model.get('overtimeHours'));
-                     hoursForVacationCosts = actualHours || estimatedHours;
-                     hoursForAdminCosts = (actualHours + overtimeHours) || estimatedHours;
-                     hoursForIdleCosts = actualHours || estimatedHours;
-                     model.changed.vacationCoefficient = isFinite(vacationBudget / hoursForVacationCosts) ? vacationBudget / hoursForVacationCosts : 0;
-                     model.changed.adminCoefficient = isFinite(adminBudget / hoursForAdminCosts) ? adminBudget / hoursForAdminCosts : 0;
-                     model.changed.idleCoefficient = isFinite(idleBudget / hoursForIdleCosts) ? idleBudget / hoursForIdleCosts : 0;*/
-                }
+
+            keys.forEach(function (id) {
+                model = self.editCollection.get(id) || self.collection.get(id);
+                model.changed = self.changedModels[id];
+            });
+
+            if (errors.length) {
+                return;
             }
             this.editCollection.save();
+
+            keys.forEach(function (id) {
+                delete self.changedModels[id];
+                self.editCollection.remove(id);
+            });
         },
 
         savedNewModel: function (modelObject) {
             var savedRow = this.$listTable.find('#false');
             var modelId;
             var checkbox = savedRow.find('input[type=checkbox]');
+            var editedEl = savedRow.find('.editing');
+            var editedCol = editedEl.closest('td');
 
             modelObject = modelObject.success;
+
             if (modelObject) {
                 modelId = modelObject._id;
                 savedRow.attr("data-id", modelId);
                 checkbox.val(modelId);
                 savedRow.removeAttr('id');
             }
+
             this.hideSaveCancelBtns();
+            editedCol.text(editedEl.val());
+            editedEl.remove();
             this.resetCollection(modelObject);
         },
 
@@ -251,9 +246,16 @@ define([
         },
 
         updatedOptions: function () {
+            var savedRow = this.$listTable.find('#false');
+            var editedEl = savedRow.find('.editing');
+            var editedCol = editedEl.closest('td');
+
             this.hideSaveCancelBtns();
+
+            editedCol.text(editedEl.val());
+            editedEl.remove();
+
             this.resetCollection();
-            this.changedModels = {};
         },
 
         showNewSelect: function (e, prev, next) {
@@ -320,10 +322,12 @@ define([
 
             startData.cid = model.cid;
 
-            this.showSaveCancelBtns();
-            this.editCollection.add(model);
+            if (!this.isNewRow()) {
+                this.showSaveCancelBtns();
+                this.editCollection.add(model);
 
-            new createView(startData);
+                new createView(startData);
+            }
 
             this.changed = true;
         },
@@ -478,6 +482,7 @@ define([
 
             async.each(edited, function (el, cb) {
                 var tr = $(el).closest('tr');
+                var trId = tr.attr("id");
                 var rowNumber = tr.find('[data-content="number"]').text();
                 var id = tr.attr('data-id');
                 var template = _.template(cancelEdit);
@@ -491,7 +496,12 @@ define([
                 model = collection.get(id);
                 model = model.toJSON();
                 model.startNumber = rowNumber;
-                tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter}));
+
+                if (!trId) {
+                    tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter}));
+                } else {
+                    tr.remove();
+                }
                 cb();
             }, function (err) {
                 self.hideSaveCancelBtns();

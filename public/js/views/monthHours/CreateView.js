@@ -35,6 +35,15 @@ define([
                     $(tds[3]).addClass('editable');
                     $(tds[4]).text('');
                     $(tds[4]).addClass('editable');
+                    $(tds[5]).text('0');
+                    $(tds[6]).text('0');
+                    $(tds[7]).text('0');
+                    $(tds[8]).text('0');
+                    $(tds[9]).text('0');
+                    $(tds[10]).text('0');
+                    $(tds[11]).text('0');
+                    $(tds[12]).text('0');
+                    $(tds[13]).text('0');
                 } else {
                     this.$el.prepend(this.template(options));
                 }
