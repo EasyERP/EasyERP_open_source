@@ -3211,6 +3211,21 @@ var wTrack = function (models) {
             var _endDateMoment;
             var startDate = options.startDate;
             var endDate = options.endDate;
+            var salesManagersMatch = {
+                $or: [/*{
+                 'salesPersons.startDate': null,
+                 'salesPersons.endDate'  : null
+                 }, {
+                 'salesPersons.startDate': {$lte: endDate},
+                 'salesPersons.endDate'  : null
+                 }, {
+                 'salesPersons.startDate': null,
+                 'salesPersons.endDate'  : {$gte: startDate}
+                 },*/ {
+                    'salesPersons.startDate': {$lte: endDate},
+                    'salesPersons.endDate'  : {$gte: startDate}
+                }]
+            }
             var match;
             var groupBy;
 
