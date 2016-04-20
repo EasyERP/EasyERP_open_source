@@ -2,10 +2,12 @@
  * Update DB jobs with type: "Not Quoted" and revenue, profit great 0
  * */
 
-var mongoose = require('mongoose');
+require('../../models/index.js');
 
+var mongoose = require('mongoose');
 var async = require('async');
 var JobsSchema = mongoose.Schemas.jobs;
+
 var connectOptions = {
     user: 'easyerp',
     pass: '1q2w3e!@#',
@@ -14,8 +16,6 @@ var connectOptions = {
 };
 
 var dbObject = mongoose.createConnection('144.76.56.111:28017/dendb', connectOptions);
-
-require('../../models/index.js');
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
