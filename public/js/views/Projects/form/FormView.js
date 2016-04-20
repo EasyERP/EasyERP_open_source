@@ -1166,8 +1166,6 @@ define([
                     }
 
                     new ProjectManagersView(data).render();
-
-                    self.renderTabCounter();
                 }
             },
 
