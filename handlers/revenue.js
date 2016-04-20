@@ -3252,8 +3252,73 @@ var wTrack = function (models) {
             }, {
                 $project: {
                     credit: 1,
-                    date: 1,
-                    job: {$arrayElemAt: ['$job', 0]}
+                    date  : 1,
+                    job   : {$arrayElemAt: ['$job', 0]}
+                }
+            }, {
+                $lookup: {
+                    from        : 'projectMembers',
+                    localField  : 'project',
+                    foreignField: 'projectId',
+                    as          : 'salesPersons'
+                }
+            }, {
+                $unwind: {
+                    path                      : '$salesPersons',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $match: salesManagersMatch
+            }, {
+                $project: {
+                    salesPersons: {
+                        _id      : '$salesPersons.employeeId',
+                        startDate: '$salesPersons.startDate',
+                        endDate  : '$salesPersons.endDate'
+                    },
+                    paymentInfo : 1,
+                    year        : 1,
+                    month       : 1,
+                    week        : 1,
+                    dateByWeek  : 1,
+                    dateByMonth : 1,
+                    project     : 1
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'salesPersons._id',
+                    foreignField: '_id',
+                    as          : 'salesPerson'
+                }
+            }, {
+                $project: {
+                    paymentInfo: 1,
+                    year       : 1,
+                    month      : 1,
+                    week       : 1,
+                    dateByWeek : 1,
+                    dateByMonth: 1,
+                    project    : 1,
+                    salesPerson: {$arrayElemAt: ['$salesPerson', 0]},
+                    startDate  : '$salesPersons.startDate',
+                    endDate    : '$salesPersons.endDate'
+                }
+            }, {
+                $project: {
+                    paymentInfo: 1,
+                    year       : 1,
+                    month      : 1,
+                    week       : 1,
+                    dateByWeek : 1,
+                    dateByMonth: 1,
+                    project    : 1,
+                    salesPerson: {
+                        _id : '$salesPerson._id',
+                        name: '$salesPerson.name'
+                    },
+                    startDate  : '$salesPersons.startDate',
+                    endDate    : '$salesPersons.endDate'
                 }
             }, {
                 $out: 'tempJournalEntries'
