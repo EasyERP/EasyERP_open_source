@@ -201,7 +201,8 @@ define([
                                         this.invoiceView = new InvoiceView({
                                             model       : self.collection,
                                             activeTab   : true,
-                                            eventChannel: self.eventChannel
+                                            eventChannel: self.eventChannel,
+                                            filter     : filter
                                         });
 
                                         this.invoiceView.showDialog(orderId);
