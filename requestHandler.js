@@ -1239,7 +1239,6 @@ var requestHandler = function (app, event, mainDb) {
                     } else {
                         totalAmount = product.unitPrice;
                     }
-                    
 
                     async.each(wTracks, function (wTrack, cb) {
                         var revenue = (wTrack.worked / totalWorked) * totalAmount * 100;
