@@ -8,17 +8,12 @@ define([
 ], function (Backbone, _, io, JobsCollection, InvoiceCollection, custom) {
     'use strict';
     var socket = io.connect();
-    var fetch = _.debounce(fetchData, 500);
-    var fetchProjects = _.debounce(fetchProjects, 500);
-    var fetchJobs = _.debounce(fetchJobs, 500);
-    var fetchInvoice = _.debounce(fetchInvoice, 500);
-    var sendMessage = _.debounce(sendMessage, 500);
 
-    socket.on('recollectVacationDash', fetch);
-    socket.on('recollectProjectInfo', fetchProjects);
-    socket.on('fetchJobsCollection', fetchJobs);
-    socket.on('fetchInvoiceCollection', fetchInvoice);
-    socket.on('sendMessage', sendMessage);
+    socket.on('recollectVacationDash', _.debounce(fetchData, 1000));
+    socket.on('recollectProjectInfo', _.debounce(fetchProjects, 1000));
+    socket.on('fetchJobsCollection', _.debounce(fetchJobs, 1000));
+    socket.on('fetchInvoiceCollection', _.debounce(fetchInvoice, 1000));
+    socket.on('sendMessage', _.debounce(sendMessage, 1000));
 
     function sendMessage(options){
         var view = options.view;
@@ -43,29 +38,14 @@ define([
     }
 
     function fetchJobs(options) {
-        var jobsCollection;
-        var projectId = options.project;
-        var key = 'jobs_projectId:' + projectId;
-        var collection = custom.retriveFromCash(key);
 
-        var filter = {
-            project: {
-                key  : 'project._id',
-                value: [projectId]
-            }
-        };
-
-        if (collection && collection.length) {
-            jobsCollection = new JobsCollection({
-                viewType : 'list',
-                filter   : filter,
-                count    : 50,
-                projectId: projectId,
-                bySocket : true
+        if (options.project === App.projectInfo.projectId) {
+            App.render({
+                type: 'notify',
+                message: 'Project data updated.'
             });
         }
 
-        return jobsCollection;
     }
 
     function fetchInvoice(options) {
@@ -77,22 +57,6 @@ define([
             });
         }
 
-        /*var invoiceCollection;
-
-        var filter = {
-            project: {
-                key  : 'project._id',
-                value: [options.project]
-            }
-        };
-
-        invoiceCollection = new InvoiceCollection({
-            viewType: 'list',
-            filter  : filter,
-            count   : 50
-        });
-
-        return invoiceCollection;*/
     }
 
     function fetchData() {
@@ -104,16 +68,6 @@ define([
 
         custom.removeFromCash('dashboardVacation');
     }
-
-    fetch = _.debounce(fetchData, 500);
-    fetchProjects = _.debounce(fetchProjects, 500);
-    fetchJobs = _.debounce(fetchJobs, 500);
-    fetchInvoice = _.debounce(fetchInvoice, 500);
-
-    socket.on('recollectVacationDash', fetch);
-    socket.on('recollectProjectInfo', fetchProjects);
-    socket.on('fetchJobsCollection', fetchJobs);
-    socket.on('fetchInvoiceCollection', fetchInvoice);
 
     socket.emit('custom');
 

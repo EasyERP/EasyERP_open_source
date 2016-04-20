@@ -7,6 +7,9 @@ var Project = function (models, event) {
     var tasksSchema = mongoose.Schemas['Task'];
     var projectSchema = mongoose.Schemas['Project'];
     var projectTypeSchema = mongoose.Schemas['projectType'];
+    var projectPositionSchema = mongoose.Schemas['projectPosition'];
+    var BonusTypeSchema = mongoose.Schemas['bonusType'];
+    var EmployeeSchema = mongoose.Schemas['Employee'];
     var prioritySchema = mongoose.Schemas['Priority'];
     var userSchema = mongoose.Schemas['User'];
     var fs = require('fs');
@@ -293,22 +296,6 @@ var Project = function (models, event) {
                     }
                     if (data.customer) {
                         _project.customer = data.customer;
-                    }
-                    if (data.salesmanager) {
-                        _project.projectmanager = data.salesmanager; // toDO fix field
-                        _project.salesManagers = [{
-                            manager: data.salesmanager,
-                            startDate   : null,
-                            endDate    : null
-                        }];
-                    }
-
-                    if (data.projectmanager) {
-                        _project.projectManagers = [{
-                            manager: data.projectmanager,
-                            startDate   : null,
-                            endDate    : null
-                        }];
                     }
 
                     if (data.notes) {
@@ -996,7 +983,9 @@ var Project = function (models, event) {
 
     function getById(req, data, response) {
         var query = models.get(req.session.lastDb, 'Project', projectSchema).findById(data.id);
-
+        var projectPosition = models.get(req.session.lastDb, 'projectPosition', projectPositionSchema);
+        var bonusType = models.get(req.session.lastDb, 'bonusType', BonusTypeSchema);
+        var employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         query.populate('bonus.employeeId', '_id name')
             .populate('bonus.bonusId', '_id name value isPercent')
             .populate('createdBy.user', '_id login')
@@ -1007,18 +996,16 @@ var Project = function (models, event) {
             .populate('groups.owner', '_id login')
             .populate('budget.projectTeam')
             .populate('projectmanager', '_id name fullName')
-            .populate('salesmanager', '_id name fullName')
             .populate('customer', '_id name fullName')
             .populate('workflow', '_id name')
-            .populate('salesManagers.manager', '_id name fullName')
-            .populate('projectManagers.manager', '_id name fullName');
 
         query.exec(function (err, project) {
             if (err) {
                 logWriter.log("Project.js getProjectById project.find " + err);
                 response.send(500, {error: "Can't find Project"});
+
             } else {
-                response.send(project);
+                response.status(200).send(project);
             }
         });
     };
@@ -1388,9 +1375,6 @@ var Project = function (models, event) {
         }
         if (data.workflow) {
             data.workflow = data.workflow;
-        }
-        if (data.salesManagers && data.salesManagers.length) {
-            data.projectmanager = data.salesManagers[data.salesManagers.length - 1].manager;
         }
 
         if (data.notes && data.notes.length != 0 && !remove) {

@@ -6,46 +6,52 @@ require('../../models/index.js');
 var projectPositionSchem = mongoose.Schemas['projectPosition'];
 
 var connectOptions = {
-	user: 'easyerp',
-	pass: '1q2w3e!@#',
-	w   : 1,
-	j   : true
+    user: 'easyErp',
+    pass: '1q2w3e!@#',
+    w: 1,
+    j: true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111', 'maxdb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
-	console.log("Connection to production is success");
+    console.log("Connection to production is success");
 });
 
 var ProjectPosition = dbObject.model("projectPosition", projectPositionSchem);
 
 var newProjectPositions = [
-	{
-		"_id" : ObjectId("570e9a75785753b3f1d9c86e"),
-		"name" : "Sales manager"
-	},
-	{
-		"_id" : ObjectId("570e9a75785753b3f1d9c86f"),
-		"name" : "Project manager"
-	},
-	{
-		"_id" : ObjectId("570e9a75785753b3f1d9c870"),
-		"name" : "Marketer"
-	},
-	{
-		"_id" : ObjectId("570e9a75785753b3f1d9c871"),
-		"name" : "Developer"
-	},
-	{
-		"_id" : ObjectId("570e9a75785753b3f1d9c872"),
-		"name" : "Team lead"
-	},
-	{
-		"_id" : ObjectId("570e9a75785753b3f1d9c873"),
-		"name" : "Reference person"
-	}
+    {
+        "_id": ObjectId("570e9a75785753b3f1d9c86e"),
+        "name": "Sales manager"
+    },
+    {
+        "_id": ObjectId("570e9a75785753b3f1d9c86f"),
+        "name": "Project manager"
+    },
+    {
+        "_id": ObjectId("570e9a75785753b3f1d9c870"),
+        "name": "Marketer"
+    },
+    {
+        "_id": ObjectId("570e9a75785753b3f1d9c871"),
+        "name": "Developer"
+    },
+    {
+        "_id": ObjectId("570e9a75785753b3f1d9c872"),
+        "name": "Team lead"
+    },
+    {
+        "_id": ObjectId("570e9a75785753b3f1d9c873"),
+        "name": "Reference person"
+    }
 ];
 
-ProjectPosition.collection.insert(newProjectPositions);
+ProjectPosition.collection.insert(newProjectPositions, function (err, success) {
+    if (err) {
+        return console.error(err);
+    }
+
+    console.log(success);
+});

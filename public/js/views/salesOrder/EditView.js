@@ -144,6 +144,8 @@ define([
             receiveInvoice: function (e) {
                 e.preventDefault();
 
+                App.startPreload();
+
                 var self = this;
                 var url = '/invoice/receive';
                 var orderId = this.currentModel.id;
@@ -194,15 +196,18 @@ define([
 
                                     function createView() {
 
+                                        App.stopPreload();
+
                                         this.invoiceView = new InvoiceView({
                                             model       : self.collection,
                                             activeTab   : true,
-                                            eventChannel: self.eventChannel
+                                            eventChannel: self.eventChannel,
+                                            filter     : filter
                                         });
 
                                         this.invoiceView.showDialog(orderId);
 
-                                        self.eventChannel && self.eventChannel.trigger('elemCountChanged');
+                                        self.eventChannel && self.eventChannel.trigger('invoiceReceive');
 
                                     };
 

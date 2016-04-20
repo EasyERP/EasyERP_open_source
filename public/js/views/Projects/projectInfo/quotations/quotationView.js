@@ -265,7 +265,7 @@ define([
                             $("#removeQuotation").hide();
                             $('#check_all_quotations').prop('checked', false);
 
-                            self.eventChannel && that.eventChannel.trigger('elemCountChanged');
+                            that.eventChannel && that.eventChannel.trigger('elemCountChanged');
 
                             //that.deleteItemsRender(that.deleteCounter, that.deletePage);
                         },

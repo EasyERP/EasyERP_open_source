@@ -94,7 +94,7 @@ define([
                     }
                 });
             }, function (err) {
-                self.eventChannel && that.eventChannel.trigger('paymentRemoved');
+                that.eventChannel && that.eventChannel.trigger('paymentRemoved');
             });
         },
 
