@@ -1,6 +1,7 @@
 define([
         'jQuery',
         'text!templates/Invoice/EditTemplate.html',
+        'views/Notes/AttachView',
         'views/Assignees/AssigneesView',
         'views/Invoice/InvoiceProductItems',
         'views/salesInvoice/wTrack/wTrackRows',
@@ -13,7 +14,7 @@ define([
         'constants',
         'helpers'
     ],
-    function ($, EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+    function ($, EditTemplate, attachView, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({
@@ -74,6 +75,8 @@ define([
                 }*/
 
                 this.render();
+
+                App.stopPreload();
             },
 
             newPayment: function (e) {
@@ -643,6 +646,14 @@ define([
                         isPaid        : this.isPaid,
                         notAddItem    : this.notAddItem
                     }).render({model: model}).el
+                );
+
+                notDiv = this.$el.find('#attach-container');
+                notDiv.append(
+                    new attachView({
+                        model: this.currentModel,
+                        url  : "/uploadInvoiceFiles",
+                    }).render().el
                 );
 
                 if (model.groups) {

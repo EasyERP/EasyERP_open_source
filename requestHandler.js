@@ -44,6 +44,7 @@ var requestHandler = function (app, event, mainDb) {
     var jobsSchema = mongoose.Schemas['jobs'];
     var ObjectId = mongoose.Types.ObjectId;
     var QuotationSchema = mongoose.Schemas.Quotation;
+    var InvoiceSchema = mongoose.Schemas.wTrackInvoice;
 
     var io = app.get('io');
     var redisStore = require('./helpers/redisClient');
@@ -1890,6 +1891,23 @@ var requestHandler = function (app, event, mainDb) {
         }
     };
 
+    function uploadInvoiceFiles(req, res, id, file) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getEditWritAccess(req, req.session.uId, 64, function (access) {
+                var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', InvoiceSchema);
+                if (access) {
+                    Invoice.findByIdAndUpdate(id, {$push: {attachments: {$each: file}}}, {new: true}, function (err, result) {
+                        res.status(200).send(result);
+                    });
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    };
+
     function removeProject(req, res, id) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getDeleteAccess(req, req.session.uId, 39, function (access) {
@@ -3208,6 +3226,7 @@ var requestHandler = function (app, event, mainDb) {
         removeOpportunitie                  : removeOpportunitie,
         opportunitieUpdateOnlySelectedFields: opportunitieUpdateOnlySelectedFields,
         uploadOpportunitiesFiles            : uploadOpportunitiesFiles,
+        uploadInvoiceFiles                  : uploadInvoiceFiles,
 
         getSources                   : getSources,
         getLanguages                 : getLanguages,

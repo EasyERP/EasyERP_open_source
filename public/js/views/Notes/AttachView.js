@@ -42,7 +42,7 @@ define([
             var currentModel = this.model;
             var elementId = this.elementId || 'addAttachments';
             var currentModelId = currentModel ? currentModel["id"] : null;
-            var addFrmAttach = $("#" + elementId);
+            var addFrmAttach = this.$el.find("#" + elementId);
             var fileArr = [];
             var addInptAttach;
 

@@ -4,6 +4,9 @@ var RESPONSES = require('../constants/responses');
 var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
+var fs = require("fs");
+var pathMod = require("path");
+// var fileUploader = require('../helpers/fileUploader');
 
 var Invoice = function (models, event) {
     "use strict";
@@ -178,6 +181,30 @@ var Invoice = function (models, event) {
             query.exec(callback);
         }
 
+        function renameFolder(orderId, invoiceId) {
+            var os = require("os");
+            var osType = (os.type().split('_')[0]);
+            var dir;
+            var oldDir;
+            var newDir;
+            switch (osType) {
+                case "Windows":
+                {
+                    dir = pathMod.join(__dirname, '..\\routes\\uploads\\');
+                }
+                    break;
+                case "Linux":
+                {
+                    dir = pathMod.join(__dirname, '..\/routes\/uploads\/');
+                }
+            }
+
+            oldDir = dir + orderId;
+            newDir = dir + invoiceId;
+
+            fs.rename(oldDir, newDir);
+        }
+
         function findProformaPayments(callback) {
             Invoice.aggregate([
                 {
@@ -268,6 +295,8 @@ var Invoice = function (models, event) {
                 proforma = parallelResponse[2][0];
                 order = parallelResponse[0];
                 workflow = parallelResponse[1];
+
+                order.attachments[0].shortPas = order.attachments[0].shortPas.replace('..%2Froutes', '');
 
             } else {
                 err = new Error(RESPONSES.BAD_REQUEST);
@@ -400,9 +429,22 @@ var Invoice = function (models, event) {
                 }
             });
 
-            if (products) {
-                async.each(products, function (result, cb) {
-                    var jobs = result.jobs;
+            result.attachments[0].shortPas = result.attachments[0].shortPas.replace(id.toString(), invoiceId.toString());
+
+            Invoice.findByIdAndUpdate(invoiceId, {
+                $set: {
+                    attachments: result.attachments
+                }
+            }, {new: true}, function (err) {
+                if (err) {
+                    return next(err);
+                }
+
+                renameFolder(id.toString(), invoiceId.toString());
+
+                if (products) {
+                    async.each(products, function (result, cb) {
+                        var jobs = result.jobs;
 
                     JobsModel.findByIdAndUpdate(jobs, {
                         $set: {
@@ -422,19 +464,189 @@ var Invoice = function (models, event) {
                         cb();
                     });
 
-                }, function () {
-                    if (project) {
-                        event.emit('fetchJobsCollection', {project: project});
-                    }
+                    }, function () {
+                        if (project) {
+                            event.emit('fetchJobsCollection', {project: project});
+                        }
 
+                        res.status(201).send(result);
+                    });
+                } else {
                     res.status(201).send(result);
-                });
-            } else {
-                res.status(201).send(result);
-            }
-
+                }
+            });
         });
 
+    };
+
+    function uploadFileArray(req, res, callback) {
+        var files = [];
+        if (req.files && req.files.attachfile && !req.files.attachfile.length) {
+            req.files.attachfile = [req.files.attachfile];
+        }
+        var path;
+        var os = require("os");
+        var osType = (os.type().split('_')[0]);
+
+        req.files.attachfile.forEach(function (item) {
+            var localPath;
+            switch (osType) {
+                case "Windows":
+                {
+                    localPath = pathMod.join(__dirname, "..\\routes\\uploads\\", req.headers.id);
+                }
+                    break;
+                case "Linux":
+                {
+                    localPath = pathMod.join(__dirname, "..\/routes\/uploads\/", req.headers.id);
+                }
+            }
+            fs.readdir(localPath, function (err, files) {
+                if (!err) {
+                    var k = '';
+                    var maxK = 0;
+                    var checkIs = false;
+                    var attachfileName = item.name.slice(0, item.name.lastIndexOf('.'));
+                    files.forEach(function (fileName) {
+                        if (fileName == item.name) {
+                            k = 1;
+                            checkIs = true;
+                        } else {
+                            if ((fileName.indexOf(attachfileName) === 0) &&
+                                (fileName.lastIndexOf(attachfileName) === 0) &&
+                                (fileName.lastIndexOf(').') !== -1) &&
+                                (fileName.lastIndexOf('(') !== -1) &&
+                                (fileName.lastIndexOf('(') < fileName.lastIndexOf(').')) &&
+                                (attachfileName.length == fileName.lastIndexOf('('))) {
+                                var intVal = fileName.slice(fileName.lastIndexOf('(') + 1, fileName.lastIndexOf(').'));
+                                k = parseInt(intVal) + 1;
+                            }
+                        }
+                        if (maxK < k) {
+                            maxK = k;
+                        }
+                    });
+                    if (!(maxK == 0) && checkIs) {
+                        item.name = attachfileName + '(' + maxK + ')' + item.name.slice(item.name.lastIndexOf('.'));
+                    }
+                }
+            });
+
+            fs.readFile(item.path, function (err, data) {
+                var shortPas;
+                switch (osType) {
+                    case "Windows":
+                    {
+                        path = pathMod.join(__dirname, "..\\routes\\uploads\\", req.headers.id, item.name);
+                        shortPas = pathMod.join("..\\routes\\uploads\\", req.headers.id, item.name);
+                    }
+                        break;
+                    case "Linux":
+                    {
+                        path = pathMod.join(__dirname, "..\/routes\/uploads\/", req.headers.id, item.name);
+                        shortPas = pathMod.join("..\/routes\/uploads\/", req.headers.id, item.name);
+                    }
+                }
+                fs.writeFile(path, data, function (err) {
+                    if (!err) {
+                        var file = {};
+                        file._id = mongoose.Types.ObjectId();
+                        file.name = item.name;
+                        file.shortPas = encodeURIComponent(shortPas);
+                        if (item.size >= 1024) {
+                            file.size = (Math.round(item.size / 1024 / 1024 * 1000) / 1000) + '&nbsp;Mb';
+                        }
+                        else {
+                            file.size = (Math.round(item.size / 1024 * 1000) / 1000) + '&nbsp;Kb';
+                        }
+                        file.uploadDate = new Date();
+                        file.uploaderName = req.session.uName;
+                        files.push(file);
+
+                        if (files.length == req.files.attachfile.length) {
+                            if (callback) {
+                                callback(files);
+                            }
+                        }
+                    } else {
+                        console.log(err);
+                        res.send(500);
+                    }
+
+                });
+            });
+        });
+
+    }
+
+    this.attach = function (req, res, next) {
+        var os = require("os");
+        var osType = (os.type().split('_')[0]);
+        var dir;
+        switch (osType) {
+            case "Windows":
+            {
+                dir = pathMod.join(__dirname, '..\\routes\\uploads\\');
+            }
+                break;
+            case "Linux":
+            {
+                dir = pathMod.join(__dirname, '..\/routes\/uploads\/');
+            }
+        }
+        fs.readdir(dir, function (err, files) {
+            if (err) {
+                fs.mkdir(dir, function (errr) {
+                    if (!errr) {
+                        dir += req.headers.id;
+                    }
+                    fs.mkdir(dir, function (errr) {
+                        if (!errr) {
+                            uploadFileArray(req, res, function (files) {
+                                uploadFile(req, res, req.headers.id, files);
+                            });
+                        }
+                    });
+                });
+            } else {
+                dir += req.headers.id;
+                fs.readdir(dir, function (err, files) {
+                    if (err) {
+                        fs.mkdir(dir, function (errr) {
+                            if (!errr) {
+                                uploadFileArray(req, res, function (files) {
+                                    uploadFile(req, res, req.headers.id, files);
+                                });
+                            }
+                        });
+                    } else {
+                        uploadFileArray(req, res, function (files) {
+                            uploadFile(req, res, req.headers.id, files);
+                        });
+                    }
+                });
+            }
+        });
+    };
+
+    function uploadFile(req, res, id, file) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getEditWritAccess(req, req.session.uId, 63, function (access) {
+                if (access) {
+                    models.get(req.session.lastDb, "Quotation", OrderSchema).findByIdAndUpdate(id, {$set: {attachments: file}}, {new: true}, function (err, response) {
+                        if (err) {
+                            res.send(401);
+                        } else {
+                            res.send(200, {success: 'Order update success', data: response});
+                        }
+                    });
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
     };
 
     this.updateOnlySelected = function (req, res, next) {
@@ -454,6 +666,12 @@ var Invoice = function (models, event) {
         var model;
         var journal;
         var dateForobs;
+        var fileName;
+        var os;
+        var _id;
+        var osType;
+        var path;
+        var dir;
 
         date = moment(new Date(data.invoiceDate));
         date = date.format('YYYY-MM-DD');
@@ -466,54 +684,121 @@ var Invoice = function (models, event) {
             access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
 
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
+                    if (data.fileName) {
 
-                    oxr.historical(date, function () {
-                        fx.rates = oxr.rates;
-                        fx.base = oxr.base;
+                        fileName = data.fileName;
+                        os = require("os");
+                        osType = (os.type().split('_')[0]);
+                        path;
+                        dir;
 
-                        data.currency.rate = oxr.rates[data.currency.name];
+                        _id = id;
+
+                        switch (osType) {
+                            case "Windows":
+                            {
+                                var newDirname = __dirname.replace("handlers", "routes");
+                                while (newDirname.indexOf("\\") !== -1) {
+                                    newDirname = newDirname.replace("\\", "\/");
+                                }
+                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                dir = newDirname + "\/uploads\/" + _id;
+                            }
+                                break;
+                            case "Linux":
+                            {
+                                var newDirname = __dirname.replace("handlers", "routes");
+                                while (newDirname.indexOf("\\") !== -1) {
+                                    newDirname = newDirname.replace("\\", "\/");
+                                }
+                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                dir = newDirname + "\/uploads\/" + _id;
+                            }
+                        }
+
+                        fs.unlink(path, function (err) {
+                            console.log(err);
+                            fs.readdir(dir, function (err, files) {
+                                if (data.attachments && data.attachments.length === 0) {
+                                    fs.rmdir(dir, function () {
+                                    });
+                                }
+                            });
+                        });
+
+                        delete data.fileName;
 
                         Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
                             if (err) {
                                 return next(err);
                             }
 
-                            if (invoice._type === 'Proforma') {
-                                model = "Proforma";
+                            res.status(200).send(invoice);
 
-                                query = {"sourceDocument.model": model, journal: CONSTANTS.BEFORE_INVOICE};
+                        });
+
+                    } else {
+
+                        data.editedBy = {
+                            user: req.session.uId,
+                            date: new Date().toISOString()
+                        };
+
+                        oxr.historical(date, function () {
+                            fx.rates = oxr.rates;
+                            fx.base = oxr.base;
+
+                            data.currency.rate = oxr.rates[data.currency.name];
+
+                            Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                if (invoice._type === 'Proforma') {
+                                    model = "Proforma";
+
+                                    query = {"sourceDocument.model": model, journal: CONSTANTS.BEFORE_INVOICE};
+                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
+
+                                    journal = CONSTANTS.PROFORMA_JOURNAL;
+                                } else {
+                                    model = "Invoice";
+                                    journal = CONSTANTS.INVOICE_JOURNAL;
+
+                                    dateForobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
+
+                                    query = {"sourceDocument.model": 'jobs', journal: {$in: [CONSTANTS.JOB_FINISHED, CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]}};
+                                    _journalEntryHandler.changeDate(query, dateForobs, req.session.lastDb, function () {});
+                                }
+
+                                query = {"sourceDocument.model": model, journal: journal};
                                 _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
 
-                                journal = CONSTANTS.PROFORMA_JOURNAL;
-                            } else {
-                                model = "Invoice";
-                                journal = CONSTANTS.INVOICE_JOURNAL;
+                                if (!invoice.journal && journalId) { // todo in case of purchase invoice hasnt journalId
+                                    Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
+                                        if (err) {
+                                            return next(err);
+                                        }
 
-                                dateForobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
+                                        /*journalEntryComposer(invoice, db, function (err, response) {
+										 if (err) {
+										 return next(err);
+										 }
+										 }, req.session.uId);*/
 
-                                query = {"sourceDocument.model": 'jobs', journal: {$in: [CONSTANTS.JOB_FINISHED, CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]}};
-                                _journalEntryHandler.changeDate(query, dateForobs, req.session.lastDb, function () {});
-                            }
+                                        Customer.populate(invoice, {
+                                            path  : 'supplier',
+                                            select: '_id name fullName'
+                                        }, function (err, resp) {
+                                            if (err) {
+                                                return next(err);
+                                            }
 
-                            query = {"sourceDocument.model": model, journal: journal};
-                            _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
-
-                            if (!invoice.journal && journalId) { // todo in case of purchase invoice hasnt journalId
-                                Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-
-                                    /*journalEntryComposer(invoice, db, function (err, response) {
-                                     if (err) {
-                                     return next(err);
-                                     }
-                                     }, req.session.uId);*/
-
+                                            res.status(200).send(invoice);
+                                        });
+                                    });
+                                } else {
                                     Customer.populate(invoice, {
                                         path  : 'supplier',
                                         select: '_id name fullName'
@@ -524,21 +809,10 @@ var Invoice = function (models, event) {
 
                                         res.status(200).send(invoice);
                                     });
-                                });
-                            } else {
-                                Customer.populate(invoice, {
-                                    path  : 'supplier',
-                                    select: '_id name fullName'
-                                }, function (err, resp) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-
-                                    res.status(200).send(invoice);
-                                });
-                            }
+                                }
+                            });
                         });
-                    });
+                    }
 
                 } else {
                     res.status(403).send();
@@ -1060,13 +1334,62 @@ var Invoice = function (models, event) {
                                     },
                                     parallelCb);
                             });
-                        };
+                        }
 
                         function paymentsRemove(parallelCb) {
                             async.each(paymentIds, function (pid, cb) {
                                 Payment.remove({invoice: id}, cb);
                             }, function () {
                                 parallelCb();
+                            });
+                        }
+
+                        function folderRemove(parallelCb) {
+                            var os = require("os");
+                            var osType = (os.type().split('_')[0]);
+                            var dir;
+                            var _id = id;
+
+                            switch (osType) {
+                                case "Windows":
+                                {
+                                    var newDirname = __dirname.replace("handlers", "routes");
+                                    while (newDirname.indexOf("\\") !== -1) {
+                                        newDirname = newDirname.replace("\\", "\/");
+                                    }
+                                    dir = newDirname + "\/uploads\/" + _id;
+                                }
+                                    break;
+                                case "Linux":
+                                {
+                                    var newDirname = __dirname.replace("handlers", "routes");
+                                    while (newDirname.indexOf("\\") !== -1) {
+                                        newDirname = newDirname.replace("\\", "\/");
+                                    }
+                                    dir = newDirname + "\/uploads\/" + _id;
+                                }
+                            }
+
+                            fs.readdir(dir, function (err, files) {
+                                async.each(files, function (file, cb) {
+                                    var file = pathMod.join(dir, file);
+                                    fs.unlink(file, function (err) {
+                                        if (err) {
+                                            return cb(err);
+                                        }
+                                        return cb();
+                                    });
+                                }, function (err) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                    fs.rmdir(dir, function (err) {
+                                        if (err) {
+                                        }
+                                        return next(err);
+                                        parallelCb();
+                                    });
+                                });
                             });
                         }
 
@@ -1125,7 +1448,7 @@ var Invoice = function (models, event) {
                             });
                         }
 
-                        async.parallel([proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks], function (err, result) {
+                        async.parallel([proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove], function (err, result) {
                             if (err) {
                                return next(err);
                             }
