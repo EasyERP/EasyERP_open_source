@@ -86,10 +86,15 @@ define([
             return false;
         },
 
-        getLastSales : function () {
+        changedSales : function () {
             var salesRow = this.$el.find('[data-id="570e9a75785753b3f1d9c86e"]').first().closest('tr');
             var salesName = salesRow.find('[data-content="employee"]').text();
             $('#salesManager').text(salesName);
+
+            return App.render({
+                type   : 'notify',
+                message: 'Data was changed, please refresh browser'
+            });
         },
 
         prevStartDate: function (row) {
@@ -244,7 +249,7 @@ define([
             this.showCreateBtn();
             this.changedModels = {};
             this.$el.find('.edited').removeClass('edited');
-            this.getLastSales();
+            this.changedSales();
         },
 
         hideNewSelect: function () {
@@ -394,7 +399,7 @@ define([
 
         isChangedSales: function (model) {
             if (model.projectPositionId === '570e9a75785753b3f1d9c86e') {
-                this.getLastSales();
+                this.changedSales();
             }
             return false;
         },
@@ -460,7 +465,6 @@ define([
                 self.editLastMember();
 
             });
-            this.getLastSales();
             this.$el.find('#saveMember').hide();
             this.$el.find('#cancelMember').hide();
 

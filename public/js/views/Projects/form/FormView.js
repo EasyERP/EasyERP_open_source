@@ -1488,8 +1488,6 @@ define([
                 var thisEl = this.$el;
                 var notDiv;
                 var container;
-                var projectMembersView;
-                var projectMembers;
 
                 App.startPreload();
 
@@ -1528,7 +1526,7 @@ define([
                     }).render().el
                 );
 
-                _.bindAll(this, 'getQuotations','getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
+                _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
 
                 paralellTasks = [this.renderProjectInfo, this.getProforma, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders, this.getProjectMembers];
 
