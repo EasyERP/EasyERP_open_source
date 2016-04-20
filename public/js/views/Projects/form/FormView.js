@@ -21,10 +21,8 @@ define([
         'views/Notes/NoteView',
         'views/Notes/AttachView',
         'views/Assignees/AssigneesView',
-        'views/Bonus/BonusView',
         'views/Projects/projectInfo/wTracks/wTrackView',
-        'views/Projects/projectInfo/salesManagers/salesManagersList',
-        'views/Projects/projectInfo/projectManagers/projectManagersList',
+        'views/Projects/projectInfo/projectMembers/projectMembersList',
         'views/Projects/projectInfo/payments/paymentView',
         'views/Projects/projectInfo/invoices/invoiceView',
         'views/Projects/projectInfo/proformas/proformaView',
@@ -37,6 +35,7 @@ define([
         'collections/customerPayments/filterCollection',
         'collections/Jobs/filterCollection',
         'collections/Proforma/filterCollection',
+        'collections/projectMembers/editCollection',
         'models/QuotationModel',
         'models/InvoiceModel',
         'text!templates/Notes/AddAttachments.html',
@@ -65,9 +64,7 @@ define([
               noteView,
               attachView,
               AssigneesView,
-              BonusView,
               wTrackView,
-              SalesManagersView,
               ProjectManagersView,
               PaymentView,
               InvoiceView,
@@ -81,6 +78,7 @@ define([
               paymentCollection,
               jobsCollection,
               proformaCollection,
+              projectMembersCol,
               quotationModel,
               invoiceModel,
               addAttachTemplate,
@@ -108,7 +106,7 @@ define([
                 'click .current-selected:not(.disabled)'                                                                  : 'showNewSelect',
                 'click #createItem'                                                                                       : 'createDialog',
                 'click #createJob'                                                                                        : 'createJob',
-                'change input:not(.checkbox, .check_all, #check_all_bonus, .statusCheckbox, #inputAttach, #noteTitleArea)': 'showSaveButton',  // added id for noteView
+                'change input:not(.checkbox, .check_all, .statusCheckbox, #inputAttach, #noteTitleArea)': 'showSaveButton',  // added id for noteView
                 'change #description'                                                                                     : 'showSaveButton',
                 'click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)'                                       : 'renderJobWTracks',
                 'mouseover #jobsItem'                                                                                     : 'showRemoveButton',
@@ -565,15 +563,6 @@ define([
                 var startDate = $.trim(thisEl.find('#StartDate').val());
                 var endDate = $.trim(thisEl.find('#EndDate').val());
                 var users = [];
-                var bonusContainer = $('#bonusTable');
-                var bonusRow = bonusContainer.find('tr');
-                var bonus = [];
-                var salesManagersContainer = $('#salesManagersTable');
-                var salesManagerRow = salesManagersContainer.find('tr');
-                var salesManagers = [];
-                var projectManagersContainer = $('#projectManagersTable');
-                var projectManagerRow = projectManagersContainer.find('tr');
-                var projectManagers = [];
 
                 var budget = this.formModel.get('budget');
 
@@ -604,9 +593,6 @@ define([
                     StartDate       : startDate,
                     EndDate         : endDate,
                     TargetEndDate   : _targetEndDate,
-                    bonus           : bonus,
-                    salesManagers   : salesManagers,
-                    projectManagers : projectManagers,
                     budget          : budget
                 };
 
@@ -621,119 +607,6 @@ define([
                         id  : val.value,
                         name: val.innerHTML
                     });
-                });
-
-                bonusRow.each(function (key, val) {
-                    var employeeId = $(val).find("[data-content='employee']").attr('data-id');
-                    var bonusId = $(val).find("[data-content='bonus']").attr('data-id');
-                    var value;
-
-                    var startD = $(val).find('.startDate input').val() || null;
-                    var endD = $(val).find('.endDate input').val() || null;
-
-                    if (!employeeId || !bonusId) {
-                        if (!employeeId) {
-                            value = 'Employee';
-                            App.render({
-                                type   : 'error',
-                                message: 'Please, choose ' + value + ' first.'
-                            });
-
-                        } else if (!bonusId) {
-                            value = 'Bonus';
-                            App.render({
-                                type   : 'error',
-                                message: 'Please, choose ' + value + ' first.'
-                            });
-                        }
-                        validation = false;
-                    }
-
-                    bonus.push({
-                        employeeId: employeeId,
-                        bonusId   : bonusId,
-                        startDate : startD,
-                        endDate   : endD
-                    });
-                });
-
-                salesManagerRow.each(function (key, val) {
-                    var employeeId = $(val).attr('data-id');
-                    var startD = $(val).find('.startDateManager');
-                    var endD = $(val).find('.endDateManager');
-                    var startDText;
-                    var endDText;
-                    var inputInside = startD.find('input');
-
-                    if (inputInside.length) {
-                        startD.text(inputInside.val());
-                    }
-
-                    startDText = (startD.text() !== 'From start of project') ? startD.text() : null;
-                    endDText = (endD.text() !== 'To end of project') ? endD.text() : null;
-
-                    if (employeeId === 'false') {
-                        App.render({
-                            type   : 'error',
-                            message: 'Please, select Sales Manager first.'
-                        });
-                        validation = false;
-                    }
-
-                    if (startD.text() === 'Choose Date') {
-                        App.render({
-                            type   : 'error',
-                            message: 'Please, choose Date.'
-                        });
-                        validation = false;
-                    }
-
-                    salesManagers.push({
-                        manager   : employeeId,
-                        startDate : startDText,
-                        endDate   : endDText
-                    });
-                });
-
-                projectManagerRow.each(function (key, val) {
-                    var employeeId = $(val).attr('data-id');
-                    var startD = $(val).find('.startDateManager');
-                    var endD = $(val).find('.endDateManager');
-                    var emptyPM = $(val).find('#employee').text() === 'Select';
-                    var startDText;
-                    var endDText;
-                    var inputInside = startD.find('input');
-
-                    if (inputInside.length) {
-                        startD.text(inputInside.val());
-                    }
-
-                    startDText = (startD.text() !== 'From start of project') ? startD.text() : null;
-                    endDText = (endD.text() !== 'To end of project') ? endD.text() : null;
-
-                    if (employeeId === 'false') {
-                        App.render({
-                            type   : 'error',
-                            message: 'Please, select Project Manager first.'
-                        });
-                        validation = false;
-                    }
-
-
-                    if (startD.text() === 'Choose Date') {
-                        App.render({
-                            type   : 'error',
-                            message: 'Please, choose Date.'
-                        });
-                        validation = false;
-                    }
-                    if (!emptyPM) {
-                        projectManagers.push({
-                            manager  : employeeId,
-                            startDate: startDText,
-                            endDate  : endDText
-                        });
-                    }
                 });
 
                 $(".groupsAndUser tr").each(function () {
@@ -1272,6 +1145,32 @@ define([
                 }
             },
 
+            getProjectMembers: function (cb) {
+                var self = this;
+
+                self.pMCollection = new projectMembersCol({
+                    project: self.formModel.id
+                });
+
+                self.pMCollection.bind('reset', createPM);
+
+                function createPM() {
+
+                    var data = {
+                        collection: self.pMCollection,
+                        project   : self.formModel
+                    };
+
+                    if (cb) {
+                        cb();
+                    }
+
+                    new ProjectManagersView(data).render();
+
+                    self.renderTabCounter();
+                }
+            },
+
             getQuotations: function (cb) {
                 var _id = window.location.hash.split('form/')[1];
                 var self = this;
@@ -1486,7 +1385,6 @@ define([
 
                 $('#top-bar-saveBtn').show();
                 $('#createQuotation').show();
-                $('#createBonus').show();
             },
 
             deleteItems: function () {
@@ -1586,20 +1484,14 @@ define([
             render: function () {
                 var formModel = this.formModel.toJSON();
                 var assignees;
-                var salesManagers;
-                var bonus;
                 var paralellTasks;
                 var self = this;
                 var templ = _.template(ProjectsFormTemplate);
                 var thisEl = this.$el;
                 var notDiv;
-                var bonusView;
                 var container;
-                var salesManagersView;
-                var projectManagersView;
-                var projectManagers;
-                var ProjectMs = formModel.projectManagers;
-                var PM = ProjectMs.length ? ProjectMs[ProjectMs.length -1].manager : ''; // choose PM from Array
+                var projectMembersView;
+                var projectMembers;
 
                 App.startPreload();
 
@@ -1613,8 +1505,7 @@ define([
                 }).render().el;
 
                 thisEl.html(templ({
-                    model: formModel,
-                    projectM : PM
+                    model: formModel
                 }));
 
                 App.projectInfo = App.projectInfo || {};
@@ -1639,44 +1530,9 @@ define([
                     }).render().el
                 );
 
-                salesManagers = thisEl.find('#salesManagers-container');
-                salesManagersView = new SalesManagersView({
-                    model: this.formModel
-                });
-                salesManagers.html(
-                    salesManagersView.render().el
-                );
-                salesManagersView.bind('save', function () {
-                    self.saveItem();
-                });
+                _.bindAll(this, 'getQuotations','getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
 
-                projectManagers = thisEl.find('#projectManagers-container');
-                projectManagersView = new ProjectManagersView({
-                    model: this.formModel
-                });
-                projectManagers.html(
-                    projectManagersView.render().el
-                );
-                projectManagersView.bind('save', function () {
-                    self.saveItem();
-                });
-
-                bonus = this.$el.find('#bonus-container');
-                bonusView = new BonusView({
-                    model: this.formModel
-                });
-                bonus.html(
-                    bonusView.render().el
-                );
-
-                bonusView.bind('save', function () {
-                    self.saveItem();
-                });
-
-                thisEl.find('#createBonus').hide();
-                _.bindAll(this, 'getQuotations', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
-
-                paralellTasks = [this.renderProjectInfo, this.getProforma, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders];
+                paralellTasks = [this.renderProjectInfo, this.getProforma, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders, this.getProjectMembers];
 
                 async.parallel(paralellTasks, function (err, result) {
                     self.getPayments();
@@ -1687,7 +1543,6 @@ define([
 
                 $('#top-bar-deleteBtn').hide();
                 $('#createQuotation').show();
-                $('#createBonus').show();
 
                 $('#StartDate').datepicker({
                     dateFormat : 'd M, yy',

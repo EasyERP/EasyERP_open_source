@@ -1,0 +1,43 @@
+<div id="createBtnHolder">
+    <a href="javascript;" class="fa fa-check" title="Save" id="saveMember"></a>
+    <a href="javascript;" class="fa fa-plus" title="Create" id="addMember"></a>
+    <a href="javascript;" class="fa fa-times" title="Cancel" id="cancelMember"></a>
+</div>
+<table class="list">
+    <colgroup>
+        <col width="2%"/>
+        <col width="20%"/>
+        <col width="20%"/>
+        <col width="20%"/>
+    </colgroup>
+    <thead>
+    <tr >
+        <th class="centerCell">x</th>
+        <th>Start Date</th>
+        <th>End Date</th>
+        <th>Project Member</th>
+        <th>Position</th>
+        <th>Bonus</th>
+    </tr>
+
+    </thead>
+    <tbody id="projectMembersTable">
+
+    <% if (members.length) { members.forEach(function(elem, index){ %>
+
+    <tr data-id="<%=elem ? elem._id : ''%>" >
+
+        <td class="centerCell"></td>
+        <td class="startDateManager"><%= elem.startDate ? utcDateToLocaleDate(elem.startDate) : 'From start of project'%></td>
+        <td class="endDateManager"><%= elem.endDate ? utcDateToLocaleDate(elem.endDate) : 'To end of project'%></td>
+
+        <td data-id="<%=elem.employeeId ? elem.employeeId._id : ''%>" data-content="employee"> <%=elem.employeeId ? elem.employeeId.fullName : '' %></td>
+        <td data-id="<%=elem.projectPositionId ? elem.projectPositionId._id : ''%>" data-content="projectPosition"><%=elem.projectPositionId ? elem.projectPositionId.name : '' %></td>
+        <td data-id="<%=elem.bonusId ? elem.bonusId._id : ''%>" data-content="bonus"> <%=elem.bonusId ? elem.bonusId.name : '' %></td>
+
+    </tr>
+    <% }) }%>
+    </tbody>
+
+</table>
+<!--<a href="javascript;" title="Add" id="addManager">Add</a>-->
