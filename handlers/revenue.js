@@ -2,6 +2,7 @@ var async = require('async');
 var _ = require('lodash');
 var mongoose = require('mongoose');
 var objectId = mongoose.Types.ObjectId;
+var CONSTANTS = require('../constants/mainConstants');
 
 var moment = require('../public/js/libs/moment/moment');
 
@@ -3211,21 +3212,10 @@ var wTrack = function (models) {
             var _endDateMoment;
             var startDate = options.startDate;
             var endDate = options.endDate;
+            var salesManagers = objectId(CONSTANTS.SALES_MANAGER_ROLE);
             var salesManagersMatch = {
-                $or: [/*{
-                 'salesPersons.startDate': null,
-                 'salesPersons.endDate'  : null
-                 }, {
-                 'salesPersons.startDate': {$lte: endDate},
-                 'salesPersons.endDate'  : null
-                 }, {
-                 'salesPersons.startDate': null,
-                 'salesPersons.endDate'  : {$gte: startDate}
-                 },*/ {
-                    'salesPersons.startDate': {$lte: endDate},
-                    'salesPersons.endDate'  : {$gte: startDate}
-                }]
-            }
+                'salesPersons.projectPositionId': salesManagers
+            };
             var match;
             var groupBy;
 
@@ -3241,6 +3231,20 @@ var wTrack = function (models) {
                 startDate = new Date(startDate);
                 endDate = new Date(endDate);
             }
+
+            salesManagersMatch.$or = [{
+                'salesPersons.startDate': null,
+                'salesPersons.endDate'  : null
+            }, {
+                'salesPersons.startDate': {$lte: endDate},
+                'salesPersons.endDate'  : null
+            }, {
+                'salesPersons.startDate': null,
+                'salesPersons.endDate'  : {$gte: startDate}
+            }, {
+                'salesPersons.startDate': {$lte: endDate},
+                'salesPersons.endDate'  : {$gte: startDate}
+            }];
 
             match = {
                 credit                : {
@@ -3273,7 +3277,7 @@ var wTrack = function (models) {
             }, {
                 $lookup: {
                     from        : 'projectMembers',
-                    localField  : 'project',
+                    localField  : 'job.project',
                     foreignField: 'projectId',
                     as          : 'salesPersons'
                 }
@@ -3282,7 +3286,7 @@ var wTrack = function (models) {
                     path                      : '$salesPersons',
                     preserveNullAndEmptyArrays: true
                 }
-            }, {
+            }/*, {
                 $match: salesManagersMatch
             }, {
                 $project: {
@@ -3291,13 +3295,8 @@ var wTrack = function (models) {
                         startDate: '$salesPersons.startDate',
                         endDate  : '$salesPersons.endDate'
                     },
-                    paymentInfo : 1,
-                    year        : 1,
-                    month       : 1,
-                    week        : 1,
-                    dateByWeek  : 1,
-                    dateByMonth : 1,
-                    project     : 1
+                    credit: 1,
+                    date  : 1
                 }
             }, {
                 $lookup: {
@@ -3337,7 +3336,7 @@ var wTrack = function (models) {
                 }
             }, {
                 $out: 'tempJournalEntries'
-            }]).exec(function (err, response) {
+            }*/]).exec(function (err, response) {
                 if (err) {
                     return next(err);
                 }
