@@ -256,8 +256,23 @@ define([
         saveItem: function (e) {
             var model;
             var id;
+            var errorContent = this.$el.find('.errorContent');
+            var isPickedEmployee = this.$el.find('.false [data-content="employee"]').text();
 
             e.preventDefault();
+
+            if (errorContent.length){
+                return App.render({
+                    type   : 'error',
+                    message: 'Please choose position'
+                });
+            }
+            if (!isPickedEmployee){
+                return App.render({
+                    type   : 'error',
+                    message: 'Please choose employee'
+                });
+            }
 
             for (id in this.changedModels) {
                 model = this.collection.get(id);
