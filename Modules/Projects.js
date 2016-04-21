@@ -996,6 +996,7 @@ var Project = function (models, event) {
             .populate('groups.owner', '_id login')
             .populate('budget.projectTeam')
             .populate('projectmanager', '_id name fullName')
+            .populate('salesmanager', '_id name fullName')
             .populate('customer', '_id name fullName')
             .populate('workflow', '_id name')
 

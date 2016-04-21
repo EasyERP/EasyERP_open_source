@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var async = require('async');
+var CONSTANTS = require('../constants/mainConstants.js');
 
 var ProjectMembers = function (models) {
     'use strict';
@@ -7,24 +8,35 @@ var ProjectMembers = function (models) {
     var ProjectMembersSchema = mongoose.Schemas['ProjectMember'];
     var ProjectSchema = mongoose.Schemas['Project'];
 
-    function changedSales(db, doc) {
+    function changedManager(db, doc) {
         var ProjectMemberModel = models.get(db, 'ProjectMember', ProjectMembersSchema);
         var Project = models.get(db, 'Project', ProjectSchema);
+        var manager;
+        switch (doc.projectPositionId.toString()) {
+            case (CONSTANTS.SALES_MANAGER_POS) :
+                manager = 'salesmanager';
+                break;
+            case (CONSTANTS.PROJECT_MANAGER_POS) :
+                manager = 'projectmanager';
+                break;
+        }
 
-        if (doc.projectPositionId.toString() === '570e9a75785753b3f1d9c86e') {
+        if (manager) {
             ProjectMemberModel.find({projectId: doc.projectId, projectPositionId: doc.projectPositionId})
                 .sort({startDate: -1})
                 .lean()
                 .exec(function (err, docs) {
                     var elem;
                     var employeeId;
+                    var data = {};
                     if (err) {
                         console.log(err);
                         return;
                     }
                     elem = docs[0];
                     employeeId = elem ? elem.employeeId : null;
-                    Project.findByIdAndUpdate(doc.projectId, {projectmanager: employeeId}, function (err) {
+                    data[manager] = employeeId;
+                    Project.findByIdAndUpdate(doc.projectId, data, function (err) {
                         if (err) {
                             console.log(err);
                         }
@@ -45,8 +57,7 @@ var ProjectMembers = function (models) {
                 return next(err);
             }
 
-
-            changedSales(db, doc);
+            changedManager(db, doc);
             res.status(200).send(doc);
         });
     };
@@ -65,7 +76,7 @@ var ProjectMembers = function (models) {
                     return cb(err);
                 }
 
-                changedSales(db, doc);
+                changedManager(db, doc);
                 cb(null, doc);
             });
 
@@ -114,7 +125,7 @@ var ProjectMembers = function (models) {
                 return next(err);
             }
 
-            changedSales(db, doc);
+            changedManager(db, doc);
             res.status(200).send({success: doc});
         });
     };
