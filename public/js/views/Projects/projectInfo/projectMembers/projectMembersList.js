@@ -93,7 +93,7 @@ define([
 
             return App.render({
                 type   : 'notify',
-                message: 'Data was changed, please refresh browser'
+                message: 'Data was changed, please refresh your browser'
             });
         },
 

@@ -608,35 +608,47 @@ var Filters = function (models) {
             Project
                 .aggregate([{
                     $lookup: {
-                        from                   : "Employees",
-                        localField             : "projectmanager",
-                        foreignField: "_id", as: "projectmanager"
+                        from        : "Employees",
+                        localField  : "projectmanager",
+                        foreignField: "_id",
+                        as          : "projectmanager"
                     }
                 }, {
                     $lookup: {
-                        from                   : "Customers",
-                        localField             : "customer",
-                        foreignField: "_id", as: "customer"
+                        from        : "Employees",
+                        localField  : "salesmanager",
+                        foreignField: "_id",
+                        as          : "salesmanager"
                     }
                 }, {
                     $lookup: {
-                        from                   : "workflows",
-                        localField             : "workflow",
-                        foreignField: "_id", as: "workflow"
+                        from        : "Customers",
+                        localField  : "customer",
+                        foreignField: "_id",
+                        as          : "customer"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "workflows",
+                        localField  : "workflow",
+                        foreignField: "_id",
+                        as          : "workflow"
                     }
                 }, {
                     $project: {
                         projectName   : 1,
                         workflow      : {$arrayElemAt: ["$workflow", 0]},
                         customer      : {$arrayElemAt: ["$customer", 0]},
-                        projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                        projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                        salesmanager  : {$arrayElemAt: ["$salesmanager", 0]}
                     }
                 }, {
                     $project: {
                         projectName   : 1,
                         workflow      : 1,
                         customer      : 1,
-                        projectmanager: 1
+                        projectmanager: 1,
+                        salesmanager  : 1
                     }
                 }, {
                     $group: {
@@ -657,6 +669,12 @@ var Filters = function (models) {
                             $addToSet: {
                                 _id : '$projectmanager._id',
                                 name: {$concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']}
+                            }
+                        },
+                        'salesmanager': {
+                            $addToSet: {
+                                _id : '$salesmanager._id',
+                                name: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
                             }
                         },
                         'name'          : {

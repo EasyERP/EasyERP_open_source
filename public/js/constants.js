@@ -171,6 +171,10 @@ define([], function () {
                 backend: 'workflow._id'
             },
             'Sales Manager': {
+                view   : 'salesmanager',
+                backend: 'salesmanager._id'
+            },
+            'Project Manager': {
                 view   : 'projectmanager',
                 backend: 'projectmanager._id'
             }
