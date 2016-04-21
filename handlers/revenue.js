@@ -3286,9 +3286,9 @@ var wTrack = function (models) {
                     path                      : '$salesPersons',
                     preserveNullAndEmptyArrays: true
                 }
-            }/*, {
-                $match: salesManagersMatch
             }, {
+                $match: salesManagersMatch
+            }/*, {
                 $project: {
                     salesPersons: {
                         _id      : '$salesPersons.employeeId',
