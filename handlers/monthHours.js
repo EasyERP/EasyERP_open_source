@@ -61,7 +61,7 @@ var MonthHours = function (event, models) {
                         hours             : monthHours.hours
                     };
                     event.emit('updateCost', params);
-                    res.status(200).send(monthHours);
+                    res.status(200).send({success: monthHours});
                 });
             } else {
                 res.status(404);
