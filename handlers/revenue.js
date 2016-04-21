@@ -3288,55 +3288,122 @@ var wTrack = function (models) {
                 }
             }, {
                 $match: salesManagersMatch
-            }/*, {
+            }, {
                 $project: {
                     salesPersons: {
                         _id      : '$salesPersons.employeeId',
                         startDate: '$salesPersons.startDate',
                         endDate  : '$salesPersons.endDate'
                     },
-                    credit: 1,
-                    date  : 1
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'salesPersons._id',
-                    foreignField: '_id',
-                    as          : 'salesPerson'
-                }
-            }, {
-                $project: {
-                    paymentInfo: 1,
-                    year       : 1,
-                    month      : 1,
-                    week       : 1,
-                    dateByWeek : 1,
-                    dateByMonth: 1,
-                    project    : 1,
-                    salesPerson: {$arrayElemAt: ['$salesPerson', 0]},
-                    startDate  : '$salesPersons.startDate',
-                    endDate    : '$salesPersons.endDate'
-                }
-            }, {
-                $project: {
-                    paymentInfo: 1,
-                    year       : 1,
-                    month      : 1,
-                    week       : 1,
-                    dateByWeek : 1,
-                    dateByMonth: 1,
-                    project    : 1,
-                    salesPerson: {
-                        _id : '$salesPerson._id',
-                        name: '$salesPerson.name'
+                    revenueSum  : '$job.budget.budgetTotal.revenueSum',
+                    profit      : {
+                        $let: {
+                            vars: {
+                                revenue: '$job.budget.budgetTotal.revenueSum',
+                                cost   : '$credit'
+                            },
+                            in  : {$subtract: ['$$revenue', '$$cost']}
+                        }
                     },
-                    startDate  : '$salesPersons.startDate',
-                    endDate    : '$salesPersons.endDate'
+                    credit      : 1,
+                    _date       : {
+                        $add: [{
+                            $multiply: [{$year: '$date'}, 10000]
+                        }, {
+                            $multiply: [{$month: '$date'}, 100]
+                        }, {
+                            $dayOfMonth: '$date'
+                        }]
+                    },
+                    date        : 1
                 }
             }, {
-                $out: 'tempJournalEntries'
-            }*/]).exec(function (err, response) {
+                $project: {
+                    isValid     : {
+                        $or: [{
+                            $and: [{
+                                $eq: ['$salesPersons.startDate', null]
+                            }, {
+                                $eq: ['$salesPersons.endDate', null]
+                            }]
+                        }, {
+                            $and: [{
+                                $lte: ['$salesPersons.startDate', '$date']
+                            }, {
+                                $eq: ['$salesPersons.endDate', null]
+                            }]
+                        }, {
+                            $and: [{
+                                $eq: ['$salesPersons.startDate', null]
+                            }, {
+                                $gte: ['$salesPersons.endDate', '$date']
+                            }]
+                        }, {
+                            $and: [{
+                                $lte: ['$salesPersons.startDate', '$date']
+                            }, {
+                                $gte: ['$salesPersons.endDate', '$date']
+                            }]
+                        }]
+                    },
+                    salesPersons: 1,
+                    revenueSum  : 1,
+                    profit      : 1,
+                    credit      : 1,
+                    date        : 1
+                }
+            }, {
+                $match: {
+                    isValid: true
+                }
+            }, {
+                $group: {
+                    _id: null,
+                    salesArray: {$addToSet: '$salesPersons._id'},
+                    totalProfit: {$sum: '$profit'},
+                    root: {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }/*, {
+             $lookup: {
+             from        : 'Employees',
+             localField  : 'salesPersons._id',
+             foreignField: '_id',
+             as          : 'salesPerson'
+             }
+             }, {
+             $project: {
+             paymentInfo: 1,
+             year       : 1,
+             month      : 1,
+             week       : 1,
+             dateByWeek : 1,
+             dateByMonth: 1,
+             project    : 1,
+             salesPerson: {$arrayElemAt: ['$salesPerson', 0]},
+             startDate  : '$salesPersons.startDate',
+             endDate    : '$salesPersons.endDate'
+             }
+             }, {
+             $project: {
+             paymentInfo: 1,
+             year       : 1,
+             month      : 1,
+             week       : 1,
+             dateByWeek : 1,
+             dateByMonth: 1,
+             project    : 1,
+             salesPerson: {
+             _id : '$salesPerson._id',
+             name: '$salesPerson.name'
+             },
+             startDate  : '$salesPersons.startDate',
+             endDate    : '$salesPersons.endDate'
+             }
+             }, {
+             $out: 'tempJournalEntries'
+             }*/]).exec(function (err, response) {
                 if (err) {
                     return next(err);
                 }
