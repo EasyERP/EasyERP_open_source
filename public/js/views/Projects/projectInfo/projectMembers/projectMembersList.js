@@ -268,7 +268,8 @@ define([
             var model;
             var id;
             var errorContent = this.$el.find('.errorContent');
-            var isPickedEmployee = this.$el.find('.false [data-content="employee"]').text();
+            var newElements = this.$el.find('tr.false');
+            var isPickedEmployee = newElements.find('[data-content="employee"]').text();
 
             e.preventDefault();
 
@@ -278,7 +279,8 @@ define([
                     message: 'Please choose position'
                 });
             }
-            if (!isPickedEmployee){
+
+            if (newElements.length && !isPickedEmployee) {
                 return App.render({
                     type   : 'error',
                     message: 'Please choose employee'
