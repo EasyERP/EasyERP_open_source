@@ -9,6 +9,15 @@
                         <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
                             <%if(model.workflow.status === 'New'){%>
                                 <%if(model.approved){%>
+                                    <%if(!model.emailed){%>
+                                        <button class="btn sendEmail">
+                                            <span>Send email</span>
+                                        </button>
+                                    <%} else {%>
+                                        <button class="btn sendEmail">
+                                            <span>Resend email</span>
+                                        </button>
+                                    <%}%>
                                     <button class="btn newPayment">
                                         <span>Pay</span>
                                     </button>

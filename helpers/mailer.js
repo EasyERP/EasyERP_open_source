@@ -5,6 +5,7 @@ module.exports = function () {
     var _ = require('../public/js/libs/underscore-min.map.1.6.0.js');
     var nodemailer = require("nodemailer");
     var smtpTransportObject = require('../config/mailer').noReplay;
+    var pathMod = require('path');
 
     var fs = require('fs');
 
@@ -43,6 +44,16 @@ module.exports = function () {
         deliver(mailOptions);
     };
 
+    this.sendInvoice = function (mailOptions, cb){
+
+        mailOptions.generateTextFromHTML = true;
+        mailOptions.from = 'easyerp <no-replay@easyerp.com>';
+        mailOptions.html = _.template(fs.readFileSync(pathMod.join(__dirname, '../public/templates/mailer/sendInvoice.html'), encoding = "utf8"), {});
+
+        deliver(mailOptions, cb);
+    };
+
+
     this.registeredNewUser = function (options){
         var templateOptions = {
             name: options.firstName + ' ' + options.lastName,
@@ -69,6 +80,8 @@ module.exports = function () {
         deliver(mailOptionsUser);
         deliver(mailOptions);
     };
+
+    this.deliver = deliver;
 
     function deliver(mailOptions, cb) {
         var transport = nodemailer.createTransport(smtpTransportObject);
