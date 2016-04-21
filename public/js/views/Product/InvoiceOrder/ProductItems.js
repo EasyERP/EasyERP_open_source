@@ -285,7 +285,7 @@ define([
             }
 
             //parent.removeClass('quickEdit').html('<span>' + val + '</span>');
-           // parent.removeClass('quickEdit').html('<span>' + helpers.currencySplitter(val) + '</span>');
+            // parent.removeClass('quickEdit').html('<span>' + helpers.currencySplitter(val) + '</span>');
 
             if (inputEl.hasClass('datepicker')) {
                 parent.find('span').addClass('datepicker');
@@ -406,7 +406,7 @@ define([
                 datePicker.remove();
 
                 //$($parrents[2]).attr('class', 'editable');
-                $($parrents[3]).attr('class', 'editable').find("span").text(salePrice); // changed on def 0
+                $('#editInput').val(salePrice); // changed on def 0
 
                 /*if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
                  $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
@@ -567,7 +567,7 @@ define([
             if (totalEls) {
                 for (var i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
-                  //  quantity = $currentEl.find('[data-name="quantity"]').text();
+                    //  quantity = $currentEl.find('[data-name="quantity"]').text();
                     cost = $currentEl.find('[data-name="price"] input').val() || '0';
                     quantity = this.quantityRetriver($currentEl);
                     cost = helpers.spaceReplacer(cost);
