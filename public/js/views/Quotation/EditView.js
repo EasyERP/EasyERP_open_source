@@ -234,6 +234,8 @@ define([
         createProforma: function (e) {
             e.preventDefault();
 
+            App.startPreload();
+
             var self = this;
             var url = '/proforma/create';
             var quotationId = this.currentModel.id;
@@ -252,6 +254,7 @@ define([
                         var tr;
 
                         if (err) {
+                            App.stopPreload();
                             App.render({
                                 type   : 'error',
                                 message: 'Can\'t create proforma'

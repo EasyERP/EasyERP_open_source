@@ -1478,7 +1478,9 @@ define([
                     self.getProforma(null, quotationId);
                     self.activeTab();
                     self.renderTabCounter();
-                    App.stopPreload();
+                    if (!quotationId) {
+                        App.stopPreload();
+                    }
                 });
 
             },

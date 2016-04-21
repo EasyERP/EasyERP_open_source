@@ -449,6 +449,8 @@ define([
                 }
             });
 
+            self.eventChannel.trigger('elemCountChanged');
+
             return this;
         }
     });
