@@ -79,18 +79,22 @@
                 ? element.quotation.name: ''%></a></td>
             <td><a data-id="<%=element.invoice ? element.invoice._id : null%>" class="invoice"><%=element.invoice ?
                 element.invoice.name : ''%></a></td>
-            <td><%=element.budget.projectTeam.length%></td>
+            <% if(element.budget && element.budget.projectTeam && element.budget.projectTeam[0].employee){%>
+            <td><%= element.budget.projectTeam[0].employee._id ? element.budget.projectTeam.length : 0%></td>
+            <%} else {%>
+            <td>0</td>
+            <%}%>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
-            <td><%= budgetTotal.costSum ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>
-            <td><%= budgetTotal ? currencySplitter(budgetTotal.revenueSum.toFixed()) : 0%></td>
-            <td><%= budgetTotal.profitSum ? currencySplitter(budgetTotal.profitSum.toFixed()) : 0%></td>
+            <td><%= budgetTotal.costSum ? currencySplitter((budgetTotal.costSum/100).toFixed()) : 0%></td>
+            <td><%= budgetTotal ? currencySplitter((budgetTotal.revenueSum/100).toFixed()) : 0%></td>
+            <td><%= currencySplitter(((budgetTotal.revenueSum - budgetTotal.costSum)/100).toFixed())%></td>
 
         </tr>
         <% count++ %>
         <% totalHours += budgetTotal.hoursSum %>
         <% totalCost += budgetTotal.costSum %>
         <% totalRevenue += budgetTotal.revenueSum%>
-        <% totalProfit += budgetTotal.profitSum%>
+        <% totalProfit = (totalRevenue - totalCost)/100%>
         <% } %>
         <% })%>
 
@@ -108,8 +112,8 @@
             <td>&nbsp</td>
             <td>&nbsp</td>
             <td id="totalHours" data-value="<%=totalHours%>"><%= currencySplitter(totalHours.toFixed())%></td>
-            <td id="totalCost" data-value="<%=totalCost%>"><%= currencySplitter(totalCost.toFixed())%></td>
-            <td id="totalRevenue" data-value="<%=totalRevenue%>"><%= currencySplitter(totalRevenue.toFixed())%></td>
+            <td id="totalCost" data-value="<%=totalCost%>"><%= currencySplitter((totalCost/100).toFixed())%></td>
+            <td id="totalRevenue" data-value="<%=totalRevenue%>"><%= currencySplitter((totalRevenue/100).toFixed())%></td>
             <td id="totalProfit" data-value="<%=totalProfit%>"><%= currencySplitter(totalProfit.toFixed())%></td>
         </tr>
 
@@ -121,7 +125,7 @@
 
 
 <div class="forInfo-half-block right">
-    <div>
+<!--    <div>
         <table class="list tableProjects">
             <colgroup span="3">
                 <col span="1">
@@ -148,7 +152,7 @@
             <% })%>
             </tbody>
         </table>
-    </div>
+    </div>-->
     <div>
         <table class="list tableProjects">
             <colgroup span="4">
@@ -171,10 +175,10 @@
             <tbody id="project">
             <%if (projectValues) {%>
             <tr>
-                <td><%=currencySplitter(projectValues.revenue.toFixed())%></td>
-                <td><%=currencySplitter(projectValues.profit.toFixed())%></td>
-                <td class="procent"><%=projectValues.markUp.toFixed() %></td>
-                <td class="procent"><%=projectValues.radio.toFixed()%></td>
+                <td><%=currencySplitter((projectValues.revenue/100).toFixed())%></td>
+                <td><%=currencySplitter((projectValues.profit/100).toFixed())%></td>
+                <td class="procent"><%=(projectValues.markUp).toFixed() %></td>
+                <td class="procent"><%=(projectValues.radio).toFixed()%></td>
             </tr>
             <% } %>
             </tbody>
