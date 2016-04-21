@@ -2,6 +2,8 @@
  * Created by liliya on 17.09.15.
  */
 define([
+    'jQuery',
+    'Underscore',
     'text!templates/Projects/projectInfo/wTrackTemplate.html',
     'text!templates/Projects/projectInfo/wTracks/wTrackHeader.html',
     'text!templates/Pagination/PaginationTemplate.html',
@@ -17,7 +19,22 @@ define([
     'async',
     'constants'
 
-], function (wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, createView, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async, constants) {
+], function ($,
+             _,
+             wTrackTemplate,
+             wTrackTopBar,
+             paginationTemplate,
+             cancelEdit,
+             createView,
+             listView,
+             listItemView,
+             currentModel,
+             EditCollection,
+             wTrackCollection,
+             dataService,
+             populate,
+             async,
+             constants) {
     var wTrackView = listView.extend({
 
         el                      : '#timesheet',
@@ -28,18 +45,18 @@ define([
         changedModels           : {},
 
         events: {
-            "mouseover .currentPageList"                             : "showPagesPopup",
-            "click .itemsNumber"                                     : "switchPageCounter",
-            "click .showPage"                                        : "showPage",
-            "change #currentShowPage"                                : "showPage",
-            "click .checkbox"                                        : "checked",
-            "change .listCB"                                         : "setAllTotalVals",
-            "click #top-bar-copyBtn"                                 : "copyRow",
-            "click #savewTrack"                                      : "saveItem",
-            "click #deletewTrack"                                    : "deleteItems",
-            "click #createBtn"                                       : "createItem",
-            "click .oe_sortable :not(span.arrow.down, span.arrow.up)": "goSort",
-            "click"                                                  : "removeInputs"
+            'mouseover .currentPageList'                             : 'showPagesPopup',
+            'click .itemsNumber'                                     : 'switchPageCounter',
+            'click .showPage'                                        : 'showPage',
+            'change #currentShowPage'                                : 'showPage',
+            'click .checkbox'                                        : 'checked',
+            'change .listCB'                                         : 'setAllTotalVals',
+            'click #top-bar-copyBtn'                                 : 'copyRow',
+            'click #savewTrack'                                      : 'saveItem',
+            'click #deletewTrack'                                    : 'deleteItems',
+            'click #createBtn'                                       : 'createItem',
+            'click .oe_sortable :not(span.arrow.down, span.arrow.up)': 'goSort',
+            click                                                    : 'removeInputs'
         },
 
         initialize: function (options) {
@@ -59,25 +76,26 @@ define([
         },
 
         createItem: function (e) {
-            e.preventDefault();
-
+            var model;
             var projectModel = this.project.toJSON();
             var now = new Date();
             var year = now.getFullYear();
             var month = now.getMonth() + 1;
             var week = now.getWeek();
-           // var rate = 3;
+            // var rate = 3;
             this.projectModel = projectModel;
             var startData = {
                 year        : year,
                 month       : month,
                 week        : week,
-               // rate        : rate,
+                // rate        : rate,
                 project     : projectModel._id,
                 projectModel: projectModel
             };
 
-            var model = new currentModel(startData);
+            e.preventDefault();
+
+            model = new currentModel(startData);
 
             startData.cid = model.cid;
 
@@ -105,14 +123,15 @@ define([
         showMoreContent: function (newModels) {
             var holder = this.$el;
             var itemView;
+            var pagenation;
 
             this.editCollection.reset(newModels);
 
-            holder.find("#listTable").empty();
+            holder.find('#listTable').empty();
 
             itemView = new this.listItemView({
                 collection : newModels,
-                page       : holder.find("#currentShowPage").val(),
+                page       : holder.find('#currentShowPage').val(),
                 itemsNumber: this.defaultItemsNumber
             });
 
@@ -120,26 +139,26 @@ define([
 
             itemView.undelegateEvents();
 
-            var pagenation = holder.find('.pagination');
+            pagenation = holder.find('.pagination');
             if (newModels.length !== 0) {
                 pagenation.show();
             } else {
                 pagenation.hide();
             }
-            $("#top-bar-deleteBtn").hide();
+            $('#top-bar-deleteBtn').hide();
             $('#check_all').prop('checked', false);
         },
 
         goSort: function (e) {
-            e.preventDefault();
             var target$;
             var currentParrentSortClass;
             var sortClass;
             var sortConst;
             var sortBy;
             var sortObject;
-
             var newRows = this.$el.find('#false').length;
+
+            e.preventDefault();
 
             if (this.isNewRow) {
                 newRows = this.isNewRow();
@@ -164,19 +183,17 @@ define([
 
             if (!sortClass) {
                 target$.addClass('sortDn');
-                sortClass = "sortDn";
+                sortClass = 'sortDn';
             }
             switch (sortClass) {
-                case "sortDn":
-                {
-                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                case 'sortDn': {
+                    target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
                     target$.removeClass('sortDn').addClass('sortUp');
                     sortConst = 1;
                 }
                     break;
-                case "sortUp":
-                {
-                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                case 'sortUp': {
+                    target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
                     target$.removeClass('sortUp').addClass('sortDn');
                     sortConst = -1;
                 }
@@ -232,20 +249,20 @@ define([
         },
 
         /*renderPagination: function ($currentEl, self) {
-            $currentEl.append(_.template(paginationTemplate));
+         $currentEl.append(_.template(paginationTemplate));
 
-            var pagenation = self.$el.find('.pagination');
+         var pagenation = self.$el.find('.pagination');
 
-            if (self.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
+         if (self.collection.length === 0) {
+         pagenation.hide();
+         } else {
+         pagenation.show();
+         }
 
-            $(document).on("click", function (e) {
-                self.hidePagesPopup(e);
-            });
-        },*/
+         $(document).on("click", function (e) {
+         self.hidePagesPopup(e);
+         });
+         },*/
         showPage: function (event) {
             event.preventDefault();
             event.stopPropagation();
@@ -277,7 +294,7 @@ define([
 
 
             $('#check_all').prop('checked', false);
-            switch(elementId) {
+            switch (elementId) {
                 case 'previousPage':
                     this.prevPProject(data, true, this);
                     break;
@@ -302,24 +319,24 @@ define([
             }, this);
         },
 
-        //showNewSelect: function (e, prev, next) {
-        //    populate.showSelect(e, prev, next, this);
-        //
-        //    return false;
-        //},
-        //
-        //nextSelect: function (e) {
-        //    this.showNewSelect(e, false, true);
-        //},
-        //
-        //prevSelect: function (e) {
-        //    this.showNewSelect(e, true, false);
-        //},
+/*        showNewSelect: function (e, prev, next) {
+            populate.showSelect(e, prev, next, this);
 
-        //showPagesPopup: function (e) {
-        //    $(e.target).closest("button").next("ul").toggle();
-        //    return false;
-        //},
+            return false;
+        },
+
+        nextSelect: function (e) {
+            this.showNewSelect(e, false, true);
+        },
+
+        prevSelect: function (e) {
+            this.showNewSelect(e, true, false);
+        },
+
+        showPagesPopup: function (e) {
+            $(e.target).closest("button").next("ul").toggle();
+            return false;
+        },*/
 
         bindingEventsToEditedCollection: function (context) {
             if (context.editCollection) {
@@ -339,7 +356,7 @@ define([
 
             if (modelObject) {
                 modelId = modelObject._id;
-                savedRow.attr("data-id", modelId);
+                savedRow.attr('data-id', modelId);
                 checkbox.val(modelId);
                 savedRow.removeAttr('id');
                 savedRow.removeClass('false');
@@ -354,7 +371,7 @@ define([
         },
 
         rerenderNumbers: function () {
-            var tableTr = $("#listTable").find('tr');
+            var tableTr = $('#listTable').find('tr');
 
             tableTr.each(function (index) {
                 $(this).find('[data-content="number"]').text(index + 1);
@@ -363,21 +380,23 @@ define([
         },
 
         deleteItems: function (e) {
-            e.preventDefault();
-
             var that = this;
+
             var mid = 39;
             var model;
-            var table = $("#listTable");
+            var table = $('#listTable');
+            var value;
+            var answer;
+
             this.collectionLength = this.collection.length;
+            e.preventDefault();
 
             if (!this.changed) {
 
-                var answer = confirm("Really DELETE items ?!");
-                var value;
+                answer = confirm('Really DELETE items ?!');
 
                 if (answer === true) {
-                    async.each($("#listTable input:checked"), function (checkbox, cb) {
+                    async.each($('#listTable input:checked'), function (checkbox, cb) {
                         value = checkbox.value;
 
                         model = that.collection.get(value);
@@ -398,8 +417,8 @@ define([
                             error  : function (model, res) {
                                 if (res.status === 403) {
                                     App.render({
-                                        type: 'error',
-                                        message: "You do not have permission to perform this action"
+                                        type   : 'error',
+                                        message: 'You do not have permission to perform this action'
                                     });
                                 }
                                 cb();
@@ -493,26 +512,28 @@ define([
         },
 
         switchPageCounter: function (event) {
+
+            var targetEl;
+            var itemsNumber;
             var newRows = this.$el.find('#false');
 
             event.preventDefault();
 
-            if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)){
+            if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
                 return App.render({
                     type   : 'notify',
                     message: 'Please, save previous changes or cancel them!'
                 });
             }
 
-            var targetEl = $(event.target);
-            var itemsNumber;
+            targetEl = $(event.target);
 
             if (this.previouslySelected) {
-                this.previouslySelected.removeClass("selectedItemsNumber");
+                this.previouslySelected.removeClass('selectedItemsNumber');
             }
 
             this.previouslySelected = targetEl;
-            targetEl.addClass("selectedItemsNumber");
+            targetEl.addClass('selectedItemsNumber');
 
             this.startTime = new Date();
             itemsNumber = targetEl.text();
@@ -533,56 +554,59 @@ define([
             });
             this.page = 1;
 
-            $("#top-bar-deleteBtn").hide();
+            $('#top-bar-deleteBtn').hide();
             $('#check_all').prop('checked', false);
 
-         //   this.changeLocationHash(1, itemsNumber, this.filter);
+            //   this.changeLocationHash(1, itemsNumber, this.filter);
         },
 
         saveItem: function (e) {
+            var self = this;
+            var model;
+            var id;
+            var errors = this.$el.find('.errorContent');
+            var keys = Object.keys(this.changedModels);
             e.preventDefault();
 
-            var model;
+            this.setChangedValueToModel();
 
-            var errors = this.$el.find('.errorContent');
-
-            for (var id in this.changedModels) {
-                model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
-                if (model){
-                    model.changed = this.changedModels[id];
-                }
-            }
+            keys.forEach(function (id) {
+                model = self.editCollection.get(id) || self.collection.get(id);
+                model.changed = self.changedModels[id];
+            });
 
             if (errors.length) {
-                return
+                return;
             }
             this.editCollection.save();
 
-            for (var id in this.changedModels) {
-                delete this.changedModels[id];
-                this.editCollection.remove(id);
-            }
+            keys.forEach(function (id) {
+                delete self.changedModels[id];
+                self.editCollection.remove(id);
+            });
 
             this.$el.find('.edited').removeClass('edited');
             this.rerenderNumbers(); // added rerender after saving too
         },
 
         checked: function (e) {
-            e.stopPropagation();
             var el = this.$el;
             var checkLength;
             var rawRows;
+            var $checkLength;
+
+            e.stopPropagation();
 
             if (this.collection.length > 0) {
-                var $checkLength = el.find("input.checkbox:checked");
+                $checkLength = el.find('input.checkbox:checked');
 
                 checkLength = $checkLength.length;
                 rawRows = $checkLength.closest('.false');
 
-                if (el.find("input.checkbox:checked").length > 0) {
+                if (el.find('input.checkbox:checked').length > 0) {
                     this.$createBtn.hide();
                     this.copyEl.show();
-                    $("#deletewTrack").show();
+                    $('#deletewTrack').show();
 
                     el.find('#check_all').prop('checked', false);
 
@@ -591,7 +615,7 @@ define([
                     }
                 }
                 else {
-                    $("#deletewTrack").hide();
+                    $('#deletewTrack').hide();
                     this.copyEl.hide();
                     this.$createBtn.show();
                     el.find('#check_all').prop('checked', false);
@@ -660,34 +684,43 @@ define([
         },
 
         copyRow: function (e) {
+
+            var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
+            var length = checkedRows.length;
+            var self = this;
+            var _model;
+            var tdsArr;
+            var cid;
+            var i;
+            var selectedWtrack;
+            var target;
+            var id;
+            var row;
+            var model;
+
+            this.createdCopied = true;
+            this.changed = true;
+
             this.stopDefaultEvents(e);
             this.hideGenerateCopy();
 
-            this.changed = true;
-            this.createdCopied = true;
-            var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
-            var length = checkedRows.length;
+            for (i = length - 1; i >= 0; i--) {
+                selectedWtrack = checkedRows[i];
+                target = $(selectedWtrack);
+                id = target.val();
+                row = target.closest('tr');
+                model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
 
-            for (var i = length - 1; i >= 0; i--) {
-                var selectedWtrack = checkedRows[i];
-                var self = this;
-                var target = $(selectedWtrack);
-                var id = target.val();
-                var row = target.closest('tr');
-                var model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
-                var _model;
-                var tdsArr;
-                var cid;
-               // var hours = model.get('worked');
-                //var rate = model.get('rate');
-                //var revenue = parseInt(hours) * parseFloat(rate);
+/*                 var hours = model.get('worked');
+                var rate = model.get('rate');
+                var revenue = parseInt(hours) * parseFloat(rate);*/
 
                 $(selectedWtrack).attr('checked', false);
 
-                model.set({"isPaid": false});
-                model.set({"amount": 0});
-                model.set({"cost": 0});
-                model.set({"revenue": 0});
+                model.set({isPaid: false});
+                model.set({amount: 0});
+                model.set({cost: 0});
+                model.set({revenue: 0});
                 model = model.toJSON();
                 delete model._id;
                 _model = new currentModel(model);
@@ -706,7 +739,7 @@ define([
 
                 tdsArr = row.find('td');
                 $(tdsArr[0]).find('input').val(cid);
-                $(tdsArr[1]).text("New");
+                $(tdsArr[1]).text('New');
             }
         },
 
@@ -739,7 +772,7 @@ define([
             this.genInvoiceEl.hide();
             this.copyEl.hide();
 
-            if (this.project.toJSON().workflow.name === 'Closed'){
+            if (this.project.toJSON().workflow.name === 'Closed') {
                 this.$createBtn.remove();
                 this.copyEl.remove();
                 this.$removeBtn.remove();
@@ -753,13 +786,13 @@ define([
 
                 allInputs = self.$el.find('.listCB');
                 allInputs.prop('checked', this.checked);
-                checkedInputs = $("input.listCB:checked");
+                checkedInputs = $('input.listCB:checked');
 
                 if (wTracks.length > 0) {
                     checkLength = checkedInputs.length;
 
                     if (checkLength > 0) {
-                        $("#deletewTrack").show();
+                        $('#deletewTrack').show();
                         self.$createBtn.hide();
 
                         if (checkLength === self.collection.length) {
@@ -770,7 +803,7 @@ define([
                             $('#check_all').prop('checked', true);
                         }
                     } else {
-                        $("#deletewTrack").hide();
+                        $('#deletewTrack').hide();
                         self.$createBtn.show();
 
                         $('#check_all').prop('checked', false);
@@ -782,31 +815,31 @@ define([
 
             });
 
-            dataService.getData("/project/getForWtrack", null, function (projects) {
+            dataService.getData('/project/getForWtrack', null, function (projects) {
                 projects = _.map(projects.data, function (project) {
                     project.name = project.projectName;
 
-                    return project
+                    return project;
                 });
 
                 self.responseObj['#project'] = projects;
             });
 
-            dataService.getData("/employee/getForDD", null, function (employees) {
+            dataService.getData('/employee/getForDD', null, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 
-                    return employee
+                    return employee;
                 });
 
                 self.responseObj['#employee'] = employees;
             });
 
-            dataService.getData("/department/getForDD", null, function (departments) {
+            dataService.getData('/department/getForDD', null, function (departments) {
                 departments = _.map(departments.data, function (department) {
                     department.name = department.departmentName;
 
-                    return department
+                    return department;
                 });
 
                 self.responseObj['#department'] = departments;
