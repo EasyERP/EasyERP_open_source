@@ -1139,6 +1139,12 @@ var Project = function (models, event) {
                                             localField  : "projectmanager",
                                             foreignField: "_id", as: "projectmanager"
                                         }
+                                    },{
+                                        $lookup: {
+                                            from        : "Employees",
+                                            localField  : "salesmanager",
+                                            foreignField: "_id", as: "salesmanager"
+                                        }
                                     }, {
                                         $lookup: {
                                             from        : "Customers",
@@ -1158,7 +1164,8 @@ var Project = function (models, event) {
                                             task          : 1,
                                             customer      : {$arrayElemAt: ["$customer", 0]},
                                             health        : 1,
-                                            projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                                            projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                                            salesmanager  : {$arrayElemAt: ["$salesmanager", 0]}
                                         }
                                     }, {
                                         $project: {
@@ -1167,6 +1174,7 @@ var Project = function (models, event) {
                                             task          : 1,
                                             workflow      : 1,
                                             projectmanager: 1,
+                                            salesmanager  : 1,
                                             customer      : 1,
                                             health        : 1
                                         }
