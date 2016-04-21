@@ -9,13 +9,13 @@ var async = require('async');
 var JobsSchema = mongoose.Schemas.jobs;
 
 var connectOptions = {
-    user: 'easyerp',
+    user: 'easyErp',
     pass: '1q2w3e!@#',
     w   : 1,
     j   : true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111:28017/dendb', connectOptions);
+var dbObject = mongoose.createConnection('localhost:27017/production', connectOptions);
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {

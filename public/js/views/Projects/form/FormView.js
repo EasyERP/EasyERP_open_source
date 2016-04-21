@@ -88,7 +88,7 @@ define([
               dataService,
               async,
               helpers) {
-        "use strict";
+        'use strict';
 
         var View = Backbone.View.extend({
             el               : '#content-holder',
@@ -1490,6 +1490,8 @@ define([
                 var self = this;
                 var templ = _.template(ProjectsFormTemplate);
                 var thisEl = this.$el;
+                var notesEl;
+                var atachEl;
                 var notDiv;
                 var container;
 

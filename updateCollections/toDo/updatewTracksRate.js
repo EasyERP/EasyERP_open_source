@@ -5,7 +5,7 @@ var mongoose = require('mongoose');
 require('../../models/index.js');
 var _ = require('../../node_modules/underscore/underscore');
 var async = require('async');
-var moment = require('/home/den/EasyErp-Desktop/public/js/libs/moment/moment');
+var moment = require('../../public/js/libs/moment/moment');
 var events = require('events');
 var event = new events.EventEmitter();
 
@@ -25,9 +25,10 @@ var connectOptions = {
     j: true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111:28017/lilyadb', connectOptions);
+// var dbObject = mongoose.createConnection('144.76.56.111:28017/lilyadb', connectOptions);
 
-//var dbObject = mongoose.createConnection('localhost', 'production');
+var dbObject = mongoose.createConnection('localhost', 'production');
+
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
