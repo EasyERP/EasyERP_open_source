@@ -11,6 +11,7 @@ module.exports = (function () {
         task            : [{type: ObjectId, ref: 'Tasks', default: null}],
         customer        : {type: ObjectId, ref: 'Customers', default: null},
         projectmanager  : {type: ObjectId, ref: 'Employees', default: null}, //todo fix usage from SM to PM or delete
+        salesmanager    : {type: ObjectId, ref: 'Employees', default: null},
         description     : String,
         whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         groups          : {
