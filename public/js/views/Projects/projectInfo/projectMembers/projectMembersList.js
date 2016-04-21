@@ -45,7 +45,7 @@ define([
             var self = this;
             var target = $(e.target);
             var row = target.parent('tr');
-            var rowId = row.data('id');
+            var rowId = row.attr('data-id');
             var isNewRow = row.hasClass('false');
             var text;
 
@@ -86,8 +86,19 @@ define([
             return false;
         },
 
+        changedSales : function () {
+            var salesRow = this.$el.find('[data-id="570e9a75785753b3f1d9c86e"]').first().closest('tr');
+            var salesName = salesRow.find('[data-content="employee"]').text();
+            $('#salesManager').text(salesName);
+
+            return App.render({
+                type   : 'notify',
+                message: 'Data was changed, please refresh browser'
+            });
+        },
+
         prevStartDate: function (row) {
-            var content = row.find('[data-content="projectPosition"]').data('id');
+            var content = row.find('[data-content="projectPosition"]').attr('data-id');
             var prevTd = row.nextAll().find('td[data-id="' + content + '"]').first();
             var prevRow;
             var prevStartDate;
@@ -126,7 +137,7 @@ define([
         putPrevDate: function (prPosition, e) {
             var td = this.$el.find('[data-id="' + prPosition + '"]').first();
             var row = td.closest('tr');
-            var id = row.data('id');
+            var id = row.attr('data-id');
             var endDate = row.find('.endDateManager');
             endDate.text('To end of project');
             if (!this.changedModels[id]) {
@@ -137,10 +148,10 @@ define([
         },
 
         updatePrevMembers: function (row, date) {
-            var content = row.find('[data-content="projectPosition"]').data('id');
+            var content = row.find('[data-content="projectPosition"]').attr('data-id');
             var td = row.nextAll().find('td[data-id="' + content + '"]').first();
             var tr = td.closest('tr');
-            var id = tr.data('id');
+            var id = tr.attr('data-id');
             var prevSalesDate = row.text() === 'From start of project' ? this.project.StartDate : date;
             var prevDate = new Date(prevSalesDate);
             var prevDay = moment(prevDate).subtract(1, 'd');
@@ -162,7 +173,7 @@ define([
             e.preventDefault();
 
             if (newElements.length) {
-                id = newElements.data('id');
+                id = newElements.attr('data-id');
 
                 if (id) {
                     this.collection.remove(id);
@@ -174,19 +185,17 @@ define([
             }
 
             if (editedItems.length) {
-                this.cancelChanges();
+                this.cancelChanges(editedItems);
             }
         },
 
-        cancelChanges: function () {
+        cancelChanges: function (edited) {
             var self = this;
-            var edited = this.$el.find('.edited');
-
             var collection = this.collection;
 
             async.each(edited, function (el, cb) {
                 var tr = $(el);
-                var id = tr.data('id');
+                var id = tr.attr('data-id');
                 var template = _.template(cancelEdit);
                 var model;
 
@@ -219,7 +228,7 @@ define([
 
         savedNewModel: function (modelObject) {
             var savedRow = this.$el.find('.false');
-            var oldId = savedRow.data('id');
+            var oldId = savedRow.attr('data-id');
             var modelId;
 
             if (modelObject) {
@@ -239,6 +248,8 @@ define([
         updatedOptions: function () {
             this.showCreateBtn();
             this.changedModels = {};
+            this.$el.find('.edited').removeClass('edited');
+            this.changedSales();
         },
 
         hideNewSelect: function () {
@@ -313,7 +324,7 @@ define([
             var targetElement = target.parents('td');
             var targetRow = target.parents('tr');
             var isNewRow = targetRow.hasClass('false');
-            var rowId = targetRow.data('id');
+            var rowId = targetRow.attr('data-id');
             var startDate;
             var id = target.attr('id') || null;
             var dataType;
@@ -403,10 +414,7 @@ define([
 
         isChangedSales: function (model) {
             if (model.projectPositionId === '570e9a75785753b3f1d9c86e') {
-                App.render({
-                    type   : 'notify',
-                    message: 'Data was changed, please refresh browser'
-                });
+                this.changedSales();
             }
             return false;
         },
@@ -414,7 +422,7 @@ define([
         removeMember: function (e) {
             var target = $(e.target);
             var row = target.closest('tr');
-            var id = row.data('id');
+            var id = row.attr('data-id');
             var model = this.collection.get(id);
             var self = this;
             var content = row.find('[data-content="projectPosition"]').attr('data-id');
@@ -472,7 +480,6 @@ define([
                 self.editLastMember();
 
             });
-
             this.$el.find('#saveMember').hide();
             this.$el.find('#cancelMember').hide();
 
