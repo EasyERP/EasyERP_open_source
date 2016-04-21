@@ -6,7 +6,8 @@ define([
     'common',
     'populate',
     'dataService',
-    'helpers/keyValidator'], function (
+    'helpers/keyValidator'
+], function (
     Backbone,
     $,
     _,

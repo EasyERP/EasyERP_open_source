@@ -601,6 +601,8 @@ define([
                     }
                 }
 
+                App.stopPreload();
+
                 return this;
             }
 

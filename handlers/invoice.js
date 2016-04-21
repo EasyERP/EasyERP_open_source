@@ -1350,47 +1350,52 @@ var Invoice = function (models, event) {
                             var dir;
                             var _id = id;
 
-                            switch (osType) {
-                                case "Windows":
-                                {
-                                    var newDirname = __dirname.replace("handlers", "routes");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
+                            if (invoiceDeleted._type === 'Proforma') {
+                                parallelCb();
+                            } else {
+                                switch (osType) {
+                                    case "Windows":
+                                    {
+                                        var newDirname = __dirname.replace("handlers", "routes");
+                                        while (newDirname.indexOf("\\") !== -1) {
+                                            newDirname = newDirname.replace("\\", "\/");
+                                        }
+                                        dir = newDirname + "\/uploads\/" + _id;
                                     }
-                                    dir = newDirname + "\/uploads\/" + _id;
-                                }
-                                    break;
-                                case "Linux":
-                                {
-                                    var newDirname = __dirname.replace("handlers", "routes");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
+                                        break;
+                                    case "Linux":
+                                    {
+                                        var newDirname = __dirname.replace("handlers", "routes");
+                                        while (newDirname.indexOf("\\") !== -1) {
+                                            newDirname = newDirname.replace("\\", "\/");
+                                        }
+                                        dir = newDirname + "\/uploads\/" + _id;
                                     }
-                                    dir = newDirname + "\/uploads\/" + _id;
                                 }
-                            }
 
-                            fs.readdir(dir, function (err, files) {
-                                async.each(files, function (file, cb) {
-                                    var file = pathMod.join(dir, file);
-                                    fs.unlink(file, function (err) {
+                                fs.readdir(dir, function (err, files) {
+                                    async.each(files, function (file, cb) {
+                                        var file = pathMod.join(dir, file);
+                                        fs.unlink(file, function (err) {
+                                            if (err) {
+                                                return cb(err);
+                                            }
+                                            return cb();
+                                        });
+                                    }, function (err) {
                                         if (err) {
-                                            return cb(err);
+                                            return next(err);
                                         }
-                                        return cb();
-                                    });
-                                }, function (err) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-                                    fs.rmdir(dir, function (err) {
-                                        if (err) {
-                                        }
-                                        return next(err);
-                                        parallelCb();
+                                        fs.rmdir(dir, function (err) {
+                                            if (err) {
+                                            }
+                                            return next(err);
+                                            parallelCb();
+                                        });
                                     });
                                 });
-                            });
+                            }
+
                         }
 
                         function journalEntryRemove(parallelCb) {

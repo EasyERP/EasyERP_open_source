@@ -26,13 +26,13 @@ define([
             this.collection = options.model;
             this.filter = options.filter ? options.filter : {};
 
+            this.eventChannel = options.eventChannel;
+
             if (options.activate) {
                 this.render({activeTab: true});
             } else {
                 this.render();
             }
-
-            this.eventChannel = options.eventChannel;
 
         },
 
@@ -375,6 +375,8 @@ define([
 
                 self.$listTable = $('#paymentsTable');
             }, 10);
+
+            self.eventChannel.trigger('elemCountChanged');
 
             return this;
         }
