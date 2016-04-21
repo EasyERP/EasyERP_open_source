@@ -66,13 +66,13 @@ define([
             var year = now.getFullYear();
             var month = now.getMonth() + 1;
             var week = now.getWeek();
-           // var rate = 3;
+            // var rate = 3;
             this.projectModel = projectModel;
             var startData = {
                 year        : year,
                 month       : month,
                 week        : week,
-               // rate        : rate,
+                // rate        : rate,
                 project     : projectModel._id,
                 projectModel: projectModel
             };
@@ -232,20 +232,20 @@ define([
         },
 
         /*renderPagination: function ($currentEl, self) {
-            $currentEl.append(_.template(paginationTemplate));
+         $currentEl.append(_.template(paginationTemplate));
 
-            var pagenation = self.$el.find('.pagination');
+         var pagenation = self.$el.find('.pagination');
 
-            if (self.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
+         if (self.collection.length === 0) {
+         pagenation.hide();
+         } else {
+         pagenation.show();
+         }
 
-            $(document).on("click", function (e) {
-                self.hidePagesPopup(e);
-            });
-        },*/
+         $(document).on("click", function (e) {
+         self.hidePagesPopup(e);
+         });
+         },*/
         showPage: function (event) {
             event.preventDefault();
             event.stopPropagation();
@@ -277,7 +277,7 @@ define([
 
 
             $('#check_all').prop('checked', false);
-            switch(elementId) {
+            switch (elementId) {
                 case 'previousPage':
                     this.prevPProject(data, true, this);
                     break;
@@ -398,7 +398,7 @@ define([
                             error  : function (model, res) {
                                 if (res.status === 403) {
                                     App.render({
-                                        type: 'error',
+                                        type   : 'error',
                                         message: "You do not have permission to perform this action"
                                     });
                                 }
@@ -497,7 +497,7 @@ define([
 
             event.preventDefault();
 
-            if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)){
+            if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
                 return App.render({
                     type   : 'notify',
                     message: 'Please, save previous changes or cancel them!'
@@ -536,32 +536,33 @@ define([
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
 
-         //   this.changeLocationHash(1, itemsNumber, this.filter);
+            //   this.changeLocationHash(1, itemsNumber, this.filter);
         },
 
         saveItem: function (e) {
+            var self = this;
+            var model;
+            var id;
+            var errors = this.$el.find('.errorContent');
+            var keys = Object.keys(this.changedModels);
             e.preventDefault();
 
-            var model;
+            this.setChangedValueToModel();
 
-            var errors = this.$el.find('.errorContent');
-
-            for (var id in this.changedModels) {
-                model = this.editCollection.get(id) ? this.editCollection.get(id) : this.collection.get(id);
-                if (model){
-                    model.changed = this.changedModels[id];
-                }
-            }
+            keys.forEach(function (id) {
+                model = self.editCollection.get(id) || self.collection.get(id);
+                model.changed = self.changedModels[id];
+            });
 
             if (errors.length) {
-                return
+                return;
             }
             this.editCollection.save();
 
-            for (var id in this.changedModels) {
-                delete this.changedModels[id];
-                this.editCollection.remove(id);
-            }
+            keys.forEach(function (id) {
+                delete self.changedModels[id];
+                self.editCollection.remove(id);
+            });
 
             this.$el.find('.edited').removeClass('edited');
             this.rerenderNumbers(); // added rerender after saving too
@@ -678,7 +679,7 @@ define([
                 var _model;
                 var tdsArr;
                 var cid;
-               // var hours = model.get('worked');
+                // var hours = model.get('worked');
                 //var rate = model.get('rate');
                 //var revenue = parseInt(hours) * parseFloat(rate);
 
@@ -739,7 +740,7 @@ define([
             this.genInvoiceEl.hide();
             this.copyEl.hide();
 
-            if (this.project.toJSON().workflow.name === 'Closed'){
+            if (this.project.toJSON().workflow.name === 'Closed') {
                 this.$createBtn.remove();
                 this.copyEl.remove();
                 this.$removeBtn.remove();
