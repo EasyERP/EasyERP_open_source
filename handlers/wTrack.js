@@ -258,8 +258,8 @@ var wTrack = function (event, models) {
                 key = filter[filterName].key;
 
                 switch (filterName) {
-                    case 'projectManager':
-                        filtrElement['projectmanager._id'] = {$in: condition.objectID()};
+                    case 'salesManager':
+                        filtrElement['salesmanager._id'] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
                         break;
                     case 'projectName':
@@ -398,9 +398,9 @@ var wTrack = function (event, models) {
             }, {
                 $lookup: {
                     from        : 'Employees',
-                    localField  : 'project.projectmanager',
+                    localField  : 'project.salesmanager',
                     foreignField: '_id',
-                    as          : 'projectmanager'
+                    as          : 'salesmanager'
                 }
             }, {
                 $lookup: {
@@ -412,7 +412,7 @@ var wTrack = function (event, models) {
             }, {
                 $project: {
                     customer      : {$arrayElemAt: ['$customer', 0]},
-                    projectmanager: {$arrayElemAt: ['$projectmanager', 0]},
+                    salesmanager  : {$arrayElemAt: ['$salesmanager', 0]},
                     project       : 1,
                     employee      : 1,
                     department    : 1,
@@ -431,7 +431,7 @@ var wTrack = function (event, models) {
                     week                : 1,
                     isPaid              : 1,
                     'customer._id'      : 1,
-                    'projectmanager._id': 1
+                    'salesmanager._id'  : 1
                 }
             }, {
                 $match: queryObject
@@ -560,6 +560,33 @@ var wTrack = function (event, models) {
         contentSearcher = function (wtrackIds, waterfallCallback) {
             var queryObject = {};
             var aggregation;
+            var sMObject = {
+                $or: [{
+                    $and: [{
+                        $eq: ['$salesPersons.startDateWeek', null]
+                    }, {
+                        $eq: ['$salesPersons.endDateWeek', null]
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$salesPersons.startDateWeek', '$dateByWeek']
+                    }, {
+                        $eq: ['$salesPersons.endDateWeek', null]
+                    }]
+                }, {
+                    $and: [{
+                        $eq: ['$salesPersons.startDateWeek', null]
+                    }, {
+                        $gte: ['$salesPersons.endDateWeek', '$dateByWeek']
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$salesPersons.startDateWeek', '$dateByWeek']
+                    }, {
+                        $gte: ['$salesPersons.endDateWeek', '$dateByWeek']
+                    }]
+                }]
+            };
 
             queryObject.$and = [];
             queryObject.$and.push({_id: {$in: _.pluck(wtrackIds, '_id')}});
@@ -624,10 +651,10 @@ var wTrack = function (event, models) {
                 }
             }, {
                 $lookup: {
-                    from        : 'Employees',
-                    localField  : 'project.projectmanager',
-                    foreignField: '_id',
-                    as          : 'projectmanager'
+                    from        : 'ProjectMembers',
+                    localField  : 'project._id',
+                    foreignField: 'projectId',
+                    as          : 'salesmanagers'
                 }
             }, {
                 $lookup: {
@@ -644,11 +671,29 @@ var wTrack = function (event, models) {
                     as          : 'workflow'
                 }
             }, {
+                $unwind: '$salesmanagers'
+            }, {
                 $project: {
                     customer      : {$arrayElemAt: ['$customer', 0]},
                     workflow      : {$arrayElemAt: ['$workflow', 0]},
-                    projectmanager: {$arrayElemAt: ['$projectmanager', 0]},
                     dateByWeek    : 1,
+                    salesmanager  : 1,
+                    'salesmanager.startDateWeek': {
+                        $let: {
+                            vars: {
+                                startDate: '$salesmanager.startDate'
+                            },
+                            in  : {$add: [{$multiply: [{$year: '$$startDate'}, 100]}, {$week: '$$startDate'}]}
+                        }
+                    },
+                    'salesmanager.endDateWeek': {
+                        $let: {
+                            vars: {
+                                endDate: '$salesmanager.endDate'
+                            },
+                            in  : {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}
+                        }
+                    },
                     createdBy     : 1,
                     project       : 1,
                     jobs          : 1,
@@ -672,6 +717,8 @@ var wTrack = function (event, models) {
                     6             : 1,
                     7             : 1
                 }
+            },{
+                $match: sMObject
             }, {
                 $match: queryObject
             }, {
