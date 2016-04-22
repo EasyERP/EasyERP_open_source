@@ -52,8 +52,9 @@ define([
             "click"                                            : "hideNewSelect",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .confirmOrder"                              : "confirmOrder",
-            "click .createProforma"                            : "createProforma",
+            "click .createProforma"                            : "addAttachment",
             "click .cancelQuotation"                           : "cancelQuotation",
+            'change #proformaAttachment'                       : 'uploadAttachment',
             "click .setDraft"                                  : "setDraft"
         },
 
@@ -231,8 +232,91 @@ define([
             });
         },
 
-        createProforma: function (e) {
+        addAttachment: function(e) {
+            var self = this;
+            var $attachment;
+
             e.preventDefault();
+
+            $attachment = self.$el.find('#proformaAttachment');
+
+            if (!$attachment.length) {
+                self.$el.prepend('<form id="proformaAttachmentForm"><input type="file" id="proformaAttachment" accept="application/pdf" name="attachfile"></form>');
+                $attachment = self.$el.find('#proformaAttachment');
+            }
+
+            $attachment.click();
+            $attachment.hide();
+
+        },
+
+        uploadAttachment: function (event) {
+            var self = this;
+            var currentModel = this.model;
+            var currentModelId = currentModel ? currentModel["id"] : null;
+            var addFrmAttach = $("#proformaAttachmentForm");
+            var addInptAttach;
+
+            addInptAttach = self.$el.find("#proformaAttachment")[0].files[0];
+
+            if (!this.fileSizeIsAcceptable(addInptAttach)) {
+                this.$el.find('#inputAttach').val('');
+                return App.render({
+                    type   : 'error',
+                    message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
+                });
+            }
+
+            addFrmAttach.submit(function (e) {
+                var formURL;
+
+                formURL = "http://" + window.location.host + ((self.url) ? self.url : "/invoice/attach");
+
+                e.preventDefault();
+                addFrmAttach.ajaxSubmit({
+                    url        : formURL,
+                    type       : "POST",
+                    processData: false,
+                    contentType: false,
+                    data       : [addInptAttach],
+
+                    beforeSend: function (xhr) {
+                        xhr.setRequestHeader("id", currentModelId);
+                    },
+
+                    uploadProgress: function (event, position, total, statusComplete) {
+                        //todo add code
+                    },
+
+                    success: function (data) {
+                        self.createProforma();
+                    },
+
+                    error: function (xhr) {
+                        App.stopPreload();
+                        App.render({
+                            type: 'error',
+                            message: 'Error occurred while image load'
+                        });
+                    }
+                });
+            });
+
+            App.startPreload();
+
+            addFrmAttach.submit();
+            addFrmAttach.off('submit');
+        },
+
+        fileSizeIsAcceptable: function (file) {
+            if (!file) {
+                return false;
+            }
+            return file.size < App.File.MAXSIZE;
+        },
+
+        createProforma: function (e) {
+            e && e.preventDefault();
 
             App.startPreload();
 

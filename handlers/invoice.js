@@ -412,12 +412,13 @@ var Invoice = function (models, event) {
         waterFallTasks = [parallel, createInvoice/*, createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
-            if (err) {
-                return next(err);
-            }
             var project;
             var invoiceId = result._id;
             var products = result.products;
+
+            if (err) {
+                return next(err);
+            }
 
             Order.findByIdAndUpdate(id, {
                 $set: {

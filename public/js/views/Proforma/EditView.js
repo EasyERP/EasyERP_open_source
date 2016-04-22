@@ -226,7 +226,7 @@ define([
                 var $tr;
                 var $priceInputs;
                 var payBtnHtml;
-                var $currencyDd
+                var $currencyDd;
 
                 e.preventDefault();
 

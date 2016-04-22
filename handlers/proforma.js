@@ -5,6 +5,8 @@ var CONSTANTS = require('../constants/mainConstants');
 var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
+var fs = require("fs");
+var pathMod = require("path");
 
 var Proforma = function (models) {
     'use strict';
@@ -37,6 +39,30 @@ var Proforma = function (models) {
 				fx.base = oxr.base;
 				callback();
 			});
+		}
+
+		function renameFolder(orderId, invoiceId) {
+			var os = require("os");
+			var osType = (os.type().split('_')[0]);
+			var dir;
+			var oldDir;
+			var newDir;
+			switch (osType) {
+				case "Windows":
+				{
+					dir = pathMod.join(__dirname, '..\\routes\\uploads\\');
+				}
+					break;
+				case "Linux":
+				{
+					dir = pathMod.join(__dirname, '..\/routes\/uploads\/');
+				}
+			}
+
+			oldDir = dir + orderId;
+			newDir = dir + invoiceId;
+
+			fs.rename(oldDir, newDir);
 		}
 
 		function fetchFirstWorkflow(callback) {
@@ -123,7 +149,8 @@ var Proforma = function (models) {
 						groups                : 1,
 						creationDate          : 1,
 						createdBy             : 1,
-						editedBy              : 1
+						editedBy              : 1,
+						attachments			  : 1
 					}
 				},
 				{
@@ -151,7 +178,8 @@ var Proforma = function (models) {
 						groups                : {$first: '$groups'},
 						creationDate          : {$first: '$creationDate'},
 						createdBy             : {$first: '$createdBy'},
-						editedBy              : {$first: '$editedBy'}
+						editedBy              : {$first: '$editedBy'},
+						attachments           : {$first: '$attachments'}
 					}
 				}
 			], function (err, quotation) {
@@ -183,6 +211,8 @@ var Proforma = function (models) {
 			}
 
             delete quotation._id;
+
+			quotation.attachments[0].shortPas = quotation.attachments[0].shortPas.replace('..%2Froutes', '');
 
             proforma = new Proforma(quotation);
 
@@ -241,9 +271,14 @@ var Proforma = function (models) {
 		waterFallTasks = [parallel, createProforma, createJournalEntry];
 
         async.waterfall(waterFallTasks, function (err, result) {
+			var invoiceId = result._id;
+			var orderId = result.sourceDocument;
+
             if (err) {
                 return next(err);
             }
+
+			renameFolder(orderId.toString(), invoiceId.toString());
 
             res.status(201).send(result);
         });
