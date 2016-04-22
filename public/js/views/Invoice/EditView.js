@@ -139,7 +139,7 @@ define([
             var $li;
             var $tr;
             var $span;
-            var payBtnHtml;
+            var buttonsHtml;
 
             e.preventDefault();
 
@@ -150,7 +150,7 @@ define([
 
             App.startPreload();
 
-            payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
+            buttonsHtml = '<button class="btn sendEmail"> <span>Send email</span></button><button class="btn newPayment"><span>Pay</span></button>';
             url = '/invoice/approve';
             data = {
                 invoiceId: invoiceId
@@ -159,7 +159,7 @@ define([
             dataService.patchData(url, data, function (err, response) {
                 if (!err) {
                     self.currentModel.set({approved: true});
-                    $li.html(payBtnHtml);
+                    $li.html(buttonsHtml);
 
                     App.stopPreload();
 
