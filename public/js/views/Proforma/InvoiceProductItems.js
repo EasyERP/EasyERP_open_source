@@ -39,6 +39,7 @@ define([
                 this.isPaid = !!options.isPaid;
                 this.notAddItem = !!options.notAddItem;
                 this.paid = options.paid;
+                this.approved = options.approved;
             }
 
             this.forSales = options.forSales;
@@ -374,7 +375,8 @@ define([
                         isPaid          : self.isPaid,
                         notAddItem      : this.notAddItem,
                         model           : options.model,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        approved        : self.approved
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');

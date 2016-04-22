@@ -7,9 +7,19 @@
                     <li><a href="javascript:;">Assignees</a></li>
                     <li class="right">
                         <%if(model.workflow && model.workflow.name !== 'Invoiced' && model.workflow.name !== 'Paid'){%>
-                        <button class="btn newPayment">
-                            <span>Pay</span>
-                        </button>
+                            <%if(model.approved){%>
+                                <button class="btn newPayment">
+                                    <span>Pay</span>
+                                </button>
+                            <%} else {%>
+                                <%if(isFinancial){%>
+                                    <button class="btn approve">
+                                        <span>Approve</span>
+                                    </button>
+                                <%} else {%>
+                                    <span>Draft</span>
+                                <%}%>
+                            <%}%>
                         <%}%>
                     </li>
                 </ul>
@@ -17,7 +27,7 @@
                 <div class="dialog-tabs-items mainTabs">
                     <div class="dialog-tabs-item mainTabs active">
 
-                        <%if(!isPaid){%>
+                        <%if(!model.approved){%>
                         <div class="half-block left">
                             <dl class="opp-info">
 
