@@ -50,7 +50,7 @@ define([
 
                 this.collection.toJSON().forEach(function (el) {
                     var month = moment(el._id).month() + 1;
-                    var year = moment(el._id).isoWeekYear();
+                    var year = moment(el._id).year();
                     var key = year * 100 + month;
                     keys.push(key.toString());
                 });
