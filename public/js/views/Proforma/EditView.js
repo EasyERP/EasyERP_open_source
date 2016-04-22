@@ -1,6 +1,7 @@
 define([
         'text!templates/Proforma/EditTemplate.html',
         'views/Assignees/AssigneesView',
+        'views/Notes/AttachView',
         'views/Proforma/InvoiceProductItems',
         'views/salesInvoice/wTrack/wTrackRows',
         'views/Payment/ProformaCreateView',
@@ -12,7 +13,7 @@ define([
         'constants',
         'helpers'
     ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+    function (EditTemplate, AssigneesView, attachView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({
@@ -256,6 +257,9 @@ define([
 
                             $td.html('<span>' + price + '</span>');
                         });
+
+                        self.$el.find('.input-file').remove();
+                        self.$el.find('a.deleteAttach').remove();
 
                         App.stopPreload();
 
@@ -642,6 +646,19 @@ define([
                         approved      : model.approved
                     }).render({model: model}).el
                 );
+
+                notDiv = this.$el.find('#attach-container');
+                notDiv.append(
+                    new attachView({
+                        model: this.currentModel,
+                        url  : '/uploadInvoiceFiles'
+                    }).render().el
+                );
+
+                if (model.approved) {
+                    self.$el.find('.input-file').remove();
+                    self.$el.find('a.deleteAttach').remove();
+                }
 
                 if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
