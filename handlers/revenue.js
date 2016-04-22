@@ -3350,13 +3350,15 @@ var wTrack = function (models) {
                     revenueSum  : 1,
                     profit      : 1,
                     credit      : 1,
-                    date        : 1
+                    date        : 1,
+                    dateByMonth: {$add: [{$multiply: [{$year: '$date'}, 100]}, {$month: '$date'}]},
+                    dateByWeek: {$add: [{$multiply: [{$year: '$date'}, 100]}, {$week: '$date'}]}
                 }
             }, {
                 $match: {
                     isValid: true
                 }
-            }, {
+            }/*, {
                 $group: {
                     _id: null,
                     salesArray: {$addToSet: '$salesPersons._id'},
@@ -3365,7 +3367,15 @@ var wTrack = function (models) {
                 }
             }, {
                 $unwind: '$root'
-            }/*, {
+            }, {
+                $group: {
+                    _id: {
+                        sales: '$root.salesPersons._id',
+                        dateByMonth: '$root.dateByMonth'
+                    },
+                    profit: {$sum: '$root.profit'}
+                }
+            }*//*, {
              $lookup: {
              from        : 'Employees',
              localField  : 'salesPersons._id',
