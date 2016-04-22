@@ -27,7 +27,7 @@ var connectOptions = {
 
 // var dbObject = mongoose.createConnection('144.76.56.111:28017/lilyadb', connectOptions);
 
-var dbObject = mongoose.createConnection('localhost', 'new_production');
+var dbObject = mongoose.createConnection('localhost', 'production');
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
