@@ -560,8 +560,8 @@ define([
 
                 var projecttype = thisEl.find('#projectTypeDD').data('id');
                 var $userNodes = $('#usereditDd option:selected');
-                var startDate = $.trim(thisEl.find('#StartDate').val());
-                var endDate = $.trim(thisEl.find('#EndDate').val());
+                //var startDate = $.trim(thisEl.find('#StartDate').val());
+                //var endDate = $.trim(thisEl.find('#EndDate').val());
                 var users = [];
 
                 var budget = this.formModel.get('budget');
@@ -571,7 +571,7 @@ define([
 
                 var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
                 var health = thisEl.find('#health a').data('value');
-                var _targetEndDate = $.trim(thisEl.find('#EndDateTarget').val());
+                //var _targetEndDate = $.trim(thisEl.find('#EndDateTarget').val());
                 var description = $.trim(thisEl.find('#description').val());
                 var data = {
                     projectName     : projectName,
@@ -590,9 +590,9 @@ define([
                     },
                     whoCanRW        : whoCanRW,
                     health          : health,
-                    StartDate       : startDate,
-                    EndDate         : endDate,
-                    TargetEndDate   : _targetEndDate,
+                    //StartDate       : startDate,
+                    //EndDate         : endDate,
+                    //TargetEndDate   : _targetEndDate,
                     budget          : budget
                 };
 
