@@ -9,7 +9,8 @@ define([
     'moment',
     'dataService',
     'constants',
-    'custom'
+    'custom',
+    'helpers'
 ], function (Backbone,
              _,
              mainTemplate,
@@ -17,14 +18,16 @@ define([
              moment,
              dataService,
              CONSTANTS,
-             custom) {
+             custom,
+             helpers) {
     'use strict';
     var View = Backbone.View.extend({
         el: '#content-holder',
 
         contentType: CONSTANTS.REVENUE,
 
-        template: _.template(mainTemplate),
+        template      : _.template(mainTemplate),
+        profitTemplate: _.template(profitTemplate),
 
         events: {
             'change #currentStartWeek': 'changeWeek',
@@ -39,50 +42,40 @@ define([
             var startDate = dateRange.startDate || moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'week').day("Monday").format('DD MMM, YYYY');
             var endDate = dateRange.endDate || moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'week').day("Sunday").format('DD MMM, YYYY');
 
-
             custom.cacheToApp('revenueDashDateRange', {
                 startDate: startDate,
                 endDate  : endDate
             });
+
+            this.render();
         },
 
-        fetchProfit: function () {
+        renderContent: function () {
             var self = this;
-            var data = {
-                week: this.model.get('currentStartWeek'),
-                year: this.model.get('currentYear')
-            };
+            var count = this.collection.length;
+            var tdWidth = Math.floor(90 / count);
+            var $tableContainer = this.$el.find('#results');
 
-            dataService.getData('/revenue/profit', data, function (profitData) {
-                /*self.model.set('allBonusByMonth', allBonus);
-                 self.model.trigger('change:allBonusByMonth');*/
-
-                console.log(profitData);
-            });
+            $tableContainer.html(this.profitTemplate({
+                collection      : self.collection,
+                currencySplitter: helpers.currencySplitter,
+                tdWidth         : tdWidth,
+                count           : count
+            }));
         },
 
-        render: function (employees) {
+        render: function (options) {
             var self = this;
-            var thisEl = this.$el;
-            var model = this.model.toJSON();
+            var $currentEl = this.$el;
 
-            $('title').text(this.contentType);
+            $currentEl.html(self.template());
 
-            this.employees = employees;
+            this.byWeek = false;
 
-            model.employees = employees;
+            this.renderContent();
 
-            this.$el.html(this.template(model));
-
-            this.$el.find('#currentStartWeek').spinner({
-                min: 0,
-                max: 54
-            });
-
-            this.$currentStartWeek = thisEl.find('#currentStartWeek');
-            this.$revenueBySales = thisEl.find('.revenueBySales');
-
-            this.rendered = true;
+            this.$startDate = $('#startDate');
+            this.$endDate = $('#endDate');
 
             return this;
         }

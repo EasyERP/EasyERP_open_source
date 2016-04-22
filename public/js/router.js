@@ -306,6 +306,8 @@ define([
 
                         self.changeView(contentview);
                         self.changeTopBarView(topbarView);
+
+                        console.log(collection);
                     }
 
                     function fetchCollection(dateRange) {

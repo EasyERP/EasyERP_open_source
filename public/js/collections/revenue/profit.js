@@ -4,7 +4,39 @@
 ], function (Backbone, moment) {
     'use strict';
     var Model = Backbone.Model.extend({
-        idAttribute: '_id'
+        idAttribute: 'date',
+
+        parse: function (response) {
+            var _Model = Backbone.Model.extend({
+                idAttribute: 'salesPerson'
+            });
+            var Collection = Backbone.Collection.extend({
+                model: _Model
+            });
+            var collection = this.collection || {};
+            var sales;
+            var paid;
+            var revenue;
+            var year = response.date.toString().substr(0, 4);
+            var monthOrWeek = response.date.toString().substr(4);
+
+            this.byWeek = !!collection.byWeek;
+
+            if (!this.byWeek) {
+                response.date = moment([year, monthOrWeek - 1]).format('MMM, YY');
+            } else {
+                response.date = monthOrWeek + ', ' + year;
+            }
+
+            sales = response.profitBySales || [];
+
+            response.profitByMonth = response.profitByMonth || 0;
+            response.profitByMonth /= 100;
+
+            response.sales = new Collection(sales);
+
+            return response;
+        }
     });
     var Colection = Backbone.Collection.extend({
         model: Model,
@@ -24,8 +56,6 @@
 
         parse: function (response) {
             this.sales = response.sales;
-
-            console.log(response.data);
 
             return response.data;
         }

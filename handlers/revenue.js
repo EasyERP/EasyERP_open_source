@@ -3306,15 +3306,9 @@ var wTrack = function (models) {
                         }
                     },
                     credit      : 1,
-                    _date       : {
-                        $add: [{
-                            $multiply: [{$year: '$date'}, 10000]
-                        }, {
-                            $multiply: [{$month: '$date'}, 100]
-                        }, {
-                            $dayOfMonth: '$date'
-                        }]
-                    },
+                    year        : {$year: '$date'},
+                    month       : {$month: '$date'},
+                    week        : {$week: '$date'},
                     date        : 1
                 }
             }, {
@@ -3346,79 +3340,138 @@ var wTrack = function (models) {
                             }]
                         }]
                     },
-                    salesPersons: 1,
+                    salesPersons: '$salesPersons._id',
                     revenueSum  : 1,
                     profit      : 1,
                     credit      : 1,
                     date        : 1,
-                    dateByMonth: {$add: [{$multiply: [{$year: '$date'}, 100]}, {$month: '$date'}]},
-                    dateByWeek: {$add: [{$multiply: [{$year: '$date'}, 100]}, {$week: '$date'}]}
+                    dateByMonth : {$add: [{$multiply: ['$year', 100]}, '$month']},
+                    dateByWeek  : {$add: [{$multiply: ['$year', 100]}, '$week']}
                 }
             }, {
                 $match: {
                     isValid: true
                 }
             }, {
-                $group: {
-                    _id: null,
-                    salesArray: {$addToSet: '$salesPersons._id'},
-                    totalProfit: {$sum: '$profit'},
-                    root: {$push: '$$ROOT'}
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'salesPersons',
+                    foreignField: '_id',
+                    as          : 'salesPersons'
                 }
-            }/*, {
-                $unwind: '$root'
+            }, {
+                $project: {
+                    salesPersons: {$arrayElemAt: ['$salesPersons', 0]},
+                    revenueSum  : 1,
+                    profit      : 1,
+                    credit      : 1,
+                    date        : 1,
+                    dateByMonth : 1,
+                    dateByWeek  : 1
+                }
+            }, {
+                $project: {
+                    salesPersons: {
+                        _id : '$salesPersons._id',
+                        name: {$concat: ['$salesPersons.name.first', ' ', '$salesPersons.name.last']}
+                    },
+                    revenueSum  : 1,
+                    profit      : 1,
+                    credit      : 1,
+                    date        : 1,
+                    dateByMonth : 1,
+                    dateByWeek  : 1
+                }
             }, {
                 $group: {
-                    _id: {
-                        sales: '$root.salesPersons._id',
-                        dateByMonth: '$root.dateByMonth'
+                    _id        : null,
+                    salesArray : {
+                        $addToSet: {
+                            _id : '$salesPersons._id',
+                            name: '$salesPersons.name'
+                        }
                     },
-                    profit: {$sum: '$root.profit'}
+                    totalProfit: {$sum: '$profit'},
+                    root       : {$push: '$$ROOT'}
                 }
-            }*//*, {
-             $lookup: {
-             from        : 'Employees',
-             localField  : 'salesPersons._id',
-             foreignField: '_id',
-             as          : 'salesPerson'
-             }
-             }, {
-             $project: {
-             paymentInfo: 1,
-             year       : 1,
-             month      : 1,
-             week       : 1,
-             dateByWeek : 1,
-             dateByMonth: 1,
-             project    : 1,
-             salesPerson: {$arrayElemAt: ['$salesPerson', 0]},
-             startDate  : '$salesPersons.startDate',
-             endDate    : '$salesPersons.endDate'
-             }
-             }, {
-             $project: {
-             paymentInfo: 1,
-             year       : 1,
-             month      : 1,
-             week       : 1,
-             dateByWeek : 1,
-             dateByMonth: 1,
-             project    : 1,
-             salesPerson: {
-             _id : '$salesPerson._id',
-             name: '$salesPerson.name'
-             },
-             startDate  : '$salesPersons.startDate',
-             endDate    : '$salesPersons.endDate'
-             }
-             }, {
-             $out: 'tempJournalEntries'
-             }*/]).exec(function (err, response) {
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    _id         : 0,
+                    salesArray  : 1,
+                    totalProfit : 1,
+                    salesPersons: '$root.salesPersons._id',
+                    profit      : '$root.profit',
+                    dateByMonth : '$root.dateByMonth',
+                    dateByWeek  : '$root.dateByWeek'
+                }
+            }, {
+                $group: {
+                    _id          : '$dateByMonth', // todo change dinamicly
+                    profitByMonth: {$sum: '$profit'},
+                    root         : {$push: '$$ROOT'},
+                    salesArray   : {$first: '$salesArray'},
+                    totalProfit  : {$first: '$totalProfit'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    _id          : 0,
+                    salesPerson  : '$root.salesPersons',
+                    dateByMonth  : '$root.dateByMonth',
+                    dateByWeek   : '$root.dateByWeek',
+                    profit       : '$root.profit',
+                    profitByMonth: 1,
+                    totalProfit  : 1,
+                    salesArray   : 1
+                }
+            }, {
+                $group: {
+                    _id          : {
+                        date       : '$dateByMonth',
+                        salesPerson: '$salesPerson'
+                    },
+                    profitBySales: {$sum: '$profit'},
+                    profitByMonth: {$first: '$profitByMonth'},
+                    salesArray   : {$first: '$salesArray'},
+                    totalProfit  : {$first: '$totalProfit'},
+                    root         : {$push: '$$ROOT'}
+                }
+            }, {
+                $group: {
+                    _id          : '$_id.date',
+                    profitBySales: {
+                        $addToSet: {
+                            salesPerson  : '$_id.salesPerson',
+                            profitBySales: '$profitBySales'
+                        }
+                    },
+                    profitByMonth: {$first: '$profitByMonth'},
+                    salesArray   : {$first: '$salesArray'},
+                    totalProfit  : {$first: '$totalProfit'}
+                }
+            }, {
+                $project: {
+                    date         : '$_id',
+                    totalProfit  : 1,
+                    salesArray   : 1,
+                    profitBySales: 1,
+                    profitByMonth: 1,
+                    _id          : 0
+                }
+            }]).exec(function (err, response) {
+                var sales;
+
                 if (err) {
                     return next(err);
                 }
 
-                res.status(200).send({sales: [], data: response});
+                sales = response[0] ? response[0].salesArray : [];
+                response = _.sortBy(response, 'date');
+
+                res.status(200).send({sales: sales, data: response});
             });
 
         });
