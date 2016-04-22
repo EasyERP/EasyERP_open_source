@@ -381,6 +381,7 @@ define([
                 this.changedModels[startData.cid] = {};
             }
             this.changedModels[startData.cid].projectId = this.project._id;
+            this.changedModels[startData.cid].endDate = null;
 
             if (!this.isNewRow()) {
                 this.collection.add(model);
