@@ -3358,14 +3358,14 @@ var wTrack = function (models) {
                 $match: {
                     isValid: true
                 }
-            }/*, {
+            }, {
                 $group: {
                     _id: null,
                     salesArray: {$addToSet: '$salesPersons._id'},
                     totalProfit: {$sum: '$profit'},
                     root: {$push: '$$ROOT'}
                 }
-            }, {
+            }/*, {
                 $unwind: '$root'
             }, {
                 $group: {
