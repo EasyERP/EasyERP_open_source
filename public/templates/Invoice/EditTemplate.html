@@ -9,6 +9,15 @@
                         <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
                             <%if(model.workflow.status === 'New'){%>
                                 <%if(model.approved){%>
+                                    <%if(!model.emailed){%>
+                                        <button class="btn sendEmail">
+                                            <span>Send email</span>
+                                        </button>
+                                    <%} else {%>
+                                        <button class="btn sendEmail">
+                                            <span>Resend email</span>
+                                        </button>
+                                    <%}%>
                                     <button class="btn newPayment">
                                         <span>Pay</span>
                                     </button>
@@ -156,6 +165,7 @@
                             <li><a href="javascript:;">Other Info</a></li>
                             <%}%>
                             <li><a href="javascript:;">Payments</a></li>
+                            <li><a href="javascript:;">Attachments</a></li>
                         </ul>
                         <div class="clearfix"></div>
                         <div class="dialog-tabs-items childTabs">
@@ -331,6 +341,9 @@
                             <div class="dialog-tabs-item childTabs">
                                 <div id="payments-container"></div>
                             </div>
+                            <div class="dialog-tabs-item childTabs">
+                                <div id="attach-container"></div>
+                            </div>
                         </div>
 
                     </div>
@@ -338,11 +351,9 @@
                         <div class="assignees-container"></div>
                     </div>
                 </div>
-
                 <div id="paymentHolder">
 
                 </div>
-
                 <div class="clearfix"></div>
             </div>
         </fieldset>

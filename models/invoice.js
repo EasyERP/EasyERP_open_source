@@ -57,9 +57,11 @@ module.exports = (function () {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
+        attachments: {type: Array, default: []},
         invoiced : {type: Boolean, default: false},
         removable: {type: Boolean, default: true},
-        approved : {type: Boolean, default: false}
+        approved : {type: Boolean, default: false},
+        emailed : {type: Boolean, default: false}
     }, {collection: 'Invoice', discriminatorKey: '_type'});
 
     var jobsInvoiceSchema = baseSchema.extend({

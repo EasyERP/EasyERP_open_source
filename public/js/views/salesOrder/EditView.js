@@ -1,16 +1,16 @@
 define([
-        "text!templates/salesOrder/EditTemplate.html",
-        "text!templates/salesOrder/ViewTemplate.html",
+        'text!templates/salesOrder/EditTemplate.html',
+        'text!templates/salesOrder/ViewTemplate.html',
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
-        "views/Projects/projectInfo/invoices/invoiceView",
+        'views/Projects/projectInfo/invoices/invoiceView',
         'collections/salesInvoice/filterCollection',
-        "common",
-        "custom",
-        "dataService",
-        "populate",
-        "constants",
-        "helpers"
+        'common',
+        'custom',
+        'dataService',
+        'populate',
+        'constants',
+        'helpers'
     ],
     function (EditTemplate, ViewTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS, helpers) {
 
@@ -42,17 +42,18 @@ define([
             },
 
             events: {
-                'keydown'                                                         : 'keydownHandler',
+                keydown                                                           : 'keydownHandler',
                 'click .dialog-tabs a'                                            : 'changeTab',
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .newSelectList li.miniStylePagination"                     : "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .receiveInvoice"                                           : "receiveInvoice",
-                "click .cancelOrder"                                              : "cancelOrder",
-                "click .setDraft"                                                 : "setDraft"
+                'click .current-selected'                                         : 'showNewSelect',
+                click                                                             : 'hideNewSelect',
+                'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
+                'click .newSelectList li.miniStylePagination'                     : 'notHide',
+                'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
+                'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
+                'click .receiveInvoice'                                           : 'createInvoice',
+                'change #invoiceAttachment'                                       : 'uploadAttachment',
+                'click .cancelOrder'                                              : 'cancelOrder',
+                'click .setDraft'                                                 : 'setDraft'
             },
 
             showNewSelect: function (e, prev, next) {
@@ -75,7 +76,6 @@ define([
             prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
-
             keydownHandler: function (e) {
                 switch (e.which) {
                     case 27:
@@ -85,7 +85,6 @@ define([
                         break;
                 }
             },
-
             changeTab: function (e) {
                 var holder = $(e.target);
                 var n;
@@ -105,7 +104,6 @@ define([
                 dialog_holder.find(itemActiveSelector).removeClass("active");
                 dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
-
             cancelOrder: function (e) {
                 e.preventDefault();
 
@@ -140,9 +138,88 @@ define([
                     });
                 });
             },
+            createInvoice: function(e) {
+                var self = this;
+                var $attachment;
 
-            receiveInvoice: function (e) {
                 e.preventDefault();
+
+                $attachment = self.$el.find('#invoiceAttachment');
+
+                if (!$attachment.length) {
+                    self.$el.prepend('<form id="invoiceAttachmentForm"><input type="file" id="invoiceAttachment" accept="application/pdf" name="attachfile"></form>');
+                    $attachment = self.$el.find('#invoiceAttachment');
+                }
+
+                $attachment.click();
+                $attachment.hide();
+
+            },
+            uploadAttachment: function (event) {
+                var self = this;
+                var currentModel = this.model;
+                var currentModelId = currentModel ? currentModel["id"] : null;
+                var addFrmAttach = $("#invoiceAttachmentForm");
+                var addInptAttach;
+
+                addInptAttach = self.$el.find("#invoiceAttachment")[0].files[0];
+
+                if (!this.fileSizeIsAcceptable(addInptAttach)) {
+                    this.$el.find('#inputAttach').val('');
+                    return App.render({
+                        type   : 'error',
+                        message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
+                    });
+                }
+
+                addFrmAttach.submit(function (e) {
+                    var formURL;
+
+                    formURL = "http://" + window.location.host + ((self.url) ? self.url : "/invoice/attach");
+
+                    e.preventDefault();
+                    addFrmAttach.ajaxSubmit({
+                        url        : formURL,
+                        type       : "POST",
+                        processData: false,
+                        contentType: false,
+                        data       : [addInptAttach],
+
+                        beforeSend: function (xhr) {
+                            xhr.setRequestHeader("id", currentModelId);
+                        },
+
+                        uploadProgress: function (event, position, total, statusComplete) {
+                            //todo add code
+                        },
+
+                        success: function (data) {
+                            self.receiveInvoice();
+                        },
+
+                        error: function (xhr) {
+                            App.stopPreload();
+                            App.render({
+                                type: 'error',
+                                message: 'Error occurred while image load'
+                            });
+                        }
+                    });
+                });
+
+                App.startPreload();
+
+                addFrmAttach.submit();
+                addFrmAttach.off('submit');
+            },
+            fileSizeIsAcceptable: function (file) {
+                if (!file) {
+                    return false;
+                }
+                return file.size < App.File.MAXSIZE;
+            },
+            receiveInvoice: function (e) {
+                e && e.preventDefault();
 
                 var self = this;
                 var url = '/invoice/receive';
@@ -194,15 +271,18 @@ define([
 
                                     function createView() {
 
+                                        App.stopPreload();
+
                                         this.invoiceView = new InvoiceView({
                                             model       : self.collection,
                                             activeTab   : true,
-                                            eventChannel: self.eventChannel
+                                            eventChannel: self.eventChannel,
+                                            filter     : filter
                                         });
 
                                         this.invoiceView.showDialog(orderId);
 
-                                        self.eventChannel && self.eventChannel.trigger('elemCountChanged');
+                                        self.eventChannel && self.eventChannel.trigger('invoiceReceive');
 
                                     };
 
@@ -216,7 +296,6 @@ define([
                     }
                 });
             },
-
             setDraft: function (e) {
                 e.preventDefault();
 
@@ -247,7 +326,6 @@ define([
                     });
                 });
             },
-
             saveItem: function (invoiceCb) {
 
                 var self = this;
@@ -400,7 +478,6 @@ define([
                     });
                 }
             },
-
             hideDialog: function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();

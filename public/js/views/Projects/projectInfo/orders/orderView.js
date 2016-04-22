@@ -374,7 +374,7 @@ define([
                             $("#removeOrder").hide();
                             $('#check_all_orders').prop('checked', false);
 
-                            self.eventChannel && that.eventChannel.trigger('elemCountChanged');
+                            that.eventChannel && that.eventChannel.trigger('elemCountChanged');
 
                             //that.deleteItemsRender(that.deleteCounter, that.deletePage);
                         },

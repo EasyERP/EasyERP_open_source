@@ -1,6 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var InvoiceHandler = require('../handlers/invoice');
+var multipartMiddleware = require('connect-multiparty')();
 
 module.exports = function (models, event) {
     var handler = new InvoiceHandler(models, event);
@@ -44,6 +45,7 @@ module.exports = function (models, event) {
 
     router.post('/', handler.create);
     router.post('/receive', handler.receive);
+    router.post('/attach', multipartMiddleware, handler.attach);
 
 
     return router;

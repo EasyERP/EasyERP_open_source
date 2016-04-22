@@ -168,11 +168,7 @@ define([
                         $("#removeInvoice").hide();
                         $('#check_all_invoice').prop('checked', false);
 
-                        payments.forEach(function (payment) {
-                            $('.payment-list').find("[data-id=" + payment + "]").find('.checkbox').removeClass('notRemovable');
-                        });
-
-
+                        that.eventChannel && that.eventChannel.trigger('invoiceRemove');
                         that.collection.remove(checkbox.value);
 
                         cb();
@@ -452,6 +448,8 @@ define([
                     $('#check_all_invoice').prop('checked', false);
                 }
             });
+
+            self.eventChannel.trigger('elemCountChanged');
 
             return this;
         }

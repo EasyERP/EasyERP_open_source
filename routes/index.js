@@ -33,6 +33,7 @@ module.exports = function (app, mainDb) {
     //var importDataRouter = require('./importData')(models);
     var projectRouter = require('./project')(models);
     var employeeRouter = require('./employee')(models);
+    var projectMemberRouter = require('./projectMember')(models, event);
     var departmentRouter = require('./department')(models);
     var revenueRouter = require('./revenue')(models);
     var wTrackRouter = require('./wTrack')(event, models);
@@ -56,6 +57,7 @@ module.exports = function (app, mainDb) {
     var jobsRouter = require('./jobs')(models, event);
     var chartOfAccountRouter = require('./chartOfAccount')(models);
     var currencyRouter = require('./currency')(models);
+    var prPositionRouter = require('./projectPosition')(models);
     var journalRouter = require('./journal')(models, event);
     var salaryReportRouter = require('./salaryReport')(models);
     var userRouter = require('./user')(event, models);
@@ -201,6 +203,8 @@ module.exports = function (app, mainDb) {
     app.use('/payrollExprnses', payrollExprnsesRouter);
     app.use('/chartOfAccount', chartOfAccountRouter);
     app.use('/currency', currencyRouter);
+    app.use('/projectPosition', prPositionRouter);
+    app.use('/projectMember', projectMemberRouter);
     app.use('/journal', journalRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
@@ -524,6 +528,56 @@ module.exports = function (app, mainDb) {
                     } else {
                         uploadFileArray(req, res, function (files) {
                             requestHandler.uploadProjectsFiles(req, res, req.headers.id, files);
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    app.post('/uploadInvoiceFiles', multipartMiddleware, function (req, res, next) {
+        var os = require("os");
+        var osType = (os.type().split('_')[0]);
+        var dir;
+        switch (osType) {
+            case "Windows":
+            {
+                dir = __dirname + "\\uploads\\";
+            }
+                break;
+            case "Linux":
+            {
+                dir = __dirname + "\/uploads\/";
+            }
+        }
+        fs.readdir(dir, function (err, files) {
+            if (err) {
+                fs.mkdir(dir, function (errr) {
+                    if (!errr) {
+                        dir += req.headers.id;
+                    }
+                    fs.mkdir(dir, function (errr) {
+                        if (!errr) {
+                            uploadFileArray(req, res, function (files) {
+                                requestHandler.uploadInvoiceFiles(req, res, req.headers.id, files);
+                            });
+                        }
+                    });
+                });
+            } else {
+                dir += req.headers.id;
+                fs.readdir(dir, function (err, files) {
+                    if (err) {
+                        fs.mkdir(dir, function (errr) {
+                            if (!errr) {
+                                uploadFileArray(req, res, function (files) {
+                                    requestHandler.uploadInvoiceFiles(req, res, req.headers.id, files);
+                                });
+                            }
+                        });
+                    } else {
+                        uploadFileArray(req, res, function (files) {
+                            requestHandler.uploadInvoiceFiles(req, res, req.headers.id, files);
                         });
                     }
                 });

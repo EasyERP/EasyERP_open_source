@@ -1,7 +1,7 @@
 <% paymentCollection.forEach(function(payment, index){ %>
 <tr data-id="<%=payment._id%>">
     <td class="notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox"/></td>
-    <td class="centerCell"><%=startNumber + index + 1%></td>
+    <td class="centerCell" data-content="number"><%=startNumber + index + 1%></td>
     <td><%=(payment.supplier._id) ? (payment.supplier.name.first + ' ' + payment.supplier.name.last) : ''%></td>
     <td><%=payment.paymentRef%></td>
     <td data-type="input" class="editable" data-content="year"><%=payment.year%></td>
