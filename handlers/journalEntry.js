@@ -1799,12 +1799,15 @@ var Module = function (models, event) {
 
                                 employees.forEach(function (employee) {
                                     var transferArray = employee.transfer;
+
                                     if (!salaryObject[employee._id]) {
                                         salaryObject[employee._id] = {};
                                     }
 
                                     transferArray.forEach(function (transferObj) {
-                                        salaryObject[employee._id][transferObj.date] = transferObj.salary || 0;
+                                        if (transferObj.status !== 'fired'){
+                                            salaryObject[employee._id][transferObj.date] = transferObj.salary || 0;
+                                        }
                                     });
                                 });
 
@@ -1821,8 +1824,14 @@ var Module = function (models, event) {
                                     }
 
                                     result = JSON.parse(result);
-                                    monthHoursObject[key] = result && result[0] ? result[0] : {};
-                                    cb();
+
+                                    if (result && result[0]){
+                                        monthHoursObject[key] = result && result[0] ? result[0] : {};
+                                        cb();
+                                    } else {
+                                        //TODO
+                                    }
+
                                 });
                             }, function () {
                                 parallelCb(null, monthHoursObject);
