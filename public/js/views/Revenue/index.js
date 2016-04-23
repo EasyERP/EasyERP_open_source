@@ -4,8 +4,10 @@
 define([
     'Backbone',
     'Underscore',
+    'jQuery',
     'text!templates/Revenue/index.html',
     'text!templates/Revenue/profit.html',
+    'collections/revenue/profit',
     'moment',
     'dataService',
     'constants',
@@ -13,8 +15,10 @@ define([
     'helpers'
 ], function (Backbone,
              _,
+             $,
              mainTemplate,
              profitTemplate,
+             ProfitCollection,
              moment,
              dataService,
              CONSTANTS,
@@ -22,25 +26,15 @@ define([
              helpers) {
     'use strict';
     var View = Backbone.View.extend({
-        el: '#content-holder',
-
-        contentType: CONSTANTS.REVENUE,
-
+        el            : '#content-holder',
+        contentType   : CONSTANTS.REVENUE,
         template      : _.template(mainTemplate),
         profitTemplate: _.template(profitTemplate),
 
-        events: {
-            'change #currentStartWeek': 'changeWeek',
-            'click .ui-spinner-button': 'changeWeek',
-            'click .clickToShow'      : 'showBonus'
-        },
-
         initialize: function () {
-            var self = this;
-
             var dateRange = custom.retriveFromCash('revenueDashDateRange') || {};
-            var startDate = dateRange.startDate || moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'week').day("Monday").format('DD MMM, YYYY');
-            var endDate = dateRange.endDate || moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'week').day("Sunday").format('DD MMM, YYYY');
+            var startDate = dateRange.startDate || moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'week').day('Monday').format('DD MMM, YYYY');
+            var endDate = dateRange.endDate || moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'week').day('Sunday').format('DD MMM, YYYY');
 
             custom.cacheToApp('revenueDashDateRange', {
                 startDate: startDate,
@@ -48,6 +42,17 @@ define([
             });
 
             this.render();
+        },
+
+        changeDateRange: function () {
+            this.startDate = this.$startDate.val();
+            this.endDate = this.$endDate.val();
+            this.collection = new ProfitCollection({
+                byWeek   : this.byWeek,
+                startDate: this.startDate,
+                endDate  : this.endDate
+            });
+            this.collection.on('reset', this.renderContent, this);
         },
 
         renderContent: function () {
@@ -64,7 +69,7 @@ define([
             }));
         },
 
-        render: function (options) {
+        render: function () {
             var self = this;
             var $currentEl = this.$el;
 

@@ -29,6 +29,6 @@
     </tr>
     <tr class="boldPaid">
         <td>Total Profit</td>>
-        <td colspan="<%= count%>"><%=currencySplitter(collection.at(0).get('totalProfit') ? collection.at(0).get('totalProfit').toFixed(0) : 0)%></td>
+        <td colspan="<%= count%>"><%=currencySplitter(collection.at(0).get('totalProfit') ? (collection.at(0).get('totalProfit') / 100).toFixed(0) : 0)%></td>
     </tr>
 </tbody>

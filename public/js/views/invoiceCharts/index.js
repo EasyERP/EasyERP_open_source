@@ -21,8 +21,8 @@ define([
         expandAll: false,
 
         events: {
-            "click #byMonth": "byMonth",
-            "click #byWeek" : "byWeekRender"
+            'click #byMonth': 'byMonth',
+            'click #byWeek' : 'byWeekRender'
         },
 
         initialize: function (options) {
