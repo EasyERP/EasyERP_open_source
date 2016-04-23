@@ -4852,548 +4852,377 @@ var Module = function (models, event) {
             };
 
             var getAR = function (cb) {
-                var getArFirst = function (pcb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {
-                                $gte: new Date(startDate),
-                                $lte: new Date(startDate)
-                            },
-                            account: objectId(CONSTANTS.ACCOUNT_RECEIVABLE)
-                        }
-                    }, {
-                        $lookup: {
-                            from: "chartOfAccount",
-                            localField: "account",
-                            foreignField: "_id", as: "account"
-                        }
-                    }, {
-                        $project: {
-                            date: 1,
-                            debit: {$divide: ['$debit', '$currency.rate']},
-                            credit: {$divide: ['$credit', '$currency.rate']},
-                            account: {$arrayElemAt: ["$account", 0]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$account._id',
-                            name: {$addToSet: '$account.name'},
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
-                    });
-                };
-
-                var getARLast = function (pcb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {
-                                $gte: new Date(startDate),
-                                $lte: new Date(endDate)
-                            },
-                            account: objectId(CONSTANTS.ACCOUNT_RECEIVABLE)
-                        }
-                    }, {
-                        $lookup: {
-                            from: "chartOfAccount",
-                            localField: "account",
-                            foreignField: "_id", as: "account"
-                        }
-                    }, {
-                        $project: {
-                            date: 1,
-                            debit: {$divide: ['$debit', '$currency.rate']},
-                            credit: {$divide: ['$credit', '$currency.rate']},
-                            account: {$arrayElemAt: ["$account", 0]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$account._id',
-                            name: {$addToSet: '$account.name'},
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
-                    });
-                };
-
-                async.parallel([getArFirst, getARLast], function (err, result) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.ACCOUNT_RECEIVABLE)
+                    }
+                }, {
+                    $lookup: {
+                        from: "chartOfAccount",
+                        localField: "account",
+                        foreignField: "_id", as: "account"
+                    }
+                }, {
+                    $project: {
+                        date: 1,
+                        debit: {$divide: ['$debit', '$currency.rate']},
+                        credit: {$divide: ['$credit', '$currency.rate']},
+                        account: {$arrayElemAt: ["$account", 0]}
+                    }
+                }, {
+                    $group: {
+                        _id: '$account._id',
+                        name: {$addToSet: '$account.name'},
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
                     if (err) {
                         return cb(err);
                     }
 
-                    var arFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
-                    var arLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
+                    var sum = result[0] ? result[0].debit - result[0].credit : 0;
 
-                    var ar = arFirst - arLast;
+                    sum = sum * (-1);
 
-                    if (ar > 0) {
-                        ar = ar * (-1);
-                    }
+                    var fieldName = result[0] ? result[0].name[0] : "Account receivable";
 
-                    var fieldName = result[1] && result[1][0] ? result[1][0].name[0] : "Account receivable";
-
-                    cb(null, [{name: fieldName, debit: ar}]);
+                    cb(null, [{name: fieldName, debit: sum}]);
                 });
             };
 
-            var getSalaryPayable = function (cb) {
-                var getSPFirst = function (pcb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {
-                                $gte: new Date(startDate),
-                                //$lte: new Date(moment(startDate).endOf('day'))
-                                $lte: new Date(startDate)
-                            },
-                            account: {$in: [objectId(CONSTANTS.SALARY_PAYABLE_ACCOUNT), objectId(CONSTANTS.SALARY_OVERTIME_ACCOUNT)]}
-                        }
-                    }, {
-                        $lookup: {
-                            from: "chartOfAccount",
-                            localField: "account",
-                            foreignField: "_id", as: "account"
-                        }
-                    }, {
-                        $project: {
-                            date: 1,
-                            credit: {$divide: ['$credit', '$currency.rate']},
-                            debit: {$divide: ['$debit', '$currency.rate']},
-                            account: {$arrayElemAt: ["$account", 0]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$account._id',
-                            name: {$addToSet: '$account.name'},
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }, {
-                        $group: {
-                            _id: null,
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
-                    });
-                };
-
-                var getSPLast = function (pcb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {
-                                $gte: new Date(startDate),
-                                $lte: new Date(endDate)
-                            },
-                            account: {$in: [objectId(CONSTANTS.SALARY_PAYABLE_ACCOUNT), objectId(CONSTANTS.SALARY_OVERTIME_ACCOUNT)]}
-                        }
-                    }, {
-                        $lookup: {
-                            from: "chartOfAccount",
-                            localField: "account",
-                            foreignField: "_id", as: "account"
-                        }
-                    }, {
-                        $project: {
-                            date: 1,
-                            credit: {$divide: ['$credit', '$currency.rate']},
-                            debit: {$divide: ['$debit', '$currency.rate']},
-                            account: {$arrayElemAt: ["$account", 0]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$account._id',
-                            name: {$addToSet: '$account.name'},
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }, {
-                        $group: {
-                            _id: null,
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
-                    });
-                };
-
-                async.parallel([getSPFirst, getSPLast], function (err, result) {
+            var getCurrentLiabilities = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.CURRENT_LIABILITIES)
+                    }
+                }, {
+                    $lookup: {
+                        from: "chartOfAccount",
+                        localField: "account",
+                        foreignField: "_id", as: "account"
+                    }
+                }, {
+                    $project: {
+                        date: 1,
+                        credit: {$divide: ['$credit', '$currency.rate']},
+                        debit: {$divide: ['$debit', '$currency.rate']},
+                        account: {$arrayElemAt: ["$account", 0]}
+                    }
+                }, {
+                    $group: {
+                        _id: '$account._id',
+                        name: {$addToSet: '$account.name'},
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }, {
+                    $group: {
+                        _id: null,
+                        name: {$addToSet: '$name'},
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
                     if (err) {
                         return cb(err);
                     }
 
-                    var spFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
-                    var spLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
+                    var sum = result[0] ? result[0].debit - result[0].credit : 0;
 
-                    var sp = spLast - spFirst;
+                    var sp = 0 - sum;
 
                     if (sp < 0) {
                         sp = sp * (-1);
                     }
 
-                    var fieldName = 'Salary Payable';
+                    var fieldName = result[0] ? result[0].name[0] : 'Current Liabilities';
+
+                    cb(null, [{name: fieldName, debit: sp}]);
+                });
+            };
+
+            var getSalaryPayable = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.SALARY_PAYABLE_ACCOUNT)
+                    }
+                }, {
+                    $lookup: {
+                        from: "chartOfAccount",
+                        localField: "account",
+                        foreignField: "_id", as: "account"
+                    }
+                }, {
+                    $project: {
+                        date: 1,
+                        credit: {$divide: ['$credit', '$currency.rate']},
+                        debit: {$divide: ['$debit', '$currency.rate']},
+                        account: {$arrayElemAt: ["$account", 0]}
+                    }
+                }, {
+                    $group: {
+                        _id: '$account._id',
+                        name: {$addToSet: '$account.name'},
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }, {
+                    $group: {
+                        _id: null,
+                        name: {$addToSet: '$name'},
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var sum = result[0] ? result[0].debit - result[0].credit : 0;
+
+                    var sp = 0 - sum;
+
+                    if (sp < 0) {
+                        sp = sp * (-1);
+                    }
+
+                    var fieldName = result[0] ? result[0].name[0] : 'Salary Payable';
+
+                    cb(null, [{name: fieldName, debit: sp}]);
+                });
+            };
+
+            var getSalaryOvertimePayable = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.SALARY_OVERTIME_ACCOUNT)
+                    }
+                }, {
+                    $lookup: {
+                        from: "chartOfAccount",
+                        localField: "account",
+                        foreignField: "_id", as: "account"
+                    }
+                }, {
+                    $project: {
+                        date: 1,
+                        credit: {$divide: ['$credit', '$currency.rate']},
+                        debit: {$divide: ['$debit', '$currency.rate']},
+                        account: {$arrayElemAt: ["$account", 0]}
+                    }
+                }, {
+                    $group: {
+                        _id: '$account._id',
+                        name: {$addToSet: '$account.name'},
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }, {
+                    $group: {
+                        _id: null,
+                        name: {$addToSet: '$name'},
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    var sum = result[0] ? result[0].debit - result[0].credit : 0;
+
+                    var sp = 0 - sum;
+
+                    if (sp < 0) {
+                        sp = sp * (-1);
+                    }
+
+                    var fieldName = result[0] ? result[0].name[0] : 'Salary Overtime Payable';
 
                     cb(null, [{name: fieldName, debit: sp}]);
                 });
             };
 
             var getWIP = function (cb) {
-                var getSPFirst = function (pcb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {
-                                $gte: new Date(startDate),
-                                //$lte: new Date(moment(startDate).endOf('day'))
-                                $lte: new Date(startDate)
-                            },
-                            account: objectId(CONSTANTS.WORK_IN_PROCESS)
-                        }
-                    }, {
-                        $lookup: {
-                            from: "chartOfAccount",
-                            localField: "account",
-                            foreignField: "_id", as: "account"
-                        }
-                    }, {
-                        $project: {
-                            date: 1,
-                            credit: {$divide: ['$credit', '$currency.rate']},
-                            debit: {$divide: ['$debit', '$currency.rate']},
-                            account: {$arrayElemAt: ["$account", 0]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$account._id',
-                            name: {$addToSet: '$account.name'},
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }, {
-                        $group: {
-                            _id: null,
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'},
-                            name: {$addToSet: '$name'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
-                    });
-                };
-
-                var getSPLast = function (pcb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {
-                                $gte: new Date(startDate),
-                                $lte: new Date(endDate)
-                            },
-                            account: objectId(CONSTANTS.WORK_IN_PROCESS)
-                        }
-                    }, {
-                        $lookup: {
-                            from: "chartOfAccount",
-                            localField: "account",
-                            foreignField: "_id", as: "account"
-                        }
-                    }, {
-                        $project: {
-                            date: 1,
-                            credit: {$divide: ['$credit', '$currency.rate']},
-                            debit: {$divide: ['$debit', '$currency.rate']},
-                            account: {$arrayElemAt: ["$account", 0]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$account._id',
-                            name: {$addToSet: '$account.name'},
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }, {
-                        $group: {
-                            _id: null,
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'},
-                            name: {$addToSet: '$name'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
-                    });
-                };
-
-                async.parallel([getSPFirst, getSPLast], function (err, result) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.WORK_IN_PROCESS)
+                    }
+                }, {
+                    $lookup: {
+                        from: "chartOfAccount",
+                        localField: "account",
+                        foreignField: "_id", as: "account"
+                    }
+                }, {
+                    $project: {
+                        date: 1,
+                        credit: {$divide: ['$credit', '$currency.rate']},
+                        debit: {$divide: ['$debit', '$currency.rate']},
+                        account: {$arrayElemAt: ["$account", 0]}
+                    }
+                }, {
+                    $group: {
+                        _id: '$account._id',
+                        name: {$addToSet: '$account.name'},
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }, {
+                    $group: {
+                        _id: null,
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'},
+                        name: {$addToSet: '$name'}
+                    }
+                }], function (err, result) {
                     if (err) {
                         return cb(err);
                     }
 
-                    var spFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
-                    var spLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
+                    var sum = result[0] ? result[0].debit - result[0].credit : 0;
 
-                    var sp = spLast - spFirst;
+                    sum = sum * (-1);
 
-                    if (sp > 0) {
-                        sp = sp * (-1);
-                    }
+                    var fieldName = result[0] ? result[0].name[0] : 'Work in process';
 
-                    var fieldName = result[1][0] ? result[1][0].name[0] : 'Work in proess';
-
-                    cb(null, [{name: fieldName, debit: sp}]);
+                    cb(null, [{name: fieldName, debit: sum}]);
                 });
             };
 
             var getCOGS = function (cb) {
-                var getSPFirst = function (pcb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {
-                                $gte: new Date(startDate),
-                                //$lte: new Date(moment(startDate).endOf('day'))
-                                $lte: new Date(startDate)
-                            },
-                            account: objectId(CONSTANTS.FINISHED_GOODS)
-                        }
-                    }, {
-                        $lookup: {
-                            from: "chartOfAccount",
-                            localField: "account",
-                            foreignField: "_id", as: "account"
-                        }
-                    }, {
-                        $project: {
-                            date: 1,
-                            credit: {$divide: ['$credit', '$currency.rate']},
-                            debit: {$divide: ['$debit', '$currency.rate']},
-                            account: {$arrayElemAt: ["$account", 0]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$account._id',
-                            name: {$addToSet: '$account.name'},
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }, {
-                        $group: {
-                            _id: null,
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
-                    });
-                };
-
-                var getSPLast = function (pcb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {
-                                $gte: new Date(startDate),
-                                $lte: new Date(endDate)
-                            },
-                            account: objectId(CONSTANTS.FINISHED_GOODS)
-                        }
-                    }, {
-                        $lookup: {
-                            from: "chartOfAccount",
-                            localField: "account",
-                            foreignField: "_id", as: "account"
-                        }
-                    }, {
-                        $project: {
-                            date: 1,
-                            credit: {$divide: ['$credit', '$currency.rate']},
-                            debit: {$divide: ['$debit', '$currency.rate']},
-                            account: {$arrayElemAt: ["$account", 0]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$account._id',
-                            name: {$addToSet: '$account.name'},
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }, {
-                        $group: {
-                            _id: null,
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'},
-                            name: {$addToSet: '$name'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
-                    });
-                };
-
-                async.parallel([getSPFirst, getSPLast], function (err, result) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.FINISHED_GOODS)
+                    }
+                }, {
+                    $lookup: {
+                        from: "chartOfAccount",
+                        localField: "account",
+                        foreignField: "_id", as: "account"
+                    }
+                }, {
+                    $project: {
+                        date: 1,
+                        credit: {$divide: ['$credit', '$currency.rate']},
+                        debit: {$divide: ['$debit', '$currency.rate']},
+                        account: {$arrayElemAt: ["$account", 0]}
+                    }
+                }, {
+                    $group: {
+                        _id: '$account._id',
+                        name: {$addToSet: '$account.name'},
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }, {
+                    $group: {
+                        _id: null,
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'},
+                        name: {$addToSet: '$name'}
+                    }
+                }], function (err, result) {
                     if (err) {
                         return cb(err);
                     }
 
-                    var spFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
-                    var spLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
+                    var sum = result[0] ? result[0].debit - result[0].credit : 0;
 
-                    var sp = Math.abs(spLast - spFirst);
+                    var sp = Math.abs(0 - sum);
 
-                    var fieldName = result[1] && result[1][0] ? result[1][0].name[0] : "Finished goods";
+                    var fieldName = result[0] ? result[0].name[0] : "Finished goods";
 
                     cb(null, [{name: fieldName, debit: sp}]);
                 });
             };
 
             var getAccountPayable = function (cb) {
-                var getSPFirst = function (pcb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {
-                                $gte: new Date(startDate),
-                                //$lte: new Date(moment(startDate).endOf('day'))
-                                $lte: new Date(startDate)
-                            },
-                            account: objectId(CONSTANTS.ACCOUNT_PAYABLE)
-                        }
-                    }, {
-                        $lookup: {
-                            from: "chartOfAccount",
-                            localField: "account",
-                            foreignField: "_id", as: "account"
-                        }
-                    }, {
-                        $project: {
-                            date: 1,
-                            credit: {$divide: ['$credit', '$currency.rate']},
-                            debit: {$divide: ['$debit', '$currency.rate']},
-                            account: {$arrayElemAt: ["$account", 0]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$account._id',
-                            name: {$addToSet: '$account.name'},
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }, {
-                        $group: {
-                            _id: null,
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
-                    });
-                };
-
-                var getSPLast = function (pcb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {
-                                $gte: new Date(startDate),
-                                $lte: new Date(endDate)
-                            },
-                            account: objectId(CONSTANTS.ACCOUNT_PAYABLE)
-                        }
-                    }, {
-                        $lookup: {
-                            from: "chartOfAccount",
-                            localField: "account",
-                            foreignField: "_id", as: "account"
-                        }
-                    }, {
-                        $project: {
-                            date: 1,
-                            credit: {$divide: ['$credit', '$currency.rate']},
-                            debit: {$divide: ['$debit', '$currency.rate']},
-                            account: {$arrayElemAt: ["$account", 0]}
-                        }
-                    }, {
-                        $group: {
-                            _id: '$account._id',
-                            name: {$addToSet: '$account.name'},
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'}
-                        }
-                    }, {
-                        $group: {
-                            _id: null,
-                            debit: {$sum: '$debit'},
-                            credit: {$sum: '$credit'},
-                            name: {$addToSet: '$name'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
-                    });
-                };
-
-                async.parallel([getSPFirst, getSPLast], function (err, result) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.ACCOUNT_PAYABLE)
+                    }
+                }, {
+                    $lookup: {
+                        from: "chartOfAccount",
+                        localField: "account",
+                        foreignField: "_id", as: "account"
+                    }
+                }, {
+                    $project: {
+                        date: 1,
+                        credit: {$divide: ['$credit', '$currency.rate']},
+                        debit: {$divide: ['$debit', '$currency.rate']},
+                        account: {$arrayElemAt: ["$account", 0]}
+                    }
+                }, {
+                    $group: {
+                        _id: '$account._id',
+                        name: {$addToSet: '$account.name'},
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }, {
+                    $group: {
+                        _id: null,
+                        debit: {$sum: '$debit'},
+                        credit: {$sum: '$credit'},
+                        name: {$addToSet: '$name'}
+                    }
+                }], function (err, result) {
                     if (err) {
-                        return cb(err);
+                        return pcb(err);
                     }
 
-                    var spFirst = result[0] && result[0][0] ? result[0][0].debit - result[0][0].credit : 0;
-                    var spLast = result[1] && result[1][0] ? result[1][0].debit - result[1][0].credit : 0;
+                    var sum = result[0] ? result[0].debit - result[0].credit : 0;
 
-                    var sp = spLast - spFirst;
+                    var sp = 0 - sum;
 
                     if (sp < 0) {
                         sp = sp * (-1);
                     }
 
-                    var fieldName = result[1][0] ? result[1][0].name[0] : 'Account Payable';
+                    var fieldName = result[0] ? result[0].name[0] : 'Account Payable';
 
                     cb(null, [{name: fieldName, debit: sp}]);
                 });
             };
 
-            async.parallel([getEBIT, getAR, getCOGS, getWIP, getSalaryPayable, getAccountPayable], function (err, result) {
+            async.parallel([getEBIT, getAR, getCOGS, getWIP, getSalaryPayable, getSalaryOvertimePayable, getCurrentLiabilities, getAccountPayable], function (err, result) {
                 if (err) {
                     return cb(err);
                 }
 
-                var result = _.union(result[0], result[1], result[2], result[3], result[4], result[5]);
+                var result = _.union(result[0], result[1], result[2], result[3], result[4], result[5], result[6], result[7]);
 
                 cb(null, result);
             });

@@ -142,6 +142,9 @@ dbObject.once('open', function callback() {
 
         JE.remove({ journal       : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]}}, function (err, removed) {
             async.each(result, function (model, cb) {
+                if (!model.invoice){
+                    return cb();
+                }
                 var date = moment(new Date(model.invoice.invoiceDate)).subtract(1, 'seconds');
                 var wTracks = model.wTracks;
 
