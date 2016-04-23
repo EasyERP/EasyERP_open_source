@@ -203,6 +203,9 @@ td,
 th {
   padding: 0;
 }
+.containerContent {
+  padding: 20px 0;
+}
 * html .ui-autocomplete {
   width: 1px;
 }
