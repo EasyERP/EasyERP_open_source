@@ -687,6 +687,11 @@ define([
                 }).render().el
             );
 
+            if (model.approved) {
+                self.$el.find('.input-file').remove();
+                self.$el.find('a.deleteAttach').remove();
+            }
+
             if (model.groups) {
                 if (model.groups.users.length > 0 || model.groups.group.length) {
                     $(".groupsAndUser").show();
