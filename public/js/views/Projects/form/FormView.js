@@ -1560,12 +1560,12 @@ define([
                             paralellTasks.push(self.getInvoice);
                             paralellTasks.push(self.getProforma);
                         } else {
-                            self.$el.find('#invoicesTab').parent().remove();
-                            self.$el.find('div#invoices').parent().remove();
-                            self.$el.find('#proformaTab').parent().remove();
-                            self.$el.find('div#proforma').parent().remove();
-                            self.$el.find('#paymentsTab').parent().remove();
-                            self.$el.find('div#payments').parent().remove();
+                            thisEl.find('#invoicesTab').parent().remove();
+                            thisEl.find('div#invoices').parent().remove();
+                            thisEl.find('#proformaTab').parent().remove();
+                            thisEl.find('div#proforma').parent().remove();
+                            thisEl.find('#paymentsTab').parent().remove();
+                            thisEl.find('div#payments').parent().remove();
 
 
                             self.getPayments = function() {};
@@ -1578,8 +1578,8 @@ define([
                         if (accessElement.access.read) {
                             paralellTasks.push(self.getWTrack);
                         } else {
-                            self.$el.find('#timesheetTab').parent().remove();
-                            self.$el.find('div#timesheet').parent().remove();
+                            thisEl.find('#timesheetTab').parent().remove();
+                            thisEl.find('div#timesheet').parent().remove();
                         }
                     }
 
@@ -1587,8 +1587,8 @@ define([
                         if (accessElement.access.read) {
                             paralellTasks.push(self.getProjectMembers);
                         } else {
-                            self.$el.find('#projectMembersTab').parent().remove();
-                            self.$el.find('div#projectMembers').parent().remove();
+                            thisEl.find('#projectMembersTab').parent().remove();
+                            thisEl.find('div#projectMembers').parent().remove();
                         }
                     }
 
