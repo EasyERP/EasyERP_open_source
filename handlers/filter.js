@@ -2180,7 +2180,7 @@ var Filters = function (models) {
                     }
                 }], function (err, result) {
                     if (err) {
-                        callback(err);
+                       return callback(err);
                     }
 
                     if (result && result.length) {

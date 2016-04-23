@@ -130,6 +130,13 @@ define([
                             subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
+                            if (price === '') {
+                                return App.render({
+                                    type   : 'error',
+                                    message: 'Unit price can\'t be empty'
+                                });
+                            }
+
                             if (jobs.length < 24) {
                                 return App.render({
                                     type   : 'error',

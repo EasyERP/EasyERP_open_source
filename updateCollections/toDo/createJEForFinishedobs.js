@@ -11,7 +11,7 @@ var JobsSchema = mongoose.Schemas.jobs;
 var journalEntrySchema = mongoose.Schemas.journalEntry;
 var journalSchema = mongoose.Schemas.journal;
 
-var dbObject = mongoose.createConnection('erp.thinkmobiles.com', 'production');
+var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
@@ -142,6 +142,9 @@ dbObject.once('open', function callback() {
 
         JE.remove({ journal       : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]}}, function (err, removed) {
             async.each(result, function (model, cb) {
+                if (!model.invoice){
+                    return cb();
+                }
                 var date = moment(new Date(model.invoice.invoiceDate)).subtract(1, 'seconds');
                 var wTracks = model.wTracks;
 

@@ -15,6 +15,12 @@ define([
                 reset  : true,
                 error  : function (err, xhr) {
                     console.log(xhr);
+                    if (xhr.status === 403) {
+                        App.render({
+                            type: 'error',
+                            message: 'No access'
+                        });
+                    }
                 }
             });
             //this.on('change', this.change, this);

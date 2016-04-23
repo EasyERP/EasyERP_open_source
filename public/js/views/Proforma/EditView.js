@@ -1,6 +1,7 @@
 define([
         'text!templates/Proforma/EditTemplate.html',
         'views/Assignees/AssigneesView',
+        'views/Notes/AttachView',
         'views/Proforma/InvoiceProductItems',
         'views/salesInvoice/wTrack/wTrackRows',
         'views/Payment/ProformaCreateView',
@@ -12,7 +13,7 @@ define([
         'constants',
         'helpers'
     ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+    function (EditTemplate, AssigneesView, attachView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({
@@ -31,6 +32,7 @@ define([
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
                 "click .details"                                                  : "showDetailsBox",
                 "click .newPayment"                                               : "newPayment",
+                'click .approve'                                                  : 'approve',
                 "click .cancelInvoice"                                            : "cancelInvoice",
                 // "click .refund": "refund",
                 "click .setDraft"                                                 : "setDraft"
@@ -216,6 +218,60 @@ define([
                 $('.edit-invoice-dialog').remove();
             },
 
+            approve: function (e) {
+                var self = this;
+                var data;
+                var url;
+                var proformaId;
+                var $li;
+                var $tr;
+                var $priceInputs;
+                var payBtnHtml;
+                var $currencyDd;
+
+                e.preventDefault();
+
+                proformaId = self.currentModel.get('_id');
+                $li = $('button.approve').parent('li');
+                $tr = $('tr[data-id=' + proformaId + ']');
+                $priceInputs = self.$el.find('td[data-name="price"]');
+                $currencyDd = self.$el.find('#currencyDd');
+
+                App.startPreload();
+
+                payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
+                url = '/invoice/approve';
+                data = {
+                    invoiceId: proformaId
+                };
+
+                dataService.patchData(url, data, function (err, response) {
+                    if (!err) {
+
+                        self.currentModel.set({approved: true});
+                        $li.html(payBtnHtml);
+                        $currencyDd.removeClass('current-selected');
+                        $priceInputs.each(function() {
+                            var $td = $(this);
+                            var price = $td.find('input').val();
+
+                            $td.html('<span>' + price + '</span>');
+                        });
+
+                        self.$el.find('.input-file').remove();
+                        self.$el.find('a.deleteAttach').remove();
+
+                        App.stopPreload();
+
+                    } else {
+                        App.render({
+                            type   : 'error',
+                            message: 'Approve fail'
+                        });
+                    }
+                });
+            },
+
             saveItem: function (paymentCb) {
                 var self = this;
                 var mid = 56;
@@ -281,7 +337,7 @@ define([
 
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
-                            price = targetEl.find('[data-name="price"] input').val();
+                            price = targetEl.find('[data-name="price"] input').val() || targetEl.find('[data-name="price"] span').text();
                             jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
                             taxes = targetEl.find('.taxes').text();
                             amount = helpers.spaceReplacer(targetEl.find('.amount').text());
@@ -432,6 +488,7 @@ define([
                 var wTracksDom;
                 var buttons;
                 var invoiceDate;
+                var isFinancial;
 
                 model = this.currentModel.toJSON();
                 invoiceDate = model.invoiceDate;
@@ -450,6 +507,8 @@ define([
                     total = model.paymentInfo ? model.paymentInfo.total : '0.00';
                 }
 
+                isFinancial = CONSTANTS.INVOICE_APPROVE_PROFILES.indexOf(App.currentUser.profile._id) !== -1;
+
                 formString = this.template({
                     model           : this.currentModel.toJSON(),
                     isWtrack        : self.isWtrack,
@@ -460,7 +519,8 @@ define([
                     assigned        : assigned,
                     customer        : customer,
                     total           : total,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    isFinancial     : isFinancial
                 });
 
                 if (this.isWtrack || this.isPaid) {
@@ -582,9 +642,23 @@ define([
                         forSales      : self.forSales,
                         isPaid        : this.isPaid,
                         notAddItem    : this.notAddItem,
-                        paid          : this.model.get('paymentInfo').paid
+                        paid          : this.model.get('paymentInfo').paid,
+                        approved      : model.approved
                     }).render({model: model}).el
                 );
+
+                notDiv = this.$el.find('#attach-container');
+                notDiv.append(
+                    new attachView({
+                        model: this.currentModel,
+                        url  : '/uploadInvoiceFiles'
+                    }).render().el
+                );
+
+                if (model.approved) {
+                    self.$el.find('.input-file').remove();
+                    self.$el.find('a.deleteAttach').remove();
+                }
 
                 if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
