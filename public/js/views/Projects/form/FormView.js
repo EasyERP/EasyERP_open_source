@@ -1539,10 +1539,10 @@ define([
 
                 paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
 
-                accessData.forEach(function(acc) {
+                accessData.forEach(function(accessElement) {
                     //todo move dom elems removal to template
-                    if (acc.module === 64) {
-                        if (acc.access.read) {
+                    if (accessElement.module === 64) {
+                        if (accessElement.access.read) {
                             paralellTasks.push(self.getInvoice);
                             paralellTasks.push(self.getProforma);
                         } else {
@@ -1560,8 +1560,8 @@ define([
                         }
                     }
 
-                    if (acc.module === 75) {
-                        if (acc.access.read) {
+                    if (accessElement.module === 75) {
+                        if (accessElement.access.read) {
                             paralellTasks.push(self.getWTrack);
                         } else {
                             self.$el.find('#timesheetTab').parent().remove();
@@ -1569,8 +1569,8 @@ define([
                         }
                     }
 
-                    if (acc.module === 72) {
-                        if (acc.access.read) {
+                    if (accessElement.module === 72) {
+                        if (accessElement.access.read) {
                             paralellTasks.push(self.getProjectMembers);
                         } else {
                             self.$el.find('#projectMembersTab').parent().remove();
