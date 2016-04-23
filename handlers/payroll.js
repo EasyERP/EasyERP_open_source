@@ -821,7 +821,7 @@ var PayRoll = function (models) {
                 }
             };
 
-            var query = Employee.find(queryObject, {transfer: 1}).lean();
+            var query = Employee.find(queryObject, {transfer: 1, fire: 1}).lean();
 
             query.exec(function (err, result) {
                 if (err) {
@@ -833,6 +833,7 @@ var PayRoll = function (models) {
                 result.forEach(function (elem) {
                     var salary = 0;
                     var hire = elem.transfer;
+                    var fire = elem.fire;
                     var length = hire.length;
                     var dateToCreate;
                     var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hour: 15, minute: 1, second: 0}));
@@ -846,10 +847,14 @@ var PayRoll = function (models) {
                     dateToCreate = endDate;
 
                     for (i = length - 1; i >= 0; i--) {
-                        if (dateToCreate >= hire[i].date) {
+                        if (dateToCreate >= hire[i].date && (hire[i].status !== 'fired')) {
                             salary = hire[i].salary;
                             break;
                         }
+                    }
+
+                    if (fire && fire.length && dateToCreate >= fire[0]){
+                        salary = 0;
                     }
 
                     if ((moment(new Date(hire[0].date)).month() === moment(dateToCreate).month()) && (moment(new Date(hire[0].date)).year() === moment(dateToCreate).year())){
@@ -998,9 +1003,9 @@ var PayRoll = function (models) {
                         }
                     };
 
-                    //if (employee.toString() === '55b92ad221e4b7c40f000030'){
+                    // if (employee.toString() === '55b92ad221e4b7c40f000030'){
                     //    return asyncCb();
-                    //}
+                    // }
 
                     newPayroll = new Payroll(startBody);
 
