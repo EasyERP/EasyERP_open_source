@@ -931,6 +931,13 @@ define([
                 dataService.getData('invoice/stats/project', {filter: filter}, function (response) {
                     if (response && response.success) {
                         self.renderInvoiceStats(response.success);
+                    } else {
+                        App.render({
+                            type: 'error',
+                            message: 'Access error'
+                        });
+
+                        App.stopPreload();
                     }
 
                     if (typeof cb === 'function') {
@@ -952,6 +959,13 @@ define([
                 dataService.getData('proforma/stats/project', {filter: filter}, function (response) {
                     if (response && response.success) {
                         self.renderProformaStats(response.success);
+                    } else {
+                        App.render({
+                            type: 'error',
+                            message: 'Access error.'
+                        });
+
+                        App.stopPreload();
                     }
 
                     if (typeof cb === 'function') {
@@ -1497,6 +1511,7 @@ define([
                 var atachEl;
                 var notDiv;
                 var container;
+                var accessData = App.currentUser && App.currentUser.profile && App.currentUser.profile.profileAccess || [];
 
                 App.startPreload();
 
@@ -1537,7 +1552,55 @@ define([
 
                 _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
 
-                paralellTasks = [this.renderProjectInfo, this.getProforma, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders, this.getProjectMembers];
+                paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
+
+                accessData.forEach(function(accessElement) {
+                    //todo move dom elems removal to template
+                    if (accessElement.module === 64) {
+                        if (accessElement.access.read) {
+                            paralellTasks.push(self.getInvoice);
+                            paralellTasks.push(self.getProforma);
+                        } else {
+                            thisEl.find('#invoicesTab').parent().remove();
+                            thisEl.find('div#invoices').parent().remove();
+                            thisEl.find('#proformaTab').parent().remove();
+                            thisEl.find('div#proforma').parent().remove();
+                            thisEl.find('#paymentsTab').parent().remove();
+                            thisEl.find('div#payments').parent().remove();
+
+
+                            self.getPayments = function() {};
+                            self.getInvoiceStats = function() {};
+                            self.getProformaStats = function() {};
+                        }
+                    }
+
+                    if (accessElement.module === 75) {
+                        if (accessElement.access.read) {
+                            paralellTasks.push(self.getWTrack);
+                        } else {
+                            thisEl.find('#timesheetTab').parent().remove();
+                            thisEl.find('div#timesheet').parent().remove();
+                        }
+                    }
+
+                    if (accessElement.module === 72) {
+                        if (accessElement.access.read) {
+                            paralellTasks.push(self.getProjectMembers);
+                        } else {
+                            thisEl.find('#projectMembersTab').parent().remove();
+                            thisEl.find('div#projectMembers').parent().remove();
+                        }
+                    }
+
+                });
+
+                if (!accessData.length) {
+                    paralellTasks.push(self.getInvoice);
+                    paralellTasks.push(self.getProforma);
+                    paralellTasks.push(self.getWTrack);
+                    paralellTasks.push(self.getProjectMembers);
+                }
 
                 async.parallel(paralellTasks, function (err, result) {
                     self.getPayments();

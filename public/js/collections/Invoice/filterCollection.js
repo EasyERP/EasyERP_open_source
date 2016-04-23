@@ -59,8 +59,14 @@
                         }
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
+                        }
+                        if (xhr.status === 403) {
+                            App.render({
+                                type: 'error',
+                                message: 'No access'
+                            });
                         }
                     }
                 });
