@@ -412,12 +412,13 @@ var Invoice = function (models, event) {
         waterFallTasks = [parallel, createInvoice/*, createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
-            if (err) {
-                return next(err);
-            }
             var project;
             var invoiceId = result._id;
             var products = result.products;
+
+            if (err) {
+                return next(err);
+            }
 
             Order.findByIdAndUpdate(id, {
                 $set: {
@@ -1350,51 +1351,51 @@ var Invoice = function (models, event) {
                             var dir;
                             var _id = id;
 
-                            if (invoiceDeleted._type === 'Proforma') {
-                                parallelCb();
-                            } else {
-                                switch (osType) {
-                                    case "Windows":
-                                    {
-                                        var newDirname = __dirname.replace("handlers", "routes");
-                                        while (newDirname.indexOf("\\") !== -1) {
-                                            newDirname = newDirname.replace("\\", "\/");
-                                        }
-                                        dir = newDirname + "\/uploads\/" + _id;
+                            switch (osType) {
+                                case "Windows":
+                                {
+                                    var newDirname = __dirname.replace("handlers", "routes");
+                                    while (newDirname.indexOf("\\") !== -1) {
+                                        newDirname = newDirname.replace("\\", "\/");
                                     }
-                                        break;
-                                    case "Linux":
-                                    {
-                                        var newDirname = __dirname.replace("handlers", "routes");
-                                        while (newDirname.indexOf("\\") !== -1) {
-                                            newDirname = newDirname.replace("\\", "\/");
-                                        }
-                                        dir = newDirname + "\/uploads\/" + _id;
-                                    }
+                                    dir = newDirname + "\/uploads\/" + _id;
                                 }
+                                    break;
+                                case "Linux":
+                                {
+                                    var newDirname = __dirname.replace("handlers", "routes");
+                                    while (newDirname.indexOf("\\") !== -1) {
+                                        newDirname = newDirname.replace("\\", "\/");
+                                    }
+                                    dir = newDirname + "\/uploads\/" + _id;
+                                }
+                            }
 
-                                fs.readdir(dir, function (err, files) {
-                                    async.each(files, function (file, cb) {
-                                        var file = pathMod.join(dir, file);
-                                        fs.unlink(file, function (err) {
-                                            if (err) {
-                                                return cb(err);
-                                            }
-                                            return cb();
-                                        });
-                                    }, function (err) {
+                            fs.readdir(dir, function (err, files) {
+                                if (err) {
+                                    return parallelCb();
+                                }
+                                async.each(files, function (file, cb) {
+                                    var file = pathMod.join(dir, file);
+                                    fs.unlink(file, function (err) {
+                                        if (err) {
+                                            return cb(err);
+                                        }
+                                        return cb();
+                                    });
+                                }, function (err) {
+                                    if (err) {
+                                        return next(err);
+                                    }
+                                    fs.rmdir(dir, function (err) {
                                         if (err) {
                                             return next(err);
                                         }
-                                        fs.rmdir(dir, function (err) {
-                                            if (err) {
-                                            }
-                                            return next(err);
-                                            parallelCb();
-                                        });
+                                        parallelCb();
                                     });
                                 });
-                            }
+                            });
+
 
                         }
 

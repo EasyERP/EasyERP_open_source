@@ -166,6 +166,9 @@ define([
                     $span.text('Unpaid');
                     $span.removeClass();
                     $span.addClass('new');
+
+                    self.$el.find('.input-file').remove();
+                    self.$el.find('a.deleteAttach').remove();
                 } else {
                     App.render({
                         type   : 'error',
@@ -683,7 +686,7 @@ define([
             notDiv.append(
                 new attachView({
                     model: this.currentModel,
-                    url  : "/uploadInvoiceFiles",
+                    url  : '/uploadInvoiceFiles',
                 }).render().el
             );
 
