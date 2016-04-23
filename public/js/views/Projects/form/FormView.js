@@ -930,6 +930,13 @@ define([
                 dataService.getData('invoice/stats/project', {filter: filter}, function (response) {
                     if (response && response.success) {
                         self.renderInvoiceStats(response.success);
+                    } else {
+                        App.render({
+                            type: 'error',
+                            message: 'Access error'
+                        });
+
+                        App.stopPreload();
                     }
 
                     if (typeof cb === 'function') {
@@ -951,6 +958,13 @@ define([
                 dataService.getData('proforma/stats/project', {filter: filter}, function (response) {
                     if (response && response.success) {
                         self.renderProformaStats(response.success);
+                    } else {
+                        App.render({
+                            type: 'error',
+                            message: 'Access error.'
+                        });
+
+                        App.stopPreload();
                     }
 
                     if (typeof cb === 'function') {
@@ -1496,7 +1510,7 @@ define([
                 var atachEl;
                 var notDiv;
                 var container;
-                var accessData = App.currentUser.profile.profileAccess;
+                var accessData = App.currentUser && App.currentUser.profile && App.currentUser.profile.profileAccess || [];
 
                 App.startPreload();
 
@@ -1579,6 +1593,13 @@ define([
                     }
 
                 });
+
+                if (!accessData.length) {
+                    paralellTasks.push(self.getInvoice);
+                    paralellTasks.push(self.getProforma);
+                    paralellTasks.push(self.getWTrack);
+                    paralellTasks.push(self.getProjectMembers);
+                }
 
                 async.parallel(paralellTasks, function (err, result) {
                     self.getPayments();
