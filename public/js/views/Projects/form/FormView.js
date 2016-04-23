@@ -1496,6 +1496,7 @@ define([
                 var atachEl;
                 var notDiv;
                 var container;
+                var accessData = App.currentUser.profile.profileAccess;
 
                 App.startPreload();
 
@@ -1536,7 +1537,48 @@ define([
 
                 _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
 
-                paralellTasks = [this.renderProjectInfo, this.getProforma, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders, this.getProjectMembers];
+                paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
+
+                accessData.forEach(function(acc) {
+                    //todo move dom elems removal to template
+                    if (acc.module === 64) {
+                        if (acc.access.read) {
+                            paralellTasks.push(self.getInvoice);
+                            paralellTasks.push(self.getProforma);
+                        } else {
+                            self.$el.find('#invoicesTab').parent().remove();
+                            self.$el.find('div#invoices').parent().remove();
+                            self.$el.find('#proformaTab').parent().remove();
+                            self.$el.find('div#proforma').parent().remove();
+                            self.$el.find('#paymentsTab').parent().remove();
+                            self.$el.find('div#payments').parent().remove();
+
+
+                            self.getPayments = function() {};
+                            self.getInvoiceStats = function() {};
+                            self.getProformaStats = function() {};
+                        }
+                    }
+
+                    if (acc.module === 75) {
+                        if (acc.access.read) {
+                            paralellTasks.push(self.getWTrack);
+                        } else {
+                            self.$el.find('#timesheetTab').parent().remove();
+                            self.$el.find('div#timesheet').parent().remove();
+                        }
+                    }
+
+                    if (acc.module === 72) {
+                        if (acc.access.read) {
+                            paralellTasks.push(self.getProjectMembers);
+                        } else {
+                            self.$el.find('#projectMembersTab').parent().remove();
+                            self.$el.find('div#projectMembers').parent().remove();
+                        }
+                    }
+
+                });
 
                 async.parallel(paralellTasks, function (err, result) {
                     self.getPayments();
