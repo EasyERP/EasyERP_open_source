@@ -18,25 +18,25 @@ define([
     'constants',
     'helpers/keyValidator'
 ], function (Backbone, $, _, productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, GenerateWTrack, populate, helpers, dataService, CONSTANTS, keyValidator) {
-    "use strict";
+    'use strict';
     var ProductItemTemplate = Backbone.View.extend({
         el: '#productItemsHolder',
 
         events: {
             'click .addProductItem a'                                                 : 'getProducts',
-            "click .newSelectList li:not(.miniStylePagination)"                       : "chooseOption",
-            "click .newSelectList li.miniStylePagination"                             : "notHide",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)"        : "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
-            "click .current-selected.productsDd"                                      : "showProductsSelect",
-            "click .current-selected.jobs"                                            : "showSelect",
-            "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
-            "mouseleave .editable"                                                    : "removeEdit",
-            "click #cancelSpan"                                                       : "cancelClick",
-            "click #saveSpan"                                                         : "saveClick",
-            "click #editSpan"                                                         : "editClick",
-            "click .fa-trash-o"                                                       : 'deleteRow',
-            "keyup td[data-name=price] input"                                         : 'priceChange',
+            'click .newSelectList li:not(.miniStylePagination)'                       : 'chooseOption',
+            'click .newSelectList li.miniStylePagination'                             : 'notHide',
+            'click .newSelectList li.miniStylePagination .next:not(.disabled)'        : 'nextSelect',
+            'click .newSelectList li.miniStylePagination .prev:not(.disabled)'        : 'prevSelect',
+            'click .current-selected.productsDd'                                      : 'showProductsSelect',
+            'click .current-selected.jobs'                                            : 'showSelect',
+            'mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)': 'quickEdit',
+            'mouseleave .editable'                                                    : 'removeEdit',
+            'click #cancelSpan'                                                       : 'cancelClick',
+            'click #saveSpan'                                                         : 'saveClick',
+            'click #editSpan'                                                         : 'editClick',
+            'click .fa-trash-o'                                                       : 'deleteRow',
+            'keyup td[data-name=price] input'                                         : 'priceChange',
             'keypress  .forNum'                                                       : 'keypressHandler'
         },
 
@@ -82,7 +82,7 @@ define([
             var self = this;
             var model = this.projectModel;
             var projectsDdContainer = $('#projectDd');
-            var projectId = $("#projectDd").attr("data-id");
+            var projectId = $('#projectDd').attr('data-id');
 
             if (!model) {
                 projectsDdContainer.css('color', 'red');
@@ -106,7 +106,7 @@ define([
                     quotationDialog     : this
                 });
             } else {
-                dataService.getData("/project/getForWtrack", {_id: projectId}, function (project) {
+                dataService.getData('/project/getForWtrack', {_id: projectId}, function (project) {
                     self.projectModel = project && project.data ? project.data[0] : {};
 
                     if (self.generatedView) {
@@ -129,7 +129,7 @@ define([
         deleteRow: function (e) {
 
             var target = $(e.target);
-            var tr = target.closest("tr");
+            var tr = target.closest('tr');
             var jobId = tr.attr('data-id');
             var exJob = _.findWhere(this.responseObj['#jobs'], {_id: jobId});
 
@@ -146,7 +146,7 @@ define([
             var tr = this.$el.find('tr[data-error="true"]');
             var aEl = tr.find('a[data-id="jobs"]');
 
-            //aEl.click();
+            // aEl.click();
         },
 
         keypressHandler: function (e) {
@@ -164,7 +164,7 @@ define([
             var $targetEl = $(e.target);
             var self = this;
             var $thisEl = this.$el;
-            var project = $("#projectDd").attr("data-id");
+            var project = $('#projectDd').attr('data-id');
             var existedJobs = $thisEl.find('.jobs.current-selected[data-id!="jobs"]');
 
             if (!this.checkForQuickEdit($targetEl)) {
@@ -174,7 +174,7 @@ define([
             e.preventDefault();
 
             if (project && project.length >= 24) {
-                dataService.getData("/jobs/getForDD", {"projectId": project}, function (jobs) {
+                dataService.getData('/jobs/getForDD', {projectId: project}, function (jobs) {
                     var aEl;
 
                     self.responseObj['#jobs'] = jobs;
@@ -195,7 +195,7 @@ define([
                     }
 
                     if (!self.projectModel) {
-                        dataService.getData("/project/getForQuotation", {"projectId": project}, function (project) {
+                        dataService.getData('/project/getForQuotation', {projectId: project}, function (project) {
                             self.projectModel = project;
                         });
                     }
@@ -206,8 +206,6 @@ define([
         },
 
         getProducts: function (e) {
-            e.preventDefault();
-            e.stopPropagation();
 
             var self = this;
             var target = $(e.target);
@@ -217,10 +215,12 @@ define([
             var hasError = $parrentRow.attr("data-error") === 'true';
             var $trEll = $parrent.find('tr.productItem');
             var products = this.products ? this.products.toJSON() : [];
-
             var templ = _.template(ProductInputContent);
 
-            if (rowId === undefined || /*rowId !== 'false'*/ !hasError) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            if (rowId === undefined || /* rowId !== 'false'*/ !hasError) {
                 if (!$trEll.length) {
                     return $parrent.prepend(templ({
                         forSales: self.forSales,
@@ -243,14 +243,14 @@ define([
 
             this.responseObj[id] = [];
             this.responseObj[id] = this.responseObj[id].concat(_.map(products, function (item) {
-                return {_id: item._id, name: item.name, level: item.projectShortDesc || ""};
+                return {_id: item._id, name: item.name, level: item.projectShortDesc || ''};
             }));
 
-            //$(id).text(this.responseObj[id][0].name).attr("data-id", this.responseObj[id][0]._id);
+            //  $(id).text(this.responseObj[id][0].name).attr("data-id", this.responseObj[id][0]._id);
 
         },
 
-        /*quickEdit: function (e) {
+        /* quickEdit: function (e) {
          var target = $(e.target);
          var trId = target.closest("tr");
          var tdId = target.closest("td");
@@ -284,8 +284,8 @@ define([
                 val = '0';
             }
 
-            //parent.removeClass('quickEdit').html('<span>' + val + '</span>');
-           // parent.removeClass('quickEdit').html('<span>' + helpers.currencySplitter(val) + '</span>');
+            /* parent.removeClass('quickEdit').html('<span>' + val + '</span>');
+             parent.removeClass('quickEdit').html('<span>' + helpers.currencySplitter(val) + '</span>');*/
 
             if (inputEl.hasClass('datepicker')) {
                 parent.find('span').addClass('datepicker');
@@ -337,11 +337,11 @@ define([
         chooseOption: function (e) {
             var self = this;
             var $target = $(e.target);
-            var $parrent = $target.parents("td");
-            var $trEl = $target.parents("tr");
+            var $parrent = $target.parents('td');
+            var $trEl = $target.parents('tr');
             var $hoursContainer = $trEl.find('[data-name="quantity"] span');
             var $parrents = $trEl.find('td');
-            var _id = $target.attr("id");
+            var _id = $target.attr('id');
             var quantity = $hoursContainer.text() || 0;
             var salePrice = 0;
             var model;
@@ -358,8 +358,8 @@ define([
             if (_id !== 'createJob') {
 
                 if ($parrent.hasClass('jobs')) {
-                    _id = product.attr("data-id");
-                    jobId = $target.attr("id");
+                    _id = product.attr('data-id');
+                    jobId = $target.attr('id');
 
                     currentJob = _.find(self.responseObj['#jobs'], function (job) {
                         return job._id === jobId;
@@ -367,8 +367,8 @@ define([
 
                     quantity = currentJob ? currentJob.budget.budgetTotal.hoursSum : 1;
 
-                    $parrent.find(".jobs").text($target.text()).attr("data-id", jobId);
-                    $parrent.attr("data-content", jobId); // in case of getting id  on edit quotation
+                    $parrent.find('.jobs').text($target.text()).attr('data-id', jobId);
+                    $parrent.attr('data-content', jobId); // in case of getting id  on edit quotation
                     $hoursContainer.text(currentJob.budget.budgetTotal.hoursSum);
 
                     model = this.products.get(_id);
@@ -377,7 +377,7 @@ define([
                     model = this.products.get(_id);
 
                     $trEl.attr('data-id', model.id);
-                    $parrent.find(".current-selected").text($target.text()).attr("data-id", _id);
+                    $parrent.find('.current-selected').text($target.text()).attr('data-id', _id);
                 }
 
                 selectedProduct = model ? model.toJSON() : null;
@@ -393,7 +393,7 @@ define([
                 }
 
                 $($parrents[2]).find('.datepicker.notVisible').datepicker({
-                    dateFormat : "d M, yy",
+                    dateFormat : 'd M, yy',
                     changeMonth: true,
                     changeYear : true
                 }).datepicker('setDate', new Date());
@@ -405,17 +405,17 @@ define([
                 spanDatePicker.text(datePicker.val());
                 datePicker.remove();
 
-                //$($parrents[2]).attr('class', 'editable');
-                $($parrents[3]).attr('class', 'editable').find("span").text(salePrice); // changed on def 0
+                //  $($parrents[2]).attr('class', 'editable');
+                $('#editInput').val(salePrice); // changed on def 0
 
-                /*if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
+                /* if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
                  $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
 
                  this.recalculatePriceByJob();
                  } else {*/
                 if (!this.forSales) {   // added possibility to edit quantity and scheduled date for Purchase Quotation
                     $($parrents[2]).addClass('editable');
-                    /*$($parrents[3]).addClass('editable');*/ // in case of taken away Scheduled Date
+                    /* $($parrents[3]).addClass('editable');*/ // in case of taken away Scheduled Date
                 }
 
                 salePrice = selectedProduct.info.salePrice;
@@ -430,7 +430,7 @@ define([
                 $($parrents[5]).text(taxes);
                 $($parrents[6]).text(subtotal);
 
-                $(".newSelectList").remove();
+                $('.newSelectList').remove();
 
                 this.calculateTotal(selectedProduct.info.salePrice);
                 /* }*/
@@ -443,7 +443,7 @@ define([
             return isNaN(val) ? 0 : val;
         },
 
-        /*recalculatePriceByJob: function () {
+        /* recalculatePriceByJob: function () {
          var self = this;
          var $thisEl = this.$el;
          var $amountInput = $('#amountDd');
@@ -567,7 +567,7 @@ define([
             if (totalEls) {
                 for (var i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
-                  //  quantity = $currentEl.find('[data-name="quantity"]').text();
+                    //  quantity = $currentEl.find('[data-name="quantity"]').text();
                     cost = $currentEl.find('[data-name="price"] input').val() || '0';
                     quantity = this.quantityRetriver($currentEl);
                     cost = helpers.spaceReplacer(cost);

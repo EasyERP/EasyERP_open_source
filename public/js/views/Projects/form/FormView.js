@@ -560,8 +560,8 @@ define([
 
                 var projecttype = thisEl.find('#projectTypeDD').data('id');
                 var $userNodes = $('#usereditDd option:selected');
-                var startDate = $.trim(thisEl.find('#StartDate').val());
-                var endDate = $.trim(thisEl.find('#EndDate').val());
+                //var startDate = $.trim(thisEl.find('#StartDate').val());
+                //var endDate = $.trim(thisEl.find('#EndDate').val());
                 var users = [];
 
                 var budget = this.formModel.get('budget');
@@ -571,7 +571,7 @@ define([
 
                 var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
                 var health = thisEl.find('#health a').data('value');
-                var _targetEndDate = $.trim(thisEl.find('#EndDateTarget').val());
+                //var _targetEndDate = $.trim(thisEl.find('#EndDateTarget').val());
                 var description = $.trim(thisEl.find('#description').val());
                 var data = {
                     projectName     : projectName,
@@ -590,9 +590,9 @@ define([
                     },
                     whoCanRW        : whoCanRW,
                     health          : health,
-                    StartDate       : startDate,
-                    EndDate         : endDate,
-                    TargetEndDate   : _targetEndDate,
+                    //StartDate       : startDate,
+                    //EndDate         : endDate,
+                    //TargetEndDate   : _targetEndDate,
                     budget          : budget
                 };
 
@@ -645,6 +645,7 @@ define([
             },
 
             chooseOption: function (e) {
+                var id;
                 var data;
                 var attrId = $(e.target).parents("td").find(".current-selected").attr('id');
 
@@ -653,15 +654,15 @@ define([
                 if ($(e.target).parents('dd').find('.current-selected').length) {
                     $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
                 } else {
-                    $(e.target).parents('td').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
-
-                    var id = $(e.target).parents('td').closest('tr').attr('data-id');
+                    id = $(e.target).parents('td').closest('tr').attr('data-id');
 
                     if (attrId === 'workflow') {
                         data = {_id: id, workflowId: $(e.target).attr('id')};
                     } else if (attrId === 'type') {
                         data = {_id: id, type: $(e.target).text()};
                     }
+
+                    $(e.target).parents('td').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
                     dataService.postData('/jobs/update', data, function (err, result) {
                         if (err) {

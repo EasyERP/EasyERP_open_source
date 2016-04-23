@@ -112,6 +112,8 @@ var Quotation = function (models, event) {
             date: new Date()
         };
 
+        delete data.attachments;
+
         Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
             if (err) {
                 return next(err);

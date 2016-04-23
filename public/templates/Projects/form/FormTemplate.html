@@ -52,17 +52,6 @@
                             <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>"
                                class="current-selected " href="javascript:;"><%=model.customer?(model.customer.fullName):'Select'%></a>
                         </dd>
-                        <dt><label for="StartDate">Start / End Date </label></dt>
-                        <dd>
-                            <input class="pikerSize extrainfo blueback " type="text" name="StartDate" id="StartDate"
-                                   value="<%=model.StartDate%>" readonly/>
-                            <input class="pikerSize info blueback" type="text" name="EndDate" id="EndDate"
-                                   value="<%=model.EndDate%>" readonly/>
-                        </dd>
-
-                        <dt><label for="EndDateTarget">Target End Date</label></dt>
-                        <dd><input class="info blueback " type="text" name="TargetEndtDate" id="EndDateTarget"
-                                   value="<%=model.TargetEndDate%>" readonly/></dd>
 
                         <dt>
                             <label for="workflowsDd">Status</label>
