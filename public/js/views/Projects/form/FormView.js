@@ -932,10 +932,6 @@ define([
                     if (response && response.success) {
                         self.renderInvoiceStats(response.success);
                     } else {
-                        App.render({
-                            type: 'error',
-                            message: 'Access error'
-                        });
 
                         App.stopPreload();
                     }
@@ -960,10 +956,6 @@ define([
                     if (response && response.success) {
                         self.renderProformaStats(response.success);
                     } else {
-                        App.render({
-                            type: 'error',
-                            message: 'Access error.'
-                        });
 
                         App.stopPreload();
                     }

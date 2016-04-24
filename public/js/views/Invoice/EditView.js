@@ -625,7 +625,7 @@ define([
             populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
 
-            if (model.workflow.status !== 'New') {
+            if (model.workflow.status !== 'New' && model.dueDate) {
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
