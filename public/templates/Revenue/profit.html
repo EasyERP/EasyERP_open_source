@@ -1,0 +1,34 @@
+<thead>
+    <tr>
+        <th width="10%">#</th>
+        <%var _class = count > 17 ? 'rotated' : ''%>
+        <% for (var i = 0; i < count; i++){%>
+            <th width="<%=tdWidth%>%" class="<%= _class%>"><%=collection.at(i).id%></th>
+        <%}%>
+    </tr>
+</thead>
+<tbody>
+    <tr class="revenueBySales">
+        <td colspan="<%= count + 1%>">Profit By Sales</td>
+    </tr>
+    <%collection.sales.forEach(function(sales){
+        if(sales._id) {%>
+            <tr>
+                <td data-id="<%=sales._id%>"><%=sales.name%></td>
+                <% collection.forEach(function(profit){%>
+                <td ><%=currencySplitter(profit.get('sales') ? (profit.get('sales').get(sales._id) ? (profit.get('sales').get(sales._id).get('profitBySales') / 100).toFixed(0): '') : '')%></td>
+                <%})%>
+            </tr>
+        <%}%>
+    <%})%>
+    <tr class="boldPaid">
+        <td>Profit</td>
+        <% collection.forEach(function(profit){%>
+            <td ><%=currencySplitter(profit.get('profitByMonth').toFixed(0))%></td>
+        <%})%>
+    </tr>
+    <tr class="boldPaid">
+        <td>Total Profit</td>>
+        <td colspan="<%= count%>"><%=currencySplitter(collection.at(0).get('totalProfit') ? (collection.at(0).get('totalProfit') / 100).toFixed(0) : 0)%></td>
+    </tr>
+</tbody>

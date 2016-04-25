@@ -254,12 +254,17 @@ define([
                 App.requestedURL = Backbone.history.fragment;
             }
 
-            Backbone.history.fragment = "";
-            Backbone.history.navigate("login", {trigger: true});
+            Backbone.history.fragment = '';
+            Backbone.history.navigate('login', {trigger: true});
         },
 
-        revenue: function () {
+        revenue: function (filter) {
             var self = this;
+
+            if (filter) {
+                filter = decodeURIComponent(filter);
+                filter = JSON.parse(filter);
+            }
 
             if (!this.isAuth) {
                 this.checkLogin(function (success) {
@@ -276,22 +281,44 @@ define([
 
             function renderRevenue() {
                 var startTime = new Date();
-                var contentViewUrl = "views/Revenue/index";
+                var collectionUrl = 'collections/revenue/profit';
+                var topBarViewUrl = 'views/Revenue/TopBarView';
+                var contentViewUrl = 'views/Revenue/index';
 
                 if (self.mainView === null) {
-                    self.main("Revenue");
+                    self.main('Revenue');
                 } else {
-                    self.mainView.updateMenu("Revenue");
+                    self.mainView.updateMenu('Revenue');
                 }
 
-                require([contentViewUrl], function (contentView) {
+                require([collectionUrl, contentViewUrl, topBarViewUrl], function (ChartCollection, ContentView, TopBarView) {
+                    var topbarView = new TopBarView();
                     var contentview;
+                    var collection;
+
+                    function render() {
+                        contentview = new ContentView({
+                            startTime : startTime,
+                            filter    : filter,
+                            collection: collection
+                        });
+                        topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
+
+                        self.changeView(contentview);
+                        self.changeTopBarView(topbarView);
+
+                        console.log(collection);
+                    }
+
+                    function fetchCollection(dateRange) {
+                        collection = new ChartCollection(dateRange);
+                        collection.on('reset', render);
+                    }
+
+                    topbarView.on('render', fetchCollection);
+                    topbarView.render();
 
                     custom.setCurrentVT('list');
-
-                    contentview = new contentView({startTime: startTime});
-
-                    self.changeView(contentview, true);
                 });
             }
         },
@@ -750,7 +777,7 @@ define([
                         };
 
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), { replace: true });
+                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     } else if (contentType === 'Product') {
                         filter = {
                             'canBePurchased': {
@@ -759,7 +786,7 @@ define([
                             }
                         };
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), { replace: true });
+                        Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     }
                 } else if (filter) {
                     filter = JSON.parse(filter);
@@ -1040,7 +1067,7 @@ define([
                             }
                         };
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), { replace: true });
+                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     } else if (contentType === 'Product') {
                         filter = {
                             'canBePurchased': {
@@ -1049,7 +1076,7 @@ define([
                             }
                         };
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), { replace: true });
+                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     }
                 } else if (filter) {
                     filter = JSON.parse(filter);

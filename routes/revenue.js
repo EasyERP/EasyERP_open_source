@@ -2,12 +2,12 @@
 
 var express = require('express');
 var router = express.Router();
-var revenueHandler = require('../handlers/revenue');
+var RevenueHandler = require('../handlers/revenue');
 
 var expressSession = require('../handlers/expressSession');
 
 module.exports = function (models) {
-    var handler = new revenueHandler(models);
+    var handler = new RevenueHandler(models);
 
     router.get('/bySales', expressSession.authenticatedUser, handler.bySales);
     router.get('/byDepartment', expressSession.authenticatedUser, handler.byDepartment);
@@ -19,8 +19,8 @@ module.exports = function (models) {
 
     router.get('/getFromCash', expressSession.authenticatedUser, handler.getFromCash);
     router.get('/hoursByDep', expressSession.authenticatedUser, handler.hoursByDep);
-    //router.get('/totalHours', expressSession.authenticatedUser, handler.totalHours);
-    //router.get('/hoursSold', expressSession.authenticatedUser, handler.hoursSold);
+    // router.get('/totalHours', expressSession.authenticatedUser, handler.totalHours);
+    // router.get('/hoursSold', expressSession.authenticatedUser, handler.hoursSold);
 
     router.get('/allBonus', expressSession.authenticatedUser, handler.allBonus);
     router.get('/uncalcBonus', expressSession.authenticatedUser, handler.uncalcBonus);
@@ -28,7 +28,9 @@ module.exports = function (models) {
     router.get('/synthetic', expressSession.authenticatedUser, handler.synthetic);
 
   /*  router.get('/paidBonus', expressSession.authenticatedUser, handler.paidBonus);
-    router.get('/balanceBonus', expressSession.authenticatedUser, handler.balanceBonus);*/
+    router.get('/balanceBonus', expressSession.authenticatedUser, handler.balanceBonus); */
+
+    router.get('/profit', expressSession.authenticatedUser, handler.profit);
 
     return router;
 };

@@ -1,91 +1,11 @@
 <div class="grid-conatiner revenue">
     <div class="clear"></div>
-    <div class="chartContainer">
-        <svg id="chart">
+    <div class="tableResponsive">
+        <table class="list" id="results">
 
-        </svg>
-        <div class="legend">
-            <div><img src="images/chart1.png">Android</div>
-            <div><img src="images/chart2.png">iOS</div>
-            <div><img src="images/chart3.png">WP</div>
-            <div><img src="images/chart4.png">Web</div>
-            <div>
-                <label>Week:</label> <input type="number" id="currentStartWeek" value="<%= currentStartWeek %>"
-                                            readonly/>
-            </div>
-            <div>
-                <label>Year:</label> <span id="currentYear"><%= currentYear %></span>
-            </div>
-        </div>
-    </div>
-    <br>
-
-    <div class="divTable" id="tableBySales">
-        <div class="headRow">
-            <div class="divCell left-cell th">
-                <span>Revenue By Sales</span>
-            </div>
-            <div id="revenueBySales" class="revenueBySales">
-
-            </div>
-
-            <div class="divCell th"><span>YTD</span></div>
-            <div class="divCell th th-trend"><span>Trend</span></div>
-        </div>
-        <% employees.forEach(function(employee){ %>
-        <div id="<%= employee._id %>" class="divRow">
-            <div class="divCell left-cell">
-                    <span><%= employee.name.first + " " + employee.name.last %>
-                    </span>
-            </div>
-            <div data-id="<%= employee._id %>">
-
-            </div>
-
-            <div class="divCell chart_mini trend">
-            </div>
-
-        </div>
-        <% }) %>
-        <div data-content="totalBySales" class="divRow totalBySales">
-
-        </div>
-    </div>
-    <div class="divTable" id="tableByDep">
-
-    </div>
-    <div class="divTable" id="tablePaidBySales">
-
-    </div>
-    <div class="divTable" id="tableUnpaidBySales">
-
-    </div>
-    <div class="divTable" id="tableCancelledBySales">
-
-    </div>
-    <div class="divTable" id="revenueTotal">
-
-    </div>
-    <div class="divTable" id="tableProjectBySales">
-
-    </div>
-    <div class="divTable" id="tableEmployeeBySales">
-
-    </div>
-    <div class="divTable" id="tablePaidBonus">
-
-    </div>
-    <div class="divTable" id="tableBalanceBonus">
-
-    </div>
-    <div class="divTable" id="totalAllBonus">
-
-    </div>
-    <div class="divTable" id="totalUncalcBonus">
-
+        </table>
     </div>
     <div class="divTable" id="totalCalcBonus">
 
     </div>
-</div>
 </div>
