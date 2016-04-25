@@ -2,30 +2,29 @@
  * Created by Roman on 27.04.2015.
  */
 define([
+    'jQuery',
+    'Underscore',
     'Backbone',
-    'text!templates/Invoice/InvoiceProductItems.html',
-    'text!templates/Invoice/InvoiceProductInputContent.html',
-    'text!templates/Proforma/EditInvoiceProductInputContent.html',
+    'text!templates/ExpensesInvoice/InvoiceProductItems.html',
+    'text!templates/ExpensesInvoice/InvoiceProductInputContent.html',
+    'text!templates/Invoice/EditInvoiceProductInputContent.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
     'populate',
-    'helpers/keyValidator',
-    'helpers',
-    'constants'
-], function (Backbone, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, productCollection, populate, keyValidator, helpers, CONSTANTS) {
-    'use strict'
+    'helpers'
+], function ($, _, Backbone, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, productCollection, populate, helpers) {
     var ProductItemTemplate = Backbone.View.extend({
         el: '#invoiceItemsHolder',
 
         events: {
-            'click .addProductItem'                                           : 'getProducts',
-            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-            "click .newSelectList li.miniStylePagination"                     : "notHide",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click .current-selected"                                         : "showProductsSelect",
-            "keyup td[data-name=price] input"                                 : 'priceChange',
-            'keypress .forNum'                                                : 'keypressHandler'
+            'click .addProductItem'                                                   : 'getProducts',
+            "click .newSelectList li:not(.miniStylePagination)"                       : "chooseOption",
+            "click .newSelectList li.miniStylePagination"                             : "notHide",
+            "click .newSelectList li.miniStylePagination .next:not(.disabled)"        : "nextSelect",
+            "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
+            "click .current-selected"                                                 : "showProductsSelect",
+            'change input.statusInfo'                                                 : 'recalculateTaxes',
+            'keyup input.statusInfo'                                                  : 'recalculateTaxes'
         },
 
         initialize: function (options) {
@@ -34,13 +33,14 @@ define([
             this.responseObj = {};
             this.taxesRate = 0;
 
+            this.recalculateTaxes = _.debounce(this.recalculateTaxes, 500);
+
             if (options) {
                 this.visible = !!options.balanceVisible;
                 this.isPaid = !!options.isPaid;
                 this.notAddItem = !!options.notAddItem;
                 this.paid = options.paid;
-                this.approved = options.approved;
-            }
+            };
 
             this.forSales = options.forSales;
 
@@ -51,8 +51,6 @@ define([
                 this.products = products;
                 this.filterProductsForDD();
             }, this);
-
-            this.priceChange = _.debounce(this.priceChange, 250);
         },
 
         template: _.template(productItemTemplate),
@@ -90,37 +88,6 @@ define([
 
         },
 
-        keypressHandler: function (e) {
-            return keyValidator(e, true);
-        },
-
-        priceChange: function (e) {
-            e.preventDefault();
-
-            var $targetEl = $(e.target);
-            var parent = $targetEl.closest('td');
-            var inputEl = parent.find('input');
-            if (!inputEl.length) {
-                inputEl = parent.find('textarea');
-            }
-            var val = inputEl.val();
-
-            if (!val.length) {
-                val = 0;
-            }
-
-            //parent.removeClass('quickEdit').html('<span>' + val + '</span>');
-
-            if (inputEl.hasClass('datepicker')) {
-                parent.find('span').addClass('datepicker');
-            }
-            if (inputEl.hasClass('textarea')) {
-                parent.find('span').addClass('textarea');
-            }
-
-            this.recalculateTaxes(parent);
-        },
-
         showProductsSelect: function (e, prev, next) {
             populate.showProductsSelect(e, prev, next, this);
 
@@ -144,7 +111,7 @@ define([
 
             parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
 
-            $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
+            /*$(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
             $(parrents[2]).attr('class', 'editable').find("span").text(1);
 
             price = selectedProduct.info.salePrice;
@@ -155,7 +122,7 @@ define([
             taxes = taxes.toFixed(2);
 
             $(parrents[4]).text(taxes);
-            $(parrents[5]).text(amount.toFixed(2));
+            $(parrents[5]).text(amount.toFixed(2));*/
 
             $(".newSelectList").hide();
 
@@ -163,95 +130,55 @@ define([
         },
 
         recalculateTaxes: function (parent) {
-            parent = parent.closest('tr');
+            var quantity;
+            var cost;
+            var amount;
+            var $parent = $(parent.target).closest('tr');
 
-            var quantity = parent.find('[data-name="quantity"] span').text();
+            quantity = $parent.find('[data-name="quantity"] input').val();
             quantity = parseFloat(quantity);
-            var cost = parent.find('[data-name="price"] input').val();
+            cost = $parent.find('[data-name="price"] input').val();
             cost = parseFloat(cost);
-            var taxes = cost * this.taxesRate;
-            var amount = cost + taxes;
-            taxes = taxes.toFixed(2);
+            amount = (quantity * cost);
             amount = amount.toFixed(2);
 
-            parent.find('.taxes').text(taxes);
-            parent.find('.amount').text(amount);
+            $parent.find('.amount').text(amount);
 
             this.calculateTotal();
         },
 
         calculateTotal: function () {
-            var thisEl = this.$el;
+            var $thisEl = this.$el;
 
-            var totalUntaxContainer = thisEl.find('#totalUntaxes');
-            var taxesContainer = thisEl.find('#taxes');
-            var totalContainer = thisEl.find('#totalAmount');
-            var balanceContainer = thisEl.find('#balance');
-            var resultForCalculate = thisEl.find('tr.productItem');
+            var totalUntaxContainer = $thisEl.find('#totalUntaxes');
+            var totalContainer = $thisEl.find('#totalAmount');
+            var balanceContainer = $thisEl.find('#balance');
+            var resultForCalculate = $thisEl.find('tr.productItem');
 
             var totalUntax = 0;
             var totalEls = resultForCalculate.length;
             var $currentEl;
             var quantity;
-            var cost;
             var balance;
-            var taxes;
-            var total;
-            var date;
-            var dates = [];
+            var cost;
 
             if (totalEls) {
                 for (var i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
-                    cost = $currentEl.find('[data-name="price"] input').val() || '0';
-                    quantity = this.quantityRetriver($currentEl);
-                    cost = helpers.spaceReplacer(cost);
-                    totalUntax += parseFloat(cost);
-                    date = $currentEl.find('.datepicker').text();
-                    dates.push(date);
+                    quantity = $currentEl.find('[data-name="quantity"] input').val();
+                    cost = $currentEl.find('[data-name="price"] input').val();
+                    totalUntax += (quantity * cost);
                 }
             }
 
             totalUntax = totalUntax.toFixed(2);
-            totalUntaxContainer.text(helpers.currencySplitter(totalUntax));
+            totalUntaxContainer.text(totalUntax);
             totalUntax = parseFloat(totalUntax);
 
-            taxes = totalUntax * this.taxesRate;
-            taxes = taxes.toFixed(2);
-            taxesContainer.text(helpers.currencySplitter(taxes));
-            taxes = parseFloat(taxes);
+            totalContainer.text(totalUntax);
 
-            total = totalUntax + taxes;
-            balance = total - this.paid;
-            total = total.toFixed(2);
-            balance = balance.toFixed(2);
+            balanceContainer.text(totalUntax - this.paid);
 
-            totalContainer.text(helpers.currencySplitter(total));
-
-            balanceContainer.text(helpers.currencySplitter(balance));
-
-            date = helpers.minFromDates(dates);
-            thisEl.find('#minScheduleDate span').text(date);
-        },
-
-        quantityRetriver: function ($parent) {
-            var selectedProduct = this.products || new Backbone.Collection();
-            var id;
-            var quantity;
-
-            $parent = $parent.closest('tr');
-            id = $parent.attr('data-id');
-
-            selectedProduct = selectedProduct.get(id) || null;
-
-            if (selectedProduct && selectedProduct.get('name') === CONSTANTS.IT_SERVICES) {
-                quantity = 1
-            } else {
-                quantity = $parent.find('[data-name="quantity"] span').text();
-                quantity = parseFloat(quantity);
-            }
-
-            return quantity;
         },
 
         nextSelect: function (e) {
@@ -282,20 +209,18 @@ define([
                 if (products) {
                     productsContainer = thisEl.find('#productList');
                     productsContainer.prepend(_.template(ProductItemsEditList, {
-                        products        : products,
-                        forSales        : self.forSales,
-                        isPaid          : self.isPaid,
-                        notAddItem      : this.notAddItem,
-                        model           : options.model,
-                        currencySplitter: helpers.currencySplitter,
-                        approved        : self.approved
+                        products  : products,
+                        forSales  : self.forSales,
+                        isPaid    : self.isPaid,
+                        notAddItem: this.notAddItem,
+                        currencySplitter : helpers.currencySplitter
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
-                        model           : options.model,
-                        balanceVisible  : this.visible,
-                        currencySplitter: helpers.currencySplitter
+                        model         : options.model,
+                        balanceVisible: this.visible,
+                        currencySplitter : helpers.currencySplitter
                     }));
                 }
             } else {
@@ -307,11 +232,7 @@ define([
                     notAddItem: this.notAddItem
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
-                totalAmountContainer.append(_.template(totalAmount, {
-                    model           : null,
-                    balanceVisible  : this.visible,
-                    currencySplitter: helpers.currencySplitter
-                }));
+                totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));
             }
 
             return this;

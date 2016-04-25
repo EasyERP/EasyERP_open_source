@@ -1,0 +1,109 @@
+<div class="form-holder">
+    <form method="post" action="" class="form" id="invoiceForm">
+        <fieldset>
+            <div class="inner">
+                <ul class="dialog-tabs" data-class="mainTabs">
+                    <li><a class="active" href="javascript:;">Main</a></li>
+                    <li><a href="javascript:;">Assignees</a></li>
+                </ul>
+                <div class="clearfix"></div>
+                <div class="dialog-tabs-items mainTabs">
+                    <div class="dialog-tabs-item mainTabs active">
+                        <div class="half-block left">
+                            <dl class="opp-info">
+                                <dt><label for="supplier">Supplier</label></dt>
+                                <dd>
+                                    <a id="supplier" class="current-selected" href="javascript:;">Select</a>
+                                </dd>
+
+                                <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
+                                <dd>
+                                    <input type="text" id="supplier_invoice_num" name="supplier_invoice_num"
+                                           placeholder="" maxlength="32"/>
+                                </dd>
+
+                            </dl>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="opp-info">
+
+                                <dt><label for="invoice_date">Invoice Date</label></dt>
+                                <dd>
+                                    <input class="extrainfo" type="text" name="invoiceDate" id="invoice_date" value=""
+                                           readonly="" placeholder="Invoice Date">
+                                </dd>
+
+                                <dt><label for="due_date">Due Date</label></dt>
+                                <dd>
+                                    <input class="extrainfo" type="text" name="dueDate" id="due_date" value=""
+                                           readonly="" placeholder="Due Date">
+                                </dd>
+
+                                <dt><label for="currencyDd">Currency</label></dt>
+                                <dd>
+                                    <a id="currencyDd" class="current-selected" href="javascript:;">Select</a>
+                                </dd>
+
+                            </dl>
+                        </div>
+                        <div class="clearfix"></div>
+                        <ul class="dialog-tabs" data-class="childTabs">
+                            <li><a class="active" href="javascript:;">Invoice</a></li>
+                            <li><a href="javascript:;">Other Info</a></li>
+                            <li><a href="javascript:;">Payments</a></li>
+                        </ul>
+                        <div class="clearfix"></div>
+                        <div class="dialog-tabs-items childTabs">
+                            <div class="dialog-tabs-item childTabs active">
+                                <div id="invoiceItemsHolder">
+
+                                </div>
+                                <div class="clearfix"></div>
+                            </div>
+                            <div class="dialog-tabs-item childTabs">
+                                <div class="other-info-container">
+                                    <div class="half-block left">
+                                        <dl class="opp-info">
+                                            <dt><label for="bank_account">Bank Account</label></dt>
+                                            <dd>
+                                                <a id="bank_account" href="javascript:;">Select</a>
+                                            </dd>
+
+                                            <dt><label for="salesPerson">Responsible</label></dt>
+                                            <dd>
+                                                <a id="salesPerson" class="current-selected"
+                                                   href="javascript:;">Select</a>
+                                            </dd>
+
+                                            <dt><label for="payment_terms">Payment Terms</label></dt>
+                                            <dd>
+                                                <a id="payment_terms" class="current-selected" href="javascript:;">Select</a>
+                                            </dd>
+                                        </dl>
+                                    </div>
+                                    <div class="half-block left">
+                                        <dl class="opp-info">
+
+                                            <dt><label for="force_period">Force Period</label></dt>
+                                            <dd>
+                                                <a id="force_period" href="javascript:;">Select</a>
+                                            </dd>
+
+                                        </dl>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="dialog-tabs-item childTabs">
+                                <div id="payments-container"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="dialog-tabs-item mainTabs">
+                        <div class="assignees-container"></div>
+                    </div>
+                </div>
+
+            </div>
+        </fieldset>
+    </form>
+</div>

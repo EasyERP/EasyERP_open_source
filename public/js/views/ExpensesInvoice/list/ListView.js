@@ -1,8 +1,8 @@
 define([
         'views/listViewBase',
         'text!templates/salesInvoice/list/ListHeader.html',
-        'views/salesInvoice/CreateView',
-        'views/salesInvoice/EditView',
+        'views/ExpensesInvoice/CreateView',
+        'views/ExpensesInvoice/EditView',
         'models/InvoiceModel',
         'views/salesInvoice/list/ListItemView',
         'collections/salesInvoice/filterCollection',
