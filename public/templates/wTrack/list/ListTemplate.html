@@ -7,8 +7,8 @@
         <td data-content="jobs" class="editable <%= enable ? 'textUnderlineHover' : ''%>" data-id="<%=wTrack.jobs ? wTrack.jobs._id : null%>"><%=wTrack.jobs ?
             wTrack.jobs.name : '------'%>
         </td>
-        <td data-content="assigned"><%=wTrack && wTrack.projectmanager ? wTrack.projectmanager.name.first + ' ' +
-            wTrack.projectmanager.name.last : ''%>
+        <td data-content="assigned"><%=wTrack && wTrack.salesmanager ? wTrack.salesmanager.name.first + ' ' +
+            wTrack.salesmanager.name.last : ''%>
         </td>
         <td class="editable" data-content="project" data-id="<%= wTrack.project._id%>"><%=wTrack.project ?
             wTrack.project.projectName : ''%>

@@ -5,8 +5,8 @@ define([], function () {
     var filters = {
         wTrack          : {
             'Assigned'    : {
-                view   : 'projectManager',
-                backend: 'projectmanager._id',
+                view   : 'salesManager',
+                backend: 'salesmanager._id',
                 type   : 'ObjectId'
             },
             'Employee'    : {
@@ -171,6 +171,10 @@ define([], function () {
                 backend: 'workflow._id'
             },
             'Sales Manager': {
+                view   : 'salesmanager',
+                backend: 'salesmanager._id'
+            },
+            'Project Manager': {
                 view   : 'projectmanager',
                 backend: 'projectmanager._id'
             }

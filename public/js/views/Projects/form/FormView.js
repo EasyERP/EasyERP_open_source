@@ -65,7 +65,7 @@ define([
               attachView,
               AssigneesView,
               wTrackView,
-              ProjectManagersView,
+              ProjectMembersView,
               PaymentView,
               InvoiceView,
               ProformaView,
@@ -134,7 +134,7 @@ define([
                 this.formModel = options.model;
                 this.id = this.formModel.id;
                 this.formModel.urlRoot = '/Projects/';
-                this.projectManager = this.formModel.get('projectmanager');
+                this.salesManager = this.formModel.get('salesmanager');
                 this.responseObj = {};
                 this.proformValues = {};
 
@@ -177,7 +177,7 @@ define([
                                 model         : model,
                                 redirect      : true,
                                 pId           : self.id,
-                                projectManager: self.projectManager
+                                projectManager: self.salesManager
                             });
                         },
                         error  : function (xhr) {
@@ -202,7 +202,7 @@ define([
                                 model         : model,
                                 redirect      : true,
                                 onlyView      : onlyView,
-                                projectManager: self.projectManager
+                                projectManager: self.salesManager
                             });
                         },
                         error  : function (xhr) {
@@ -1176,7 +1176,7 @@ define([
                         cb();
                     }
 
-                    new ProjectManagersView(data).render();
+                    new ProjectMembersView(data).render();
                 }
             },
 
@@ -1208,7 +1208,7 @@ define([
                         collection      : self.qCollection,
                         projectId       : _id,
                         customerId      : self.formModel.toJSON().customer._id,
-                        projectManager  : self.formModel.toJSON().projectmanager,
+                        projectManager  : self.salesManager,
                         filter          : filter,
                         model           : self.formModel,
                         wTrackCollection: self.wCollection,
@@ -1256,7 +1256,7 @@ define([
                         collection    : self.ordersCollection,
                         projectId     : _id,
                         customerId    : self.formModel.toJSON().customer._id,
-                        projectManager: self.formModel.toJSON().projectmanager,
+                        projectManager: self.salesManager,
                         filter        : filter,
                         eventChannel  : self.eventChannel
                     });
@@ -1524,7 +1524,6 @@ define([
                 App.projectInfo.currentTab = App.projectInfo.currentTab ? App.projectInfo.currentTab : 'overview';
 
                 populate.get('#projectTypeDD', '/projectType', {}, 'name', this, false, true);
-                populate.get2name('#projectManagerDD', '/getPersonsForDd', {}, this);
                 populate.get2name('#customerDd', '/Customer', {}, this, false, false);
                 populate.getWorkflow('#workflowsDd', '#workflowNamesDd', '/WorkflowsForDd', {id: 'Projects'}, 'name', this);
                 populate.getWorkflow('#workflow', '#workflowNames', '/WorkflowsForDd', {id: 'Jobs'}, 'name', this);

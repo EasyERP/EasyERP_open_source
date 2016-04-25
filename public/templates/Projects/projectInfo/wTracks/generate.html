@@ -37,13 +37,13 @@
             <div class="thirdPartBlock left">
                 <dl class="person-info">
                     <div class="miniAvatarPM miniAvatar"
-                         data-id="<%=( project.projectmanager &&  project.projectmanager._id) ?  project.projectmanager._id: ''%>">
+                         data-id="<%=( project.salesmanager &&  project.salesmanager._id) ?  project.salesmanager._id: ''%>">
                         <img alt="" src="" class="avatar"/>
                     </div>
                     <div class="miniAvatarInfo">
-                        <dt><label for="projectManager">SM</label></dt>
+                        <dt><label for="salesManager">SM</label></dt>
                         <dd>
-                            <span id="projectManager"><%= project.projectmanager && project.projectmanager.name ?  project.projectmanager.name.first + ' ' +  project.projectmanager.name.last : ''%></span>
+                            <span id="salesManager"><%= project.salesmanager && project.salesmanager.name ?  project.salesmanager.name.first + ' ' +  project.salesmanager.name.last : ''%></span>
                         </dd>
                     </div>
                 </dl>

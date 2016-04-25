@@ -93,7 +93,7 @@ define([
 
             return App.render({
                 type   : 'notify',
-                message: 'Data was changed, please refresh browser'
+                message: 'Data was changed, please refresh your browser'
             });
         },
 
@@ -387,6 +387,7 @@ define([
             this.changedModels[startData.cid] = data;
 
             this.changedModels[startData.cid].projectId = this.project._id;
+            this.changedModels[startData.cid].endDate = null;
 
             if (!this.isNewRow()) {
                 this.collection.add(model);

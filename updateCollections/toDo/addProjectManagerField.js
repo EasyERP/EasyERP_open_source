@@ -80,7 +80,7 @@ var Project = dbObject.model("Project", ProjectSchema);
 var ProjectOld = dbObject.model("ProjectOld", ProjectSchemaOld);
 var ProjectMember = dbObject.model("ProjectMember", projectMemberSchema);
 
-var query = ProjectOld.find({projectName : 'Sensei'}).lean();
+var query = ProjectOld.find({}).lean();
 
 query.exec(function (error, _res) {
     if (error) {

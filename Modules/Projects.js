@@ -540,6 +540,9 @@ var Project = function (models, event) {
                 case 'projectmanager':
                     condition.push({'projectmanager._id': {$in: filter.projectmanager.value.objectID()}});
                     break;
+                case 'salesmanager':
+                    condition.push({'salesmanager._id': {$in: filter.salesmanager.value.objectID()}});
+                    break;
                 case 'name':
                     condition.push({'_id': {$in: filter.name.value.objectID()}});
                     break;
@@ -651,6 +654,12 @@ var Project = function (models, event) {
                                     localField  : "projectmanager",
                                     foreignField: "_id", as: "projectmanager"
                                 }
+                            },{
+                                $lookup: {
+                                    from        : "Employees",
+                                    localField  : "salesmanager",
+                                    foreignField: "_id", as: "salesmanager"
+                                }
                             }, {
                                 $lookup: {
                                     from        : "Customers",
@@ -681,6 +690,7 @@ var Project = function (models, event) {
                                         $size: {"$ifNull": [ "$budget.projectTeam", [] ]} // added check on field value null
                                     },
                                     projectmanager  : {$arrayElemAt: ["$projectmanager", 0]},
+                                    salesmanager    : {$arrayElemAt: ["$salesmanager", 0]},
                                     workflow        : {$arrayElemAt: ["$workflow", 0]},
                                     customer        : {$arrayElemAt: ["$customer", 0]},
                                     'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
@@ -697,6 +707,7 @@ var Project = function (models, event) {
                             }, {
                                 $project: {
                                     projectmanager  : 1,
+                                    salesmanager    : 1,
                                     notRemovable    : 1,
                                     workflow        : 1,
                                     projectName     : 1,
@@ -924,6 +935,12 @@ var Project = function (models, event) {
                                             localField  : "projectmanager",
                                             foreignField: "_id", as: "projectmanager"
                                         }
+                                    },{
+                                        $lookup: {
+                                            from        : "Employees",
+                                            localField  : "salesmanager",
+                                            foreignField: "_id", as: "salesmanager"
+                                        }
                                     }, {
                                         $lookup: {
                                             from        : "Customers",
@@ -943,7 +960,8 @@ var Project = function (models, event) {
                                             task          : 1,
                                             customer      : {$arrayElemAt: ["$customer", 0]},
                                             health        : 1,
-                                            projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                                            projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                                            salesmanager  : {$arrayElemAt: ["$salesmanager", 0]}
                                         }
                                     }, {
                                         $project: {
@@ -951,6 +969,7 @@ var Project = function (models, event) {
                                             projectName   : 1,
                                             task          : 1,
                                             workflow      : 1,
+                                            salesmanager  : 1,
                                             projectmanager: 1,
                                             customer      : 1,
                                             health        : 1
@@ -1120,6 +1139,12 @@ var Project = function (models, event) {
                                             localField  : "projectmanager",
                                             foreignField: "_id", as: "projectmanager"
                                         }
+                                    },{
+                                        $lookup: {
+                                            from        : "Employees",
+                                            localField  : "salesmanager",
+                                            foreignField: "_id", as: "salesmanager"
+                                        }
                                     }, {
                                         $lookup: {
                                             from        : "Customers",
@@ -1139,7 +1164,8 @@ var Project = function (models, event) {
                                             task          : 1,
                                             customer      : {$arrayElemAt: ["$customer", 0]},
                                             health        : 1,
-                                            projectmanager: {$arrayElemAt: ["$projectmanager", 0]}
+                                            projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                                            salesmanager  : {$arrayElemAt: ["$salesmanager", 0]}
                                         }
                                     }, {
                                         $project: {
@@ -1148,6 +1174,7 @@ var Project = function (models, event) {
                                             task          : 1,
                                             workflow      : 1,
                                             projectmanager: 1,
+                                            salesmanager  : 1,
                                             customer      : 1,
                                             health        : 1
                                         }
