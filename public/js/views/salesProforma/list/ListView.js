@@ -6,6 +6,7 @@ define([
         'views/Proforma/EditView',
         'models/InvoiceModel',
         'views/salesInvoice/list/ListItemView',
+        'views/Order/list/ListTotalView',
         'collections/salesProforma/filterCollection',
         'views/Filter/FilterView',
         'common',
@@ -13,7 +14,7 @@ define([
         'constants'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, listTotalView, contentCollection, filterView, common, dataService, CONSTANTS) {
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
@@ -179,6 +180,8 @@ define([
                     //$currentEl.append(itemView.render());
                 }
 
+                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
+
                 self.renderCheckboxes();
                 self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
@@ -190,6 +193,8 @@ define([
                 }, function (stages) {
                     self.stages = stages;
                 });
+
+
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
