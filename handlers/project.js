@@ -29,7 +29,7 @@ var Project = function (models) {
             .lean()
             .populate('workflow', '_id name')
             .populate('customer', '_id name')
-            .populate('projectmanager', '_id name')
+            .populate('salesmanager', '_id name')
             .exec(function (err, projects) {
                 if (err) {
                     return next(err);
