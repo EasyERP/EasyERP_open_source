@@ -136,7 +136,7 @@ define([
                     case CONTENT_TYPES.BALANCESHEET:
                     case CONTENT_TYPES.CASHFLOW:
                     case CONTENT_TYPES.CLOSEMONTH:
-                    case CONTENT_TYPES.PROFORMA:
+                    case CONTENT_TYPES.SALESPROFORMA:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -193,7 +193,7 @@ define([
                     case CONTENT_TYPES.BALANCESHEET:
                     case CONTENT_TYPES.CASHFLOW:
                     case CONTENT_TYPES.CLOSEMONTH:
-                    case CONTENT_TYPES.PROFORMA:
+                    case CONTENT_TYPES.SALESPROFORMA:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:

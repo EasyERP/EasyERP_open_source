@@ -1,5 +1,5 @@
 define([
-        'text!templates/Invoice/TopBarTemplate.html',
+        'text!templates/Proforma/TopBarTemplate.html',
         'custom',
         'common',
         'constants',
@@ -8,7 +8,7 @@ define([
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS, dataService) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
-            contentType: CONSTANTS.SALESINVOICE,
+            contentType: CONSTANTS.SALESPROFORMA,
             template   : _.template(ContentTopBarTemplate),
 
             events: {
@@ -41,7 +41,7 @@ define([
             },
 
             render: function () {
-                $('title').text("Invoice");
+                $('title').text("Proforma");
 
                 var viewType = Custom.getCurrentVT();
                 var self = this;

@@ -6,6 +6,7 @@ var Filters = function (models) {
     var ProjectSchema = mongoose.Schemas.Project;
     var TaskSchema = mongoose.Schemas.Tasks;
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
+    var ProformaSchema = mongoose.Schemas.Proforma;
     var customerPaymentsSchema = mongoose.Schemas.Payment;
     var QuotationSchema = mongoose.Schemas.Quotation;
     var productSchema = mongoose.Schemas.Products;
@@ -28,6 +29,7 @@ var Filters = function (models) {
         var Project = models.get(lastDB, 'Project', ProjectSchema);
         var Task = models.get(lastDB, 'Tasks', TaskSchema);
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
+        var Proforma = models.get(lastDB, 'Proforma', ProformaSchema);
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
         var Product = models.get(lastDB, 'Products', productSchema);
         var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
@@ -118,6 +120,7 @@ var Filters = function (models) {
                 Projects        : getProjectFiltersValues,
                 Tasks           : getTasksFiltersValues,
                 salesInvoice    : getSalesInvoiceFiltersValues,
+                salesProforma   : getSalesProformaFiltersValues,
                 Invoice         : getInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
@@ -913,6 +916,97 @@ var Filters = function (models) {
                 $match: {
                     forSales: true,
                     _type   : "wTrackInvoice"
+                }
+            }, {
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id", as: "project"
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "salesPerson",
+                    foreignField: "_id", as: "salesPerson"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $project: {
+                    workflow   : {$arrayElemAt: ["$workflow", 0]},
+                    supplier   : {$arrayElemAt: ["$supplier", 0]},
+                    salesPerson: {$arrayElemAt: ["$salesPerson", 0]},
+                    project    : {$arrayElemAt: ["$project", 0]}
+                }
+            }, {
+                $project: {
+                    workflow   : 1,
+                    supplier   : 1,
+                    salesPerson: 1,
+                    project    : 1
+                }
+            }, {
+                $group: {
+                    _id          : null,
+                    'workflow'   : {
+                        $addToSet: {
+                            _id : '$workflow._id',
+                            name: '$workflow.name'
+                        }
+                    },
+                    'project'    : {
+                        $addToSet: {
+                            _id : '$project._id',
+                            name: '$project.projectName'
+                        }
+                    },
+                    'salesPerson': {
+                        $addToSet: {
+                            _id : '$salesPerson._id',
+                            name: {
+                                $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
+                            }
+                        }
+                    },
+                    'supplier'   : {
+                        $addToSet: {
+                            _id : '$supplier._id',
+                            name: {
+                                $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                            }
+                        }
+                    }
+                }
+            }], function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        }
+
+        function getSalesProformaFiltersValues(callback) {
+            Proforma.aggregate([{
+                $match: {
+                    forSales: true,
+                    _type   : "Proforma"
                 }
             }, {
                 $lookup: {

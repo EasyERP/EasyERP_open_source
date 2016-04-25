@@ -157,6 +157,25 @@ define([], function () {
                 backend: 'workflow._id'
             }
         },
+        salesProforma    : {
+            'Customer'    : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Assigned'    : {
+                view   : 'salesPerson',
+                backend: 'salesPerson._id'
+            },
+            'Project Name': {
+                view   : 'project',
+                backend: 'project._id'
+            }
+            ,
+            'Status'      : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
         Projects        : {
             'Project Name' : {
                 view   : 'name',
@@ -500,7 +519,7 @@ define([], function () {
         BALANCESHEET      : 'balanceSheet',
         CASHFLOW          : 'cashFlow',
         CLOSEMONTH        : 'closeMonth',
-        PROFORMA          : 'Proforma',
+        SALESPROFORMA     : 'salesProforma',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
