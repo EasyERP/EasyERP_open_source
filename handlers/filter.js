@@ -179,8 +179,8 @@ var Filters = function (models) {
             }, {
                 $lookup: {
                     from        : "Employees",
-                    localField  : "project.projectmanager",
-                    foreignField: "_id", as: "projectmanager"
+                    localField  : "project.salesmanager",
+                    foreignField: "_id", as: "salesmanager"
                 }
             }, {
                 $lookup: {
@@ -191,7 +191,7 @@ var Filters = function (models) {
             }, {
                 $project: {
                     customer      : {$arrayElemAt: ["$customer", 0]},
-                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    salesmanager: {$arrayElemAt: ["$salesmanager", 0]},
                     project       : 1,
                     employee      : 1,
                     department    : 1,
@@ -209,11 +209,11 @@ var Filters = function (models) {
                             name: '$jobs.name'
                         }
                     },
-                    'projectManager': {
+                    'salesManager': {
                         $addToSet: {
-                            _id : '$projectmanager._id',
+                            _id : '$salesmanager._id',
                             name: {
-                                $concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']
+                                $concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']
                             }
                         }
                     },

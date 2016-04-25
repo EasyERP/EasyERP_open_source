@@ -368,6 +368,38 @@ var wTrack = function (event, models) {
 
         contentSearcher = function (wTrackIDs, waterfallCallback) {
             var queryObject = {};
+            var salesManagerMatch = {
+                $and: [{
+                    $or: [{
+                        $and: [{
+                            $eq: ['$salesmanager.startDateWeek', null]
+                        }, {
+                            $eq: ['$salesmanager.endDateWeek', null]
+                        }]
+                    }, {
+                        $and: [{
+                            $eq: ['$salesmanager.startDateWeek', null]
+                        }, {
+                            $gte: ['$salesmanager.endDateWeek', '$dateByWeek']
+                        }]
+                    }, {
+                        $and: [{
+                            $lte: ['$salesmanager.startDateWeek', '$dateByWeek']
+                        }, {
+                            $eq: ['$salesmanager.endDateWeek', null]
+                        }]
+                    }, {
+                        $and: [{
+                            $lte: ['$salesmanager.startDateWeek', '$dateByWeek']
+                        }, {
+                            $gte: ['$salesmanager.endDateWeek', '$dateByWeek']
+                        }]
+                    }]
+                }, {
+                    $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_POS)]
+                }]
+
+            };
 
             queryObject.$and = [];
 
@@ -388,6 +420,7 @@ var wTrack = function (event, models) {
                 $project: {
                     project   : {$arrayElemAt: ['$project', 0]},
                     employee  : 1,
+                    dateByWeek: 1,
                     department: 1,
                     month     : 1,
                     year      : 1,
@@ -397,10 +430,10 @@ var wTrack = function (event, models) {
                 }
             }, {
                 $lookup: {
-                    from        : 'Employees',
-                    localField  : 'project.salesmanager',
-                    foreignField: '_id',
-                    as          : 'salesmanager'
+                    from        : 'projectMembers',
+                    localField  : 'project._id',
+                    foreignField: 'projectId',
+                    as          : 'salesmanagers'
                 }
             }, {
                 $lookup: {
@@ -409,10 +442,28 @@ var wTrack = function (event, models) {
                     foreignField: '_id',
                     as          : 'customer'
                 }
+            },{
+                $unwind: '$salesmanagers'
             }, {
                 $project: {
                     customer      : {$arrayElemAt: ['$customer', 0]},
-                    salesmanager  : {$arrayElemAt: ['$salesmanager', 0]},
+                    salesmanagers               : 1,
+                    'salesmanager.startDateWeek': {
+                        $let: {
+                            vars: {
+                                startDate: '$salesmanagers.startDate'
+                            },
+                            in  : {$cond: [{$eq: ['$$startDate', null]}, null, {$add: [{$multiply: [{$year: '$$startDate'}, 100]}, {$week: '$$startDate'}]}]}
+                        }
+                    },
+                    'salesmanager.endDateWeek'  : {
+                        $let: {
+                            vars: {
+                                endDate: '$salesmanagers.endDate'
+                            },
+                            in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
+                        }
+                    },
                     project       : 1,
                     employee      : 1,
                     department    : 1,
@@ -423,6 +474,8 @@ var wTrack = function (event, models) {
                 }
             }, {
                 $project: {
+                    isValid             : salesManagerMatch,
+                    salesmanagers       : 1,
                     project             : 1,
                     employee            : 1,
                     department          : 1,
@@ -430,12 +483,44 @@ var wTrack = function (event, models) {
                     year                : 1,
                     week                : 1,
                     isPaid              : 1,
-                    'customer._id'      : 1,
-                    'salesmanager._id'  : 1
+                    'customer._id'      : 1
+                }
+            },{
+                $match: {
+                    isValid: true
                 }
             }, {
+                $sort: {
+                    'salesmanagers.startDate': 1
+                }
+            }, {
+                $group: {
+                    _id: '$_id',
+                    doc: {$last: '$$ROOT'}
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'doc.salesmanagers.employeeId',
+                    foreignField: '_id',
+                    as          : 'salesmanager'
+                }
+            }, {
+                $project: {
+                    salesmanager: {$arrayElemAt: ['$salesmanager', 0]},
+                    customer    : '$doc.customer',
+                    dateByWeek  : '$doc.dateByWeek',
+                    project     : '$doc.project',
+                    employee    : '$doc.employee',
+                    department  : '$doc.department',
+                    month       : '$doc.month',
+                    year        : '$doc.year',
+                    week        : '$doc.week',
+                    isPaid      : '$doc.isPaid'
+                }
+            }/*, {
                 $match: queryObject
-            }], function (err, result) {
+            }*/], function (err, result) {
                 if (err) {
                     return next(err);
                 }
