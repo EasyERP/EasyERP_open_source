@@ -500,6 +500,7 @@ define([], function () {
         BALANCESHEET      : 'balanceSheet',
         CASHFLOW          : 'cashFlow',
         CLOSEMONTH        : 'closeMonth',
+        PROFORMA          : 'Proforma',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
