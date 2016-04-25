@@ -10,8 +10,8 @@ module.exports = (function () {
         projectName     : {type: String, default: 'emptyProject', unique: true},
         task            : [{type: ObjectId, ref: 'Tasks', default: null}],
         customer        : {type: ObjectId, ref: 'Customers', default: null},
-        projectmanager  : {type: ObjectId, ref: 'Employees', default: null},
-        salesmanager    : {type: ObjectId, ref: 'Employees', default: null},//todo fix usage from SM to PM or delete
+        projectmanager  : {type: ObjectId, ref: 'Employees', default: null}, //todo fix usage from SM to PM or delete
+        salesmanager    : {type: ObjectId, ref: 'Employees', default: null},
         description     : String,
         whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         groups          : {
@@ -42,6 +42,23 @@ module.exports = (function () {
         },
         health          : {type: Number, default: 1},
         ID              : Number,
+        bonus           : [{
+            //_id: false,
+            employeeId: {
+                type: ObjectId,
+                ref : 'Employees'
+            },
+            bonusId   : {
+                type: ObjectId,
+                ref : 'bonusType'
+            },
+            startDate : {type: Date, default: null},
+            startWeek : Number,
+            startYear : Number,
+            endDate   : {type: Date, default: null},
+            endWeek   : Number,
+            endYear   : Number
+        }],
         budget          : {
             _id        : false,
             bonus      : Array,

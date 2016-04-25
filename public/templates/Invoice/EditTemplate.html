@@ -9,11 +9,26 @@
                         <%if(model.workflow && model.workflow.status !== 'Cancelled'){%>
                             <%if(model.workflow.status === 'New'){%>
                                 <%if(model.approved){%>
+                                    <%if(!model.emailed){%>
+                                        <button class="btn sendEmail">
+                                            <span>Send email</span>
+                                        </button>
+                                    <%} else {%>
+                                        <button class="btn sendEmail">
+                                            <span>Resend email</span>
+                                        </button>
+                                    <%}%>
                                     <button class="btn newPayment">
                                         <span>Pay</span>
                                     </button>
                                 <%} else {%>
                                     <%if(isFinancial){%>
+                                        <button class="btn sendEmail" style="display: none;">
+                                            <span>Send email</span>
+                                        </button>
+                                        <button class="btn newPayment" style="display: none;">
+                                            <span>Pay</span>
+                                        </button>
                                         <button class="btn approve">
                                             <span>Approve</span>
                                         </button>
@@ -25,9 +40,25 @@
                                 <% if(!isWtrack) {%>
                                 <%}%>
                             <%} else {%>
+                                <%if(model.approved){%>
                                     <button class="red newPayment">
                                         <span>Pay</span>
                                     </button>
+                                <%} else {%>
+                                    <%if(isFinancial){%>
+                                        <button class="btn sendEmail" style="display: none;">
+                                            <span>Send email</span>
+                                        </button>
+                                        <button class="btn newPayment" style="display: none;">
+                                            <span>Pay</span>
+                                        </button>
+                                        <button class="btn approve">
+                                            <span>Approve</span>
+                                        </button>
+                                    <%} else {%>
+                                        <span>Draft</span>
+                                    <%}%>
+                                <%}%>
                             <%}%>
                         <%} else {%>
                         <button class="red setDraft">

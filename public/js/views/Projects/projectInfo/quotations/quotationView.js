@@ -355,6 +355,8 @@ define([
             }, function (stages) {
                 self.stages = stages;
             });
+
+            self.eventChannel.trigger('elemCountChanged');
         }
 
     });

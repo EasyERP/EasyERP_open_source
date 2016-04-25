@@ -80,6 +80,8 @@ module.exports = {
         '56c9d555c3b88f6d64490fb5',//overtime Payable
         '565eb53a6aa50532e5df0bdc'
     ],
+    
+    CURRENT_LIABILITIES: '565eb53a6aa50532e5df0bdb',
 
     ACCOUNT_PAYABLE: '565eb53a6aa50532e5df0bdc',
 

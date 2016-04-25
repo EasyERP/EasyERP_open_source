@@ -1,0 +1,29 @@
+<div class="form-holder">
+    <form method="post" action="" id="sendEmailForm" class="form">
+        <fieldset>
+            <div class="inner">
+                <div class="topInputHolder">
+                    <h2>Email Invoice</h2>
+                </div>
+                <dl class="opp-info">
+                    <dt><label for="To">To:</label></dt>
+                    <dd>
+                        <input id="To" class="" type="email" value="<%= emails.To %>" multiple/>
+                    </dd>
+                    <dt><label for="Cc">Cc:</label></dt>
+                    <dd>
+                        <input id="Cc" class="" type="email" value="<%= emails.Cc %>" multiple/>
+                    </dd>
+                    <dt><label for="Attachments-list">Attachments:</label></dt>
+                    <dd>
+                        <ul id="Attachments-list" class="attachContainer">
+                            <% attachments.forEach(function(att) { %>
+                                <li><a href="download/<%=att.shortPas%>"><%=att.name %></a></li>
+                            <% }); %>
+                        </ul>
+                    </dd>
+                </dl>
+            </div>
+        </fieldset>
+    </form>
+</div>

@@ -5,12 +5,16 @@ var Project = function (models) {
     var wTrackSchema = mongoose.Schemas.wTrack;
     var MonthHoursSchema = mongoose.Schemas.MonthHours;
     var EmployeeSchema = mongoose.Schemas.Employee;
+    var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var jobsSchema = mongoose.Schemas.jobs;
     var _ = require('../node_modules/underscore');
     var moment = require('../public/js/libs/moment/moment');
     var async = require('async');
     var objectId = mongoose.Types.ObjectId;
     var CONSTANTS = require('../constants/mainConstants.js');
+    var Mailer = require('../helpers/mailer');
+    var mailer = new Mailer();
+    var pathMod = require("path");
 
     this.getForWtrack = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -49,6 +53,99 @@ var Project = function (models) {
 
             res.status(200).send(project);
         });
+    };
+
+    this.sendInvoice = function (req, res, next) {
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+        var data = req.body;
+        var attachments;
+        var mailOptions;
+
+        data.attachments = JSON.parse(data.attachments);
+
+        attachments = data.attachments.map(function(att) {
+            return {
+                path: pathMod.join(__dirname, '../routes', decodeURIComponent(att))
+            };
+        });
+
+        mailOptions = {
+            to         : data.To,
+            cc         : data.Cc,
+            subject    : 'Invoice ' + data.name,
+            attachments: attachments
+        };
+
+        mailer.sendInvoice(mailOptions, function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            Invoice.findByIdAndUpdate(data.id, {$set: {emailed: true}}, function(err, result) {
+                res.status(200).send({});
+            });
+        });
+    };
+
+    this.getEmails = function (req, res, next) {
+        var projectId =  req.params.id;
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+
+        Project.aggregate([
+            {
+                $match: {
+                    _id: objectId(projectId)
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'salesmanager',
+                    foreignField: '_id',
+                    as          : 'salesmanager'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'projectmanager',
+                    foreignField: '_id',
+                    as          : 'projectmanager'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'customer',
+                    foreignField: '_id',
+                    as          : 'customerCompany'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'customer',
+                    foreignField: 'company',
+                    as          : 'customerPersons'
+                }
+            }, {
+                $project: {
+                    salesmanager   : {$arrayElemAt: ['$salesmanager', 0]},
+                    projectmanager : {$arrayElemAt: ['$projectmanager', 0]},
+                    customerCompany: {$arrayElemAt: ['$customerCompany', 0]},
+                    customerPersons: 1
+                }
+            }, {
+                $project: {
+                    _id            : 0,
+                    salesmanager   : '$salesmanager.workEmail',
+                    projectmanager : '$projectmanager.workEmail',
+                    customerCompany: '$customerCompany.email',
+                    customerPersons: '$customerPersons.email'
+                }
+            }
+        ], function(err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
+
     };
 
     this.getFilterValues = function (req, res, next) {

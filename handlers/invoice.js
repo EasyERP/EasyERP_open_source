@@ -412,12 +412,13 @@ var Invoice = function (models, event) {
         waterFallTasks = [parallel, createInvoice/*, createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
-            if (err) {
-                return next(err);
-            }
             var project;
             var invoiceId = result._id;
             var products = result.products;
+
+            if (err) {
+                return next(err);
+            }
 
             Order.findByIdAndUpdate(id, {
                 $set: {
@@ -1371,6 +1372,9 @@ var Invoice = function (models, event) {
                             }
 
                             fs.readdir(dir, function (err, files) {
+                                if (err) {
+                                    return parallelCb();
+                                }
                                 async.each(files, function (file, cb) {
                                     var file = pathMod.join(dir, file);
                                     fs.unlink(file, function (err) {
@@ -1385,12 +1389,14 @@ var Invoice = function (models, event) {
                                     }
                                     fs.rmdir(dir, function (err) {
                                         if (err) {
+                                            return next(err);
                                         }
-                                        return next(err);
                                         parallelCb();
                                     });
                                 });
                             });
+
+
                         }
 
                         function journalEntryRemove(parallelCb) {

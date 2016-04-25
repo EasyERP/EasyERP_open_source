@@ -31,10 +31,17 @@ define([
                         that.trigger('showmore', models);
                     },
                     error  : function () {
-                        App.render({
-                            type: 'error',
-                            message: "Some Error."
-                        });
+                        if (xhr.status === 403) {
+                            App.render({
+                                type: 'error',
+                                message: 'No access'
+                            });
+                        } else {
+                            App.render({
+                                type: 'error',
+                                message: 'Some Error.'
+                            });
+                        }
                     }
                 });
             },

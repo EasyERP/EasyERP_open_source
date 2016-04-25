@@ -49,7 +49,7 @@ define([
             var isNewRow = row.hasClass('false');
             var text;
 
-            var startDate = this.prevStartDate(row) || this.project.startDate;
+            var startDate = this.prevStartDate(row) || this.project.startDate || new Date();
 
             if (target.prop('tagName') !== 'INPUT') {
                 this.hideNewSelect();
@@ -104,12 +104,13 @@ define([
             var prevStartDate;
             var prevDate;
             var nextDay;
+            var projectStartDate =  this.project.StartDate || new Date();
             if (!prevTd.length) {
                 return false;
             }
 
             prevRow = prevTd.closest('tr');
-            prevStartDate = prevRow.find('.startDateManager').text() === 'From start of project' ? this.project.StartDate : prevRow.find('.startDateManager').text();
+            prevStartDate = prevRow.find('.startDateManager').text() === 'From start of project' ? projectStartDate : prevRow.find('.startDateManager').text();
             prevDate = new Date(prevStartDate);
             nextDay = moment(prevDate).add(1, 'd');
 
@@ -373,13 +374,18 @@ define([
                 projectId: this.project._id
             };
             var model = new CurrentModel(startData);
+            var data = {
+                startDate : null,
+                endDate   : null
+            };
 
             e.preventDefault();
 
             startData.cid = model.cid;
-            if (!this.changedModels[startData.cid]) {
-                this.changedModels[startData.cid] = {};
-            }
+
+
+            this.changedModels[startData.cid] = data;
+
             this.changedModels[startData.cid].projectId = this.project._id;
 
             if (!this.isNewRow()) {

@@ -5,6 +5,8 @@ var CONSTANTS = require('../constants/mainConstants');
 var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
+var fs = require("fs");
+var pathMod = require("path");
 
 var Proforma = function (models) {
     'use strict';
@@ -19,9 +21,9 @@ var Proforma = function (models) {
     var JournalEntryHandler = require('./journalEntry');
     var _journalEntryHandler = new JournalEntryHandler(models);
 
-	oxr.set({app_id: process.env.OXR_APP_ID});
+    oxr.set({app_id: process.env.OXR_APP_ID});
 
-	this.create = function (req, res, next) {
+    this.create = function (req, res, next) {
         var dbIndex = req.session.lastDb;
         var id = req.body.quotationId;
         var Proforma = models.get(dbIndex, 'Proforma', ProformaSchema);
@@ -31,136 +33,162 @@ var Proforma = function (models) {
         var parallelTasks;
         var waterFallTasks;
 
-		function getRates(callback) {
-			oxr.historical(date, function () {
-				fx.rates = oxr.rates;
-				fx.base = oxr.base;
-				callback();
-			});
-		}
+        function getRates(callback) {
+            oxr.historical(date, function () {
+                fx.rates = oxr.rates;
+                fx.base = oxr.base;
+                callback();
+            });
+        }
 
-		function fetchFirstWorkflow(callback) {
-			request = {
-				query  : {
-					wId: 'Proforma'
-				},
-				session: req.session
-			};
-			workflowHandler.getFirstForConvert(request, callback);
-		}
+        function renameFolder(orderId, invoiceId) {
+            var os = require("os");
+            var osType = (os.type().split('_')[0]);
+            var dir;
+            var oldDir;
+            var newDir;
+            switch (osType) {
+                case "Windows":
+                {
+                    dir = pathMod.join(__dirname, '..\\routes\\uploads\\');
+                }
+                    break;
+                case "Linux":
+                {
+                    dir = pathMod.join(__dirname, '..\/routes\/uploads\/');
+                }
+            }
+
+            oldDir = dir + orderId;
+            newDir = dir + invoiceId;
+
+            fs.rename(oldDir, newDir);
+        }
+
+        function fetchFirstWorkflow(callback) {
+            request = {
+                query  : {
+                    wId: 'Proforma'
+                },
+                session: req.session
+            };
+            workflowHandler.getFirstForConvert(request, callback);
+        }
 
         function findQuotation(callback) {
 
-			Quotation.aggregate([
-				{
-					$match: {
-						_id: objectId(id)
-					}
-				},
-				{
-					$unwind: '$products'
-				},
-				{
-					$lookup: {
-						from        : 'Products',
-						localField  : 'products.product',
-						foreignField: '_id',
-						as          : 'products.product'
-					}
-				},
-				{
-					$lookup: {
-						from        : 'jobs',
-						localField  : 'products.jobs',
-						foreignField: '_id',
-						as          : 'products.jobs'
-					}
-				},
-				{
-					$lookup: {
-						from        : 'Project',
-						localField  : 'project',
-						foreignField: '_id',
-						as          : 'project'
-					}
-				},
-				{
-					$lookup: {
-						from        : 'currency',
-						localField  : 'currency._id',
-						foreignField: '_id',
-						as          : 'currency.obj'
-					}
-				},
-				{
-					$project: {
-						'products.product'    : {$arrayElemAt: ['$products.product', 0]},
-						'products.jobs'       : {$arrayElemAt: ['$products.jobs', 0]},
-						'currency.obj'        : {$arrayElemAt: ['$currency.obj', 0]},
-						project               : {$arrayElemAt: ['$project', 0]},
-						'products.subTotal'   : 1,
-						'products.unitPrice'  : 1,
-						'products.taxes'      : 1,
-						'products.description': 1,
-						'products.quantity'   : 1,
-						'currency._id'        : 1,
-						forSales              : 1,
-						type                  : 1,
-						isOrder               : 1,
-						supplier              : 1,
-						deliverTo             : 1,
-						orderDate             : 1,
-						expectedDate          : 1,
-						name                  : 1,
-						destination           : 1,
-						incoterm              : 1,
-						invoiceControl        : 1,
-						invoiceRecived        : 1,
-						paymentTerm           : 1,
-						paymentInfo           : 1,
-						workflow              : 1,
-						whoCanRW              : 1,
-						groups                : 1,
-						creationDate          : 1,
-						createdBy             : 1,
-						editedBy              : 1
-					}
-				},
-				{
-					$group: {
-						_id                   : '$_id',
-						products              : {$push: '$products'},
-						project               : {$first: '$project'},
-						currency              : {$first: '$currency'},
-						forSales              : {$first: '$forSales'},
-						type                  : {$first: '$forSales'},
-						isOrder               : {$first: '$isOrder'},
-						supplier              : {$first: '$supplier'},
-						deliverTo             : {$first: '$deliverTo'},
-						orderDate             : {$first: '$orderDate'},
-						expectedDate          : {$first: '$expectedDate'},
-						name                  : {$first: '$name'},
-						destination           : {$first: '$destination'},
-						incoterm              : {$first: '$incoterm'},
-						invoiceControl        : {$first: '$invoiceControl'},
-						invoiceRecived        : {$first: '$invoiceRecived'},
-						paymentTerm           : {$first: '$paymentTerm'},
-						paymentInfo           : {$first: '$paymentInfo'},
-						workflow              : {$first: '$workflow'},
-						whoCanRW              : {$first: '$whoCanRW'},
-						groups                : {$first: '$groups'},
-						creationDate          : {$first: '$creationDate'},
-						createdBy             : {$first: '$createdBy'},
-						editedBy              : {$first: '$editedBy'}
-					}
-				}
-			], function (err, quotation) {
-				if (err) {
-					return next(err);
-				}
-				callback(err, quotation[0]);
-			});
-		}
+            Quotation.aggregate([
+                {
+                    $match: {
+                        _id: objectId(id)
+                    }
+                },
+                {
+                    $unwind: '$products'
+                },
+                {
+                    $lookup: {
+                        from        : 'Products',
+                        localField  : 'products.product',
+                        foreignField: '_id',
+                        as          : 'products.product'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'jobs',
+                        localField  : 'products.jobs',
+                        foreignField: '_id',
+                        as          : 'products.jobs'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Project',
+                        localField  : 'project',
+                        foreignField: '_id',
+                        as          : 'project'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'currency',
+                        localField  : 'currency._id',
+                        foreignField: '_id',
+                        as          : 'currency.obj'
+                    }
+                },
+                {
+                    $project: {
+                        'products.product'    : {$arrayElemAt: ['$products.product', 0]},
+                        'products.jobs'       : {$arrayElemAt: ['$products.jobs', 0]},
+                        'currency.obj'        : {$arrayElemAt: ['$currency.obj', 0]},
+                        project               : {$arrayElemAt: ['$project', 0]},
+                        'products.subTotal'   : 1,
+                        'products.unitPrice'  : 1,
+                        'products.taxes'      : 1,
+                        'products.description': 1,
+                        'products.quantity'   : 1,
+                        'currency._id'        : 1,
+                        forSales              : 1,
+                        type                  : 1,
+                        isOrder               : 1,
+                        supplier              : 1,
+                        deliverTo             : 1,
+                        orderDate             : 1,
+                        expectedDate          : 1,
+                        name                  : 1,
+                        destination           : 1,
+                        incoterm              : 1,
+                        invoiceControl        : 1,
+                        invoiceRecived        : 1,
+                        paymentTerm           : 1,
+                        paymentInfo           : 1,
+                        workflow              : 1,
+                        whoCanRW              : 1,
+                        groups                : 1,
+                        creationDate          : 1,
+                        createdBy             : 1,
+                        editedBy              : 1,
+                        attachments           : 1
+                    }
+                },
+                {
+                    $group: {
+                        _id           : '$_id',
+                        products      : {$push: '$products'},
+                        project       : {$first: '$project'},
+                        currency      : {$first: '$currency'},
+                        forSales      : {$first: '$forSales'},
+                        type          : {$first: '$forSales'},
+                        isOrder       : {$first: '$isOrder'},
+                        supplier      : {$first: '$supplier'},
+                        deliverTo     : {$first: '$deliverTo'},
+                        orderDate     : {$first: '$orderDate'},
+                        expectedDate  : {$first: '$expectedDate'},
+                        name          : {$first: '$name'},
+                        destination   : {$first: '$destination'},
+                        incoterm      : {$first: '$incoterm'},
+                        invoiceControl: {$first: '$invoiceControl'},
+                        invoiceRecived: {$first: '$invoiceRecived'},
+                        paymentTerm   : {$first: '$paymentTerm'},
+                        paymentInfo   : {$first: '$paymentInfo'},
+                        workflow      : {$first: '$workflow'},
+                        whoCanRW      : {$first: '$whoCanRW'},
+                        groups        : {$first: '$groups'},
+                        creationDate  : {$first: '$creationDate'},
+                        createdBy     : {$first: '$createdBy'},
+                        editedBy      : {$first: '$editedBy'},
+                        attachments   : {$first: '$attachments'}
+                    }
+                }
+            ], function (err, quotation) {
+                if (err) {
+                    return next(err);
+                }
+                callback(err, quotation[0]);
+            });
+        }
 
         function parallel(callback) {
             async.parallel(parallelTasks, callback);
@@ -179,10 +207,12 @@ var Proforma = function (models) {
                 err = new Error(RESPONSES.BAD_REQUEST);
                 err.status = 400;
 
-				return callback(err);
-			}
+                return callback(err);
+            }
 
             delete quotation._id;
+
+            quotation.attachments[0].shortPas = quotation.attachments[0].shortPas.replace('..%2Froutes', '');
 
             proforma = new Proforma(quotation);
 
@@ -198,17 +228,17 @@ var Proforma = function (models) {
             proforma.journal = CONSTANTS.PROFORMA_JOURNAL;
 
             proforma.currency.rate = oxr.rates[quotation.currency.obj.name];
-			proforma.currency._id = quotation.currency._id;
+            proforma.currency._id = quotation.currency._id;
 
-			if (!proforma.project) {
-				proforma.project = quotation.project ? quotation.project._id : null;
-			}
+            if (!proforma.project) {
+                proforma.project = quotation.project ? quotation.project._id : null;
+            }
 
             proforma.supplier = quotation.supplier;
             proforma.salesPerson = quotation.project.projectmanager || null;
 
             proforma.save(function (err, result) {
-                if (err){
+                if (err) {
                     return callback(err);
                 }
 
@@ -225,27 +255,44 @@ var Proforma = function (models) {
                     _id  : proforma._id
                 },
                 amount        : 0,
-                date: proforma.invoiceDate
+                date          : proforma.invoiceDate
             };
 
             var amount = proforma.currency.rate * proforma.paymentInfo.total;
 
             body.amount = amount;
 
-            _journalEntryHandler.create(body, req.session.lastDb, function() {}, req.session.uId);
+            _journalEntryHandler.create(body, req.session.lastDb, function () {
+            }, req.session.uId);
 
-	        callback(null, proforma);
+            callback(null, proforma);
         }
 
-		parallelTasks = [findQuotation, fetchFirstWorkflow, getRates];
-		waterFallTasks = [parallel, createProforma, createJournalEntry];
+        parallelTasks = [findQuotation, fetchFirstWorkflow, getRates];
+        waterFallTasks = [parallel, createProforma, createJournalEntry];
 
         async.waterfall(waterFallTasks, function (err, result) {
+            var proformaId = result._id.toString();
+            var orderId = result.sourceDocument.toString();
+
             if (err) {
                 return next(err);
             }
 
-            res.status(201).send(result);
+            result.attachments[0].shortPas = result.attachments[0].shortPas.replace(orderId, proformaId);
+
+            Proforma.findByIdAndUpdate(proformaId, {
+                $set: {
+                    attachments: result.attachments
+                }
+            }, {new: true}, function (err) {
+                if (err) {
+                    return next(err);
+                }
+                renameFolder(orderId, proformaId);
+
+                res.status(201).send(result);
+            });
         });
     };
 };

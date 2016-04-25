@@ -213,7 +213,7 @@ dbObject.once('open', function callback() {
      });
      };*/
 
-    var weeksArray = [/*1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30, 31, 32, 33,34,35,36,37,38,39,*/40, 41, 42, 43, 44/*, 45, 46, 47, 48, 49, 50, 51, 52, 53*/];
+    var weeksArray = [/*1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,*/ 31, 32, 33,34,35,36,37,38,39,40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53];
 
     weeksArray.forEach(function (week) {
         console.log('start week ', week);
@@ -223,7 +223,7 @@ dbObject.once('open', function callback() {
             var holidaysObject = {};
             var vacationObject = {};
 
-            var timeToSet = {hour: 18, minute: 1, second: 0};
+            var timeToSet = {hour: 15, minute: 1, second: 0};
             var createdDateObject = {};
             var createDirect;
             var waterfallForSalary;
@@ -237,7 +237,7 @@ dbObject.once('open', function callback() {
             var wTracks;
 
             wTrackFinder = function (wfcallback) {
-                WTrack.find({year: 2014, week: week}, function (err, result) {
+                WTrack.find({year: 2015, week: week}, function (err, result) {
                     if (err) {
                         return wfcallback(err);
                     }
@@ -292,7 +292,7 @@ dbObject.once('open', function callback() {
 
                     createDirect = function (createWaterfallCb) {
                         var salaryFinder = function (parallelCb) {
-                            var query = Employee.find({_id: {$in: employeesArray}}, {transfer: 1}).lean();
+                            var query = Employee.find({_id: {$in: employeesArray}}, {transfer: 1, fire: 1}).lean();
 
                             query.exec(function (err, employees) {
                                 if (err) {
@@ -306,7 +306,9 @@ dbObject.once('open', function callback() {
                                     }
 
                                     transferArray.forEach(function (transferObj) {
-                                        salaryObject[employee._id][transferObj.date] = transferObj.salary || 0;
+                                        if (transferObj.status !== 'fired'){
+                                            salaryObject[employee._id][transferObj.date] = transferObj.salary || 0;
+                                        }
                                     });
                                 });
 
@@ -400,6 +402,10 @@ dbObject.once('open', function callback() {
                                 }
 
                                 var date = moment().isoWeekYear(year).month(wTrackModel.month - 1).isoWeek(wTrackModel.week).startOf('isoWeek');
+
+                                if (date.year() === 2014){
+                                    return asyncCb();
+                                }
 
                                 for (j = 5; j >= 1; j--) {
                                     date = moment(date).day(j);
@@ -771,16 +777,11 @@ dbObject.once('open', function callback() {
                                         var department;
 
                                         for (j = length - 1; j >= 0; j--) {
-                                            if (date >= hireArray[j].date) {
+                                            if ((date >= hireArray[j].date) && (hireArray[j].status !== 'fired')) {
                                                 salary = hireArray[j].salary;
                                                 department = hireArray[j].department;
                                                 break;
                                             }
-                                        }
-
-                                        if (employee.toString() === '55b92ad221e4b7c40f000030' && dateKey === '20150330') {
-                                            console.log('ddd');
-
                                         }
 
                                         if (!vacation) {

@@ -560,8 +560,8 @@ define([
 
                 var projecttype = thisEl.find('#projectTypeDD').data('id');
                 var $userNodes = $('#usereditDd option:selected');
-                var startDate = $.trim(thisEl.find('#StartDate').val());
-                var endDate = $.trim(thisEl.find('#EndDate').val());
+                //var startDate = $.trim(thisEl.find('#StartDate').val());
+                //var endDate = $.trim(thisEl.find('#EndDate').val());
                 var users = [];
 
                 var budget = this.formModel.get('budget');
@@ -571,7 +571,7 @@ define([
 
                 var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
                 var health = thisEl.find('#health a').data('value');
-                var _targetEndDate = $.trim(thisEl.find('#EndDateTarget').val());
+                //var _targetEndDate = $.trim(thisEl.find('#EndDateTarget').val());
                 var description = $.trim(thisEl.find('#description').val());
                 var data = {
                     projectName     : projectName,
@@ -590,9 +590,9 @@ define([
                     },
                     whoCanRW        : whoCanRW,
                     health          : health,
-                    StartDate       : startDate,
-                    EndDate         : endDate,
-                    TargetEndDate   : _targetEndDate,
+                    //StartDate       : startDate,
+                    //EndDate         : endDate,
+                    //TargetEndDate   : _targetEndDate,
                     budget          : budget
                 };
 
@@ -645,6 +645,7 @@ define([
             },
 
             chooseOption: function (e) {
+                var id;
                 var data;
                 var attrId = $(e.target).parents("td").find(".current-selected").attr('id');
 
@@ -653,15 +654,15 @@ define([
                 if ($(e.target).parents('dd').find('.current-selected').length) {
                     $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
                 } else {
-                    $(e.target).parents('td').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
-
-                    var id = $(e.target).parents('td').closest('tr').attr('data-id');
+                    id = $(e.target).parents('td').closest('tr').attr('data-id');
 
                     if (attrId === 'workflow') {
                         data = {_id: id, workflowId: $(e.target).attr('id')};
                     } else if (attrId === 'type') {
                         data = {_id: id, type: $(e.target).text()};
                     }
+
+                    $(e.target).parents('td').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
 
                     dataService.postData('/jobs/update', data, function (err, result) {
                         if (err) {
@@ -930,6 +931,9 @@ define([
                 dataService.getData('invoice/stats/project', {filter: filter}, function (response) {
                     if (response && response.success) {
                         self.renderInvoiceStats(response.success);
+                    } else {
+
+                        App.stopPreload();
                     }
 
                     if (typeof cb === 'function') {
@@ -951,6 +955,9 @@ define([
                 dataService.getData('proforma/stats/project', {filter: filter}, function (response) {
                     if (response && response.success) {
                         self.renderProformaStats(response.success);
+                    } else {
+
+                        App.stopPreload();
                     }
 
                     if (typeof cb === 'function') {
@@ -1478,7 +1485,9 @@ define([
                     self.getProforma(null, quotationId);
                     self.activeTab();
                     self.renderTabCounter();
-                    App.stopPreload();
+                    if (!quotationId) {
+                        App.stopPreload();
+                    }
                 });
 
             },
@@ -1494,6 +1503,7 @@ define([
                 var atachEl;
                 var notDiv;
                 var container;
+                var accessData = App.currentUser && App.currentUser.profile && App.currentUser.profile.profileAccess || [];
 
                 App.startPreload();
 
@@ -1534,7 +1544,55 @@ define([
 
                 _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
 
-                paralellTasks = [this.renderProjectInfo, this.getProforma, this.getInvoice, this.getWTrack, this.getQuotations, this.getOrders, this.getProjectMembers];
+                paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
+
+                accessData.forEach(function(accessElement) {
+                    //todo move dom elems removal to template
+                    if (accessElement.module === 64) {
+                        if (accessElement.access.read) {
+                            paralellTasks.push(self.getInvoice);
+                            paralellTasks.push(self.getProforma);
+                        } else {
+                            thisEl.find('#invoicesTab').parent().remove();
+                            thisEl.find('div#invoices').parent().remove();
+                            thisEl.find('#proformaTab').parent().remove();
+                            thisEl.find('div#proforma').parent().remove();
+                            thisEl.find('#paymentsTab').parent().remove();
+                            thisEl.find('div#payments').parent().remove();
+
+
+                            self.getPayments = function() {};
+                            self.getInvoiceStats = function() {};
+                            self.getProformaStats = function() {};
+                        }
+                    }
+
+                    if (accessElement.module === 75) {
+                        if (accessElement.access.read) {
+                            paralellTasks.push(self.getWTrack);
+                        } else {
+                            thisEl.find('#timesheetTab').parent().remove();
+                            thisEl.find('div#timesheet').parent().remove();
+                        }
+                    }
+
+                    if (accessElement.module === 72) {
+                        if (accessElement.access.read) {
+                            paralellTasks.push(self.getProjectMembers);
+                        } else {
+                            thisEl.find('#projectMembersTab').parent().remove();
+                            thisEl.find('div#projectMembers').parent().remove();
+                        }
+                    }
+
+                });
+
+                if (!accessData.length) {
+                    paralellTasks.push(self.getInvoice);
+                    paralellTasks.push(self.getProforma);
+                    paralellTasks.push(self.getWTrack);
+                    paralellTasks.push(self.getProjectMembers);
+                }
 
                 async.parallel(paralellTasks, function (err, result) {
                     self.getPayments();

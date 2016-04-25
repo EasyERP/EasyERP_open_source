@@ -61,21 +61,27 @@ define([
                 return false;
 
             },
+
             notHide      : function () {
                 return false;
             },
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
+
             chooseOption : function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
+
             nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
+
             prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
             },
+
             keydownHandler: function (e) {
                 switch (e.which) {
                     case 27:
@@ -85,6 +91,7 @@ define([
                         break;
                 }
             },
+
             changeTab: function (e) {
                 var holder = $(e.target);
                 var n;
@@ -104,6 +111,7 @@ define([
                 dialog_holder.find(itemActiveSelector).removeClass("active");
                 dialog_holder.find(itemSelector).eq(n).addClass("active");
             },
+
             cancelOrder: function (e) {
                 e.preventDefault();
 
@@ -138,6 +146,7 @@ define([
                     });
                 });
             },
+
             createInvoice: function(e) {
                 var self = this;
                 var $attachment;
@@ -155,6 +164,7 @@ define([
                 $attachment.hide();
 
             },
+
             uploadAttachment: function (event) {
                 var self = this;
                 var currentModel = this.model;
@@ -212,12 +222,14 @@ define([
                 addFrmAttach.submit();
                 addFrmAttach.off('submit');
             },
+
             fileSizeIsAcceptable: function (file) {
                 if (!file) {
                     return false;
                 }
                 return file.size < App.File.MAXSIZE;
             },
+
             receiveInvoice: function (e) {
                 e && e.preventDefault();
 
@@ -296,6 +308,7 @@ define([
                     }
                 });
             },
+
             setDraft: function (e) {
                 e.preventDefault();
 
@@ -326,6 +339,7 @@ define([
                     });
                 });
             },
+
             saveItem: function (invoiceCb) {
 
                 var self = this;

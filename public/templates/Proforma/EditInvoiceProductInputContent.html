@@ -9,7 +9,7 @@
     <td data-name="productDescr" class="<%=editable  ? 'editable' : ''%>"><span><%=product.description%></span></td>
     <% } %>
     <td data-name="quantity" class=""><span><%=product.quantity%></span></td>
-    <% var editable = model.workflow && model.workflow.name !== 'Invoiced' && model.workflow.name !== 'Paid'%>
+    <% var editable = !approved %>
     <td data-name="price" class="<%= editable ? 'editable' : ''%> forNum">
         <% if(editable) { %>
         <input id="editInput" maxlength="9" class="statusInfo" size=7 type="text" value="<%=product.unitPrice%>" />

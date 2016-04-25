@@ -21,8 +21,8 @@ var ObjectId = mongoose.Types.ObjectId;
 var connectOptions = {
     user: 'easyerp',
     pass: '1q2w3e!@#',
-    w: 1,
-    j: true
+    w   : 1,
+    j   : true
 };
 
 // var dbObject = mongoose.createConnection('144.76.56.111:28017/lilyadb', connectOptions);
@@ -101,7 +101,7 @@ dbObject.once('open', function callback() {
                             return waterfallCb(err);
                         }
 
-                        if(quotation.currency && quotation.currency.rate){
+                        if (quotation.currency && quotation.currency.rate) {
                             totalAmount = product.unitPrice / quotation.currency.rate;
                         } else {
                             totalAmount = product.unitPrice;
@@ -227,7 +227,14 @@ dbObject.once('open', function callback() {
                                     cb(null, {wTrack: result, monthHours: months});
                                 });
                             } else {
-                                ProjectModel.update({_id: project._id}, {$set: {budget: {projectTeam: [], bonus: []}}}, function (err, result) {
+                                ProjectModel.update({_id: project._id}, {
+                                    $set: {
+                                        budget: {
+                                            projectTeam: [],
+                                            bonus      : []
+                                        }
+                                    }
+                                }, function (err, result) {
                                     if (err) {
                                         return console.log(err);
                                     }
@@ -362,26 +369,28 @@ dbObject.once('open', function callback() {
 
                                 response = response || [];
 
-                                bonuses.forEach(function (element) {
-                                    var objToSave = {};
+                                if (bonuses) {
+                                    bonuses.forEach(function (element) {
+                                        var objToSave = {};
 
-                                    objToSave.bonus = 0;
-                                    objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
-                                    objToSave.percentage = element.bonusId.name;
+                                        objToSave.bonus = 0;
+                                        objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
+                                        objToSave.percentage = element.bonusId.name;
 
-                                    if (element.bonusId.isPercent) {
-                                        objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
-                                        bonus.push(objToSave);
-                                    } else {
-                                        monthHours.forEach(function (month) {
-                                            objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
-                                        });
+                                        if (element.bonusId.isPercent) {
+                                            objToSave.bonus = (budgetTotal.revenueSum / 100) * element.bonusId.value * 100;
+                                            bonus.push(objToSave);
+                                        } else {
+                                            monthHours.forEach(function (month) {
+                                                objToSave.bonus += (hoursByMonth[month._id] / month.value[0]) * element.bonusId.value;
+                                            });
 
-                                        objToSave.bonus = objToSave.bonus * 100;
-                                        bonus.push(objToSave);
-                                    }
+                                            objToSave.bonus = objToSave.bonus * 100;
+                                            bonus.push(objToSave);
+                                        }
 
-                                });
+                                    });
+                                }
 
                                 keysForPT = Object.keys(projectTeam);
 
@@ -445,7 +454,7 @@ dbObject.once('open', function callback() {
                         });
 
                     }, function () {
-                        event.emit('updateJobBudget', { pId: pId});
+                        event.emit('updateJobBudget', {pId: pId});
                     });
                 });
 
@@ -717,7 +726,6 @@ dbObject.once('open', function callback() {
         });
 
     });
-
 
 
 });
