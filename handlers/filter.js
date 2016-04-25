@@ -14,7 +14,9 @@ var Filters = function (models) {
     var OpportunitiesSchema = mongoose.Schemas.Opportunitie;
     var journalEntrySchema = mongoose.Schemas.journalEntry;
     var _ = require('../node_modules/underscore');
+    var objectId = mongoose.Types.ObjectId;
     var async = require('async');
+    var CONSTANTS = require('../constants/mainConstants.js');
     var moment = require('../public/js/libs/moment/moment');
 
     this.getFiltersValues = function (req, res, next) {
@@ -178,20 +180,35 @@ var Filters = function (models) {
                 }
             }, {
                 $lookup: {
-                    from        : "Employees",
-                    localField  : "project.salesmanager",
-                    foreignField: "_id", as: "salesmanager"
+                    from        : "projectMembers",
+                    localField  : "project._id",
+                    foreignField: "projectId",
+                    as: "salesmanagers"
                 }
             }, {
                 $lookup: {
                     from        : "Customers",
                     localField  : "project.customer",
-                    foreignField: "_id", as: "customer"
+                    foreignField: "_id",
+                    as: "customer"
+                }
+            }, {
+                $unwind: '$salesmanagers'
+            }, {
+                $match : {
+                'salesmanagers.projectPositionId' :  objectId(CONSTANTS.SALES_MANAGER_POS)
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "salesmanagers.employeeId",
+                    foreignField: "_id",
+                    as: "salesmanager"
                 }
             }, {
                 $project: {
+                    salesmanager  : {$arrayElemAt: ["$salesmanager", 0]},
                     customer      : {$arrayElemAt: ["$customer", 0]},
-                    salesmanager: {$arrayElemAt: ["$salesmanager", 0]},
                     project       : 1,
                     employee      : 1,
                     department    : 1,
