@@ -23,6 +23,12 @@
                                     </button>
                                 <%} else {%>
                                     <%if(isFinancial){%>
+                                        <button class="btn sendEmail" style="display: none;">
+                                            <span>Send email</span>
+                                        </button>
+                                        <button class="btn newPayment" style="display: none;">
+                                            <span>Pay</span>
+                                        </button>
                                         <button class="btn approve">
                                             <span>Approve</span>
                                         </button>
@@ -34,9 +40,25 @@
                                 <% if(!isWtrack) {%>
                                 <%}%>
                             <%} else {%>
+                                <%if(model.approved){%>
                                     <button class="red newPayment">
                                         <span>Pay</span>
                                     </button>
+                                <%} else {%>
+                                    <%if(isFinancial){%>
+                                        <button class="btn sendEmail" style="display: none;">
+                                            <span>Send email</span>
+                                        </button>
+                                        <button class="btn newPayment" style="display: none;">
+                                            <span>Pay</span>
+                                        </button>
+                                        <button class="btn approve">
+                                            <span>Approve</span>
+                                        </button>
+                                    <%} else {%>
+                                        <span>Draft</span>
+                                    <%}%>
+                                <%}%>
                             <%}%>
                         <%} else {%>
                         <button class="red setDraft">

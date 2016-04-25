@@ -10,6 +10,7 @@ var Jobs = function (models, event) {
     var jobsInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var ProjectSchema = mongoose.Schemas['Project'];
     var PaymentSchema = mongoose.Schemas['Payment'];
+    var journalEntrySchema = mongoose.Schemas.journalEntry;
     var CONSTANTS = require('../constants/mainConstants.js');
 
     var access = require("../Modules/additions/access.js")(models);
@@ -115,62 +116,62 @@ var Jobs = function (models, event) {
         JobsModel
             .aggregate([{
                 $lookup: {
-                    from                   : "Project",
-                    localField             : "project",
+                    from: "Project",
+                    localField: "project",
                     foreignField: "_id", as: "project"
                 }
             }, {
                 $lookup: {
-                    from                   : "Invoice",
-                    localField             : "invoice",
+                    from: "Invoice",
+                    localField: "invoice",
                     foreignField: "_id", as: "invoice"
                 }
             }, {
                 $lookup: {
-                    from                   : "workflows",
-                    localField             : "workflow",
+                    from: "workflows",
+                    localField: "workflow",
                     foreignField: "_id", as: "workflow"
                 }
             }, {
                 $lookup: {
-                    from                   : "Quotation",
-                    localField             : "quotation",
+                    from: "Quotation",
+                    localField: "quotation",
                     foreignField: "_id", as: "quotation"
                 }
             }, {
                 $project: {
-                    name     : 1,
-                    workflow : {$arrayElemAt: ["$workflow", 0]},
-                    type     : 1,
-                    wTracks  : 1,
-                    project  : {$arrayElemAt: ["$project", 0]},
-                    budget   : 1,
+                    name: 1,
+                    workflow: {$arrayElemAt: ["$workflow", 0]},
+                    type: 1,
+                    wTracks: 1,
+                    project: {$arrayElemAt: ["$project", 0]},
+                    budget: 1,
                     quotation: {$arrayElemAt: ["$quotation", 0]},
-                    invoice  : {$arrayElemAt: ["$invoice", 0]}
+                    invoice: {$arrayElemAt: ["$invoice", 0]}
                 }
             }, {
                 $lookup: {
-                    from                       : "Payment",
-                    localField                 : "invoice._id",
+                    from: "Payment",
+                    localField: "invoice._id",
                     foreignField: "invoice", as: "payments"
                 }
             }, {
                 $lookup: {
-                    from                   : "Employees",
-                    localField             : "project.projectmanager",
+                    from: "Employees",
+                    localField: "project.projectmanager",
                     foreignField: "_id", as: "projectmanager"
                 }
             }, {
                 $project: {
-                    order         : {
+                    order: {
                         $cond: {
-                            if  : {
+                            if: {
                                 $eq: ['$type', 'Not Quoted']
                             },
                             then: -1,
                             else: {
                                 $cond: {
-                                    if  : {
+                                    if: {
                                         $eq: ['$type', 'Quoted']
                                     },
                                     then: 0,
@@ -179,32 +180,32 @@ var Jobs = function (models, event) {
                             }
                         }
                     },
-                    name          : 1,
-                    workflow      : 1,
-                    type          : 1,
-                    wTracks       : 1,
-                    project       : 1,
-                    budget        : 1,
-                    quotation     : 1,
-                    invoice       : 1,
+                    name: 1,
+                    workflow: 1,
+                    type: 1,
+                    wTracks: 1,
+                    project: 1,
+                    budget: 1,
+                    quotation: 1,
+                    invoice: 1,
                     projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
-                    payment       : {
-                        paid : {$sum: '$payments.paidAmount'},
+                    payment: {
+                        paid: {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
                     }
                 }
             }, {
                 $project: {
-                    order         : 1,
-                    name          : 1,
-                    workflow      : 1,
-                    type          : 1,
-                    wTracks       : 1,
-                    project       : 1,
-                    budget        : 1,
-                    quotation     : 1,
-                    invoice       : 1,
-                    payment       : 1,
+                    order: 1,
+                    name: 1,
+                    workflow: 1,
+                    type: 1,
+                    wTracks: 1,
+                    project: 1,
+                    budget: 1,
+                    quotation: 1,
+                    invoice: 1,
+                    payment: 1,
                     projectmanager: 1
                 }
             }, {
@@ -226,6 +227,7 @@ var Jobs = function (models, event) {
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', jobsInvoiceSchema);
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+        var JournalEntryModel = models.get(req.session.lastDb, "journalEntry", journalEntrySchema);
 
         var queryObject = {};
         var queryObjectStage2 = {};
@@ -274,62 +276,62 @@ var Jobs = function (models, event) {
         JobsModel
             .aggregate([{
                 $lookup: {
-                    from                   : "Project",
-                    localField             : "project",
+                    from: "Project",
+                    localField: "project",
                     foreignField: "_id", as: "project"
                 }
             }, {
                 $lookup: {
-                    from                   : "Invoice",
-                    localField             : "invoice",
+                    from: "Invoice",
+                    localField: "invoice",
                     foreignField: "_id", as: "invoice"
                 }
             }, {
                 $lookup: {
-                    from                   : "workflows",
-                    localField             : "workflow",
+                    from: "workflows",
+                    localField: "workflow",
                     foreignField: "_id", as: "workflow"
                 }
             }, {
                 $lookup: {
-                    from                   : "Quotation",
-                    localField             : "quotation",
+                    from: "Quotation",
+                    localField: "quotation",
                     foreignField: "_id", as: "quotation"
                 }
             }, {
                 $project: {
-                    name     : 1,
-                    workflow : {$arrayElemAt: ["$workflow", 0]},
-                    type     : 1,
-                    wTracks  : 1,
-                    project  : {$arrayElemAt: ["$project", 0]},
-                    budget   : 1,
+                    name: 1,
+                    workflow: {$arrayElemAt: ["$workflow", 0]},
+                    type: 1,
+                    wTracks: 1,
+                    project: {$arrayElemAt: ["$project", 0]},
+                    budget: 1,
                     quotation: {$arrayElemAt: ["$quotation", 0]},
-                    invoice  : {$arrayElemAt: ["$invoice", 0]}
+                    invoice: {$arrayElemAt: ["$invoice", 0]}
                 }
             }, {
                 $lookup: {
-                    from                       : "Payment",
-                    localField                 : "invoice._id",
+                    from: "Payment",
+                    localField: "invoice._id",
                     foreignField: "invoice", as: "payments"
                 }
             }, {
                 $lookup: {
-                    from                   : "Employees",
-                    localField             : "project.projectmanager",
+                    from: "Employees",
+                    localField: "project.projectmanager",
                     foreignField: "_id", as: "projectmanager"
                 }
             }, {
                 $project: {
-                    order         : {
+                    order: {
                         $cond: {
-                            if  : {
+                            if: {
                                 $eq: ['$type', 'Not Quoted']
                             },
                             then: -1,
                             else: {
                                 $cond: {
-                                    if  : {
+                                    if: {
                                         $eq: ['$type', 'Quoted']
                                     },
                                     then: 0,
@@ -338,32 +340,32 @@ var Jobs = function (models, event) {
                             }
                         }
                     },
-                    name          : 1,
-                    workflow      : 1,
-                    type          : 1,
-                    wTracks       : 1,
-                    project       : 1,
-                    budget        : 1,
-                    quotation     : 1,
-                    invoice       : 1,
+                    name: 1,
+                    workflow: 1,
+                    type: 1,
+                    wTracks: 1,
+                    project: 1,
+                    budget: 1,
+                    quotation: 1,
+                    invoice: 1,
                     projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
-                    payment       : {
-                        paid : {$sum: '$payments.paidAmount'},
+                    payment: {
+                        paid: {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
                     }
                 }
             }, {
                 $project: {
-                    order         : 1,
-                    name          : 1,
-                    workflow      : 1,
-                    type          : 1,
-                    wTracks       : 1,
-                    project       : 1,
-                    budget        : 1,
-                    quotation     : 1,
-                    invoice       : 1,
-                    payment       : 1,
+                    order: 1,
+                    name: 1,
+                    workflow: 1,
+                    type: 1,
+                    wTracks: 1,
+                    project: 1,
+                    budget: 1,
+                    quotation: 1,
+                    invoice: 1,
+                    payment: 1,
                     projectmanager: 1
                 }
             }, {
@@ -378,9 +380,29 @@ var Jobs = function (models, event) {
                 $limit: count
             }], function (err, jobs) {
                 if (err) {
-                    next(err);
+                    return next(err);
                 }
-                res.status(200).send(jobs);
+
+                async.each(jobs, function (job, cb) {
+                    JournalEntryModel.aggregate([{
+                        $match: {
+                            'sourceDocument.model': 'wTrack',
+                            "sourceDocument._id": {$in: job.wTracks}
+                        }
+                    }, {
+                        $group: {
+                            _id: null,
+                            debit: {$sum: '$debit'},
+                            credit: {$sum: '$credit'}
+                        }
+                    }], function (err, result) {
+                        job.cost = result[0] ? result[0].debit : 0;
+                        cb();
+                    });
+                }, function (err, result) {
+                    res.status(200).send(jobs);
+                });
+
             });
     };
 
@@ -401,8 +423,8 @@ var Jobs = function (models, event) {
         }
 
         query.find(queryObj, {
-            name    : 1,
-            _id     : 1,
+            name: 1,
+            _id: 1,
             "budget": 1
         }, function (err, jobs) {
             if (err) {
@@ -428,7 +450,7 @@ var Jobs = function (models, event) {
                 return next(err);
             }
 
-            if (result){
+            if (result) {
                 jobId = result.get('_id');
                 projectId = result.get('project');
 
@@ -502,7 +524,7 @@ var Jobs = function (models, event) {
             async.each(products, function (product, cb) {
 
                 JobsModel.findByIdAndUpdate(product.jobs, {
-                    type    : type,
+                    type: type,
                     editedBy: editedBy
                 }, {new: true}, function (err, result) {
                     if (err) {

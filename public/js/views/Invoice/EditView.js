@@ -139,18 +139,20 @@ define([
             var $li;
             var $tr;
             var $span;
-            var payBtnHtml;
+            var $buttons;
+            var $selfEl = self.$el;
 
             e.preventDefault();
 
+            $selfEl.find('button.approve').hide();
+
             invoiceId = self.currentModel.get('_id');
-            $li = $('button.approve').parent('li');
             $tr = $('tr[data-id=' + invoiceId + ']');
             $span = $tr.find('td').eq(10).find('span');
 
             App.startPreload();
 
-            payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
+            $buttons = $selfEl.find('button.sendEmail, button.newPayment');
             url = '/invoice/approve';
             data = {
                 invoiceId: invoiceId
@@ -159,7 +161,7 @@ define([
             dataService.patchData(url, data, function (err, response) {
                 if (!err) {
                     self.currentModel.set({approved: true});
-                    $li.html(payBtnHtml);
+                    $buttons.show();
 
                     App.stopPreload();
 
@@ -623,7 +625,7 @@ define([
             populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
 
-            if (model.workflow.status !== 'New') {
+            if (model.workflow.status !== 'New' && model.dueDate) {
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat : "d M, yy",
                     changeMonth: true,
