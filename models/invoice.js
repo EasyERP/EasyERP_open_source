@@ -103,11 +103,14 @@ module.exports = (function () {
         }]
     });
 
+    var expensesInvoiceSchema = invoiceSchema.extend({});
+
     function setPrice(num) {
         return num * 100;
     };
 
     jobsInvoiceSchema.set('toJSON', {getters: true});
+    expensesInvoiceSchema.set('toJSON', {getters: true});
     payRollInvoiceSchema.set('toJSON', {getters: true});
     invoiceSchema.set('toJSON', {getters: true});
     proformaSchema.set('toJSON', {getters: true});
@@ -115,6 +118,7 @@ module.exports = (function () {
     mongoose.model('wTrackInvoice', jobsInvoiceSchema);
     mongoose.model('payRollInvoice', payRollInvoiceSchema);
     mongoose.model('Invoice', invoiceSchema);
+    mongoose.model('expensesInvoice', expensesInvoiceSchema);
     mongoose.model('Proforma', proformaSchema);
 
     if (!mongoose.Schemas) {
@@ -124,5 +128,6 @@ module.exports = (function () {
     mongoose.Schemas['wTrackInvoice'] = jobsInvoiceSchema;
     mongoose.Schemas['payRollInvoice'] = payRollInvoiceSchema;
     mongoose.Schemas['Invoice'] = invoiceSchema;
+    mongoose.Schemas['expensesInvoice'] = expensesInvoiceSchema;
     mongoose.Schemas['Proforma'] = proformaSchema;
 })();

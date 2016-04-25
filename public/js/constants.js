@@ -520,6 +520,7 @@ define([], function () {
         CASHFLOW          : 'cashFlow',
         CLOSEMONTH        : 'closeMonth',
         SALESPROFORMA     : 'salesProforma',
+        EXPENSESINVOICE   : 'ExpensesInvoice',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
