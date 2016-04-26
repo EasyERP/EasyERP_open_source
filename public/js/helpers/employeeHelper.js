@@ -15,9 +15,10 @@ define([
                 var workingHours = 0;
                 var _endDay = 7;
                 var _startDay = 1;
+                var startDay;
                 var _date;
                 var _monDate;
-                var _satDate;
+                var _sunDate;
                 var _secondStartDate;
                 var _dateEl;
                 var vacation;
@@ -31,11 +32,12 @@ define([
                 }
 
                 _monDate = moment(_date).day(1);
-                _satDate = moment(_date).day(7);
+                _sunDate = moment(_date).day(7);
 
-                if (_monDate.month() !== _satDate.month()) {
+                if (_monDate.month() !== _sunDate.month()) {
                     _endDay = _monDate.endOf('month').day();
-                    _secondStartDate = moment(_satDate).startOf('month');
+                    _secondStartDate = moment(_sunDate).startOf('month');
+                    startDay = _secondStartDate.day() || 7;
 
                     nonWorkingDays.splited = [{
                         startDay: 1,
@@ -43,10 +45,10 @@ define([
                         month   : _monDate.month() + 1,
                         year    : _monDate.year()
                     }, {
-                        startDay: _secondStartDate.day(),
+                        startDay: startDay,
                         endDay  : 7,
-                        month   : _satDate.month() + 1,
-                        year    : _satDate.year()
+                        month   : _sunDate.month() + 1,
+                        year    : _sunDate.year()
                     }];
 
                     if (month) {

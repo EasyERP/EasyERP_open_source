@@ -778,16 +778,16 @@ var Payment = function (models, event) {
 
                     payments = invoice ? invoice.get('payments') : [];
 
-                    async.each(products, function (porduct) {
-                        var job = porduct.jobs;
-
-                        JobsModel.findByIdAndUpdate(job, payments, {new: true}, function (err, result) {
-                            if (err) {
-                                return next(err);
-                            }
-                        });
-
-                    });
+                    // async.each(products, function (porduct) {
+                    //     var job = porduct.jobs;
+                    //
+                    //     JobsModel.findByIdAndUpdate(job, payments, {new: true}, function (err, result) {
+                    //         if (err) {
+                    //             return next(err);
+                    //         }
+                    //     });
+                    //
+                    // });
 
                     if (project) {
                         event.emit('fetchInvoiceCollection', {project: project});
@@ -803,8 +803,13 @@ var Payment = function (models, event) {
         }
 
         function createJournalEntry(invoice, payment, waterfallCallback) {
+            var journal = MAIN_CONSTANTS.PAYMENT_JOURNAL;
+
+            if (invoice._type === 'Proforma'){
+                journal = MAIN_CONSTANTS.PROFORMA_JOURNAL;
+            }
             var paymentBody = {
-                journal       : MAIN_CONSTANTS.PAYMENT_JOURNAL,
+                journal       : journal,
                 currency      : MAIN_CONSTANTS.CURRENCY_USD,
                 date          : payment.date,
                 sourceDocument: {

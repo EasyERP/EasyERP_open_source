@@ -5,9 +5,9 @@
  */
 module.exports = function (mainDb, dbsNames) {
     'use strict';
-    //mongoose is delegated because it encapsulated main connection
+    // mongoose is delegated because it encapsulated main connection
 
-    //var newrelic = require('newrelic');
+    // var newrelic = require('newrelic');
     var http = require('http');
     var path = require('path');
     var express = require('express');
@@ -50,14 +50,14 @@ module.exports = function (mainDb, dbsNames) {
         next();
     };
 
-    /*app.enable('trust proxy');*/
+    /* app.enable('trust proxy'); */
     app.set('dbsObject', dbsObject);
     app.set('dbsNames', dbsNames);
     app.engine('html', consolidate.swig);
     app.set('view engine', 'html');
     app.set('views', __dirname + '/views');
     app.use(logger('dev'));
-    //app.use(subDomainParser);
+    // app.use(subDomainParser);
     app.use(bodyParser.json({strict: false, inflate: false, limit: 1024 * 1024 * 200}));
     app.use(bodyParser.urlencoded({extended: false, limit: 1024 * 1024 * 200}));
     app.use(cookieParser("CRMkey"));

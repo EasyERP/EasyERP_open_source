@@ -3,7 +3,7 @@
  */
 define([
         'views/Quotation/CreateView',
-        "models/QuotationModel"
+        'models/QuotationModel'
     ],
     function (CreateView, QuotationModel) {
         var salesQuotation = CreateView.extend({

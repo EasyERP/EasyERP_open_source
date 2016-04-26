@@ -199,7 +199,7 @@ var Employee = function (models) {
                 $match: match
             }, {
                 $group: {
-                    _id: "$projectmanager"
+                    _id: '$projectmanager'
                 }
             }], cb);
         }
