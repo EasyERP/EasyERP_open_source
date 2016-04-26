@@ -14,7 +14,7 @@ require('../../config/' + process.env.NODE_ENV);
 
 var oxr = require('open-exchange-rates');
 
-var dbObject = mongoose.createConnection('localhost', 'production');
+var dbObject = mongoose.createConnection('localhost', 'production', 28017);
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
