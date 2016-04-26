@@ -3384,15 +3384,16 @@ var wTrack = function (models) {
                 }
             }, {
                 $group: {
-                    _id        : null,
-                    salesArray : {
+                    _id         : null,
+                    salesArray  : {
                         $addToSet: {
                             _id : '$salesPersons._id',
                             name: '$salesPersons.name'
                         }
                     },
-                    totalProfit: {$sum: '$profit'},
-                    root       : {$push: '$$ROOT'}
+                    totalProfit : {$sum: '$profit'},
+                    totalRevenue: {$sum: '$revenueSum'},
+                    root        : {$push: '$$ROOT'}
                 }
             }, {
                 $unwind: '$root'
@@ -3401,65 +3402,108 @@ var wTrack = function (models) {
                     _id         : 0,
                     salesArray  : 1,
                     totalProfit : 1,
+                    totalRevenue: 1,
                     salesPersons: '$root.salesPersons._id',
                     profit      : '$root.profit',
+                    revenueSum  : '$root.revenueSum',
                     dateByMonth : '$root.dateByMonth',
                     dateByWeek  : '$root.dateByWeek'
                 }
             }, {
                 $group: {
-                    _id          : '$dateByMonth', // todo change dinamicly
-                    profitByMonth: {$sum: '$profit'},
-                    root         : {$push: '$$ROOT'},
-                    salesArray   : {$first: '$salesArray'},
-                    totalProfit  : {$first: '$totalProfit'}
+                    _id           : '$dateByMonth', // todo change dinamicly
+                    profitByMonth : {$sum: '$profit'},
+                    revenueByMonth: {$sum: '$revenueSum'},
+                    root          : {$push: '$$ROOT'},
+                    salesArray    : {$first: '$salesArray'},
+                    totalProfit   : {$first: '$totalProfit'},
+                    totalRevenue  : {$first: '$totalRevenue'}
                 }
             }, {
                 $unwind: '$root'
             }, {
                 $project: {
-                    _id          : 0,
-                    salesPerson  : '$root.salesPersons',
-                    dateByMonth  : '$root.dateByMonth',
-                    dateByWeek   : '$root.dateByWeek',
-                    profit       : '$root.profit',
-                    profitByMonth: 1,
-                    totalProfit  : 1,
-                    salesArray   : 1
+                    _id           : 0,
+                    salesPerson   : '$root.salesPersons',
+                    dateByMonth   : '$root.dateByMonth',
+                    dateByWeek    : '$root.dateByWeek',
+                    profit        : '$root.profit',
+                    revenueSum    : '$root.revenueSum',
+                    profitByMonth : 1,
+                    revenueByMonth: 1,
+                    totalProfit   : 1,
+                    totalRevenue  : 1,
+                    salesArray    : 1
                 }
             }, {
                 $group: {
-                    _id          : {
+                    _id                : {
                         date       : '$dateByMonth',
                         salesPerson: '$salesPerson'
                     },
-                    profitBySales: {$sum: '$profit'},
-                    profitByMonth: {$first: '$profitByMonth'},
-                    salesArray   : {$first: '$salesArray'},
-                    totalProfit  : {$first: '$totalProfit'},
-                    root         : {$push: '$$ROOT'}
+                    profitBySales      : {$sum: '$profit'},
+                    revenueBySales     : {$sum: '$revenueSum'},
+                    profitByMonth      : {$first: '$profitByMonth'},
+                    totalProfitBySales : {$first: '$totalProfitBySales'},
+                    totalRevenueBySales: {$first: '$totalRevenueBySales'},
+                    revenueByMonth     : {$first: '$revenueByMonth'},
+                    salesArray         : {$first: '$salesArray'},
+                    totalProfit        : {$first: '$totalProfit'},
+                    totalRevenue       : {$first: '$totalRevenue'},
+                    root               : {$push: '$$ROOT'}
                 }
             }, {
                 $group: {
-                    _id          : '$_id.date',
-                    profitBySales: {
+                    _id                : '$_id.salesPerson',
+                    totalProfitBySales : {$sum: '$profitBySales'},
+                    totalRevenueBySales: {$sum: '$revenueBySales'},
+                    root               : {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $group: {
+                    _id                : '$root._id',
+                    profitBySales      : {$first: '$root.profitBySales'},
+                    revenueBySales     : {$first: '$root.revenueBySales'},
+                    profitByMonth      : {$first: '$root.profitByMonth'},
+                    totalProfitBySales : {$first: '$totalProfitBySales'},
+                    totalRevenueBySales: {$first: '$totalRevenueBySales'},
+                    revenueByMonth     : {$first: '$root.revenueByMonth'},
+                    salesArray         : {$first: '$root.salesArray'},
+                    totalProfit        : {$first: '$root.totalProfit'},
+                    totalRevenue       : {$first: '$root.totalRevenue'}
+                }
+            }, {
+                $group: {
+                    _id                : '$_id.date',
+                    profitBySales      : {
                         $addToSet: {
-                            salesPerson  : '$_id.salesPerson',
-                            profitBySales: '$profitBySales'
+                            salesPerson   : '$_id.salesPerson',
+                            profitBySales : '$profitBySales',
+                            revenueBySales: '$revenueBySales'
                         }
                     },
-                    profitByMonth: {$first: '$profitByMonth'},
-                    salesArray   : {$first: '$salesArray'},
-                    totalProfit  : {$first: '$totalProfit'}
+                    profitByMonth      : {$first: '$profitByMonth'},
+                    revenueByMonth     : {$first: '$revenueByMonth'},
+                    salesArray         : {$first: '$salesArray'},
+                    totalProfitBySales : {$first: '$totalProfitBySales'},
+                    totalRevenueBySales: {$first: '$totalRevenueBySales'},
+                    totalProfit        : {$first: '$totalProfit'},
+                    totalRevenue       : {$first: '$totalRevenue'}
                 }
             }, {
                 $project: {
-                    date         : '$_id',
-                    totalProfit  : 1,
-                    salesArray   : 1,
-                    profitBySales: 1,
-                    profitByMonth: 1,
-                    _id          : 0
+                    date               : '$_id',
+                    totalProfit        : 1,
+                    revenueByMonth     : 1,
+                    totalProfitBySales : 1,
+                    totalRevenueBySales: 1,
+                    totalRevenue       : 1,
+                    salesArray         : 1,
+                    profitBySales      : 1,
+                    profitByMonth      : 1,
+                    _id                : 0
                 }
             }]).exec(function (err, response) {
                 var sales;

@@ -31,7 +31,9 @@
             sales = response.profitBySales || [];
 
             response.profitByMonth = response.profitByMonth || 0;
+            response.revenueByMonth = response.revenueByMonth || 0;
             response.profitByMonth /= 100;
+            response.revenueByMonth /= 100;
 
             response.sales = new Collection(sales);
 
