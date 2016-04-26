@@ -312,6 +312,7 @@ define([
 
                     function fetchCollection(dateRange) {
                         collection = new ChartCollection(dateRange);
+                        collection.dateRange = dateRange;
                         collection.on('reset', render);
                     }
 
