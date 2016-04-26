@@ -223,10 +223,10 @@ define([
             var newOrder = order + modelJSON.paymentInfo.total;
 
             orderSum.attr('data-value', newOrder);
-            orderSum.text(helpers.currencySplitter(newOrder.toFixed(2)));
+            orderSum.text(helpers.currencySplitter(newOrder.toString()));
 
             totalSum.attr('data-value', newTotal);
-            totalSum.text(helpers.currencySplitter(newTotal.toFixed(2)));
+            totalSum.text(helpers.currencySplitter(newTotal.toString()));
 
             orderCount.text(parseFloat(orderCount.text()) + 1);
             totalCount.text(parseFloat(totalCount.text()) + 1);
