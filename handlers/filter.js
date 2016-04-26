@@ -196,7 +196,7 @@ var Filters = function (models) {
                 $unwind: '$salesmanagers'
             }, {
                 $match : {
-                'salesmanagers.projectPositionId' : objectId(CONSTANTS.SALES_MANAGER_POS)
+                'salesmanagers.projectPositionId' : objectId(CONSTANTS.SALES_MANAGER_ROLE)
                 }
             }, {
                 $lookup: {
@@ -1385,7 +1385,7 @@ var Filters = function (models) {
                     $unwind: '$salesmanagers'
                 }, {
                     $match : {
-                        'salesmanagers.projectPositionId' : objectId(CONSTANTS.SALES_MANAGER_POS)
+                        'salesmanagers.projectPositionId' : objectId(CONSTANTS.SALES_MANAGER_ROLE)
                     }
                 }, {
                     $lookup: {
@@ -1491,7 +1491,7 @@ var Filters = function (models) {
                     $unwind: '$salesmanagers'
                 }, {
                     $match : {
-                        'salesmanagers.projectPositionId' : objectId(CONSTANTS.SALES_MANAGER_POS)
+                        'salesmanagers.projectPositionId' : objectId(CONSTANTS.SALES_MANAGER_ROLE)
                     }
                 }, {
                     $lookup: {

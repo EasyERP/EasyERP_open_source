@@ -455,7 +455,7 @@ var Quotation = function (models, event) {
                         }]
                     }]
                 }, {
-                    $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_POS)]
+                    $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
                 }]
             };
 
@@ -509,7 +509,7 @@ var Quotation = function (models, event) {
                     $project: {
                         'salesmanagers.startDate'        : {$ifNull: ['$salesmanagers.startDate', null]},
                         'salesmanagers.endDate'          : {$ifNull: ['$salesmanagers.endDate', null]},
-                        'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_POS)]},
+                        'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
                         'salesmanagers.employeeId'       : {$ifNull: ['$salesmanagers.employeeId', null]},
                         forSales                         : 1,
                         orderDate                        : 1,
@@ -687,7 +687,7 @@ var Quotation = function (models, event) {
                         }]
                     }]
                 }, {
-                    $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_POS)]
+                    $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
                 }]
             };
 
@@ -740,7 +740,7 @@ var Quotation = function (models, event) {
                 $project: {
                     'salesmanagers.startDate'        : {$ifNull: ['$salesmanagers.startDate', null]},
                     'salesmanagers.endDate'          : {$ifNull: ['$salesmanagers.endDate', null]},
-                    'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_POS)]},
+                    'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
                     'salesmanagers.employeeId'       : {$ifNull: ['$salesmanagers.employeeId', null]},
                     name                             : 1,
                     paymentInfo                      : 1,

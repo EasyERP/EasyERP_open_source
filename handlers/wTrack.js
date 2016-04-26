@@ -396,7 +396,7 @@ var wTrack = function (event, models) {
                         }]
                     }]
                 }, {
-                    $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_POS)]
+                    $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
                 }]
 
             };
@@ -452,7 +452,7 @@ var wTrack = function (event, models) {
                         customer                        : {$arrayElemAt: ['$customer', 0]},
                         'salesmanagers.startDate'        : {$ifNull: ['$salesmanagers.startDate', null]},
                         'salesmanagers.endDate'          : {$ifNull: ['$salesmanagers.endDate', null]},
-                        'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_POS)]},
+                        'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
                         dateByWeek                      : 1,
                         project                         : 1,
                         employee                        : 1,
@@ -703,7 +703,7 @@ var wTrack = function (event, models) {
                             }]
                         }]
                     }, {
-                        $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_POS)]
+                        $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
                     }]
 
                 };
@@ -801,7 +801,7 @@ var wTrack = function (event, models) {
                     workflow                         : {$arrayElemAt: ['$workflow', 0]},
                     'salesmanagers.startDate'        : {$ifNull: ['$salesmanagers.startDate', null]},
                     'salesmanagers.endDate'          : {$ifNull: ['$salesmanagers.endDate', null]},
-                    'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_POS)]},
+                    'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
                     'salesmanagers.employeeId'       : {$ifNull: ['$salesmanagers.employeeId', null]},
                     dateByWeek                       : 1,
                     createdBy                        : 1,
