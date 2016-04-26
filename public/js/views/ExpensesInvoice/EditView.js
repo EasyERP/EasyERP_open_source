@@ -2,7 +2,7 @@ define([
     'jQuery',
     'Underscore',
     'Backbone',
-    'text!templates/Invoice/EditTemplate.html',
+    'text!templates/ExpensesInvoice/EditTemplate.html',
     'views/Notes/AttachView',
     'views/Assignees/AssigneesView',
     'views/Invoice/InvoiceProductItems',
@@ -61,7 +61,6 @@ define([
 
         initialize: function (options) {
 
-            _.bindAll(this, 'render', 'saveItem');
             _.bindAll(this, 'render', 'deleteItem');
 
             this.eventChannel = options.eventChannel;
@@ -78,21 +77,6 @@ define([
 
             this.notCreate = options.notCreate ? false : true;
 
-            /*if (!App || !App.currentDb) {
-                dataService.getData('/currentDb', null, function (response) {
-                    if (response && !response.error) {
-                        App.currentDb = response;
-                        App.weTrack = true;
-                    } else {
-                        console.log('can\'t fetch current db');
-                    }
-
-                    this.render();
-                });
-            } else {
-                this.render();
-            }*/
-
             this.render();
 
             App.stopPreload();
@@ -101,83 +85,24 @@ define([
         newPayment: function (e) {
             var paymentView;
             var self = this;
+            var model = self.currentModel.toJSON();
+
+            model.currency.name = model.currency._id.name;
+            model.currency._id = model.currency._id._id;
+
+            self.currentModel.set({currency:  model.currency});
 
             e.preventDefault();
 
-            this.saveItem(function (err, currency) {
-                if (!err) {
-                    paymentView = new PaymentCreateView({
-                        model       : self.currentModel,
-                        redirect    : self.redirect,
-                        collection  : self.collection,
-                        mid         : 56,
-                        currency    : currency,
-                        eventChannel: self.eventChannel
-                    });
-                }
+            paymentView = new PaymentCreateView({
+                model       : self.currentModel,
+                redirect    : self.redirect,
+                collection  : self.collection,
+                mid         : 97,
+                currency    : model.currency,
+                eventChannel: self.eventChannel
             });
-        },
 
-        sendEmail: function (e) {
-            var emailView;
-            var self = this;
-
-            e.preventDefault();
-
-            self.hideDialog();
-
-            emailView = new EmailVew({
-                model: self.currentModel
-            });
-        },
-
-        approve: function (e) {
-            var self = this;
-            var data;
-            var url;
-            var invoiceId;
-            var $li;
-            var $tr;
-            var $span;
-            var $buttons;
-            var $selfEl = self.$el;
-
-            e.preventDefault();
-
-            $selfEl.find('button.approve').hide();
-
-            invoiceId = self.currentModel.get('_id');
-            $tr = $('tr[data-id=' + invoiceId + ']');
-            $span = $tr.find('td').eq(10).find('span');
-
-            App.startPreload();
-
-            $buttons = $selfEl.find('button.sendEmail, button.newPayment');
-            url = '/invoice/approve';
-            data = {
-                invoiceId: invoiceId
-            };
-
-            dataService.patchData(url, data, function (err, response) {
-                if (!err) {
-                    self.currentModel.set({approved: true});
-                    $buttons.show();
-
-                    App.stopPreload();
-
-                    $span.text('Unpaid');
-                    $span.removeClass();
-                    $span.addClass('new');
-
-                    self.$el.find('.input-file').remove();
-                    self.$el.find('a.deleteAttach').remove();
-                } else {
-                    App.render({
-                        type   : 'error',
-                        message: 'Approve fail'
-                    });
-                }
-            });
         },
 
         cancelInvoice: function (e) {
@@ -301,176 +226,9 @@ define([
             $('.edit-invoice-dialog').remove();
         },
 
-        saveItem: function (paymentCb) {
-            var self = this;
-            var mid = 56;
-
-            var $thisEl = this.$el;
-
-            var errors = $thisEl.find('.errorContent');
-            var selectedProducts = $thisEl.find('.productItem');
-            var products = [];
-            var selectedLength = selectedProducts.length;
-            var targetEl;
-            var productId;
-            var journalId;
-            var quantity;
-            var price;
-            var description;
-            var taxes;
-            var amount;
-            var data;
-            var workflow = this.currentModel.workflow ? this.currentModel.workflow : this.currentModel.get('workflow');
-            var salesPerson = this.currentModel.salesPerson ? this.currentModel.salesPerson : this.currentModel.get('salesPerson');
-            var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
-            var currency = {
-                _id : $thisEl.find('#currencyDd').attr('data-id'),
-                name: $.trim($thisEl.find('#currencyDd').text())
-            };
-
-            var invoiceDate = $thisEl.find("#invoice_date").val();
-            var dueDate = $thisEl.find("#due_date").val();
-
-            var supplier = $thisEl.find('#supplier').attr("data-id");
-
-            var total = parseFloat($thisEl.find("#totalAmount").text());
-            var unTaxed = parseFloat($thisEl.find("#totalUntaxes").text());
-            var balance = parseFloat($thisEl.find("#balance").text());
-
-            var payments = {
-                total  : total,
-                unTaxed: unTaxed,
-                balance: balance
-            };
-
-            var salesPersonId = $thisEl.find("#salesPerson").attr("data-id") || null;
-            var paymentTermId = $thisEl.find("#payment_terms").attr("data-id") || null;
-            var journalId = this.$el.find('#journal').attr("data-id") || null;
-
-            var usersId = [];
-            var groupsId = [];
-
-            var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
-
-            if (errors.length) {
-                return false;
-            }
-
-            if (selectedLength) {
-                for (var i = selectedLength - 1; i >= 0; i--) {
-                    targetEl = $(selectedProducts[i]);
-                    productId = targetEl.data('id');
-
-                    if (productId) {
-                        quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
-                        description = targetEl.find('[data-name="productDescr"]').text();
-                        taxes = targetEl.find('.taxes').text();
-                        amount = targetEl.find('.amount').text();
-
-                        products.push({
-                            product    : productId,
-                            description: description,
-                            unitPrice  : price,
-                            quantity   : quantity,
-                            taxes      : taxes,
-                            amount     : amount
-                        });
-                    }
-                }
-            }
-
-            $(".groupsAndUser tr").each(function () {
-                if ($(this).data("type") == "targetUsers") {
-                    usersId.push($(this).data("id"));
-                }
-                if ($(this).data("type") == "targetGroups") {
-                    groupsId.push($(this).data("id"));
-                }
-
-            });
-
-            data = {
-                currency      : currency,
-                supplier      : supplier,
-                fiscalPosition: null,
-                //sourceDocument: $.trim(this.$el.find('#source_document').val()),
-                //supplierInvoiceNumber: $.trim(this.$el.find('#supplier_invoice_num').val()),
-                name          : $.trim(this.$el.find('#supplier_invoice_num').val()), //changed For Yana
-                //paymentReference: $.trim(this.$el.find('#payment_reference').val()),
-                invoiceDate   : invoiceDate,
-                dueDate       : dueDate,
-                account       : null,
-                journal       : journalId,
-
-                salesPerson : salesPerson,
-                paymentTerms: paymentTermId,
-
-                //products   : this.redirect ? productsOld : products,
-                //paymentInfo: payments,
-
-                groups  : {
-                    owner: $("#allUsersSelect").data("id"),
-                    users: usersId,
-                    group: groupsId
-                },
-                whoCanRW: whoCanRW,
-                workflow: workflow
-
-            };
-
-            if (supplier) {
-                this.model.save(data, {
-                    headers: {
-                        mid: mid
-                    },
-                    wait   : true,
-                    patch  : true,
-                    success: function (err, result) {
-                        var $dueDateEl;
-                        var url = window.location.hash;
-                        var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
-
-                        self.hideDialog();
-
-                        if (paymentCb && typeof paymentCb === 'function') {
-                            return paymentCb(null, currency);
-                        }
-
-                        if (self.redirect) {
-
-                            if (self.eventChannel) {
-                                self.eventChannel.trigger('invoiceUpdated');
-                            }
-
-                            Backbone.history.navigate(url, {trigger: true});
-                            $dueDateEl = $('#' + result.id).closest('tr').find('[data-content="dueDate"]');
-                            $dueDateEl.text(result.dueDate);
-                        } else {
-                            Backbone.history.navigate(redirectUrl, {trigger: true});
-                        }
-                    },
-                    error  : function (model, xhr) {
-                        self.errorNotification(xhr);
-
-                        if (paymentCb && typeof paymentCb === 'function') {
-                            return paymentCb(xhr.text);
-                        }
-                    }
-                });
-
-            } else {
-                App.render({
-                    type   : 'error',
-                    message: CONSTANTS.RESPONSES.CREATE_QUOTATION
-                });
-            }
-        },
-
         showNewSelect: function (e, prev, next) {
             populate.showSelect(e, prev, next, this);
             return false;
-
         },
 
         hideNewSelect: function () {
@@ -561,38 +319,19 @@ define([
                 isFinancial     : isFinancial
             });
 
-            if (this.isWtrack || this.isPaid) {
-                buttons = [
-                    {
-                        text : this.isPaid ? "Close" : 'Cancel',
-                        click: function () {
-                            self.hideDialog();
-                        }
-                    }/*,
-                     {
-                     text : "Delete",
-                     click: self.deleteItem
-                     }*/
-                ]
-            } else {
-                buttons = [
-                    {
-                        text : "Save",
-                        click: self.saveItem
-                    },
 
-                    {
-                        text : "Cancel",
-                        click: function () {
-                            self.hideDialog();
-                        }
-                    },
-                    {
-                        text : "Delete",
-                        click: self.deleteItem
+            buttons = [
+                {
+                    text : "Close",
+                    click: function () {
+                        self.hideDialog();
                     }
-                ]
-            }
+                }, {
+                    text : "Delete",
+                    click: self.deleteItem
+                }
+            ];
+
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -600,7 +339,7 @@ define([
                 resizable    : true,
                 dialogClass  : "edit-invoice-dialog",
                 title        : "Edit Invoice",
-                width        : self.isWtrack ? '1200' : '900',
+                width        : '900',
                 position     : {my: "center bottom", at: "center", of: window},
                 buttons      : buttons
 
@@ -618,58 +357,7 @@ define([
                 new listHederInvoice().render({model: this.currentModel.toJSON()}).el
             );
 
-            populate.get2name("#supplier", "/supplier", {}, this, false);
-            populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
-            populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
             populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
-            populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
-
-
-            if (model.workflow.status !== 'New' && model.dueDate) {
-                this.$el.find('#invoice_date').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    disabled   : true,
-                    maxDate    : 0,
-                    onSelect   : function () {
-                        var dueDatePicker = $('#due_date');
-                        var endDate = $(this).datepicker('getDate');
-
-                        endDate.setDate(endDate.getDate());
-
-                        dueDatePicker.datepicker('option', 'minDate', endDate);
-                    }
-                });
-            } else {
-                this.$el.find('#invoice_date').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    minDate    : new Date(model.sourceDocument.orderDate),
-                    maxDate    : 0,
-                    onSelect   : function () {
-                        var dueDatePicker = $('#due_date');
-                        var endDate = $(this).datepicker('getDate');
-
-                        endDate.setDate(endDate.getDate());
-
-                        dueDatePicker.datepicker('option', 'minDate', endDate);
-                    }
-                });
-            }
-
-            this.$el.find('#due_date').datepicker({
-                defaultValue: invoiceDate,
-                dateFormat  : "d M, yy",
-                changeMonth : true,
-                changeYear  : true,
-                onSelect    : function () {
-                    var targetInput = $(this);
-
-                    targetInput.removeClass('errorContent');
-                }
-            }).datepicker('option', 'minDate', invoiceDate);
 
             this.delegateEvents(this.events);
 

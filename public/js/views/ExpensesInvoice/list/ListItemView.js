@@ -1,5 +1,5 @@
 ﻿define([
-        'text!templates/salesInvoice/list/ListTemplate.html',
+        'text!templates/ExpensesInvoice/list/ListTemplate.html',
         'helpers'
     ],
 

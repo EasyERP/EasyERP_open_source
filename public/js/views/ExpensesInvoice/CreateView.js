@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'Backbone',
         "text!templates/ExpensesInvoice/CreateTemplate.html",
         "models/InvoiceModel",
@@ -10,7 +12,7 @@ define([
         "dataService",
         'constants'
     ],
-    function (Backbone, CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
+    function ($, _, Backbone, CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -35,17 +37,21 @@ define([
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
+
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
 
             },
+
             notHide      : function () {
                 return false;
             },
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
+
             chooseOption : function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
@@ -54,9 +60,11 @@ define([
             nextSelect    : function (e) {
                 this.showNewSelect(e, false, true);
             },
+
             prevSelect    : function (e) {
                 this.showNewSelect(e, true, false);
             },
+
             showDetailsBox: function (e) {
                 $(e.target).parent().find(".details-box").toggle();
             },
@@ -95,7 +103,7 @@ define([
                 var self = this;
                 var mid = 97;
                 var $currentEl = this.$el;
-
+                var errors = $currentEl.find('.errorContent');
                 var selectedProducts = $currentEl.find('.productItem');
                 var products = [];
                 var selectedLength = selectedProducts.length;
@@ -104,7 +112,12 @@ define([
                 var quantity;
                 var price;
                 var taxes;
+                var whoCanRW;
+                var data;
+                var model;
                 var amount;
+                var groupsId;
+                var usersId;
                 var description;
 
                 var forSales = (this.forSales) ? true : false;
@@ -129,6 +142,10 @@ define([
                     name: $.trim($currentEl.find('#currencyDd').text())
                 };
 
+                if (errors.length) {
+                    return false;
+                }
+
                 if (selectedLength) {
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
@@ -152,8 +169,8 @@ define([
                     }
                 }
 
-                var usersId = [];
-                var groupsId = [];
+                usersId = [];
+                groupsId = [];
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
@@ -164,21 +181,17 @@ define([
 
                 });
 
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-                var data = {
+                whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+                data = {
                     forSales: false,
-
                     supplier             : supplier,
                     supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
                     invoiceDate          : invoiceDate,
                     dueDate              : dueDate,
-                    account              : null,
                     journal              : null,
-
                     products   : products,
                     paymentInfo: payments,
                     currency   : currency,
-
                     groups  : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
@@ -186,22 +199,23 @@ define([
                     },
                     whoCanRW: whoCanRW,
                     workflow: this.defaultWorkflow
-
                 };
 
                 if (supplier) {
-                    var model = new InvoiceModel();
+                    model = new InvoiceModel();
                     model.urlRoot = function () {
                         return 'expensesInvoice';
                     };
 
                     model.save(data, {
+                        patch  : true,
                         headers: {
                             mid: mid
                         },
                         wait   : true,
                         success: function (res) {
                             self.hideDialog();
+                            Backbone.history.navigate('#easyErp/ExpensesInvoice', {trigger: true});
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
@@ -295,6 +309,10 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
+                    onSelect    : function () {
+                        var targetInput = $(this);
+                        targetInput.removeClass('errorContent');
+                    }
                 });
 
                 this.delegateEvents(this.events);

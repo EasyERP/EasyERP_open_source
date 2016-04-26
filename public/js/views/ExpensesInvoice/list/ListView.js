@@ -1,10 +1,10 @@
 define([
         'views/listViewBase',
-        'text!templates/salesInvoice/list/ListHeader.html',
+        'text!templates/ExpensesInvoice/list/ListHeader.html',
         'views/ExpensesInvoice/CreateView',
         'views/ExpensesInvoice/EditView',
         'models/InvoiceModel',
-        'views/salesInvoice/list/ListItemView',
+        'views/ExpensesInvoice/list/ListItemView',
         'collections/salesInvoice/filterCollection',
         'views/Filter/FilterView',
         'common',
@@ -21,7 +21,7 @@ define([
             contentCollection       : contentCollection,
             filterView              : filterView,
             totalCollectionLengthUrl: '/Invoice/totalCollectionLength',
-            contentType             : 'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
+            contentType             : 'ExpensesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
             changedModels           : {},
 
             initialize: function (options) {
@@ -30,7 +30,7 @@ define([
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
                 this.filter = options.filter ? options.filter : {};
-                this.filter.forSales = {key: 'forSales', value: [true]};
+                this.filter.forSales = {key: 'forSales', value: [false]};
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
@@ -44,7 +44,6 @@ define([
             },
 
             events: {
-               // "click .stageSelect"                       : "showNewSelect",
                 "click  .list tbody td:not(.notForm, .validated)": "goToEditDialog",
                 "click .newSelectList li"                  : "chooseOption",
                 "click .selectList"                        : "showSelects"
@@ -85,34 +84,6 @@ define([
             },
 
             chooseOption: function (e) {
-                //var self = this;
-                //var target$ = $(e.target);
-                //var targetElement = target$.parents("td");
-                //var wId = target$.attr("id");
-                //var status = _.find(this.stages, function (stage) {
-                //    return wId === stage._id;
-                //});
-                //var name = target$.text();
-                //var id = targetElement.attr("id");
-                //var model = this.collection.get(id);
-                //
-                //model.save({
-                //    'workflow._id'   : wId,
-                //    'workflow.status': status.status,
-                //    'workflow.name'  : name
-                //}, {
-                //    headers : {
-                //        mid: 55
-                //    },
-                //    patch   : true,
-                //    validate: false,
-                //    success : function () {
-                //        self.showFilteredPage(self.filter, self);
-                //    }
-                //});
-                //
-                //this.hideNewSelect();
-                //return false;
                 var self = this;
                 var target$ = $(e.target);
                 var targetElement = target$.parents("td");
@@ -137,20 +108,6 @@ define([
 
             },
 
-           /* showNewSelect: function (e) {
-                if ($(".newSelectList").is(":visible")) {
-                    this.hideNewSelect();
-                    return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
-                    return false;
-                }
-            },
-
-            hideNewSelect: function (e) {
-                $(".newSelectList").remove();
-            },*/
-
             render: function () {
                 var self;
                 var $currentEl;
@@ -162,33 +119,11 @@ define([
 
                 $currentEl.html('');
 
-                /*if (!App || !App.currentDb) {
-                    dataService.getData('/currentDb', null, function (response) {
-                        if (response && !response.error) {
-                            App.currentDb = response;
-                            App.weTrack = response === "weTrack" || response === "production" || response === "development";
-                        }
-
-                        currentEllistRenderer(self);
-                        //$currentEl.append(itemView.render());
-                    });
-                } else {
-                    currentEllistRenderer(self);
-                    //$currentEl.append(itemView.render());
-                }*/
                 currentEllistRenderer(self);
 
                 self.renderCheckboxes();
                 self.renderPagination($currentEl, self);
-                self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
-
-/*                dataService.getData("/workflow/fetch", {
-                    wId         : 'Sales Invoice',
-                    source      : 'purchase',
-                    targetSource: 'invoice'
-                }, function (stages) {
-                    self.stages = stages;
-                });*/
+                self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [false]}});
 
                 this.recalcTotal();
 
@@ -234,7 +169,8 @@ define([
                 model.fetch({
                     data   : {
                         id       : id,
-                        currentDb: App.currentDb
+                        currentDb: App.currentDb,
+                        forSales : 'false'
                     },
                     success: function (model) {
                         new editView({model: model});

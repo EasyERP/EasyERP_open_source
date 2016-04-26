@@ -46,6 +46,7 @@ module.exports = function (app, mainDb) {
     var vacationRouter = require('./vacation')(event, models);
     var bonusTypeRouter = require('./bonusType')(models);
     var dashboardRouter = require('./dashboard')(models);
+    var expensesInvoiceRouter = require('./expensesInvoice')(models, event);
     var filterRouter = require('./filter')(models);
     var productCategoriesRouter = require('./productCategories')(models, event);
     var customersRouter = require('./customers')(models, event);
@@ -167,6 +168,7 @@ module.exports = function (app, mainDb) {
     app.use('/order', orderRouter);
     app.use('/invoice', invoiceRouter);
     app.use('/proforma', proformaRouter);
+    app.use('/expensesInvoice', expensesInvoiceRouter);
     app.use('/supplier', supplierRouter);
     app.use('/quotation', quotationRouter);
     app.use('/destination', destinationRouter);

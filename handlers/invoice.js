@@ -1047,12 +1047,6 @@ var Invoice = function (models, event) {
                         optionsObject.$and.push({_id: {$in: _.pluck(invoicesIds, "_id")}});
                         optionsObject.$and.push({expense: {$exists: false}});
 
-                        if (baseUrl === '/Proforma') {
-                            optionsObject.$and.push({_type: 'Proforma'});
-                        } else {
-                            optionsObject.$and.push({_type: {$ne: 'Proforma'}});
-                        }
-
                         if (contentType === 'salesProforma' || contentType === 'Proforma') {
                             optionsObject.$and.push({_type: 'Proforma'});
                         }  else if (contentType === 'ExpensesInvoice') {
@@ -1550,6 +1544,8 @@ var Invoice = function (models, event) {
 
         if (contentType === 'salesProforma' || contentType === 'Proforma') {
             Invoice = models.get(req.session.lastDb, 'Proforma', ProformaSchema);
+        } else if (contentType === 'ExpensesInvoice') {
+            Invoice = models.get(req.session.lastDb, 'expensesInvoice', ExpensesInvoiceSchema);
         } else {
             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         }
@@ -1594,12 +1590,19 @@ var Invoice = function (models, event) {
                 matchQuery.$and.push({
                     _type : 'Proforma'
                 });
+            } else if (contentType === 'ExpensesInvoice') {
+                matchQuery.$and.push({
+                    _type : 'expensesInvoice'
+                });
             } else {
                 matchQuery.$and.push({
-                    _type : {
-                        $ne: 'Proforma'
-                    }
-                });
+                    $and: [
+                        {
+                            _type: {$ne: 'Proforma'}
+                        }, {
+                            _type: {$ne: 'expensesInvoice'}
+                        }
+                    ]});
             }
 
             Invoice.aggregate(

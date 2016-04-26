@@ -46,6 +46,7 @@ define([
                 this.invoiceModel = options.model;
                 this.totalAmount = this.invoiceModel.get('paymentInfo').balance || 0;
                 this.forSales = this.invoiceModel.get('forSales');
+                this.mid = options.mid || 56;
             } else {
                 this.forSales = true;
             }
@@ -150,8 +151,9 @@ define([
             var self = this;
             var data;
             //FixMe change mid value to proper number after inserting it into DB
-            var mid = 56;
+            var mid = self.mid || 56;
             var thisEl = this.$el;
+
             var invoiceModel = this.invoiceModel.toJSON();
             var supplier = thisEl.find('#supplierDd');
             var supplierId = supplier.attr('data-id');
