@@ -141,12 +141,14 @@ define([
             var $span;
             var $buttons;
             var $selfEl = self.$el;
+            var invoiceDate;
 
             e.preventDefault();
 
             $selfEl.find('button.approve').hide();
 
             invoiceId = self.currentModel.get('_id');
+            invoiceDate = this.$el.find('#invoice_date').val();
             $tr = $('tr[data-id=' + invoiceId + ']');
             $span = $tr.find('td').eq(10).find('span');
 
@@ -155,7 +157,8 @@ define([
             $buttons = $selfEl.find('button.sendEmail, button.newPayment');
             url = '/invoice/approve';
             data = {
-                invoiceId: invoiceId
+                invoiceId: invoiceId,
+                invoiceDate: invoiceDate
             };
 
             dataService.patchData(url, data, function (err, response) {

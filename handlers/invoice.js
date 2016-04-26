@@ -103,7 +103,7 @@ var Invoice = function (models, event) {
 
         if (forSales) {
             Invoice = models.get(dbIndex, 'wTrackInvoice', wTrackInvoiceSchema);
-            waterfallTasks = [invoiceSaver, journalEntryComposer];
+            waterfallTasks = [invoiceSaver/*, journalEntryComposer*/];
         } else {
             Invoice = models.get(dbIndex, 'Invoice', InvoiceSchema);
             waterfallTasks = [invoiceSaver];   // added in case of bad creating no forSales invoice ( property model undefined for Journal )
@@ -436,45 +436,15 @@ var Invoice = function (models, event) {
                 $set: {
                     attachments: result.attachments
                 }
-            }, {new: true}, function (err) {
+            }, {new: true}, function (err, invoice) {
                 if (err) {
                     return next(err);
                 }
 
                 renameFolder(id.toString(), invoiceId.toString());
 
-                if (products) {
-                    async.each(products, function (result, cb) {
-                        var jobs = result.jobs;
 
-                    JobsModel.findByIdAndUpdate(jobs, {
-                        $set: {
-                            invoice : invoiceId,
-                            type    : "Invoiced",
-                            workflow: CONSTANTS.JOBSFINISHED,
-                            editedBy: editedBy
-                        }
-                    }, {new: true}, function (err, job) {
-                        if (err) {
-                            return cb(err);
-                        }
-                        project = job.project || null;
-
-                        _journalEntryHandler.checkAndCreateForJob({req: req, jobId: jobs, workflow: CONSTANTS.JOBSFINISHED, wTracks: job.wTracks, date: result.invoiceDate});
-
-                        cb();
-                    });
-
-                    }, function () {
-                        if (project) {
-                            event.emit('fetchJobsCollection', {project: project});
-                        }
-
-                        res.status(201).send(result);
-                    });
-                } else {
-                    res.status(201).send(result);
-                }
+                res.status(201).send(result);
             });
         });
 
@@ -664,15 +634,19 @@ var Invoice = function (models, event) {
         var PaymentModel = models.get(db, 'Payment', PaymentSchema);
         var Customer = models.get(db, 'Customers', CustomerSchema);
         var query;
+        var queryForClosed;
         var model;
         var journal;
-        var dateForobs;
+        var dateForJobs;
+        var dateForJobsFinished;
         var fileName;
         var os;
         var _id;
         var osType;
         var path;
         var dir;
+        var invoiceProducts;
+        var invoiceJobs;
 
         date = moment(new Date(data.invoiceDate));
         date = date.format('YYYY-MM-DD');
@@ -759,7 +733,7 @@ var Invoice = function (models, event) {
                                 if (invoice._type === 'Proforma') {
                                     model = "Proforma";
 
-                                    query = {"sourceDocument.model": model, journal: CONSTANTS.BEFORE_INVOICE};
+                                    query = {"sourceDocument.model": model, "sourceDocument._id": id, journal: CONSTANTS.BEFORE_INVOICE};
                                     _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
 
                                     journal = CONSTANTS.PROFORMA_JOURNAL;
@@ -767,26 +741,33 @@ var Invoice = function (models, event) {
                                     model = "Invoice";
                                     journal = CONSTANTS.INVOICE_JOURNAL;
 
-                                    dateForobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
+                                    dateForJobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
+                                    dateForJobsFinished = moment(new Date(data.invoiceDate)).subtract(2, 'seconds');
 
-                                    query = {"sourceDocument.model": 'jobs', journal: {$in: [CONSTANTS.JOB_FINISHED, CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]}};
-                                    _journalEntryHandler.changeDate(query, dateForobs, req.session.lastDb, function () {});
+                                    invoiceProducts = invoice.products;
+
+                                    invoiceJobs = [];
+
+                                    invoiceProducts.forEach(function (prod) {
+                                        invoiceJobs.push(prod.jobs);
+                                    });
+
+                                    query = {"sourceDocument.model": 'jobs', "sourceDocument._id": {$in: invoiceJobs}, journal: CONSTANTS.JOB_FINISHED};
+                                    _journalEntryHandler.changeDate(query, dateForJobs, req.session.lastDb, function () {});
+
+                                    queryForClosed = {"sourceDocument.model": 'jobs', "sourceDocument._id": {$in: invoiceJobs}, journal: CONSTANTS.CLOSED_JOB};
+                                    _journalEntryHandler.changeDate(query, dateForJobsFinished, req.session.lastDb, function () {});
+
+                                    query = {"sourceDocument.model": model, "sourceDocument._id": id, journal: journal};
+                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
                                 }
+                                
 
-                                query = {"sourceDocument.model": model, journal: journal};
-                                _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
-
-                                if (!invoice.journal && journalId) { // todo in case of purchase invoice hasnt journalId
+                                if (!invoice.journal && journalId) { // todo in case of purchase invoice hasn't journalId
                                     Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
                                         if (err) {
                                             return next(err);
                                         }
-
-                                        /*journalEntryComposer(invoice, db, function (err, response) {
-										 if (err) {
-										 return next(err);
-										 }
-										 }, req.session.uId);*/
 
                                         Customer.populate(invoice, {
                                             path  : 'supplier',
@@ -827,6 +808,11 @@ var Invoice = function (models, event) {
     this.approve = function (req, res, next) {
         var db = req.session.lastDb;
         var id = req.body.invoiceId;
+        var invoiceDate = req.body.invoiceDate;
+        var JobsModel = models.get(db, 'jobs', JobsSchema);
+        var products;
+        var project;
+
         var moduleId = 64;
 
         var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
@@ -835,12 +821,52 @@ var Invoice = function (models, event) {
             access.getApproveAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
 
-                    Invoice.findByIdAndUpdate(id, {$set: {approved: true}}, {new: true}, function (err, resp) {
+                    Invoice.findByIdAndUpdate(id, {$set: {approved: true, invoiceDate: new Date(invoiceDate)}}, {new: true}, function (err, resp) {
                         if (err) {
                             return next(err);
                         }
 
                         journalEntryComposer(resp, req.session.lastDb, function () {}, req.session.uId);
+
+                        products = resp.products;
+
+                        if (products) {
+                            async.each(products, function (result, cb) {
+                                var jobs = result.jobs;
+                                var editedBy = {
+                                    user: req.session.uId,
+                                    date: new Date()
+                                };
+                                JobsModel.findByIdAndUpdate(jobs, {
+                                    $set: {
+                                        invoice: resp._id,
+                                        type: "Invoiced",
+                                        workflow: CONSTANTS.JOBSFINISHED,
+                                        editedBy: editedBy
+                                    }
+                                }, {new: true}, function (err, job) {
+                                    if (err) {
+                                        return cb(err);
+                                    }
+                                    project = job.project || null;
+
+                                    _journalEntryHandler.checkAndCreateForJob({
+                                        req: req,
+                                        jobId: jobs,
+                                        workflow: CONSTANTS.JOBSFINISHED,
+                                        wTracks: job.wTracks,
+                                        date: resp.invoiceDate
+                                    });
+
+                                    cb();
+                                });
+
+                            }, function () {
+                                if (project) {
+                                    event.emit('fetchJobsCollection', {project: project});
+                                }
+                            });
+                        }
 
                         res.status(200).send(resp);
                     });
