@@ -202,7 +202,7 @@ define([
                                                 collection    : self.ordersCollection,
                                                 projectId     : self.pId,
                                                 customerId    : self.customerId,
-                                                projectManager: self.projectManager,
+                                                salesManager  : self.salesManager,
                                                 filter        : filter,
                                                 activeTab     : true,
                                                 eventChannel  : self.eventChannel

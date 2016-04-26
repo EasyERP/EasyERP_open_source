@@ -1208,7 +1208,7 @@ define([
                         collection      : self.qCollection,
                         projectId       : _id,
                         customerId      : self.formModel.toJSON().customer._id,
-                        projectManager  : self.salesManager,
+                        salesManager    : self.salesManager,
                         filter          : filter,
                         model           : self.formModel,
                         wTrackCollection: self.wCollection,

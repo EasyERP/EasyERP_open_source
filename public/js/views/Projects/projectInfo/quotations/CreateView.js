@@ -45,7 +45,7 @@ define([
                 this.responseObj = {};
                 this.projectId = options.projectId;
                 this.customerId = options.customerId;
-                this.projectManager = options.projectManager;
+                this.salesManager = options.salesManager;
                 this.render();
                 this.getForDd(this.projectId, this.customerId);
                 this.forSales = true;

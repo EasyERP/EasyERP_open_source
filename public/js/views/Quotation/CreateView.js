@@ -81,7 +81,7 @@ define([
                 });
 
                 if (type ) {    // added condition for project with no data-level empty
-                    this.projectManager = element.projectmanager;
+                    this.salesManager = element.salesmanager;
 
                     this.$el.find('#supplierDd').text(element.customer.name.first + element.customer.name.last);
                     this.$el.find('#supplierDd').attr('data-id', element.customer._id);

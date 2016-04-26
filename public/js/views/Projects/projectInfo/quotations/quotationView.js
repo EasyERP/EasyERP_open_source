@@ -37,7 +37,7 @@ define([
             this.collection = options.collection;
             this.projectID = options.projectId;
             this.customerId = options.customerId;
-            this.projectManager = options.projectManager;
+            this.salesManager = options.salesManager;
             this.filter = options.filter ? options.filter : {};
             this.defaultItemsNumber = 50;
             this.page = options.page ? options.page : 1;
@@ -315,7 +315,7 @@ define([
                 projectId       : this.projectID,
                 customerId      : this.customerId,
                 collection      : this.collection,
-                projectManager  : this.projectManager,
+                salesManager    : this.salesManager,
                 projectModel    : this.projectModel,
                 wTrackCollection: this.wTrackCollection,
                 createJob       : this.createJob,
