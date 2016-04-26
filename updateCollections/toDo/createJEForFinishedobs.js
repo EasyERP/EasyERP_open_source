@@ -10,8 +10,15 @@ var async = require('async');
 var JobsSchema = mongoose.Schemas.jobs;
 var journalEntrySchema = mongoose.Schemas.journalEntry;
 var journalSchema = mongoose.Schemas.journal;
+var connectOptions = {
+    user: 'easyerp',
+    pass: '1q2w3e!@#',
+    w   : 1,
+    j   : true
+};
 
-var dbObject = mongoose.createConnection('localhost', 'production', 28017);
+var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
+
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
