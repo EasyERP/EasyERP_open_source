@@ -55,10 +55,73 @@ define([
             this.collection.on('reset', this.renderContent, this);
         },
 
+        calculateTotal: function () {
+            var $thisEl = this.$el;
+            var $trsProfit = $thisEl.find('tr.profit');
+            var $trsRevenue = $thisEl.find('tr.revenue');
+
+            $trsProfit.each(function () {
+                var $el = $(this);
+                var $total = $el.find('[data-content="totalBySales"]');
+                var $tds = $el.find('td.content');
+                var total = 0;
+
+                $tds.each(function () {
+                    var _$el = $(this);
+                    var val = _$el.text();
+
+                    val = val.replace(/\D/g, '');
+                    val = val || 0;
+                    val = parseFloat(val);
+
+                    total += val;
+                });
+
+                $total.text(helpers.currencySplitter(total.toFixed(0)));
+            });
+
+            $trsRevenue.each(function () {
+                var $el = $(this);
+                var id = $el.attr('data-id');
+                var $total = $el.find('[data-content="totalBySales"]');
+                var $tds = $el.find('td.content');
+                var total = 0;
+                var rate = 0;
+                var $profitTr = $thisEl.find('tr[data-id="' + id + '"].profit');
+                var $rate = $profitTr.find('.rate');
+                var totslProfit = $profitTr.find('[data-content="totalBySales"]').text();
+
+                totslProfit = totslProfit.replace(/\D/g, '');
+                totslProfit = totslProfit || 0;
+
+                $tds.each(function () {
+                    var _$el = $(this);
+                    var val = _$el.text();
+
+                    val = val.replace(/\D/g, '');
+                    val = val || 0;
+                    val = parseFloat(val);
+
+                    total += val;
+                });
+
+                rate = (totslProfit / total) * 100;
+
+                if (!isFinite(rate)) {
+                    rate = 0;
+                }
+
+                $rate.text(rate.toFixed(0));
+                $total.text(helpers.currencySplitter(total.toFixed(0)));
+            });
+
+
+        },
+
         renderContent: function () {
             var self = this;
             var count = this.collection.length;
-            var tdWidth = Math.floor(90 / count);
+            var tdWidth = Math.floor(90 / (count + 2));
             var $tableContainer = this.$el.find('#results');
 
             $tableContainer.html(this.profitTemplate({
@@ -67,6 +130,8 @@ define([
                 tdWidth         : tdWidth,
                 count           : count
             }));
+
+            this.calculateTotal();
         },
 
         render: function () {
