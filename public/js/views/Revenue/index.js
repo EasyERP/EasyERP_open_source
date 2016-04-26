@@ -7,7 +7,9 @@ define([
     'jQuery',
     'text!templates/Revenue/index.html',
     'text!templates/Revenue/profit.html',
+    'text!templates/Revenue/bonus.html',
     'collections/revenue/profit',
+    'collections/revenue/bonus',
     'moment',
     'dataService',
     'constants',
@@ -18,7 +20,9 @@ define([
              $,
              mainTemplate,
              profitTemplate,
+             bonusTemplate,
              ProfitCollection,
+             BonusCollection,
              moment,
              dataService,
              CONSTANTS,
@@ -30,16 +34,27 @@ define([
         contentType   : CONSTANTS.REVENUE,
         template      : _.template(mainTemplate),
         profitTemplate: _.template(profitTemplate),
+        bonusTemplate : _.template(bonusTemplate),
 
         initialize: function () {
             var dateRange = custom.retriveFromCash('revenueDashDateRange') || {};
             var startDate = dateRange.startDate || moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'week').day('Monday').format('DD MMM, YYYY');
             var endDate = dateRange.endDate || moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'week').day('Sunday').format('DD MMM, YYYY');
 
+            dateRange = dateRange || (this.collection ? this.collection.dateRange : {});
+            dateRange = dateRange || {};
+
             custom.cacheToApp('revenueDashDateRange', {
                 startDate: startDate,
                 endDate  : endDate
             });
+
+            this.bonusBySalesCollection = new BonusCollection({
+                byWeek   : this.byWeek,
+                startDate: dateRange.startDate,
+                endDate  : dateRange.endDate
+            });
+            this.bonusBySalesCollection.on('reset', this.renderAllBonusBySales, this);
 
             this.render();
         },
@@ -52,11 +67,17 @@ define([
                 startDate: this.startDate,
                 endDate  : this.endDate
             });
-            this.collection.on('reset', this.renderContent, this);
+            this.bonusBySalesCollection = new BonusCollection({
+                byWeek   : this.byWeek,
+                startDate: this.startDate,
+                endDate  : this.endDate
+            });
+            this.collection.on('reset', this.renderProfit, this);
+            this.bonusBySalesCollection.on('reset', this.renderAllBonusBySales, this);
         },
 
-        calculateTotal: function () {
-            var $thisEl = this.$el;
+        calculateTotal: function ($baseContainer) {
+            var $thisEl = $baseContainer || this.$el;
             var $trsProfit = $thisEl.find('tr.profit');
             var $trsRevenue = $thisEl.find('tr.revenue');
 
@@ -70,7 +91,7 @@ define([
                     var _$el = $(this);
                     var val = _$el.text();
 
-                    val = val.replace(/\D/g, '');
+                    val = val.replace(/\s|\n|\r|\n\r/g, '');
                     val = val || 0;
                     val = parseFloat(val);
 
@@ -91,7 +112,7 @@ define([
                 var $rate = $profitTr.find('.rate');
                 var totslProfit = $profitTr.find('[data-content="totalBySales"]').text();
 
-                totslProfit = totslProfit.replace(/\D/g, '');
+                totslProfit = totslProfit.replace(/\s|\n|\r|\n\r/g, '');
                 totslProfit = totslProfit || 0;
 
                 $tds.each(function () {
@@ -114,24 +135,40 @@ define([
                 $rate.text(rate.toFixed(0));
                 $total.text(helpers.currencySplitter(total.toFixed(0)));
             });
-
-
         },
 
-        renderContent: function () {
+        renderProfit: function () {
             var self = this;
+            var $thisEl = this.$el;
             var count = this.collection.length;
             var tdWidth = Math.floor(90 / (count + 2));
-            var $tableContainer = this.$el.find('#results');
+            var $profitTableContainer = $thisEl.find('#results');
 
-            $tableContainer.html(this.profitTemplate({
+            $profitTableContainer.html(this.profitTemplate({
                 collection      : self.collection,
                 currencySplitter: helpers.currencySplitter,
                 tdWidth         : tdWidth,
                 count           : count
             }));
 
-            this.calculateTotal();
+            this.calculateTotal($profitTableContainer);
+        },
+
+        renderAllBonusBySales: function () {
+            var self = this;
+            var $thisEl = this.$el;
+            var count = this.bonusBySalesCollection.length;
+            var tdWidth = Math.floor(90 / (count + 2));
+            var $revenueTableContainer = $thisEl.find('#allBonusBySales');
+
+            $revenueTableContainer.html(this.bonusTemplate({
+                collection      : self.bonusBySalesCollection,
+                currencySplitter: helpers.currencySplitter,
+                tdWidth         : tdWidth,
+                count           : count
+            }));
+
+            this.calculateTotal($revenueTableContainer);
         },
 
         render: function () {
@@ -142,7 +179,7 @@ define([
 
             this.byWeek = false;
 
-            this.renderContent();
+            this.renderProfit();
 
             this.$startDate = $('#startDate');
             this.$endDate = $('#endDate');
