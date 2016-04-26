@@ -347,8 +347,8 @@ define([], function () {
                 backend: 'supplier._id'
             },
             'Sales Manager': {
-                view   : 'projectmanager',
-                backend: 'projectmanager._id'
+                view   : 'salesmanager',
+                backend: 'salesmanager._id'
             },
             'Status'       : {
                 view   : 'workflow',
@@ -365,8 +365,8 @@ define([], function () {
                 backend: 'supplier._id'
             },
             'Sales Manager': {
-                view   : 'projectmanager',
-                backend: 'projectmanager._id'
+                view   : 'salesmanager',
+                backend: 'salesmanager._id'
             },
             'Status'       : {
                 view   : 'workflow',

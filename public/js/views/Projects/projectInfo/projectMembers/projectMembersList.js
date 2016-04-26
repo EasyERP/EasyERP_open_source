@@ -49,7 +49,7 @@ define([
             var isNewRow = row.hasClass('false');
             var text;
 
-            var startDate = this.prevStartDate(row) || this.project.startDate || new Date();
+            var startDate = this.prevStartDate(row);
 
             if (target.prop('tagName') !== 'INPUT') {
                 this.hideNewSelect();
@@ -104,7 +104,7 @@ define([
             var prevStartDate;
             var prevDate;
             var nextDay;
-            var projectStartDate =  this.project.StartDate || new Date();
+            var projectStartDate =  this.project.StartDate || new Date(2014, 8, 1);
             if (!prevTd.length) {
                 return false;
             }
