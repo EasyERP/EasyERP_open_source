@@ -17,18 +17,18 @@ dbObject.once('open', function callback() {
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var Employee = dbObject.model("Employees", EmployeeSchema);
 
-    // Employee.find({isEmployee: false}, {fire: 1}, function (err, result) {
-    //     if (err) {
-    //         return console.log(err);
-    //     }
-    //     async.each(result, function (emp, cb) {
-    //         console.log(emp.fire.length);
-    //         JE.remove({"sourceDocument._id": emp._id, date: {$gte: new Date(emp.fire[0])}}, cb)
-    //     }, function (err, result) {
-    //         console.log('good');
-    //     });
-    //
-    // });
+    Employee.find({isEmployee: false}, {fire: 1}, function (err, result) {
+        if (err) {
+            return console.log(err);
+        }
+        async.each(result, function (emp, cb) {
+            console.log(emp.fire.length);
+            JE.remove({"sourceDocument._id": emp._id, date: {$gte: new Date(emp.fire[0])}}, cb)
+        }, function (err, result) {
+            console.log('good');
+        });
+
+    });
 
 
     // JE.find({}, {date: 1}, function (err, result) {
@@ -53,7 +53,7 @@ dbObject.once('open', function callback() {
     //     });
     // });
 
-    var InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+    /*var InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var counter = 0;
 
     var Invoice = dbObject.model("wTrackInvoice", InvoiceSchema);
@@ -87,5 +87,5 @@ dbObject.once('open', function callback() {
             }
         });
     })
-
+*/
 });

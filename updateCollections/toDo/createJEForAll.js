@@ -213,7 +213,7 @@ dbObject.once('open', function callback() {
      });
      };*/
 
-    var weeksArray = [/*1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,*/ 31, 32, 33,34,35,36,37,38,39,40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53];
+    var weeksArray = [/*1, 2, 3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30, 31, 32, 33,34,35,36,*/37,38,39,40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53];
 
     weeksArray.forEach(function (week) {
         console.log('start week ', week);
@@ -403,9 +403,9 @@ dbObject.once('open', function callback() {
 
                                 var date = moment().isoWeekYear(year).month(wTrackModel.month - 1).isoWeek(wTrackModel.week).startOf('isoWeek');
 
-                                if (date.year() === 2014){
-                                    return asyncCb();
-                                }
+                                // if (date.year() === 2015){
+                                //     return asyncCb();
+                                // }
 
                                 for (j = 5; j >= 1; j--) {
                                     date = moment(date).day(j);
