@@ -1039,7 +1039,9 @@ define([
 
                     self.renderTabCounter();
 
-                    callback();
+                    if (cb) {
+                        callback();
+                    }
                 }
 
                 callback = _.once(cb);
