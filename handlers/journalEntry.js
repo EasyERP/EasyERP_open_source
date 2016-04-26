@@ -1666,7 +1666,7 @@ var Module = function (models, event) {
         var wTracks;
 
         reconcileInvoiceEntries = function (mainCallback) {
-            Invoice.find({reconcile: true}, function (err, result) {
+            Invoice.find({reconcile: true, _type : {$ne: "Proforma"}}, function (err, result) {
                 if (err) {
                     return mainCallback(err);
                 }

@@ -269,7 +269,7 @@ var Proforma = function (models) {
         }
 
         parallelTasks = [findQuotation, fetchFirstWorkflow, getRates];
-        waterFallTasks = [parallel, createProforma, createJournalEntry];
+        waterFallTasks = [parallel, createProforma/*, createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
             var proformaId = result._id.toString();
