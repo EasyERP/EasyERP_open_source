@@ -8,29 +8,36 @@ module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
     var Schema = mongoose.Schema;
+    var payments;
+    var products;
+    var quotationSchema;
 
-    var payments = {
+    function setPrice(num) {
+        return num * 100;
+    }
+
+    payments = {
         _id    : false,
         id     : false,
-        total  : {type: Number, default: 0},
-        unTaxed: {type: Number, default: 0},
-        taxes  : {type: Number, default: 0}
+        total  : {type: Number, default: 0, set : setPrice},
+        unTaxed: {type: Number, default: 0, set : setPrice},
+        taxes  : {type: Number, default: 0, set : setPrice}
     };
 
-    var products = {
+    products = {
         _id          : false,
         id           : false,
         scheduledDate: {type: Date},
         quantity     : {type: Number, default: 1},
-        taxes        : {type: Number},
-        subTotal     : Number,
-        unitPrice    : Number,
+        taxes        : {type: Number, default: 0, set : setPrice},
+        subTotal     : {type: Number, default: 0, set : setPrice},
+        unitPrice    : {type: Number, default: 0, set : setPrice},
         product      : {type: ObjectId, ref: 'Product', default: null},
         description  : {type: String, default: ''},
         jobs         : {type: ObjectId, ref: "jobs", default: null}
     };
 
-    var quotationSchema = new Schema({
+    quotationSchema = new Schema({
         currency      : {
             _id : {type: ObjectId, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
