@@ -1692,7 +1692,7 @@ var Module = function (models, event) {
                 function findProformaPayments(resultArray, cb) {
                     Invoice.aggregate([{
                         $match: {
-                            sourceDocument: {$in: resultArray.objectID()}
+                            _id: {$in: resultArray}
                         }
                     }, {
                         $project: {
@@ -1736,14 +1736,13 @@ var Module = function (models, event) {
                         }
                     }, {
                         $group: {
-                            _id: '$_id',
+                            _id: '$invoice._id',
                             paymentsInfo: {$push: '$payment'},
                             payments: {$push: '$payment._id'},
                             paymentDate: {$first: '$paymentDate'},
                             dueDate: {$max: '$dueDate'}
                         }
-                    }
-                    ], function (err, result) {
+                    }], function (err, result) {
                         if (err) {
                             return cb(err);
                         }
