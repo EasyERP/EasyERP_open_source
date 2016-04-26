@@ -18,6 +18,7 @@ var connectOptions = {
 };
 
 var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
+//var dbObject = mongoose.createConnection('localhost', 'production');
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
@@ -199,8 +200,8 @@ dbObject.once('open', function callback() {
                     bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
                     bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
 
-                    createReconciled(bodyFinishedJob, 'production', callback, '52203e707d4dba8813000003');
-                    createReconciled(bodyClosedJob, 'production', callback, '52203e707d4dba8813000003');
+                    createReconciled(bodyFinishedJob, 'lilyadb', callback, '52203e707d4dba8813000003');
+                    createReconciled(bodyClosedJob, 'lilyadb', callback, '52203e707d4dba8813000003');
                 });
             }, function () {
                 console.log(count++);

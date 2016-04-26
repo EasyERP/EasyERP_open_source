@@ -11,6 +11,7 @@ var JobsSchema = mongoose.Schemas.jobs;
 var journalEntrySchema = mongoose.Schemas.journalEntry;
 var journalSchema = mongoose.Schemas.journal;
 var InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+var PaymentSchema = mongoose.Schemas.wTrackPayOut;
 
 var connectOptions = {
     user: 'easyerp',
@@ -25,11 +26,12 @@ dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
     var Invoice = dbObject.model("wTrackInvoice", InvoiceSchema);
+    var Payment = dbObject.model("Payment", PaymentSchema);
 
     var Job = dbObject.model("jobs", JobsSchema);
     var JE = dbObject.model("journalEntry", journalEntrySchema);
     var count = 0;
-    // Invoice.find({}, function (err, result) {
+    // Invoice.find({}).populate('project').exec(function (err, result) {
     //     if (err){
     //         return console.log(err);
     //     }
@@ -41,48 +43,52 @@ dbObject.once('open', function callback() {
     //         products.forEach(function (prod) {
     //             var job = prod.jobs;
     //
-    //             Job.find({_id: job, invoice: null}, function (err, result) {
+    //             Job.find({_id: job}, function (err, result) {
     //                 if (err){
     //                     return console.log(err);
     //                 }
-    //                 Job.findByIdAndUpdate(job, {$set: {invoice: invId}}, function (err, result) {
-    //                     if (err){
-    //                         return console.log(err);
-    //                     }
+    //                 if (!result.length){
+    //                    var payments = inv.payments;
     //
-    //                     console.log('success');
-    //                 });
+    //                     Payment.remove({_id: {$in: payments}}, function(err, result){
+    //
+    //                     });
+    //
+    //                     Invoice.remove({_id: invId}, function (){
+    //
+    //                     });
+    //                 }
     //             });
     //         });
     //     });
     // });
 
-    var count = 0;
-    Job.find({invoice: {$ne: null}}).populate('quotation').exec(function (err, result) {
-        if (err){
-            return console.log(err);
-        }
-        var type = 'Quoted';
-
-        result.forEach(function (job) {
-
-            if (job.quotation && job.quotation._id && job.quotation.isOrder ){
-                type = 'Ordered';
-            } else if (job.quotation && job.quotation._id) {
-                type = 'Quoted';
-            } else {
-                type = 'Not Quoted';
-            }
-
-            Invoice.findById(job.invoice, function (err, result) {
-                if (result._type === 'Proforma'){
-                    console.log(count++);
-
-                    Job.findByIdAndUpdate(job._id, {$set: {invoice: null, type: type, workflow: '56337c705d49d8d6537832eb'}}, function(){
-                        
-                    })
-                }
-            });
-        });
-    });
+    // var count = 0;
+    // Job.find({invoice: {$ne: null}}).populate('quotation').exec(function (err, result) {
+    //     if (err){
+    //         return console.log(err);
+    //     }
+    //     var type = 'Quoted';
+    //
+    //     result.forEach(function (job) {
+    //
+    //         if (job.quotation && job.quotation._id && job.quotation.isOrder ){
+    //             type = 'Ordered';
+    //         } else if (job.quotation && job.quotation._id) {
+    //             type = 'Quoted';
+    //         } else {
+    //             type = 'Not Quoted';
+    //         }
+    //
+    //         Invoice.findById(job.invoice, function (err, result) {
+    //             if (result._type === 'Proforma'){
+    //                 console.log(count++);
+    //
+    //                 Job.findByIdAndUpdate(job._id, {$set: {invoice: null, type: type, workflow: '56337c705d49d8d6537832eb'}}, function(){
+    //
+    //                 })
+    //             }
+    //         });
+    //     });
+    // });
 });

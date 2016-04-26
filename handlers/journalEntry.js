@@ -1666,7 +1666,7 @@ var Module = function (models, event) {
         var wTracks;
 
         reconcileInvoiceEntries = function (mainCallback) {
-            Invoice.find({reconcile: true, _type : {$ne: "Proforma"}}, function (err, result) {
+            Invoice.find({reconcile: true, _type: {$ne: "Proforma"}}, function (err, result) {
                 if (err) {
                     return mainCallback(err);
                 }
@@ -1685,17 +1685,112 @@ var Module = function (models, event) {
                             return cb(err);
                         }
 
-                        cb();
+                        cb(null, resultArray);
                     });
                 };
-                var parallelCreate = function (cb) {
+
+                function findProformaPayments(resultArray, cb) {
+                    Invoice.aggregate([{
+                        $match: {
+                            sourceDocument: {$in: resultArray.objectID()}
+                        }
+                    }, {
+                        $project: {
+                            payments: 1,
+                            paymentDate: 1,
+                            dueDate: 1,
+                            _id: 0
+                        }
+                    }, {
+                        $unwind: '$payments'
+                    }, {
+                        $lookup: {
+                            from: 'Payment',
+                            localField: 'payments',
+                            foreignField: '_id',
+                            as: 'payment'
+                        }
+                    }, {
+                        $project: {
+                            payment: {$arrayElemAt: ['$payment', 0]},
+                            paymentDate: 1,
+                            dueDate: 1
+                        }
+                    }, {
+                        $lookup: {
+                            from: 'Invoice',
+                            localField: 'payment.invoice',
+                            foreignField: '_id',
+                            as: 'invoice'
+                        }
+                    }, {
+                        $project: {
+                            payment: 1,
+                            invoice: {$arrayElemAt: ['$invoice', 0]},
+                            paymentDate: 1,
+                            dueDate: 1
+                        }
+                    }, {
+                        $match: {
+                            'invoice._type': 'Proforma'
+                        }
+                    }, {
+                        $group: {
+                            _id: '$_id',
+                            paymentsInfo: {$push: '$payment'},
+                            payments: {$push: '$payment._id'},
+                            paymentDate: {$first: '$paymentDate'},
+                            dueDate: {$max: '$dueDate'}
+                        }
+                    }
+                    ], function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb(null, result);
+                    });
+                }
+
+                var parallelCreate = function (result, cb) {
                     async.each(resultArray, function (element, asyncCb) {
                         Invoice.findById(element, function (err, invoice) {
                             if (err) {
                                 return asyncCb(err);
                             }
 
+                            var cb = asyncCb;
+
+                            var proforma = _.find(result, function (el) {
+                                return el._id.toString() === element._id.toString()
+                            });
+
+                            var paidAmount = 0;
+                            var beforeInvoiceBody = {};
                             var journalEntryBody = {};
+
+                            if (proforma) {
+                                proforma.paymentsInfo.forEach(function (payment) {
+                                    var paid = payment.paidAmount;
+                                    var paidInUSD = paid / payment.currency.rate;
+
+                                    paidAmount += paidInUSD;
+                                });
+
+                                if (invoice.paymentInfo.total - paidAmount > 0) {
+                                    cb = _.after(2, asyncCb);
+
+                                    beforeInvoiceBody.date = invoice.invoiceDate;
+                                    beforeInvoiceBody.journal = invoice.journal;
+                                    beforeInvoiceBody.currency = invoice.currency ? invoice.currency._id : 'USD';
+                                    beforeInvoiceBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total - invoice.paymentInfo.balance : 0;
+                                    beforeInvoiceBody.sourceDocument = {};
+                                    beforeInvoiceBody.sourceDocument._id = invoice._id;
+                                    beforeInvoiceBody.sourceDocument.model = 'Proforma';
+
+                                    createReconciled(beforeInvoiceBody, req.session.lastDb, cb, req.session.uId);
+                                }
+                            }
 
                             journalEntryBody.date = invoice.invoiceDate;
                             journalEntryBody.journal = invoice.journal || CONSTANTS.INVOICE_JOURNAL;
@@ -1705,7 +1800,7 @@ var Module = function (models, event) {
                             journalEntryBody.sourceDocument._id = invoice._id;
                             journalEntryBody.sourceDocument.model = 'Invoice';
 
-                            createReconciled(journalEntryBody, req.session.lastDb, asyncCb, req.session.uId);
+                            createReconciled(journalEntryBody, req.session.lastDb, cb, req.session.uId);
                         });
                     }, function () {
                         cb();
@@ -1713,9 +1808,9 @@ var Module = function (models, event) {
 
                 };
 
-                var parallelTasks = [parallelRemove, parallelCreate];
+                var waterfallTasks = [parallelRemove, findProformaPayments, parallelCreate];
 
-                async.parallel(parallelTasks, function (err) {
+                async.waterfall(waterfallTasks, function (err) {
                     if (err) {
                         return mainCallback(err);
                     }
@@ -1805,7 +1900,7 @@ var Module = function (models, event) {
                                     }
 
                                     transferArray.forEach(function (transferObj) {
-                                        if (transferObj.status !== 'fired'){
+                                        if (transferObj.status !== 'fired') {
                                             salaryObject[employee._id][transferObj.date] = transferObj.salary || 0;
                                         }
                                     });
@@ -1825,7 +1920,7 @@ var Module = function (models, event) {
 
                                     result = JSON.parse(result);
 
-                                    if (result && result[0]){
+                                    if (result && result[0]) {
                                         monthHoursObject[key] = result && result[0] ? result[0] : {};
                                         cb();
                                     } else {
@@ -6402,9 +6497,9 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from: "Project",
-                                localField: "sourceDocument._id.project",
-                                foreignField: "_id", as: "sourceDocument._id.project"
+                                from: "Invoice",
+                                localField: "sourceDocument._id.invoice",
+                                foreignField: "_id", as: "sourceDocument._id.invoice"
                             }
                         }, {
                             $project: {
@@ -6412,7 +6507,7 @@ var Module = function (models, event) {
                                 currency: 1,
                                 'journal.debitAccount': {$arrayElemAt: ["$journal.debitAccount", 0]},
                                 'journal.creditAccount': {$arrayElemAt: ["$journal.creditAccount", 0]},
-                                'sourceDocument._id.project': {$arrayElemAt: ["$sourceDocument._id.project", 0]},
+                                'sourceDocument._id.invoice': {$arrayElemAt: ["$sourceDocument._id.invoice", 0]},
                                 'journal.name': 1,
                                 date: 1,
                                 'sourceDocument.model': 1,
@@ -6431,7 +6526,7 @@ var Module = function (models, event) {
                                 'sourceDocument.model': 1,
                                 'sourceDocument.subject._id': 1,
                                 'sourceDocument.subject.name.first': '$sourceDocument.subject.name',
-                                'sourceDocument.name': '$sourceDocument._id.project.projectName',
+                                'sourceDocument.name': '$sourceDocument._id.invoice.name',
                                 account: 1
                             }
                         }, {
