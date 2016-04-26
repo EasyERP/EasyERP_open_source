@@ -13,7 +13,7 @@ module.exports = (function () {
     var quotationSchema;
 
     function setPrice(num) {
-        return num * 100;
+        return num/* * 100*/;
     }
 
     payments = {

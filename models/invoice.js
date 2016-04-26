@@ -5,10 +5,10 @@ module.exports = (function () {
 
     var payments = {
         _id    : false,
-        total  : {type: Number, default: 0, set: setPrice},
-        balance: {type: Number, default: 0, set: setPrice},
-        unTaxed: {type: Number, default: 0, set: setPrice},
-        taxes  : {type: Number, default: 0, set: setPrice}
+        total  : {type: Number, default: 0},
+        balance: {type: Number, default: 0},
+        unTaxed: {type: Number, default: 0},
+        taxes  : {type: Number, default: 0}
     };
 
     var productForJobs = {type: ObjectId, ref: 'Product', default: null};
@@ -103,9 +103,9 @@ module.exports = (function () {
         }]
     });
 
-    function setPrice(num) {
-        return num * 100;
-    };
+    //function setPrice(num) {
+    //    return num * 100;
+    //};
 
     jobsInvoiceSchema.set('toJSON', {getters: true});
     payRollInvoiceSchema.set('toJSON', {getters: true});

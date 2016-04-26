@@ -1218,23 +1218,23 @@ var requestHandler = function (app, event, mainDb) {
                             obj.quantity = job.toJSON().budget.budgetTotal.hoursSum;
                             newProducts[index] = obj;
 
-                            //Quotation.findByIdAndUpdate(job.quotation, {$set: {products: newProducts}}, {new: true}, function (err, result) {
-                            //    if (err) {
-                            //        return console.log(err);
-                            //    }
-                            //});
-
-                            objId = obj.jobs.toString();
-                            objQuantity = obj.quantity;
-
-                            Quotation.update({
-                                _id            : job.quotation,
-                                'products.jobs': objId
-                            }, {$set: {'products.$.quantity': objQuantity}}, {new: true}, function (err, result) {
+                            Quotation.findByIdAndUpdate(job.quotation, {$set: {products: newProducts}}, {new: true}, function (err, result) {
                                 if (err) {
                                     return console.log(err);
                                 }
                             });
+
+                            //objId = obj.jobs.toString();
+                            //objQuantity = obj.quantity;
+                            //
+                            //Quotation.update({
+                            //    _id            : job.quotation,
+                            //    'products.jobs': objId
+                            //}, {$set: {'products.$.quantity': objQuantity}}, {new: true}, function (err, result) {
+                            //    if (err) {
+                            //        return console.log(err);
+                            //    }
+                            //});
                         }
                     }
                 });

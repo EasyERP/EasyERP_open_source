@@ -369,9 +369,9 @@ define([
                 var orderDate = thisEl.find('#orderDate').val();
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
-                var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
-                var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
-                var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
+                var total = parseFloat(helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()))) * 100;
+                var unTaxed = parseFloat(helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()))) * 100;
+                var totalTaxes = parseFloat(helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()))) * 100;
 
                 var usersId = [];
                 var groupsId = [];
@@ -413,9 +413,9 @@ define([
                         productId = targetEl.data('id');
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                         quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"]').text());
-                        taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
-                        subtotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                        price = parseFloat(helpers.spaceReplacer(targetEl.find('[data-name="price"]').text())) * 100;
+                        taxes = parseFloat(helpers.spaceReplacer(targetEl.find('.taxes').text())) * 100;
+                        subtotal = parseFloat(helpers.spaceReplacer(targetEl.find('.subtotal').text())) * 100;
                         jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
 
                         products.push({

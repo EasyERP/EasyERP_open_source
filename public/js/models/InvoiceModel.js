@@ -22,31 +22,54 @@ define(['Validation', 'common'], function (Validation, common) {
         parse      : function (response) {
             if (response) {
                 var payments = response.payments;
+                var products = response.products;
                 var balance;
                 var paid;
                 var total;
                 var unTaxed;
+                var taxes;
+                var unitPrice;
+                var subTotal;
 
                 if (response.paymentInfo) {
                     balance = response.paymentInfo.balance || 0;
                     total = response.paymentInfo.total || 0;
                     unTaxed = response.paymentInfo.unTaxed || 0;
                     paid = total - balance;
+
+                    if (isNaN(paid)) {
+                        paid = 0;
+                    }
+
+                    balance = (balance / 100);
+                    paid = (paid / 100);
+                    total = (total / 100);
+                    unTaxed = (unTaxed / 100);
+
+                    response.paymentInfo.balance = balance;
+                    response.paymentInfo.unTaxed = unTaxed;
+                    response.paymentInfo.total = total;
+                    response.paymentInfo.paid = paid;
                 }
 
-                if (isNaN(paid)) {
-                    paid = 0;
+                if (products) {
+                    products = _.map(products, function (product) {
+
+                        unitPrice = product.unitPrice || 0;
+                        subTotal = product.subTotal || 0;
+                        taxes = product.taxes || 0;
+
+                        unitPrice = unitPrice / 100;
+                        subTotal = subTotal / 100;
+                        taxes = taxes / 100;
+
+                        product.unitPrice = unitPrice;
+                        product.subTotal = subTotal;
+                        product.taxes = taxes;
+
+                        return product;
+                    });
                 }
-
-                balance = (balance / 100).toFixed(2);
-                paid = (paid / 100).toFixed(2);
-                total = (total / 100).toFixed(2);
-                unTaxed = (unTaxed / 100).toFixed(2);
-
-                response.paymentInfo.balance = balance;
-                response.paymentInfo.unTaxed = unTaxed;
-                response.paymentInfo.total = total;
-                response.paymentInfo.paid = paid;
 
                 if (response.invoiceDate) {
                     response.invoiceDate = common.utcDateToLocaleDate(response.invoiceDate);

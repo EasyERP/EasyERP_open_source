@@ -53,9 +53,9 @@
         <td><%=invoice.paymentDate%></td>
         <td><%=(invoice.salesPerson && invoice.salesPerson.name) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
         <td data-content="dueDate"><%=invoice.dueDate%></td>
-        <td class="money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
-        <td class="paid money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid) : '0.00'%></td>
-        <td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
+        <td class="money"><%=currencySplitter(invoice.paymentInfo.balance.toString())%></td>
+        <td class="paid money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid.toString()) : '0.00'%></td>
+        <td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total.toString()) : '0.00'%></td>
         <td id='<%=invoice._id%>'>
             <%if(invoice.workflow && invoice.approved){%>
             <span class=" <%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></span>
@@ -74,9 +74,9 @@
         <!--</td>-->
 
         <% var rate = invoice.currency.rate || 1 %>
-        <%balance += parseFloat(invoice.paymentInfo.balance)/rate %>
-        <%paid += parseFloat(invoice.paymentInfo.paid)/rate %>
-        <%total += parseFloat(invoice.paymentInfo.total)/rate %>
+        <%balance += parseFloat(invoice.paymentInfo.balance.toString())/rate %>
+        <%paid += parseFloat(invoice.paymentInfo.paid.toString())/rate %>
+        <%total += parseFloat(invoice.paymentInfo.total.toString())/rate %>
         </tr>
         <% }) %>
 
@@ -85,9 +85,9 @@
         <tfoot id="listTotal">
         <tr>
             <td colspan="7"></td>
-            <td><span id="balance" class="money"><%=currencySplitter((balance).toFixed(2))%></span></td>
-            <td><span id="paid" class="money"><%=currencySplitter((paid).toFixed(2))%></span></td>
-            <td><span id="total" class="money"><%=currencySplitter((total).toFixed(2))%></span></td>
+            <td><span id="balance" class="money"><%=currencySplitter((balance).toString())%></span></td>
+            <td><span id="paid" class="money"><%=currencySplitter((paid).toString())%></span></td>
+            <td><span id="total" class="money"><%=currencySplitter((total).toString())%></span></td>
             <td></td>
         </tr>
         </tfoot>

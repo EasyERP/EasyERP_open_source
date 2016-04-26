@@ -454,12 +454,12 @@ define([
             var supplierReference = thisEl.find('#supplierReference').val();
             var orderDate = thisEl.find('#orderDate').val();
             var expectedDate = thisEl.find('#expectedDate').val() || orderDate;
-            var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
+            var total = parseFloat(helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()))) * 100;
 
-            var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
+            var totalTaxes = parseFloat(helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()))) * 100;
             var taxes;
             var description;
-            var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
+            var unTaxed = parseFloat(helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()))) * 100;
             var subTotal;
             var jobs;
             var scheduledDate;
@@ -497,12 +497,12 @@ define([
 
                     if (productId) {
                         quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
+                        price = parseFloat(helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val())) * 100;
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
-                        taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
+                        taxes = parseFloat(helpers.spaceReplacer(targetEl.find('.taxes').text())) * 100;
                         description = targetEl.find('[data-name="productDescr"]').text();
                         jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
-                        subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                        subTotal = parseFloat(helpers.spaceReplacer(targetEl.find('.subtotal').text())) * 100;
 
                         if (jobs) {
                             products.push({

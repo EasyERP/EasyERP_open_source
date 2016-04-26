@@ -337,10 +337,10 @@ define([
 
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
-                            price = targetEl.find('[data-name="price"] input').val() || targetEl.find('[data-name="price"] span').text();
+                            price = parseFloat(targetEl.find('[data-name="price"] input').val() || targetEl.find('[data-name="price"] span').text()) * 100;
                             jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
-                            taxes = targetEl.find('.taxes').text();
-                            amount = helpers.spaceReplacer(targetEl.find('.amount').text());
+                            taxes = parseFloat(targetEl.find('.taxes').text()) * 100;
+                            amount = parseFloat(helpers.spaceReplacer(targetEl.find('.amount').text())) * 100;
 
                             products.push({
                                 product    : productId,
