@@ -305,26 +305,32 @@ define([
 
                 var supplier = $thisEl.find('#supplier').attr("data-id");
 
-                var total = parseFloat(helpers.spaceReplacer($thisEl.find("#totalAmount").text())) * 100;
-                var unTaxed = parseFloat(helpers.spaceReplacer($thisEl.find("#totalUntaxes").text())) * 100;
-                var balance = parseFloat(helpers.spaceReplacer($thisEl.find("#balance").text())) * 100;
-                var taxes = parseFloat(helpers.spaceReplacer($thisEl.find("#taxes").text())) * 100;
+                var total = helpers.spaceReplacer($thisEl.find('#totalAmount').text());
+                var unTaxed = helpers.spaceReplacer($thisEl.find('#totalUntaxes').text());
+                var balance = helpers.spaceReplacer($thisEl.find('#balance').text());
+                var taxes = helpers.spaceReplacer($thisEl.find('#taxes').text());
 
-                var payments = {
+                var salesPersonId = $thisEl.find("#salesPerson").attr("data-id") || null;
+                var paymentTermId = $thisEl.find("#payment_terms").attr("data-id") || null;
+                var journalId = this.$el.find('#journal').attr("data-id") || null;
+                var usersId = [];
+
+                var groupsId = [];
+                var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
+
+                var payments;
+
+                total = parseFloat(total) * 100;
+                unTaxed = parseFloat(unTaxed) * 100;
+                balance = parseFloat(balance) * 100;
+                taxes = parseFloat(taxes) * 100;
+
+                payments = {
                     total  : total,
                     unTaxed: unTaxed,
                     balance: balance,
                     taxes  : taxes
                 };
-
-                var salesPersonId = $thisEl.find("#salesPerson").attr("data-id") || null;
-                var paymentTermId = $thisEl.find("#payment_terms").attr("data-id") || null;
-                var journalId = this.$el.find('#journal').attr("data-id") || null;
-
-                var usersId = [];
-                var groupsId = [];
-
-                var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
 
                 if (errors.length) {
                     return false;
@@ -337,10 +343,13 @@ define([
 
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
-                            price = parseFloat(targetEl.find('[data-name="price"] input').val() || targetEl.find('[data-name="price"] span').text()) * 100;
+                            price = targetEl.find('[data-name="price"] input').val() || targetEl.find('[data-name="price"] span').text();
+                            price = parseFloat(price) * 100;
                             jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
-                            taxes = parseFloat(targetEl.find('.taxes').text()) * 100;
-                            amount = parseFloat(helpers.spaceReplacer(targetEl.find('.amount').text())) * 100;
+                            taxes = targetEl.find('.taxes').text();
+                            taxes = parseFloat(taxes) * 100;
+                            amount = helpers.spaceReplacer(targetEl.find('.amount').text());
+                            amount = parseFloat(amount) * 100;
 
                             products.push({
                                 product    : productId,

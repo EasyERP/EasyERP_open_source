@@ -369,9 +369,12 @@ define([
                 var orderDate = thisEl.find('#orderDate').val();
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
 
-                var total = parseFloat(helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()))) * 100;
-                var unTaxed = parseFloat(helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()))) * 100;
-                var totalTaxes = parseFloat(helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()))) * 100;
+                var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
+                var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
+                var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
+                total = parseFloat(total) * 100;
+                unTaxed = parseFloat(unTaxed) * 100;
+                totalTaxes = parseFloat(totalTaxes) * 100;
 
                 var usersId = [];
                 var groupsId = [];

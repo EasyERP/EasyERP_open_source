@@ -93,19 +93,20 @@ define([
                 var orderDate = thisEl.find('#orderDate').val();
                 var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#orderDate').val();
 
-                var total = parseFloat(helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()))) * 100;
+                var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
                 var totalTaxes = $.trim(thisEl.find('#taxes').text());
                 var taxes;
                 var description;
-                var unTaxed = parseFloat(helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()))) * 100;
+                var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
                 var subTotal;
                 var jobs;
-
                 var usersId = [];
                 var groupsId = [];
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
+                total = parseFloat(total) * 100;
+                unTaxed = parseFloat(unTaxed) * 100;
 
                 thisEl.find(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -123,11 +124,14 @@ define([
                         productId = targetEl.data('id');
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
-                            price = parseFloat(targetEl.find('[data-name="price"] input').val()) * 100;
+                            price = targetEl.find('[data-name="price"] input').val();
+                            price = parseFloat(price) * 100;
                             scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
-                            taxes = parseFloat(targetEl.find('.taxes').text()) * 100;
+                            taxes = targetEl.find('.taxes').text();
+                            taxes = parseFloat(taxes) * 100;
                             description = targetEl.find('[data-name="productDescr"]').text();
-                            subTotal = parseFloat(helpers.spaceReplacer(targetEl.find('.subtotal').text())) * 100;
+                            subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                            subTotal = parseFloat(subTotal) * 100;
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
                             if (price === '') {

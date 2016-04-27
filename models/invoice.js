@@ -103,9 +103,9 @@ module.exports = (function () {
         }]
     });
 
-    //function setPrice(num) {
-    //    return num * 100;
-    //};
+/*    function setPrice(num) {
+        return num * 100;
+    };*/
 
     jobsInvoiceSchema.set('toJSON', {getters: true});
     payRollInvoiceSchema.set('toJSON', {getters: true});

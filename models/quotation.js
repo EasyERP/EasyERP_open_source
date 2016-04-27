@@ -12,16 +12,16 @@ module.exports = (function () {
     var products;
     var quotationSchema;
 
-    function setPrice(num) {
-        return num/* * 100*/;
-    }
+/*    function setPrice(num) {
+        return num * 100;
+    }*/
 
     payments = {
         _id    : false,
         id     : false,
-        total  : {type: Number, default: 0, set : setPrice},
-        unTaxed: {type: Number, default: 0, set : setPrice},
-        taxes  : {type: Number, default: 0, set : setPrice}
+        total  : {type: Number, default: 0},
+        unTaxed: {type: Number, default: 0},
+        taxes  : {type: Number, default: 0}
     };
 
     products = {
@@ -29,9 +29,9 @@ module.exports = (function () {
         id           : false,
         scheduledDate: {type: Date},
         quantity     : {type: Number, default: 1},
-        taxes        : {type: Number, default: 0, set : setPrice},
-        subTotal     : {type: Number, default: 0, set : setPrice},
-        unitPrice    : {type: Number, default: 0, set : setPrice},
+        taxes        : {type: Number, default: 0},
+        subTotal     : {type: Number, default: 0},
+        unitPrice    : {type: Number, default: 0},
         product      : {type: ObjectId, ref: 'Product', default: null},
         description  : {type: String, default: ''},
         jobs         : {type: ObjectId, ref: "jobs", default: null}

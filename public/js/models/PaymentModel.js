@@ -65,10 +65,10 @@ define(['Validation', 'common'], function (Validation, common, helpers) {
                     paid = 0;
                 }
 
-                balance = (balance / 100);
-                paid = (paid / 100);
-                total = (total / 100);
-                unTaxed = (unTaxed / 100);
+                balance = (balance / 100).toFixed(2);
+                paid = (paid / 100).toFixed(2);
+                total = (total / 100).toFixed(2);
+                unTaxed = (unTaxed / 100).toFixed(2);
 
                 model.paymentInfo.balance = balance;
                 model.paymentInfo.unTaxed = unTaxed;
@@ -83,9 +83,9 @@ define(['Validation', 'common'], function (Validation, common, helpers) {
                     subTotal = product.subTotal || 0;
                     taxes = product.taxes || 0;
 
-                    unitPrice = unitPrice / 100;
-                    subTotal = subTotal / 100;
-                    taxes = taxes / 100;
+                    unitPrice = (unitPrice / 100).toFixed(2);
+                    subTotal = (subTotal / 100).toFixed(2);
+                    taxes = (taxes / 100).toFixed(2);
 
                     product.unitPrice = unitPrice;
                     product.subTotal = subTotal;
