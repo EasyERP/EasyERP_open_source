@@ -1364,7 +1364,7 @@ var Payment = function (models, event) {
                                                     },
                                                     session: req.session
                                                 };
-                                                if (invoice._type === 'wTrackInvoice') {
+                                                if (invoice._type === 'wTrackInvoice' || invoice._type === 'expensesInvoice') {
                                                     wId = 'Sales Invoice';
                                                 } else if (invoice._type === 'Proforma') {
                                                     wId = 'Proforma';
