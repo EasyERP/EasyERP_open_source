@@ -77,6 +77,7 @@ define([
         },
 
         calculateTotal: function ($baseContainer) {
+            var badValsRegExp = /\s|\n|\r|\n\r/g;
             var $thisEl = $baseContainer || this.$el;
             var $trsProfit = $thisEl.find('tr.profit');
             var $trsRevenue = $thisEl.find('tr.revenue');
@@ -91,7 +92,7 @@ define([
                     var _$el = $(this);
                     var val = _$el.text();
 
-                    val = val.replace(/\s|\n|\r|\n\r/g, '');
+                    val = val.replace(badValsRegExp, '');
                     val = val || 0;
                     val = parseFloat(val);
 
@@ -112,14 +113,14 @@ define([
                 var $rate = $profitTr.find('.rate');
                 var totslProfit = $profitTr.find('[data-content="totalBySales"]').text();
 
-                totslProfit = totslProfit.replace(/\s|\n|\r|\n\r/g, '');
+                totslProfit = totslProfit.replace(badValsRegExp, '');
                 totslProfit = totslProfit || 0;
 
                 $tds.each(function () {
                     var _$el = $(this);
                     var val = _$el.text();
 
-                    val = val.replace(/\D/g, '');
+                    val = val.replace(badValsRegExp, '');
                     val = val || 0;
                     val = parseFloat(val);
 
@@ -158,7 +159,7 @@ define([
             var self = this;
             var $thisEl = this.$el;
             var count = this.bonusBySalesCollection.length;
-            var tdWidth = Math.floor(90 / (count + 2));
+            var tdWidth = Math.floor(90 / (count + 1));
             var $revenueTableContainer = $thisEl.find('#allBonusBySales');
 
             $revenueTableContainer.html(this.bonusTemplate({
