@@ -2,7 +2,7 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
-        'text!templates/supplierPayments/TopBarTemplate.html',
+        'text!templates/ExpensesPayments/TopBarTemplate.html',
         'custom',
         'common',
         'constants'

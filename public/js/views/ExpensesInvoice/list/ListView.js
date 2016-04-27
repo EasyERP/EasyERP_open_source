@@ -146,7 +146,7 @@ define([
 
             recalcTotal: function () {
                 var self = this;
-                var columns = ['balance', 'total', 'unTaxed'];
+                var columns = ['balance', 'paid', 'total'];
 
                 _.each(columns, function (col) {
                     var sum = 0;

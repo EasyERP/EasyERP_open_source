@@ -55,6 +55,7 @@ define([
             chooseOption : function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+                $(e.target).closest('td').removeClass('errorContent');
             },
 
             nextSelect    : function (e) {
@@ -151,11 +152,18 @@ define([
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
                         if (productId) {
-                            quantity = targetEl.find('[data-name="quantity"] input').val();
-                            price = targetEl.find('[data-name="price"] input').val();
+                            quantity = parseFloat(targetEl.find('[data-name="quantity"] input').val());
+                            price = parseFloat(targetEl.find('[data-name="price"] input').val());
                             description = targetEl.find('[data-name="productDescr"] input').val();
                             taxes = targetEl.find('.taxes').text();
                             amount = targetEl.find('.amount').text();
+
+                            if (!quantity || !price) {
+                                return App.render({
+                                    type: 'error',
+                                    message: 'Fields "price" and "quantity" can\'t be empty or 0'
+                                });
+                            }
 
                             products.push({
                                 product    : productId,
@@ -225,7 +233,7 @@ define([
                 } else {
                     App.render({
                         type   : 'error',
-                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                        message: 'Please fill all fields.'
                     });
                 }
 

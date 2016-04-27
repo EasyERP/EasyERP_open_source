@@ -7,6 +7,7 @@
 </td>
 <td><%=invoice.name%></td>
 <td><%=invoice.paymentDate%></td>
+<td><%=(invoice.salesPerson) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
 <td><%=invoice.dueDate%></td>
 <td class="balance money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
 <td class="paid money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid) : '0.00'%></td>

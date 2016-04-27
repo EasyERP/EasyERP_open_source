@@ -280,6 +280,7 @@ var Payment = function (models, event) {
                                 differenceAmount: 1,
                                 paidAmount      : 1,
                                 workflow        : 1,
+                                name            : 1,
                                 date            : 1,
                                 isExpense       : 1,
                                 bonus           : 1,
@@ -316,6 +317,7 @@ var Payment = function (models, event) {
                                 paidAmount        : 1,
                                 workflow          : 1,
                                 date              : 1,
+                                name            : 1,
                                 paymentMethod     : 1,
                                 isExpense         : 1,
                                 bonus             : 1,
@@ -339,6 +341,7 @@ var Payment = function (models, event) {
                                 assigned          : 1,
                                 forSale           : 1,
                                 differenceAmount  : 1,
+                                name              : 1,
                                 paidAmount        : 1,
                                 workflow          : 1,
                                 date              : 1,
@@ -945,6 +948,7 @@ var Payment = function (models, event) {
         var forSale = type === 'customers';
         var bonus = type === 'supplier';
         var salary = type === 'salary';
+        var expenses = type === 'expenses';
         var supplier = 'Customers';
         var paymentMethod = 'PaymentMethod';
 
@@ -984,6 +988,10 @@ var Payment = function (models, event) {
         } else {
             queryObject.$and.push({isExpense: true});
             paymentMethod = 'ProductCategory';
+        }
+
+        if (expenses) {
+            queryObject.$and.push({_type: 'expensesInvoicePayment'});
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -1032,10 +1040,14 @@ var Payment = function (models, event) {
         contentSearcher = function (paymentIds, waterfallCallback) {
             var query;
 
-            //query = Payment.find(queryObject);
-            //query.count(waterfallCallback);
+            paymentIds = _.pluck(paymentIds, '_id');
 
-            Payment.aggregate([{
+            Payment.aggregate([
+            {
+                $match: {
+                    _id: {$in: paymentIds}
+                }
+            }, {
                 $lookup: {
                     from        : supplier,
                     localField  : "supplier",
@@ -1094,8 +1106,6 @@ var Payment = function (models, event) {
                     month           : 1,
                     period          : 1
                 }
-            }, {
-                $match: queryObject
             }
             ], waterfallCallback);
         };

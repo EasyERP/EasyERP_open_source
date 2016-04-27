@@ -3,17 +3,17 @@
  */
 define([
         'text!templates/Pagination/PaginationTemplate.html',
-        'text!templates/supplierPayments/list/ListHeader.html',
-        'text!templates/supplierPayments/forWTrack/ListHeader.html',
+        'text!templates/ExpensesPayments/list/ListHeader.html',
+        'text!templates/ExpensesPayments/list/ListHeader.html',
         'text!templates/supplierPayments/forWTrack/cancelEdit.html',
         'views/selectView/selectView',
         'views/supplierPayments/CreateView',
         'views/Filter/FilterView',
         'models/PaymentModel',
-        'views/supplierPayments/list/ListItemView',
-        'views/supplierPayments/list/ListTotalView',
-        'collections/supplierPayments/filterCollection',
-        'collections/supplierPayments/editCollection',
+        'views/ExpensesPayments/list/ListItemView',
+        'views/ExpensesPayments/list/ListTotalView',
+        'collections/ExpensesPayments/filterCollection',
+        'collections/ExpensesPayments/editCollection',
         'dataService',
         'populate',
         'async',
@@ -442,7 +442,7 @@ define([
 
                 $currentEl.append(new listTotalView({
                     element : this.$el.find("#listTable"),
-                    cellSpan: 6,
+                    cellSpan: 4,
                     wTrack  : true
                 }).render());
 

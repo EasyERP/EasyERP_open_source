@@ -1,20 +1,37 @@
 define([
-        'views/listViewBase',
-        'text!templates/salesInvoice/list/ListHeader.html',
-        'text!templates/stages.html',
-        'views/salesInvoice/CreateView',
-        'views/Proforma/EditView',
-        'models/InvoiceModel',
-        'views/salesInvoice/list/ListItemView',
-        'views/Order/list/ListTotalView',
-        'collections/salesProforma/filterCollection',
-        'views/Filter/FilterView',
-        'common',
-        'dataService',
-        'constants'
-    ],
-
-    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, listTotalView, contentCollection, filterView, common, dataService, CONSTANTS) {
+    'jQuery',
+    'Underscore',
+    'Backbone',
+    'views/listViewBase',
+    'text!templates/salesProforma/list/ListHeader.html',
+    'text!templates/stages.html',
+    'views/salesInvoice/CreateView',
+    'views/Proforma/EditView',
+    'models/InvoiceModel',
+    'views/salesProforma/list/ListItemView',
+    'views/salesProforma/list/ListTotalView',
+    'collections/salesProforma/filterCollection',
+    'views/Filter/FilterView',
+    'common',
+    'dataService',
+    'constants'
+],
+    function ($,
+              _,
+              Backbone,
+              listViewBase,
+              listTemplate,
+              stagesTemplate,
+              CreateView,
+              editView,
+              invoiceModel,
+              listItemView,
+              listTotalView,
+              contentCollection,
+              filterView,
+              common,
+              dataService,
+              CONSTANTS) {
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
@@ -47,10 +64,10 @@ define([
             },
 
             events: {
-                "click .stageSelect"                       : "showNewSelect",
-                "click  .list tbody td:not(.notForm, .validated)": "goToEditDialog",
-                "click .newSelectList li"                  : "chooseOption",
-                "click .selectList"                        : "showSelects"
+                'click .stageSelect'                             : 'showNewSelect',
+                'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog',
+                'click .newSelectList li'                        : 'chooseOption',
+                'click .selectList'                              : 'showSelects'
             },
 
             showSelects: function (e) {
@@ -88,34 +105,6 @@ define([
             },
 
             chooseOption: function (e) {
-                //var self = this;
-                //var target$ = $(e.target);
-                //var targetElement = target$.parents("td");
-                //var wId = target$.attr("id");
-                //var status = _.find(this.stages, function (stage) {
-                //    return wId === stage._id;
-                //});
-                //var name = target$.text();
-                //var id = targetElement.attr("id");
-                //var model = this.collection.get(id);
-                //
-                //model.save({
-                //    'workflow._id'   : wId,
-                //    'workflow.status': status.status,
-                //    'workflow.name'  : name
-                //}, {
-                //    headers : {
-                //        mid: 55
-                //    },
-                //    patch   : true,
-                //    validate: false,
-                //    success : function () {
-                //        self.showFilteredPage(self.filter, self);
-                //    }
-                //});
-                //
-                //this.hideNewSelect();
-                //return false;
                 var self = this;
                 var target$ = $(e.target);
                 var targetElement = target$.parents("td");
@@ -195,7 +184,6 @@ define([
                 });
 
 
-
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 function currentEllistRenderer(self) {
@@ -230,7 +218,7 @@ define([
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please refresh browser'
                         });
                     }
@@ -256,7 +244,7 @@ define([
                         collection : this.collection,
                         page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
-                    }).render());//added two parameters page and items number
+                    }).render());
                 }
 
                 var pagenation = this.$el.find('.pagination');

@@ -94,6 +94,8 @@ define([
 
             e.preventDefault();
 
+            self.hideDialog();
+
             paymentView = new PaymentCreateView({
                 model       : self.currentModel,
                 redirect    : self.redirect,
@@ -356,8 +358,6 @@ define([
             paymentContainer.append(
                 new listHederInvoice().render({model: this.currentModel.toJSON()}).el
             );
-
-            populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
 
             this.delegateEvents(this.events);
 

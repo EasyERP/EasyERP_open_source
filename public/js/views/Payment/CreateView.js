@@ -194,6 +194,10 @@ define([
                     success: function () {
                         var redirectUrl = self.forSales ? "easyErp/customerPayments" : "easyErp/supplierPayments";
 
+                        if (mid === 97) {
+                            redirectUrl = '#easyErp/ExpensesPayments/list';
+                        }
+
                         self.hideDialog();
 
                         if (self.redirect) {

@@ -1000,7 +1000,6 @@ var Invoice = function (models, event) {
                     };
 
                     contentIdsSearcher = function (deps, waterfallCallback) {
-                        // var Model;
                         var everyOne = rewriteAccess.everyOne();
                         var owner = rewriteAccess.owner(req.session.uId);
                         var group = rewriteAccess.group(req.session.uId, deps);
@@ -1014,13 +1013,8 @@ var Invoice = function (models, event) {
                             ]
                         };
 
-                        /*if (contentType === 'Proforma') {
-                            Model = models.get(req.session.lastDb, "Proforma", ProformaSchema);
-                        } else {
-                            Model = models.get(req.session.lastDb, "Invoice", InvoiceSchema);
-                        }*/
 
-                        Invoice.aggregate(
+                        Invoice.aggregate([
                             {
                                 $match: matchQuery
                             },
@@ -1028,7 +1022,8 @@ var Invoice = function (models, event) {
                                 $project: {
                                     _id: 1
                                 }
-                            },
+                            }
+                        ],
                             waterfallCallback
                         );
                     };
@@ -1558,7 +1553,7 @@ var Invoice = function (models, event) {
         var waterfallTasks;
 
         departmentSearcher = function (waterfallCallback) {
-            Invoice.aggregate(
+            Invoice.aggregate([
                 {
                     $match: {
                         users: objectId(req.session.uId)
@@ -1567,7 +1562,8 @@ var Invoice = function (models, event) {
                     $project: {
                         _id: 1
                     }
-                },
+                }
+            ],
 
                 waterfallCallback);
         };

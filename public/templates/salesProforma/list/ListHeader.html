@@ -5,11 +5,14 @@
         <tr>
             <th class="centerCell"><input type="checkbox" id="check_all"/></th>
             <th class="centerCell">N</th>
-            <th class="oe_sortable" data-sort="supplier.name.first">Supplier<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="supplier.name.first">Customer<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="name">Invoice Number<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paymentDate">Payment Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="salesPerson.name.first"><%= currentDb ? 'Assigned' : 'SalesPerson'%><span
+                    class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="dueDate">Due Date<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
@@ -31,7 +34,7 @@
         <tbody id="listTable" class="enableTableOdd"></tbody>
         <tfoot id="listTotal">
         <tr>
-            <td colspan="6"></td>
+            <td colspan="7"></td>
             <td class="money"> <span id="balance"></span></td>
             <td class="money"><span id="paid"></span></td>
             <td class="money"><span id="total"></span></td>
