@@ -953,7 +953,14 @@ var Invoice = function (models, event) {
 
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
-        var moduleId = 64;
+        var contentType = req.query.contentType;
+        var moduleId;
+
+        if (contentType === 'Proforma') {
+            moduleId = 99;
+        } else {
+            moduleId = 64;
+        }
 
         if (req.session && req.session.loggedIn && db) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
@@ -976,7 +983,12 @@ var Invoice = function (models, event) {
                 var waterfallTasks;
 
                 if (access) {
-                    Invoice = models.get(db, 'Invoice', InvoiceSchema);
+
+                    if (contentType === 'Proforma') {
+                        Invoice = models.get(db, 'Proforma', ProformaSchema);
+                    } else {
+                        Invoice = models.get(db, 'Invoice', InvoiceSchema);
+                    }
 
                     count = parseInt(query.count) || CONSTANTS.DEF_LIST_COUNT;
                     page = parseInt(query.page);
@@ -1007,6 +1019,7 @@ var Invoice = function (models, event) {
                     };
 
                     contentIdsSearcher = function (deps, waterfallCallback) {
+                        var Model;
                         var everyOne = rewriteAccess.everyOne();
                         var owner = rewriteAccess.owner(req.session.uId);
                         var group = rewriteAccess.group(req.session.uId, deps);
@@ -1019,7 +1032,12 @@ var Invoice = function (models, event) {
                                 }
                             ]
                         };
-                        var Model = models.get(req.session.lastDb, "Invoice", InvoiceSchema);
+
+                        if (contentType === 'Proforma') {
+                            Model = models.get(req.session.lastDb, "Proforma", ProformaSchema);
+                        } else {
+                            Model = models.get(req.session.lastDb, "Invoice", InvoiceSchema);
+                        }
 
                         Model.aggregate(
                             {
@@ -1130,7 +1148,7 @@ var Invoice = function (models, event) {
                                 $limit: count
                             }
                             ], function (err, result) {
-                                waterfallCallback(null, result)
+                                waterfallCallback(null, result);
                             });
                     };
 
@@ -1531,14 +1549,21 @@ var Invoice = function (models, event) {
 
     this.totalCollectionLength = function (req, res, next) {
 
-        var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
         var query = req.query;
         var filter = query.filter;
         var filterObj;
+        var contentType = req.query.contentType;
+        var Invoice;
         // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
+
+        if (contentType === 'salesProforma') {
+            Invoice = models.get(req.session.lastDb, 'Proforma', ProformaSchema);
+        } else {
+            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
+        }
 
         if (filter) {
             filterObj = {};
@@ -1548,7 +1573,7 @@ var Invoice = function (models, event) {
         var waterfallTasks;
 
         departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(
+            Invoice.aggregate(
                 {
                     $match: {
                         users: objectId(req.session.uId)
@@ -1575,6 +1600,18 @@ var Invoice = function (models, event) {
                     }
                 ]
             };
+
+            if (contentType === 'salesProforma') {
+                matchQuery.$and.push({
+                    _type : 'Proforma'
+                });
+            } else {
+                matchQuery.$and.push({
+                    _type : {
+                        $ne: 'Proforma'
+                    }
+                });
+            }
 
             Invoice.aggregate(
                 {

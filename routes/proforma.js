@@ -9,6 +9,7 @@ module.exports = function (models, event) {
 
     router.post('/create', handler.create);
     router.get('/list', iHandler.getForView);
+    router.get('/totalCollectionLength', iHandler.totalCollectionLength);
     router.get('/stats/project', iHandler.getStatsForProject);
 
     return router;
