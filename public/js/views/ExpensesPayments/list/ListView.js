@@ -2,26 +2,43 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
-        'text!templates/Pagination/PaginationTemplate.html',
-        'text!templates/ExpensesPayments/list/ListHeader.html',
-        'text!templates/ExpensesPayments/list/ListHeader.html',
-        'text!templates/supplierPayments/forWTrack/cancelEdit.html',
-        'views/selectView/selectView',
-        'views/supplierPayments/CreateView',
-        'views/Filter/FilterView',
-        'models/PaymentModel',
-        'views/ExpensesPayments/list/ListItemView',
-        'views/ExpensesPayments/list/ListTotalView',
-        'collections/ExpensesPayments/filterCollection',
-        'collections/ExpensesPayments/editCollection',
-        'dataService',
-        'populate',
-        'async',
-        'helpers/keyCodeHelper',
-        'views/listViewBase',
-        'helpers'
+    'text!templates/Pagination/PaginationTemplate.html',
+    'text!templates/ExpensesPayments/list/ListHeader.html',
+    'text!templates/ExpensesPayments/list/ListHeader.html',
+    'text!templates/supplierPayments/forWTrack/cancelEdit.html',
+    'views/selectView/selectView',
+    'views/supplierPayments/CreateView',
+    'views/Filter/FilterView',
+    'models/PaymentModel',
+    'views/ExpensesPayments/list/ListItemView',
+    'views/ExpensesPayments/list/ListTotalView',
+    'collections/ExpensesPayments/filterCollection',
+    'collections/ExpensesPayments/editCollection',
+    'dataService',
+    'populate',
+    'async',
+    'helpers/keyCodeHelper',
+    'views/listViewBase',
+    'helpers'
     ],
-    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase,helpers) {
+    function (paginationTemplate,
+              listTemplate,
+              ListHeaderForWTrack,
+              cancelEdit,
+              selectView,
+              createView,
+              filterView,
+              currentModel,
+              listItemView,
+              listTotalView,
+              paymentCollection,
+              editCollection,
+              dataService,
+              populate,
+              async,
+              keyCodes,
+              ListViewBase,
+              helpers) {
         var PaymentListView = ListViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -541,7 +558,7 @@ define([
                 count = listTableCheckedInput.length;
                 this.collectionLength = this.collection.length;
                 if(!this.createdItem){
-                $.each(listTableCheckedInput, function (index, checkbox) {
+                async.eachSeries(listTableCheckedInput, function (checkbox, cb) {
                     model = that.collection.get(checkbox.value);
                     model.destroy({
                         headers: {
@@ -578,6 +595,8 @@ define([
                                 that.deletePage = $("#currentShowPage").val();
                                 that.deleteItemsRender(that.deleteCounter, that.deletePage);
                             }
+
+                            cb();
                         },
                         error  : function (model, res) {
                             if (res.status === 403 && index === 0) {
@@ -594,6 +613,8 @@ define([
                                 that.deleteItemsRender(that.deleteCounter, that.deletePage);
 
                             }
+
+                            cb();
                         }
                     });
                 });

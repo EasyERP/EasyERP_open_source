@@ -782,7 +782,7 @@ var Payment = function (models, event) {
 
                 invoice.paymentDate = new Date(paymentDate); //Because we have it in post.schema
 
-                delete invoice.paymentDate;
+                // delete invoice.paymentDate;
 
                 Invoice.findByIdAndUpdate(invoiceId, invoice, {new: true}, function (err, invoice) {
                     if (err) {

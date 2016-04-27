@@ -3,6 +3,7 @@ define([
         'Underscore',
         'Backbone',
         "text!templates/ExpensesInvoice/CreateTemplate.html",
+        'views/Notes/AttachView',
         "models/InvoiceModel",
         "common",
         "populate",
@@ -12,7 +13,7 @@ define([
         "dataService",
         'constants'
     ],
-    function ($, _, Backbone, CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
+    function ($, _, Backbone, CreateTemplate, attachView, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -322,6 +323,14 @@ define([
                         targetInput.removeClass('errorContent');
                     }
                 });
+
+                notDiv = this.$el.find('#attach-container');
+                notDiv.append(
+                    new attachView({
+                        model: this.currentModel,
+                        url  : '/uploadInvoiceFiles',
+                    }).render().el
+                );
 
                 this.delegateEvents(this.events);
 
