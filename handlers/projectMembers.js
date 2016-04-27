@@ -13,7 +13,7 @@ var ProjectMembers = function (models) {
         var Project = models.get(db, 'Project', ProjectSchema);
         var manager;
         switch (doc.projectPositionId.toString()) {
-            case (CONSTANTS.SALES_MANAGER_POS) :
+            case (CONSTANTS.SALES_MANAGER_ROLE) :
                 manager = 'salesmanager';
                 break;
             case (CONSTANTS.PROJECT_MANAGER_POS) :
