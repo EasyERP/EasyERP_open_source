@@ -324,7 +324,6 @@ define([
             var amount;
             var data;
             var workflow = this.currentModel.workflow ? this.currentModel.workflow : this.currentModel.get('workflow');
-            var salesPerson = this.currentModel.salesPerson ? this.currentModel.salesPerson : this.currentModel.get('salesPerson');
             var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
             var currency = {
                 _id : $thisEl.find('#currencyDd').attr('data-id'),

@@ -2,7 +2,6 @@ var mongoose = require('mongoose');
 require('../../models/index.js');
 var async = require('async');
 
-var ProjectSchemaOld = mongoose.Schemas['ProjectOld'];
 var projectMemberSchema = mongoose.Schemas['ProjectMember'];
 
 //var dbObject = mongoose.createConnection('localhost', 'production');

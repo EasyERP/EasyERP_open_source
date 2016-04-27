@@ -265,7 +265,7 @@ define([
 
                     new editView({model: model,
                         redirect: true,
-                        collection: this.collection,
+                        collection: self.collection,
                         notCreate: true,
                         eventChannel: self.eventChannel
                     });

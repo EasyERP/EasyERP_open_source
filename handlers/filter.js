@@ -958,13 +958,7 @@ var Filters = function (models) {
                     localField  : "project",
                     foreignField: "_id", as: "project"
                 }
-            }, {
-                $lookup: {
-                    from        : "Employees",
-                    localField  : "salesPerson",
-                    foreignField: "_id", as: "salesPerson"
-                }
-            }, {
+            },  {
                 $lookup: {
                     from        : "workflows",
                     localField  : "workflow",
@@ -980,14 +974,33 @@ var Filters = function (models) {
                 $project: {
                     workflow   : {$arrayElemAt: ["$workflow", 0]},
                     supplier   : {$arrayElemAt: ["$supplier", 0]},
-                    salesPerson: {$arrayElemAt: ["$salesPerson", 0]},
                     project    : {$arrayElemAt: ["$project", 0]}
+                }
+            }, {
+                $lookup: {
+                    from        : "projectMembers",
+                    localField  : "project._id",
+                    foreignField: "projectId",
+                    as: "salesmanagers"
+                }
+            }, {
+                $unwind: '$salesmanagers'
+            }, {
+                $match : {
+                    'salesmanagers.projectPositionId' : objectId(CONSTANTS.SALES_MANAGER_ROLE)
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "salesmanagers.employeeId",
+                    foreignField: "_id",
+                    as: "salesmanagers"
                 }
             }, {
                 $project: {
                     workflow   : 1,
                     supplier   : 1,
-                    salesPerson: 1,
+                    salesmanagers: {$arrayElemAt: ['$salesmanagers', 0]},
                     project    : 1
                 }
             }, {
@@ -1007,9 +1020,9 @@ var Filters = function (models) {
                     },
                     'salesPerson': {
                         $addToSet: {
-                            _id : '$salesPerson._id',
+                            _id : '$salesmanagers._id',
                             name: {
-                                $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
+                                $concat: ['$salesmanagers.name.first', ' ', '$salesmanagers.name.last']
                             }
                         }
                     },

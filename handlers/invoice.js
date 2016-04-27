@@ -176,7 +176,7 @@ var Invoice = function (models, event) {
                 .populate('products.product')
                 .populate('products.jobs')
                 .populate('currency._id')
-                .populate('project', '_id projectName projectmanager');
+                .populate('project', '_id projectName salesmanager');
 
             query.exec(callback);
         }
@@ -367,7 +367,7 @@ var Invoice = function (models, event) {
             invoice.journal = journal;
 
             if (forSales === 'true') {
-                invoice.salesPerson = order.project.projectmanager || null;
+                invoice.salesPerson = order.project.salesmanager || null;
 
                 invoice.save(function (err, result) {
                     if (err) {
@@ -1053,6 +1053,38 @@ var Invoice = function (models, event) {
                     };
 
                     contentSearcher = function (invoicesIds, waterfallCallback) {
+                        var salesManagerMatch = {
+                            $and: [{
+                                $or: [{
+                                    $and: [{
+                                        $eq: ['$salesmanagers.startDate', null]
+                                    }, {
+                                        $eq: ['$salesmanagers.endDate', null]
+                                    }]
+                                }, {
+                                    $and: [{
+                                        $lte: ['$salesmanagers.startDate', '$invoiceDate']
+                                    }, {
+                                        $eq: ['$salesmanagers.endDate', null]
+                                    }]
+                                }, {
+                                    $and: [{
+                                        $eq: ['$salesmanagers.startDate', null]
+                                    }, {
+                                        $gte: ['$salesmanagers.endDate', '$invoiceDate']
+                                    }]
+                                }, {
+                                    $and: [{
+                                        $lte: ['$salesmanagers.startDate', '$invoiceDate']
+                                    }, {
+                                        $gte: ['$salesmanagers.endDate', '$invoiceDate']
+                                    }]
+                                }]
+                            }, {
+                                $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
+                            }]
+                        };
+
                         optionsObject.$and = [];
 
                         if (filter && typeof filter === 'object') {
@@ -1072,14 +1104,9 @@ var Invoice = function (models, event) {
                             optionsObject.$and.push({_type: {$ne: 'Proforma'}});
                         }
 
+
                         Invoice
                             .aggregate([{
-                                $lookup: {
-                                    from                   : "Employees",
-                                    localField             : "salesPerson",
-                                    foreignField: "_id", as: "salesPerson"
-                                }
-                            }, {
                                 $lookup: {
                                     from                   : "Customers",
                                     localField             : "supplier",
@@ -1120,7 +1147,6 @@ var Invoice = function (models, event) {
                                     sourceDocument  : {$arrayElemAt: ["$sourceDocument", 0]},
                                     workflow        : {$arrayElemAt: ["$workflow", 0]},
                                     supplier        : {$arrayElemAt: ["$supplier", 0]},
-                                    salesPerson     : {$arrayElemAt: ["$salesPerson", 0]},
                                     'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
                                     'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
                                     project         : {$arrayElemAt: ["$project", 0]},
@@ -1137,6 +1163,102 @@ var Invoice = function (models, event) {
                                     _type           : 1,
                                     removable       : 1,
                                     paid            : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
+                                }
+                            }, {
+                                $lookup: {
+                                    from                   : 'projectMembers',
+                                    localField             : 'project._id',
+                                    foreignField: 'projectId',
+                                    as: 'salesmanagers'
+                                }
+                            }, {
+                                $unwind: {
+                                    path                      : '$salesmanagers',
+                                    preserveNullAndEmptyArrays: true
+                                }
+                            }, {
+                                $project: {
+                                    'salesmanagers.startDate'        : {$ifNull: ['$salesmanagers.startDate', null]},
+                                    'salesmanagers.endDate'          : {$ifNull: ['$salesmanagers.endDate', null]},
+                                    'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
+                                    'salesmanagers.employeeId'       : {$ifNull: ['$salesmanagers.employeeId', null]},
+                                    sourceDocument  : 1,
+                                    workflow        : 1,
+                                    supplier        : 1,
+                                    'editedBy.user' : 1,
+                                    'createdBy.user': 1,
+                                    project         : 1,
+                                    expense         : 1,
+                                    forSales        : 1,
+                                    currency        : 1,
+                                    paymentInfo     : 1,
+                                    invoiceDate     : 1,
+                                    name            : 1,
+                                    paymentDate     : 1,
+                                    dueDate         : 1,
+                                    payments        : 1,
+                                    approved        : 1,
+                                    _type           : 1,
+                                    removable       : 1,
+                                    paid            : 1
+                                }
+                            }, {
+                                $project: {
+                                    isValid         : salesManagerMatch,
+                                    salesmanagers   : 1,
+                                    sourceDocument  : 1,
+                                    workflow        : 1,
+                                    supplier        : 1,
+                                    'editedBy.user' : 1,
+                                    'createdBy.user': 1,
+                                    project         : 1,
+                                    expense         : 1,
+                                    forSales        : 1,
+                                    currency        : 1,
+                                    paymentInfo     : 1,
+                                    invoiceDate     : 1,
+                                    name            : 1,
+                                    paymentDate     : 1,
+                                    dueDate         : 1,
+                                    payments        : 1,
+                                    approved        : 1,
+                                    _type           : 1,
+                                    removable       : 1,
+                                    paid            : 1
+                                }
+                            }, {
+                                $match: {
+                                    isValid: true
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : 'Employees',
+                                    localField  : 'salesmanagers.employeeId',
+                                    foreignField: '_id',
+                                    as          : 'salesmanagers'
+                                }
+                            }, {
+                                $project: {
+                                    salesPerson     : {$arrayElemAt: ['$salesmanagers', 0]},
+                                    sourceDocument  : 1,
+                                    workflow        : 1,
+                                    supplier        : 1,
+                                    'editedBy.user' : 1,
+                                    'createdBy.user': 1,
+                                    project         : 1,
+                                    expense         : 1,
+                                    forSales        : 1,
+                                    currency        : 1,
+                                    paymentInfo     : 1,
+                                    invoiceDate     : 1,
+                                    name            : 1,
+                                    paymentDate     : 1,
+                                    dueDate         : 1,
+                                    payments        : 1,
+                                    approved        : 1,
+                                    _type           : 1,
+                                    removable       : 1,
+                                    paid            : 1
                                 }
                             }, {
                                 $match: optionsObject
@@ -1279,8 +1401,7 @@ var Invoice = function (models, event) {
                             .populate('groups.owner', '_id login')
                             .populate('sourceDocument')
                             .populate('workflow', '_id name status')
-                            .populate('supplier', '_id name fullName')
-                            .populate('salesPerson', '_id name fullName');
+                            .populate('supplier', '_id name fullName');
 
                         query.lean().exec(waterfallCallback);
                     };
@@ -1628,6 +1749,37 @@ var Invoice = function (models, event) {
 
         contentSearcher = function (invoicesIds, waterfallCallback) {
             var queryObject = {};
+            var salesManagerMatch = {
+                $and: [{
+                    $or: [{
+                        $and: [{
+                            $eq: ['$salesmanagers.startDate', null]
+                        }, {
+                            $eq: ['$salesmanagers.endDate', null]
+                        }]
+                    }, {
+                        $and: [{
+                            $lte: ['$salesmanagers.startDate', '$invoiceDate']
+                        }, {
+                            $eq: ['$salesmanagers.endDate', null]
+                        }]
+                    }, {
+                        $and: [{
+                            $eq: ['$salesmanagers.startDate', null]
+                        }, {
+                            $gte: ['$salesmanagers.endDate', '$invoiceDate']
+                        }]
+                    }, {
+                        $and: [{
+                            $lte: ['$salesmanagers.startDate', '$invoiceDate']
+                        }, {
+                            $gte: ['$salesmanagers.endDate', '$invoiceDate']
+                        }]
+                    }]
+                }, {
+                    $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
+                }]
+            };
 
             queryObject['$and'] = [];
 
@@ -1638,12 +1790,6 @@ var Invoice = function (models, event) {
             queryObject['$and'].push({_id: {$in: _.pluck(invoicesIds, '_id')}});
 
             Invoice.aggregate([{
-                $lookup: {
-                    from        : "Employees",
-                    localField  : "salesPerson",
-                    foreignField: "_id", as: "salesPerson"
-                }
-            }, {
                 $lookup: {
                     from        : "Customers",
                     localField  : "supplier",
@@ -1684,7 +1830,6 @@ var Invoice = function (models, event) {
                     sourceDocument  : {$arrayElemAt: ["$sourceDocument", 0]},
                     workflow        : {$arrayElemAt: ["$workflow", 0]},
                     supplier        : {$arrayElemAt: ["$supplier", 0]},
-                    salesPerson     : {$arrayElemAt: ["$salesPerson", 0]},
                     'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
                     'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
                     project         : {$arrayElemAt: ["$project", 0]},
@@ -1698,11 +1843,74 @@ var Invoice = function (models, event) {
                     payments        : 1
                 }
             }, {
+                $lookup: {
+                    from                   : 'projectMembers',
+                    localField             : 'project._id',
+                    foreignField: 'projectId',
+                    as: 'salesmanagers'
+                }
+            }, {
+                $unwind: {
+                    path                      : '$salesmanagers',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
                 $project: {
+                    'salesmanagers.startDate'        : {$ifNull: ['$salesmanagers.startDate', null]},
+                    'salesmanagers.endDate'          : {$ifNull: ['$salesmanagers.endDate', null]},
+                    'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
+                    'salesmanagers.employeeId'       : {$ifNull: ['$salesmanagers.employeeId', null]},
                     sourceDocument  : 1,
                     workflow        : 1,
                     supplier        : 1,
-                    salesPerson     : 1,
+                    'editedBy.user' : 1,
+                    'createdBy.user': 1,
+                    project         : 1,
+                    expense         : 1,
+                    forSales        : 1,
+                    paymentInfo     : 1,
+                    invoiceDate     : 1,
+                    name            : 1,
+                    paymentDate     : 1,
+                    dueDate         : 1,
+                    payments        : 1
+                }
+            },{
+                $project: {
+                    isValid         : salesManagerMatch,
+                    salesmanagers   : 1,
+                    sourceDocument  : 1,
+                    workflow        : 1,
+                    supplier        : 1,
+                    'editedBy.user' : 1,
+                    'createdBy.user': 1,
+                    project         : 1,
+                    expense         : 1,
+                    forSales        : 1,
+                    paymentInfo     : 1,
+                    invoiceDate     : 1,
+                    name            : 1,
+                    paymentDate     : 1,
+                    dueDate         : 1,
+                    payments        : 1
+                }
+            }, {
+                $match: {
+                    isValid: true
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'salesmanagers.employeeId',
+                    foreignField: '_id',
+                    as          : 'salesmanagers'
+                }
+            }, {
+                $project: {
+                    salesPerson     : {$arrayElemAt: ['$salesmanagers', 0]},
+                    sourceDocument  : 1,
+                    workflow        : 1,
+                    supplier        : 1,
                     'editedBy.user' : 1,
                     'createdBy.user': 1,
                     project         : 1,
@@ -1813,7 +2021,7 @@ var Invoice = function (models, event) {
                         break;
                 }
             });
-            res.status(200).send(result)
+            res.status(200).send(result);
         });
     };
 
@@ -1822,6 +2030,37 @@ var Invoice = function (models, event) {
         var now = new Date();
         var sortValueInt;
         var key;
+        var salesManagerMatch = {
+            $and: [{
+                $or: [{
+                    $and: [{
+                        $eq: ['$salesmanagers.startDate', null]
+                    }, {
+                        $eq: ['$salesmanagers.endDate', null]
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$salesmanagers.startDate', '$invoiceDate']
+                    }, {
+                        $eq: ['$salesmanagers.endDate', null]
+                    }]
+                }, {
+                    $and: [{
+                        $eq: ['$salesmanagers.startDate', null]
+                    }, {
+                        $gte: ['$salesmanagers.endDate', '$invoiceDate']
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$salesmanagers.startDate', '$invoiceDate']
+                    }, {
+                        $gte: ['$salesmanagers.endDate', '$invoiceDate']
+                    }]
+                }]
+            }, {
+                $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
+            }]
+        };
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
 
         sortObj = req.query.sort || sortObj;
@@ -1852,32 +2091,39 @@ var Invoice = function (models, event) {
                 foreignField: "_id", as: "supplier"
             }
         }, {
+            $project: {
+                project      : {$arrayElemAt: ["$project", 0]},
+                supplier     : {$arrayElemAt: ["$supplier", 0]},
+                dueDate      : 1,
+                name         : 1,
+                invoiceDate  : 1,
+                paymentInfo  : 1
+            }
+        }, {
             $lookup: {
-                from        : "Employees",
-                localField  : "salesPerson",
-                foreignField: "_id", as: "salesPerson"
+                from        : "projectMembers",
+                localField  : "project._id",
+                foreignField: "projectId", as: "salesmanagers"
+            }
+        }, {
+            $unwind: {
+                path                      : '$salesmanagers',
+                preserveNullAndEmptyArrays: true
             }
         }, {
             $project: {
-                project    : {$arrayElemAt: ["$project", 0]},
-                supplier   : {$arrayElemAt: ["$supplier", 0]},
-                salesPerson: {$arrayElemAt: ["$salesPerson", 0]},
-                dueDate    : 1,
-                name       : 1,
-                paymentInfo: 1
-            }
-        }, {
-            $project: {
+                'salesmanagers.startDate'        : {$ifNull: ['$salesmanagers.startDate', null]},
+                'salesmanagers.endDate'          : {$ifNull: ['$salesmanagers.endDate', null]},
+                'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
+                'salesmanagers.employeeId'       : {$ifNull: ['$salesmanagers.employeeId', null]},
                 dueDate              : 1,
                 'project.projectName': 1,
+                invoiceDate          : 1,
                 'supplier.name'      : {
                     $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
                 },
                 name                 : 1,
                 paymentInfo          : 1,
-                'salesPerson.name'   : {
-                    $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
-                },
                 diffStatus           : {
                     $cond: {
                         if  : {
@@ -1919,6 +2165,51 @@ var Invoice = function (models, event) {
                         }
                     }
                 }
+            }
+        }, {
+            $project: {
+                isValid              : salesManagerMatch,
+                invoiceDate          : 1,
+                salesmanagers        : 1,
+                dueDate              : 1,
+                'project.projectName': 1,
+                'supplier.name'      : 1,
+                name                 : 1,
+                paymentInfo          : 1,
+                diffStatus           : 1
+            }
+        },{
+            $match: {
+                isValid: true
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'salesmanagers.employeeId',
+                foreignField: '_id',
+                as          : 'salesmanagers'
+            }
+        },{
+            $project: {
+                salesPerson          : {$arrayElemAt: ['$salesmanagers', 0]},
+                dueDate              : 1,
+                'project.projectName': 1,
+                'supplier.name'      : 1,
+                name                 : 1,
+                paymentInfo          : 1,
+                diffStatus           : 1
+            }
+        },{
+            $project: {
+                'salesPerson.name'   : {
+                    $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
+                },
+                dueDate              : 1,
+                'project.projectName': 1,
+                'supplier.name'      : 1,
+                name                 : 1,
+                paymentInfo          : 1,
+                diffStatus           : 1
             }
         }, {
             $sort: sortObj
