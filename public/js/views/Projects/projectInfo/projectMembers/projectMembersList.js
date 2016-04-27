@@ -48,8 +48,13 @@ define([
             var rowId = row.attr('data-id');
             var isNewRow = row.hasClass('false');
             var text;
+            var startDate;
+            var nextDay = new Date(2014, 8, 2);
+            if (this.prevStartDate(row)) {
+                startDate = new Date(this.prevStartDate(row));
+                nextDay = moment(startDate).add(1, 'd').toDate();
+            }
 
-            var startDate = this.prevStartDate(row) || this.project.startDate || new Date();
 
             if (target.prop('tagName') !== 'INPUT') {
                 this.hideNewSelect();
@@ -62,7 +67,7 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : startDate,
+                minDate    : nextDay,
                 maxDate    : new Date(),
                 onSelect   : function (dateText) {
                     var $editedCol = target.closest('td');
@@ -104,7 +109,7 @@ define([
             var prevStartDate;
             var prevDate;
             var nextDay;
-            var projectStartDate =  this.project.StartDate || new Date();
+            var projectStartDate =  this.project.StartDate || new Date(2014, 8, 1);
             if (!prevTd.length) {
                 return false;
             }
@@ -112,9 +117,8 @@ define([
             prevRow = prevTd.closest('tr');
             prevStartDate = prevRow.find('.startDateManager').text() === 'From start of project' ? projectStartDate : prevRow.find('.startDateManager').text();
             prevDate = new Date(prevStartDate);
-            nextDay = moment(prevDate).add(1, 'd');
 
-            return common.utcDateToLocaleDate(nextDay.toDate());
+            return common.utcDateToLocaleDate(prevDate);
         },
 
         editLastMember: function () {
@@ -353,8 +357,14 @@ define([
                 targetRow.addClass('edited');
             }
             if (targetElement.hasClass('errorContent')) {
-                startDate = this.prevStartDate(targetRow);
-                if (startDate) {
+                startDate = common.utcDateToLocaleDate(new Date());
+                if (startDate === this.prevStartDate(targetRow)){
+                    return App.render({
+                        type   : 'error',
+                        message: "Previous Member's Start Date is today"
+                    });
+                }
+                if (startDate && this.prevStartDate(targetRow)) {
                     targetRow.find('.startDateManager').text(startDate);
                     this.changedModels[rowId].startDate = startDate;
                     this.updatePrevMembers(targetRow, startDate);
