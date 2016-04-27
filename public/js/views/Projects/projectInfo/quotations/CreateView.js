@@ -124,13 +124,20 @@ define([
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
                             price = targetEl.find('[data-name="price"] input').val();
+                            price = parseFloat(price);
+                            if (isNaN(price) || price <=0) {
+                                return App.render({
+                                    type   : 'error',
+                                    message: 'Please, enter Unit Price!'
+                                });
+                            }
                             scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                             taxes = targetEl.find('.taxes').text();
                             description = targetEl.find('[data-name="productDescr"]').text();
                             subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
-                            if (price === '') {
+                            if (price == '') {
                                 return App.render({
                                     type   : 'error',
                                     message: 'Unit price can\'t be empty'

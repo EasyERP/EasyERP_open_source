@@ -232,7 +232,7 @@ define([
             });
         },
 
-        addAttachment: function(e) {
+        addAttachment: function (e) {
             var self = this;
             var $attachment;
 
@@ -240,10 +240,10 @@ define([
 
             $attachment = self.$el.find('#proformaAttachment');
 
-            if (!$attachment.length) {
-                self.$el.prepend('<form id="proformaAttachmentForm"><input type="file" id="proformaAttachment" accept="application/pdf" name="attachfile"></form>');
-                $attachment = self.$el.find('#proformaAttachment');
-            }
+            $attachment.remove();
+
+            self.$el.prepend('<form id="proformaAttachmentForm"><input type="file" id="proformaAttachment" accept="application/pdf" name="attachfile"></form>');
+            $attachment = self.$el.find('#proformaAttachment');
 
             $attachment.click();
             $attachment.hide();
@@ -295,7 +295,7 @@ define([
                     error: function (xhr) {
                         App.stopPreload();
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Error occurred while image load'
                         });
                     }
@@ -345,7 +345,7 @@ define([
                             });
                         } else {
 
-                            if (App.projectInfo){
+                            if (App.projectInfo) {
                                 App.projectInfo.currentTab = 'proforma';
                             }
 
@@ -498,6 +498,14 @@ define([
                     if (productId) {
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
+                        price = parseFloat(price);
+                        if (isNaN(price) || price <= 0) {
+                            App.stopPreload();
+                            return App.render({
+                                type   : 'error',
+                                message: 'Please, enter Unit Price!'
+                            });
+                        }
                         scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                         taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                         description = targetEl.find('[data-name="productDescr"]').text();
