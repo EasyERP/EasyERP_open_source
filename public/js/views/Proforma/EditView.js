@@ -293,7 +293,6 @@ define([
                 var amount;
                 var data;
                 var workflow = this.currentModel.workflow ? this.currentModel.workflow : this.currentModel.get('workflow');
-                var salesPerson = this.currentModel.salesPerson ? this.currentModel.salesPerson : this.currentModel.get('salesPerson');
                 var productsOld = this.currentModel.products ? this.currentModel.products : this.currentModel.get('products');
                 var currency = {
                     _id : $thisEl.find('#currencyDd').attr('data-id'),
@@ -317,7 +316,7 @@ define([
                     taxes  : taxes
                 };
 
-                var salesPersonId = $thisEl.find("#salesPerson").attr("data-id") || null;
+
                 var paymentTermId = $thisEl.find("#payment_terms").attr("data-id") || null;
                 var journalId = this.$el.find('#journal').attr("data-id") || null;
 
@@ -376,8 +375,6 @@ define([
                     dueDate              : dueDate,
                     account              : null,
                     journal              : journalId,
-
-                    salesPerson : salesPerson,
                     paymentTerms: paymentTermId,
 
                     products   : products,
@@ -502,7 +499,6 @@ define([
                         return product.product;
                     });
                     project = model.project;
-                    assigned = model.salesPerson;
                     customer = model.supplier;
                     total = model.paymentInfo ? model.paymentInfo.total : '0.00';
                 }
@@ -516,7 +512,6 @@ define([
                     notAddItem      : this.notAddItem,
                     wTracks         : wTracks,
                     project         : project,
-                    assigned        : assigned,
                     customer        : customer,
                     total           : total,
                     currencySplitter: helpers.currencySplitter,
