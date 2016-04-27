@@ -903,12 +903,15 @@ var wTrack = function (models) {
 
             if (!startDate && !endDate) {
                 _endDateMoment = moment(_dateMoment).subtract(1, 'years');
-                startDate = _dateMoment.startOf('week').minutes(50);
-                endDate = _endDateMoment.endOf('week').minutes(50);
+                startDate = _dateMoment.startOf('month').hours(0).minutes(0);
+                endDate = _endDateMoment.endOf('month').hours(23).minutes(59);
             } else {
-                startDate = new Date(startDate);
-                endDate = new Date(endDate);
+                startDate = moment(new Date(startDate)).startOf('day');
+                endDate = moment(new Date(endDate)).endOf('day');
             }
+
+            startDate = startDate.toDate();
+            endDate = endDate.toDate();
 
             salesManagersMatch.$or = [{
                 'salesPersons.startDate': null,
@@ -925,15 +928,14 @@ var wTrack = function (models) {
             }];
 
             match = {
-                'sourceDocument.model': 'jobs',
-                journal               : objectId('56f2a96f58dfeeac4be1582a'),
-
-                credit: {
+                credit                : {
                     $exists: true,
                     $ne    : 0
                 },
-
-                date: {
+                'sourceDocument.model': 'Invoice',
+                // journal               : objectId('56f2a96f58dfeeac4be1582a'),
+                journal               : objectId('565ef6ba270f53d02ee71d65'),
+                date                  : {
                     $lte: endDate,
                     $gte: startDate
                 }
@@ -943,21 +945,68 @@ var wTrack = function (models) {
                 $match: match
             }, {
                 $lookup: {
-                    from        : 'jobs',
+                    from        : 'Invoice',
                     localField  : 'sourceDocument._id',
                     foreignField: '_id',
-                    as          : 'job'
+                    as          : 'invoice'
                 }
             }, {
                 $project: {
-                    credit: 1,
-                    date  : 1,
-                    job   : {$arrayElemAt: ['$job', 0]}
+                    credit : 1,
+                    date   : 1,
+                    project: 1,
+                    invoice: {$arrayElemAt: ['$invoice', 0]}
+                }
+            }, {
+                $project: {
+                    credit   : 1,
+                    date     : 1,
+                    project  : '$invoice.project',
+                    invoiceId: '$invoice._id',
+                    products : '$invoice.products'
+                }
+            }, {
+                $unwind: {
+                    path                      : '$products',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $lookup: {
+                    from        : 'journalentries',
+                    localField  : 'products.jobs',
+                    foreignField: 'sourceDocument._id',
+                    as          : 'jobFinished'
+                }
+            }, {
+                $unwind: {
+                    path                      : '$jobFinished',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $match: {
+                    'jobFinished.journal': objectId('56f2a96f58dfeeac4be1582a'),
+                    'jobFinished.credit' : {
+                        $exists: true,
+                        $ne    : 0
+                    }
+                }
+            }, {
+                $group: {
+                    _id    : '$invoiceId',
+                    project: {$first: '$project'},
+                    revenue: {$first: '$credit'},
+                    date   : {$first: '$date'},
+                    cost   : {$sum: '$jobFinished.credit'}
+                }
+            }, {
+                $unwind: {
+                    path                      : '$invoice.products',
+                    preserveNullAndEmptyArrays: true
                 }
             }, {
                 $lookup: {
                     from        : 'projectMembers',
-                    localField  : 'job.project',
+                    localField  : 'project',
                     foreignField: 'projectId',
                     as          : 'salesPersons'
                 }
@@ -970,8 +1019,8 @@ var wTrack = function (models) {
                 $match: salesManagersMatch
             }, {
                 $project: {
-                    revenueSum: '$job.budget.budgetTotal.revenueSum',
-                    credit    : 1,
+                    revenueSum: '$revenue',
+                    credit    : '$cost',
                     year      : {$year: '$date'},
                     month     : {$month: '$date'},
                     week      : {$week: '$date'},
@@ -984,16 +1033,7 @@ var wTrack = function (models) {
                         bonusId  : '$salesPersons.bonusId'
                     },
 
-                    profit: {
-                        $let: {
-                            vars: {
-                                revenue: '$job.budget.budgetTotal.revenueSum',
-                                cost   : '$credit'
-                            },
-
-                            in: {$subtract: ['$$revenue', '$$cost']}
-                        }
-                    }
+                    profit: {$subtract: ['$revenue', '$cost']}
                 }
             }, {
                 $project: {
@@ -3202,7 +3242,6 @@ var wTrack = function (models) {
                 'salesPersons.projectPositionId': salesManagers
             };
             var match;
-            var groupBy;
 
             if (!_access) {
                 return res.status(403).send();
@@ -3210,12 +3249,15 @@ var wTrack = function (models) {
 
             if (!startDate && !endDate) {
                 _endDateMoment = moment(_dateMoment).subtract(1, 'years');
-                startDate = _dateMoment.startOf('week').minutes(50);
-                endDate = _endDateMoment.endOf('week').minutes(50);
+                startDate = _dateMoment.startOf('month').hours(0).minutes(0);
+                endDate = _endDateMoment.endOf('month').hours(23).minutes(59);
             } else {
-                startDate = new Date(startDate);
-                endDate = new Date(endDate);
+                startDate = moment(new Date(startDate)).startOf('day');
+                endDate = moment(new Date(endDate)).endOf('day');
             }
+
+            startDate = startDate.toDate();
+            endDate = endDate.toDate();
 
             salesManagersMatch.$or = [{
                 'salesPersons.startDate': null,
@@ -3236,8 +3278,9 @@ var wTrack = function (models) {
                     $exists: true,
                     $ne    : 0
                 },
-                'sourceDocument.model': 'jobs',
-                journal               : objectId('56f2a96f58dfeeac4be1582a'),
+                'sourceDocument.model': 'Invoice',
+                // journal               : objectId('56f2a96f58dfeeac4be1582a'),
+                journal               : objectId('565ef6ba270f53d02ee71d65'),
                 date                  : {
                     $lte: endDate,
                     $gte: startDate
@@ -3248,21 +3291,68 @@ var wTrack = function (models) {
                 $match: match
             }, {
                 $lookup: {
-                    from        : 'jobs',
+                    from        : 'Invoice',
                     localField  : 'sourceDocument._id',
                     foreignField: '_id',
-                    as          : 'job'
+                    as          : 'invoice'
                 }
             }, {
                 $project: {
-                    credit: 1,
-                    date  : 1,
-                    job   : {$arrayElemAt: ['$job', 0]}
+                    credit : 1,
+                    date   : 1,
+                    project: 1,
+                    invoice: {$arrayElemAt: ['$invoice', 0]}
+                }
+            }, {
+                $project: {
+                    credit   : 1,
+                    date     : 1,
+                    project  : '$invoice.project',
+                    invoiceId: '$invoice._id',
+                    products : '$invoice.products'
+                }
+            }, {
+                $unwind: {
+                    path                      : '$products',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $lookup: {
+                    from        : 'journalentries',
+                    localField  : 'products.jobs',
+                    foreignField: 'sourceDocument._id',
+                    as          : 'jobFinished'
+                }
+            }, {
+                $unwind: {
+                    path                      : '$jobFinished',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $match: {
+                    'jobFinished.journal': objectId('56f2a96f58dfeeac4be1582a'),
+                    'jobFinished.credit' : {
+                        $exists: true,
+                        $ne    : 0
+                    }
+                }
+            }, {
+                $group: {
+                    _id    : '$invoiceId',
+                    project: {$first: '$project'},
+                    revenue: {$first: '$credit'},
+                    date   : {$first: '$date'},
+                    cost   : {$sum: '$jobFinished.credit'}
+                }
+            }, {
+                $unwind: {
+                    path                      : '$invoice.products',
+                    preserveNullAndEmptyArrays: true
                 }
             }, {
                 $lookup: {
                     from        : 'projectMembers',
-                    localField  : 'job.project',
+                    localField  : 'project',
                     foreignField: 'projectId',
                     as          : 'salesPersons'
                 }
@@ -3280,21 +3370,15 @@ var wTrack = function (models) {
                         startDate: '$salesPersons.startDate',
                         endDate  : '$salesPersons.endDate'
                     },
-                    revenueSum  : '$job.budget.budgetTotal.revenueSum',
-                    profit      : {
-                        $let: {
-                            vars: {
-                                revenue: '$job.budget.budgetTotal.revenueSum',
-                                cost   : '$credit'
-                            },
-                            in  : {$subtract: ['$$revenue', '$$cost']}
-                        }
-                    },
-                    credit      : 1,
-                    year        : {$year: '$date'},
-                    month       : {$month: '$date'},
-                    week        : {$week: '$date'},
-                    date        : 1
+
+                    revenueSum: '$revenue',
+
+                    profit: {$subtract: ['$revenue', '$cost']},
+                    credit: '$cost',
+                    year  : {$year: '$date'},
+                    month : {$month: '$date'},
+                    week  : {$week: '$date'},
+                    date  : 1
                 }
             }, {
                 $project: {
