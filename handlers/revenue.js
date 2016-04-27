@@ -882,336 +882,321 @@ var wTrack = function (models) {
         });
     };
 
-    this.allBonus = function (req, res, next) {
-        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
-        var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
-        var BonusType = models.get(req.session.lastDb, 'bonusType', BonusTypeSchema);
+    this.allBonusBySales = function (req, res, next) {
+        var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntry);
 
-        access.getReadAccess(req, req.session.uId, 67, function (access) {
+        access.getReadAccess(req, req.session.uId, 67, function (_access) {
             var options = req.query;
-            var startMonth = parseInt(options.month) || 8;
-            var startYear = parseInt(options.year) || 2014;
-            var endMonth = parseInt(options.endMonth) || 7;
-            var endYear = parseInt(options.endYear) || 2015;
-            var startDateByWeek;
-            var startDate;
-            var endDateByWeek;
-            var endDate;
-            var waterfallTasks;
-            var projectIds;
-
-            var startMomentDate = moment().isoWeekYear(startYear).month(startMonth - 1);
-            var endMomentDate = moment().isoWeekYear(endYear).month(endMonth - 1);
-
-            var startWeek = startMomentDate.isoWeek();
-            var endWeek = endMomentDate.isoWeek();
-
-            startDate = startMomentDate.date(1).toDate();
-            endDate = endMomentDate.date(31).toDate();
-
-            startDateByWeek = parseInt(options.startDate) || (startYear * 100 + startMonth);
-            endDateByWeek = parseInt(options.endDate) || (endYear * 100 + endMonth);
-
-            var idForProjects = function (callback) {
-                Project.aggregate([{
-                    $project: {
-                        _id       : 1,
-                        bonus     : 1,
-                        bonusCount: {$size: '$bonus'}
-                    }
-                }, {
-                    $match: {
-                        $and: [{
-                            bonusCount: {$gt: 0}
-                        }, {
-                            $or: [{
-                                $or: [{
-                                    'bonus.startDate': null
-                                }, {
-                                    'bonus.endDate': null
-                                }]
-                            }, {
-                                $or: [{
-                                    'bonus.startDate': {$gte: startDate}
-                                }, {
-                                    'bonus.endDate': {$lte: endDate}
-                                }]
-                            }]
-                        }]
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                }], function (err, response) {
-                    if (err) {
-                        return callback(err);
-                    }
-
-                    response = _.pluck(response, '_id');
-
-                    callback(null, response);
-                });
+            var _dateMoment = moment();
+            var _endDateMoment;
+            var startDate = options.startDate;
+            var endDate = options.endDate;
+            var salesManagers = objectId(CONSTANTS.SALES_MANAGER_ROLE);
+            var salesManagersMatch = {
+                'salesPersons.projectPositionId': salesManagers
             };
+            var match;
 
-            function getWTracksByProjects(_ids, callback) {
-                var queryObject = {};
-
-                projectIds = _ids;
-
-                queryObject['$and'] = [
-                    {'dateByMonth': {'$gte': startDateByWeek}},
-                    {'dateByMonth': {'$lte': endDateByWeek}},
-                    {'project': {'$in': projectIds}}
-                ];
-
-                WTrack.aggregate([
-                    {
-                        $match: queryObject
-                    }, {
-                        $lookup: {
-                            from        : 'Project',
-                            localField  : 'project',
-                            foreignField: '_id', as: 'project'
-                        }
-                    }, {
-                        $project: {
-                            project    : {$arrayElemAt: ["$project", 0]},
-                            dateByMonth: 1,
-                            revenue    : 1,
-                            cost       : 1
-                        }
-                    }, {
-                        $group: {
-                            _id    : {
-                                name       : '$project.projectName',
-                                _id        : '$project._id',
-                                dateByMonth: '$dateByMonth'
-                            },
-                            ids    : {$addToSet: '$project._id'},
-                            revenue: {$sum: {$subtract: ['$revenue', '$cost']}}
-                        }
-                    }, {
-                        $project: {
-                            projectName: '$_id.name',
-                            _id        : '$_id._id',
-                            dateByMonth: '$_id.dateByMonth',
-                            revenue    : 1
-                        }
-                    }, {
-                        $group: {
-                            _id : '$dateByMonth',
-                            root: {$addToSet: '$$ROOT'}
-                        }
-                    }, {
-                        $sort: {
-                            _id: 1
-                        }
-                    }], function (err, result) {
-
-                    if (err) {
-                        return callback(err);
-                    }
-
-                    callback(null, result);
-                });
-            };
-
-            function getProjectsByIds(wTracks, callback) {
-                //var _ids = _.pluck(wTracks, 'project._id');
-
-                Project.aggregate([
-                    {
-                        $match: {
-                            _id: {'$in': projectIds}
-                        }
-                    },
-                    {
-                        $unwind: '$bonus'
-                    },
-                    {
-                        $group: {
-                            _id     : {
-                                employeeId: '$bonus.employeeId',
-                                bonusId   : '$bonus.bonusId'
-                            },
-                            projects: {
-                                $addToSet: {
-                                    _id : '$_id',
-                                    name: '$projectName'
-                                }
-                            }
-
-                        }
-                    }, {
-                        $project: {
-                            employee: '$_id.employeeId',
-                            bonus   : '$_id.bonusId',
-                            projects: 1,
-                            _id     : 0
-                        }
-                    }, {
-                        $group: {
-                            _id : '$employee',
-                            root: {$push: '$$ROOT'}
-                        }
-                    }
-                ], function (err, projects) {
-                    if (err) {
-                        return callback(err)
-                    }
-
-                    Employee.populate(projects, {
-                        path   : '_id',
-                        match  : {'department': '55b92ace21e4b7c40f000014'},
-                        select : '_id name',
-                        options: {
-                            lean: true
-                        }
-                    }, function (err, employees) {
-                        if (err) {
-                            return callback(err);
-
-                        }
-
-                        projects = _.filter(projects, function (employee) {
-                            if (employee._id) {
-                                return employee;
-                            }
-                        });
-
-                        BonusType.populate(projects, {
-                            path   : 'root.bonus',
-                            select : '_id name value',
-                            options: {
-                                lean: true
-                            }
-                        }, function (err, types) {
-                            if (err) {
-                                return callback(err);
-
-                            }
-
-                            callback(null, {wTracks: wTracks, projects: projects});
-                        });
-                    });
-
-                });
-            };
-
-            function getBonuses(wTracks, callback) {
-                var _ids = _.pluck(wTracks, 'project._id');
-
-                Project.aggregate([
-                    {
-                        $match: {
-                            _id: {'$in': _ids}
-                        }
-                    },
-                    {
-                        $unwind: '$bonus'
-                    },
-                    {
-                        $group: {
-                            _id      : {employeeId: '$bonus.employeeId', bonusId: '$bonus.bonusId'},
-                            dateArray: {
-                                $push: {
-                                    startDate: '$bonus.startDate',
-                                    endDate  : '$bonus.endDate',
-                                    projectId: '$_id'
-                                }
-                            }
-
-                        }
-                    }
-                ], callback);
-            };
-
-            if (!access) {
+            if (!_access) {
                 return res.status(403).send();
             }
 
-            waterfallTasks = [idForProjects, getWTracksByProjects, getProjectsByIds];
+            if (!startDate && !endDate) {
+                _endDateMoment = moment(_dateMoment).subtract(1, 'years');
+                startDate = _dateMoment.startOf('week').minutes(50);
+                endDate = _endDateMoment.endOf('week').minutes(50);
+            } else {
+                startDate = new Date(startDate);
+                endDate = new Date(endDate);
+            }
 
-            async.waterfall(waterfallTasks, function (err, result) {
+            salesManagersMatch.$or = [{
+                'salesPersons.startDate': null,
+                'salesPersons.endDate'  : null
+            }, {
+                'salesPersons.startDate': {$lte: endDate},
+                'salesPersons.endDate'  : null
+            }, {
+                'salesPersons.startDate': null,
+                'salesPersons.endDate'  : {$gte: startDate}
+            }, {
+                'salesPersons.startDate': {$lte: endDate},
+                'salesPersons.endDate'  : {$gte: startDate}
+            }];
+
+            match = {
+                'sourceDocument.model': 'jobs',
+                journal               : objectId('56f2a96f58dfeeac4be1582a'),
+
+                credit: {
+                    $exists: true,
+                    $ne    : 0
+                },
+
+                date: {
+                    $lte: endDate,
+                    $gte: startDate
+                }
+            };
+
+            JournalEntry.aggregate([{
+                $match: match
+            }, {
+                $lookup: {
+                    from        : 'jobs',
+                    localField  : 'sourceDocument._id',
+                    foreignField: '_id',
+                    as          : 'job'
+                }
+            }, {
+                $project: {
+                    credit: 1,
+                    date  : 1,
+                    job   : {$arrayElemAt: ['$job', 0]}
+                }
+            }, {
+                $lookup: {
+                    from        : 'projectMembers',
+                    localField  : 'job.project',
+                    foreignField: 'projectId',
+                    as          : 'salesPersons'
+                }
+            }, {
+                $unwind: {
+                    path                      : '$salesPersons',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $match: salesManagersMatch
+            }, {
+                $project: {
+                    revenueSum: '$job.budget.budgetTotal.revenueSum',
+                    credit    : 1,
+                    year      : {$year: '$date'},
+                    month     : {$month: '$date'},
+                    week      : {$week: '$date'},
+                    date      : 1,
+
+                    salesPersons: {
+                        _id      : '$salesPersons.employeeId',
+                        startDate: '$salesPersons.startDate',
+                        endDate  : '$salesPersons.endDate',
+                        bonusId  : '$salesPersons.bonusId'
+                    },
+
+                    profit: {
+                        $let: {
+                            vars: {
+                                revenue: '$job.budget.budgetTotal.revenueSum',
+                                cost   : '$credit'
+                            },
+
+                            in: {$subtract: ['$$revenue', '$$cost']}
+                        }
+                    }
+                }
+            }, {
+                $project: {
+                    salesPersons: 1,
+                    revenueSum  : 1,
+                    profit      : 1,
+                    credit      : 1,
+                    date        : 1,
+                    dateByMonth : {$add: [{$multiply: ['$year', 100]}, '$month']},
+                    dateByWeek  : {$add: [{$multiply: ['$year', 100]}, '$week']},
+
+                    isValid: {
+                        $or: [{
+                            $and: [{
+                                $eq: ['$salesPersons.startDate', null]
+                            }, {
+                                $eq: ['$salesPersons.endDate', null]
+                            }]
+                        }, {
+                            $and: [{
+                                $lte: ['$salesPersons.startDate', '$date']
+                            }, {
+                                $eq: ['$salesPersons.endDate', null]
+                            }]
+                        }, {
+                            $and: [{
+                                $eq: ['$salesPersons.startDate', null]
+                            }, {
+                                $gte: ['$salesPersons.endDate', '$date']
+                            }]
+                        }, {
+                            $and: [{
+                                $lte: ['$salesPersons.startDate', '$date']
+                            }, {
+                                $gte: ['$salesPersons.endDate', '$date']
+                            }]
+                        }]
+                    }
+                }
+            }, {
+                $match: {
+                    isValid: true
+                }
+            }, {
+                $lookup: {
+                    from        : 'bonusType',
+                    localField  : 'salesPersons.bonusId',
+                    foreignField: '_id',
+                    as          : 'salesPersonsBonus'
+                }
+            }, {
+                $project: {
+                    salesPersonsBonus: {$arrayElemAt: ['$salesPersonsBonus', 0]},
+                    salesPersons     : 1,
+                    revenueSum       : 1,
+                    profit           : 1,
+                    date             : 1,
+                    dateByMonth      : 1,
+                    dateByWeek       : 1
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'salesPersons._id',
+                    foreignField: '_id',
+                    as          : 'salesPersons'
+                }
+            }, {
+                $project: {
+                    salesPersons     : {$arrayElemAt: ['$salesPersons', 0]},
+                    salesPersonsBonus: 1,
+                    profit           : 1,
+                    date             : 1,
+                    dateByMonth      : 1,
+                    dateByWeek       : 1
+                }
+            }, {
+                $project: {
+                    salesPersons: {
+                        _id : '$salesPersons._id',
+                        name: {$concat: ['$salesPersons.name.first', ' ', '$salesPersons.name.last']}
+                    },
+
+                    salesPersonsBonus: 1,
+                    profit           : {$multiply: ['$profit', '$salesPersonsBonus.value', 0.01]},
+                    date             : 1,
+                    dateByMonth      : 1,
+                    dateByWeek       : 1
+                }
+            }, {
+                $group: {
+                    _id        : null,
+                    totalProfit: {$sum: '$profit'},
+                    root       : {$push: '$$ROOT'},
+
+                    salesArray: {
+                        $addToSet: {
+                            _id : '$salesPersons._id',
+                            name: '$salesPersons.name'
+                        }
+                    }
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    _id         : 0,
+                    salesArray  : 1,
+                    totalProfit : 1,
+                    salesPersons: '$root.salesPersons._id',
+                    profit      : '$root.profit',
+                    dateByMonth : '$root.dateByMonth',
+                    dateByWeek  : '$root.dateByWeek'
+                }
+            }, {
+                $group: {
+                    _id          : '$dateByMonth', // todo change dinamicly
+                    profitByMonth: {$sum: '$profit'},
+                    root         : {$push: '$$ROOT'},
+                    salesArray   : {$first: '$salesArray'},
+                    totalProfit  : {$first: '$totalProfit'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    _id          : 0,
+                    salesPerson  : '$root.salesPersons',
+                    dateByMonth  : '$root.dateByMonth',
+                    dateByWeek   : '$root.dateByWeek',
+                    profit       : '$root.profit',
+                    profitByMonth: 1,
+                    totalProfit  : 1,
+                    salesArray   : 1
+                }
+            }, {
+                $group: {
+                    _id               : {
+                        date       : '$dateByMonth',
+                        salesPerson: '$salesPerson'
+                    },
+                    profitBySales     : {$sum: '$profit'},
+                    profitByMonth     : {$first: '$profitByMonth'},
+                    totalProfitBySales: {$first: '$totalProfitBySales'},
+                    salesArray        : {$first: '$salesArray'},
+                    totalProfit       : {$first: '$totalProfit'},
+                    root              : {$push: '$$ROOT'}
+                }
+            }, {
+                $group: {
+                    _id               : '$_id.salesPerson',
+                    totalProfitBySales: {$sum: '$profitBySales'},
+                    root              : {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $group: {
+                    _id               : '$root._id',
+                    profitBySales     : {$first: '$root.profitBySales'},
+                    profitByMonth     : {$first: '$root.profitByMonth'},
+                    totalProfitBySales: {$first: '$totalProfitBySales'},
+                    salesArray        : {$first: '$root.salesArray'},
+                    totalProfit       : {$first: '$root.totalProfit'}
+                }
+            }, {
+                $group: {
+                    _id: '$_id.date',
+
+                    profitBySales: {
+                        $addToSet: {
+                            salesPerson  : '$_id.salesPerson',
+                            profitBySales: '$profitBySales'
+                        }
+                    },
+
+                    profitByMonth     : {$first: '$profitByMonth'},
+                    salesArray        : {$first: '$salesArray'},
+                    totalProfitBySales: {$first: '$totalProfitBySales'},
+                    totalProfit       : {$first: '$totalProfit'}
+                }
+            }, {
+                $project: {
+                    date              : '$_id',
+                    totalProfit       : 1,
+                    totalProfitBySales: 1,
+                    salesArray        : 1,
+                    profitBySales     : 1,
+                    profitByMonth     : 1,
+                    _id               : 0
+                }
+            }]).exec(function (err, response) {
+                var sales;
+
                 if (err) {
                     return next(err);
                 }
 
-                result = resultGenerator(result);
+                sales = response[0] ? response[0].salesArray : [];
+                response = _.sortBy(response, 'date');
 
-                res.status(200).send(result);
+                res.status(200).send({sales: sales, data: response});
             });
-
-            function resultGenerator(projectsWetrackObject) {
-                var employees = [];
-                var groupedEmployees = projectsWetrackObject.projects;
-                var groupedWtracks = projectsWetrackObject.wTracks;
-                var employee;
-                var _employee;
-                var dateStr;
-                var groupedEmployee;
-                var totalByBonus;
-                var bonusObject;
-
-                //iterate over grouped result of projects with bonus by Employee
-                for (var i = groupedEmployees.length;
-                     i--;) {
-                    totalByBonus = 0;
-
-                    groupedEmployee = groupedEmployees[i];
-                    _employee = groupedEmployee._id;
-                    employee = {
-                        _id  : _employee._id,
-                        name : _employee.name.first + ' ' + _employee.name.last,
-                        total: 0
-                    };
-                    //iterate over grouped result of wTrack by date and projects
-                    for (var j = groupedWtracks.length;
-                         j--;) {
-                        dateStr = groupedWtracks[j]._id;
-                        /*employee[dateStr] = [];*/
-                        bonusObject = {
-                            total: 0
-                        };
-                        for (var m = groupedEmployee.root.length;
-                             m--;) {
-                            /*bonusObject = {
-                             total: 0
-                             };*/
-                            totalByBonus = 0;
-
-                            for (var k = groupedWtracks[j].root.length;
-                                 k--;) {
-
-                                for (var l = groupedEmployee.root[m].projects.length;
-                                     l--;) {
-                                    if (groupedWtracks[j].root[k]._id.toString() === groupedEmployee.root[m].projects[l]._id.toString()) {
-                                        if (groupedEmployee.root[m].bonus) {
-                                            totalByBonus += (groupedEmployee.root[m].bonus.value * groupedWtracks[j].root[k].revenue / 100) / 100;
-                                        }
-                                    }
-                                }
-
-                            }
-                            if (groupedEmployee.root[m].bonus) {
-                                bonusObject[groupedEmployee.root[m].bonus.name] = totalByBonus;
-                            }
-                            bonusObject.total += totalByBonus;
-                            bonusObject.total = parseFloat(bonusObject.total.toFixed(2));
-                            /*employee[dateStr].push(bonusObject);*/
-                        }
-                        employee.total += bonusObject.total;
-                        employee.total = parseFloat(employee.total.toFixed(2));
-                        employee[dateStr] = bonusObject;
-                    }
-
-                    employees.push(employee);
-                }
-
-                return employees;
-            }
 
         });
     };
@@ -3375,12 +3360,13 @@ var wTrack = function (models) {
                         _id : '$salesPersons._id',
                         name: {$concat: ['$salesPersons.name.first', ' ', '$salesPersons.name.last']}
                     },
-                    revenueSum  : 1,
-                    profit      : 1,
-                    credit      : 1,
-                    date        : 1,
-                    dateByMonth : 1,
-                    dateByWeek  : 1
+
+                    revenueSum : 1,
+                    profit     : 1,
+                    credit     : 1,
+                    date       : 1,
+                    dateByMonth: 1,
+                    dateByWeek : 1
                 }
             }, {
                 $group: {
@@ -3476,14 +3462,16 @@ var wTrack = function (models) {
                 }
             }, {
                 $group: {
-                    _id                : '$_id.date',
-                    profitBySales      : {
+                    _id: '$_id.date',
+
+                    profitBySales: {
                         $addToSet: {
                             salesPerson   : '$_id.salesPerson',
                             profitBySales : '$profitBySales',
                             revenueBySales: '$revenueBySales'
                         }
                     },
+
                     profitByMonth      : {$first: '$profitByMonth'},
                     revenueByMonth     : {$first: '$revenueByMonth'},
                     salesArray         : {$first: '$salesArray'},
