@@ -651,6 +651,7 @@ dbObject.once('open', function callback() {
         var createIdle = function (createdDateObject, empResult, wfCb) {
             var dates = Object.keys(createdDateObject.createdDateObject);
             var newDates = _.uniq(dates);
+            
             async.each(newDates, function (dateKey, asyncCb) {
                 var year = parseInt(dateKey.slice(0, 4), 10);
                 var month = parseInt(dateKey.slice(4, 6), 10);
