@@ -16,11 +16,11 @@ MongoClient.connect(url, function (err, db) {
         var module = {
             _id: 99,
             mname: 'Proforma',
-            href: 'Proforma',
+            href: 'salesProforma',
             sequence: 0,
             parrent: 19,
             link: true,
-            visible: false
+            visible: true
         };
 
         var q = async.queue(function (module, callback) {
