@@ -124,7 +124,7 @@ define([
         editLastMember: function () {
             var removeBtn = '<span title="Delete" class="fa fa-trash-o"></span>';
             var self = this;
-            var trs = this.$el.find('tr');
+            var trs = this.$el.find('tr:not(.false)');
             trs.find('td:first-child').text('');
             trs.find('td').removeClass('editable selectCurrent');
             this.responseObj['#projectPosition'].forEach(function (item) {
@@ -163,8 +163,8 @@ define([
             var id = tr.attr('data-id');
             var prevSalesDate = row.text() === 'From start of project' ? this.project.StartDate : date;
             var prevDate = new Date(prevSalesDate);
-            var prevDay = moment(prevDate).subtract(1, 'm');
-            var endDate = common.utcDateToLocaleDate(prevDay.toDate());
+            var prevDay = moment(prevDate).subtract(1, 'm').toDate();
+            var endDate = common.utcDateToLocaleDate(prevDay);
 
             tr.find('.endDateManager').text(endDate);
 
@@ -172,7 +172,7 @@ define([
                 this.changedModels[id] = {};
             }
 
-            this.changedModels[id].endDate = endDate;
+            this.changedModels[id].endDate = prevDay;
             tr.addClass('edited');
         },
 
@@ -364,7 +364,8 @@ define([
                 targetRow.addClass('edited');
             }
 
-            if (targetElement.hasClass('errorContent')) {
+            if (dataType === 'projectPositionId') {
+                this.removePrevPosition();
                 startDate = common.utcDateToLocaleDate(new Date());
 
                 if (startDate === this.prevStartDate(targetRow)) {
@@ -374,11 +375,15 @@ define([
                     });
                 }
 
-                if (startDate && this.prevStartDate(targetRow)) {
+                if (this.prevStartDate(targetRow)) {
                     targetRow.find('.startDateManager').text(startDate);
                     this.changedModels[rowId].startDate = startDate;
                     this.updatePrevMembers(targetRow, startDate);
+                } else {
+                    targetRow.find('.startDateManager').text('From start of project');
+                    this.changedModels[rowId].startDate = null;
                 }
+
                 targetElement.removeClass('errorContent');
             }
 
@@ -387,6 +392,16 @@ define([
             this.showSaveBtn();
 
             return false;
+        },
+
+        removePrevPosition: function (){
+            var row = this.$el.find('.edited');
+            var id = row.attr('data-id');
+
+            delete this.changedModels[id];
+
+            row.find('td.endDateManager').text('To end of project');
+            row.removeClass('edited');
         },
 
         addMember: function (e) {
