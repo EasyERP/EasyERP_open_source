@@ -185,6 +185,11 @@ define([
             if (!data) {
                 attr = targetEl.attr("id") || targetEl.attr("data-id");
                 data = context.responseObj["#" + attr];
+
+                if (targetEl.parents('td').hasClass('jobs') && !data){
+                    attr = 'jobs';
+                    data = context.responseObj["#" + attr];
+                }
             }
 
             elementVisible = number || 10;
