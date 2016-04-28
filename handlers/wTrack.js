@@ -369,36 +369,31 @@ var wTrack = function (event, models) {
         contentSearcher = function (wTrackIDs, waterfallCallback) {
             var queryObject = {};
             var salesManagerMatch = {
-                $and: [{
-                    $or: [{
-                        $and: [{
-                            $eq: ['$startDateWeek', null]
-                        }, {
-                            $eq: ['$endDateWeek', null]
-                        }]
+                $or: [{
+                    $and: [{
+                        $eq: ['$startDateWeek', null]
                     }, {
-                        $and: [{
-                            $eq: ['$startDateWeek', null]
-                        }, {
-                            $gte: ['$endDateWeek', '$dateByWeek']
-                        }]
-                    }, {
-                        $and: [{
-                            $lte: ['$startDateWeek', '$dateByWeek']
-                        }, {
-                            $eq: ['$endDateWeek', null]
-                        }]
-                    }, {
-                        $and: [{
-                            $lte: ['$startDateWeek', '$dateByWeek']
-                        }, {
-                            $gte: ['$endDateWeek', '$dateByWeek']
-                        }]
+                        $eq: ['$endDateWeek', null]
                     }]
                 }, {
-                    $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
+                    $and: [{
+                        $eq: ['$startDateWeek', null]
+                    }, {
+                        $gte: ['$endDateWeek', '$dateByWeek']
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$startDateWeek', '$dateByWeek']
+                    }, {
+                        $eq: ['$endDateWeek', null]
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$startDateWeek', '$dateByWeek']
+                    }, {
+                        $gte: ['$endDateWeek', '$dateByWeek']
+                    }]
                 }]
-
             };
 
             queryObject.$and = [];
@@ -411,6 +406,13 @@ var wTrack = function (event, models) {
 
             WTrack.aggregate([{
                 $lookup: {
+                    from        : 'projectMembers',
+                    localField  : 'project',
+                    foreignField: 'projectId',
+                    as          : 'projectMembers'
+                }
+            }, {
+                $lookup: {
                     from        : 'Project',
                     localField  : 'project',
                     foreignField: '_id',
@@ -418,22 +420,22 @@ var wTrack = function (event, models) {
                 }
             }, {
                 $project: {
-                    project   : {$arrayElemAt: ['$project', 0]},
-                    employee  : 1,
-                    dateByWeek: 1,
-                    department: 1,
-                    month     : 1,
-                    year      : 1,
-                    week      : 1,
-                    isPaid    : 1,
-                    customer  : 1
-                }
-            }, {
-                $lookup: {
-                    from        : 'projectMembers',
-                    localField  : 'project._id',
-                    foreignField: 'projectId',
-                    as          : 'salesmanagers'
+                    project      : {$arrayElemAt: ['$project', 0]},
+                    salesmanagers: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                        }
+                    },
+                    employee     : 1,
+                    dateByWeek   : 1,
+                    department   : 1,
+                    month        : 1,
+                    year         : 1,
+                    week         : 1,
+                    isPaid       : 1,
+                    customer     : 1
                 }
             }, {
                 $lookup: {
@@ -444,65 +446,50 @@ var wTrack = function (event, models) {
                 }
             }, {
                 $unwind: {
-                    path : '$salesmanagers',
+                    path                      : '$salesmanagers',
                     preserveNullAndEmptyArrays: true
                 }
-            },{
-                    $project: {
-                        customer                        : {$arrayElemAt: ['$customer', 0]},
-                        'salesmanagers.startDate'        : {$ifNull: ['$salesmanagers.startDate', null]},
-                        'salesmanagers.endDate'          : {$ifNull: ['$salesmanagers.endDate', null]},
-                        'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
-                        dateByWeek                      : 1,
-                        project                         : 1,
-                        employee                        : 1,
-                        department                      : 1,
-                        month                           : 1,
-                        year                            : 1,
-                        week                            : 1,
-                        isPaid                          : 1
-                    }
-                }, {
+            }, {
                 $project: {
-                    'startDateWeek': {
+                    startDateWeek: {
                         $let: {
                             vars: {
-                                startDate: {$ifNull: [ '$salesmanager.startDate', null ]}
+                                startDate: {$ifNull: ['$salesmanagers.startDate', null]}
                             },
                             in  : {$cond: [{$eq: ['$$startDate', null]}, null, {$add: [{$multiply: [{$year: '$$startDate'}, 100]}, {$week: '$$startDate'}]}]}
                         }
                     },
-                    'endDateWeek' : {
+                    endDateWeek  : {
                         $let: {
                             vars: {
-                                endDate: {$ifNull: [ '$salesmanager.endDate', null ]}
+                                endDate: {$ifNull: ['$salesmanagers.startDate', null]}
                             },
                             in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
                         }
                     },
-                    customer                    : 1,
-                    salesmanagers               : 1,
-                    dateByWeek                  : 1,
-                    project                     : 1,
-                    employee                    : 1,
-                    department                  : 1,
-                    month                       : 1,
-                    year                        : 1,
-                    week                        : 1,
-                    isPaid                      : 1
+                    customer     : {$arrayElemAt: ['$customer', 0]},
+                    salesmanagers: 1,
+                    dateByWeek   : 1,
+                    project      : 1,
+                    employee     : 1,
+                    department   : 1,
+                    month        : 1,
+                    year         : 1,
+                    week         : 1,
+                    isPaid       : 1
                 }
             }, {
                 $project: {
-                    isValid             : salesManagerMatch,
-                    salesmanagers       : 1,
-                    project             : 1,
-                    employee            : 1,
-                    department          : 1,
-                    month               : 1,
-                    year                : 1,
-                    week                : 1,
-                    isPaid              : 1,
-                    'customer._id'      : 1
+                    isValid       : salesManagerMatch,
+                    salesmanagers : 1,
+                    project       : 1,
+                    employee      : 1,
+                    department    : 1,
+                    month         : 1,
+                    year          : 1,
+                    week          : 1,
+                    isPaid        : 1,
+                    'customer._id': 1
                 }
             }, {
                 $match: {
@@ -676,37 +663,32 @@ var wTrack = function (event, models) {
             var queryObject = {};
             var aggregation;
             var salesManagerMatch = {
+                $or: [{
                     $and: [{
-                        $or: [{
-                            $and: [{
-                                $eq: ['$startDateWeek', null]
-                            }, {
-                                $eq: ['$endDateWeek', null]
-                            }]
-                        }, {
-                            $and: [{
-                                $eq: ['$startDateWeek', null]
-                            }, {
-                                $gte: ['$endDateWeek', '$dateByWeek']
-                            }]
-                        }, {
-                            $and: [{
-                                $lte: ['$startDateWeek', '$dateByWeek']
-                            }, {
-                                $eq: ['$endDateWeek', null]
-                            }]
-                        }, {
-                            $and: [{
-                                $lte: ['$startDateWeek', '$dateByWeek']
-                            }, {
-                                $gte: ['$endDateWeek', '$dateByWeek']
-                            }]
-                        }]
+                        $eq: ['$startDateWeek', null]
                     }, {
-                        $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
+                        $eq: ['$endDateWeek', null]
                     }]
-
-                };
+                }, {
+                    $and: [{
+                        $eq: ['$startDateWeek', null]
+                    }, {
+                        $gte: ['$endDateWeek', '$dateByWeek']
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$startDateWeek', '$dateByWeek']
+                    }, {
+                        $eq: ['$endDateWeek', null]
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$startDateWeek', '$dateByWeek']
+                    }, {
+                        $gte: ['$endDateWeek', '$dateByWeek']
+                    }]
+                }]
+            };
 
             queryObject.$and = [];
             queryObject.$and.push({_id: {$in: _.pluck(wtrackIds, '_id')}});
@@ -716,6 +698,13 @@ var wTrack = function (event, models) {
             }
 
             aggregation = WTrack.aggregate([{
+                $lookup: {
+                    from        : 'projectMembers',
+                    localField  : 'project',
+                    foreignField: 'projectId',
+                    as          : 'projectMembers'
+                }
+            }, {
                 $lookup: {
                     from        : 'Project',
                     localField  : 'project',
@@ -745,36 +734,36 @@ var wTrack = function (event, models) {
                 }
             }, {
                 $project: {
-                    project   : {$arrayElemAt: ['$project', 0]},
-                    jobs      : {$arrayElemAt: ['$jobs', 0]},
-                    employee  : {$arrayElemAt: ['$employee', 0]},
-                    department: {$arrayElemAt: ['$department', 0]},
-                    dateByWeek: 1,
-                    createdBy : 1,
-                    month     : 1,
-                    year      : 1,
-                    week      : 1,
-                    revenue   : 1,
-                    amount    : 1,
-                    rate      : 1,
-                    hours     : 1,
-                    cost      : 1,
-                    worked    : 1,
-                    isPaid    : 1,
-                    1         : 1,
-                    2         : 1,
-                    3         : 1,
-                    4         : 1,
-                    5         : 1,
-                    6         : 1,
-                    7         : 1
-                }
-            }, {
-                $lookup: {
-                    from        : 'projectMembers',
-                    localField  : 'project._id',
-                    foreignField: 'projectId',
-                    as          : 'salesmanagers'
+                    project      : {$arrayElemAt: ['$project', 0]},
+                    jobs         : {$arrayElemAt: ['$jobs', 0]},
+                    employee     : {$arrayElemAt: ['$employee', 0]},
+                    department   : {$arrayElemAt: ['$department', 0]},
+                    salesmanagers: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                        }
+                    },
+                    dateByWeek   : 1,
+                    createdBy    : 1,
+                    month        : 1,
+                    year         : 1,
+                    week         : 1,
+                    revenue      : 1,
+                    amount       : 1,
+                    rate         : 1,
+                    hours        : 1,
+                    cost         : 1,
+                    worked       : 1,
+                    isPaid       : 1,
+                    1            : 1,
+                    2            : 1,
+                    3            : 1,
+                    4            : 1,
+                    5            : 1,
+                    6            : 1,
+                    7            : 1
                 }
             }, {
                 $lookup: {
@@ -792,85 +781,53 @@ var wTrack = function (event, models) {
                 }
             }, {
                 $unwind: {
-                    path : '$salesmanagers',
+                    path                      : '$salesmanagers',
                     preserveNullAndEmptyArrays: true
                 }
             }, {
                 $project: {
-                    customer                         : {$arrayElemAt: ['$customer', 0]},
-                    workflow                         : {$arrayElemAt: ['$workflow', 0]},
-                    'salesmanagers.startDate'        : {$ifNull: ['$salesmanagers.startDate', null]},
-                    'salesmanagers.endDate'          : {$ifNull: ['$salesmanagers.endDate', null]},
-                    'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
-                    'salesmanagers.employeeId'       : {$ifNull: ['$salesmanagers.employeeId', null]},
-                    dateByWeek                       : 1,
-                    createdBy                        : 1,
-                    project                          : 1,
-                    jobs                             : 1,
-                    employee                         : 1,
-                    department                       : 1,
-                    month                            : 1,
-                    year                             : 1,
-                    week                             : 1,
-                    revenue                          : 1,
-                    amount                           : 1,
-                    rate                             : 1,
-                    hours                            : 1,
-                    cost                             : 1,
-                    worked                           : 1,
-                    isPaid                           : 1,
-                    1                                : 1,
-                    2                                : 1,
-                    3                                : 1,
-                    4                                : 1,
-                    5                                : 1,
-                    6                                : 1,
-                    7                                : 1
-                }
-            }, {
-                $project: {
-                    'startDateWeek': {
+                    startDateWeek: {
                         $let: {
                             vars: {
-                                startDate: '$salesmanagers.startDate'
+                                startDate: {$ifNull: ['$salesmanagers.startDate', null]}
                             },
                             in  : {$cond: [{$eq: ['$$startDate', null]}, null, {$add: [{$multiply: [{$year: '$$startDate'}, 100]}, {$week: '$$startDate'}]}]}
                         }
                     },
-                    'endDateWeek'  : {
+                    endDateWeek  : {
                         $let: {
                             vars: {
-                                endDate: '$salesmanagers.endDate'
+                                endDate: {$ifNull: ['$salesmanagers.startDate', null]}
                             },
                             in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
                         }
                     },
-                    customer                    : 1,
-                    workflow                    : 1,
-                    dateByWeek                  : 1,
-                    salesmanagers               : 1,
-                    createdBy                   : 1,
-                    project                     : 1,
-                    jobs                        : 1,
-                    employee                    : 1,
-                    department                  : 1,
-                    month                       : 1,
-                    year                        : 1,
-                    week                        : 1,
-                    revenue                     : 1,
-                    amount                      : 1,
-                    rate                        : 1,
-                    hours                       : 1,
-                    cost                        : 1,
-                    worked                      : 1,
-                    isPaid                      : 1,
-                    1                           : 1,
-                    2                           : 1,
-                    3                           : 1,
-                    4                           : 1,
-                    5                           : 1,
-                    6                           : 1,
-                    7                           : 1
+                    customer     : {$arrayElemAt: ['$customer', 0]},
+                    workflow     : {$arrayElemAt: ['$workflow', 0]},
+                    dateByWeek   : 1,
+                    salesmanagers: 1,
+                    createdBy    : 1,
+                    project      : 1,
+                    jobs         : 1,
+                    employee     : 1,
+                    department   : 1,
+                    month        : 1,
+                    year         : 1,
+                    week         : 1,
+                    revenue      : 1,
+                    amount       : 1,
+                    rate         : 1,
+                    hours        : 1,
+                    cost         : 1,
+                    worked       : 1,
+                    isPaid       : 1,
+                    1            : 1,
+                    2            : 1,
+                    3            : 1,
+                    4            : 1,
+                    5            : 1,
+                    6            : 1,
+                    7            : 1
                 }
             }, {
                 $project: {

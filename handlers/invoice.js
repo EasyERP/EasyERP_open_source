@@ -761,7 +761,7 @@ var Invoice = function (models, event) {
                                     query = {"sourceDocument.model": model, "sourceDocument._id": id, journal: journal};
                                     _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
                                 }
-                                
+
 
                                 if (!invoice.journal && journalId) { // todo in case of purchase invoice hasn't journalId
                                     Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
@@ -1702,11 +1702,11 @@ var Invoice = function (models, event) {
 
             if (contentType === 'salesProforma') {
                 matchQuery.$and.push({
-                    _type : 'Proforma'
+                    _type: 'Proforma'
                 });
             } else {
                 matchQuery.$and.push({
-                    _type : {
+                    _type: {
                         $ne: 'Proforma'
                     }
                 });
@@ -1728,31 +1728,31 @@ var Invoice = function (models, event) {
         contentSearcher = function (invoicesIds, waterfallCallback) {
             var queryObject = {};
             var salesManagerMatch = {
-                    $or: [{
-                        $and: [{
-                            $eq: ['$salesmanagers.startDate', null]
-                        }, {
-                            $eq: ['$salesmanagers.endDate', null]
-                        }]
+                $or: [{
+                    $and: [{
+                        $eq: ['$salesmanagers.startDate', null]
                     }, {
-                        $and: [{
-                            $lte: ['$salesmanagers.startDate', '$invoiceDate']
-                        }, {
-                            $eq: ['$salesmanagers.endDate', null]
-                        }]
-                    }, {
-                        $and: [{
-                            $eq: ['$salesmanagers.startDate', null]
-                        }, {
-                            $gte: ['$salesmanagers.endDate', '$invoiceDate']
-                        }]
-                    }, {
-                        $and: [{
-                            $lte: ['$salesmanagers.startDate', '$invoiceDate']
-                        }, {
-                            $gte: ['$salesmanagers.endDate', '$invoiceDate']
-                        }]
+                        $eq: ['$salesmanagers.endDate', null]
                     }]
+                }, {
+                    $and: [{
+                        $lte: ['$salesmanagers.startDate', '$invoiceDate']
+                    }, {
+                        $eq: ['$salesmanagers.endDate', null]
+                    }]
+                }, {
+                    $and: [{
+                        $eq: ['$salesmanagers.startDate', null]
+                    }, {
+                        $gte: ['$salesmanagers.endDate', '$invoiceDate']
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$salesmanagers.startDate', '$invoiceDate']
+                    }, {
+                        $gte: ['$salesmanagers.endDate', '$invoiceDate']
+                    }]
+                }]
             };
 
             queryObject['$and'] = [];
@@ -1768,47 +1768,47 @@ var Invoice = function (models, event) {
                     from        : "Customers",
                     localField  : "supplier",
                     foreignField: "_id",
-                    as: "supplier"
+                    as          : "supplier"
                 }
-            },{
+            }, {
                 $lookup: {
-                    from           : 'projectMembers',
-                    localField     : 'project',
-                    foreignField   : 'projectId',
-                    as             : 'projectMembers'
+                    from        : 'projectMembers',
+                    localField  : 'project',
+                    foreignField: 'projectId',
+                    as          : 'projectMembers'
                 }
             }, {
                 $lookup: {
                     from        : "workflows",
                     localField  : "workflow",
                     foreignField: "_id",
-                    as: "workflow"
+                    as          : "workflow"
                 }
             }, {
                 $lookup: {
                     from        : "Project",
                     localField  : "project",
                     foreignField: "_id",
-                    as: "project"
+                    as          : "project"
                 }
             }, {
                 $project: {
-                    salesmanagers   : {
+                    salesmanagers: {
                         $filter: {
                             input: '$projectMembers',
                             as   : 'projectMember',
                             cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
                         }
                     },
-                    workflow        : {$arrayElemAt: ["$workflow", 0]},
-                    supplier        : {$arrayElemAt: ["$supplier", 0]},
-                    project         : {$arrayElemAt: ["$project", 0]},
-                    forSales        : 1,
-                    paymentInfo     : 1,
-                    invoiceDate     : 1,
-                    name            : 1,
-                    paymentDate     : 1,
-                    dueDate         : 1
+                    workflow     : {$arrayElemAt: ["$workflow", 0]},
+                    supplier     : {$arrayElemAt: ["$supplier", 0]},
+                    project      : {$arrayElemAt: ["$project", 0]},
+                    forSales     : 1,
+                    paymentInfo  : 1,
+                    invoiceDate  : 1,
+                    name         : 1,
+                    paymentDate  : 1,
+                    dueDate      : 1
                 }
             }, {
                 $unwind: {
@@ -1817,17 +1817,17 @@ var Invoice = function (models, event) {
                 }
             }, {
                 $project: {
-                    isValid         : salesManagerMatch,
-                    salesmanagers   : 1,
-                    workflow        : 1,
-                    supplier        : 1,
-                    project         : 1,
-                    forSales        : 1,
-                    paymentInfo     : 1,
-                    invoiceDate     : 1,
-                    name            : 1,
-                    paymentDate     : 1,
-                    dueDate         : 1
+                    isValid      : salesManagerMatch,
+                    salesmanagers: 1,
+                    workflow     : 1,
+                    supplier     : 1,
+                    project      : 1,
+                    forSales     : 1,
+                    paymentInfo  : 1,
+                    invoiceDate  : 1,
+                    name         : 1,
+                    paymentDate  : 1,
+                    dueDate      : 1
                 }
             }, {
                 $match: {
@@ -1846,16 +1846,16 @@ var Invoice = function (models, event) {
                 }
             }, {
                 $project: {
-                    salesPerson     : {$arrayElemAt: ['$salesmanagers', 0]},
-                    workflow        : 1,
-                    supplier        : 1,
-                    project         : 1,
-                    forSales        : 1,
-                    paymentInfo     : 1,
-                    invoiceDate     : 1,
-                    name            : 1,
-                    paymentDate     : 1,
-                    dueDate         : 1
+                    salesPerson: {$arrayElemAt: ['$salesmanagers', 0]},
+                    workflow   : 1,
+                    supplier   : 1,
+                    project    : 1,
+                    forSales   : 1,
+                    paymentInfo: 1,
+                    invoiceDate: 1,
+                    name       : 1,
+                    paymentDate: 1,
+                    dueDate    : 1
                 }
             }, {
                 $match: queryObject

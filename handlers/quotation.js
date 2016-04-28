@@ -428,34 +428,31 @@ var Quotation = function (models, event) {
             var queryObject = {};
 
             var salesManagerMatch = {
-                $and: [{
-                    $or: [{
-                        $and: [{
-                            $eq: ['$salesmanagers.startDate', null]
-                        }, {
-                            $eq: ['$salesmanagers.endDate', null]
-                        }]
+
+                $or: [{
+                    $and: [{
+                        $eq: ['$salesmanagers.startDate', null]
                     }, {
-                        $and: [{
-                            $lte: ['$salesmanagers.startDate', '$orderDate']
-                        }, {
-                            $eq: ['$salesmanagers.endDate', null]
-                        }]
-                    }, {
-                        $and: [{
-                            $eq: ['$salesmanagers.startDate', null]
-                        }, {
-                            $gte: ['$salesmanagers.endDate', '$orderDate']
-                        }]
-                    }, {
-                        $and: [{
-                            $lte: ['$salesmanagers.startDate', '$orderDate']
-                        }, {
-                            $gte: ['$salesmanagers.endDate', '$orderDate']
-                        }]
+                        $eq: ['$salesmanagers.endDate', null]
                     }]
                 }, {
-                    $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
+                    $and: [{
+                        $lte: ['$salesmanagers.startDate', '$orderDate']
+                    }, {
+                        $eq: ['$salesmanagers.endDate', null]
+                    }]
+                }, {
+                    $and: [{
+                        $eq: ['$salesmanagers.startDate', null]
+                    }, {
+                        $gte: ['$salesmanagers.endDate', '$orderDate']
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$salesmanagers.startDate', '$orderDate']
+                    }, {
+                        $gte: ['$salesmanagers.endDate', '$orderDate']
+                    }]
                 }]
             };
 
@@ -466,6 +463,13 @@ var Quotation = function (models, event) {
             //query = Quotation.count(queryObject);
             //query.count(waterfallCallback);
             Quotation.aggregate([{
+                $lookup: {
+                    from        : 'projectMembers',
+                    localField  : 'project',
+                    foreignField: 'projectId',
+                    as          : 'projectMembers'
+                }
+            }, {
                 $lookup: {
                     from        : "workflows",
                     localField  : "workflow",
@@ -486,37 +490,24 @@ var Quotation = function (models, event) {
             },
                 {
                     $project: {
-                        workflow : {$arrayElemAt: ["$workflow", 0]},
-                        supplier : {$arrayElemAt: ["$supplier", 0]},
-                        project  : {$arrayElemAt: ["$project", 0]},
-                        forSales : 1,
-                        orderDate: 1,
-                        isOrder  : 1
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'projectMembers',
-                        localField  : 'project._id',
-                        foreignField: 'projectId',
-                        as          : 'salesmanagers'
+                        salesmanagers: {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                            }
+                        },
+                        workflow     : {$arrayElemAt: ["$workflow", 0]},
+                        supplier     : {$arrayElemAt: ["$supplier", 0]},
+                        project      : {$arrayElemAt: ["$project", 0]},
+                        forSales     : 1,
+                        orderDate    : 1,
+                        isOrder      : 1
                     }
                 }, {
                     $unwind: {
                         path                      : '$salesmanagers',
                         preserveNullAndEmptyArrays: true
-                    }
-                }, {
-                    $project: {
-                        'salesmanagers.startDate'        : {$ifNull: ['$salesmanagers.startDate', null]},
-                        'salesmanagers.endDate'          : {$ifNull: ['$salesmanagers.endDate', null]},
-                        'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
-                        'salesmanagers.employeeId'       : {$ifNull: ['$salesmanagers.employeeId', null]},
-                        forSales                         : 1,
-                        orderDate                        : 1,
-                        workflow                         : 1,
-                        supplier                         : 1,
-                        project                          : 1,
-                        isOrder                          : 1
                     }
                 }, {
                     $project: {
@@ -530,7 +521,11 @@ var Quotation = function (models, event) {
                     }
                 }, {
                     $match: {
-                        isValid: true
+                        $or: [
+                            {isValid: true},
+                            {
+                                salesmanagers: {$exists: false}
+                            }]
                     }
                 }, {
                     $lookup: {
@@ -660,34 +655,30 @@ var Quotation = function (models, event) {
         contentSearcher = function (quotationsIds, waterfallCallback) {
             var newQueryObj = {};
             var salesManagerMatch = {
-                $and: [{
-                    $or: [{
-                        $and: [{
-                            $eq: ['$salesmanagers.startDate', null]
-                        }, {
-                            $eq: ['$salesmanagers.endDate', null]
-                        }]
+                $or: [{
+                    $and: [{
+                        $eq: ['$salesmanagers.startDate', null]
                     }, {
-                        $and: [{
-                            $lte: ['$salesmanagers.startDate', '$orderDate']
-                        }, {
-                            $eq: ['$salesmanagers.endDate', null]
-                        }]
-                    }, {
-                        $and: [{
-                            $eq: ['$salesmanagers.startDate', null]
-                        }, {
-                            $gte: ['$salesmanagers.endDate', '$orderDate']
-                        }]
-                    }, {
-                        $and: [{
-                            $lte: ['$salesmanagers.startDate', '$orderDate']
-                        }, {
-                            $gte: ['$salesmanagers.endDate', '$orderDate']
-                        }]
+                        $eq: ['$salesmanagers.endDate', null]
                     }]
                 }, {
-                    $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
+                    $and: [{
+                        $lte: ['$salesmanagers.startDate', '$orderDate']
+                    }, {
+                        $eq: ['$salesmanagers.endDate', null]
+                    }]
+                }, {
+                    $and: [{
+                        $eq: ['$salesmanagers.startDate', null]
+                    }, {
+                        $gte: ['$salesmanagers.endDate', '$orderDate']
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$salesmanagers.startDate', '$orderDate']
+                    }, {
+                        $gte: ['$salesmanagers.endDate', '$orderDate']
+                    }]
                 }]
             };
 
@@ -696,6 +687,13 @@ var Quotation = function (models, event) {
             newQueryObj.$and.push({_id: {$in: _.pluck(quotationsIds, '_id')}});
 
             Quotation.aggregate([{
+                $lookup: {
+                    from        : 'projectMembers',
+                    localField  : 'project',
+                    foreignField: 'projectId',
+                    as          : 'projectMembers'
+                }
+            }, {
                 $lookup: {
                     from        : "workflows",
                     localField  : "workflow",
@@ -715,41 +713,26 @@ var Quotation = function (models, event) {
                 }
             }, {
                 $project: {
-                    workflow   : {$arrayElemAt: ["$workflow", 0]},
-                    supplier   : {$arrayElemAt: ["$supplier", 0]},
-                    project    : {$arrayElemAt: ["$project", 0]},
-                    name       : 1,
-                    paymentInfo: 1,
-                    orderDate  : 1,
-                    forSales   : 1,
-                    isOrder    : 1
-                }
-            }, {
-                $lookup: {
-                    from        : 'projectMembers',
-                    localField  : 'project._id',
-                    foreignField: 'projectId',
-                    as          : 'salesmanagers'
+                    workflow     : {$arrayElemAt: ["$workflow", 0]},
+                    supplier     : {$arrayElemAt: ["$supplier", 0]},
+                    project      : {$arrayElemAt: ["$project", 0]},
+                    salesmanagers: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                        }
+                    },
+                    name         : 1,
+                    paymentInfo  : 1,
+                    orderDate    : 1,
+                    forSales     : 1,
+                    isOrder      : 1
                 }
             }, {
                 $unwind: {
                     path                      : '$salesmanagers',
                     preserveNullAndEmptyArrays: true
-                }
-            }, {
-                $project: {
-                    'salesmanagers.startDate'        : {$ifNull: ['$salesmanagers.startDate', null]},
-                    'salesmanagers.endDate'          : {$ifNull: ['$salesmanagers.endDate', null]},
-                    'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
-                    'salesmanagers.employeeId'       : {$ifNull: ['$salesmanagers.employeeId', null]},
-                    name                             : 1,
-                    paymentInfo                      : 1,
-                    orderDate                        : 1,
-                    forSales                         : 1,
-                    workflow                         : 1,
-                    supplier                         : 1,
-                    project                          : 1,
-                    isOrder                          : 1
                 }
             }, {
                 $project: {
@@ -766,7 +749,11 @@ var Quotation = function (models, event) {
                 }
             }, {
                 $match: {
-                    isValid: true
+                    $or: [
+                        {isValid: true},
+                        {
+                            salesmanagers: {$exists: false}
+                        }]
                 }
             }, {
                 $lookup: {
