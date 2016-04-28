@@ -155,6 +155,13 @@ var Filters = function (models) {
         function getWtrackFiltersValues(callback) {
             WTrack.aggregate([{
                 $lookup: {
+                    from        : "projectMembers",
+                    localField  : "project",
+                    foreignField: "projectId",
+                    as: "salesmanagers"
+                }
+            }, {
+                $lookup: {
                     from        : "Project",
                     localField  : "project",
                     foreignField: "_id", as: "project"
@@ -173,20 +180,20 @@ var Filters = function (models) {
                 }
             }, {
                 $project: {
-                    project   : {$arrayElemAt: ["$project", 0]},
-                    employee  : {$arrayElemAt: ["$employee", 0]},
-                    department: {$arrayElemAt: ["$department", 0]},
-                    month     : 1,
-                    year      : 1,
-                    week      : 1,
-                    isPaid    : 1
-                }
-            }, {
-                $lookup: {
-                    from        : "projectMembers",
-                    localField  : "project._id",
-                    foreignField: "projectId",
-                    as: "salesmanagers"
+                    project      : {$arrayElemAt: ["$project", 0]},
+                    employee     : {$arrayElemAt: ["$employee", 0]},
+                    department   : {$arrayElemAt: ["$department", 0]},
+                    month        : 1,
+                    year         : 1,
+                    week         : 1,
+                    isPaid       : 1,
+                    salesmanagers: {
+                        $filter: {
+                            input: '$salesmanagers',
+                            as   : 'projectMember',
+                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                        }
+                    }
                 }
             }, {
                 $lookup: {
@@ -196,10 +203,9 @@ var Filters = function (models) {
                     as: "customer"
                 }
             }, {
-                $unwind: '$salesmanagers'
-            }, {
-                $match : {
-                'salesmanagers.projectPositionId' : objectId(CONSTANTS.SALES_MANAGER_ROLE)
+                $unwind: {
+                    path                      : '$salesmanagers',
+                    preserveNullAndEmptyArrays: true
                 }
             }, {
                 $lookup: {
@@ -952,6 +958,13 @@ var Filters = function (models) {
                     forSales: true,
                     _type   : "wTrackInvoice"
                 }
+            },{
+                $lookup: {
+                    from        : "projectMembers",
+                    localField  : "project",
+                    foreignField: "projectId",
+                    as          : "projectMembers"
+                }
             }, {
                 $lookup: {
                     from        : "Project",
@@ -974,20 +987,19 @@ var Filters = function (models) {
                 $project: {
                     workflow   : {$arrayElemAt: ["$workflow", 0]},
                     supplier   : {$arrayElemAt: ["$supplier", 0]},
-                    project    : {$arrayElemAt: ["$project", 0]}
+                    project    : {$arrayElemAt: ["$project", 0]},
+                    salesmanagers: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                        }
+                    }
                 }
             }, {
-                $lookup: {
-                    from        : "projectMembers",
-                    localField  : "project._id",
-                    foreignField: "projectId",
-                    as: "salesmanagers"
-                }
-            }, {
-                $unwind: '$salesmanagers'
-            }, {
-                $match : {
-                    'salesmanagers.projectPositionId' : objectId(CONSTANTS.SALES_MANAGER_ROLE)
+                $unwind: {
+                    path                      : '$salesmanagers',
+                    preserveNullAndEmptyArrays: true
                 }
             }, {
                 $lookup: {
@@ -1058,6 +1070,13 @@ var Filters = function (models) {
                 }
             }, {
                 $lookup: {
+                    from        : "projectMembers",
+                    localField  : "project",
+                    foreignField: "projectId",
+                    as          : "projectMembers"
+                }
+            }, {
+                $lookup: {
                     from        : "Project",
                     localField  : "project",
                     foreignField: "_id", as: "project"
@@ -1084,20 +1103,19 @@ var Filters = function (models) {
                 $project: {
                     workflow   : {$arrayElemAt: ["$workflow", 0]},
                     supplier   : {$arrayElemAt: ["$supplier", 0]},
-                    project    : {$arrayElemAt: ["$project", 0]}
+                    project    : {$arrayElemAt: ["$project", 0]},
+                    salesmanagers: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                        }
+                    }
                 }
             }, {
-                $lookup: {
-                    from        : "projectMembers",
-                    localField  : "project._id",
-                    foreignField: "projectId",
-                    as: "salesmanagers"
-                }
-            }, {
-                $unwind: '$salesmanagers'
-            },{
-                $match : {
-                    'salesmanagers.projectPositionId' : objectId(CONSTANTS.SALES_MANAGER_ROLE)
+                $unwind: {
+                    path                      : '$salesmanagers',
+                    preserveNullAndEmptyArrays: true
                 }
             }, {
                 $lookup: {
@@ -1192,33 +1210,52 @@ var Filters = function (models) {
                         name         : 1
                     }
                 }, {
+                    $lookup: {
+                        from        : "projectMembers",
+                        localField  : "invoice.project",
+                        foreignField: "projectId",
+                        as          : "projectMembers"
+                    }
+                }, {
                     $project: {
-                        supplier     : 1,
-                        invoice      : 1,
-                        name         : 1,
-                        paymentMethod: 1
+                        supplier      : 1,
+                        salesmanagers:  {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                            }
+                        },
+                        name          : 1,
+                        paymentMethod : 1
+                    }
+                }, {
+                    $unwind: {
+                        path                      : '$salesmanagers',
+                        preserveNullAndEmptyArrays: true
                     }
                 }, {
                     $lookup: {
                         from        : "Employees",
-                        localField  : "invoice.salesPerson",
-                        foreignField: "_id", as: "assigned"
+                        localField  : "salesmanagers.employeeId",
+                        foreignField: "_id",
+                        as          : "salesmanagers"
                     }
-                }, {
+                },{
                     $project: {
                         supplier     : 1,
-                        assigned     : {$arrayElemAt: ["$assigned", 0]},
-                        name         : 1,
-                        paymentMethod: 1
+                        salesmanager : {$arrayElemAt: ["$salesmanagers", 0]},
+                        paymentMethod: 1,
+                        name         : 1
                     }
                 }, {
                     $group: {
                         _id            : null,
                         'assigned'     : {
                             $addToSet: {
-                                _id : '$assigned._id',
+                                _id : '$salesmanager._id',
                                 name: {
-                                    $concat: ['$assigned.name.first', ' ', '$assigned.name.last']
+                                    $concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']
                                 }
                             }
                         },
@@ -1478,6 +1515,13 @@ var Filters = function (models) {
                     }
                 }, {
                     $lookup: {
+                        from        : "projectMembers",
+                        localField  : "project",
+                        foreignField: "projectId",
+                        as          : "projectMembers"
+                    }
+                }, {
+                    $lookup: {
                         from        : "Project",
                         localField  : "project",
                         foreignField: "_id", as: "project"
@@ -1498,20 +1542,19 @@ var Filters = function (models) {
                     $project: {
                         workflow: {$arrayElemAt: ["$workflow", 0]},
                         project : {$arrayElemAt: ["$project", 0]},
-                        supplier: {$arrayElemAt: ["$supplier", 0]}
+                        supplier: {$arrayElemAt: ["$supplier", 0]},
+                        salesmanagers: {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                            }
+                        }
                     }
                 }, {
-                    $lookup: {
-                        from        : "projectMembers",
-                        localField  : "project._id",
-                        foreignField: "projectId",
-                        as: "salesmanagers"
-                    }
-                }, {
-                    $unwind: '$salesmanagers'
-                }, {
-                    $match : {
-                        'salesmanagers.projectPositionId' : objectId(CONSTANTS.SALES_MANAGER_ROLE)
+                    $unwind: {
+                        path                      : '$salesmanagers',
+                        preserveNullAndEmptyArrays: true
                     }
                 }, {
                     $lookup: {
@@ -1584,6 +1627,13 @@ var Filters = function (models) {
                     }
                 }, {
                     $lookup: {
+                        from        : "projectMembers",
+                        localField  : "project",
+                        foreignField: "projectId",
+                        as          : "projectMembers"
+                    }
+                }, {
+                    $lookup: {
                         from        : "Project",
                         localField  : "project",
                         foreignField: "_id", as: "project"
@@ -1604,20 +1654,19 @@ var Filters = function (models) {
                     $project: {
                         workflow: {$arrayElemAt: ["$workflow", 0]},
                         project : {$arrayElemAt: ["$project", 0]},
-                        supplier: {$arrayElemAt: ["$supplier", 0]}
+                        supplier: {$arrayElemAt: ["$supplier", 0]},
+                        salesmanagers: {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                            }
+                        }
                     }
                 }, {
-                    $lookup: {
-                        from        : "projectMembers",
-                        localField  : "project._id",
-                        foreignField: "projectId",
-                        as: "salesmanagers"
-                    }
-                }, {
-                    $unwind: '$salesmanagers'
-                }, {
-                    $match : {
-                        'salesmanagers.projectPositionId' : objectId(CONSTANTS.SALES_MANAGER_ROLE)
+                    $unwind: {
+                        path                      : '$salesmanagers',
+                        preserveNullAndEmptyArrays: true
                     }
                 }, {
                     $lookup: {

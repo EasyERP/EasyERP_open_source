@@ -473,19 +473,22 @@ var Quotation = function (models, event) {
                 $lookup: {
                     from        : "workflows",
                     localField  : "workflow",
-                    foreignField: "_id", as: "workflow"
+                    foreignField: "_id",
+                    as: "workflow"
                 }
             }, {
                 $lookup: {
                     from        : "Customers",
                     localField  : "supplier",
-                    foreignField: "_id", as: "supplier"
+                    foreignField: "_id",
+                    as: "supplier"
                 }
             }, {
                 $lookup: {
                     from        : "Project",
                     localField  : "project",
-                    foreignField: "_id", as: "project"
+                    foreignField: "_id",
+                    as: "project"
                 }
             },
                 {
@@ -697,19 +700,22 @@ var Quotation = function (models, event) {
                 $lookup: {
                     from        : "workflows",
                     localField  : "workflow",
-                    foreignField: "_id", as: "workflow"
+                    foreignField: "_id",
+                    as: "workflow"
                 }
             }, {
                 $lookup: {
                     from        : "Customers",
                     localField  : "supplier",
-                    foreignField: "_id", as: "supplier"
+                    foreignField: "_id",
+                    as: "supplier"
                 }
             }, {
                 $lookup: {
                     from        : "Project",
                     localField  : "project",
-                    foreignField: "_id", as: "project"
+                    foreignField: "_id",
+                    as: "project"
                 }
             }, {
                 $project: {
