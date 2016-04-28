@@ -215,14 +215,17 @@ define([
 
             var orderSum = proformContainer.find('#orderSum');
             var orderCount = proformContainer.find('#orderCount');
-            var order = orderSum.attr('data-value');
-            order = parseFloat(order);
             var totalSum = proformContainer.find('#totalSum');
             var totalCount = proformContainer.find('#totalCount');
             var total = orderSum.attr('data-value');
+            var order = orderSum.attr('data-value');
+            var newTotal;
+            var newOrder;
+
             total = parseFloat(total);
-            var newTotal = total + modelJSON.paymentInfo.total;
-            var newOrder = order + modelJSON.paymentInfo.total;
+            order = parseFloat(order);
+            newTotal = total + modelJSON.paymentInfo.total;
+            newOrder = order + modelJSON.paymentInfo.total;
 
             orderSum.attr('data-value', newOrder);
             orderSum.text(helpers.currencySplitter(newOrder.toString()));

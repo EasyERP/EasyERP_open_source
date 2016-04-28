@@ -35,11 +35,11 @@ var Employee = function (models) {
         //}
 
         options = {
-            res         : res,
-            next        : next,
-            Model       : Model,
-            map         : exportMap,
-            fileName    : 'Employees'
+            res     : res,
+            next    : next,
+            Model   : Model,
+            map     : exportMap,
+            fileName: 'Employees'
         };
     };
 
@@ -85,24 +85,24 @@ var Employee = function (models) {
                 }
             },
             {
-                $match : matchQuery
+                $match: matchQuery
             },
             {
-                $sort : {'name.first' : 1}
+                $sort: {'name.first': 1}
             }
         ], function (err, employees) {
             if (err) {
                 return callback(err);
             }
 
-                callback(null, employees);
-            });
+            callback(null, employees);
+        });
     }
 
     this.getEmployeesCount = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         Employee.find({isEmployee: true}).count(function (err, result) {
-            if (err){
+            if (err) {
                 return next(err);
             }
 
@@ -124,16 +124,16 @@ var Employee = function (models) {
             var i;
             var length;
 
-            if (err){
+            if (err) {
                 return next(err);
             }
 
-            if (result){
+            if (result) {
                 hire = result.transfer;
                 length = hire.length;
 
-                for (i = length - 1; i >= 0; i--){
-                    if (date >= hire[i].date){
+                for (i = length - 1; i >= 0; i--) {
+                    if (date >= hire[i].date) {
                         salary = hire[i].salary;
                         break;
                     }
@@ -192,7 +192,7 @@ var Employee = function (models) {
 
         function assigneFinder(cb) {
             var match = {
-                'projectmanager': {$ne: null}
+                projectmanager: {$ne: null}
             };
 
             Project.aggregate([{
@@ -231,7 +231,7 @@ var Employee = function (models) {
                 $match: {isEmployee: true}
             }, {
                 $group: {
-                    _id      : "$department",
+                    _id      : '$department',
                     employees: {
                         $push: {
                             name: {$concat: ['$name.first', ' ', '$name.last']},
