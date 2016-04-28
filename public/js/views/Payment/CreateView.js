@@ -64,7 +64,7 @@ define([
         },
 
         events: {
-            'keypress'                                          : 'keypressHandler',
+            'keypress'                                         : 'keypressHandler',
             "click .current-selected"                          : "showNewSelect",
             "click"                                            : "hideNewSelect",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
@@ -103,7 +103,7 @@ define([
             data.date = date;
 
             dataService.getData(constants.URLS.PAYMENT_AMOUNT_LEFT, data,
-                function(res, self) {
+                function (res, self) {
                     if (res.difference) {
                         differenceAmount.text(res.difference.toFixed(2));
                         self.differenceAmount = res.difference;
@@ -164,7 +164,7 @@ define([
             var paymentRef = thisEl.find('#paymentRef').val();
             var period = thisEl.find('#period').attr('data-id');
             var currency = {
-                _id: thisEl.find('#currencyDd').attr('data-id'),
+                _id : thisEl.find('#currencyDd').attr('data-id'),
                 name: $.trim(thisEl.find('#currencyDd').text())
             };
 
@@ -262,7 +262,7 @@ define([
                 maxDate    : 0,
                 onSelect   : function () {
                     self.changePaidAmount();
-                    }
+                }
             }).datepicker('setDate', new Date())
                 .datepicker('option', 'minDate', model.invoiceDate);
 

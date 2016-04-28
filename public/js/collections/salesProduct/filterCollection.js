@@ -1,6 +1,5 @@
 ﻿define([
-        'collections/Product/filterCollection'
-    ],
-    function (filterCollection) {
-        return filterCollection;
-    });
+    'collections/Product/filterCollection'
+], function (filterCollection) {
+    return filterCollection;
+});

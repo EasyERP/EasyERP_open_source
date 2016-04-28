@@ -15,7 +15,7 @@ module.exports = (function () {
         whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         month           : {type: Number},
         year            : {type: Number},
-        currency: {
+        currency        : {
             _id : {type: ObjectId, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
         },
@@ -43,7 +43,7 @@ module.exports = (function () {
         paymentMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
         period       : {type: ObjectId, ref: 'Destination', default: null},
         bonus        : {type: Boolean},
-        currency: {
+        currency     : {
             _id : {type: ObjectId, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
         }
@@ -56,15 +56,15 @@ module.exports = (function () {
     var ExpensesInvoicePaymentSchema = PaymentSchema.extend({});
 
     var salaryPaymentSchema = basePaymentSchema.extend({
-        //invoice      : {
-        //    _id     : {type: ObjectId, ref: 'Invoice', default: null},
-        //    name    : String,
-        //    assigned: {
-        //        _id : {type: ObjectId, ref: 'Employee', default: null},
-        //        name: String
-        //    }
-        //},
-        invoice: {type: ObjectId, ref: 'Invoice', default: null},
+        /* invoice      : {
+         _id     : {type: ObjectId, ref: 'Invoice', default: null},
+         name    : String,
+         assigned: {
+         _id : {type: ObjectId, ref: 'Employee', default: null},
+         name: String
+         }
+         }, */
+        invoice      : {type: ObjectId, ref: 'Invoice', default: null},
         isExpense    : {type: Boolean, default: true},
         supplier     : [{
             _id             : {type: ObjectId, ref: 'Employees', default: null},
@@ -97,7 +97,7 @@ module.exports = (function () {
     InvoicePaymentSchema.pre('save', setName);
     ExpensesInvoicePaymentSchema.pre('save', setName);
 
-    function setName (next) {
+    function setName(next) {
         var payment = this;
         var db = payment.db.db;
 
@@ -123,6 +123,7 @@ module.exports = (function () {
                 next();
             });
     }
+
     /*PaymentSchema.post('save', function (doc) {
      var payment = this;
      var paymentDate = new Date(this.date);

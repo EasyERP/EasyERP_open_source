@@ -1,27 +1,31 @@
 ﻿define([
-        'text!templates/ExpensesInvoice/list/ListTemplate.html',
-        'helpers'
-    ],
+    'Backbone',
+    'Underscore',
+    'text!templates/ExpensesInvoice/list/ListTemplate.html',
+    'helpers'
+], function (Backbone, _, listTemplate, helpers) {
+    'use strict';
+    var InvoiceListItemView = Backbone.View.extend({
+        el: '#listTable',
 
-    function (listTemplate, helpers) {
-        var InvoiceListItemView = Backbone.View.extend({
-            el: '#listTable',
+        initialize: function (options) {
+            this.page = parseInt(options.page, 10);
 
-            initialize: function (options) {
-                this.collection = options.collection;
-                this.page = parseInt(options.page) ? parseInt(options.page) : 1;
-                this.startNumber = (this.page - 1 ) * options.itemsNumber;
-            },
-            render    : function (options) {
-                var el = (options && options.thisEl) ? options.thisEl : this.$el;
+            this.collection = options.collection;
+            this.page = isNaN(this.page) ? 1 : this.page;
+            this.startNumber = (this.page - 1) * options.itemsNumber;
+        },
 
-                el.append(_.template(listTemplate, {
-                    invoiceCollection: this.collection.toJSON(),
-                    startNumber      : this.startNumber,
-                    currencySplitter : helpers.currencySplitter
-                }));
-            }
-        });
+        render: function (options) {
+            var el = (options && options.thisEl) ? options.thisEl : this.$el;
 
-        return InvoiceListItemView;
+            el.append(_.template(listTemplate, {
+                invoiceCollection: this.collection.toJSON(),
+                startNumber      : this.startNumber,
+                currencySplitter : helpers.currencySplitter
+            }));
+        }
     });
+
+    return InvoiceListItemView;
+});

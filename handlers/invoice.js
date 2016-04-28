@@ -344,7 +344,7 @@ var Invoice = function (models, event) {
             invoice.paymentReference = order.name;
             invoice.paymentInfo.balance = order.paymentInfo.total - paidAmount;
 
-            if (payments && payments.length){
+            if (payments && payments.length) {
                 invoice.removable = true;
             }
 
@@ -734,8 +734,13 @@ var Invoice = function (models, event) {
                                 if (invoice._type === 'Proforma') {
                                     model = "Proforma";
 
-                                    query = {"sourceDocument.model": model, "sourceDocument._id": id, journal: CONSTANTS.BEFORE_INVOICE};
-                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
+                                    query = {
+                                        "sourceDocument.model": model,
+                                        "sourceDocument._id"  : id,
+                                        journal               : CONSTANTS.BEFORE_INVOICE
+                                    };
+                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
+                                    });
 
                                     journal = CONSTANTS.PROFORMA_JOURNAL;
                                 } else {
@@ -753,16 +758,27 @@ var Invoice = function (models, event) {
                                         invoiceJobs.push(prod.jobs);
                                     });
 
-                                    query = {"sourceDocument.model": 'jobs', "sourceDocument._id": {$in: invoiceJobs}, journal: CONSTANTS.JOB_FINISHED};
-                                    _journalEntryHandler.changeDate(query, dateForJobs, req.session.lastDb, function () {});
+                                    query = {
+                                        "sourceDocument.model": 'jobs',
+                                        "sourceDocument._id"  : {$in: invoiceJobs},
+                                        journal               : CONSTANTS.JOB_FINISHED
+                                    };
+                                    _journalEntryHandler.changeDate(query, dateForJobs, req.session.lastDb, function () {
+                                    });
 
-                                    queryForClosed = {"sourceDocument.model": 'jobs', "sourceDocument._id": {$in: invoiceJobs}, journal: CONSTANTS.CLOSED_JOB};
-                                    _journalEntryHandler.changeDate(query, dateForJobsFinished, req.session.lastDb, function () {});
+                                    queryForClosed = {
+                                        "sourceDocument.model": 'jobs',
+                                        "sourceDocument._id"  : {$in: invoiceJobs},
+                                        journal               : CONSTANTS.CLOSED_JOB
+                                    };
+                                    _journalEntryHandler.changeDate(query, dateForJobsFinished, req.session.lastDb, function () {
+                                    });
 
                                     query = {"sourceDocument.model": model, "sourceDocument._id": id, journal: journal};
-                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {});
+                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
+                                    });
                                 }
-                                
+
 
                                 if (!invoice.journal && journalId) { // todo in case of purchase invoice hasn't journalId
                                     Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
@@ -822,12 +838,18 @@ var Invoice = function (models, event) {
             access.getApproveAccess(req, req.session.uId, moduleId, function (access) {
                 if (access) {
 
-                    Invoice.findByIdAndUpdate(id, {$set: {approved: true, invoiceDate: new Date(invoiceDate)}}, {new: true}, function (err, resp) {
+                    Invoice.findByIdAndUpdate(id, {
+                        $set: {
+                            approved   : true,
+                            invoiceDate: new Date(invoiceDate)
+                        }
+                    }, {new: true}, function (err, resp) {
                         if (err) {
                             return next(err);
                         }
 
-                        journalEntryComposer(resp, req.session.lastDb, function () {}, req.session.uId);
+                        journalEntryComposer(resp, req.session.lastDb, function () {
+                        }, req.session.uId);
 
                         products = resp.products;
 
@@ -840,8 +862,8 @@ var Invoice = function (models, event) {
                                 };
                                 JobsModel.findByIdAndUpdate(jobs, {
                                     $set: {
-                                        invoice: resp._id,
-                                        type: "Invoiced",
+                                        invoice : resp._id,
+                                        type    : "Invoiced",
                                         workflow: CONSTANTS.JOBSFINISHED,
                                         editedBy: editedBy
                                     }
@@ -852,11 +874,11 @@ var Invoice = function (models, event) {
                                     project = job.project || null;
 
                                     _journalEntryHandler.checkAndCreateForJob({
-                                        req: req,
-                                        jobId: jobs,
+                                        req     : req,
+                                        jobId   : jobs,
                                         workflow: CONSTANTS.JOBSFINISHED,
-                                        wTracks: job.wTracks,
-                                        date: resp.invoiceDate
+                                        wTracks : job.wTracks,
+                                        date    : resp.invoiceDate
                                     });
 
                                     cb();
@@ -1041,15 +1063,15 @@ var Invoice = function (models, event) {
 
 
                         Invoice.aggregate([
-                            {
-                                $match: matchQuery
-                            },
-                            {
-                                $project: {
-                                    _id: 1
+                                {
+                                    $match: matchQuery
+                                },
+                                {
+                                    $project: {
+                                        _id: 1
+                                    }
                                 }
-                            }
-                        ],
+                            ],
                             waterfallCallback
                         );
                     };
@@ -1070,64 +1092,71 @@ var Invoice = function (models, event) {
 
                         if (contentType === 'salesProforma' || contentType === 'Proforma') {
                             optionsObject.$and.push({_type: 'Proforma'});
-                        }  else if (contentType === 'ExpensesInvoice') {
+                        } else if (contentType === 'ExpensesInvoice') {
                             optionsObject.$and.push({_type: 'expensesInvoice'});
                         } else {
-                            optionsObject.$and.push({ $and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}]});
+                            optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}]});
                         }
 
                         Invoice
                             .aggregate([{
                                 $lookup: {
-                                    from                   : "Employees",
-                                    localField             : "salesPerson",
-                                    foreignField: "_id", as: "salesPerson"
+                                    from        : 'Employees',
+                                    localField  : 'salesPerson',
+                                    foreignField: '_id',
+                                    as          : 'salesPerson'
                                 }
                             }, {
                                 $lookup: {
-                                    from                   : "Customers",
-                                    localField             : "supplier",
-                                    foreignField: "_id", as: "supplier"
+                                    from        : 'Customers',
+                                    localField  : 'supplier',
+                                    foreignField: '_id',
+                                    as          : 'supplier'
                                 }
                             }, {
                                 $lookup: {
-                                    from                   : "workflows",
-                                    localField             : "workflow",
-                                    foreignField: "_id", as: "workflow"
+                                    from        : 'workflows',
+                                    localField  : 'workflow',
+                                    foreignField: '_id',
+                                    as          : 'workflow'
                                 }
                             }, {
                                 $lookup: {
-                                    from                   : "Users",
-                                    localField             : "createdBy.user",
-                                    foreignField: "_id", as: "createdBy.user"
+                                    from        : 'Users',
+                                    localField  : 'createdBy.user',
+                                    foreignField: '_id',
+                                    as          : 'createdBy.user'
                                 }
                             }, {
                                 $lookup: {
-                                    from                   : "Users",
-                                    localField             : "editedBy.user",
-                                    foreignField: "_id", as: "editedBy.user"
+                                    from        : 'Users',
+                                    localField  : 'editedBy.user',
+                                    foreignField: '_id',
+                                    as          : 'editedBy.user'
                                 }
                             }, {
                                 $lookup: {
-                                    from                   : "Quotation",
-                                    localField             : "sourceDocument",
-                                    foreignField: "_id", as: "sourceDocument"
+                                    from        : 'Quotation',
+                                    localField  : 'sourceDocument',
+                                    foreignField: '_id',
+                                    as          : 'sourceDocument'
                                 }
                             }, {
                                 $lookup: {
-                                    from                   : "Project",
-                                    localField             : "project",
-                                    foreignField: "_id", as: "project"
+                                    from        : 'Project',
+                                    localField  : 'project',
+                                    foreignField: '_id',
+                                    as          : 'project'
                                 }
                             }, {
                                 $project: {
-                                    sourceDocument  : {$arrayElemAt: ["$sourceDocument", 0]},
-                                    workflow        : {$arrayElemAt: ["$workflow", 0]},
-                                    supplier        : {$arrayElemAt: ["$supplier", 0]},
-                                    salesPerson     : {$arrayElemAt: ["$salesPerson", 0]},
-                                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
-                                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                                    project         : {$arrayElemAt: ["$project", 0]},
+                                    sourceDocument  : {$arrayElemAt: ['$sourceDocument', 0]},
+                                    workflow        : {$arrayElemAt: ['$workflow', 0]},
+                                    supplier        : {$arrayElemAt: ['$supplier', 0]},
+                                    salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
+                                    'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
+                                    'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                                    project         : {$arrayElemAt: ['$project', 0]},
                                     expense         : 1,
                                     forSales        : 1,
                                     currency        : 1,
@@ -1471,7 +1500,13 @@ var Invoice = function (models, event) {
                                         return console.log(err);
                                     }
 
-                                    _journalEntryHandler.checkAndCreateForJob({req: req, jobId: id, workflow: CONSTANTS.JOBSINPROGRESS, wTracks: result.wTracks, date: invoiceDeleted.invoiceDate});
+                                    _journalEntryHandler.checkAndCreateForJob({
+                                        req     : req,
+                                        jobId   : id,
+                                        workflow: CONSTANTS.JOBSINPROGRESS,
+                                        wTracks : result.wTracks,
+                                        date    : invoiceDeleted.invoiceDate
+                                    });
 
                                     project = result ? result.project : null;
                                     array = result ? result.wTracks : [];
@@ -1504,7 +1539,7 @@ var Invoice = function (models, event) {
 
                         async.parallel([proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove], function (err, result) {
                             if (err) {
-                               return next(err);
+                                return next(err);
                             }
                         });
 
@@ -1579,8 +1614,7 @@ var Invoice = function (models, event) {
         var waterfallTasks;
 
         departmentSearcher = function (waterfallCallback) {
-            Invoice.aggregate([
-                {
+            Invoice.aggregate([{
                     $match: {
                         users: objectId(req.session.uId)
                     }
@@ -1588,8 +1622,7 @@ var Invoice = function (models, event) {
                     $project: {
                         _id: 1
                     }
-                }
-            ],
+                }],
 
                 waterfallCallback);
         };
@@ -1610,11 +1643,11 @@ var Invoice = function (models, event) {
 
             if (contentType === 'salesProforma' || contentType === 'Proforma') {
                 matchQuery.$and.push({
-                    _type : 'Proforma'
+                    _type: 'Proforma'
                 });
             } else if (contentType === 'ExpensesInvoice') {
                 matchQuery.$and.push({
-                    _type : 'expensesInvoice'
+                    _type: 'expensesInvoice'
                 });
             } else {
                 matchQuery.$and.push({
@@ -1624,7 +1657,8 @@ var Invoice = function (models, event) {
                         }, {
                             _type: {$ne: 'expensesInvoice'}
                         }
-                    ]});
+                    ]
+                });
             }
 
             Invoice.aggregate(
