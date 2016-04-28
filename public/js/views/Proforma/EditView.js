@@ -345,6 +345,13 @@ define([
                             quantity = targetEl.find('[data-name="quantity"]').text();
                             price = targetEl.find('[data-name="price"] input').val() || targetEl.find('[data-name="price"] span').text();
                             price = parseFloat(price) * 100;
+                            
+                            if (isNaN(price) || price <=0) {
+                                return App.render({
+                                    type   : 'error',
+                                    message: 'Please, enter Unit Price!'
+                                });
+                            }
                             jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
                             taxes = targetEl.find('.taxes').text();
                             taxes = parseFloat(taxes) * 100;

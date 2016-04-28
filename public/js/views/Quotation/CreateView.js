@@ -110,7 +110,7 @@ define([
                         this.validateForm(e);
                         break;
                     default:
-                        return keyValidator(e);
+                        return keyValidator(e, true);
                 }
             },
 

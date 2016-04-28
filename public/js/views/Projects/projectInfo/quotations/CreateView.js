@@ -102,6 +102,7 @@ define([
                 var jobs;
                 var usersId = [];
                 var groupsId = [];
+                var i;
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
@@ -119,13 +120,21 @@ define([
                 });
 
                 if (selectedLength) {
-                    for (var i = selectedLength - 1; i >= 0; i--) {
+                    for (i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
+                        
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
                             price = targetEl.find('[data-name="price"] input').val();
                             price = parseFloat(price) * 100;
+                            
+                            if (isNaN(price) || price <=0) {
+                                return App.render({
+                                    type   : 'error',
+                                    message: 'Please, enter Unit Price!'
+                                });
+                            }
                             scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                             taxes = targetEl.find('.taxes').text();
                             taxes = parseFloat(taxes) * 100;
@@ -134,7 +143,7 @@ define([
                             subTotal = parseFloat(subTotal) * 100;
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
-                            if (price === '') {
+                            if (price == '') {
                                 return App.render({
                                     type   : 'error',
                                     message: 'Unit price can\'t be empty'
