@@ -981,7 +981,7 @@ var Invoice = function (models, event) {
 
         if (contentType === 'salesProforma') {
             moduleId = 99;
-        } else if (contentType === 'Proforma') {
+        } else if (contentType === 'proforma') {
             moduleId = 95;
         } else if (contentType === 'ExpensesInvoice') {
             moduleId = 97;
@@ -1011,7 +1011,7 @@ var Invoice = function (models, event) {
 
                 if (access) {
 
-                    if (contentType === 'salesProforma' || contentType === 'Proforma') {
+                    if (contentType === 'salesProforma' || contentType === 'proforma') {
                         Invoice = models.get(db, 'Proforma', ProformaSchema);
                     } else if (contentType === 'ExpensesInvoice') {
                         Invoice = models.get(db, 'expensesInvoice', ExpensesInvoiceSchema);
@@ -1090,7 +1090,7 @@ var Invoice = function (models, event) {
                         optionsObject.$and.push({_id: {$in: _.pluck(invoicesIds, "_id")}});
                         optionsObject.$and.push({expense: {$exists: false}});
 
-                        if (contentType === 'salesProforma' || contentType === 'Proforma') {
+                        if (contentType === 'salesProforma' || contentType === 'proforma') {
                             optionsObject.$and.push({_type: 'Proforma'});
                         } else if (contentType === 'ExpensesInvoice') {
                             optionsObject.$and.push({_type: 'expensesInvoice'});
@@ -1598,7 +1598,7 @@ var Invoice = function (models, event) {
         var Invoice;
         // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
 
-        if (contentType === 'salesProforma' || contentType === 'Proforma') {
+        if (contentType === 'salesProforma' || contentType === 'proforma') {
             Invoice = models.get(req.session.lastDb, 'Proforma', ProformaSchema);
         } else if (contentType === 'ExpensesInvoice') {
             Invoice = models.get(req.session.lastDb, 'expensesInvoice', ExpensesInvoiceSchema);
@@ -1641,7 +1641,7 @@ var Invoice = function (models, event) {
                 ]
             };
 
-            if (contentType === 'salesProforma' || contentType === 'Proforma') {
+            if (contentType === 'salesProforma' || contentType === 'proforma') {
                 matchQuery.$and.push({
                     _type: 'Proforma'
                 });
