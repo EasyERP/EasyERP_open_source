@@ -839,7 +839,7 @@ var PayRoll = function (models) {
                     var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hour: 15, minute: 1, second: 0}));
                     var daysInMonth;
                     var payForDay;
-                    var isDeveloper;
+                    var department;
 
                     journalEntry.removeByDocId({'sourceDocument._id': elem._id, journal: CONSTANTS.ADMIN_SALARY_JOURNAL, date: localDate}, req.session.lastDb, function (err, result) {
 
@@ -850,26 +850,33 @@ var PayRoll = function (models) {
                     for (i = length - 1; i >= 0; i--) {
                         if (dateToCreate >= hire[i].date && (hire[i].status !== 'fired')) {
                             salary = hire[i].salary;
-                            isDeveloper = hire[i].isDeveloper;
+                            department = hire[i].department;
                             break;
                         }
                     }
 
-                    if (fire && fire.length && dateToCreate >= fire[0]){
-                        salary = 0;
-                    }
+                    // if (fire && fire.length && dateToCreate >= fire[0]){
+                    //     salary = 0;
+                    // }
 
                     if ((moment(new Date(hire[0].date)).month() === moment(dateToCreate).month()) && (moment(new Date(hire[0].date)).year() === moment(dateToCreate).year())){
                         daysInMonth = moment(dateToCreate).endOf('month').date();
                         payForDay = salary / daysInMonth;
 
-                        salary = payForDay * (daysInMonth - moment(new Date(hire[0].date)).date());
+                        salary = payForDay * (daysInMonth - moment(new Date(hire[0].date)).date() + 1);
+                    }
+
+                    if ((moment(new Date(fire[0])).month() === moment(dateToCreate).month()) && (moment(new Date(fire[0])).year() === moment(dateToCreate).year())){
+                        daysInMonth = moment(dateToCreate).endOf('month').date();
+                        payForDay = salary / daysInMonth;
+
+                        salary = payForDay * moment(new Date(fire[0])).date();
                     }
 
                     if (salary) {
                         ids[elem._id] = {
                             salary: salary,
-                            isDeveloper: isDeveloper
+                            department: department
                         } ;
                     }
                 });
@@ -994,8 +1001,8 @@ var PayRoll = function (models) {
             function createForNotDev(pCb) {
                 async.each(empKeys, function (employee, asyncCb) {
                     startBody.employee = employee;
-                    startBody.calc = empIds[employee];
-                    startBody.diff = empIds[employee];
+                    startBody.calc = empIds[employee].salary;
+                    startBody.diff = empIds[employee].salary;
 
                     var cb = _.after(2, asyncCb);
 
@@ -1008,8 +1015,8 @@ var PayRoll = function (models) {
                         }
                     };
 
-                    if (empIds[employee].isDeveloper){
-                       return asyncCb();
+                    if (departmentArray.indexOf(empIds[employee].department.toString()) === -1) {
+                        return asyncCb();
                     }
 
                     newPayroll = new Payroll(startBody);

@@ -309,7 +309,7 @@ function (err, result) {
             var hireObject = _.filter(transfer, function (result) {
                 return result.status === 'hired';
             });
-            var timeToSet = {hour: 15, minute: 1, second: 0};
+            var timeToSet = {hour: 15, minute: 1, second: 0, millisecond: 0};
             var datesArray = [];
             var hireDate = hireObject && hireObject.length ? hireObject[0].date : null;
             var hireDay = moment(hireDate).date();
@@ -332,9 +332,8 @@ function (err, result) {
 
             datesArray.forEach(function (date) {
                 Model.remove({
-                    "sourceDocument.model": 'Employees',
-                    "sourceDocument._id": employee,
-                    date: date.set(timeToSet)
+                    date: date.set(timeToSet),
+                    'sourceDocument.model': 'Employees'
                 }, function (err, result) {
                     var salaryForDate = 0;
                     var vacationObject;
@@ -725,8 +724,6 @@ function (err, result) {
                 stringIds.push(el.toString());
             });
 
-            //stringIds = [];
-
             employeesIds.push(stringIds);
 
             var allEmployees = _.flatten(employeesIds);
@@ -804,9 +801,6 @@ function (err, result) {
 
                         if (vacation) {
                             createVacation = true;
-                            if (employee.toString() === '55b92ad221e4b7c40f000061'){
-                                console.log(date.toDate());
-                            }
                         }
                     }
 

@@ -23,8 +23,8 @@ var connectOptions = {
     j: true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
-//var dbObject = mongoose.createConnection('localhost', 'production');
+//var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
@@ -37,86 +37,87 @@ dbObject.once('open', function callback() {
     var count = 0;
 
 
-    // JE.find({
-    //     debit: {$gt: 0},
-    //     'sourceDocument.model': 'wTrack',
-    //     account: "565eb53a6aa50532e5df0bda"
-    // }, {sourceDocument: 1}, function (err, result) {
-    //     if (err) {
-    //         return console.log(err);
-    //     }
-    //     var wTracks = [];
-    //     var newwTracks = [];
-    //     result.forEach(function (je) {
-    //         wTracks.push(je.sourceDocument._id);
-    //     });
-    //
-    //
-    //     wTrackModel.aggregate([{
-    //         $match: {
-    //             _id: {$in: wTracks}
-    //         }
-    //     }, {
-    //         $group: {
-    //             _id: '$jobs'
-    //         }
-    //     }], function (err, result) {
-    //         var jobsArray = _.pluck(result, '_id');
-    //         var jobsFinished = [];
-    //         JE.aggregate([{
-    //             $match: {
-    //                 "sourceDocument._id": {$in: jobsArray},
-    //                 credit: {$gt: 0},
-    //                 journal: ObjectId('56f2a96f58dfeeac4be1582a')
-    //             }
-    //         }, {$group: {
-    //             _id: '$sourceDocument._id'
-    //         }}], function (err, result) {
-    //             var newResult = _.pluck(result, '_id');
-    //             newResult.forEach(function (je) {
-    //                 jobsFinished.push(je.toString());
-    //             });
-    //             jobsArray.forEach(function (je) {
-    //                 newwTracks.push(je.toString());
-    //             });
-    //
-    //             var resultArray = _.difference(newwTracks, jobsFinished);
-    //             var newAr = [];
-    //             resultArray.forEach(function (je) {
-    //                 newAr.push(ObjectId(je));
-    //             });
-    //             Job.aggregate([{
-    //                 $match: {
-    //                     "_id": {$in: newAr}
-    //                 }
-    //             }, {
-    //                 $unwind: '$wTracks'
-    //             }, {
-    //                 $group: {
-    //                     _id: null,
-    //                     wTracks: {$push:'$wTracks'}
-    //                 }
-    //             }], function (err, resultjob) {
-    //                 if (err){
-    //                     return console.log(err);
-    //                 }
-    //                 JE.aggregate([{
-    //                     $match: {
-    //                         "sourceDocument._id": {$in: resultjob[0].wTracks},
-    //                         credit: {$gt: 0}
-    //                     }
-    //                 }, {
-    //                     $group: {
-    //                     _id: null,
-    //                     sum: {$sum: '$credit'}
-    //                 }}], function (err, result) {
-    //                     console.dir(result)
-    //                 });
-    //             });
-    //
-    //         });
-    //     });
-    // });
+    JE.find({
+        debit: {$gt: 0},
+        'sourceDocument.model': 'wTrack',
+        account: "565eb53a6aa50532e5df0bda"
+    }, {sourceDocument: 1}, function (err, result) {
+        if (err) {
+            return console.log(err);
+        }
+        var wTracks = [];
+        var newwTracks = [];
+        result.forEach(function (je) {
+            wTracks.push(je.sourceDocument._id);
+        });
+
+
+        wTrackModel.aggregate([{
+            $match: {
+                _id: {$in: wTracks}
+            }
+        }, {
+            $group: {
+                _id: '$jobs'
+            }
+        }], function (err, result) {
+            var jobsArray = _.pluck(result, '_id');
+            var jobsFinished = [];
+            JE.aggregate([{
+                $match: {
+                    "sourceDocument._id": {$in: jobsArray},
+                    credit: {$gt: 0},
+                    journal: ObjectId('56f2a96f58dfeeac4be1582a')
+                }
+            }, {$group: {
+                _id: '$sourceDocument._id'
+            }}], function (err, result) {
+                var newResult = _.pluck(result, '_id');
+                newResult.forEach(function (je) {
+                    jobsFinished.push(je.toString());
+                });
+                jobsArray.forEach(function (je) {
+                    newwTracks.push(je.toString());
+                });
+
+                var resultArray = _.difference(newwTracks, jobsFinished);
+                var newAr = [];
+                resultArray.forEach(function (je) {
+                    newAr.push(ObjectId(je));
+                });
+                Job.aggregate([{
+                    $match: {
+                        "_id": {$in: newAr}
+                    }
+                }, {
+                    $unwind: '$wTracks'
+                }, {
+                    $group: {
+                        _id: '$project',
+                        wTracks: {$push:'$wTracks'}
+                    }
+                }], function (err, resultjob) {
+                    if (err){
+                        return console.log(err);
+                    }
+                    JE.aggregate([{
+                        $match: {
+                            "sourceDocument._id": {$in: resultjob[0].wTracks},
+                            credit: {$gt: 0}
+                        }
+                    }, {
+                        $group: {
+                        _id: null,
+                        sum: {$sum: '$credit'}
+                    }}], function (err, result) {
+                       // console.dir(result)
+                        console.dir(resultjob)
+                    });
+                });
+
+            });
+        });
+    });
 
 
     // Invoice.find({}).populate('project').exec(function (err, result) {
