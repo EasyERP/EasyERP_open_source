@@ -15,8 +15,6 @@
             });
             var collection = this.collection || {};
             var sales;
-            var paid;
-            var revenue;
             var year = response.date.toString().substr(0, 4);
             var monthOrWeek = response.date.toString().substr(4);
 
@@ -43,12 +41,16 @@
     var Colection = Backbone.Collection.extend({
         model: Model,
 
-        url: 'revenue/profit',
+        url: function () {
+            return 'revenue/profit/' + this.byContent;
+        },
 
         initialize: function (options) {
             options = options || {};
-
+            this.byContent = options.byContent || 'salesManager';
             this.byWeek = !!options.byWeek;
+
+            delete options.byContent;
 
             this.fetch({
                 data : options,

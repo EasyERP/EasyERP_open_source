@@ -891,7 +891,7 @@ var wTrack = function (models) {
             var _endDateMoment;
             var startDate = options.startDate;
             var endDate = options.endDate;
-            var salesManagers = objectId(CONSTANTS.SALES_MANAGER_ROLE);
+            var salesManagers = objectId(CONSTANTS.SALESMANAGER);
             var salesManagersMatch = {
                 'salesPersons.projectPositionId': salesManagers
             };
@@ -3229,7 +3229,9 @@ var wTrack = function (models) {
 
     this.profit = function (req, res, next) {
         var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntry);
-        var TempJournalEntry = models.get(req.session.lastDb, 'tempJournalEntry', tempJournalEntry);
+        var projectionContent = req.params.byContent || 'salesManager';
+
+        projectionContent = projectionContent.toUpperCase();
 
         access.getReadAccess(req, req.session.uId, 67, function (_access) {
             var options = req.query;
@@ -3237,7 +3239,7 @@ var wTrack = function (models) {
             var _endDateMoment;
             var startDate = options.startDate;
             var endDate = options.endDate;
-            var salesManagers = objectId(CONSTANTS.SALES_MANAGER_ROLE);
+            var salesManagers = objectId(CONSTANTS[projectionContent]);
             var salesManagersMatch = {
                 'salesPersons.projectPositionId': salesManagers
             };
@@ -3274,14 +3276,15 @@ var wTrack = function (models) {
             }];
 
             match = {
-                credit                : {
+                'sourceDocument.model': 'Invoice',
+                journal               : objectId('565ef6ba270f53d02ee71d65'),
+
+                credit: {
                     $exists: true,
                     $ne    : 0
                 },
-                'sourceDocument.model': 'Invoice',
-                // journal               : objectId('56f2a96f58dfeeac4be1582a'),
-                journal               : objectId('565ef6ba270f53d02ee71d65'),
-                date                  : {
+
+                date: {
                     $lte: endDate,
                     $gte: startDate
                 }

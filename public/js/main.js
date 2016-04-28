@@ -19,6 +19,7 @@ require.config({
         imageCrop    : './libs/jquery.Jcrop.min',
         jqueryui     : './libs/jquery-ui.min',
         spinJs       : './libs/spin.min',
+        ladda        : './libs/spin.min',
         Underscore   : './libs/underscore-min.map.1.6.0',
         Backbone     : './libs/backbone-min.map.1.1.2',
         less         : './libs/less.min',
@@ -37,7 +38,7 @@ require.config({
         'Underscore': {
             exports: '_'
         },
-        'jQuery': {
+        'jQuery'    : {
             exports: '$'
         },
         'jqueryui'  : ['jQuery'],
@@ -109,7 +110,7 @@ require(['app'], function (app) {
                     Backbone.history.navigate("login", {trigger: true});
                 } else {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: "You do not have permission to perform this action."
                     });
                 }

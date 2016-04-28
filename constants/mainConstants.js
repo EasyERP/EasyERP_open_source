@@ -80,7 +80,7 @@ module.exports = {
         '56c9d555c3b88f6d64490fb5',//overtime Payable
         '565eb53a6aa50532e5df0bdc'
     ],
-    
+
     CURRENT_LIABILITIES: '565eb53a6aa50532e5df0bdb',
 
     ACCOUNT_PAYABLE: '565eb53a6aa50532e5df0bdc',
@@ -111,7 +111,7 @@ module.exports = {
     HR_VAC_YEAR_BEFORE: 2,
     HR_VAC_YEAR_AFTER : 1,
 
-    NOT_DEV_ARRAY: [ //HR, Marketing, Business, Finance, PM
+    NOT_DEV_ARRAY: [ // HR, Marketing, Business, Finance, PM
         "560c0b83a5d4a2e20ba5068c",
         "55b92ace21e4b7c40f000013",
         "55b92ace21e4b7c40f000014",
@@ -130,12 +130,12 @@ module.exports = {
     TOTAL_EXPENSES: '56cc6bf2541812c07197356a',
 
     CLOSE_MONTH_JOURNALS: [
-        '56f5383a9c85020807b40020', //credit Income Summary
-        '56f538679c85020807b40022', //close COGS
-        '56f538c39c85020807b40024', //retained earnings
-        '56efc13cfd70ba6414bd3de7', //close Vacation Expenses
-        '56efc15bfd70ba6414bd3de9', //close idle Expenses
-        '56efc1affd70ba6414bd3deb', //close admin salary expenses
+        '56f5383a9c85020807b40020', // credit Income Summary
+        '56f538679c85020807b40022', // close COGS
+        '56f538c39c85020807b40024', // retained earnings
+        '56efc13cfd70ba6414bd3de7', // close Vacation Expenses
+        '56efc15bfd70ba6414bd3de9', // close idle Expenses
+        '56efc1affd70ba6414bd3deb', // close admin salary expenses
         '56f90e8d8cea58642c57f442'
     ],
 
@@ -151,10 +151,10 @@ module.exports = {
     PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146',
     BEFORE_INVOICE  : '57035ffd21f9b0c4313d414e',
 
-    DEF_LIST_COUNT    : 100,
-    MAX_COUNT         : 200,
-    PARENT_DEV        : '56cebdf6541812c07197358f',
-    SALESDEPARTMENTS  : ['55b92ace21e4b7c40f000014', '55bb1f40cb76ca630b000007'],
-    SALES_MANAGER_ROLE: '570e9a75785753b3f1d9c86e'
-}
-;
+    DEF_LIST_COUNT  : 100,
+    MAX_COUNT       : 200,
+    PARENT_DEV      : '56cebdf6541812c07197358f',
+    SALESDEPARTMENTS: ['55b92ace21e4b7c40f000014', '55bb1f40cb76ca630b000007'],
+    SALESMANAGER    : '570e9a75785753b3f1d9c86e',
+    PROJECTSMANAGER : '570e9a75785753b3f1d9c86f'
+};
