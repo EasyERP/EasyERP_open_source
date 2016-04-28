@@ -194,6 +194,8 @@ define([
                     case CONTENT_TYPES.CASHFLOW:
                     case CONTENT_TYPES.CLOSEMONTH:
                     case CONTENT_TYPES.SALESPROFORMA:
+                    case CONTENT_TYPES.EXPENSESINVOICE:
+                    case CONTENT_TYPES.EXPENSESPAYMENTS:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:

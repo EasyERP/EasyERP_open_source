@@ -1,9 +1,9 @@
 define([
-        'text!templates/Proforma/TopBarTemplate.html',
-        'custom',
-        'common',
-        'constants',
-        'dataService'
+    'text!templates/Proforma/TopBarTemplate.html',
+    'custom',
+    'common',
+    'constants',
+    'dataService'
     ],
     function (ContentTopBarTemplate, Custom, Common, CONSTANTS, dataService) {
         var TopBarView = Backbone.View.extend({
@@ -12,11 +12,11 @@ define([
             template   : _.template(ContentTopBarTemplate),
 
             events: {
-                "click a.changeContentView": 'changeContentViewType',
-                "click #top-bar-deleteBtn" : "deleteEvent",
-                "click #top-bar-editBtn"   : "editEvent",
-                "click #top-bar-createBtn" : "createEvent",
-                "click #top-bar-saveBtn"   : "saveEvent"
+                'click a.changeContentView': 'changeContentViewType',
+                'click #top-bar-deleteBtn' : 'deleteEvent',
+                'click #top-bar-editBtn'   : 'editEvent',
+                'click #top-bar-createBtn' : 'createEvent',
+                'click #top-bar-saveBtn'   : 'saveEvent'
             },
 
             changeContentViewType: function (e) {
@@ -41,7 +41,7 @@ define([
             },
 
             render: function () {
-                $('title').text("Proforma");
+                $('title').text('Proforma');
 
                 var viewType = Custom.getCurrentVT();
                 var self = this;
@@ -90,7 +90,7 @@ define([
 
             deleteEvent: function (event) {
                 event.preventDefault();
-                var answer = confirm("Really DELETE items ?!");
+                var answer = confirm('Really DELETE items ?!');
                 if (answer == true) {
                     this.trigger('deleteEvent');
                 }

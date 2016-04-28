@@ -1,45 +1,27 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone',
-    'views/listViewBase',
-    'text!templates/salesProforma/list/ListHeader.html',
-    'text!templates/stages.html',
-    'views/salesInvoice/CreateView',
-    'views/Proforma/EditView',
-    'models/InvoiceModel',
-    'views/salesProforma/list/ListItemView',
-    'views/salesProforma/list/ListTotalView',
-    'collections/salesProforma/filterCollection',
-    'views/Filter/FilterView',
-    'common',
-    'dataService',
-    'constants'
-],
-    function ($,
-              _,
-              Backbone,
-              listViewBase,
-              listTemplate,
-              stagesTemplate,
-              CreateView,
-              editView,
-              invoiceModel,
-              listItemView,
-              listTotalView,
-              contentCollection,
-              filterView,
-              common,
-              dataService,
-              CONSTANTS) {
+        'views/listViewBase',
+        'text!templates/ExpensesInvoice/list/ListHeader.html',
+        'views/ExpensesInvoice/CreateView',
+        'views/ExpensesInvoice/EditView',
+        'models/InvoiceModel',
+        'views/ExpensesInvoice/list/ListItemView',
+        'collections/salesInvoice/filterCollection',
+        'views/Filter/FilterView',
+        'common',
+        'dataService',
+        'constants',
+        'helpers'
+    ],
+
+    function (listViewBase, listTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
             filterView              : filterView,
-            totalCollectionLengthUrl: '/Proforma/totalCollectionLength',
-            contentType             : 'salesProforma', //'Invoice',//needs in view.prototype.changeLocationHash
+            totalCollectionLengthUrl: '/Invoice/totalCollectionLength',
+            contentType             : 'ExpensesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
             changedModels           : {},
 
             initialize: function (options) {
@@ -48,7 +30,7 @@ define([
                 _.bind(this.collection.showMore, this.collection);
                 this.parrentContentId = options.collection.parrentContentId;
                 this.filter = options.filter ? options.filter : {};
-                this.filter.forSales = {key: 'forSales', value: [true]};
+                this.filter.forSales = {key: 'forSales', value: [false]};
                 this.sort = options.sort;
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
@@ -59,15 +41,12 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
-                this.stages = [];
-                this.filterView;
             },
 
             events: {
-                'click .stageSelect'                             : 'showNewSelect',
-                'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog',
-                'click .newSelectList li'                        : 'chooseOption',
-                'click .selectList'                              : 'showSelects'
+                "click  .list tbody td:not(.notForm, .validated)": "goToEditDialog",
+                "click .newSelectList li"                  : "chooseOption",
+                "click .selectList"                        : "showSelects"
             },
 
             showSelects: function (e) {
@@ -129,20 +108,6 @@ define([
 
             },
 
-            showNewSelect: function (e) {
-                if ($(".newSelectList").is(":visible")) {
-                    this.hideNewSelect();
-                    return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
-                    return false;
-                }
-            },
-
-            hideNewSelect: function (e) {
-                $(".newSelectList").remove();
-            },
-
             render: function () {
                 var self;
                 var $currentEl;
@@ -154,40 +119,18 @@ define([
 
                 $currentEl.html('');
 
-                if (!App || !App.currentDb) {
-                    dataService.getData('/currentDb', null, function (response) {
-                        if (response && !response.error) {
-                            App.currentDb = response;
-                            App.weTrack = true;
-                        }
-
-                        currentEllistRenderer(self);
-                        //$currentEl.append(itemView.render());
-                    });
-                } else {
-                    currentEllistRenderer(self);
-                    //$currentEl.append(itemView.render());
-                }
-
-                $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
+                currentEllistRenderer(self);
 
                 self.renderCheckboxes();
                 self.renderPagination($currentEl, self);
-                self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
+                self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [false]}});
 
-                dataService.getData("/workflow/fetch", {
-                    wId         : 'Sales Invoice',
-                    source      : 'purchase',
-                    targetSource: 'invoice'
-                }, function (stages) {
-                    self.stages = stages;
-                });
-
+                this.recalcTotal();
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 function currentEllistRenderer(self) {
-                    $currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
+                    $currentEl.append(_.template(listTemplate, {currentDb: true}));
                     var itemView = new listItemView({
                         collection : self.collection,
                         page       : self.page,
@@ -201,6 +144,21 @@ define([
 
             },
 
+            recalcTotal: function () {
+                var self = this;
+                var columns = ['balance', 'paid', 'total'];
+
+                _.each(columns, function (col) {
+                    var sum = 0;
+
+                    _.each(self.collection.toJSON(), function (model) {
+                        sum += parseFloat(model.paymentInfo[col]);
+                    });
+
+                    self.$el.find('#' + col).text(helpers.currencySplitter(sum.toFixed(2)));
+                });
+            },
+
             goToEditDialog: function (e) {
                 e.preventDefault();
 
@@ -211,7 +169,8 @@ define([
                 model.fetch({
                     data   : {
                         id       : id,
-                        currentDb: App.currentDb
+                        currentDb: App.currentDb,
+                        forSales : 'false'
                     },
                     success: function (model) {
                         new editView({model: model});
@@ -244,7 +203,7 @@ define([
                         collection : this.collection,
                         page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()
-                    }).render());
+                    }).render());//added two parameters page and items number
                 }
 
                 var pagenation = this.$el.find('.pagination');

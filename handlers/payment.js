@@ -21,6 +21,7 @@ var Payment = function (models, event) {
     var payrollSchema = mongoose.Schemas['PayRoll'];
     var JobsSchema = mongoose.Schemas['jobs'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+    var ExpensesInvoiceSchema = mongoose.Schemas['expensesInvoice'];
     var ProformaSchema = mongoose.Schemas['Proforma'];
     var payRollInvoiceSchema = mongoose.Schemas['payRollInvoice'];
     var InvoiceSchema = mongoose.Schemas['Invoice'];
@@ -140,6 +141,7 @@ var Payment = function (models, event) {
         var forSale = options ? !!options.forSale : false;
         var bonus = options ? !!options.bonus : false;
         var salary = options ? !!options.salary : false;
+        var expenses = options ? !!options.expenses : false;
         var Payment = returnModel(req, options);
         var supplier = 'Customers';
         var paymentMethod = "PaymentMethod";
@@ -192,6 +194,10 @@ var Payment = function (models, event) {
                     if (bonus) {
                         //  optionsObject.$and.push({bonus: bonus}); //todo   this is case of no view purchase payments in supplier payments
                         supplier = "Employees"
+                    }
+
+                    if (expenses) {
+                        optionsObject.$and.push({_type: 'expensesInvoicePayment'});
                     }
 
                     departmentSearcher = function (waterfallCallback) {
@@ -274,6 +280,7 @@ var Payment = function (models, event) {
                                 differenceAmount: 1,
                                 paidAmount      : 1,
                                 workflow        : 1,
+                                name            : 1,
                                 date            : 1,
                                 isExpense       : 1,
                                 bonus           : 1,
@@ -310,6 +317,7 @@ var Payment = function (models, event) {
                                 paidAmount        : 1,
                                 workflow          : 1,
                                 date              : 1,
+                                name            : 1,
                                 paymentMethod     : 1,
                                 isExpense         : 1,
                                 bonus             : 1,
@@ -333,6 +341,7 @@ var Payment = function (models, event) {
                                 assigned          : 1,
                                 forSale           : 1,
                                 differenceAmount  : 1,
+                                name              : 1,
                                 paidAmount        : 1,
                                 workflow          : 1,
                                 date              : 1,
@@ -453,10 +462,12 @@ var Payment = function (models, event) {
         var forSale = type === 'customers';
         var bonus = type === 'supplier';
         var salary = type === 'salary';
+        var expenses = type === 'expenses';
         var options = {
             forSale: forSale,
             bonus  : bonus,
-            salary : salary
+            salary : salary,
+            expenses: expenses
         };
 
         switch (viewType) {
@@ -658,6 +669,10 @@ var Payment = function (models, event) {
             PaymentSchema = mongoose.Schemas.ProformaPayment;
             Payment = models.get(req.session.lastDb, 'ProformaPayment', PaymentSchema);
             Invoice = models.get(req.session.lastDb, 'Proforma', ProformaSchema);
+        } else if (mid === 97) {
+            PaymentSchema = mongoose.Schemas.ExpensesInvoicePayment;
+            Payment = models.get(req.session.lastDb, 'expensesInvoicePayment', PaymentSchema);
+            Invoice = models.get(req.session.lastDb, 'expensesInvoice', ExpensesInvoiceSchema);
         }
 
         function fetchInvoice(waterfallCallback) {
@@ -767,7 +782,7 @@ var Payment = function (models, event) {
 
                 invoice.paymentDate = new Date(paymentDate); //Because we have it in post.schema
 
-                delete invoice.paymentDate;
+                // delete invoice.paymentDate;
 
                 Invoice.findByIdAndUpdate(invoiceId, invoice, {new: true}, function (err, invoice) {
                     if (err) {
@@ -905,7 +920,13 @@ var Payment = function (models, event) {
             });
         }
 
-        waterfallTasks = [getRates, fetchInvoice, savePayment, invoiceUpdater, createJournalEntry];
+        waterfallTasks = [getRates, fetchInvoice, savePayment, invoiceUpdater];
+
+
+        // todo refactor for journal entry (temp)
+        if (mid !== 97) {
+            waterfallTasks.push(createJournalEntry);
+        }
 
         if (isForSale) { // todo added condition for purchase payment
             waterfallTasks.push(updateWtrack);
@@ -932,6 +953,7 @@ var Payment = function (models, event) {
         var forSale = type === 'customers';
         var bonus = type === 'supplier';
         var salary = type === 'salary';
+        var expenses = type === 'expenses';
         var supplier = 'Customers';
         var paymentMethod = 'PaymentMethod';
 
@@ -971,6 +993,10 @@ var Payment = function (models, event) {
         } else {
             queryObject.$and.push({isExpense: true});
             paymentMethod = 'ProductCategory';
+        }
+
+        if (expenses) {
+            queryObject.$and.push({_type: 'expensesInvoicePayment'});
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -1019,10 +1045,14 @@ var Payment = function (models, event) {
         contentSearcher = function (paymentIds, waterfallCallback) {
             var query;
 
-            //query = Payment.find(queryObject);
-            //query.count(waterfallCallback);
+            paymentIds = _.pluck(paymentIds, '_id');
 
-            Payment.aggregate([{
+            Payment.aggregate([
+            {
+                $match: {
+                    _id: {$in: paymentIds}
+                }
+            }, {
                 $lookup: {
                     from        : supplier,
                     localField  : "supplier",
@@ -1081,8 +1111,6 @@ var Payment = function (models, event) {
                     month           : 1,
                     period          : 1
                 }
-            }, {
-                $match: queryObject
             }
             ], waterfallCallback);
         };
@@ -1341,7 +1369,7 @@ var Payment = function (models, event) {
                                                     },
                                                     session: req.session
                                                 };
-                                                if (invoice._type === 'wTrackInvoice') {
+                                                if (invoice._type === 'wTrackInvoice' || invoice._type === 'expensesInvoice') {
                                                     wId = 'Sales Invoice';
                                                 } else if (invoice._type === 'Proforma') {
                                                     wId = 'Proforma';

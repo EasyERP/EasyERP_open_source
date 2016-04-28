@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Filters = function (models) {
     var wTrackSchema = mongoose.Schemas.wTrack;
+    var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
     var CustomerSchema = mongoose.Schemas.Customer;
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
@@ -8,6 +9,7 @@ var Filters = function (models) {
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var ProformaSchema = mongoose.Schemas.Proforma;
     var customerPaymentsSchema = mongoose.Schemas.Payment;
+    var ExpensesInvoicePaymentSchema = mongoose.Schemas.ExpensesInvoicePayment;
     var QuotationSchema = mongoose.Schemas.Quotation;
     var productSchema = mongoose.Schemas.Products;
     var PayRollSchema = mongoose.Schemas.PayRoll;
@@ -29,8 +31,10 @@ var Filters = function (models) {
         var Project = models.get(lastDB, 'Project', ProjectSchema);
         var Task = models.get(lastDB, 'Tasks', TaskSchema);
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
+        var ExpensesInvoice = models.get(lastDB, 'expensesInvoice', ExpensesInvoiceSchema);
         var Proforma = models.get(lastDB, 'Proforma', ProformaSchema);
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
+        var ExpensesPayments = models.get(lastDB, 'expensesInvoicePayment', ExpensesInvoicePaymentSchema);
         var Product = models.get(lastDB, 'Products', productSchema);
         var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
         var PayRoll = models.get(lastDB, 'PayRoll', PayRollSchema);
@@ -122,8 +126,10 @@ var Filters = function (models) {
                 salesInvoice    : getSalesInvoiceFiltersValues,
                 salesProforma   : getSalesProformaFiltersValues,
                 Invoice         : getInvoiceFiltersValues,
+                ExpensesInvoice : getExpensesInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
+                ExpensesPayments: getExpensesPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
                 salesProduct    : getProductsFiltersValues,
                 Quotation       : getQuotationFiltersValues,
@@ -911,6 +917,61 @@ var Filters = function (models) {
             });
         }
 
+        function getExpensesInvoiceFiltersValues(callback) {
+            ExpensesInvoice.aggregate([{
+                $match: {
+                    forSales: false
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $lookup: {
+                    from        : "Customers",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $project: {
+                    workflow: {$arrayElemAt: ["$workflow", 0]},
+                    supplier: {$arrayElemAt: ["$supplier", 0]}
+                }
+            }, {
+                $group: {
+                    _id       : null,
+                    'workflow': {
+                        $addToSet: {
+                            _id : '$workflow._id',
+                            name: '$workflow.name'
+                        }
+                    },
+                    'supplier': {
+                        $addToSet: {
+                            _id : '$supplier._id',
+                            name: {
+                                $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                            }
+                        }
+                    }
+                }
+            }], function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        }
+
         function getSalesInvoiceFiltersValues(callback) {
             wTrackInvoice.aggregate([{
                 $match: {
@@ -1196,6 +1257,86 @@ var Filters = function (models) {
                 $match: {
                     forSale: false,
                     bonus  : true
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $project: {
+                    supplier  : {$arrayElemAt: ["$supplier", 0]},
+                    paymentRef: 1,
+                    year      : 1,
+                    month     : 1,
+                    workflow  : 1
+                }
+            }, {
+                $project: {
+                    supplier  : 1,
+                    paymentRef: 1,
+                    year      : 1,
+                    month     : 1,
+                    workflow  : 1
+                }
+            }, {
+                $group: {
+                    _id         : null,
+                    'supplier'  : {
+                        $addToSet: {
+                            _id       : '$supplier._id',
+                            name      : {
+                                $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                            },
+                            isEmployee: '$supplier.isEmployee'
+                        }
+                    },
+                    'paymentRef': {
+                        $addToSet: {
+                            _id : '$paymentRef',
+                            name: {'$ifNull': ['$paymentRef', 'None']}
+                        }
+                    },
+                    'year'      : {
+                        $addToSet: {
+                            _id : '$year',
+                            name: {'$ifNull': ['$year', 'None']}
+                        }
+                    },
+                    'month'     : {
+                        $addToSet: {
+                            _id : '$month',
+                            name: {'$ifNull': ['$month', 'None']}
+                        }
+                    },
+                    'workflow'  : {
+                        $addToSet: {
+                            _id : '$workflow',
+                            name: {'$ifNull': ['$workflow', 'None']}
+                        }
+                    }
+                }
+            }
+            ], function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        }
+
+        function getExpensesPaymentsFiltersValues(callback) {
+            ExpensesPayments.aggregate([{
+                $match: {
+                    _type: 'expensesInvoicePayment'
                 }
             }, {
                 $lookup: {

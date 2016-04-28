@@ -157,6 +157,16 @@ define([], function () {
                 backend: 'workflow._id'
             }
         },
+        ExpensesInvoice    : {
+            'Supplier'    : {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+            'Status'      : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
         salesProforma    : {
             'Customer'    : {
                 view   : 'supplier',
@@ -274,6 +284,24 @@ define([], function () {
             'Bonus Type': {
                 view   : 'paymentRef',
                 backend: 'paymentRef'
+            },
+            'Year'      : {
+                view   : 'year',
+                backend: 'year'
+            },
+            'Month'     : {
+                view   : 'month',
+                backend: 'month'
+            },
+            'Status'    : {
+                view   : 'workflow',
+                backend: 'workflow'
+            }
+        },
+        ExpensesPayments: {
+            'Employee'  : {
+                view   : 'supplier',
+                backend: 'supplier._id'
             },
             'Year'      : {
                 view   : 'year',
@@ -520,6 +548,8 @@ define([], function () {
         CASHFLOW          : 'cashFlow',
         CLOSEMONTH        : 'closeMonth',
         SALESPROFORMA     : 'salesProforma',
+        EXPENSESINVOICE   : 'ExpensesInvoice',
+        EXPENSESPAYMENTS  : 'ExpensesPayments',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',
@@ -636,7 +666,9 @@ define([], function () {
             Companies   : 50
         },
 
-        INVOICE_JOURNAL : '565ef6ba270f53d02ee71d65',
+        MIN_DATE          : '2015-09-01',
+
+        INVOICE_JOURNAL: '565ef6ba270f53d02ee71d65',
         PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146'
     };
 });
