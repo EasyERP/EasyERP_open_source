@@ -1198,6 +1198,8 @@ var requestHandler = function (app, event, mainDb) {
                     var products;
                     var obj;
                     var index;
+                    var objId;
+                    var objQuantity;
 
                     if (err) {
                         return console.log(err);
@@ -1221,6 +1223,7 @@ var requestHandler = function (app, event, mainDb) {
                                     return console.log(err);
                                 }
                             });
+
                         }
                     }
                 });
@@ -1438,7 +1441,7 @@ var requestHandler = function (app, event, mainDb) {
                     }
 
                     async.each(wTracks, function (wTrack, cb) {
-                        var revenue = (wTrack.worked / totalWorked) * totalAmount * 100;
+                        var revenue = (wTrack.worked / totalWorked) * totalAmount;
 
                         wTrackModel.findByIdAndUpdate(wTrack._id, {$set: {revenue: revenue}}, {new: true}, function (err, updated) {
                             if (err) {

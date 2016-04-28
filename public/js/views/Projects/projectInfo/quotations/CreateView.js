@@ -55,7 +55,7 @@ define([
                 this.channelObject.trigger('recalculatePriceByJob');
             },
 
-            validateForm: function(e){
+            validateForm: function (e) {
 
             },
 
@@ -100,12 +100,13 @@ define([
                 var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
                 var subTotal;
                 var jobs;
-
                 var usersId = [];
                 var groupsId = [];
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
 
+                total = parseFloat(total) * 100;
+                unTaxed = parseFloat(unTaxed) * 100;
 
                 thisEl.find(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -124,10 +125,13 @@ define([
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
                             price = targetEl.find('[data-name="price"] input').val();
+                            price = parseFloat(price) * 100;
                             scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
                             taxes = targetEl.find('.taxes').text();
+                            taxes = parseFloat(taxes) * 100;
                             description = targetEl.find('[data-name="productDescr"]').text();
                             subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                            subTotal = parseFloat(subTotal) * 100;
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
                             if (price === '') {

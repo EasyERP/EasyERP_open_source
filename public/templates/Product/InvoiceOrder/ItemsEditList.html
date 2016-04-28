@@ -34,7 +34,7 @@
         <% if(editable) { %>
         <input id="editInput" class="statusInfo" maxlength="9" size=7 type="text" value="<%=product.unitPrice%>" />
         <% } else { %>
-        <span><%=product.unitPrice%></span>
+        <span><%=product.unitPrice.toString()%></span>
         <% } %>
     </td>
     <td class="<%=editable  ? 'editable' : ''%>">

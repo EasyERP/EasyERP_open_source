@@ -1045,7 +1045,9 @@ define([
 
                     self.renderTabCounter();
 
-                    callback();
+                    if (cb) {
+                        callback();
+                    }
                 }
 
                 callback = _.once(cb);
@@ -1289,20 +1291,20 @@ define([
 
                 ordersCollectionJSON.forEach(function (element) {
                     if (element.paymentInfo) {
-                        orderSum += element.paymentInfo.total;
+                        orderSum += parseFloat(element.paymentInfo.total);
                     }
                 });
 
                 qCollectionJSON.forEach(function (element) {
                     if (element.paymentInfo) {
-                        sum += element.paymentInfo.total;
+                        sum += parseFloat(element.paymentInfo.total);
                     }
                 });
 
                 jobsCollection.forEach(function (element) {
                     if (element.type === 'Not Quoted') {
                         if (element.budget.budgetTotal && (element.budget.budgetTotal.revenueSum !== 0)) {
-                            jobSum += element.budget.budgetTotal.revenueSum;
+                            jobSum += parseFloat(element.budget.budgetTotal.revenueSum);
                             jobsCount++;
                         }
                     }
