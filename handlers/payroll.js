@@ -839,6 +839,7 @@ var PayRoll = function (models) {
                     var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hour: 15, minute: 1, second: 0}));
                     var daysInMonth;
                     var payForDay;
+                    var isDeveloper;
 
                     journalEntry.removeByDocId({'sourceDocument._id': elem._id, journal: CONSTANTS.ADMIN_SALARY_JOURNAL, date: localDate}, req.session.lastDb, function (err, result) {
 
@@ -849,6 +850,7 @@ var PayRoll = function (models) {
                     for (i = length - 1; i >= 0; i--) {
                         if (dateToCreate >= hire[i].date && (hire[i].status !== 'fired')) {
                             salary = hire[i].salary;
+                            isDeveloper = hire[i].isDeveloper;
                             break;
                         }
                     }
@@ -865,7 +867,10 @@ var PayRoll = function (models) {
                     }
 
                     if (salary) {
-                        ids[elem._id] = salary;
+                        ids[elem._id] = {
+                            salary: salary,
+                            isDeveloper: isDeveloper
+                        } ;
                     }
                 });
 
@@ -1003,14 +1008,14 @@ var PayRoll = function (models) {
                         }
                     };
 
-                    if (employee.toString() === '55b92ad221e4b7c40f000030'){
+                    if (empIds[employee].isDeveloper){
                        return asyncCb();
                     }
 
                     newPayroll = new Payroll(startBody);
 
                     bodyAdminSalary.sourceDocument._id = employee;
-                    bodyAdminSalary.amount = empIds[employee] * 100;
+                    bodyAdminSalary.amount = empIds[employee].salary * 100;
 
                     journalEntry.createReconciled(bodyAdminSalary, req.session.lastDb, cb, req.session.uId);
 
