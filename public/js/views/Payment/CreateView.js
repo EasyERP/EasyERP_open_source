@@ -166,6 +166,14 @@ define([
                 name: $.trim(thisEl.find('#currencyDd').text())
             };
 
+            paidAmount = parseFloat(paidAmount);
+            if (isNaN(paidAmount) || paidAmount <=0) {
+                return App.render({
+                    type   : 'error',
+                    message: 'Please, enter Paid Amount!'
+                });
+            }
+
             paymentMethod = paymentMethod || null;
             period = period || null;
 
