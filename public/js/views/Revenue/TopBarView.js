@@ -99,12 +99,15 @@ define([
         },
 
         render: function () {
-            var endDate = moment().format('DD MMM, YYYY');
-            var startDate = moment(endDate).subtract(1, 'years').format('DD MMM, YYYY');
-            var dateObject = {
-                startDate: startDate,
-                endDate  : endDate
-            };
+            var filter = custom.retriveFromCash('Revenue.filter') || {};
+            var endDate = filter.endDate || moment().format('DD MMM, YYYY');
+            var startDate = filter.startDate || moment(endDate).subtract(1, 'years').format('DD MMM, YYYY');
+
+            startDate = moment(startDate).format('DD MMM, YYYY');
+            endDate = moment(endDate).format('DD MMM, YYYY');
+
+            filter.startDate = startDate;
+            filter.endDate = endDate;
 
             $('title').text(this.contentType);
 
@@ -116,9 +119,9 @@ define([
 
             this.bindDataPickers(startDate, endDate);
 
-            custom.cacheToApp('revenueDashDateRange', dateObject);
+            custom.cacheToApp('Revenue.filter', filter);
 
-            this.trigger('render', dateObject);
+            this.trigger('render', filter);
 
             return this;
         }

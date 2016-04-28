@@ -23,7 +23,7 @@ define([
             "easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)"                            : "goToThumbnails",
             "easyErp/:contentType/form(/:modelId)"                                                          : "goToForm", //FixMe chenge to required Id after test
             "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
-            "easyErp/Revenue"                                                                               : "revenue",
+            "easyErp/Revenue(/filter=:filter)"                                                                     : "revenue",
             "easyErp/Efficiency"                                                                            : "hours",
             "easyErp/Attendance"                                                                            : "attendance",
             "easyErp/Profiles"                                                                              : "goToProfiles",
@@ -292,31 +292,26 @@ define([
                 }
 
                 require([collectionUrl, contentViewUrl, topBarViewUrl], function (ChartCollection, ContentView, TopBarView) {
-                    var topbarView = new TopBarView();
+                    var topbarView = new TopBarView({
+                        startTime: startTime,
+                        filter   : filter
+                        // collection: collection
+                    });
                     var contentview;
-                    var collection;
 
                     function render() {
                         contentview = new ContentView({
-                            startTime : startTime,
-                            filter    : filter,
-                            collection: collection
+                            startTime: startTime,
+                            filter   : filter
+                            // collection: collection
                         });
                         topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
 
                         self.changeView(contentview);
                         self.changeTopBarView(topbarView);
-
-                        console.log(collection);
                     }
 
-                    function fetchCollection(dateRange) {
-                        collection = new ChartCollection(dateRange);
-                        collection.dateRange = dateRange;
-                        collection.on('reset', render);
-                    }
-
-                    topbarView.on('render', fetchCollection);
+                    topbarView.on('render', render);
                     topbarView.render();
 
                     custom.setCurrentVT('list');
