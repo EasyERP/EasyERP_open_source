@@ -1,5 +1,5 @@
 var MongoClient = require('mongodb').MongoClient;
-var url = 'mongodb://localhost:27017/maxdb';
+var url = 'mongodb://localhost:27017/sergey';
 var async = require('async');
 
 MongoClient.connect(url, function (err, db) {
