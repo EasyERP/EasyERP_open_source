@@ -55,7 +55,6 @@ define([
                 nextDay = moment(startDate).add(1, 'd').toDate();
             }
 
-
             if (target.prop('tagName') !== 'INPUT') {
                 this.hideNewSelect();
             }
@@ -91,7 +90,7 @@ define([
             return false;
         },
 
-        changedSales : function () {
+        changedSales: function () {
             var salesRow = this.$el.find('[data-id="570e9a75785753b3f1d9c86e"]').first().closest('tr');
             var salesName = salesRow.find('[data-content="employee"]').text();
             $('#salesManager').text(salesName);
@@ -109,7 +108,8 @@ define([
             var prevStartDate;
             var prevDate;
             var nextDay;
-            var projectStartDate =  this.project.StartDate || new Date(2014, 8, 1);
+            var projectStartDate = this.project.StartDate || new Date(2014, 8, 1);
+
             if (!prevTd.length) {
                 return false;
             }
@@ -132,9 +132,11 @@ define([
                 var firstTd = tds.first();
                 var tr = firstTd.closest('tr');
                 tr.find('td').first().html(removeBtn);
+
                 if (tds.length > 1) {
                     tr.find('td.startDateManager').addClass('editable');
                 }
+
                 tr.find('td[data-content]:not([data-content="projectPosition"])').addClass('selectCurrent');
             });
         },
@@ -145,9 +147,11 @@ define([
             var id = row.attr('data-id');
             var endDate = row.find('.endDateManager');
             endDate.text('To end of project');
+
             if (!this.changedModels[id]) {
                 this.changedModels[id] = {};
             }
+
             this.changedModels[id].endDate = null;
             this.saveItem(e);
         },
@@ -159,13 +163,15 @@ define([
             var id = tr.attr('data-id');
             var prevSalesDate = row.text() === 'From start of project' ? this.project.StartDate : date;
             var prevDate = new Date(prevSalesDate);
-            var prevDay = moment(prevDate).subtract(1, 'd');
+            var prevDay = moment(prevDate).subtract(1, 'm');
             var endDate = common.utcDateToLocaleDate(prevDay.toDate());
 
             tr.find('.endDateManager').text(endDate);
+
             if (!this.changedModels[id]) {
                 this.changedModels[id] = {};
             }
+
             this.changedModels[id].endDate = endDate;
             tr.addClass('edited');
         },
@@ -241,6 +247,7 @@ define([
                 savedRow.attr('data-id', modelId);
                 savedRow.removeClass('false');
             }
+
             this.isChangedSales(modelObject);
 
             delete this.changedModels[oldId];
@@ -278,7 +285,7 @@ define([
 
             e.preventDefault();
 
-            if (errorContent.length){
+            if (errorContent.length) {
                 return App.render({
                     type   : 'error',
                     message: 'Please choose position'
@@ -356,14 +363,17 @@ define([
             if (!isNewRow) {
                 targetRow.addClass('edited');
             }
+
             if (targetElement.hasClass('errorContent')) {
                 startDate = common.utcDateToLocaleDate(new Date());
-                if (startDate === this.prevStartDate(targetRow)){
+
+                if (startDate === this.prevStartDate(targetRow)) {
                     return App.render({
                         type   : 'error',
                         message: "Previous Member's Start Date is today"
                     });
                 }
+
                 if (startDate && this.prevStartDate(targetRow)) {
                     targetRow.find('.startDateManager').text(startDate);
                     this.changedModels[rowId].startDate = startDate;
@@ -385,14 +395,13 @@ define([
             };
             var model = new CurrentModel(startData);
             var data = {
-                startDate : null,
-                endDate   : null
+                startDate: null,
+                endDate  : null
             };
 
             e.preventDefault();
 
             startData.cid = model.cid;
-
 
             this.changedModels[startData.cid] = data;
 
@@ -444,6 +453,7 @@ define([
             var model = this.collection.get(id);
             var self = this;
             var content = row.find('[data-content="projectPosition"]').attr('data-id');
+
             if (model && id.length === 24) {
                 model.destroy({
                     wait   : true,
