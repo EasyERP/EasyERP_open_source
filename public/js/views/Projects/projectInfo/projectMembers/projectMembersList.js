@@ -50,6 +50,7 @@ define([
             var text;
             var startDate;
             var nextDay = new Date(2014, 8, 2);
+
             if (this.prevStartDate(row)) {
                 startDate = new Date(this.prevStartDate(row));
                 nextDay = moment(startDate).add(1, 'd').toDate();
@@ -58,6 +59,7 @@ define([
             if (target.prop('tagName') !== 'INPUT') {
                 this.hideNewSelect();
             }
+
             text = (target.text()).trim();
 
             target.html('<input class="extrainfo" type="text" name="date" id="date" value="' + text + '" readonly="" placeholder="Date">');
@@ -93,6 +95,7 @@ define([
         changedSales: function () {
             var salesRow = this.$el.find('[data-id="570e9a75785753b3f1d9c86e"]').first().closest('tr');
             var salesName = salesRow.find('[data-content="employee"]').text();
+
             $('#salesManager').text(salesName);
 
             return App.render({
@@ -125,12 +128,15 @@ define([
             var removeBtn = '<span title="Delete" class="fa fa-trash-o"></span>';
             var self = this;
             var trs = this.$el.find('tr:not(.false)');
+
             trs.find('td:first-child').text('');
             trs.find('td').removeClass('editable selectCurrent');
+
             this.responseObj['#projectPosition'].forEach(function (item) {
                 var tds = self.$el.find('[data-id="' + item._id + '"]');
                 var firstTd = tds.first();
                 var tr = firstTd.closest('tr');
+
                 tr.find('td').first().html(removeBtn);
 
                 if (tds.length > 1) {
@@ -146,6 +152,7 @@ define([
             var row = td.closest('tr');
             var id = row.attr('data-id');
             var endDate = row.find('.endDateManager');
+
             endDate.text('To end of project');
 
             if (!this.changedModels[id]) {
@@ -360,6 +367,7 @@ define([
             }
 
             targetElement.attr('data-id', id);
+
             if (!isNewRow) {
                 targetRow.addClass('edited');
             }
@@ -439,7 +447,6 @@ define([
             this.$el.find('#saveMember').show();
             this.$el.find('#addMember').hide();
             this.$el.find('#cancelMember').show();
-
         },
 
         showCreateBtn: function () {
@@ -458,6 +465,7 @@ define([
             if (model.projectPositionId === '570e9a75785753b3f1d9c86e') {
                 this.changedSales();
             }
+
             return false;
         },
 
@@ -523,6 +531,7 @@ define([
                 self.editLastMember();
 
             });
+
             this.$el.find('#saveMember').hide();
             this.$el.find('#cancelMember').hide();
 
