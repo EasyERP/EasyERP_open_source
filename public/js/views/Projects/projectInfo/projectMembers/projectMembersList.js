@@ -48,12 +48,18 @@ define([
             var rowId = row.attr('data-id');
             var isNewRow = row.hasClass('false');
             var text;
+            var startDate;
+            var nextDay = new Date(2014, 8, 2);
 
-            var startDate = this.prevStartDate(row) || this.project.startDate || new Date();
+            if (this.prevStartDate(row)) {
+                startDate = new Date(this.prevStartDate(row));
+                nextDay = moment(startDate).add(1, 'd').toDate();
+            }
 
             if (target.prop('tagName') !== 'INPUT') {
                 this.hideNewSelect();
             }
+
             text = (target.text()).trim();
 
             target.html('<input class="extrainfo" type="text" name="date" id="date" value="' + text + '" readonly="" placeholder="Date">');
@@ -62,7 +68,7 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : startDate,
+                minDate    : nextDay,
                 maxDate    : new Date(),
                 onSelect   : function (dateText) {
                     var $editedCol = target.closest('td');
@@ -86,9 +92,10 @@ define([
             return false;
         },
 
-        changedSales : function () {
+        changedSales: function () {
             var salesRow = this.$el.find('[data-id="570e9a75785753b3f1d9c86e"]').first().closest('tr');
             var salesName = salesRow.find('[data-content="employee"]').text();
+
             $('#salesManager').text(salesName);
 
             return App.render({
@@ -104,7 +111,8 @@ define([
             var prevStartDate;
             var prevDate;
             var nextDay;
-            var projectStartDate =  this.project.StartDate || new Date();
+            var projectStartDate = this.project.StartDate || new Date(2014, 8, 1);
+
             if (!prevTd.length) {
                 return false;
             }
@@ -112,25 +120,29 @@ define([
             prevRow = prevTd.closest('tr');
             prevStartDate = prevRow.find('.startDateManager').text() === 'From start of project' ? projectStartDate : prevRow.find('.startDateManager').text();
             prevDate = new Date(prevStartDate);
-            nextDay = moment(prevDate).add(1, 'd');
 
-            return common.utcDateToLocaleDate(nextDay.toDate());
+            return common.utcDateToLocaleDate(prevDate);
         },
 
         editLastMember: function () {
             var removeBtn = '<span title="Delete" class="fa fa-trash-o"></span>';
             var self = this;
-            var trs = this.$el.find('tr');
+            var trs = this.$el.find('tr:not(.false)');
+
             trs.find('td:first-child').text('');
             trs.find('td').removeClass('editable selectCurrent');
+
             this.responseObj['#projectPosition'].forEach(function (item) {
                 var tds = self.$el.find('[data-id="' + item._id + '"]');
                 var firstTd = tds.first();
                 var tr = firstTd.closest('tr');
+
                 tr.find('td').first().html(removeBtn);
+
                 if (tds.length > 1) {
                     tr.find('td.startDateManager').addClass('editable');
                 }
+
                 tr.find('td[data-content]:not([data-content="projectPosition"])').addClass('selectCurrent');
             });
         },
@@ -140,10 +152,13 @@ define([
             var row = td.closest('tr');
             var id = row.attr('data-id');
             var endDate = row.find('.endDateManager');
+
             endDate.text('To end of project');
+
             if (!this.changedModels[id]) {
                 this.changedModels[id] = {};
             }
+
             this.changedModels[id].endDate = null;
             this.saveItem(e);
         },
@@ -155,14 +170,16 @@ define([
             var id = tr.attr('data-id');
             var prevSalesDate = row.text() === 'From start of project' ? this.project.StartDate : date;
             var prevDate = new Date(prevSalesDate);
-            var prevDay = moment(prevDate).subtract(1, 'd');
-            var endDate = common.utcDateToLocaleDate(prevDay.toDate());
+            var prevDay = moment(prevDate).subtract(1, 'm').toDate();
+            var endDate = common.utcDateToLocaleDate(prevDay);
 
             tr.find('.endDateManager').text(endDate);
+
             if (!this.changedModels[id]) {
                 this.changedModels[id] = {};
             }
-            this.changedModels[id].endDate = endDate;
+
+            this.changedModels[id].endDate = prevDay;
             tr.addClass('edited');
         },
 
@@ -237,6 +254,7 @@ define([
                 savedRow.attr('data-id', modelId);
                 savedRow.removeClass('false');
             }
+
             this.isChangedSales(modelObject);
 
             delete this.changedModels[oldId];
@@ -274,7 +292,7 @@ define([
 
             e.preventDefault();
 
-            if (errorContent.length){
+            if (errorContent.length) {
                 return App.render({
                     type   : 'error',
                     message: 'Please choose position'
@@ -349,16 +367,31 @@ define([
             }
 
             targetElement.attr('data-id', id);
+
             if (!isNewRow) {
                 targetRow.addClass('edited');
             }
-            if (targetElement.hasClass('errorContent')) {
-                startDate = this.prevStartDate(targetRow);
-                if (startDate) {
+
+            if (dataType === 'projectPositionId') {
+                this.removePrevPosition();
+                startDate = common.utcDateToLocaleDate(new Date());
+
+                if (startDate === this.prevStartDate(targetRow)) {
+                    return App.render({
+                        type   : 'error',
+                        message: "Previous Member's Start Date is today"
+                    });
+                }
+
+                if (this.prevStartDate(targetRow)) {
                     targetRow.find('.startDateManager').text(startDate);
                     this.changedModels[rowId].startDate = startDate;
                     this.updatePrevMembers(targetRow, startDate);
+                } else {
+                    targetRow.find('.startDateManager').text('From start of project');
+                    this.changedModels[rowId].startDate = null;
                 }
+
                 targetElement.removeClass('errorContent');
             }
 
@@ -369,20 +402,29 @@ define([
             return false;
         },
 
+        removePrevPosition: function (){
+            var row = this.$el.find('.edited');
+            var id = row.attr('data-id');
+
+            delete this.changedModels[id];
+
+            row.find('td.endDateManager').text('To end of project');
+            row.removeClass('edited');
+        },
+
         addMember: function (e) {
             var startData = {
                 projectId: this.project._id
             };
             var model = new CurrentModel(startData);
             var data = {
-                startDate : null,
-                endDate   : null
+                startDate: null,
+                endDate  : null
             };
 
             e.preventDefault();
 
             startData.cid = model.cid;
-
 
             this.changedModels[startData.cid] = data;
 
@@ -405,7 +447,6 @@ define([
             this.$el.find('#saveMember').show();
             this.$el.find('#addMember').hide();
             this.$el.find('#cancelMember').show();
-
         },
 
         showCreateBtn: function () {
@@ -424,6 +465,7 @@ define([
             if (model.projectPositionId === '570e9a75785753b3f1d9c86e') {
                 this.changedSales();
             }
+
             return false;
         },
 
@@ -434,6 +476,7 @@ define([
             var model = this.collection.get(id);
             var self = this;
             var content = row.find('[data-content="projectPosition"]').attr('data-id');
+
             if (model && id.length === 24) {
                 model.destroy({
                     wait   : true,
@@ -488,6 +531,7 @@ define([
                 self.editLastMember();
 
             });
+
             this.$el.find('#saveMember').hide();
             this.$el.find('#cancelMember').hide();
 
