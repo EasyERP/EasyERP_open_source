@@ -2,12 +2,12 @@ define([
         'jQuery',
         'Underscore',
         'Backbone',
-        "text!templates/ExpensesInvoice/CreateTemplate.html",
+        "text!templates/DividendInvoice/CreateTemplate.html",
         'views/Notes/AttachView',
         "models/InvoiceModel",
         "common",
         "populate",
-        "views/ExpensesInvoice/InvoiceProductItems",
+        "views/DividendInvoice/InvoiceProductItems",
         "views/Assignees/AssigneesView",
         "views/Payment/list/ListHeaderInvoice",
         "dataService",
@@ -122,16 +122,12 @@ define([
                 var usersId;
                 var description;
 
-                var forSales = (this.forSales) ? true : false;
-
-                var supplier = $currentEl.find("#supplier").data("id");
-                var supplierName = $currentEl.find("#supplier").text();
                 var invoiceDate = $currentEl.find("#invoice_date").val();
                 var dueDate = $currentEl.find("#due_date").val();
 
-                var total = parseFloat($currentEl.find("#totalAmount").text());
-                var unTaxed = parseFloat($currentEl.find("#totalUntaxes").text());
-                var balance = parseFloat($currentEl.find("#balance").text());
+                var total = 100 * parseFloat($currentEl.find("#totalAmount").text());
+                var unTaxed = 100 * parseFloat($currentEl.find("#totalUntaxes").text());
+                var balance = 100 * parseFloat($currentEl.find("#balance").text());
 
                 var payments = {
                     total  : total,
@@ -153,13 +149,12 @@ define([
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
                         if (productId) {
-                            quantity = parseFloat(targetEl.find('[data-name="quantity"] input').val());
-                            price = parseFloat(targetEl.find('[data-name="price"] input').val());
+                            price = 100 * parseFloat(targetEl.find('[data-name="price"] input').val());
                             description = targetEl.find('[data-name="productDescr"] input').val();
                             taxes = targetEl.find('.taxes').text();
-                            amount = targetEl.find('.amount').text();
+                            amount = 100 * targetEl.find('.amount').text();
 
-                            if (!quantity || !price) {
+                            if (!price) {
                                 return App.render({
                                     type: 'error',
                                     message: 'Fields "price" and "quantity" can\'t be empty or 0'
@@ -170,7 +165,6 @@ define([
                                 product    : productId,
                                 description: description,
                                 unitPrice  : price,
-                                quantity   : quantity,
                                 taxes      : taxes,
                                 subTotal   : amount
                             });
@@ -193,8 +187,6 @@ define([
                 whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 data = {
                     forSales: false,
-                    supplier             : supplier,
-                    supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
                     invoiceDate          : invoiceDate,
                     dueDate              : dueDate,
                     journal              : null,
@@ -210,34 +202,25 @@ define([
                     workflow: this.defaultWorkflow
                 };
 
-                if (supplier) {
-                    model = new InvoiceModel();
-                    model.urlRoot = function () {
-                        return 'expensesInvoice';
-                    };
+                model = new InvoiceModel();
+                model.urlRoot = function () {
+                    return 'DividendInvoice';
+                };
 
-                    model.save(data, {
-                        patch  : true,
-                        headers: {
-                            mid: mid
-                        },
-                        wait   : true,
-                        success: function (res) {
-                            self.hideDialog();
-                            Backbone.history.navigate('#easyErp/ExpensesInvoice', {trigger: true});
-                        },
-                        error  : function (model, xhr) {
-                            self.errorNotification(xhr);
-                        }
-                    });
-
-                } else {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please fill all fields.'
-                    });
-                }
-
+                model.save(data, {
+                    patch  : true,
+                    headers: {
+                        mid: mid
+                    },
+                    wait   : true,
+                    success: function () {
+                        self.hideDialog();
+                        Backbone.history.navigate('#easyErp/DividendInvoice', {trigger: true});
+                    },
+                    error  : function (model, xhr) {
+                        self.errorNotification(xhr);
+                    }
+                });
             },
 
             hideDialog: function () {
@@ -299,8 +282,7 @@ define([
                 );
 
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
-
-                populate.get2name("#supplier", "/supplier", {}, this, false, true);
+                populate.get2name("#employeesDd", "/getPersonsForDd", {}, this, true, false);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {

@@ -18,6 +18,7 @@ var Invoice = function (models, event) {
     var OrderSchema = mongoose.Schemas.Quotation;
     var ProformaSchema = mongoose.Schemas.Proforma;
     var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
+    var DividendInvoiceSchema = mongoose.Schemas.dividendInvoice;
     var DepartmentSchema = mongoose.Schemas.Department;
     var CustomerSchema = mongoose.Schemas.Customer;
     var PaymentSchema = mongoose.Schemas.Payment;
@@ -985,6 +986,8 @@ var Invoice = function (models, event) {
             moduleId = 95;
         } else if (contentType === 'ExpensesInvoice') {
             moduleId = 97;
+        } else if (contentType === 'DividendInvoice') {
+            moduleId = 100;
         } else {
             moduleId = 64;
         }
@@ -1015,6 +1018,8 @@ var Invoice = function (models, event) {
                         Invoice = models.get(db, 'Proforma', ProformaSchema);
                     } else if (contentType === 'ExpensesInvoice') {
                         Invoice = models.get(db, 'expensesInvoice', ExpensesInvoiceSchema);
+                    } else if (contentType === 'DividendInvoice') {
+                        Invoice = models.get(db, 'dividendInvoice', DividendInvoiceSchema);
                     } else {
                         Invoice = models.get(db, 'Invoice', InvoiceSchema);
                     }
@@ -1094,6 +1099,8 @@ var Invoice = function (models, event) {
                             optionsObject.$and.push({_type: 'Proforma'});
                         } else if (contentType === 'ExpensesInvoice') {
                             optionsObject.$and.push({_type: 'expensesInvoice'});
+                        } else if (contentType === 'DividendInvoice') {
+                            optionsObject.$and.push({_type: 'dividendInvoice'});
                         } else {
                             optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}]});
                         }
@@ -1206,6 +1213,7 @@ var Invoice = function (models, event) {
     this.getInvoiceById = function (req, res, next) {
         var moduleId = 64;
         var data = req.query || {};
+        var contentType = data.contentType;
         var id = data.id;
         var forSales;
 
@@ -1222,7 +1230,9 @@ var Invoice = function (models, event) {
                 var waterfallTasks;
 
                 if (access) {
-                    if (forSales) {
+                    if (contentType === 'DividendInvoice') {
+                        Invoice = models.get(req.session.lastDb, 'dividendInvoice', DividendInvoiceSchema);
+                    } else if (forSales) {
                         Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
                     } else {
                         Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
@@ -1291,13 +1301,14 @@ var Invoice = function (models, event) {
                     };
 
                     contentSearcher = function (invoicesIds, waterfallCallback) {
+                        var query;
 
                         optionsObject = {
                             _id     : id,
                             forSales: forSales
                         };
 
-                        var query = Invoice.findOne(optionsObject);
+                        query = Invoice.findOne(optionsObject);
 
                         query.populate('products.product')
                             .populate('products.jobs')
@@ -1602,6 +1613,8 @@ var Invoice = function (models, event) {
             Invoice = models.get(req.session.lastDb, 'Proforma', ProformaSchema);
         } else if (contentType === 'ExpensesInvoice') {
             Invoice = models.get(req.session.lastDb, 'expensesInvoice', ExpensesInvoiceSchema);
+        } else if (contentType === 'DividendInvoice') {
+            Invoice = models.get(req.session.lastDb, 'dividendInvoice', DividendInvoiceSchema);
         } else {
             Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         }
@@ -1649,6 +1662,10 @@ var Invoice = function (models, event) {
                 matchQuery.$and.push({
                     _type: 'expensesInvoice'
                 });
+            } else if (contentType === 'DividendInvoice') {
+                matchQuery.$and.push({
+                    _type: 'dividendInvoice'
+                });
             } else {
                 matchQuery.$and.push({
                     $and: [
@@ -1656,6 +1673,8 @@ var Invoice = function (models, event) {
                             _type: {$ne: 'Proforma'}
                         }, {
                             _type: {$ne: 'expensesInvoice'}
+                        }, {
+                            _type: {$ne: 'dividendInvoice'}
                         }
                     ]
                 });

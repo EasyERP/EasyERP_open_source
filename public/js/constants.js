@@ -167,6 +167,12 @@ define([], function () {
                 backend: 'workflow._id'
             }
         },
+        DividendInvoice    : {
+            'Status'      : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
         salesProforma    : {
             'Customer'    : {
                 view   : 'supplier',
@@ -550,6 +556,7 @@ define([], function () {
         SALESPROFORMA     : 'salesProforma',
         EXPENSESINVOICE   : 'ExpensesInvoice',
         EXPENSESPAYMENTS  : 'ExpensesPayments',
+        DIVIDENDINVOICE   : 'DividendInvoice',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',

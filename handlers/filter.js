@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Filters = function (models) {
     var wTrackSchema = mongoose.Schemas.wTrack;
     var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
+    var DividendInvoiceSchema = mongoose.Schemas.dividendInvoice;
     var CustomerSchema = mongoose.Schemas.Customer;
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
@@ -32,6 +33,7 @@ var Filters = function (models) {
         var Task = models.get(lastDB, 'Tasks', TaskSchema);
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
         var ExpensesInvoice = models.get(lastDB, 'expensesInvoice', ExpensesInvoiceSchema);
+        var DividendInvoice = models.get(lastDB, 'dividendInvoice', DividendInvoiceSchema);
         var Proforma = models.get(lastDB, 'Proforma', ProformaSchema);
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
         var ExpensesPayments = models.get(lastDB, 'expensesInvoicePayment', ExpensesInvoicePaymentSchema);
@@ -127,6 +129,7 @@ var Filters = function (models) {
                 salesProforma   : getSalesProformaFiltersValues,
                 Invoice         : getInvoiceFiltersValues,
                 ExpensesInvoice : getExpensesInvoiceFiltersValues,
+                DividendInvoice : getDividendInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 ExpensesPayments: getExpensesPaymentsFiltersValues,
@@ -954,6 +957,46 @@ var Filters = function (models) {
                             name: {
                                 $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
                             }
+                        }
+                    }
+                }
+            }], function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        }
+
+        function getDividendInvoiceFiltersValues(callback) {
+            DividendInvoice.aggregate([{
+                $match: {
+                    _type: 'dividendInvoice'
+                }
+            } ,{
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $project: {
+                    workflow: {$arrayElemAt: ["$workflow", 0]}
+                }
+            }, {
+                $group: {
+                    _id       : null,
+                    'workflow': {
+                        $addToSet: {
+                            _id : '$workflow._id',
+                            name: '$workflow.name'
                         }
                     }
                 }
