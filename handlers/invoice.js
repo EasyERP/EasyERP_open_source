@@ -1054,34 +1054,30 @@ var Invoice = function (models, event) {
 
                     contentSearcher = function (invoicesIds, waterfallCallback) {
                         var salesManagerMatch = {
-                            $and: [{
-                                $or: [{
-                                    $and: [{
-                                        $eq: ['$salesmanagers.startDate', null]
-                                    }, {
-                                        $eq: ['$salesmanagers.endDate', null]
-                                    }]
+                            $or: [{
+                                $and: [{
+                                    $eq: ['$salesmanagers.startDate', null]
                                 }, {
-                                    $and: [{
-                                        $lte: ['$salesmanagers.startDate', '$invoiceDate']
-                                    }, {
-                                        $eq: ['$salesmanagers.endDate', null]
-                                    }]
-                                }, {
-                                    $and: [{
-                                        $eq: ['$salesmanagers.startDate', null]
-                                    }, {
-                                        $gte: ['$salesmanagers.endDate', '$invoiceDate']
-                                    }]
-                                }, {
-                                    $and: [{
-                                        $lte: ['$salesmanagers.startDate', '$invoiceDate']
-                                    }, {
-                                        $gte: ['$salesmanagers.endDate', '$invoiceDate']
-                                    }]
+                                    $eq: ['$salesmanagers.endDate', null]
                                 }]
                             }, {
-                                $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
+                                $and: [{
+                                    $lte: ['$salesmanagers.startDate', '$invoiceDate']
+                                }, {
+                                    $eq: ['$salesmanagers.endDate', null]
+                                }]
+                            }, {
+                                $and: [{
+                                    $eq: ['$salesmanagers.startDate', null]
+                                }, {
+                                    $gte: ['$salesmanagers.endDate', '$invoiceDate']
+                                }]
+                            }, {
+                                $and: [{
+                                    $lte: ['$salesmanagers.startDate', '$invoiceDate']
+                                }, {
+                                    $gte: ['$salesmanagers.endDate', '$invoiceDate']
+                                }]
                             }]
                         };
 
@@ -1103,7 +1099,6 @@ var Invoice = function (models, event) {
                         } else {
                             optionsObject.$and.push({_type: {$ne: 'Proforma'}});
                         }
-
 
                         Invoice
                             .aggregate([{
@@ -1166,22 +1161,20 @@ var Invoice = function (models, event) {
                                 }
                             }, {
                                 $lookup: {
-                                    from                   : 'projectMembers',
-                                    localField             : 'project._id',
+                                    from        : 'projectMembers',
+                                    localField  : 'project._id',
                                     foreignField: 'projectId',
-                                    as: 'salesmanagers'
+                                    as          : 'projectMembers'
                                 }
                             }, {
-                                $unwind: {
-                                    path                      : '$salesmanagers',
-                                    preserveNullAndEmptyArrays: true
-                                }
-                            },  {
                                 $project: {
-                                    'salesmanagers.startDate'        : {$ifNull: ['$salesmanagers.startDate', null]},
-                                    'salesmanagers.endDate'          : {$ifNull: ['$salesmanagers.endDate', null]},
-                                    'salesmanagers.projectPositionId': {$ifNull: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
-                                    'salesmanagers.employeeId'       : {$ifNull: ['$salesmanagers.employeeId', null]},
+                                    salesmanagers   : {
+                                        $filter: {
+                                            input: '$projectMembers',
+                                            as   : 'projectMember',
+                                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                                        }
+                                    },
                                     sourceDocument  : 1,
                                     workflow        : 1,
                                     supplier        : 1,
@@ -1201,6 +1194,11 @@ var Invoice = function (models, event) {
                                     _type           : 1,
                                     removable       : 1,
                                     paid            : 1
+                                }
+                            }, {
+                                $unwind: {
+                                    path                      : '$salesmanagers',
+                                    preserveNullAndEmptyArrays: true
                                 }
                             }, {
                                 $project: {
@@ -1228,7 +1226,11 @@ var Invoice = function (models, event) {
                                 }
                             }, {
                                 $match: {
-                                    isValid: true
+                                    $or: [
+                                        {isValid: true},
+                                        {
+                                            salesmanagers: {$exists: false}
+                                        }]
                                 }
                             }, {
                                 $lookup: {
@@ -1262,9 +1264,7 @@ var Invoice = function (models, event) {
                                 }
                             }, {
                                 $match: optionsObject
-                            },{
-                             $match: optionsObject
-                             },  {
+                            }, {
                                 $skip: skip
                             }, {
                                 $limit: count
@@ -1774,7 +1774,7 @@ var Invoice = function (models, event) {
                         }, {
                             $gte: ['$salesmanagers.endDate', '$invoiceDate']
                         }]
-                    }, {$eq : ['$salesmanagers', null]}]
+                    }]
             };
 
             queryObject['$and'] = [];
@@ -1851,12 +1851,13 @@ var Invoice = function (models, event) {
                     foreignField: 'projectId',
                     as: 'projectMembers'
                 }
-            },{
-                salesmanagers   : {$filter : {
-                    input: '$projectMembers',
-                    as   : 'projectMember',
-                    cond: { eq: [ "$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE) ] }
-                }
+            }, {
+                salesmanagers   : {
+                    $filter: {
+                        input: '$projectMembers',
+                        as   : 'projectMember',
+                        cond : {eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                    }
                 },
                 sourceDocument  : 1,
                 workflow        : 1,
@@ -1898,7 +1899,11 @@ var Invoice = function (models, event) {
                 }
             }, {
                 $match: {
-                    isValid: true
+                    $or: [
+                        {isValid: true},
+                        {
+                            salesmanagers: {$exists: false}
+                        }]
                 }
             }, {
                 $lookup: {
