@@ -88,36 +88,18 @@ query.exec(function (error, _res) {
     }
 
     async.eachSeries(_res, function (project, callback) {
-        var constPMId = '55b92ad221e4b7c40f000030'; // _id of Alex Svatuk
-        var constPrPosition = '570e9a75785753b3f1d9c86f'; // _id of projectManager position
         var data = {
-            projectmanager: constPMId,
+            projectmanager: null,
             salesmanager  : project.projectmanager
         };
 
-        Project.update({_id: project._id}, data, function (err, updatedPr) {
-            var pM;
-
+        Project.update({_id: project._id}, data, function (err) {
             if (err) {
                 callback(err);
                 return;
             }
 
-            pM = new ProjectMember({
-                projectId        : project._id,
-                employeeId       : constPMId,
-                bonusId          : null,
-                projectPositionId: constPrPosition,
-                startDate        : null,
-                endDate          : null
-            });
-            pM.save(function (err, doc) {
-                if (err) {
-                    callback(err);
-                    return;
-                }
-                callback();
-            });
+            callback();
         });
 
     }, function (err) {
