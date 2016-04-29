@@ -205,7 +205,7 @@
 
             asyncLoadImgs: function (collection) {
                 var arr = _.filter(collection.toJSON(), function (item) {
-                    return item.salesmanager !== null;
+                    return item.salesmanager;
                 });
                 var ids = _.map(arr, function (item) {
                     return item.salesmanager._id;
