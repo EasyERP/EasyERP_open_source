@@ -188,14 +188,6 @@ var wTrack = function (models) {
 
             function departmentMapper(department, departmentCb) {
                 var dashDepartment = _.find(dashBoardResult, function (deps) {
-                    // todo fix this bad low code after add logic transfer employee
-
-                    // bad low code start
-                    function unityWpChecker(dep1, dep2) {
-
-                    }
-
-                    // bad low code end
                     return deps.department.toString() === department.department.toString();
                 });
 
