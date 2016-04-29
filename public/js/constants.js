@@ -446,8 +446,8 @@ define([], function () {
         },
         "jobsDashboard" : {
             "Sales Manager": {
-                view   : 'projectManager',
-                backend: 'projectmanager._id'
+                view   : 'salesmanager',
+                backend: 'salesmanager._id'
             },
             "Project"      : {
                 view   : 'project',

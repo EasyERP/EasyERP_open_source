@@ -650,47 +650,51 @@ var Project = function (models, event) {
                         query
                             .aggregate([{
                                 $lookup: {
-                                    from        : "Employees",
-                                    localField  : "projectmanager",
-                                    foreignField: "_id", as: "projectmanager"
-                                }
-                            },{
-                                $lookup: {
-                                    from        : "Employees",
-                                    localField  : "salesmanager",
-                                    foreignField: "_id", as: "salesmanager"
+                                    from        : "projectMembers",
+                                    localField  : "_id",
+                                    foreignField: "projectId",
+                                    as: "projectMembers"
                                 }
                             }, {
                                 $lookup: {
                                     from        : "Customers",
                                     localField  : "customer",
-                                    foreignField: "_id", as: "customer"
+                                    foreignField: "_id",
+                                    as: "customer"
                                 }
                             }, {
                                 $lookup: {
                                     from        : "workflows",
                                     localField  : "workflow",
-                                    foreignField: "_id", as: "workflow"
+                                    foreignField: "_id",
+                                    as: "workflow"
                                 }
                             }, {
                                 $lookup: {
                                     from        : "Users",
                                     localField  : "createdBy.user",
-                                    foreignField: "_id", as: "createdBy.user"
+                                    foreignField: "_id",
+                                    as: "createdBy.user"
                                 }
                             }, {
                                 $lookup: {
                                     from        : "Users",
                                     localField  : "editedBy.user",
-                                    foreignField: "_id", as: "editedBy.user"
+                                    foreignField: "_id",
+                                    as: "editedBy.user"
                                 }
                             }, {
                                 $project: {
                                     notRemovable : {
                                         $size: {"$ifNull": [ "$budget.projectTeam", [] ]} // added check on field value null
                                     },
-                                    projectmanager  : {$arrayElemAt: ["$projectmanager", 0]},
-                                    salesmanager    : {$arrayElemAt: ["$salesmanager", 0]},
+                                    salesmanagers: {
+                                        $filter: {
+                                            input: '$projectMembers',
+                                            as   : 'projectMember',
+                                            cond : {$and : [{$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}, {$eq: ["$$projectMember.endDate", null]}] }
+                                        }
+                                    },
                                     workflow        : {$arrayElemAt: ["$workflow", 0]},
                                     customer        : {$arrayElemAt: ["$customer", 0]},
                                     'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
@@ -706,8 +710,31 @@ var Project = function (models, event) {
                                 }
                             }, {
                                 $project: {
-                                    projectmanager  : 1,
-                                    salesmanager    : 1,
+                                    salesmanager    : {$arrayElemAt: ["$salesmanagers", 0]},
+                                    notRemovable    : 1,
+                                    workflow        : 1,
+                                    projectName     : 1,
+                                    health          : 1,
+                                    customer        : 1,
+                                    progress        : 1,
+                                    StartDate       : 1,
+                                    EndDate         : 1,
+                                    TargetEndDate   : 1,
+                                    'createdBy.date': 1,
+                                    'editedBy.date' : 1,
+                                    'createdBy.user': 1,
+                                    'editedBy.user' : 1
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : "Employees",
+                                    localField  : "salesmanager.employeeId",
+                                    foreignField: "_id",
+                                    as: "salesmanager"
+                                }
+                            }, {
+                                $project: {
+                                    salesmanager    : {$arrayElemAt: ["$salesmanager", 0]},
                                     notRemovable    : 1,
                                     workflow        : 1,
                                     projectName     : 1,
@@ -931,27 +958,24 @@ var Project = function (models, event) {
                                 Project
                                     .aggregate([{
                                         $lookup: {
-                                            from        : "Employees",
-                                            localField  : "projectmanager",
-                                            foreignField: "_id", as: "projectmanager"
-                                        }
-                                    },{
-                                        $lookup: {
-                                            from        : "Employees",
-                                            localField  : "salesmanager",
-                                            foreignField: "_id", as: "salesmanager"
+                                            from        : "projectMembers",
+                                            localField  : "_id",
+                                            foreignField: "projectId",
+                                            as: "projectMembers"
                                         }
                                     }, {
                                         $lookup: {
                                             from        : "Customers",
                                             localField  : "customer",
-                                            foreignField: "_id", as: "customer"
+                                            foreignField: "_id",
+                                            as: "customer"
                                         }
                                     }, {
                                         $lookup: {
                                             from        : "workflows",
                                             localField  : "workflow",
-                                            foreignField: "_id", as: "workflow"
+                                            foreignField: "_id",
+                                            as: "workflow"
                                         }
                                     }, {
                                         $project: {
@@ -960,8 +984,13 @@ var Project = function (models, event) {
                                             task          : 1,
                                             customer      : {$arrayElemAt: ["$customer", 0]},
                                             health        : 1,
-                                            projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
-                                            salesmanager  : {$arrayElemAt: ["$salesmanager", 0]}
+                                            salesmanagers: {
+                                                $filter: {
+                                                    input: '$projectMembers',
+                                                    as   : 'projectMember',
+                                                    cond : {$and: [{$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}, {$eq: ["$$projectMember.endDate", null]}]}
+                                                }
+                                            }
                                         }
                                     }, {
                                         $project: {
@@ -969,8 +998,24 @@ var Project = function (models, event) {
                                             projectName   : 1,
                                             task          : 1,
                                             workflow      : 1,
-                                            salesmanager  : 1,
-                                            projectmanager: 1,
+                                            salesmanager  : {$arrayElemAt: ["$salesmanagers", 0]},
+                                            customer      : 1,
+                                            health        : 1
+                                        }
+                                    }, {
+                                        $lookup: {
+                                            from        : "Employees",
+                                            localField  : "salesmanager.employeeId",
+                                            foreignField: "_id",
+                                            as: "salesmanager"
+                                        }
+                                    }, {
+                                        $project: {
+                                            _id           : 1,
+                                            projectName   : 1,
+                                            task          : 1,
+                                            workflow      : 1,
+                                            salesmanager  : {$arrayElemAt: ["$salesmanager", 0]},
                                             customer      : 1,
                                             health        : 1
                                         }
