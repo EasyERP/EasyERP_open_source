@@ -680,8 +680,8 @@ var Project = function (models) {
         }, {
             $lookup: {
                 from        : 'Employees',
-                localField  : 'projectmanager',
-                foreignField: '_id', as: 'projectmanager'
+                localField  : 'salesmanager',
+                foreignField: '_id', as: 'salesmanager'
             }
         }, {
             $lookup: {
@@ -692,13 +692,13 @@ var Project = function (models) {
         }, {
             $project: {
                 'budget.projectTeam': {$arrayElemAt: ['$budget.projectTeam', 0]},
-                projectmanager      : {$arrayElemAt: ['$projectmanager', 0]},
+                salesmanager      : {$arrayElemAt: ['$salesmanager', 0]},
                 'budget.budgetTotal': 1,
                 projectName         : 1
             }
         }, {
             $project: {
-                projectmanager      : 1,
+                salesmanager      : 1,
                 projectName         : 1,
                 'budget.projectTeam': 1,
                 'budget.budgetTotal': 1
@@ -706,8 +706,8 @@ var Project = function (models) {
         }, {
             $group: {
                 _id           : '$_id',
-                projectmanager: {
-                    $addToSet: '$projectmanager'
+                salesmanager: {
+                    $addToSet: '$salesmanager'
                 },
                 projectTeam   : {
                     $push: '$budget.projectTeam'
@@ -722,7 +722,7 @@ var Project = function (models) {
         }, {
             $project: {
                 _id                 : 1,
-                projectmanager      : {$arrayElemAt: ['$projectmanager', 0]},
+                salesmanager      : {$arrayElemAt: ['$salesmanager', 0]},
                 projectName         : {$arrayElemAt: ['$projectName', 0]},
                 'budget.projectTeam': '$projectTeam',
                 'budget.budgetTotal': '$budgetTotal'
