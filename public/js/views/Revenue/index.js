@@ -55,6 +55,7 @@ define([
             custom.cacheToApp('Revenue.filter', this.filter);
 
             this.stopSalesSpinner = _.after(2, this.hideSpinnerTab);
+            this.stopPMSpinner = _.after(2, this.hideSpinnerPMTab);
 
             this.collection = new ProfitCollection({
                 byWeek   : this.byWeek,
@@ -77,6 +78,14 @@ define([
                 endDate  : filter.endDate
             });
             this.profitByPmCollection.on('reset', this.renderProfitByPM, this);
+
+            this.bonusByPMCollection = new BonusCollection({
+                byContent: 'projectsManager',
+                byWeek   : this.byWeek,
+                startDate: filter.startDate,
+                endDate  : filter.endDate
+            });
+            this.bonusByPMCollection.on('reset', this.renderAllBonusByPM, this);
 
             this.render();
         },
@@ -109,6 +118,10 @@ define([
 
         hideSpinnerTab: function () {
             this.$profitBySales.fadeOut();
+        },
+
+        hideSpinnerPMTab: function () {
+            this.$profitByPM.fadeOut();
         },
 
         changeTab: function (e) {
@@ -155,9 +168,16 @@ define([
                 startDate: this.startDate,
                 endDate  : this.endDate
             });
+            this.bonusByPMCollection = new BonusCollection({
+                byContent: 'projectsManager',
+                byWeek   : this.byWeek,
+                startDate: this.startDate,
+                endDate  : this.endDate
+            });
             this.collection.on('reset', this.renderProfit, this);
             this.bonusBySalesCollection.on('reset', this.renderAllBonusBySales, this);
             this.profitByPmCollection.on('reset', this.renderProfitByPM, this);
+            this.bonusByPMCollection.on('reset', this.renderAllBonusByPM, this);
 
             this.changeLocation(this.filter);
         },
@@ -247,17 +267,35 @@ define([
             var $thisEl = this.$el;
             var count = this.bonusBySalesCollection.length;
             var tdWidth = Math.floor(90 / (count + 1));
-            var $revenueTableContainer = $thisEl.find('#allBonusBySales');
+            var $bonusTableContainer = $thisEl.find('#allBonusBySales');
 
-            $revenueTableContainer.html(this.bonusTemplate({
+            $bonusTableContainer.html(this.bonusTemplate({
                 collection      : self.bonusBySalesCollection,
                 currencySplitter: helpers.currencySplitter,
                 tdWidth         : tdWidth,
                 count           : count
             }));
 
-            this.calculateTotal($revenueTableContainer);
+            this.calculateTotal($bonusTableContainer);
             this.stopSalesSpinner();
+        },
+
+        renderAllBonusByPM: function () {
+            var self = this;
+            var $thisEl = this.$el;
+            var count = this.bonusByPMCollection.length;
+            var tdWidth = Math.floor(90 / (count + 1));
+            var $bonusTableContainer = $thisEl.find('#allBonusByPM');
+
+            $bonusTableContainer.html(this.bonusTemplate({
+                collection      : self.bonusByPMCollection,
+                currencySplitter: helpers.currencySplitter,
+                tdWidth         : tdWidth,
+                count           : count
+            }));
+
+            this.calculateTotal($bonusTableContainer);
+            this.stopPMSpinner();
         },
 
         renderProfitByPM: function () {
@@ -275,7 +313,7 @@ define([
             }));
 
             this.calculateTotal($profitTableContainer);
-            this.$profitByPM.fadeOut();
+            this.stopPMSpinner();
         },
 
         changeLocation: function (filter) {

@@ -54,7 +54,13 @@
 
             this.fetch({
                 data : options,
-                reset: true
+                reset: true,
+                error: function (collection, xhr) {
+                    App.render({
+                        type   : 'error',
+                        message: xhr.statusText
+                    });
+                }
             });
         },
 

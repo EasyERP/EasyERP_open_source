@@ -39,16 +39,26 @@
     var Colection = Backbone.Collection.extend({
         model: Model,
 
-        url: 'revenue/allBonusBySales',
+        url: function () {
+            return 'revenue/allBonusBySales/' + this.byContent;
+        },
 
         initialize: function (options) {
             options = options || {};
-
+            this.byContent = options.byContent || 'salesManager';
             this.byWeek = !!options.byWeek;
+
+            delete options.byContent;
 
             this.fetch({
                 data : options,
-                reset: true
+                reset: true,
+                error: function (collection, xhr) {
+                    App.render({
+                        type   : 'error',
+                        message: xhr.statusText
+                    });
+                }
             });
         },
 

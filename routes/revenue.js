@@ -1,5 +1,3 @@
-
-
 var express = require('express');
 var router = express.Router();
 var RevenueHandler = require('../handlers/revenue');
@@ -20,7 +18,7 @@ module.exports = function (models) {
     router.get('/getFromCash', expressSession.authenticatedUser, handler.getFromCash);
     router.get('/hoursByDep', expressSession.authenticatedUser, handler.hoursByDep);
 
-    router.get('/allBonusBySales', expressSession.authenticatedUser, handler.allBonusBySales);
+    router.get('/allBonusBySales/:byContent', expressSession.authenticatedUser, handler.allBonusBySales);
     router.get('/uncalcBonus', expressSession.authenticatedUser, handler.uncalcBonus);
     router.get('/calcBonus', expressSession.authenticatedUser, handler.calcBonus);
     router.get('/synthetic', expressSession.authenticatedUser, handler.synthetic);

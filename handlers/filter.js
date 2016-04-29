@@ -101,8 +101,8 @@ var Filters = function (models) {
                 startDate = startFilter.startDate;
                 endDate = startFilter.startDate;
             } else if (query.startDate && query.endDate) {
-                _startDate = moment(query.startDate);
-                _endDate = moment(query.endDate);
+                _startDate = moment(new Date(query.startDate));
+                _endDate = moment(new Date(query.endDate));
                 startDate = _startDate.isoWeekYear() * 100 + _startDate.isoWeek();
                 endDate = _endDate.isoWeekYear() * 100 + _endDate.isoWeek();
             }

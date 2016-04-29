@@ -884,6 +884,9 @@ var wTrack = function (models) {
 
     this.allBonusBySales = function (req, res, next) {
         var JournalEntry = models.get(req.session.lastDb, 'journalEntry', journalEntry);
+        var projectionContent = req.params.byContent || 'salesManager';
+
+        projectionContent = projectionContent.toUpperCase();
 
         access.getReadAccess(req, req.session.uId, 67, function (_access) {
             var options = req.query;
@@ -891,7 +894,7 @@ var wTrack = function (models) {
             var _endDateMoment;
             var startDate = options.startDate;
             var endDate = options.endDate;
-            var salesManagers = objectId(CONSTANTS.SALESMANAGER);
+            var salesManagers = objectId(CONSTANTS[projectionContent]);
             var salesManagersMatch = {
                 'salesPersons.projectPositionId': salesManagers
             };
