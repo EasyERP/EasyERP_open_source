@@ -26,14 +26,14 @@ var Quotation = function (models, event) {
 
         if (type === 'integer') {
             for (i = array.length - 1;
-                i >= 0;
-                i--) {
+                 i >= 0;
+                 i--) {
                 array[i] = parseInt(array[i], 10);
             }
         } else if (type === 'boolean') {
             for (i = array.length - 1;
-                i >= 0;
-                i--) {
+                 i >= 0;
+                 i--) {
                 if (array[i] === 'true') {
                     array[i] = true;
                 } else if (array[i] === 'false') {
@@ -107,53 +107,121 @@ var Quotation = function (models, event) {
         var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var products;
         var project;
+        var oldProducts = [];
         var editedBy = {
             user: req.session.uId,
             date: new Date()
         };
 
+        var indexOfBinary = function (arr, jobs) {
+            var minIndex = 0;
+            var maxIndex = arr.length - 1;
+            var currentIndex;
+            var currentElement;
+
+            while (minIndex <= maxIndex) {
+                currentIndex = (minIndex + maxIndex) / 2 | 0;
+                currentElement = arr[currentIndex].jobs.id;
+                if (currentElement > jobs) {
+                    minIndex = currentIndex + 1;
+                } else if (currentElement < jobs) {
+                    maxIndex = currentIndex - 1;
+                } else {
+                    return currentIndex;
+                }
+            }
+
+            return -1;
+        };
+
         delete data.attachments;
 
-        Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
+        Quotation.findById(id, function (err, oldQuotation) {
             if (err) {
                 return next(err);
             }
 
-            products = quotation.products;
+            oldProducts = oldQuotation.toJSON().products;
 
-            async.each(products, function (product, cb) {
-                var jobs = product.jobs;
-                var _type = data.isOrder ? 'Ordered' : 'Quoted';
-
-                JobsModel.findByIdAndUpdate(jobs, {
-                    $set: {
-                        type    : _type,
-                        editedBy: editedBy
-                    }
-                }, {new: true}, function (err, result) {
-                    if (err) {
-                        return cb(err);
-                    }
-                    project = result.project || null;
-                    cb();
-                });
-
-            }, function () {
-                if (project) {
-                    event.emit('fetchJobsCollection', {project: project});
+            Quotation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, quotation) {
+                if (err) {
+                    return next(err);
                 }
 
-                res.status(200).send({success: 'Quotation updated', result: quotation});
-            });
+                products = quotation.toJSON().products;
 
-            event.emit('recalculateRevenue', {   // added for recalculating projectInfo after editing quotation
-                quotation  : quotation,
-                wTrackModel: wTrackModel,
-                req        : req
-            });
+                async.each(products, function (product, cb) {
+                    var jobs = product.jobs;
+                    var _type = data.isOrder ? 'Ordered' : 'Quoted';
 
+                    var index = indexOfBinary(oldProducts, jobs.id);
+
+                    if (index !== -1) {
+                        oldProducts.splice(index, 1);
+                    }
+
+                    JobsModel.findByIdAndUpdate(jobs, {
+                        $set: {
+                            quotation: id,
+                            type     : _type,
+                            editedBy : editedBy
+                        }
+                    }, {new: true}, function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+                        project = result.project || null;
+                        cb();
+                    });
+
+                }, function () {
+                    var type;
+
+                    if (project) {
+                        event.emit('fetchJobsCollection', {project: project});
+                    }
+
+                    res.status(200).send({success: 'Quotation updated', result: quotation});
+
+                    if (oldProducts.length > 0) {
+                        async.each(oldProducts, function (oldProduct, cb) {
+
+                            type = 'Not Quoted';
+
+                            JobsModel.findByIdAndUpdate(oldProduct.jobs, {
+                                type     : type,
+                                quotation: null,
+                                editedBy : editedBy
+                            }, {new: true}, function (err, result) {
+                                var wTracks;
+
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                project = result ? result.get('project') : null;
+                                wTracks = result ? result.wTracks : [];
+
+                                async.each(wTracks, function (wTr, callback) {
+                                    wTrackModel.findByIdAndUpdate(wTr, {$set: {revenue: 0}}, callback);
+                                }, function () {
+                                    event.emit('updateProjectDetails', {req: req, _id: project, jobId: result._id});
+                                    cb();
+                                });
+                            });
+
+                        });
+                    }
+                });
+
+                event.emit('recalculateRevenue', {   // added for recalculating projectInfo after editing quotation
+                    quotation  : quotation,
+                    wTrackModel: wTrackModel,
+                    req        : req
+                });
+
+            });
         });
-
     }
 
     this.create = function (req, res, next) {

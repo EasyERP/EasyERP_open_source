@@ -354,6 +354,7 @@ define([
             var jobId;
             var currentJob;
             var product = $('.productsDd');
+            var price;
 
             if (_id !== 'createJob') {
 
@@ -406,7 +407,16 @@ define([
                 datePicker.remove();
 
                 //  $($parrents[2]).attr('class', 'editable');
-                $('#editInput').val(salePrice); // changed on def 0
+//                $('#editInput').val(salePrice); // changed on def 0
+
+                if (currentJob && currentJob.budget) {
+                    price = currentJob.budget.budgetTotal.revenueSum;
+                    if (price) {
+                        $trEl.find('[data-name="price"]').find('input').val(price);
+                    } else {
+                        $trEl.find('[data-name="price"]').find('input').val('0');
+                    }
+                }
 
                 /* if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
                  $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
