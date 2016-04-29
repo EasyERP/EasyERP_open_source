@@ -652,31 +652,36 @@ var Project = function (models, event) {
                                 $lookup: {
                                     from        : "projectMembers",
                                     localField  : "_id",
-                                    foreignField: "projectId", as: "projectMembers"
+                                    foreignField: "projectId",
+                                    as: "projectMembers"
                                 }
                             }, {
                                 $lookup: {
                                     from        : "Customers",
                                     localField  : "customer",
-                                    foreignField: "_id", as: "customer"
+                                    foreignField: "_id",
+                                    as: "customer"
                                 }
                             }, {
                                 $lookup: {
                                     from        : "workflows",
                                     localField  : "workflow",
-                                    foreignField: "_id", as: "workflow"
+                                    foreignField: "_id",
+                                    as: "workflow"
                                 }
                             }, {
                                 $lookup: {
                                     from        : "Users",
                                     localField  : "createdBy.user",
-                                    foreignField: "_id", as: "createdBy.user"
+                                    foreignField: "_id",
+                                    as: "createdBy.user"
                                 }
                             }, {
                                 $lookup: {
                                     from        : "Users",
                                     localField  : "editedBy.user",
-                                    foreignField: "_id", as: "editedBy.user"
+                                    foreignField: "_id",
+                                    as: "editedBy.user"
                                 }
                             }, {
                                 $project: {
@@ -724,7 +729,8 @@ var Project = function (models, event) {
                                 $lookup: {
                                     from        : "Employees",
                                     localField  : "salesmanager.employeeId",
-                                    foreignField: "_id", as: "salesmanager"
+                                    foreignField: "_id",
+                                    as: "salesmanager"
                                 }
                             }, {
                                 $project: {
@@ -954,19 +960,22 @@ var Project = function (models, event) {
                                         $lookup: {
                                             from        : "projectMembers",
                                             localField  : "_id",
-                                            foreignField: "projectId", as: "projectMembers"
+                                            foreignField: "projectId",
+                                            as: "projectMembers"
                                         }
                                     }, {
                                         $lookup: {
                                             from        : "Customers",
                                             localField  : "customer",
-                                            foreignField: "_id", as: "customer"
+                                            foreignField: "_id",
+                                            as: "customer"
                                         }
                                     }, {
                                         $lookup: {
                                             from        : "workflows",
                                             localField  : "workflow",
-                                            foreignField: "_id", as: "workflow"
+                                            foreignField: "_id",
+                                            as: "workflow"
                                         }
                                     }, {
                                         $project: {
@@ -997,7 +1006,8 @@ var Project = function (models, event) {
                                         $lookup: {
                                             from        : "Employees",
                                             localField  : "salesmanager.employeeId",
-                                            foreignField: "_id", as: "salesmanager"
+                                            foreignField: "_id",
+                                            as: "salesmanager"
                                         }
                                     }, {
                                         $project: {
