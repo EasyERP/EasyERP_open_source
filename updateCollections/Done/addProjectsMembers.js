@@ -122,8 +122,7 @@ query.exec(function (error, _res) {
         var parallelTasks = [];
         var fieldsToDelete = {
             'salesManagers': '',
-            'projectManagers': '',
-            'bonus': ''
+            'projectManagers': ''
         };
 
         function SalesMember(prCallback) {

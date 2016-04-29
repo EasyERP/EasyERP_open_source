@@ -134,7 +134,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 asyncLoadImgs: function (model) {
                     var currentModel = model.id ? model.toJSON() : model;
                     var id = currentModel._id;
-                    var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id : currentModel.projectmanager;
+                    var pm = currentModel.salesmanager && currentModel.salesmanager._id ? currentModel.salesmanager._id : currentModel.salesmanager;
                     var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
 
                     if (pm) {

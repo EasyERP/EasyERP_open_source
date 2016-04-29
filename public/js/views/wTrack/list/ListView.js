@@ -206,7 +206,7 @@ define([
 
                 if (!project) {
                     project = model.get('project');
-                    assigned = project.projectmanager;
+                    assigned = project.salesmanager;
                     customer = project.customer;
                 }
 
@@ -733,7 +733,7 @@ define([
             var attr = targetElement.attr('id') || targetElement.data('content');
             var elementType = '#' + attr;
             var jobs = {};
-            var projectManager;
+            var salesManager;
             var assignedContainer;
             var project;
             var employee;
@@ -765,9 +765,9 @@ define([
                 if (elementType === '#project') {
                     this.projectModel = element;
 
-                    projectManager = element.projectmanager.name.first + ' ' + element.projectmanager.name.last;
+                    salesManager = element.salesmanager ? element.salesmanager.name.first + ' ' + element.salesmanager.name.last : '';
                     assignedContainer = tr.find('[data-content="assigned"]');
-                    assignedContainer.text(projectManager);
+                    assignedContainer.text(salesManager);
                     targetElement.attr('data-id', id);
                     $job = tr.find('[data-content="jobs"]');
                     $job.text('');
