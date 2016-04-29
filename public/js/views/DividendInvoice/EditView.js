@@ -7,7 +7,7 @@ define([
     'views/Assignees/AssigneesView',
     'views/DividendInvoice/InvoiceProductItems',
     'views/salesInvoice/wTrack/wTrackRows',
-    'views/Payment/CreateView',
+    'views/DividendPayments/CreateView',
     'views/salesInvoice/EmailView',
     'views/Payment/list/ListHeaderInvoice',
     'common',
