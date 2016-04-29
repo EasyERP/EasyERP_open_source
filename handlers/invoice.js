@@ -1188,7 +1188,7 @@ var Invoice = function (models, event) {
                                         $filter: {
                                             input: '$projectMembers',
                                             as   : 'projectMember',
-                                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}
                                         }
                                     },
                                     expense         : 1,
@@ -1846,7 +1846,7 @@ var Invoice = function (models, event) {
                         $filter: {
                             input: '$projectMembers',
                             as   : 'projectMember',
-                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}
                         }
                     },
                     workflow     : {$arrayElemAt: ["$workflow", 0]},
@@ -2041,7 +2041,7 @@ var Invoice = function (models, event) {
                     }]
                 }]
             }, {
-                $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]
+                $eq: ['$salesmanagers.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
             }]
         };
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
@@ -2087,7 +2087,7 @@ var Invoice = function (models, event) {
                     $filter: {
                         input: '$projectMembers',
                         as   : 'projectMember',
-                        cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                        cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}
                     }
                 },
                 dueDate      : 1,

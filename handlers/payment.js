@@ -344,7 +344,7 @@ var Payment = function (models, event) {
                                     $filter: {
                                         input: '$projectMembers',
                                         as   : 'projectMember',
-                                        cond : {$eq: ["$$projectMember.projectPositionId", objectId(MAIN_CONSTANTS.SALES_MANAGER_ROLE)]}
+                                        cond : {$eq: ["$$projectMember.projectPositionId", objectId(MAIN_CONSTANTS.SALESMANAGER)]}
                                     }
                                 },
                                 forSale           : 1,
@@ -1235,7 +1235,7 @@ var Payment = function (models, event) {
                         $filter: {
                             input: '$projectMembers',
                             as   : 'projectMember',
-                            cond : {$eq: ['$$projectMember.projectPositionId', objectId(MAIN_CONSTANTS.SALES_MANAGER_ROLE)]}
+                            cond : {$eq: ['$$projectMember.projectPositionId', objectId(MAIN_CONSTANTS.SALESMANAGER)]}
                         }
                     },
                     forSale         : 1,
