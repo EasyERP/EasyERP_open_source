@@ -11,7 +11,7 @@
 </thead>
 <tbody>
 <tr class="revenueBySales">
-    <td colspan="<%= count + 3%>">Profit By Sales</td>
+    <td colspan="<%= count + 3%>">Profit</td>
 </tr>
 <%collection.sales.forEach(function(sales){
     if(sales._id) {%>
@@ -35,7 +35,7 @@
     <td data-content="totalBySales"></td>
 </tr>
 <tr class="totalBySales">
-    <td colspan="<%= count + 2%>">Revenue By Sales</td>
+    <td colspan="<%= count + 2%>">Revenue</td>
 </tr>
 <%collection.sales.forEach(function(sales){
 if(sales._id) {%>
