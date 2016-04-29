@@ -17,6 +17,7 @@
     "tests"
   ],
   "dependencies": {
+    "spin.js": "spinjs#^2.3.2",
     "async": "~1.2.1",
     "moment": "~2.11.2",
     "backbone.memento": "~0.4.1",
