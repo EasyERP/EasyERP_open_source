@@ -134,9 +134,9 @@ define([
                 var balance = parseFloat($currentEl.find("#balance").text());
 
                 var payments = {
-                    total  : total,
-                    unTaxed: unTaxed,
-                    balance: balance
+                    total  :  100 * total,
+                    unTaxed:  100 * unTaxed,
+                    balance:  100 * balance
                 };
 
                 var currency = {
@@ -154,10 +154,10 @@ define([
                         productId = targetEl.data('id');
                         if (productId) {
                             quantity = parseFloat(targetEl.find('[data-name="quantity"] input').val());
-                            price = parseFloat(targetEl.find('[data-name="price"] input').val());
+                            price = 100 * parseFloat(targetEl.find('[data-name="price"] input').val());
                             description = targetEl.find('[data-name="productDescr"] input').val();
                             taxes = targetEl.find('.taxes').text();
-                            amount = targetEl.find('.amount').text();
+                            amount =  100 * targetEl.find('.amount').text();
 
                             if (!quantity || !price) {
                                 return App.render({

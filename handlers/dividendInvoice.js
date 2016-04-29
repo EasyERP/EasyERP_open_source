@@ -88,7 +88,7 @@ var Proforma = function (models) {
 
             saveObject.workflow = workflow._id;
             saveObject.paymentInfo.balance = data.paymentInfo.total;
-            //dividendInvoice.journal = CONSTANTS.dividendInvoice_JOURNAL;
+            saveObject.journal = CONSTANTS.DIVIDEND_INVOICE_JOURNAL;
 
             saveObject.currency.rate = oxr.rates[data.currency.name];
 
@@ -106,7 +106,7 @@ var Proforma = function (models) {
         function createJournalEntry(dividendInvoice, callback) {
             var body = {
                 currency      : CONSTANTS.CURRENCY_USD,
-                journal       : CONSTANTS.dividendInvoice_JOURNAL,
+                journal       : CONSTANTS.DIVIDEND_INVOICE_JOURNAL,
                 sourceDocument: {
                     model: 'dividendInvoice',
                     _id  : dividendInvoice._id
@@ -126,7 +126,7 @@ var Proforma = function (models) {
         }
 
         parallelTasks = [fetchFirstWorkflow, getRates];
-        waterFallTasks = [parallel, createDividendInvoice/*, createJournalEntry*/];
+        waterFallTasks = [parallel, createDividendInvoice, createJournalEntry];
 
         async.waterfall(waterFallTasks, function (err, result) {
             if (err) {

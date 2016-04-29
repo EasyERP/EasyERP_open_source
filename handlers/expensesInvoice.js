@@ -92,7 +92,7 @@ var Proforma = function (models) {
 
             saveObject.workflow = workflow._id;
             saveObject.paymentInfo.balance = data.paymentInfo.total;
-            //expensesInvoice.journal = CONSTANTS.expensesInvoice_JOURNAL;
+            saveObject.journal = CONSTANTS.EXPENSES_INVOICE_JOURNAL;
 
             saveObject.currency.rate = oxr.rates[data.currency.name];
 
@@ -110,7 +110,7 @@ var Proforma = function (models) {
         function createJournalEntry(expensesInvoice, callback) {
             var body = {
                 currency      : CONSTANTS.CURRENCY_USD,
-                journal       : CONSTANTS.expensesInvoice_JOURNAL,
+                journal       : CONSTANTS.EXPENSES_INVOICE_JOURNAL,
                 sourceDocument: {
                     model: 'expensesInvoice',
                     _id  : expensesInvoice._id
@@ -130,7 +130,7 @@ var Proforma = function (models) {
         }
 
         parallelTasks = [fetchFirstWorkflow, getRates];
-        waterFallTasks = [parallel, createExpensesInvoice/*, createJournalEntry*/];
+        waterFallTasks = [parallel, createExpensesInvoice, createJournalEntry];
 
         async.waterfall(waterFallTasks, function (err, result) {
             if (err) {

@@ -833,10 +833,21 @@ var Payment = function (models, event) {
 
         function createJournalEntry(invoice, payment, waterfallCallback) {
             var journal = MAIN_CONSTANTS.PAYMENT_JOURNAL;
+            var invoiceType = invoice._type;
 
-            if (invoice._type === 'Proforma'){
-                journal = MAIN_CONSTANTS.PROFORMA_JOURNAL;
+            if (!isForSale) {
+                waterfallCallback = payment;
+                payment = invoice;
             }
+
+            if (invoiceType === 'Proforma'){
+                journal = MAIN_CONSTANTS.PROFORMA_JOURNAL;
+            } else if (invoiceType === 'expensesInvoicePayment') {
+                journal = MAIN_CONSTANTS.EXPENSES_PAYMENT_JOURNAL;
+            } else if (invoiceType === 'dividendInvoicePayment') {
+                journal = MAIN_CONSTANTS.DIVIDEND_PAYMENT_JOURNAL;
+            }
+
             var paymentBody = {
                 journal       : journal,
                 currency      : MAIN_CONSTANTS.CURRENCY_USD,
@@ -934,12 +945,7 @@ var Payment = function (models, event) {
             });
         }
 
-        waterfallTasks = [getRates, fetchInvoice, savePayment, invoiceUpdater];
-
-        // todo refactor for journal entry (temp)
-        if (mid !== 97 && mid !== 100) {
-            waterfallTasks.push(createJournalEntry);
-        }
+        waterfallTasks = [getRates, fetchInvoice, savePayment, invoiceUpdater, createJournalEntry];
 
         if (isForSale) { // todo added condition for purchase payment
             waterfallTasks.push(updateWtrack);
@@ -1449,17 +1455,20 @@ var Payment = function (models, event) {
 
                                                         var payments = result.get('payments') ? result.get('payments') : [];
 
-                                                        async.each(products, function (product) {
+                                                        if (result._type !== 'expensesInvoice' && result._type !== 'dividendInvoice') {
 
-                                                            JobsModel.findByIdAndUpdate(product.jobs, {payments: payments}, {new: true}, function (err, result) {
-                                                                if (err) {
-                                                                    return next(err);
-                                                                }
+                                                            async.each(products, function (product) {
 
-                                                                project = result ? result.get('project') : null;
+                                                                JobsModel.findByIdAndUpdate(product.jobs, {payments: payments}, {new: true}, function (err, result) {
+                                                                    if (err) {
+                                                                        return next(err);
+                                                                    }
+
+                                                                    project = result ? result.get('project') : null;
+                                                                });
+
                                                             });
-
-                                                        });
+                                                        }
 
                                                         if (project) {
                                                             event.emit('fetchInvoiceCollection', {project: project});
