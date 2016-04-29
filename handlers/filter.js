@@ -1874,6 +1874,13 @@ var Filters = function (models) {
         function getDashJobsFiltersValues(callback) {
             Jobs.aggregate([{
                 $lookup: {
+                    from        : "projectMembers",
+                    localField  : "project",
+                    foreignField: "projectId",
+                    as          : "projectMembers"
+                }
+            }, {
+                $lookup: {
                     from        : "Project",
                     localField  : "project",
                     foreignField: "_id",
@@ -1909,7 +1916,19 @@ var Filters = function (models) {
                     project  : {$arrayElemAt: ["$project", 0]},
                     budget   : 1,
                     quotation: {$arrayElemAt: ["$quotation", 0]},
-                    invoice  : {$arrayElemAt: ["$invoice", 0]}
+                    invoice  : {$arrayElemAt: ["$invoice", 0]},
+                    salesmanagers: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                        }
+                    }
+                }
+            }, {
+                $unwind: {
+                    path                      : '$salesmanagers',
+                    preserveNullAndEmptyArrays: true
                 }
             }, {
                 $lookup: {
@@ -1921,9 +1940,9 @@ var Filters = function (models) {
             }, {
                 $lookup: {
                     from        : "Employees",
-                    localField  : "project.projectmanager",
+                    localField  : "salesmanagers.employeeId",
                     foreignField: "_id",
-                    as          : "projectmanager"
+                    as: "salesmanager"
                 }
             }, {
                 $project: {
@@ -1952,7 +1971,7 @@ var Filters = function (models) {
                     budget        : 1,
                     quotation     : 1,
                     invoice       : 1,
-                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    salesmanager  : {$arrayElemAt: ["$salesmanager", 0]},
                     payment       : {
                         paid : {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
@@ -1969,7 +1988,7 @@ var Filters = function (models) {
                     budget        : 1,
                     quotation     : 1,
                     invoice       : 1,
-                    projectmanager: 1,
+                    salesmanager  : 1,
                     payment       : 1
                 }
             }, {
@@ -2001,11 +2020,11 @@ var Filters = function (models) {
                             name: '$project.projectName'
                         }
                     },
-                    'projectManager': {
+                    'salesmanager': {
                         $addToSet: {
-                            _id : '$projectmanager._id',
+                            _id : '$salesmanager._id',
                             name: {
-                                $concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']
+                                $concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']
                             }
                         }
                     },

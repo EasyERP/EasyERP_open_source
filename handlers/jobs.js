@@ -39,7 +39,7 @@ var Jobs = function (models, event) {
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
-                case 'projectManager':
+                case 'salesmanager':
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
@@ -97,6 +97,37 @@ var Jobs = function (models, event) {
         var data = req.query;
         var forDashboard = true;
         var filter = data ? data.filter : {};
+        var salesManagerMatch = {
+            $and: [
+                {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
+                {
+                    $or: [{
+                        $and: [{
+                            $eq: ['$$projectMember.startDate', null]
+                        }, {
+                            $eq: ['$$projectMember.endDate', null]
+                        }]
+                    }, {
+                        $and: [{
+                            $lte: ['$$projectMember.startDate', '$quotation.orderDate']
+                        }, {
+                            $eq: ['$$projectMember.endDate', null]
+                        }]
+                    }, {
+                        $and: [{
+                            $eq: ['$$projectMember.startDate', null]
+                        }, {
+                            $gte: ['$$projectMember.endDate', '$quotation.orderDate']
+                        }]
+                    }, {
+                        $and: [{
+                            $lte: ['$$projectMember.startDate', '$quotation.orderDate']
+                        }, {
+                            $gte: ['$$projectMember.endDate', '$quotation.orderDate']
+                        }]
+                    }]
+                }]
+        };
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
@@ -116,50 +147,78 @@ var Jobs = function (models, event) {
         JobsModel
             .aggregate([{
                 $lookup: {
-                    from: "Project",
-                    localField: "project",
-                    foreignField: "_id", as: "project"
+                    from        : 'projectMembers',
+                    localField  : 'project',
+                    foreignField: 'projectId',
+                    as          : 'projectMembers'
                 }
             }, {
                 $lookup: {
-                    from: "Invoice",
-                    localField: "invoice",
-                    foreignField: "_id", as: "invoice"
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id',
+                    as          : 'project'
                 }
             }, {
                 $lookup: {
-                    from: "workflows",
-                    localField: "workflow",
-                    foreignField: "_id", as: "workflow"
+                    from        : 'Invoice',
+                    localField  : 'invoice',
+                    foreignField: '_id',
+                    as          : 'invoice'
                 }
             }, {
                 $lookup: {
-                    from: "Quotation",
-                    localField: "quotation",
-                    foreignField: "_id", as: "quotation"
+                    from        : 'workflows',
+                    localField  : 'workflow',
+                    foreignField: '_id',
+                    as          : 'workflow'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Quotation',
+                    localField  : 'quotation',
+                    foreignField: '_id',
+                    as          : 'quotation'
                 }
             }, {
                 $project: {
                     name: 1,
-                    workflow: {$arrayElemAt: ["$workflow", 0]},
-                    type: 1,
+                    workflow: {$arrayElemAt: ['$workflow', 0]},
+                    salesmanagers : {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : salesManagerMatch
+                        }
+                    },
                     wTracks: 1,
-                    project: {$arrayElemAt: ["$project", 0]},
-                    budget: 1,
-                    quotation: {$arrayElemAt: ["$quotation", 0]},
-                    invoice: {$arrayElemAt: ["$invoice", 0]}
+                    project: {$arrayElemAt: ['$project', 0]},
+                    quotation: {$arrayElemAt: ['$quotation', 0]},
+                    invoice: {$arrayElemAt: ['$invoice', 0]}
+                }
+            }, {
+                $project: {
+                    name         : 1,
+                    workflow     : 1,
+                    salesmanagers: {$arrayElemAt: ['$salesmanagers', 0]},
+                    wTracks      : 1,
+                    project      : 1,
+                    quotation    : 1,
+                    invoice      : 1
                 }
             }, {
                 $lookup: {
-                    from: "Payment",
-                    localField: "invoice._id",
-                    foreignField: "invoice", as: "payments"
+                    from        : 'Payment',
+                    localField  : 'invoice._id',
+                    foreignField: 'invoice',
+                    as          : 'payments'
                 }
             }, {
                 $lookup: {
-                    from: "Employees",
-                    localField: "project.projectmanager",
-                    foreignField: "_id", as: "projectmanager"
+                    from        : 'Employees',
+                    localField  : 'salesmanagers.employeeId',
+                    foreignField: '_id',
+                    as          : 'salesmanagers'
                 }
             }, {
                 $project: {
@@ -182,31 +241,14 @@ var Jobs = function (models, event) {
                     },
                     name: 1,
                     workflow: 1,
-                    type: 1,
                     wTracks: 1,
                     project: 1,
-                    budget: 1,
                     quotation: 1,
-                    invoice: 1,
-                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    salesmanager: {$arrayElemAt: ['$salesmanagers', 0]},
                     payment: {
                         paid: {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
                     }
-                }
-            }, {
-                $project: {
-                    order: 1,
-                    name: 1,
-                    workflow: 1,
-                    type: 1,
-                    wTracks: 1,
-                    project: 1,
-                    budget: 1,
-                    quotation: 1,
-                    invoice: 1,
-                    payment: 1,
-                    projectmanager: 1
                 }
             }, {
                 $match: queryObject
@@ -238,6 +280,37 @@ var Jobs = function (models, event) {
         var count = parseInt(data.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = parseInt(data.page, 10);
         var skip;
+        var salesManagerMatch = {
+            $and: [
+                {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
+                {
+                    $or: [{
+                        $and: [{
+                            $eq: ['$$projectMember.startDate', null]
+                        }, {
+                            $eq: ['$$projectMember.endDate', null]
+                        }]
+                    }, {
+                        $and: [{
+                            $lte: ['$$projectMember.startDate', '$quotation.orderDate']
+                        }, {
+                            $eq: ['$$projectMember.endDate', null]
+                        }]
+                    }, {
+                        $and: [{
+                            $eq: ['$$projectMember.startDate', null]
+                        }, {
+                            $gte: ['$$projectMember.endDate', '$quotation.orderDate']
+                        }]
+                    }, {
+                        $and: [{
+                            $lte: ['$$projectMember.startDate', '$quotation.orderDate']
+                        }, {
+                            $gte: ['$$projectMember.endDate', '$quotation.orderDate']
+                        }]
+                    }]
+                }]
+        };
 
         var filter = data ? data.filter : {};
 
@@ -276,27 +349,38 @@ var Jobs = function (models, event) {
         JobsModel
             .aggregate([{
                 $lookup: {
+                    from: "projectMembers",
+                    localField: "project",
+                    foreignField: "projectId",
+                    as: "projectMembers"
+                }
+            }, {
+                $lookup: {
                     from: "Project",
                     localField: "project",
-                    foreignField: "_id", as: "project"
+                    foreignField: "_id",
+                    as: "project"
                 }
             }, {
                 $lookup: {
                     from: "Invoice",
                     localField: "invoice",
-                    foreignField: "_id", as: "invoice"
+                    foreignField: "_id",
+                    as: "invoice"
                 }
             }, {
                 $lookup: {
                     from: "workflows",
                     localField: "workflow",
-                    foreignField: "_id", as: "workflow"
+                    foreignField: "_id",
+                    as: "workflow"
                 }
             }, {
                 $lookup: {
                     from: "Quotation",
                     localField: "quotation",
-                    foreignField: "_id", as: "quotation"
+                    foreignField: "_id",
+                    as: "quotation"
                 }
             }, {
                 $project: {
@@ -307,7 +391,8 @@ var Jobs = function (models, event) {
                     project: {$arrayElemAt: ["$project", 0]},
                     budget: 1,
                     quotation: {$arrayElemAt: ["$quotation", 0]},
-                    invoice: {$arrayElemAt: ["$invoice", 0]}
+                    invoice: {$arrayElemAt: ["$invoice", 0]},
+                    projectMembers : 1
                 }
             }, {
                 $lookup: {
@@ -348,7 +433,13 @@ var Jobs = function (models, event) {
                     budget: 1,
                     quotation: 1,
                     invoice: 1,
-                    projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
+                    salesmanagers : {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : salesManagerMatch
+                        }
+                    },
                     payment: {
                         paid: {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
@@ -356,17 +447,37 @@ var Jobs = function (models, event) {
                 }
             }, {
                 $project: {
-                    order: 1,
-                    name: 1,
-                    workflow: 1,
-                    type: 1,
-                    wTracks: 1,
-                    project: 1,
-                    budget: 1,
-                    quotation: 1,
-                    invoice: 1,
-                    payment: 1,
-                    projectmanager: 1
+                    order       : 1,
+                    name        : 1,
+                    workflow    : 1,
+                    type        : 1,
+                    wTracks     : 1,
+                    project     : 1,
+                    budget      : 1,
+                    quotation   : 1,
+                    invoice     : 1,
+                    payment     : 1,
+                    salesmanager: {$arrayElemAt: ["$salesmanagers", 0]}
+                }
+            }, {
+                $lookup: {
+                    from: 'Employees',
+                    localField: 'salesmanager.employeeId',
+                    foreignField: '_id', as: 'salesmanager'
+                }
+            }, {
+                $project: {
+                    order       : 1,
+                    name        : 1,
+                    workflow    : 1,
+                    type        : 1,
+                    wTracks     : 1,
+                    project     : 1,
+                    budget      : 1,
+                    quotation   : 1,
+                    invoice     : 1,
+                    payment     : 1,
+                    salesmanager: {$arrayElemAt: ['$salesmanager', 0]}
                 }
             }, {
                 $match: queryObject
