@@ -22,6 +22,7 @@ var Payment = function (models, event) {
     var JobsSchema = mongoose.Schemas['jobs'];
     var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
     var ExpensesInvoiceSchema = mongoose.Schemas['expensesInvoice'];
+    var DividendInvoiceSchema = mongoose.Schemas['dividendInvoice'];
     var ProformaSchema = mongoose.Schemas['Proforma'];
     var payRollInvoiceSchema = mongoose.Schemas['payRollInvoice'];
     var InvoiceSchema = mongoose.Schemas['Invoice'];
@@ -142,6 +143,7 @@ var Payment = function (models, event) {
         var bonus = options ? !!options.bonus : false;
         var salary = options ? !!options.salary : false;
         var expenses = options ? !!options.expenses : false;
+        var dividend = options ? !!options.dividend : false;
         var Payment = returnModel(req, options);
         var supplier = 'Customers';
         var paymentMethod = "PaymentMethod";
@@ -199,6 +201,11 @@ var Payment = function (models, event) {
                     if (expenses) {
                         optionsObject.$and.push({_type: 'expensesInvoicePayment'});
                     }
+
+                    if (dividend) {
+                        optionsObject.$and.push({_type: 'dividendInvoicePayment'});
+                    }
+
 
                     departmentSearcher = function (waterfallCallback) {
                         models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
@@ -463,10 +470,12 @@ var Payment = function (models, event) {
         var bonus = type === 'supplier';
         var salary = type === 'salary';
         var expenses = type === 'expenses';
+        var dividend = type === 'dividend';
         var options = {
             forSale: forSale,
             bonus  : bonus,
             salary : salary,
+            dividend : dividend,
             expenses: expenses
         };
 
@@ -673,6 +682,10 @@ var Payment = function (models, event) {
             PaymentSchema = mongoose.Schemas.ExpensesInvoicePayment;
             Payment = models.get(req.session.lastDb, 'expensesInvoicePayment', PaymentSchema);
             Invoice = models.get(req.session.lastDb, 'expensesInvoice', ExpensesInvoiceSchema);
+        } else if (mid === 100) {
+            PaymentSchema = mongoose.Schemas.DividendInvoicePayment;
+            Payment = models.get(req.session.lastDb, 'dividendInvoicePayment', PaymentSchema);
+            Invoice = models.get(req.session.lastDb, 'dividendInvoice', DividendInvoiceSchema);
         }
 
         function fetchInvoice(waterfallCallback) {
@@ -727,6 +740,7 @@ var Payment = function (models, event) {
             var payments;
             var products = invoice.products;
             var paymentDate = new Date(payment.date);
+            var invoiceType = invoice._type;
             var request = {
                 query  : {
                     source      : 'purchase',
@@ -745,9 +759,9 @@ var Payment = function (models, event) {
                 paymentDate = new Date();
             }
 
-            if (invoice._type === 'wTrackInvoice') {
+            if (invoiceType === 'wTrackInvoice' || invoiceType === 'expensesInvoice' || invoiceType === 'dividendInvoice') {
                 wId = 'Sales Invoice';
-            } else if (invoice._type === 'Proforma') {
+            } else if (invoiceType === 'Proforma') {
                 wId = 'Proforma';
                 request.query = {};
             } else {
@@ -759,7 +773,7 @@ var Payment = function (models, event) {
             totalToPay = parseFloat(totalToPay).toFixed(2);
             paid = parseFloat(paid).toFixed(2);
 
-            isNotFullPaid = paid < totalToPay;
+            isNotFullPaid = parseFloat(paid) < parseFloat(totalToPay);
 
             if (isNotFullPaid) {
                 request.query.status = 'In Progress';
@@ -922,9 +936,8 @@ var Payment = function (models, event) {
 
         waterfallTasks = [getRates, fetchInvoice, savePayment, invoiceUpdater];
 
-
         // todo refactor for journal entry (temp)
-        if (mid !== 97) {
+        if (mid !== 97 && mid !== 100) {
             waterfallTasks.push(createJournalEntry);
         }
 
@@ -954,6 +967,7 @@ var Payment = function (models, event) {
         var bonus = type === 'supplier';
         var salary = type === 'salary';
         var expenses = type === 'expenses';
+        var dividend = type === 'dividend';
         var supplier = 'Customers';
         var paymentMethod = 'PaymentMethod';
 
@@ -997,6 +1011,10 @@ var Payment = function (models, event) {
 
         if (expenses) {
             queryObject.$and.push({_type: 'expensesInvoicePayment'});
+        }
+
+        if (dividend) {
+            queryObject.$and.push({_type: 'dividendInvoicePayment'});
         }
 
         departmentSearcher = function (waterfallCallback) {
@@ -1349,12 +1367,13 @@ var Payment = function (models, event) {
                                             .populate('currency._id')
                                             .exec(function (err, invoice) {
 
-                                                paid = fx(removed.paidAmount).from(paymentCurrency.name).to(invoice.currency._id.name);
-
                                                 var paymentInfo = invoice.get('paymentInfo');
                                                 var project = invoice ? invoice.get('project') : null;
                                                 var payments = invoice ? invoice.get('payments') : [];
                                                 var removable = true;
+                                                var invoiceType = invoice._type;
+
+                                                paid = fx(removed.paidAmount).from(paymentCurrency.name).to(invoice.currency._id.name);
 
                                                 payments.forEach(function (payment) {
                                                     if (payment._type !== 'ProformaPayment') {
@@ -1369,9 +1388,10 @@ var Payment = function (models, event) {
                                                     },
                                                     session: req.session
                                                 };
-                                                if (invoice._type === 'wTrackInvoice' || invoice._type === 'expensesInvoice') {
+
+                                                if (invoiceType === 'wTrackInvoice' || invoiceType === 'expensesInvoice' || invoiceType === 'dividendInvoice') {
                                                     wId = 'Sales Invoice';
-                                                } else if (invoice._type === 'Proforma') {
+                                                } else if (invoiceType === 'Proforma') {
                                                     wId = 'Proforma';
                                                     request.query = {};
                                                 } else {

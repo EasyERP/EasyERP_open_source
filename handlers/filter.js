@@ -133,6 +133,7 @@ var Filters = function (models) {
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 ExpensesPayments: getExpensesPaymentsFiltersValues,
+                DividendPayments: getDividendPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
                 salesProduct    : getProductsFiltersValues,
                 Quotation       : getQuotationFiltersValues,
@@ -1380,6 +1381,86 @@ var Filters = function (models) {
             ExpensesPayments.aggregate([{
                 $match: {
                     _type: 'expensesInvoicePayment'
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $project: {
+                    supplier  : {$arrayElemAt: ["$supplier", 0]},
+                    paymentRef: 1,
+                    year      : 1,
+                    month     : 1,
+                    workflow  : 1
+                }
+            }, {
+                $project: {
+                    supplier  : 1,
+                    paymentRef: 1,
+                    year      : 1,
+                    month     : 1,
+                    workflow  : 1
+                }
+            }, {
+                $group: {
+                    _id         : null,
+                    'supplier'  : {
+                        $addToSet: {
+                            _id       : '$supplier._id',
+                            name      : {
+                                $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                            },
+                            isEmployee: '$supplier.isEmployee'
+                        }
+                    },
+                    'paymentRef': {
+                        $addToSet: {
+                            _id : '$paymentRef',
+                            name: {'$ifNull': ['$paymentRef', 'None']}
+                        }
+                    },
+                    'year'      : {
+                        $addToSet: {
+                            _id : '$year',
+                            name: {'$ifNull': ['$year', 'None']}
+                        }
+                    },
+                    'month'     : {
+                        $addToSet: {
+                            _id : '$month',
+                            name: {'$ifNull': ['$month', 'None']}
+                        }
+                    },
+                    'workflow'  : {
+                        $addToSet: {
+                            _id : '$workflow',
+                            name: {'$ifNull': ['$workflow', 'None']}
+                        }
+                    }
+                }
+            }
+            ], function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        }
+
+        function getDividendPaymentsFiltersValues(callback) {
+            ExpensesPayments.aggregate([{
+                $match: {
+                    _type: 'dividendInvoicePayment'
                 }
             }, {
                 $lookup: {

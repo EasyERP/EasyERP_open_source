@@ -322,6 +322,20 @@ define([], function () {
                 backend: 'workflow'
             }
         },
+        DividendPayments: {
+            'Year'      : {
+                view   : 'year',
+                backend: 'year'
+            },
+            'Month'     : {
+                view   : 'month',
+                backend: 'month'
+            },
+            'Status'    : {
+                view   : 'workflow',
+                backend: 'workflow'
+            }
+        },
         Product         : {
             'Product Name'    : {
                 view   : 'name',
@@ -557,6 +571,7 @@ define([], function () {
         EXPENSESINVOICE   : 'ExpensesInvoice',
         EXPENSESPAYMENTS  : 'ExpensesPayments',
         DIVIDENDINVOICE   : 'DividendInvoice',
+        DIVIDENDPAYMENTS  : 'DividendPayments',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',

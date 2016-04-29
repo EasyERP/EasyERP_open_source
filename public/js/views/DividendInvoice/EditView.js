@@ -100,7 +100,7 @@ define([
                 model       : self.currentModel,
                 redirect    : self.redirect,
                 collection  : self.collection,
-                mid         : 97,
+                mid         : 100,
                 currency    : model.currency,
                 eventChannel: self.eventChannel
             });

@@ -55,6 +55,8 @@ module.exports = (function () {
 
     var ExpensesInvoicePaymentSchema = PaymentSchema.extend({});
 
+    var DividendInvoicePaymentSchema = PaymentSchema.extend({});
+
     var salaryPaymentSchema = basePaymentSchema.extend({
         /* invoice      : {
          _id     : {type: ObjectId, ref: 'Invoice', default: null},
@@ -89,6 +91,7 @@ module.exports = (function () {
     mongoose.model('InvoicePayment', InvoicePaymentSchema);
     mongoose.model('ProformaPayment', ProformaPaymentSchema);
     mongoose.model('expensesInvoicePayment', ExpensesInvoicePaymentSchema);
+    mongoose.model('dividendInvoicePayment', DividendInvoicePaymentSchema);
     mongoose.model('salaryPayment', salaryPaymentSchema);
     mongoose.model('wTrackPayOut', payOutSchema);
 
@@ -96,6 +99,7 @@ module.exports = (function () {
     ProformaPaymentSchema.pre('save', setName);
     InvoicePaymentSchema.pre('save', setName);
     ExpensesInvoicePaymentSchema.pre('save', setName);
+    DividendInvoicePaymentSchema.pre('save', setName);
 
     function setName(next) {
         var payment = this;
@@ -224,6 +228,7 @@ module.exports = (function () {
     mongoose.Schemas.InvoicePayment = InvoicePaymentSchema;
     mongoose.Schemas.ProformaPayment = ProformaPaymentSchema;
     mongoose.Schemas.ExpensesInvoicePayment = ExpensesInvoicePaymentSchema;
+    mongoose.Schemas.DividendInvoicePayment = DividendInvoicePaymentSchema;
     mongoose.Schemas.salaryPayment = salaryPaymentSchema;
     mongoose.Schemas.wTrackPayOut = payOutSchema;
 })();

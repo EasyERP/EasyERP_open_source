@@ -103,7 +103,7 @@ define([
 
             saveItem: function () {
                 var self = this;
-                var mid = 97;
+                var mid = 100;
                 var $currentEl = this.$el;
                 var errors = $currentEl.find('.errorContent');
                 var selectedProducts = $currentEl.find('.productItem');
