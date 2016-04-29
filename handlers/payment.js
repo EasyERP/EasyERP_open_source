@@ -252,7 +252,7 @@ var Payment = function (models, event) {
                                 }]
                             }, {
                                 $and: [{
-                                    $lte: ['$salesmanagers.startDate', '$orderDate']
+                                    $lte: ['$salesmanagers.startDate', '$date']
                                 }, {
                                     $eq: ['$salesmanagers.endDate', null]
                                 }]
@@ -260,13 +260,13 @@ var Payment = function (models, event) {
                                 $and: [{
                                     $eq: ['$salesmanagers.startDate', null]
                                 }, {
-                                    $gte: ['$salesmanagers.endDate', '$orderDate']
+                                    $gte: ['$salesmanagers.endDate', '$date']
                                 }]
                             }, {
                                 $and: [{
-                                    $lte: ['$salesmanagers.startDate', '$orderDate']
+                                    $lte: ['$salesmanagers.startDate', '$date']
                                 }, {
-                                    $gte: ['$salesmanagers.endDate', '$orderDate']
+                                    $gte: ['$salesmanagers.endDate', '$date']
                                 }]
                             }]
                         };
@@ -344,7 +344,7 @@ var Payment = function (models, event) {
                                     $filter: {
                                         input: '$projectMembers',
                                         as   : 'projectMember',
-                                        cond : {$eq: ["$$projectMember.projectPositionId", objectId(MAIN_CONSTANTS.SALES_MANAGER_ROLE)]}
+                                        cond : {$eq: ["$$projectMember.projectPositionId", objectId(MAIN_CONSTANTS.SALESMANAGER)]}
                                     }
                                 },
                                 forSale           : 1,
@@ -1157,7 +1157,7 @@ var Payment = function (models, event) {
                     }]
                 }, {
                     $and: [{
-                        $lte: ['$salesmanagers.startDate', '$orderDate']
+                        $lte: ['$salesmanagers.startDate', '$date']
                     }, {
                         $eq: ['$salesmanagers.endDate', null]
                     }]
@@ -1165,13 +1165,13 @@ var Payment = function (models, event) {
                     $and: [{
                         $eq: ['$salesmanagers.startDate', null]
                     }, {
-                        $gte: ['$salesmanagers.endDate', '$orderDate']
+                        $gte: ['$salesmanagers.endDate', '$date']
                     }]
                 }, {
                     $and: [{
-                        $lte: ['$salesmanagers.startDate', '$orderDate']
+                        $lte: ['$salesmanagers.startDate', '$date']
                     }, {
-                        $gte: ['$salesmanagers.endDate', '$orderDate']
+                        $gte: ['$salesmanagers.endDate', '$date']
                     }]
                 }]
             };
@@ -1235,7 +1235,7 @@ var Payment = function (models, event) {
                         $filter: {
                             input: '$projectMembers',
                             as   : 'projectMember',
-                            cond : {$eq: ['$$projectMember.projectPositionId', objectId(MAIN_CONSTANTS.SALES_MANAGER_ROLE)]}
+                            cond : {$eq: ['$$projectMember.projectPositionId', objectId(MAIN_CONSTANTS.SALESMANAGER)]}
                         }
                     },
                     forSale         : 1,

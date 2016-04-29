@@ -197,7 +197,7 @@ var Filters = function (models) {
                         $filter: {
                             input: '$salesmanagers',
                             as   : 'projectMember',
-                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}
                         }
                     }
                 }
@@ -1053,7 +1053,7 @@ var Filters = function (models) {
                         $filter: {
                             input: '$projectMembers',
                             as   : 'projectMember',
-                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}
                         }
                     }
                 }
@@ -1169,7 +1169,7 @@ var Filters = function (models) {
                         $filter: {
                             input: '$projectMembers',
                             as   : 'projectMember',
-                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}
                         }
                     }
                 }
@@ -1284,7 +1284,7 @@ var Filters = function (models) {
                             $filter: {
                                 input: '$projectMembers',
                                 as   : 'projectMember',
-                                cond : {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                                cond : {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]}
                             }
                         },
                         name          : 1,
@@ -1688,7 +1688,7 @@ var Filters = function (models) {
                             $filter: {
                                 input: '$projectMembers',
                                 as   : 'projectMember',
-                                cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                                cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}
                             }
                         }
                     }
@@ -1800,7 +1800,7 @@ var Filters = function (models) {
                             $filter: {
                                 input: '$projectMembers',
                                 as   : 'projectMember',
-                                cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                                cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}
                             }
                         }
                     }
