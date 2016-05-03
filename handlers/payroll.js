@@ -855,10 +855,6 @@ var PayRoll = function (models) {
                         }
                     }
 
-                    // if (fire && fire.length && dateToCreate >= fire[0]){
-                    //     salary = 0;
-                    // }
-
                     if ((moment(new Date(hire[0].date)).month() === moment(dateToCreate).month()) && (moment(new Date(hire[0].date)).year() === moment(dateToCreate).year())){
                         daysInMonth = moment(dateToCreate).endOf('month').date();
                         payForDay = salary / daysInMonth;
@@ -871,6 +867,8 @@ var PayRoll = function (models) {
                         payForDay = salary / daysInMonth;
 
                         salary = payForDay * moment(new Date(fire[0])).date();
+                    } else if ((moment(new Date(fire[0])).month() < moment(dateToCreate).month()) && (moment(new Date(fire[0])).year() <= moment(dateToCreate).year())){
+                        salary = 0;
                     }
 
                     if (salary) {

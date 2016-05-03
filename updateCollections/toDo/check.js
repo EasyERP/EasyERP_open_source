@@ -1,6 +1,3 @@
-/**
- * Created by roma on 28.04.16.
- */
 var mongoose = require('mongoose');
 var async = require('async');
 var moment = require('../../public/js/libs/moment/moment');
@@ -17,6 +14,7 @@ var connectOptions = {
     j   : true
 };
 
+//var dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, connectOptions);
 var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
@@ -25,6 +23,8 @@ dbObject.once('open', function callback() {
     var wTrackModel = dbObject.model("wTrack", wTrackSchema);
     var EmployeeModel = dbObject.model('Employees', employeeSchema);
     var wTrackArray = [];
+    var counterDeleted = 0;
+    var counterUpdated = 0;
 
     wTrackModel.find({}, function (err, result) {
         if (err) {
@@ -32,7 +32,6 @@ dbObject.once('open', function callback() {
         }
 
         async.each(result, function (wTrack, cb) {
-            var month = wTrack.month;
             var year = wTrack.year;
             var week = wTrack.week;
             var employee = wTrack.employee;
@@ -40,7 +39,9 @@ dbObject.once('open', function callback() {
             var dayFirst;
             var dateLast;
             var dateFirst;
+            var dataForUpdate = {};
             var i;
+
             for (i = 1; i <= 7; i++) {
                 if (wTrack[i]) {
                     day = i;
@@ -53,10 +54,9 @@ dbObject.once('open', function callback() {
                 }
             }
             if (day && dayFirst) {
-                dateLast = moment().isoWeekYear(wTrack.isoYear || year).month(month - 1).week(week).day(day);
-                dateFirst = moment().isoWeekYear(wTrack.isoYear || year).month(month - 1).week(week).day(dayFirst);
+                dateLast = moment().year(wTrack.isoYear || year).isoWeek(week).day(day).startOf('day');
+                dateFirst = moment().year(wTrack.isoYear || year).isoWeek(week).day(dayFirst).endOf('day');
             } else {
-
                 cb();
                 return;
             }
@@ -68,20 +68,86 @@ dbObject.once('open', function callback() {
                     var dataHire;
                     var isEmployee;
                     var dataFire;
+                    var weekDayFirst;
+                    var weekDayLast;
+                    var weekHire;
+                    var weekFire;
+                    var worked = wTrack.worked;
+
 
                     if (err) {
-                        return cb(err);
+                        cb(err);
+                        return;
                     }
 
                     dataHire = emp.hire[0];
+                    weekHire = moment(dataHire).isoWeek() + moment(dataHire).year()*100;
                     isEmployee = emp.isEmployee;
                     dataFire = emp.fire[emp.fire.length - 1] || null;
 
-                    if (dataHire > dateFirst.toDate() || (!isEmployee && dataFire && dataFire < dateLast.toDate())) {
-                        wTrackArray.push(wTrack._id);
-                        console.log(wTrack._id, wTrack.worked, wTrack.month, wTrack.year);
+                    if (dataFire) {
+                        weekFire = moment(dataFire).isoWeek() + moment(dataFire).year()*100;
                     }
-                    cb();
+
+                    if (weekHire > wTrack.dateByWeek || (!isEmployee && weekFire && (weekFire < wTrack.dateByWeek))) {
+                        counterDeleted += 1;
+                        wTrackModel.findByIdAndRemove(wTrack._id,  function (err){
+                            if (err){
+                                return cb(err);
+                            }
+
+                            counterDeleted += 1;
+                            cb();
+                        });
+                        return;
+                    }
+
+                    if (dataHire > dateFirst.toDate() || (!isEmployee && dataFire && dataFire < dateLast.toDate())) {
+                        dataForUpdate = {};
+                        weekDayFirst = moment(dataHire).isoWeekday();
+                        if (dataFire){
+                            weekDayLast = moment(dataFire).isoWeekday();
+                        }
+
+                        if (dataHire > dateFirst.toDate()) {
+                            for (i = weekDayFirst - 1; i >= 1; i--) {
+                                dataForUpdate[i] = null;
+                                worked = worked - wTrack[i];
+                            }
+                        }
+                        if (!isEmployee && dataFire && dataFire < dateLast.toDate()) {
+                            for (i = 7; i >= weekDayLast + 1; i--) {
+                                dataForUpdate[i] = null;
+                                worked = worked - wTrack[i];
+                            }
+                        }
+
+                        if (Object.keys(dataForUpdate).length) {
+                            if (worked) {
+                                dataForUpdate.worked  = worked;
+                                wTrackModel.update({_id : wTrack._id}, {$set : dataForUpdate}, function (err){
+                                    if (err){
+                                        return cb(err);
+                                    }
+                                    counterUpdated += 1;
+                                    cb();
+                                });
+                            } else {
+                                wTrackModel.findByIdAndRemove(wTrack._id,  function (err){
+                                    if (err){
+                                        return cb(err);
+                                    }
+
+                                    counterDeleted += 1;
+                                    cb();
+                                });
+                            }
+                        } else {
+                            cb();
+                        }
+                    } else {
+                        cb();
+                    }
                 });
             } else {
                 cb();
@@ -90,9 +156,12 @@ dbObject.once('open', function callback() {
         }, function (err) {
             if (err) {
                 console.log(err);
+                return;
             }
 
-            console.log(wTrackArray.length);
+            console.log('Good');
+            console.log(counterDeleted);
+            console.log(counterUpdated);
         });
     });
 

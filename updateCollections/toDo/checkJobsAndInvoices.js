@@ -13,7 +13,9 @@ var journalSchema = mongoose.Schemas.journal;
 var InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
 var PaymentSchema = mongoose.Schemas.wTrackPayOut;
 var wTrackSchema = mongoose.Schemas.wTrack;
+var QuotationSchema = mongoose.Schemas.Quotation;
 var ObjectId = mongoose.Types.ObjectId;
+var count = 0;
 
 
 var connectOptions = {
@@ -29,6 +31,7 @@ dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
     var Invoice = dbObject.model("wTrackInvoice", InvoiceSchema);
+    var Quotation = dbObject.model("Quotation", QuotationSchema);
     var Payment = dbObject.model("Payment", PaymentSchema);
     var wTrackModel = dbObject.model("wTrack", wTrackSchema);
 
@@ -82,10 +85,11 @@ dbObject.once('open', function callback() {
 
                 var resultArray = _.difference(newwTracks, jobsFinished);
                 var newAr = [];
+
                 resultArray.forEach(function (je) {
                     newAr.push(ObjectId(je));
                 });
-                Job.aggregate([{
+                /*Job.aggregate([{
                     $match: {
                         "_id": {$in: newAr}
                     }
@@ -100,7 +104,9 @@ dbObject.once('open', function callback() {
                     if (err){
                         return console.log(err);
                     }
-                    JE.aggregate([{
+
+                    console.log(resultjob.length);
+                   /!* JE.aggregate([{
                         $match: {
                             "sourceDocument._id": {$in: resultjob[0].wTracks},
                             credit: {$gt: 0}
@@ -112,9 +118,42 @@ dbObject.once('open', function callback() {
                     }}], function (err, result) {
                        // console.dir(result)
                         console.dir(resultjob)
-                    });
+                    });*!/
                 });
+*/
+                console.log(resultArray.length);
+                 resultArray.forEach(function(job){
+                     Quotation.find({"products.jobs": job}, function (err, result) {
+                         if (err){
+                             return console.log(err);
+                         }
 
+                         var body = result[0];
+
+                         var id = body._id;
+
+                         delete body._id;
+
+                         body.workflow = '55647d932e4aa3804a765ec9';
+
+
+                         body.approved = false;
+
+
+                         var invoice = new Invoice(body);
+
+                         invoice.set('invoiceDate', new Date("29 Dec 2014"));
+                         invoice.set('sourceDocument', id);
+
+                         invoice.save(function (err, result) {
+                             console.log(count++);
+
+                             Job.update({_id: job}, {$set: {invoice: result._id}}, function (err, result) {
+
+                             });
+                         });
+                     })
+                 });
             });
         });
     });

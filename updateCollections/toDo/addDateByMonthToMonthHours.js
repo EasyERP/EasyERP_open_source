@@ -28,7 +28,7 @@ dbObject.once('open', function callback() {
 
         result.forEach(function (el) {
             var date = el.date;
-            var year = moment(date).isoWeekYear();
+            var year = moment(date).year();
             var month = moment(date).month();
             var dateByMonth = year * 100 + month + 1;
 
