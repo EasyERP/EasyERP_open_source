@@ -544,6 +544,7 @@ define([], function () {
         CHARTOFACCOUNT    : 'ChartOfAccount',
         JOURNAL           : 'journal',
         JOURNALENTRY      : 'journalEntry',
+        INVENTORYREPORT   : 'inventoryReport',
         INVOICECHARTS     : 'invoiceCharts',
         SALARYREPORT      : 'salaryReport',
         TRIALBALANCE      : 'trialBalance',
