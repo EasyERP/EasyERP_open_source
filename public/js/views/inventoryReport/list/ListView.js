@@ -123,6 +123,7 @@ define([
             },
 
             showMoreContent: function (newModels) {
+                var self = this;
                 var holder = this.$el;
                 var itemView;
                 var page = holder.find("#currentShowPage").val();
@@ -136,6 +137,8 @@ define([
                 });
 
                 holder.append(itemView.render());
+
+                this.calcTotal();
 
                 itemView.undelegateEvents();
 
@@ -158,10 +161,11 @@ define([
                 var $curEl = this.$el;
                 var $rows = $curEl.find('#listTable tr').not('#listFooter');
 
-                var total = 0;
+
                 var columns = ['openingBalance', 'inwards', 'outwards', 'closingBalance'];
 
                 columns.forEach(function (col) {
+                    var total = 0;
                     $rows.each(function (index, element) {
                         var $curElement = $(element);
                         var $val = $curElement.find('.' + col);
@@ -197,9 +201,11 @@ define([
 
                 this.renderCheckboxes();
 
-                this.renderFilter(this);
+                this.calcTotal();
 
-                this.renderPagination($currentEl, this);
+               // this.renderFilter(this);
+
+               // this.renderPagination($currentEl, this);
 
                 App.filter = this.filter;
 

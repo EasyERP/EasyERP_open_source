@@ -13,7 +13,7 @@ define([
         'use strict';
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
-            contentType: CONSTANTS.JOURNALENTRY,
+            contentType: CONSTANTS.INVENTORYREPORT,
             template   : _.template(ContentTopBarTemplate),
 
             events: {
@@ -116,7 +116,7 @@ define([
                 startTime.text(startDate);
                 endTime.text(endDate);
 
-                Custom.cacheToApp('journalEntryDateRange', {
+                Custom.cacheToApp('inventoryReportDateRange', {
                     startDate: startDate,
                     endDate  : endDate
                 });
@@ -184,7 +184,7 @@ define([
 
             render: function () {
                 var viewType = Custom.getCurrentVT();
-                var dateRange = Custom.retriveFromCash('journalEntryDateRange');
+                var dateRange = Custom.retriveFromCash('inventoryReportDateRange');
 
                 this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
                 this.endDate = common.utcDateToLocaleDate(dateRange.endDate);

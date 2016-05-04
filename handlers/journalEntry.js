@@ -4784,6 +4784,246 @@ var Module = function (models, event) {
         skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         findJobs = function (wfCb) {
+            JobsModel.find({}, function (err, result) {
+                if (err) {
+                    return wfCb(err);
+                }
+
+                var jobs = [];
+                var wTracks = [];
+
+                result.forEach(function (el) {
+                    jobs.push(el._id);
+                    wTracks.push(el.wTracks);
+                });
+
+                wTracks = _.flatten(wTracks);
+
+                wfCb(null, wTracks, jobs);
+            });
+        };
+
+        composeReport = function (wTracks, jobs, wfCb) {
+            var parallelTasks;
+
+            var getOpening = function (pCb) {
+                Model.aggregate([{
+                    $match: {
+                        date                : {$lt: startDate},
+                        debit               : {$gt: 0},
+                        "sourceDocument._id": {$in: wTracks}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "wTrack",
+                        localField  : "sourceDocument._id",
+                        foreignField: "_id", as: "sourceDocument"
+                    }
+                }, {
+                    $project: {
+                        sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
+                        debit         : 1
+                    }
+                }, {
+                    $group: {
+                        _id  : '$sourceDocument.jobs',
+                        debit: {$sum: '$debit'}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "jobs",
+                        localField  : "_id",
+                        foreignField: "_id", as: "_id"
+                    }
+                }, {
+                    $project: {
+                        _id  : {$arrayElemAt: ['$_id', 0]},
+                        debit: 1
+                    }
+                }, {
+                    $project: {
+                        _id  : '$_id._id',
+                        name : '$_id.name',
+                        debit: 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pCb(err);
+                    }
+
+                    pCb(null, result);
+                });
+            };
+
+            var getInwards = function (pCb) {
+                Model.aggregate([{
+                    $match: {
+                        date                : {$lte: endDate, $gte: startDate},
+                        debit               : {$gt: 0},
+                        "sourceDocument._id": {$in: wTracks}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "wTrack",
+                        localField  : "sourceDocument._id",
+                        foreignField: "_id", as: "sourceDocument"
+                    }
+                }, {
+                    $project: {
+                        sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
+                        debit         : 1
+                    }
+                }, {
+                    $group: {
+                        _id  : '$sourceDocument.jobs',
+                        debit: {$sum: '$debit'}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "jobs",
+                        localField  : "_id",
+                        foreignField: "_id", as: "_id"
+                    }
+                }, {
+                    $project: {
+                        _id  : {$arrayElemAt: ['$_id', 0]},
+                        debit: 1
+                    }
+                }, {
+                    $project: {
+                        _id  : '$_id._id',
+                        name : '$_id.name',
+                        debit: 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pCb(err);
+                    }
+
+                    pCb(null, result);
+                });
+            };
+
+            var getOutwards = function (pCb) {
+                Model.aggregate([{
+                    $match: {
+                        date                : {$lte: endDate, $gte: startDate},
+                        debit               : {$gt: 0},
+                        "sourceDocument._id": {$in: jobs},
+                        journal             : objectId(CONSTANTS.FINISHED_JOB_JOURNAL)
+                    }
+                }, {
+                    $lookup: {
+                        from        : "jobs",
+                        localField  : "sourceDocument._id",
+                        foreignField: "_id", as: "sourceDocument"
+                    }
+                }, {
+                    $project: {
+                        sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
+                        debit         : 1
+                    }
+                }, {
+                    $project: {
+                        _id  : '$sourceDocument._id',
+                        name : '$sourceDocument.name',
+                        debit: 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pCb(err);
+                    }
+
+                    pCb(null, result);
+                });
+            };
+
+            parallelTasks = [getOpening, getInwards, getOutwards];
+
+            async.parallel(parallelTasks, function (err, result) {
+                if (err) {
+                    return wfCb(err);
+                }
+
+                var resultArray = [];
+
+                jobs.forEach(function (job) {
+                    var newElement = {};
+
+                    var opening = _.find(result[0], function (el) {
+                        return el._id.toString() === job.toString()
+                    });
+                    var inwards = _.find(result[1], function (el) {
+                        return el._id.toString() === job.toString()
+                    });
+                    var outwards = _.find(result[2], function (el) {
+                        return el._id.toString() === job.toString()
+                    });
+
+                    newElement._id = job;
+                    newElement.name = opening ? opening.name : (inwards ? inwards.name : '');
+
+                    newElement.openingBalance = opening ? opening.debit / 100 : 0;
+                    newElement.inwards = inwards ? inwards.debit / 100 : 0;
+                    newElement.outwards = outwards ? outwards.debit / 100 : 0;
+                    newElement.closingBalance = newElement.openingBalance + newElement.inwards - newElement.outwards;
+
+
+                    if (newElement.name){
+                        resultArray.push(newElement);
+                    }
+
+                });
+
+                resultArray = _.sortBy(resultArray, function(el){
+                    return el[Object.keys(sort)[0]];
+                });
+
+                wfCb(null, resultArray);
+            });
+        };
+
+        waterfallTasks = [findJobs, composeReport];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+
+    };
+
+    this.totalCollectionInventory = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var JobsModel = models.get(req.session.lastDb, 'jobs', jobsSchema);
+        var query = req.query;
+        var findJobs;
+        var composeReport;
+        var waterfallTasks;
+        var sort = {name: 1};
+        var startDate = query.filter.startDate.value;
+        var endDate = query.filter.endDate.value;
+        var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
+        var page = parseInt(query.page, 10);
+        var skip;
+
+        if (query.sort) {
+            sort = {};
+
+            for (var sortKey in query.sort) {
+                sort[sortKey] = parseInt(query.sort[sortKey]);
+            }
+        }
+
+        startDate = new Date(moment(new Date(startDate)).startOf('day'));
+        endDate = new Date(moment(new Date(endDate)).endOf('day'));
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
+
+        findJobs = function (wfCb) {
             JobsModel.aggregate([{
                 $skip: skip
             }, {
@@ -4965,17 +5205,21 @@ var Module = function (models, event) {
                     });
 
                     newElement._id = job;
-                    newElement.name = opening ? opening.name : (inwards ? inwards.name : '---');
+                    newElement.name = opening ? opening.name : (inwards ? inwards.name : '');
 
-                    newElement.openigBalance = opening ? opening.debit / 100 : 0;
+                    newElement.openingBalance = opening ? opening.debit / 100 : 0;
                     newElement.inwards = inwards ? inwards.debit / 100 : 0;
                     newElement.outwards = outwards ? outwards.debit / 100 : 0;
-                    newElement.closingBalance = newElement.openigBalance + newElement.inwards - newElement.outwards;
+                    newElement.closingBalance = newElement.openingBalance + newElement.inwards - newElement.outwards;
+
 
                     resultArray.push(newElement);
+
                 });
 
-                resultArray = _.sortBy(resultArray, sort);
+                resultArray = _.sortBy(resultArray, function(el){
+                    return el[Object.keys(sort)[0]];
+                }, sort[Object.keys(sort)[0]]);
 
                 wfCb(null, resultArray);
             });
@@ -4988,21 +5232,9 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-            res.status(200).send(result);
-        });
-
-    };
-
-    this.totalCollectionInventory = function (req, res, next) {
-        var JobsModel = models.get(req.session.lastDb, 'jobs', jobsSchema);
-
-        JobsModel.find({}, function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
             res.status(200).send({count: result.length});
         });
+
     };
 
     this.getCashFlow = function (req, res, next) {
