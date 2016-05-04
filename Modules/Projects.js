@@ -692,7 +692,7 @@ var Project = function (models, event) {
                                         $filter: {
                                             input: '$projectMembers',
                                             as   : 'projectMember',
-                                            cond : {$and : [{$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}, {$eq: ["$$projectMember.endDate", null]}] }
+                                            cond : {$and : [{$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}, {$eq: ["$$projectMember.endDate", null]}] }
                                         }
                                     },
                                     workflow        : {$arrayElemAt: ["$workflow", 0]},
@@ -988,7 +988,7 @@ var Project = function (models, event) {
                                                 $filter: {
                                                     input: '$projectMembers',
                                                     as   : 'projectMember',
-                                                    cond : {$and: [{$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}, {$eq: ["$$projectMember.endDate", null]}]}
+                                                    cond : {$and: [{$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}, {$eq: ["$$projectMember.endDate", null]}]}
                                                 }
                                             }
                                         }

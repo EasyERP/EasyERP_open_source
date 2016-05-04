@@ -99,7 +99,7 @@ var Jobs = function (models, event) {
         var filter = data ? data.filter : {};
         var salesManagerMatch = {
             $and: [
-                {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
+                {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]},
                 {
                     $or: [{
                         $and: [{
@@ -282,7 +282,7 @@ var Jobs = function (models, event) {
         var skip;
         var salesManagerMatch = {
             $and: [
-                {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]},
+                {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]},
                 {
                     $or: [{
                         $and: [{

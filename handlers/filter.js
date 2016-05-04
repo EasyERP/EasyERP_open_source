@@ -1921,7 +1921,7 @@ var Filters = function (models) {
                         $filter: {
                             input: '$projectMembers',
                             as   : 'projectMember',
-                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALES_MANAGER_ROLE)]}
+                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}
                         }
                     }
                 }
