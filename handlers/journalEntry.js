@@ -4780,7 +4780,7 @@ var Module = function (models, event) {
         startDate = new Date(moment(new Date(startDate)).startOf('day'));
         endDate = new Date(moment(new Date(endDate)).endOf('day'));
 
-        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        //count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count; // special case for getting all
         skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
         findJobs = function (wfCb) {
