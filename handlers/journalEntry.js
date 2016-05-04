@@ -4910,7 +4910,7 @@ var Module = function (models, event) {
                         date                : {$lte: endDate, $gte: startDate},
                         debit               : {$gt: 0},
                         "sourceDocument._id": {$in: jobs},
-                        journal             : objectId(CONSTANTS.FINISHED_JOB_JOURNAL)
+                        journal             : objectId(CONSTANTS.CLOSED_JOB)/*objectId(CONSTANTS.FINISHED_JOB_JOURNAL)*/
                     }
                 }, {
                     $lookup: {
@@ -4968,8 +4968,7 @@ var Module = function (models, event) {
                     newElement.outwards = outwards ? outwards.debit / 100 : 0;
                     newElement.closingBalance = newElement.openingBalance + newElement.inwards - newElement.outwards;
 
-
-                    if (newElement.name){
+                    if (newElement.outwards){
                         resultArray.push(newElement);
                     }
 
