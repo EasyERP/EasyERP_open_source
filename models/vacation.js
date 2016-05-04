@@ -13,7 +13,8 @@ module.exports = (function () {
         month: Number,
         year: Number,
         vacArray: Array,
-        monthTotal: Number
+        monthTotal: Number,
+        dateByMonth: Number
     }, {collection: 'Vacation'});
 
     vacationSchema.set('toJSON', {virtuals: true});

@@ -42,9 +42,9 @@ var Invoice = function (models, event) {
         var cb = waterfallCb;
 
         journalEntryBody.date = invoice.invoiceDate;
-        journalEntryBody.journal = invoice.journal;
+        journalEntryBody.journal = invoice.journal || CONSTANTS.INVOICE_JOURNAL;
         journalEntryBody.currency = invoice.currency || 'USD';
-        journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.balance : 0;
+        journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
         journalEntryBody.sourceDocument = {};
         journalEntryBody.sourceDocument._id = invoice._id;
         journalEntryBody.sourceDocument.model = 'Invoice';

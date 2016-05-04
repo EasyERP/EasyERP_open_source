@@ -18,7 +18,8 @@ module.exports = (function () {
         adminSalaryBudget: {type: Number, default: 0},
         estimatedHours: {type: Number, default: 0},
         actualHours: {type: Number, default: 0},
-        overheadRate: {type: Number, default: 0}
+        overheadRate: {type: Number, default: 0},
+        dateByMonth: {type: Number, default: 0}
     }, {collection: 'MonthHours'});
 
     mongoose.model('MonthHours', monthHoursSchema);

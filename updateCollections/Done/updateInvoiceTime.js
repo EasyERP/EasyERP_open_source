@@ -5,8 +5,9 @@ var mongoose = require('mongoose');
 require('../../models/index.js');
 var async = require('async');
 var moment = require('../../public/js/libs/moment/moment');
-
+var wTrackSchema = mongoose.Schemas.wTrack;
 var _ = require('../../node_modules/underscore/underscore');
+
 var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
@@ -16,14 +17,62 @@ dbObject.once('open', function callback() {
     var counter = 0;
     var EmployeeSchema = mongoose.Schemas['Employee'];
     var Employee = dbObject.model("Employees", EmployeeSchema);
+    var wTrack = dbObject.model("wTrack", wTrackSchema);
 
-    Employee.find({isEmployee: false}, {fire: 1}, function (err, result) {
+
+    // Employee.find({_id: "55b92ad221e4b7c40f000034"}, {fire: 1, hire: 1}, function (err, result) {
+    //     if (err) {
+    //         return console.log(err);
+    //     }
+    //     var firedEmpl = [];
+    //     var wTRackArray = [];
+    //     async.each(result, function (emp, cb) {
+    //         console.log(emp.fire.length);
+    //
+    //         firedEmpl.push(emp._id);
+    //
+    //         JE.remove({"sourceDocument._id": emp._id, date: {$gte: new Date("8 Aug 2014"), $lte: new Date("29 Dec 2014")}}, function (err, result) {
+    //             wTrack.find({employee: {$in: firedEmpl}}, function (err, result) {
+    //
+    //                 result.forEach(function (wtr) {
+    //                     wTRackArray.push(wtr._id);
+    //                 });
+    //
+    //                 JE.remove({"sourceDocument._id": {$in: wTRackArray}, "sourceDocument.model": 'wTrack', date: {$gte: new Date("8 Aug 2014"), $lte: new Date("29 Dec 2014")}}, function (err, result) {
+    //                     cb();
+    //                 });
+    //
+    //             });
+    //         })
+    //     }, function (err, result) {
+    //         console.log('good');
+    //     });
+    //
+    // });
+    Employee.find({isEmployee: false}, {fire: 1, hire: 1}, function (err, result) {
         if (err) {
             return console.log(err);
         }
+        var firedEmpl = [];
+        var wTRackArray = [];
         async.each(result, function (emp, cb) {
             console.log(emp.fire.length);
-            JE.remove({"sourceDocument._id": emp._id, date: {$gte: new Date(emp.fire[0])}}, cb)
+
+            firedEmpl.push(emp._id);
+
+            JE.remove({"sourceDocument._id": emp._id, date: {$lte: new Date(emp.hire[0])}}, function (err, result) {
+                wTrack.find({employee: {$in: firedEmpl}}, function (err, result) {
+
+                    result.forEach(function (wtr) {
+                        wTRackArray.push(wtr._id);
+                    });
+
+                    JE.remove({"sourceDocument._id": {$in: wTRackArray}, "sourceDocument.model": 'wTrack', date: {$lte: new Date(emp.hire[0])}}, function (err, result) {
+                        cb();
+                    });
+
+                });
+            })
         }, function (err, result) {
             console.log('good');
         });

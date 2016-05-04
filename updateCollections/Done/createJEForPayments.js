@@ -13,8 +13,15 @@ process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 require('../../config/' + process.env.NODE_ENV);
 
 var oxr = require('open-exchange-rates');
+var connectOptions = {
+    user: 'easyerp',
+    pass: '1q2w3e!@#',
+    w   : 1,
+    j   : true
+};
 
-var dbObject = mongoose.createConnection('localhost', 'production', 28017);
+//var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
@@ -23,7 +30,7 @@ dbObject.once('open', function callback() {
     var JE = dbObject.model("journalEntry", journalEntrySchema);
     var Currency = dbObject.model('currency', CurrencySchema);
 
-    var query = Payment.find({forSale: true, "_type" : "Payment"}).populate('invoice').lean();
+    var query = Payment.find({forSale: true, "_type" : {$in: ["Payment", "ProformaPayment"]}}).populate('invoice').lean();
     var count = 0;
 
     function createReconciled(body, dbIndex, cb, uId) {
@@ -169,14 +176,19 @@ dbObject.once('open', function callback() {
 
     query.exec(function (err, result) {
 
-        JE.remove({journal: CONSTANTS.PAYMENT_JOURNAL}, function (err, removed) {
+        JE.remove({journal: {$in: [CONSTANTS.PAYMENT_JOURNAL, CONSTANTS.PROFORMA_JOURNAL]}}, function (err, removed) {
             async.each(result, function (model, cb) {
                 var date = moment(new Date(model.date));
+                var journlal = CONSTANTS.PAYMENT_JOURNAL;
 
                 if (model.invoice){
+                    if (model.invoice._type === 'Proforma'){
+                        journlal = CONSTANTS.PROFORMA_JOURNAL;
+                    }
+
                     var body = {
                         currency      : model.invoice.currency._id,
-                        journal       : CONSTANTS.PAYMENT_JOURNAL,
+                        journal       : journlal,
                         date          : new Date(date),
                         sourceDocument: {
                             model: 'Payment',
@@ -187,7 +199,7 @@ dbObject.once('open', function callback() {
 
                     count++;
 
-                    createReconciled(body, 'production', cb, '52203e707d4dba8813000003');
+                    createReconciled(body, 'lilyadb', cb, '52203e707d4dba8813000003');
                 } else {
                     cb();
                 }
