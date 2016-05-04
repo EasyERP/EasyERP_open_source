@@ -93,6 +93,7 @@ define([
                     filter   : this.filter
                 };
 
+                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.collection.showMore(searchObject);
                 this.changeLocationHash(1, itemsNumber, this.filter);
 
@@ -128,7 +129,6 @@ define([
                 var page = parseInt(holder.find('#currentShowPage').val(), 10) || 1; // if filter give 0 elements
 
                 holder.find('#listTable').empty();
-                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
 
                 itemView = new this.listItemView({
                     collection : newModels,
@@ -198,6 +198,7 @@ define([
                 $currentEl.append(_.template(listTemplate));
                 itemView = new ListItemView({
                     collection : this.collection,
+                    page       : this.collection.page,
                     itemsNumber: this.collection.namberToShow
                 });
 
