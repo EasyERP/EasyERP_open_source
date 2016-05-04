@@ -4946,8 +4946,9 @@ var Module = function (models, event) {
                 }
 
                 var resultArray = [];
+                var sortField = Object.keys(sort)[0];
 
-                jobs.forEach(function (job) {
+                jobs.forEach(function (job) { // need refactor on aggregate function
                     var newElement = {};
 
                     var opening = _.find(result[0], function (el) {
@@ -4974,10 +4975,26 @@ var Module = function (models, event) {
 
                 });
 
-                resultArray = _.sortBy(resultArray, function(el){
-                    return el[Object.keys(sort)[0]];
-                });
-                resultArray = resultArray.slice(skip, skip + count);
+                if (sortField) { // need refactor on aggregate function
+                    resultArray = resultArray.sort(function (a, b) {
+                        function compareField(elA, elB) {
+                            if (elA[sortField] > elB[sortField]) {
+                                return 1;
+                            } else if (elA[sortField] < elB[sortField]) {
+                                return -1;
+                            }
+                            return 0;
+                        }
+
+                        if (sort[sortField] === 1) {
+                            return compareField(a, b);
+                        } else {
+                            return compareField(b, a);
+                        }
+                    });
+                }
+
+                resultArray = resultArray.slice(skip, skip + count); // need refactor on aggregate function
 
                 wfCb(null, resultArray);
             });
