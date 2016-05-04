@@ -122,13 +122,13 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
 
-           /* showMoreContent: function (newModels) {
-                var self = this;
+            showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var itemView;
-                var page = holder.find("#currentShowPage").val();
+                var page = parseInt(holder.find('#currentShowPage').val(), 10) || 1; // if filter give 0 elements
 
-                holder.find("#listTable").empty();
+                holder.find('#listTable').empty();
+                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
 
                 itemView = new this.listItemView({
                     collection : newModels,
@@ -138,24 +138,27 @@ define([
 
                 holder.append(itemView.render());
 
-                this.calcTotal();
-
                 itemView.undelegateEvents();
 
-                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-
-                var pagination = holder.find('.pagination');
+                var pagenation = holder.find('.pagination');
                 if (newModels.length !== 0) {
-                    pagination.show();
+                    pagenation.show();
                 } else {
-                    pagination.hide();
+                    pagenation.hide();
                 }
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
+                /*if (this.filterView) {
+                 this.filterView.renderFilterContent();
+                 }*/
+
+                this.calcTotal();
+
+
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-            },*/
+            },
 
             calcTotal: function () {
                 var $curEl = this.$el;
@@ -166,11 +169,12 @@ define([
 
                 columns.forEach(function (col) {
                     var total = 0;
+
                     $rows.each(function (index, element) {
                         var $curElement = $(element);
                         var $val = $curElement.find('.' + col);
 
-                        var val = parseInt($val.attr('data-amount'), 10);
+                        var val = parseFloat($val.attr('data-amount'));
 
                         total += val;
                     });
