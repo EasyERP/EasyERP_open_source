@@ -4951,13 +4951,13 @@ var Module = function (models, event) {
                     var newElement = {};
 
                     var opening = _.find(result[0], function (el) {
-                        return el._id.toString() === job.toString()
+                        return el._id.toString() === job.toString();
                     });
                     var inwards = _.find(result[1], function (el) {
-                        return el._id.toString() === job.toString()
+                        return el._id.toString() === job.toString();
                     });
                     var outwards = _.find(result[2], function (el) {
-                        return el._id.toString() === job.toString()
+                        return el._id.toString() === job.toString();
                     });
 
                     newElement._id = job;
@@ -4968,7 +4968,7 @@ var Module = function (models, event) {
                     newElement.outwards = outwards ? outwards.debit / 100 : 0;
                     newElement.closingBalance = newElement.openingBalance + newElement.inwards - newElement.outwards;
 
-                    if (newElement.outwards){
+                    if (newElement.name){
                         resultArray.push(newElement);
                     }
 
@@ -4977,6 +4977,7 @@ var Module = function (models, event) {
                 resultArray = _.sortBy(resultArray, function(el){
                     return el[Object.keys(sort)[0]];
                 });
+                resultArray = resultArray.slice(skip, skip + count);
 
                 wfCb(null, resultArray);
             });
@@ -5008,26 +5009,11 @@ var Module = function (models, event) {
         var page = parseInt(query.page, 10);
         var skip;
 
-        if (query.sort) {
-            sort = {};
-
-            for (var sortKey in query.sort) {
-                sort[sortKey] = parseInt(query.sort[sortKey]);
-            }
-        }
-
         startDate = new Date(moment(new Date(startDate)).startOf('day'));
         endDate = new Date(moment(new Date(endDate)).endOf('day'));
 
-        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
-        skip = (page - 1) > 0 ? (page - 1) * count : 0;
-
         findJobs = function (wfCb) {
-            JobsModel.aggregate([{
-                $skip: skip
-            }, {
-                $limit: count
-            }], function (err, result) {
+            JobsModel.find({}, function (err, result) {
                 if (err) {
                     return wfCb(err);
                 }
@@ -5211,14 +5197,12 @@ var Module = function (models, event) {
                     newElement.outwards = outwards ? outwards.debit / 100 : 0;
                     newElement.closingBalance = newElement.openingBalance + newElement.inwards - newElement.outwards;
 
+                    if (newElement.name) {
+                        resultArray.push(newElement);
+                    }
 
-                    resultArray.push(newElement);
 
                 });
-
-                resultArray = _.sortBy(resultArray, function(el){
-                    return el[Object.keys(sort)[0]];
-                }, sort[Object.keys(sort)[0]]);
 
                 wfCb(null, resultArray);
             });

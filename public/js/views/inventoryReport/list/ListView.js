@@ -122,7 +122,7 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             },
 
-            showMoreContent: function (newModels) {
+           /* showMoreContent: function (newModels) {
                 var self = this;
                 var holder = this.$el;
                 var itemView;
@@ -155,7 +155,7 @@ define([
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-            },
+            },*/
 
             calcTotal: function () {
                 var $curEl = this.$el;
@@ -203,9 +203,9 @@ define([
 
                 this.calcTotal();
 
-               // this.renderFilter(this);
+                //this.renderFilter(this);
 
-               // this.renderPagination($currentEl, this);
+                this.renderPagination($currentEl, this);
 
                 App.filter = this.filter;
 

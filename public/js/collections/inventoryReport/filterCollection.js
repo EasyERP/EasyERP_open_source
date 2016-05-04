@@ -14,23 +14,22 @@ define(['Backbone',
 
         initialize: function (options) {
             var that = this;
+            var startDate = moment(new Date());
+            var endDate = moment(new Date());
+            var dateRange = custom.retriveFromCash('inventoryReportDateRange') || {};
+
             this.namberToShow = options.count;
             this.viewType = options.viewType;
             this.contentType = options.contentType;
             this.count = options.count;
             this.page = options.page || 1;
             this.filter = options.filter || custom.retriveFromCash('inventoryReport.filter');
-            var startDate = moment(new Date());
-            var endDate = moment(new Date());
+
 
             startDate.month(startDate.month() - 1);
             startDate.date(1);
             endDate.month(startDate.month());
             endDate.endOf('month');
-
-            var dateRange = custom.retriveFromCash('inventoryReportDateRange') || {};
-            this.startDate = dateRange.startDate;
-            this.endDate = dateRange.endDate;
 
             this.startDate = dateRange.startDate || new Date(startDate);
             this.endDate = dateRange.endDate || new Date(endDate);
@@ -61,8 +60,18 @@ define(['Backbone',
         showMore: function (options) {
             var that = this;
             var filterObject = options || {};
+            var dateRange = custom.retriveFromCash('inventoryReportDateRange') || {};
+            var startDate = moment(new Date());
+            var endDate = moment(new Date());
 
-            this.startTime = new Date();
+            startDate.month(startDate.month() - 1);
+            startDate.date(1);
+            endDate.month(startDate.month());
+            endDate.endOf('month');
+
+            filterObject.startDate = dateRange.startDate || new Date(startDate);
+            filterObject.endDate = dateRange.endDate || new Date(endDate);
+
 
             filterObject.page = (options && options.page) ? options.page : this.page;
             filterObject.count = (options && options.count) ? options.count : this.namberToShow;
