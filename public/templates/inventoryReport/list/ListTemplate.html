@@ -1,6 +1,7 @@
 <% collection.forEach(function(element, index){ %>
 <tr data-index="<%= index %>" data-id="<%=element._id%>">
     <td class="centerCell"><%= startNumber + index + 1 %></td>
+    <td ><a href='#easyErp/Projects/form/<%=element.project || null%>'><%=element.projectName || '-----'%></a></td>
     <td ><%=element.name%></td>
     <td class="openingBalance" data-amount="<%=element.openingBalance%>"><%=currencySplitter(element.openingBalance.toFixed(2))%></td>
     <td class="inwards" data-amount="<%=element.inwards%>"><%=currencySplitter(element.inwards.toFixed(2))%></td>
