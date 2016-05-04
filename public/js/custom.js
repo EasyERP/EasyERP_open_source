@@ -107,6 +107,7 @@ define([
                     case CONTENT_TYPES.SOURCEOFAPPLICANTS:
                     case CONTENT_TYPES.LEADS:
                     case CONTENT_TYPES.BIRTHDAYS:
+                    case CONTENT_TYPES.INVENTORYREPORT:
                     case CONTENT_TYPES.LEADSWORKFLOW:
                     case CONTENT_TYPES.MYPROFILE:
                     case CONTENT_TYPES.QUOTATION:
@@ -157,6 +158,7 @@ define([
                     case CONTENT_TYPES.DASHBOARD:
                     case CONTENT_TYPES.TASKS:
                     case CONTENT_TYPES.PROFILES:
+                    case CONTENT_TYPES.INVENTORYREPORT:
                     case CONTENT_TYPES.DEPARTMENTS:
                     case CONTENT_TYPES.USERS:
                     case CONTENT_TYPES.JOBPOSITIONS:
