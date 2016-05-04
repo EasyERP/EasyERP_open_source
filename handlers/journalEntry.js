@@ -4911,7 +4911,8 @@ var Module = function (models, event) {
                     $lookup: {
                         from        : "wTrack",
                         localField  : "sourceDocument._id",
-                        foreignField: "_id", as: "sourceDocument"
+                        foreignField: "_id",
+                        as: "sourceDocument"
                     }
                 }, {
                     $project: {
@@ -4935,9 +4936,17 @@ var Module = function (models, event) {
                         debit: 1
                     }
                 }, {
+                    $lookup: {
+                        from        : "Project",
+                        localField  : "_id.project",
+                        foreignField: "_id",
+                        as: "project"
+                    }
+                }, {
                     $project: {
                         _id  : '$_id._id',
                         name : '$_id.name',
+                        project:  {$arrayElemAt: ['$project', 0]},
                         debit: 1
                     }
                 }], function (err, result) {
@@ -4984,9 +4993,17 @@ var Module = function (models, event) {
                         debit: 1
                     }
                 }, {
+                    $lookup: {
+                        from        : "Project",
+                        localField  : "_id.project",
+                        foreignField: "_id",
+                        as: "project"
+                    }
+                }, {
                     $project: {
                         _id  : '$_id._id',
                         name : '$_id.name',
+                        project:  {$arrayElemAt: ['$project', 0]},
                         debit: 1
                     }
                 }], function (err, result) {
@@ -5044,6 +5061,7 @@ var Module = function (models, event) {
 
                 jobs.forEach(function (job) { // need refactor on aggregate function
                     var newElement = {};
+                    var project;
 
                     var opening = _.find(result[0], function (el) {
                         return el._id.toString() === job.toString();
@@ -5057,6 +5075,11 @@ var Module = function (models, event) {
 
                     newElement._id = job;
                     newElement.name = opening ? opening.name : (inwards ? inwards.name : '');
+
+                    project = opening ? opening.project : (inwards ? inwards.project : {});
+
+                    newElement.project = project._id;
+                    newElement.projectName = project.projectName;
 
                     newElement.openingBalance = opening ? opening.debit / 100 : 0;
                     newElement.inwards = inwards ? inwards.debit / 100 : 0;
