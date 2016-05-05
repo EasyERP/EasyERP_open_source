@@ -8,9 +8,20 @@
     <td><%=job.workflow ? job.workflow.name : ''%></td>
     <td><%=job.type%></td>
     <td><%=currencySplitter(job.cost ? (job.cost / 100).toFixed(2) : "0")%></td>
-    <!--<td><%= currencySplitter(job.budget.budgetTotal && job.budget.budgetTotal.costSum ? (job.budget.budgetTotal.costSum/100).toFixed(2) : "0")%></td>-->
-    <td><%=currencySplitter(job.quotation && job.order === 0 ? job.quotation.paymentInfo.total.toFixed(2) : "")%></td>
-    <td><%=currencySplitter(job.quotation && job.order === 1? job.quotation.paymentInfo.total.toFixed(2) : "")%></td>
+    <td><%=currencySplitter(job.costQA ? (job.costQA / 100).toFixed(2) : "0")%></td>
+    <td><%=currencySplitter(job.costDes ? (job.costDes / 100).toFixed(2) : "0")%></td>
+    <td><%=currencySplitter(job.costDev ? (job.costDev / 100).toFixed(2) : "0")%></td>
+    <td><%=job.percQA ? job.percQA.toFixed(2) : "0"%></td>
+    <td><%=job.percDes ? job.percDes.toFixed(2) : "0"%></td>
+    <td><%=job.percDev ? job.percDev.toFixed(2) : "0"%></td>
+    <td><%=job.margin ? job.margin.toFixed(2) : "0"%></td>
+    <td><%=job.devMargin ? job.devMargin.toFixed(2) : "0"%></td>
+    <td><%=job.hoursQa%></td>
+    <td><%=job.hoursDes%></td>
+    <td><%=job.hoursDev%></td>
+    <td><%=job.avDevRate ? job.avDevRate.toFixed(2) : "0"%></td>
+    <td><%=currencySplitter(job.profit ? job.profit.toFixed(2) : "")%></td>
+    <td><%=currencySplitter(job.quotation ? job.quotation.paymentInfo.total.toFixed(2) : "")%></td>
     <td><%=currencySplitter(job.invoice ? (job.invoice.paymentInfo.total / 100).toFixed(2) : "")%></td>
     <td><%=currencySplitter(job.payment ? (job.payment.paid / 100).toFixed(2) : "")%></td>
     <td><%=job.payment ? job.payment.count : ""%></td>
