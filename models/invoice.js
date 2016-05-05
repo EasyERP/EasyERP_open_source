@@ -103,14 +103,52 @@ module.exports = (function () {
         }]
     });
 
-    var expensesInvoiceSchema = invoiceSchema.extend({});
-    
+        var expensesInvoiceSchema = invoiceSchema.extend({});
+
+    var dividendInvoiceSchema = invoiceSchema.extend({
+        products: [{
+            _id        : false,
+            quantity   : {type: Number, default: 1},
+            unitPrice  : Number,
+            product    : {type: ObjectId, ref: 'Employees', default: null},
+            description: {type: String, default: ''},
+            taxes      : {type: Number, default: 0},
+            subTotal   : Number
+        }]
+    });
+
 /*    function setPrice(num) {
         return num * 100;
     };*/
 
+    dividendInvoiceSchema.pre('save', function (next) {
+        var invoice = this;
+        var db = invoice.db.db;
+
+        db.collection('settings').findOneAndUpdate({
+                dbName: db.databaseName,
+                name  : 'DividendDeclaration'
+            },
+            {
+                $inc: {seq: 1}
+            },
+            {
+                returnOriginal: false,
+                upsert        : true
+            },
+            function (err, rate) {
+                if (err) {
+                    return next(err);
+                }
+                invoice.name = 'DD' + rate.value.seq;
+
+                next();
+            });
+    });
+
     jobsInvoiceSchema.set('toJSON', {getters: true});
     expensesInvoiceSchema.set('toJSON', {getters: true});
+    dividendInvoiceSchema.set('toJSON', {getters: true});
     payRollInvoiceSchema.set('toJSON', {getters: true});
     invoiceSchema.set('toJSON', {getters: true});
     proformaSchema.set('toJSON', {getters: true});
@@ -119,6 +157,7 @@ module.exports = (function () {
     mongoose.model('payRollInvoice', payRollInvoiceSchema);
     mongoose.model('Invoice', invoiceSchema);
     mongoose.model('expensesInvoice', expensesInvoiceSchema);
+    mongoose.model('dividendInvoice', dividendInvoiceSchema);
     mongoose.model('Proforma', proformaSchema);
 
     if (!mongoose.Schemas) {
@@ -129,5 +168,6 @@ module.exports = (function () {
     mongoose.Schemas['payRollInvoice'] = payRollInvoiceSchema;
     mongoose.Schemas['Invoice'] = invoiceSchema;
     mongoose.Schemas['expensesInvoice'] = expensesInvoiceSchema;
+    mongoose.Schemas['dividendInvoice'] = dividendInvoiceSchema;
     mongoose.Schemas['Proforma'] = proformaSchema;
 })();

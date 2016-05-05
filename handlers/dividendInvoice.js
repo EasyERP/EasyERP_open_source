@@ -5,15 +5,13 @@ var CONSTANTS = require('../constants/mainConstants');
 var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
-var fs = require("fs");
-var pathMod = require("path");
 
 var Proforma = function (models) {
     'use strict';
 
     var async = require('async');
 
-    var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
+    var DividendInvoiceSchema = mongoose.Schemas.dividendInvoice;
     var objectId = mongoose.Types.ObjectId;
     var workflowHandler = new WorkflowHandler(models);
 
@@ -24,7 +22,7 @@ var Proforma = function (models) {
 
     this.create = function (req, res, next) {
         var dbIndex = req.session.lastDb;
-        var ExpensesInvoice = models.get(dbIndex, 'expensesInvoice', ExpensesInvoiceSchema);
+        var DividendInvoice = models.get(dbIndex, 'dividendInvoice', DividendInvoiceSchema);
         var request;
         var date = moment().format('YYYY-MM-DD');
         var data = req.body;
@@ -53,10 +51,10 @@ var Proforma = function (models) {
             async.parallel(parallelTasks, callback);
         }
 
-        function createExpensesInvoice(parallelResponse, callback) {
+        function createDividendInvoice(parallelResponse, callback) {
             var workflow;
             var err;
-            var expensesInvoice;
+            var dividendInvoice;
             var saveObject = {
                 currency: data.currency,
                 dueDate: data.dueDate,
@@ -65,8 +63,6 @@ var Proforma = function (models) {
                 invoiceDate: data.invoiceDate,
                 paymentInfo: data.paymentInfo,
                 products: data.products,
-                supplier: data.supplier,
-                name: data.supplierInvoiceNumber,
                 whoCanRW: data.whoCanRW
             };
 
@@ -92,13 +88,13 @@ var Proforma = function (models) {
 
             saveObject.workflow = workflow._id;
             saveObject.paymentInfo.balance = data.paymentInfo.total;
-            saveObject.journal = CONSTANTS.EXPENSES_INVOICE_JOURNAL;
+            saveObject.journal = CONSTANTS.DIVIDEND_INVOICE_JOURNAL;
 
             saveObject.currency.rate = oxr.rates[data.currency.name];
 
-            expensesInvoice = new ExpensesInvoice(saveObject);
+            dividendInvoice = new DividendInvoice(saveObject);
 
-            expensesInvoice.save(function (err, result) {
+            dividendInvoice.save(function (err, result) {
                 if (err) {
                     return callback(err);
                 }
@@ -107,30 +103,30 @@ var Proforma = function (models) {
             });
         }
 
-        function createJournalEntry(expensesInvoice, callback) {
+        function createJournalEntry(dividendInvoice, callback) {
             var body = {
                 currency      : CONSTANTS.CURRENCY_USD,
-                journal       : CONSTANTS.EXPENSES_INVOICE_JOURNAL,
+                journal       : CONSTANTS.DIVIDEND_INVOICE_JOURNAL,
                 sourceDocument: {
-                    model: 'expensesInvoice',
-                    _id  : expensesInvoice._id
+                    model: 'dividendInvoice',
+                    _id  : dividendInvoice._id
                 },
                 amount        : 0,
-                date          : expensesInvoice.invoiceDate
+                date          : dividendInvoice.invoiceDate
             };
 
-            var amount = expensesInvoice.currency.rate * expensesInvoice.paymentInfo.total;
+            var amount = dividendInvoice.currency.rate * dividendInvoice.paymentInfo.total;
 
             body.amount = amount;
 
             _journalEntryHandler.create(body, req.session.lastDb, function () {
             }, req.session.uId);
 
-            callback(null, expensesInvoice);
+            callback(null, dividendInvoice);
         }
 
         parallelTasks = [fetchFirstWorkflow, getRates];
-        waterFallTasks = [parallel, createExpensesInvoice, createJournalEntry];
+        waterFallTasks = [parallel, createDividendInvoice, createJournalEntry];
 
         async.waterfall(waterFallTasks, function (err, result) {
             if (err) {

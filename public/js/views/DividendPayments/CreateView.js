@@ -1,11 +1,8 @@
-/**
- * Created by soundstorm on 20.05.15.
- */
 define([
     'Backbone',
     'jQuery',
     'Underscore',
-    "text!templates/Payment/CreateTemplate.html",
+    "text!templates/DividendPayments/CreateTemplate.html",
     "collections/Persons/PersonsCollection",
     "collections/Departments/DepartmentsCollection",
     'collections/salesInvoice/filterCollection',

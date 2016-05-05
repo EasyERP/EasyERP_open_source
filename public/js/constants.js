@@ -167,6 +167,12 @@ define([], function () {
                 backend: 'workflow._id'
             }
         },
+        DividendInvoice    : {
+            'Status'      : {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
         salesProforma    : {
             'Customer'    : {
                 view   : 'supplier',
@@ -307,6 +313,20 @@ define([], function () {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
+            'Year'      : {
+                view   : 'year',
+                backend: 'year'
+            },
+            'Month'     : {
+                view   : 'month',
+                backend: 'month'
+            },
+            'Status'    : {
+                view   : 'workflow',
+                backend: 'workflow'
+            }
+        },
+        DividendPayments: {
             'Year'      : {
                 view   : 'year',
                 backend: 'year'
@@ -555,6 +575,8 @@ define([], function () {
         SALESPROFORMA     : 'salesProforma',
         EXPENSESINVOICE   : 'ExpensesInvoice',
         EXPENSESPAYMENTS  : 'ExpensesPayments',
+        DIVIDENDINVOICE   : 'DividendInvoice',
+        DIVIDENDPAYMENTS  : 'DividendPayments',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',

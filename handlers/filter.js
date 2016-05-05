@@ -2,6 +2,7 @@ var mongoose = require('mongoose');
 var Filters = function (models) {
     var wTrackSchema = mongoose.Schemas.wTrack;
     var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
+    var DividendInvoiceSchema = mongoose.Schemas.dividendInvoice;
     var CustomerSchema = mongoose.Schemas.Customer;
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
@@ -34,6 +35,7 @@ var Filters = function (models) {
         var Task = models.get(lastDB, 'Tasks', TaskSchema);
         var wTrackInvoice = models.get(lastDB, 'wTrackInvoice', wTrackInvoiceSchema);
         var ExpensesInvoice = models.get(lastDB, 'expensesInvoice', ExpensesInvoiceSchema);
+        var DividendInvoice = models.get(lastDB, 'dividendInvoice', DividendInvoiceSchema);
         var Proforma = models.get(lastDB, 'Proforma', ProformaSchema);
         var customerPayments = models.get(lastDB, 'Payment', customerPaymentsSchema);
         var ExpensesPayments = models.get(lastDB, 'expensesInvoicePayment', ExpensesInvoicePaymentSchema);
@@ -129,9 +131,11 @@ var Filters = function (models) {
                 salesProforma   : getSalesProformaFiltersValues,
                 Invoice         : getInvoiceFiltersValues,
                 ExpensesInvoice : getExpensesInvoiceFiltersValues,
+                DividendInvoice : getDividendInvoiceFiltersValues,
                 customerPayments: getCustomerPaymentsFiltersValues,
                 supplierPayments: getSupplierPaymentsFiltersValues,
                 ExpensesPayments: getExpensesPaymentsFiltersValues,
+                DividendPayments: getDividendPaymentsFiltersValues,
                 Product         : getProductsFiltersValues,
                 salesProduct    : getProductsFiltersValues,
                 Quotation       : getQuotationFiltersValues,
@@ -1013,6 +1017,46 @@ var Filters = function (models) {
             });
         }
 
+        function getDividendInvoiceFiltersValues(callback) {
+            DividendInvoice.aggregate([{
+                $match: {
+                    _type: 'dividendInvoice'
+                }
+            } ,{
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $project: {
+                    workflow: {$arrayElemAt: ["$workflow", 0]}
+                }
+            }, {
+                $group: {
+                    _id       : null,
+                    'workflow': {
+                        $addToSet: {
+                            _id : '$workflow._id',
+                            name: '$workflow.name'
+                        }
+                    }
+                }
+            }], function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        }
+
         function getSalesInvoiceFiltersValues(callback) {
             wTrackInvoice.aggregate([{
                 $match: {
@@ -1441,6 +1485,86 @@ var Filters = function (models) {
             ExpensesPayments.aggregate([{
                 $match: {
                     _type: 'expensesInvoicePayment'
+                }
+            }, {
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "supplier",
+                    foreignField: "_id", as: "supplier"
+                }
+            }, {
+                $project: {
+                    supplier  : {$arrayElemAt: ["$supplier", 0]},
+                    paymentRef: 1,
+                    year      : 1,
+                    month     : 1,
+                    workflow  : 1
+                }
+            }, {
+                $project: {
+                    supplier  : 1,
+                    paymentRef: 1,
+                    year      : 1,
+                    month     : 1,
+                    workflow  : 1
+                }
+            }, {
+                $group: {
+                    _id         : null,
+                    'supplier'  : {
+                        $addToSet: {
+                            _id       : '$supplier._id',
+                            name      : {
+                                $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
+                            },
+                            isEmployee: '$supplier.isEmployee'
+                        }
+                    },
+                    'paymentRef': {
+                        $addToSet: {
+                            _id : '$paymentRef',
+                            name: {'$ifNull': ['$paymentRef', 'None']}
+                        }
+                    },
+                    'year'      : {
+                        $addToSet: {
+                            _id : '$year',
+                            name: {'$ifNull': ['$year', 'None']}
+                        }
+                    },
+                    'month'     : {
+                        $addToSet: {
+                            _id : '$month',
+                            name: {'$ifNull': ['$month', 'None']}
+                        }
+                    },
+                    'workflow'  : {
+                        $addToSet: {
+                            _id : '$workflow',
+                            name: {'$ifNull': ['$workflow', 'None']}
+                        }
+                    }
+                }
+            }
+            ], function (err, result) {
+                if (err) {
+                    return callback(err);
+                }
+
+                if (!result.length) {
+                    return callback(null, result);
+                }
+
+                result = result[0];
+
+                callback(null, result);
+            });
+        }
+
+        function getDividendPaymentsFiltersValues(callback) {
+            ExpensesPayments.aggregate([{
+                $match: {
+                    _type: 'dividendInvoicePayment'
                 }
             }, {
                 $lookup: {
