@@ -149,18 +149,26 @@ define([
             },
 
             editRow: function (e, prev, next) {
-                //$(".newSelectList").hide();
+                var self = this;
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var mothHoursId = tr.data('id');
                 var colType = el.data('type');
-                var dataContent = el.data('content');
                 var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var tempContainer;
                 var width;
-                var insertedInput;
                 var month = parseInt(tr.find('[data-content="month"]').text(), 10);
                 var year = parseInt(tr.find('[data-content="year"]').text(), 10);
+                var changedModels;
+                var estimatedHours;
+                var adminBudget;
+                var adminSalaryBudget;
+                var vacationBudget;
+                var idleBudget;
+                var actualHours;
+                var sumBudget;
+                var hours;
+                var editModel;
 
                 if (mothHoursId && el.prop('tagName') !== 'INPUT') {
                     if (this.modelId) {
@@ -172,7 +180,6 @@ define([
                 if (isSelect) {
                     populate.showSelect(e, prev, next, this);
                 } else if (year && month) {
-
                     dataService.getData('journal/journalEntry/getAdminExpenses', {
                         month: month,
                         year: year
@@ -184,8 +191,28 @@ define([
                         var sum = result.sum;
 
                         tr.find('[data-content="adminBudget"]').text(helpers.currencySplitter((sum / 100).toFixed(2)));
-                    });
 
+                        changedModels = self.changedModels[mothHoursId];
+
+                        editModel = self.editCollection.get(mothHoursId);
+
+                        estimatedHours = changedModels.estimatedHours || editModel.get('estimatedHours');
+                        adminBudget = changedModels.adminBudget || editModel.get('adminBudget');
+                        adminSalaryBudget = changedModels.adminSalaryBudget || editModel.get('adminSalaryBudget');
+                        vacationBudget = changedModels.vacationBudget || editModel.get('vacationBudget');
+                        idleBudget = changedModels.idleBudget || editModel.get('idleBudget');
+                        actualHours = changedModels.actualHours || editModel.get('actualHours');
+                        hours = actualHours || estimatedHours;
+                        sumBudget = parseFloat(adminBudget) + parseFloat(adminSalaryBudget) + parseFloat(vacationBudget) + parseFloat(idleBudget);
+
+                        if (isFinite(sumBudget / hours)) {
+                            changedModels.overheadRate = sumBudget / hours;
+                            tr.find('[data-content="overheadRate"]').text(helpers.currencySplitter(changedModels.overheadRate.toFixed(2)));
+                        } else {
+                            changedModels.overheadRate = 0;
+                            tr.find('[data-content="overheadRate"]').text(0);
+                        }
+                    });
                 }
                 else {
                     tempContainer = el.text();
