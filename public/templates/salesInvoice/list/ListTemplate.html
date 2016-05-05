@@ -1,5 +1,11 @@
 <% invoiceCollection.forEach(function(invoice, index){ %>
-<% var overdue = invoice.diffDates > 0 && ((invoice.workflow && invoice.workflow.status === 'Done') || invoice.paymentInfo.balance > 0) %>
+<% var overdue = 0%>
+<% if(invoice.workflow && (invoice.workflow.status !== 'Done')){ %>
+<% overdue = invoice.paymentDate - invoice.dueDate %>
+<% } elseif (invoice.paymentInfo && invoice.paymentInfo.balance > 0){ %>
+<% overdue = new Date() - invoice.dueDate %>
+<% } %>
+
 <tr data-id="<%=invoice._id%>">
     <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>"/>
 <td class="centerCell"><%=startNumber + index + 1%></td>
@@ -9,7 +15,7 @@
 <td><%=invoice.name%></td>
 <td><%=invoice.paymentDate%></td>
 <td><%=(invoice.salesPerson) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
-<td class="<%= overdue ? 'overdue' : '' %>"><%= overdue ? Math.ceil(invoice.diffDates / (1000 * 3600 * 24)) + " days" :invoice.dueDate%></td>
+<td class="<%= overdue > 0 ? 'overdue' : '' %>"><%= overdue > 0 ? Math.ceil(overdue / (1000 * 3600 * 24)) + " days" :invoice.dueDate%></td>
 <td class="money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
 <td class="unTaxed money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.unTaxed) : '0.00'%></td>
 <td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
