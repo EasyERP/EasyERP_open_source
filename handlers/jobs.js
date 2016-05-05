@@ -393,26 +393,26 @@ var Jobs = function (models, event) {
             }, {
                 $project: {
                     name: 1,
-                    workflow: {$arrayElemAt: ["$workflow", 0]},
+                    workflow: {$arrayElemAt: ['$workflow', 0]},
                     wTracksQa: {
                         $filter: {
                             input: '$wTracksDocs',
                             as   : 'wTrack',
-                            cond : {$eq: ["$$wTrack.department", objectId(CONSTANTS.QADEPARTMENT)]}
+                            cond : {$eq: ['$$wTrack.department', objectId(CONSTANTS.QADEPARTMENT)]}
                         }
                     },
                     wTracksDes: {
                         $filter: {
                             input: '$wTracksDocs',
                             as   : 'wTrack',
-                            cond : {$eq: ["$$wTrack.department", objectId(CONSTANTS.DESDEPARTMENT)]}
+                            cond : {$eq: ['$$wTrack.department', objectId(CONSTANTS.DESDEPARTMENT)]}
                         }
                     },
                     wTracksDev: {
                         $filter: {
                             input: '$wTracksDocs',
                             as   : 'wTrack',
-                            cond : {$and : [{$ne: ["$$wTrack.department",  objectId(CONSTANTS.DESDEPARTMENT)]}, {$ne: ["$$wTrack.department",  objectId(CONSTANTS.QADEPARTMENT)]}]}
+                            cond : {$and : [{$ne: ['$$wTrack.department',  objectId(CONSTANTS.DESDEPARTMENT)]}, {$ne: ['$$wTrack.department',  objectId(CONSTANTS.QADEPARTMENT)]}]}
                         }
                     },
                     type: 1,
@@ -423,21 +423,21 @@ var Jobs = function (models, event) {
                         $filter: {
                             input: '$budget.projectTeam',
                             as   : 'el',
-                            cond : {$eq: ["$$el.department._id", objectId(CONSTANTS.QADEPARTMENT)]}
+                            cond : {$eq: ['$$el.department._id', objectId(CONSTANTS.QADEPARTMENT)]}
                         }
                     },
                     budgetDes : {
                         $filter: {
                             input: '$budget.projectTeam',
                             as   : 'el',
-                            cond : {$eq: ["$$el.department._id", objectId(CONSTANTS.DESDEPARTMENT)]}
+                            cond : {$eq: ['$$el.department._id', objectId(CONSTANTS.DESDEPARTMENT)]}
                         }
                     },
                     budgetDev : {
                         $filter: {
                             input: '$budget.projectTeam',
                             as   : 'el',
-                            cond : {$and : [{$ne: ["$$el.department",  objectId(CONSTANTS.DESDEPARTMENT)]}, {$ne: ["$$el.department",  objectId(CONSTANTS.QADEPARTMENT)]}]}
+                            cond : {$and : [{$ne: ['$$el.department',  objectId(CONSTANTS.DESDEPARTMENT)]}, {$ne: ['$$el.department',  objectId(CONSTANTS.QADEPARTMENT)]}]}
                         }
                     },
                     quotation: {$arrayElemAt: ["$quotation", 0]},
@@ -449,12 +449,6 @@ var Jobs = function (models, event) {
                     from: "Payment",
                     localField: "invoice._id",
                     foreignField: "invoice", as: "payments"
-                }
-            }, {
-                $lookup: {
-                    from: "Employees",
-                    localField: "project.projectmanager",
-                    foreignField: "_id", as: "projectmanager"
                 }
             }, {
                 $project: {
@@ -636,6 +630,7 @@ var Jobs = function (models, event) {
                         if (err) {
                             cb(err);
                         }
+
                         job.percDev = job.costDev ? ((job.costDev / job.cost) * 100) : 0;
                         job.percDes = job.costDes ? ((job.costDes / job.cost) * 100) : 0;
                         job.percQA = job.costQA ? ((job.costQA / job.cost) * 100) : 0;
@@ -643,15 +638,18 @@ var Jobs = function (models, event) {
                         job.devMargin = job.quotation ? ((1 - job.costDev / (100 * job.quotation.paymentInfo.total)) * 100) : 0;
                         job.avDevRate = job.quotation && job.hoursDev ? ((job.quotation.paymentInfo.total - ((job.costQA - job.costDes) / 100)) / job.hoursDev) : 0;
                         job.profit = job.quotation ? (job.quotation.paymentInfo.total - (job.cost / 100)) : 0;
+
                         cb();
                     })
 
                 }, function (err, result) {
+                    var sortField = Object.keys(sort)[0];
+                    var sortingFields = ['profit', 'percDev', 'percDes', 'percQA', 'margin', 'devMargin', 'avDevRate', 'costDev', 'costQA', 'costDes', 'cost'];
+
                     if (err){
                         return next(err);
                     }
-                    var sortField = Object.keys(sort)[0];
-                    var sortingFields = ['profit', 'percDev', 'percDes', 'percQA', 'margin', 'devMargin', 'avDevRate', 'costDev', 'costQA', 'costDes', 'cost'];
+
 
                     if (sortField && sortingFields.indexOf(sortField) !== -1) {
                         jobs = jobs.sort(function (a, b) {
