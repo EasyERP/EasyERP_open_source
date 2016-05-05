@@ -437,7 +437,7 @@ var Jobs = function (models, event) {
                         $filter: {
                             input: '$budget.projectTeam',
                             as   : 'el',
-                            cond : {$and : [{$ne: ['$$el.department',  objectId(CONSTANTS.DESDEPARTMENT)]}, {$ne: ['$$el.department',  objectId(CONSTANTS.QADEPARTMENT)]}]}
+                            cond : {$and : [{$ne: ['$$el.department._id',  objectId(CONSTANTS.DESDEPARTMENT)]}, {$ne: ['$$el.department._id',  objectId(CONSTANTS.QADEPARTMENT)]}]}
                         }
                     },
                     quotation: {$arrayElemAt: ["$quotation", 0]},
