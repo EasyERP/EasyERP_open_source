@@ -85,9 +85,9 @@
         <tfoot id="listTotal">
         <tr>
             <td colspan="7"></td>
-            <td><span id="balance" class="money"><%=currencySplitter((balance).toString())%></span></td>
-            <td><span id="paid" class="money"><%=currencySplitter((paid).toString())%></span></td>
-            <td><span id="total" class="money"><%=currencySplitter((total).toString())%></span></td>
+            <td><span id="balance" class="money"><%=currencySplitter((balance.toFixed(2)).toString())%></span></td>
+            <td><span id="paid" class="money"><%=currencySplitter((paid.toFixed(2)).toString())%></span></td>
+            <td><span id="total" class="money"><%=currencySplitter((total.toFixed(2)).toString())%></span></td>
             <td></td>
         </tr>
         </tfoot>
