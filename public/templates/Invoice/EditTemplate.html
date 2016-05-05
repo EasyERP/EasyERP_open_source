@@ -37,7 +37,10 @@
                                     <%}%>
                                 <%}%>
                             <%} else if(model.workflow.status === 'Done'){%>
-                                <% if(!isWtrack) {%>
+                                <% if(paidAndNotApproved) {%>
+                                   <button class="btn approve">
+                                      <span>Approve</span>
+                                   </button>
                                 <%}%>
                             <%} else {%>
                                 <%if(model.approved){%>
@@ -71,7 +74,7 @@
                 <div class="dialog-tabs-items mainTabs">
                     <div class="dialog-tabs-item mainTabs active">
 
-                        <%if(!isPaid){%>
+                        <%if(!isPaid || paidAndNotApproved){%>
                         <div class="half-block left">
                             <dl class="opp-info">
 

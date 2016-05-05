@@ -79,19 +79,19 @@ define([
             this.notCreate = options.notCreate ? false : true;
 
             /*if (!App || !App.currentDb) {
-                dataService.getData('/currentDb', null, function (response) {
-                    if (response && !response.error) {
-                        App.currentDb = response;
-                        App.weTrack = true;
-                    } else {
-                        console.log('can\'t fetch current db');
-                    }
+             dataService.getData('/currentDb', null, function (response) {
+             if (response && !response.error) {
+             App.currentDb = response;
+             App.weTrack = true;
+             } else {
+             console.log('can\'t fetch current db');
+             }
 
-                    this.render();
-                });
-            } else {
-                this.render();
-            }*/
+             this.render();
+             });
+             } else {
+             this.render();
+             }*/
 
             this.render();
 
@@ -157,7 +157,7 @@ define([
             $buttons = $selfEl.find('button.sendEmail, button.newPayment');
             url = '/invoice/approve';
             data = {
-                invoiceId: invoiceId,
+                invoiceId  : invoiceId,
                 invoiceDate: invoiceDate
             };
 
@@ -529,11 +529,18 @@ define([
             var buttons;
             var invoiceDate;
             var isFinancial;
+            var dueDate;
+            var paidAndNotApproved = false;
 
             model = this.currentModel.toJSON();
             invoiceDate = model.invoiceDate;
+            dueDate = model.dueDate;
 
             this.isPaid = (model && model.workflow) ? model.workflow.status === 'Done' : false;
+
+            if (this.isPaid && !dueDate) {
+                paidAndNotApproved = true;
+            }
 
             this.notAddItem = true;
 
@@ -550,20 +557,21 @@ define([
             isFinancial = CONSTANTS.INVOICE_APPROVE_PROFILES.indexOf(App.currentUser.profile._id) !== -1;
 
             formString = this.template({
-                model           : this.currentModel.toJSON(),
-                isWtrack        : self.isWtrack,
-                isPaid          : this.isPaid,
-                notAddItem      : this.notAddItem,
-                wTracks         : wTracks,
-                project         : project,
-                assigned        : assigned,
-                customer        : customer,
-                total           : total,
-                currencySplitter: helpers.currencySplitter,
-                isFinancial     : isFinancial
+                model             : this.currentModel.toJSON(),
+                isWtrack          : self.isWtrack,
+                isPaid            : this.isPaid,
+                paidAndNotApproved: paidAndNotApproved,
+                notAddItem        : this.notAddItem,
+                wTracks           : wTracks,
+                project           : project,
+                assigned          : assigned,
+                customer          : customer,
+                total             : total,
+                currencySplitter  : helpers.currencySplitter,
+                isFinancial       : isFinancial
             });
 
-            if (this.isWtrack || this.isPaid) {
+            if (this.isWtrack || this.isPaid && dueDate.length) {
                 buttons = [
                     {
                         text : this.isPaid ? "Close" : 'Cancel',
@@ -626,7 +634,6 @@ define([
             populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
             populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
-
             if (model.workflow.status !== 'New' && model.dueDate) {
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat : "d M, yy",
@@ -679,10 +686,11 @@ define([
 
             invoiceItemContainer.append(
                 new InvoiceItemView({
-                    balanceVisible: true,
-                    forSales      : self.forSales,
-                    isPaid        : this.isPaid,
-                    notAddItem    : this.notAddItem
+                    balanceVisible    : true,
+                    forSales          : self.forSales,
+                    isPaid            : this.isPaid,
+                    paidAndNotApproved: paidAndNotApproved,
+                    notAddItem        : this.notAddItem
                 }).render({model: model}).el
             );
 
