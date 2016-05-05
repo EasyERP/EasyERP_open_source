@@ -134,9 +134,9 @@ define([
                 var balance = parseFloat($currentEl.find("#balance").text());
 
                 var payments = {
-                    total  : total,
-                    unTaxed: unTaxed,
-                    balance: balance
+                    total  : total * 100,
+                    unTaxed: unTaxed * 100,
+                    balance: balance * 100
                 };
 
                 var currency = {
@@ -169,10 +169,10 @@ define([
                             products.push({
                                 product    : productId,
                                 description: description,
-                                unitPrice  : price,
+                                unitPrice  : price * 100,
                                 quantity   : quantity,
-                                taxes      : taxes,
-                                subTotal   : amount
+                                taxes      : taxes * 100,
+                                subTotal   : amount * 100
                             });
                         }
                     }

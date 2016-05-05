@@ -405,7 +405,7 @@ define([
                 account       : null,
                 journal       : journalId,
 
-                salesPerson : salesPerson,
+                salesPerson : salesPersonId,
                 paymentTerms: paymentTermId,
 
                 //products   : this.redirect ? productsOld : products,

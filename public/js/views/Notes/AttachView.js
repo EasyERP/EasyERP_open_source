@@ -202,7 +202,7 @@ define([
 
         render: function () {
             var attachments = null;
-            if (this.model.toJSON() && this.model.toJSON().attachments) {
+            if (this.model && this.model.toJSON() && this.model.toJSON().attachments) {
                 attachments = this.model.toJSON().attachments;
             }
 

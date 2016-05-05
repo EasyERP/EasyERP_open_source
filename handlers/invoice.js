@@ -325,7 +325,7 @@ var Invoice = function (models, event) {
                     paidAmount += fx(paidInUSD).from('USD').to(invoiceCurrency);
                 });
 
-                paidAmount = paidAmount / 100;
+                paidAmount = paidAmount;
 
                 payments = proforma.payments;
                 invoice.paymentDate = proforma.paymentDate;
@@ -1453,6 +1453,7 @@ var Invoice = function (models, event) {
         var Order = models.get(db, 'Quotation', OrderSchema);
         var Proforma = models.get(db, 'Proforma', ProformaSchema);
         var JobsModel = models.get(db, 'jobs', JobsSchema);
+        var parallelTasks;
         var editedBy = {
             user: req.session.uId,
             date: new Date()
@@ -1639,7 +1640,13 @@ var Invoice = function (models, event) {
                             });
                         }
 
-                        async.parallel([proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove], function (err, result) {
+                       if (result && result._type !== 'expensesInvoice'){
+                           parallelTasks = [proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove];
+                       } else {
+                           parallelTasks = [proformaUpdate, paymentsRemove, journalEntryRemove, folderRemove]
+                       }
+
+                        async.parallel(parallelTasks, function (err, result) {
                             if (err) {
                                 return next(err);
                             }
