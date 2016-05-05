@@ -81,7 +81,7 @@
                                 <dt><label for="supplier">Supplier</label></dt>
                                 <dd>
                                     <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>"
-                                        href="javascript:;"><%=(model.supplier.name)?model.supplier.name.first
+                                        href="javascript:;"><%=(model.supplier && model.supplier.name)?model.supplier.name.first
                                         + ' ' + model.supplier.name.last:"Select"%></a>
                                 </dd>
 
@@ -143,7 +143,7 @@
                                 <dt><label for="supplier">Supplier</label></dt>
                                 <dd>
                                     <span id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>"
-                                          href="javascript:;"><%=(model.supplier.name)?model.supplier.name.first + ' ' + model.supplier.name.last:""%></span>
+                                          href="javascript:;"><%=(model.supplier && model.supplier.name)?model.supplier.name.first + ' ' + model.supplier.name.last:""%></span>
                                 </dd>
 
                                 <dt><label for="source_document">Source Document</label></dt>

@@ -199,7 +199,7 @@ var Module = function (models, event) {
 
     var lookupInvoiceArray = [{
         $match: {
-            "sourceDocument.model": {$in: ["Invoice", "proforma"]},
+            "sourceDocument.model": {$in: ["Invoice", "proforma", "dividendInvoice"]},
             debit                 : {$gt: 0}
         }
     }, {
@@ -1792,7 +1792,7 @@ var Module = function (models, event) {
                             var cb = asyncCb;
 
                             var proforma = _.find(result, function (el) {
-                                if (element && element._id){
+                                if (element && element._id) {
                                     return el._id.toString() === element._id.toString()
                                 }
                             });
@@ -2866,7 +2866,7 @@ var Module = function (models, event) {
                             $match: matchObject
                         }, {
                             $match: {
-                                "sourceDocument.model": {$in: ["Invoice", "proforma"]},
+                                "sourceDocument.model": {$in: ["Invoice", "proforma", "dividendInvoice"]},
                                 debit                 : {$gt: 0}
                             }
                         }, {
@@ -3778,6 +3778,38 @@ var Module = function (models, event) {
             }
 
             res.status(200).send({assets: result[0], liabilities: result[1], equity: result[2]});
+        });
+    };
+
+    this.getAdminExpenses = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var query = req.query;
+        var month = parseInt(query.month, 10);
+        var year = parseInt(query.year, 10);
+        var startDate = moment().year(year).month(month - 1).startOf('month');
+        var endDate = moment(startDate).endOf('month');
+
+        Model.aggregate([{
+            $match: {
+                date                  : {$gte: new Date(startDate), $lte: new Date(endDate)},
+                "sourceDocument.model": 'dividendInvoice',
+                debit                 : {$gt: 0}
+            }
+        }, {
+            $group: {
+                _id: null,
+                sum: {
+                    $sum: {$divide: ['$debit', '$currency.rate']}
+                }
+            }
+        }], function (err, result) {
+            if (err){
+                return next(err);
+            }
+
+            var newResult = result && result.length ? result[0].sum : 0;
+
+            res.status(200).send({sum: newResult});
         });
     };
 
@@ -5618,7 +5650,7 @@ var Module = function (models, event) {
                             $match: matchObject
                         }, {
                             $match: {
-                                "sourceDocument.model": {$in: ["Invoice", "proforma"]},
+                                "sourceDocument.model": {$in: ["Invoice", "proforma", "dividendInvoice"]},
                                 debit                 : {$gt: 0}
                             }
                         }, {

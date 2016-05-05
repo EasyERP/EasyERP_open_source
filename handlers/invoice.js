@@ -1333,7 +1333,7 @@ var Invoice = function (models, event) {
                 var waterfallTasks;
 
                 if (access) {
-                    if (contentType === 'DividendInvoice') {
+                    if ((contentType === 'DividendInvoice') || (contentType === 'dividendInvoice')) {
                         Invoice = models.get(req.session.lastDb, 'dividendInvoice', DividendInvoiceSchema);
                     } else if (forSales) {
                         Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);

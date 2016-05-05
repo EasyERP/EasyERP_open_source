@@ -5,6 +5,7 @@ define([
         'text!templates/journalEntry/list/ListHeader.html',
         'views/journalEntry/list/ListItemView',
         'views/salesInvoice/EditView',
+        'views/DividendInvoice/EditView',
         'views/Filter/FilterView',
         'models/InvoiceModel',
         'collections/journalEntry/filterCollection',
@@ -16,7 +17,7 @@ define([
         'custom'
     ],
 
-    function (_, $, listViewBase, listTemplate, ListItemView, EditView, filterView, InvoiceModel, contentCollection, CONSTANTS, helpers, dataService, common, moment, custom) {
+    function (_, $, listViewBase, listTemplate, ListItemView, EditView, DividendEditView, filterView, InvoiceModel, contentCollection, CONSTANTS, helpers, dataService, common, moment, custom) {
         'use strict';
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
@@ -68,8 +69,8 @@ define([
             },
 
             events: {
-                "click .Invoice": "viewSourceDocument",
-                "click .jobs"   : "viewSourceDocumentJOb"
+                "click .Invoice, .dividendInvoice": "viewSourceDocument",
+                "click .jobs"                     : "viewSourceDocumentJOb"
             },
 
             changeDateRange: function () {
@@ -133,17 +134,25 @@ define([
             viewSourceDocument: function (e) {
                 var $target = $(e.target);
                 var id = $target.attr('data-id');
+                var forSales = $target.attr('class') !== 'dividendInvoice' ? true : false;
+                var view = EditView;
+
+                if (!forSales) {
+                    view = DividendEditView;
+                }
 
                 var model = new InvoiceModel({validate: false});
 
                 model.urlRoot = '/Invoice/form';
                 model.fetch({
                     data   : {
-                        id       : id,
-                        currentDb: App.currentDb
+                        id         : id,
+                        currentDb  : App.currentDb,
+                        contentType: $target.attr('class'),
+                        forSales   : forSales.toString()
                     },
                     success: function (model) {
-                        new EditView({model: model, redirect: true, notCreate: true});
+                        new view({model: model, redirect: true, notCreate: true});
                     },
                     error  : function () {
                         App.render({
