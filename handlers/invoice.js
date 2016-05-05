@@ -1272,7 +1272,8 @@ var Invoice = function (models, event) {
                                     approved        : 1,
                                     _type           : 1,
                                     removable       : 1,
-                                    paid            : 1
+                                    paid            : 1,
+                                    diffDates       : {$cond: [{$eq : ['$workflow.status', 'Done']}, {$subtract: ['$paymentDate', '$dueDate']}, {$subtract: [new Date(), '$dueDate']}]}
                                 }
                             }, {
                                 $match: optionsObject
