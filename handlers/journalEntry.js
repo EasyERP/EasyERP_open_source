@@ -40,21 +40,21 @@ var Module = function (models, event) {
                 from        : "chartOfAccount",
                 localField  : "account",
                 foreignField: "_id",
-                as: "account"
+                as          : "account"
             }
         }, {
             $lookup: {
                 from        : "wTrack",
                 localField  : "sourceDocument._id",
                 foreignField: "_id",
-                as: "sourceDocument._id"
+                as          : "sourceDocument._id"
             }
         }, {
             $lookup: {
                 from        : "journals",
                 localField  : "journal",
                 foreignField: "_id",
-                as: "journal"
+                as          : "journal"
             }
         }, {
             $project: {
@@ -69,28 +69,28 @@ var Module = function (models, event) {
                 from        : "chartOfAccount",
                 localField  : "journal.debitAccount",
                 foreignField: "_id",
-                as: "journal.debitAccount"
+                as          : "journal.debitAccount"
             }
         }, {
             $lookup: {
                 from        : "jobs",
                 localField  : "sourceDocument._id.jobs",
                 foreignField: "_id",
-                as: "sourceDocument._id.jobs"
+                as          : "sourceDocument._id.jobs"
             }
         }, {
             $lookup: {
                 from        : "chartOfAccount",
                 localField  : "journal.creditAccount",
                 foreignField: "_id",
-                as: "journal.creditAccount"
+                as          : "journal.creditAccount"
             }
         }, {
             $lookup: {
                 from        : "Employees",
                 localField  : "sourceDocument._id.employee",
                 foreignField: "_id",
-                as: "sourceDocument._id.employee"
+                as          : "sourceDocument._id.employee"
             }
         }, {
             $project: {
@@ -128,21 +128,21 @@ var Module = function (models, event) {
             from        : "chartOfAccount",
             localField  : "account",
             foreignField: "_id",
-            as: "account"
+            as          : "account"
         }
     }, {
         $lookup: {
             from        : "Employees",
             localField  : "sourceDocument._id",
             foreignField: "_id",
-            as: "sourceDocument._id"
+            as          : "sourceDocument._id"
         }
     }, {
         $lookup: {
             from        : "journals",
             localField  : "journal",
             foreignField: "_id",
-            as: "journal"
+            as          : "journal"
         }
     }, {
         $project: {
@@ -157,21 +157,21 @@ var Module = function (models, event) {
             from        : "chartOfAccount",
             localField  : "journal.debitAccount",
             foreignField: "_id",
-            as: "journal.debitAccount"
+            as          : "journal.debitAccount"
         }
     }, {
         $lookup: {
             from        : "chartOfAccount",
             localField  : "journal.creditAccount",
             foreignField: "_id",
-            as: "journal.creditAccount"
+            as          : "journal.creditAccount"
         }
     }, {
         $lookup: {
             from        : "Department",
             localField  : "sourceDocument._id.department",
             foreignField: "_id",
-            as: "sourceDocument._id.department"
+            as          : "sourceDocument._id.department"
         }
     }, {
         $project: {
@@ -207,21 +207,21 @@ var Module = function (models, event) {
             from        : "chartOfAccount",
             localField  : "account",
             foreignField: "_id",
-            as: "account"
+            as          : "account"
         }
     }, {
         $lookup: {
             from        : "Invoice",
             localField  : "sourceDocument._id",
             foreignField: "_id",
-            as: "sourceDocument._id"
+            as          : "sourceDocument._id"
         }
     }, {
         $lookup: {
             from        : "journals",
             localField  : "journal",
             foreignField: "_id",
-            as: "journal"
+            as          : "journal"
         }
     }, {
         $project: {
@@ -238,21 +238,21 @@ var Module = function (models, event) {
             from        : "chartOfAccount",
             localField  : "journal.debitAccount",
             foreignField: "_id",
-            as: "journal.debitAccount"
+            as          : "journal.debitAccount"
         }
     }, {
         $lookup: {
             from        : "chartOfAccount",
             localField  : "journal.creditAccount",
             foreignField: "_id",
-            as: "journal.creditAccount"
+            as          : "journal.creditAccount"
         }
     }, {
         $lookup: {
             from        : "Customers",
             localField  : "sourceDocument._id.supplier",
             foreignField: "_id",
-            as: "sourceDocument.subject"
+            as          : "sourceDocument.subject"
         }
     }, {
         $project: {
@@ -290,21 +290,21 @@ var Module = function (models, event) {
                 from        : "chartOfAccount",
                 localField  : "account",
                 foreignField: "_id",
-                as: "account"
+                as          : "account"
             }
         }, {
             $lookup: {
                 from        : "jobs",
                 localField  : "sourceDocument._id",
                 foreignField: "_id",
-                as: "sourceDocument._id"
+                as          : "sourceDocument._id"
             }
         }, {
             $lookup: {
                 from        : "journals",
                 localField  : "journal",
                 foreignField: "_id",
-                as: "journal"
+                as          : "journal"
             }
         }, {
             $project: {
@@ -321,14 +321,14 @@ var Module = function (models, event) {
                 from        : "chartOfAccount",
                 localField  : "journal.debitAccount",
                 foreignField: "_id",
-                as: "journal.debitAccount"
+                as          : "journal.debitAccount"
             }
         }, {
             $lookup: {
                 from        : "chartOfAccount",
                 localField  : "journal.creditAccount",
                 foreignField: "_id",
-                as: "journal.creditAccount"
+                as          : "journal.creditAccount"
             }
         }, {
             $project: {
@@ -372,21 +372,21 @@ var Module = function (models, event) {
                 from        : "chartOfAccount",
                 localField  : "account",
                 foreignField: "_id",
-                as: "account"
+                as          : "account"
             }
         }, {
             $lookup: {
                 from        : "Payment",
                 localField  : "sourceDocument._id",
                 foreignField: "_id",
-                as: "sourceDocument._id"
+                as          : "sourceDocument._id"
             }
         }, {
             $lookup: {
                 from        : "journals",
                 localField  : "journal",
                 foreignField: "_id",
-                as: "journal"
+                as          : "journal"
             }
         }, {
             $project: {
@@ -403,21 +403,21 @@ var Module = function (models, event) {
                 from        : "chartOfAccount",
                 localField  : "journal.debitAccount",
                 foreignField: "_id",
-                as: "journal.debitAccount"
+                as          : "journal.debitAccount"
             }
         }, {
             $lookup: {
                 from        : "chartOfAccount",
                 localField  : "journal.creditAccount",
                 foreignField: "_id",
-                as: "journal.creditAccount"
+                as          : "journal.creditAccount"
             }
         }, {
             $lookup: {
                 from        : "Customers",
                 localField  : "sourceDocument._id.supplier",
                 foreignField: "_id",
-                as: "sourceDocument.subject"
+                as          : "sourceDocument.subject"
             }
         }, {
             $project: {
@@ -1080,7 +1080,7 @@ var Module = function (models, event) {
                                     from        : "wTrack",
                                     localField  : "sourceDocument._id",
                                     foreignField: "_id",
-                                    as: "sourceDocument._id"
+                                    as          : "sourceDocument._id"
                                 }
                             }, {
                                 $project: {
@@ -2869,24 +2869,24 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "account",
+                                from        : "chartOfAccount",
+                                localField  : "account",
                                 foreignField: "_id",
-                                as: "account"
+                                as          : "account"
                             }
                         }, {
                             $lookup: {
-                                from                   : "Invoice",
-                                localField             : "sourceDocument._id",
+                                from        : "Invoice",
+                                localField  : "sourceDocument._id",
                                 foreignField: "_id",
-                                as: "sourceDocument._id"
+                                as          : "sourceDocument._id"
                             }
                         }, {
                             $lookup: {
-                                from                   : "journals",
-                                localField             : "journal",
+                                from        : "journals",
+                                localField  : "journal",
                                 foreignField: "_id",
-                                as: "journal"
+                                as          : "journal"
                             }
                         }, {
                             $project: {
@@ -2933,14 +2933,14 @@ var Module = function (models, event) {
                             from        : "wTrack",
                             localField  : "sourceDocument._id",
                             foreignField: "_id",
-                            as: "sourceDocument._id"
+                            as          : "sourceDocument._id"
                         }
                     }, {
                         $lookup: {
                             from        : "journals",
                             localField  : "journal",
                             foreignField: "_id",
-                            as: "journal"
+                            as          : "journal"
                         }
                     }, {
                         $project: {
@@ -2988,14 +2988,14 @@ var Module = function (models, event) {
                             from        : "Employees",
                             localField  : "sourceDocument._id",
                             foreignField: "_id",
-                            as: "sourceDocument._id"
+                            as          : "sourceDocument._id"
                         }
                     }, {
                         $lookup: {
                             from        : "journals",
                             localField  : "journal",
                             foreignField: "_id",
-                            as: "journal"
+                            as          : "journal"
                         }
                     }, {
                         $project: {
@@ -3008,7 +3008,7 @@ var Module = function (models, event) {
                             from        : "chartOfAccount",
                             localField  : "journal.debitAccount",
                             foreignField: "_id",
-                            as: "journal.debitAccount"
+                            as          : "journal.debitAccount"
                         }
                     }, {
                         $project: {
@@ -3057,14 +3057,14 @@ var Module = function (models, event) {
                             from        : "jobs",
                             localField  : "sourceDocument._id",
                             foreignField: "_id",
-                            as: "sourceDocument._id"
+                            as          : "sourceDocument._id"
                         }
                     }, {
                         $lookup: {
                             from        : "journals",
                             localField  : "journal",
                             foreignField: "_id",
-                            as: "journal"
+                            as          : "journal"
                         }
                     }, {
                         $project: {
@@ -3077,7 +3077,7 @@ var Module = function (models, event) {
                             from        : "chartOfAccount",
                             localField  : "journal.creditAccount",
                             foreignField: "_id",
-                            as: "journal.creditAccount"
+                            as          : "journal.creditAccount"
                         }
                     }, {
                         $project: {
@@ -3119,14 +3119,14 @@ var Module = function (models, event) {
                             from        : "Payment",
                             localField  : "sourceDocument._id",
                             foreignField: "_id",
-                            as: "sourceDocument._id"
+                            as          : "sourceDocument._id"
                         }
                     }, {
                         $lookup: {
                             from        : "journals",
                             localField  : "journal",
                             foreignField: "_id",
-                            as: "journal"
+                            as          : "journal"
                         }
                     }, {
                         $project: {
@@ -3139,7 +3139,7 @@ var Module = function (models, event) {
                             from        : "chartOfAccount",
                             localField  : "journal.creditAccount",
                             foreignField: "_id",
-                            as: "journal.creditAccount"
+                            as          : "journal.creditAccount"
                         }
                     }, {
                         $project: {
@@ -3181,14 +3181,14 @@ var Module = function (models, event) {
                             from        : "Employees",
                             localField  : "sourceDocument._id",
                             foreignField: "_id",
-                            as: "sourceDocument._id"
+                            as          : "sourceDocument._id"
                         }
                     }, {
                         $lookup: {
                             from        : "journals",
                             localField  : "journal",
                             foreignField: "_id",
-                            as: "journal"
+                            as          : "journal"
                         }
                     }, {
                         $project: {
@@ -3201,7 +3201,7 @@ var Module = function (models, event) {
                             from        : "chartOfAccount",
                             localField  : "journal.creditAccount",
                             foreignField: "_id",
-                            as: "journal.creditAccount"
+                            as          : "journal.creditAccount"
                         }
                     }, {
                         $project: {
@@ -3288,7 +3288,7 @@ var Module = function (models, event) {
                 from        : "journals",
                 localField  : "_id",
                 foreignField: "_id",
-                as: "journal"
+                as          : "journal"
             }
         }, {
             $project: {
@@ -3407,17 +3407,17 @@ var Module = function (models, event) {
                         }
                     }, {
                         $lookup: {
-                            from                   : "wTrack",
-                            localField             : "sourceDocument._id",
+                            from        : "wTrack",
+                            localField  : "sourceDocument._id",
                             foreignField: "_id",
-                            as: "sourceDocument"
+                            as          : "sourceDocument"
                         }
                     }, {
                         $lookup: {
-                            from                   : "journals",
-                            localField             : "journal",
+                            from        : "journals",
+                            localField  : "journal",
                             foreignField: "_id",
-                            as: "journal"
+                            as          : "journal"
                         }
                     }, {
                         $project: {
@@ -3436,24 +3436,24 @@ var Module = function (models, event) {
                         }
                     }, {
                         $lookup: {
-                            from                   : "chartOfAccount",
-                            localField             : "journal.debitAccount",
+                            from        : "chartOfAccount",
+                            localField  : "journal.debitAccount",
                             foreignField: "_id",
-                            as: "journal.debitAccount"
+                            as          : "journal.debitAccount"
                         }
                     }, {
                         $lookup: {
-                            from                   : "chartOfAccount",
-                            localField             : "journal.creditAccount",
+                            from        : "chartOfAccount",
+                            localField  : "journal.creditAccount",
                             foreignField: "_id",
-                            as: "journal.creditAccount"
+                            as          : "journal.creditAccount"
                         }
                     }, {
                         $lookup: {
-                            from                   : "Employees",
-                            localField             : "sourceDocument.employee",
+                            from        : "Employees",
+                            localField  : "sourceDocument.employee",
                             foreignField: "_id",
-                            as: "employee"
+                            as          : "employee"
                         }
                     }, {
                         $project: {
@@ -3628,7 +3628,7 @@ var Module = function (models, event) {
                     from        : "chartOfAccount",
                     localField  : "account",
                     foreignField: "_id",
-                    as: "account"
+                    as          : "account"
                 }
             }, {
                 $project: {
@@ -3677,7 +3677,7 @@ var Module = function (models, event) {
                     from        : "chartOfAccount",
                     localField  : "account",
                     foreignField: "_id",
-                    as: "account"
+                    as          : "account"
                 }
             }, {
                 $project: {
@@ -3727,7 +3727,7 @@ var Module = function (models, event) {
                     from        : "chartOfAccount",
                     localField  : "account",
                     foreignField: "_id",
-                    as: "account"
+                    as          : "account"
                 }
             }, {
                 $project: {
@@ -3859,7 +3859,7 @@ var Module = function (models, event) {
                         from        : "jobs",
                         localField  : "_id",
                         foreignField: "_id",
-                        as: "_id"
+                        as          : "_id"
                     }
                 }, {
                     $project: {
@@ -3901,7 +3901,7 @@ var Module = function (models, event) {
                         from        : "wTrack",
                         localField  : "sourceDocument._id",
                         foreignField: "_id",
-                        as: "sourceDocument"
+                        as          : "sourceDocument"
                     }
                 }, {
                     $project: {
@@ -3960,13 +3960,13 @@ var Module = function (models, event) {
                         from        : "jobs",
                         localField  : "sourceDocument._id",
                         foreignField: "_id",
-                        as: "sourceDocument"
+                        as          : "sourceDocument"
                     }
                 }, {
                     $project: {
                         sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
                         debit         : 1,
-                        date          : 1,
+                        date          : 1
                     }
                 }, {
                     $project: {
@@ -4021,7 +4021,7 @@ var Module = function (models, event) {
                     newElement.outwards = outwards ? outwards.debit / 100 : 0;
                     newElement.closingBalance = newElement.openingBalance + newElement.inwards - newElement.outwards;
 
-                    if (newElement.name) {
+                    if (newElement.name && !(outwards && outwards.date < startDate)) {
                         resultArray.push(newElement);
                     }
 
@@ -4205,7 +4205,7 @@ var Module = function (models, event) {
             var getOutwards = function (pCb) {
                 Model.aggregate([{
                     $match: {
-                        date                : {$lte: endDate, $gte: startDate},
+                        date                : {$lte: endDate/*, $gte: startDate*/},
                         debit               : {$gt: 0},
                         "sourceDocument._id": {$in: jobs},
                         journal             : objectId(CONSTANTS.FINISHED_JOB_JOURNAL)
@@ -4219,13 +4219,15 @@ var Module = function (models, event) {
                 }, {
                     $project: {
                         sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
-                        debit         : 1
+                        debit         : 1,
+                        date          : 1
                     }
                 }, {
                     $project: {
                         _id  : '$sourceDocument._id',
                         name : '$sourceDocument.name',
-                        debit: 1
+                        debit: 1,
+                        date : 1
                     }
                 }], function (err, result) {
                     if (err) {
@@ -4266,7 +4268,7 @@ var Module = function (models, event) {
                     newElement.outwards = outwards ? outwards.debit / 100 : 0;
                     newElement.closingBalance = newElement.openingBalance + newElement.inwards - newElement.outwards;
 
-                    if (newElement.name) {
+                    if (newElement.name && !(outwards && outwards.date < startDate)) {
                         resultArray.push(newElement);
                     }
 
@@ -5014,7 +5016,7 @@ var Module = function (models, event) {
                 from        : "chartOfAccount",
                 localField  : "account",
                 foreignField: "_id",
-                as: "account"
+                as          : "account"
             }
         }, {
             $project: {
@@ -5078,14 +5080,14 @@ var Module = function (models, event) {
                     from        : "Employees",
                     localField  : "sourceDocument._id",
                     foreignField: "_id",
-                    as: "employee"
+                    as          : "employee"
                 }
             }, {
                 $lookup: {
                     from        : "journals",
                     localField  : "journal",
                     foreignField: "_id",
-                    as: "journal"
+                    as          : "journal"
                 }
             }, {
                 $project: {
@@ -5101,14 +5103,14 @@ var Module = function (models, event) {
                     from        : "chartOfAccount",
                     localField  : "journal.debitAccount",
                     foreignField: "_id",
-                    as: "journal.debitAccount"
+                    as          : "journal.debitAccount"
                 }
             }, {
                 $lookup: {
                     from        : "chartOfAccount",
                     localField  : "journal.creditAccount",
                     foreignField: "_id",
-                    as: "journal.creditAccount"
+                    as          : "journal.creditAccount"
                 }
             }, {
                 $project: {
@@ -5147,14 +5149,14 @@ var Module = function (models, event) {
                     from        : "wTrack",
                     localField  : "sourceDocument._id",
                     foreignField: "_id",
-                    as: "sourceDocument"
+                    as          : "sourceDocument"
                 }
             }, {
                 $lookup: {
                     from        : "journals",
                     localField  : "journal",
                     foreignField: "_id",
-                    as: "journal"
+                    as          : "journal"
                 }
             }, {
                 $project: {
@@ -5170,14 +5172,14 @@ var Module = function (models, event) {
                     from        : "chartOfAccount",
                     localField  : "journal.debitAccount",
                     foreignField: "_id",
-                    as: "journal.debitAccount"
+                    as          : "journal.debitAccount"
                 }
             }, {
                 $lookup: {
                     from        : "chartOfAccount",
                     localField  : "journal.creditAccount",
                     foreignField: "_id",
-                    as: "journal.creditAccount"
+                    as          : "journal.creditAccount"
                 }
             }, {
                 $project: {
@@ -5207,7 +5209,7 @@ var Module = function (models, event) {
                     from        : "Employees",
                     localField  : "employee",
                     foreignField: "_id",
-                    as: "employee"
+                    as          : "employee"
                 }
             }, {
                 $project: {
@@ -5619,24 +5621,24 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "account",
+                                from        : "chartOfAccount",
+                                localField  : "account",
                                 foreignField: "_id",
-                                as: "account"
+                                as          : "account"
                             }
                         }, {
                             $lookup: {
-                                from                   : "Invoice",
-                                localField             : "sourceDocument._id",
+                                from        : "Invoice",
+                                localField  : "sourceDocument._id",
                                 foreignField: "_id",
-                                as: "sourceDocument._id"
+                                as          : "sourceDocument._id"
                             }
                         }, {
                             $lookup: {
-                                from                   : "journals",
-                                localField             : "journal",
+                                from        : "journals",
+                                localField  : "journal",
                                 foreignField: "_id",
-                                as: "journal"
+                                as          : "journal"
                             }
                         }, {
                             $project: {
@@ -5650,24 +5652,24 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "journal.debitAccount",
+                                from        : "chartOfAccount",
+                                localField  : "journal.debitAccount",
                                 foreignField: "_id",
-                                as: "journal.debitAccount"
+                                as          : "journal.debitAccount"
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "journal.creditAccount",
+                                from        : "chartOfAccount",
+                                localField  : "journal.creditAccount",
                                 foreignField: "_id",
-                                as: "journal.creditAccount"
+                                as          : "journal.creditAccount"
                             }
                         }, {
                             $lookup: {
-                                from                   : "Customers",
-                                localField             : "sourceDocument._id.supplier",
+                                from        : "Customers",
+                                localField  : "sourceDocument._id.supplier",
                                 foreignField: "_id",
-                                as: "sourceDocument.subject"
+                                as          : "sourceDocument.subject"
                             }
                         }, {
                             $project: {
@@ -5711,24 +5713,24 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "account",
+                                from        : "chartOfAccount",
+                                localField  : "account",
                                 foreignField: "_id",
-                                as: "account"
+                                as          : "account"
                             }
                         }, {
                             $lookup: {
-                                from                   : "wTrack",
-                                localField             : "sourceDocument._id",
+                                from        : "wTrack",
+                                localField  : "sourceDocument._id",
                                 foreignField: "_id",
-                                as: "sourceDocument._id"
+                                as          : "sourceDocument._id"
                             }
                         }, {
                             $lookup: {
-                                from                   : "journals",
-                                localField             : "journal",
+                                from        : "journals",
+                                localField  : "journal",
                                 foreignField: "_id",
-                                as: "journal"
+                                as          : "journal"
                             }
                         }, {
                             $project: {
@@ -5742,31 +5744,31 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "jobs",
-                                localField             : "sourceDocument._id.jobs",
+                                from        : "jobs",
+                                localField  : "sourceDocument._id.jobs",
                                 foreignField: "_id",
-                                as: "sourceDocument._id.jobs"
+                                as          : "sourceDocument._id.jobs"
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "journal.debitAccount",
+                                from        : "chartOfAccount",
+                                localField  : "journal.debitAccount",
                                 foreignField: "_id",
-                                as: "journal.debitAccount"
+                                as          : "journal.debitAccount"
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "journal.creditAccount",
+                                from        : "chartOfAccount",
+                                localField  : "journal.creditAccount",
                                 foreignField: "_id",
-                                as: "journal.creditAccount"
+                                as          : "journal.creditAccount"
                             }
                         }, {
                             $lookup: {
-                                from                   : "Employees",
-                                localField             : "sourceDocument._id.employee",
+                                from        : "Employees",
+                                localField  : "sourceDocument._id.employee",
                                 foreignField: "_id",
-                                as: "sourceDocument._id.employee"
+                                as          : "sourceDocument._id.employee"
                             }
                         }, {
                             $project: {
@@ -5815,24 +5817,24 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "account",
+                                from        : "chartOfAccount",
+                                localField  : "account",
                                 foreignField: "_id",
-                                as: "account"
+                                as          : "account"
                             }
                         }, {
                             $lookup: {
-                                from                   : "Employees",
-                                localField             : "sourceDocument._id",
+                                from        : "Employees",
+                                localField  : "sourceDocument._id",
                                 foreignField: "_id",
-                                as: "sourceDocument._id"
+                                as          : "sourceDocument._id"
                             }
                         }, {
                             $lookup: {
-                                from                   : "journals",
-                                localField             : "journal",
+                                from        : "journals",
+                                localField  : "journal",
                                 foreignField: "_id",
-                                as: "journal"
+                                as          : "journal"
                             }
                         }, {
                             $project: {
@@ -5846,24 +5848,24 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "journal.debitAccount",
+                                from        : "chartOfAccount",
+                                localField  : "journal.debitAccount",
                                 foreignField: "_id",
-                                as: "journal.debitAccount"
+                                as          : "journal.debitAccount"
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "journal.creditAccount",
+                                from        : "chartOfAccount",
+                                localField  : "journal.creditAccount",
                                 foreignField: "_id",
-                                as: "journal.creditAccount"
+                                as          : "journal.creditAccount"
                             }
                         }, {
                             $lookup: {
-                                from                   : "Department",
-                                localField             : "sourceDocument._id.department",
+                                from        : "Department",
+                                localField  : "sourceDocument._id.department",
                                 foreignField: "_id",
-                                as: "sourceDocument._id.department"
+                                as          : "sourceDocument._id.department"
                             }
                         }, {
                             $project: {
@@ -5924,24 +5926,24 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "account",
+                                from        : "chartOfAccount",
+                                localField  : "account",
                                 foreignField: "_id",
-                                as: "account"
+                                as          : "account"
                             }
                         }, {
                             $lookup: {
-                                from                   : "jobs",
-                                localField             : "sourceDocument._id",
+                                from        : "jobs",
+                                localField  : "sourceDocument._id",
                                 foreignField: "_id",
-                                as: "sourceDocument._id"
+                                as          : "sourceDocument._id"
                             }
                         }, {
                             $lookup: {
-                                from                   : "journals",
-                                localField             : "journal",
+                                from        : "journals",
+                                localField  : "journal",
                                 foreignField: "_id",
-                                as: "journal"
+                                as          : "journal"
                             }
                         }, {
                             $project: {
@@ -5955,17 +5957,17 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "journal.debitAccount",
+                                from        : "chartOfAccount",
+                                localField  : "journal.debitAccount",
                                 foreignField: "_id",
-                                as: "journal.debitAccount"
+                                as          : "journal.debitAccount"
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "journal.creditAccount",
+                                from        : "chartOfAccount",
+                                localField  : "journal.creditAccount",
                                 foreignField: "_id",
-                                as: "journal.creditAccount"
+                                as          : "journal.creditAccount"
                             }
                         }, {
                             $lookup: {
@@ -6034,24 +6036,24 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "account",
+                                from        : "chartOfAccount",
+                                localField  : "account",
                                 foreignField: "_id",
-                                as: "account"
+                                as          : "account"
                             }
                         }, {
                             $lookup: {
-                                from                   : "Payment",
-                                localField             : "sourceDocument._id",
+                                from        : "Payment",
+                                localField  : "sourceDocument._id",
                                 foreignField: "_id",
-                                as: "sourceDocument._id"
+                                as          : "sourceDocument._id"
                             }
                         }, {
                             $lookup: {
-                                from                   : "journals",
-                                localField             : "journal",
+                                from        : "journals",
+                                localField  : "journal",
                                 foreignField: "_id",
-                                as: "journal"
+                                as          : "journal"
                             }
                         }, {
                             $project: {
@@ -6065,24 +6067,24 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "journal.debitAccount",
+                                from        : "chartOfAccount",
+                                localField  : "journal.debitAccount",
                                 foreignField: "_id",
-                                as: "journal.debitAccount"
+                                as          : "journal.debitAccount"
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "journal.creditAccount",
+                                from        : "chartOfAccount",
+                                localField  : "journal.creditAccount",
                                 foreignField: "_id",
-                                as: "journal.creditAccount"
+                                as          : "journal.creditAccount"
                             }
                         }, {
                             $lookup: {
-                                from                   : "Customers",
-                                localField             : "sourceDocument._id.supplier",
+                                from        : "Customers",
+                                localField  : "sourceDocument._id.supplier",
                                 foreignField: "_id",
-                                as: "sourceDocument._id.supplier"
+                                as          : "sourceDocument._id.supplier"
                             }
                         }, {
                             $project: {
@@ -6143,24 +6145,24 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "account",
+                                from        : "chartOfAccount",
+                                localField  : "account",
                                 foreignField: "_id",
-                                as: "account"
+                                as          : "account"
                             }
                         }, {
                             $lookup: {
-                                from                   : "Employees",
-                                localField             : "sourceDocument._id",
+                                from        : "Employees",
+                                localField  : "sourceDocument._id",
                                 foreignField: "_id",
-                                as: "sourceDocument._id"
+                                as          : "sourceDocument._id"
                             }
                         }, {
                             $lookup: {
-                                from                   : "journals",
-                                localField             : "journal",
+                                from        : "journals",
+                                localField  : "journal",
                                 foreignField: "_id",
-                                as: "journal"
+                                as          : "journal"
                             }
                         }, {
                             $project: {
@@ -6174,24 +6176,24 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "journal.debitAccount",
+                                from        : "chartOfAccount",
+                                localField  : "journal.debitAccount",
                                 foreignField: "_id",
-                                as: "journal.debitAccount"
+                                as          : "journal.debitAccount"
                             }
                         }, {
                             $lookup: {
-                                from                   : "chartOfAccount",
-                                localField             : "journal.creditAccount",
+                                from        : "chartOfAccount",
+                                localField  : "journal.creditAccount",
                                 foreignField: "_id",
-                                as: "journal.creditAccount"
+                                as          : "journal.creditAccount"
                             }
                         }, {
                             $lookup: {
-                                from                   : "Department",
-                                localField             : "sourceDocument._id.department",
+                                from        : "Department",
+                                localField  : "sourceDocument._id.department",
                                 foreignField: "_id",
-                                as: "sourceDocument._id.department"
+                                as          : "sourceDocument._id.department"
                             }
                         }, {
                             $project: {
