@@ -649,6 +649,8 @@ var Invoice = function (models, event) {
         var invoiceProducts;
         var invoiceJobs;
 
+        delete data.salesPerson;
+
         date = moment(new Date(data.invoiceDate));
         date = date.format('YYYY-MM-DD');
 
