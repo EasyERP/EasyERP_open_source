@@ -1792,7 +1792,9 @@ var Module = function (models, event) {
                             var cb = asyncCb;
 
                             var proforma = _.find(result, function (el) {
-                                return el._id.toString() === element._id.toString()
+                                if (element && element._id){
+                                    return el._id.toString() === element._id.toString()
+                                }
                             });
 
                             var paidAmount = 0;
