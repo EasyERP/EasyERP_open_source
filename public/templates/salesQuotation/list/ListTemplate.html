@@ -10,7 +10,7 @@ class="canceledListItem"
 <td><%=(quotation.salesmanager) ? quotation.salesmanager.name.first + ' ' + quotation.salesmanager.name.last :
     ''%>
 </td>
-<td class="total"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total.toFixed(2)) : '0'%></td>
+<td class="total"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total) : '0'%></td>
 <td id='<%=quotation._id%>'>
     <span><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></span>
 </td>

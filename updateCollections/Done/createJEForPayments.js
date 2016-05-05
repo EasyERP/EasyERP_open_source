@@ -199,7 +199,7 @@ dbObject.once('open', function callback() {
 
                     count++;
 
-                    createReconciled(body, 'lilyadb', cb, '52203e707d4dba8813000003');
+                    createReconciled(body, 'production', cb, '52203e707d4dba8813000003');
                 } else {
                     cb();
                 }
