@@ -21,7 +21,7 @@ dbObject.once('open', function callback() {
     var Vacation = dbObject.model('Vacation', VacationSchema);
     var holedayModel = dbObject.model('Holiday', HolidaySchema);
 
-    holedayModel.find({}, function (err, result) {
+    /*holedayModel.find({}, function (err, result) {
         if (err){
             return console.log(err);
         }
@@ -33,37 +33,37 @@ dbObject.once('open', function callback() {
             var dateByMonth = year * 100 + month + 1;
 
             holedayModel.update({_id: el._id}, {$set: {dateByMonth: dateByMonth}}, function(){
-                console.log(dateByMonth)
+                console.log(dateByMonth);
             });
         });
-    });
+    });*/
 
-    // monthHoursModel.find({}, function (err, result) {
-    //     if (err){
-    //         return console.log(err);
-    //     }
-    //
-    //     result.forEach(function (el) {
-    //         var dateByMonth = el.year * 100 + el.month;
-    //
-    //         monthHoursModel.update({_id: el._id}, {$set: {dateByMonth: dateByMonth}}, function(){
-    //             console.log(dateByMonth)
-    //         });
-    //     });
-    // });
-    //
-    // Vacation.find({}, function (err, result) {
-    //     if (err){
-    //         return console.log(err);
-    //     }
-    //
-    //     result.forEach(function (el) {
-    //         var dateByMonth = el.year * 100 + el.month;
-    //
-    //         Vacation.update({_id: el._id}, {$set: {dateByMonth: dateByMonth}}, function(err, result){
-    //             console.log(dateByMonth)
-    //         });
-    //     });
-    // })
+     /*monthHoursModel.find({}, function (err, result) {
+         if (err){
+             return console.log(err);
+         }
+
+         result.forEach(function (el) {
+             var dateByMonth = el.year * 100 + el.month;
+
+             monthHoursModel.update({_id: el._id}, {$set: {dateByMonth: dateByMonth}}, function(){
+                 console.log(dateByMonth)
+             });
+         });
+     });*/
+/*
+     Vacation.find({}, function (err, result) {
+         if (err){
+             return console.log(err);
+         }
+
+         result.forEach(function (el) {
+             var dateByMonth = el.year * 100 + el.month;
+
+             Vacation.update({_id: el._id}, {$set: {dateByMonth: dateByMonth}}, function(err, result){
+                 console.log(dateByMonth)
+             });
+         });
+     })*/
 
 });
