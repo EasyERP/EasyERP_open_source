@@ -203,6 +203,9 @@ td,
 th {
   padding: 0;
 }
+.containerContent {
+  padding: 20px 0;
+}
 * html .ui-autocomplete {
   width: 1px;
 }
@@ -1472,8 +1475,15 @@ textarea {
   vertical-align: top;
 }
 /*------------------------Functions-----------------------------*/
+.dollar:before,
 .money:before {
   content: "$";
+}
+.euro:before {
+  content: "€";
+}
+.uah:before {
+  content: '₴';
 }
 .errorContent {
   border: 1px solid red !important;
