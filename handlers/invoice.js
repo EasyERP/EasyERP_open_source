@@ -326,8 +326,6 @@ var Invoice = function (models, event) {
                     paidAmount += fx(paidInUSD).from('USD').to(invoiceCurrency);
                 });
 
-                paidAmount = paidAmount;
-
                 payments = proforma.payments;
                 invoice.paymentDate = proforma.paymentDate;
             }
@@ -856,42 +854,44 @@ var Invoice = function (models, event) {
 
                         products = resp.products;
 
-                        if (products) {
-                            async.each(products, function (result, cb) {
-                                var jobs = result.jobs;
-                                var editedBy = {
-                                    user: req.session.uId,
-                                    date: new Date()
-                                };
-                                JobsModel.findByIdAndUpdate(jobs, {
-                                    $set: {
-                                        invoice : resp._id,
-                                        type    : "Invoiced",
-                                        workflow: CONSTANTS.JOBSFINISHED,
-                                        editedBy: editedBy
-                                    }
-                                }, {new: true}, function (err, job) {
-                                    if (err) {
-                                        return cb(err);
-                                    }
-                                    project = job.project || null;
+                        if (resp._type !== 'Proforma'){
+                            if (products) {
+                                async.each(products, function (result, cb) {
+                                    var jobs = result.jobs;
+                                    var editedBy = {
+                                        user: req.session.uId,
+                                        date: new Date()
+                                    };
+                                    JobsModel.findByIdAndUpdate(jobs, {
+                                        $set: {
+                                            invoice : resp._id,
+                                            type    : "Invoiced",
+                                            workflow: CONSTANTS.JOBSFINISHED,
+                                            editedBy: editedBy
+                                        }
+                                    }, {new: true}, function (err, job) {
+                                        if (err) {
+                                            return cb(err);
+                                        }
+                                        project = job.project || null;
 
-                                    _journalEntryHandler.checkAndCreateForJob({
-                                        req     : req,
-                                        jobId   : jobs,
-                                        workflow: CONSTANTS.JOBSFINISHED,
-                                        wTracks : job.wTracks,
-                                        date    : resp.invoiceDate
+                                        _journalEntryHandler.checkAndCreateForJob({
+                                            req     : req,
+                                            jobId   : jobs,
+                                            workflow: CONSTANTS.JOBSFINISHED,
+                                            wTracks : job.wTracks,
+                                            date    : resp.invoiceDate
+                                        });
+
+                                        cb();
                                     });
 
-                                    cb();
+                                }, function () {
+                                    if (project) {
+                                        event.emit('fetchJobsCollection', {project: project});
+                                    }
                                 });
-
-                            }, function () {
-                                if (project) {
-                                    event.emit('fetchJobsCollection', {project: project});
-                                }
-                            });
+                            }
                         }
 
                         res.status(200).send(resp);
