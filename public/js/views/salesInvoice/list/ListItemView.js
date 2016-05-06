@@ -1,6 +1,7 @@
 ﻿define([
         'text!templates/salesInvoice/list/ListTemplate.html',
-        'helpers'
+        'helpers',
+        'moment'
     ],
 
     function (listTemplate, helpers) {
