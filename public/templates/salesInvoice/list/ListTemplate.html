@@ -25,7 +25,7 @@
 <td class="money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
 <td class="unTaxed money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.unTaxed) : '0.00'%></td>
 <td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
-<td id='<%=invoice._id%>'>
+<td class="centerCell" id='<%=invoice._id%>'>
     <%if(invoice.workflow){%>
     <%if(invoice.workflow.status !== 'Done'){%>
     <%if(invoice.approved){%>
