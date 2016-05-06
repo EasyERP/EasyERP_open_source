@@ -639,7 +639,7 @@ var Jobs = function (models, event) {
                         job.margin = job.quotation ? ((1 - job.cost / (100 * job.quotation.paymentInfo.total)) * 100) : 0;
                         job.devMargin = job.quotation ? ((1 - job.costDev / (100 * job.quotation.paymentInfo.total)) * 100) : 0;
                         job.avDevRate = job.quotation && job.hoursDev ? ((job.quotation.paymentInfo.total - ((job.costQA - job.costDes) / 100)) / job.hoursDev) : 0;
-                        job.profit = job.quotation ? (job.quotation.paymentInfo.total - (job.cost / 100)) : 0;
+                        job.profit = job.quotation ? ((job.quotation.paymentInfo.total - job.cost) / 100) : 0;
 
                         cb();
                     })
