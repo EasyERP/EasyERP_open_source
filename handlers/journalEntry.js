@@ -4813,7 +4813,7 @@ var Module = function (models, event) {
                         $gte: new Date(startDate),
                         $lte: new Date(endDate)
                     },
-                    account: {$in: CONSTANTS.INVESTING}
+                    account: {$in: CONSTANTS.INVESTING.objectID()}
                 }
             }, {
                 $lookup: {
@@ -4836,15 +4836,11 @@ var Module = function (models, event) {
                     credit: {$sum: '$credit'}
                 }
             }, {
-                $project: {
-                    _id   : 1,
-                    debit : 1,
-                    credit: 1,
-                    name  : {$arrayElemAt: ["$name", 0]}
-                }
-            }, {
-                $sort: {
-                    name: 1
+                $group: {
+                    _id   : null,
+                    debit : {$sum: '$debit'},
+                    credit: {$sum: '$credit'},
+                    name  : {$addToSet: '$name'}
                 }
             }], function (err, result) {
                 if (err) {
@@ -4862,7 +4858,7 @@ var Module = function (models, event) {
                         $gte: new Date(startDate),
                         $lte: new Date(endDate)
                     },
-                    account: {$in: CONSTANTS.FINANCING}
+                    account: {$in: CONSTANTS.FINANCING.objectID()}
                 }
             }, {
                 $lookup: {
@@ -4885,22 +4881,28 @@ var Module = function (models, event) {
                     credit: {$sum: '$credit'}
                 }
             }, {
-                $project: {
-                    _id   : 1,
-                    debit : 1,
-                    credit: 1,
-                    name  : {$arrayElemAt: ["$name", 0]}
-                }
-            }, {
-                $sort: {
-                    name: 1
+                $group: {
+                    _id   : null,
+                    debit : {$sum: '$debit'},
+                    credit: {$sum: '$credit'},
+                    name  : {$addToSet: '$name'}
                 }
             }], function (err, result) {
                 if (err) {
                     return cb(err);
                 }
 
-                cb(null, result);
+                var sum = result[0] ? result[0].debit - result[0].credit : 0;
+
+                var sp = 0 - sum;
+
+                if (sp < 0) {
+                    sp = sp * (-1);
+                }
+
+                var fieldName = result[0] ? result[0].name[0] : '777777 Dividends Payable';
+
+                cb(null, [{name: fieldName, debit: sp}]);
             });
         };
 

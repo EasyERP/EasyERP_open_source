@@ -105,7 +105,9 @@ module.exports = {
 
     OPERATING: [],
     INVESTING: [],
-    FINANCING: [],
+    FINANCING: [
+        '572346da8ba4fd1330062723'
+    ],
 
     MOBILE_DEFAULT_COUNT_PER_LIST: 50,
 
