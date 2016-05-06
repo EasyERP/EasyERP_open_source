@@ -198,6 +198,10 @@ var Payment = function (models, event) {
                         supplier = "Employees"
                     }
 
+                    if (!forSale && !dividend && !expenses){
+                        optionsObject.$and.push({_type: {$nin: ['expensesInvoicePayment', 'dividendInvoicePayment']}});
+                    }
+
                     if (expenses) {
                         optionsObject.$and.push({_type: 'expensesInvoicePayment'});
                     }

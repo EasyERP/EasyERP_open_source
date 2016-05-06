@@ -3323,18 +3323,29 @@ var Module = function (models, event) {
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
 
+        var match =  {
+            date   : {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            },
+            account: objectId(account)
+        };
+
         if (!account) {
             return res.status(200).send({journalEntries: []});
         }
 
+        /*if (account === CONSTANTS.FINISHED_GOODS){
+            match.journal = objectId(CONSTANTS.CLOSED_JOB);
+        }
+
+        if (account === CONSTANTS.ACCOUNT_RECEIVABLE){
+            match.journal = objectId(CONSTANTS.INVOICE_JOURNAL);
+        }*/
+
+
         Model.aggregate([{
-            $match: {
-                date   : {
-                    $gte: new Date(startDate),
-                    $lte: new Date(endDate)
-                },
-                account: objectId(account)
-            }
+            $match: match
         }, {
             $project: {
                 date   : 1,
