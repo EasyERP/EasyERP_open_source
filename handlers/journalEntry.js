@@ -3773,7 +3773,7 @@ var Module = function (models, event) {
                 }
 
                 var newResult = _.union(result[0], result[1]);
-                
+
                 cb(null, newResult);
             });
         };

@@ -566,6 +566,7 @@ var Vacation = function (event, models) {
         var vacationKeys;
         var result = 0;
         var parallelTasks;
+        var dateByMonth;
 
         body.vacations = calculateWeeks(vacArr, body.month, body.year);
 
@@ -577,6 +578,10 @@ var Vacation = function (event, models) {
 
         body.monthTotal = result;
 
+        dateByMonth = body.year * 100 + body.month;
+
+        body.dateByMonth = dateByMonth;
+
         vacation = new Vacation(body);
 
         vacation.save(function (err, Vacation) {
@@ -585,8 +590,6 @@ var Vacation = function (event, models) {
             }
 
             event.emit('setReconcileTimeCard', {req: req, month: Vacation.month, year: Vacation.year});
-
-            parallelTasks = [populateEmployees, populateDeps];
 
             function populateEmployees (cb) {
                 Employee.populate(Vacation, {

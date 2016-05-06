@@ -212,6 +212,10 @@ define([
                             changedModels.overheadRate = 0;
                             tr.find('[data-content="overheadRate"]').text(0);
                         }
+
+                        tempContainer = el.text();
+                        width = el.width() - 6;
+                        el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
                     });
                 }
                 else {

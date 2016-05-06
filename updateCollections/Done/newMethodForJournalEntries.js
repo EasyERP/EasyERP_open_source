@@ -158,7 +158,7 @@ dbObject.once('open', function callback() {
     WTrack.aggregate([{
             $match: //reconcile: true
 
-            {dateByMonth: {$lte: 201511, $gte: 201511}}
+            {dateByMonth: {$lte: 201601, $gte: 201601}}
             // {dateByWeek: {$eq: 201401}}
 
         }, {
@@ -616,7 +616,7 @@ dbObject.once('open', function callback() {
                 var keys = Object.keys(createdDateObject.createdDateObject);
 
                 var firstKey = keys[0];
-                var lastKey = keys[keys.length - 1];
+             /*   var lastKey = keys[keys.length - 1];
 
                 var startYear = parseInt(firstKey.slice(0, 4), 10);
                 var startMonth = parseInt(firstKey.slice(4, 6), 10);
@@ -628,9 +628,9 @@ dbObject.once('open', function callback() {
                 var endDate = moment().year(endYear).month(endMonth - 1).date(endDateOfMonth);
 
                 var startDateKey = startYear * 100 + moment(date).isoWeek();
-                var endDateKey = endYear * 100 + moment(endDate).isoWeek();
+                var endDateKey = endYear * 100 + moment(endDate).isoWeek();*/
 
-                var matchObj = {
+              /*  var matchObj = {
                     $and: [{
                         $or: [{
                             $and: [{
@@ -658,7 +658,7 @@ dbObject.once('open', function callback() {
                         }
                         ]
                     }]
-                };
+                };*/
 
                 Employee
                     .aggregate([{

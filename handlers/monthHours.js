@@ -39,6 +39,10 @@ var MonthHours = function (event, models) {
     this.create = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var body = req.body;
+        var dateByMonth = body.year * 100 + body.month;
+
+        body.dateByMonth = dateByMonth;
+
         var monthHours = new MonthHoursModel(body);
 
         access.getEditWritAccess(req, req.session.uId, 68, function (access) {
@@ -58,7 +62,8 @@ var MonthHours = function (event, models) {
                         month             : monthHours.month,
                         fixedExpense      : monthHours.fixedExpense,
                         expenseCoefficient: monthHours.expenseCoefficient,
-                        hours             : monthHours.hours
+                        hours             : monthHours.hours,
+                        dateByMonth       : monthHours.dateByMonth
                     };
                     event.emit('updateCost', params);
                     res.status(200).send({success: monthHours});
@@ -81,6 +86,13 @@ var MonthHours = function (event, models) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
                         delete data._id;
+
+                        if (data.year && data.month) {
+                            var dateByMonth = data.year * 100 + data.month;
+
+                            data.dateByMonth = dateByMonth;
+                        }
+
                         monthHoursModel.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, result) {
                             if (err) {
                                 return cb(err);
@@ -91,7 +103,8 @@ var MonthHours = function (event, models) {
                                 month             : result.month,
                                 fixedExpense      : result.fixedExpense,
                                 expenseCoefficient: result.expenseCoefficient,
-                                hours             : result.hours
+                                hours             : result.hours,
+                                dateByMonth       : result.dateByMonth
                             };
                             event.emit('updateCost', params);
                             event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
@@ -119,7 +132,7 @@ var MonthHours = function (event, models) {
     this.getList = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var sort = {};
-        var count = parseInt(req.query.count, 10) ||  CONSTANTS.DEF_LIST_COUNT;
+        var count = parseInt(req.query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = req.query.page;
         var skip;
         var query = req.query;

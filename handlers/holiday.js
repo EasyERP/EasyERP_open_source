@@ -146,6 +146,11 @@ var Holiday = function (models, event) {
                         user: req.session.uId,
                         date: new Date()
                     };
+
+                    if (data.date){
+                        data.dateByMonth = moment(data.date).year() * 100 + moment(data.date).month() + 1;
+                    }
+
                     Holiday.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
                         if (err) {
                             return next(err);
@@ -184,6 +189,8 @@ var Holiday = function (models, event) {
                             data.year = date.isoWeekYear();
                             data.week = date.isoWeek();
                             data.day = date.day();
+
+                            data.dateByMonth = moment(data.date).year() * 100 + moment(data.date).month() + 1;
                         }
 
                         data.editedBy = {
@@ -252,6 +259,8 @@ var Holiday = function (models, event) {
         body.year = date.isoWeekYear();
         body.week = date.isoWeek();
         body.day = date.day();
+
+        body.dateByMonth = moment(date).year() * 100 + moment(date).month() + 1;
 
         Holiday = new HolidayModel(body);
 
