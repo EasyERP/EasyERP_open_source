@@ -3666,49 +3666,115 @@ var Module = function (models, event) {
         };
 
         getLiabilities = function (cb) {
-            Model.aggregate([{
-                $match: {
-                    date   : {
-                        $gte: new Date(startDate),
-                        $lte: new Date(endDate)
-                    },
-                    account: {$in: liabilities}
-                }
-            }, {
-                $lookup: {
-                    from        : "chartOfAccount",
-                    localField  : "account",
-                    foreignField: "_id",
-                    as          : "account"
-                }
-            }, {
-                $project: {
-                    credit : {$divide: ['$credit', '$currency.rate']},
-                    account: {$arrayElemAt: ["$account", 0]}
-                }
-            }, {
-                $group: {
-                    _id   : '$account._id',
-                    name  : {$addToSet: '$account.name'},
-                    credit: {$sum: '$credit'}
-                }
-            }, {
-                $project: {
-                    _id   : 1,
-                    credit: 1,
-                    name  : {$arrayElemAt: ["$name", 0]},
-                    group : {$concat: ['liabilities']}
-                }
-            }, {
-                $sort: {
-                    name: 1
-                }
-            }], function (err, result) {
-                if (err) {
+            var parallelTasks;
+
+            var getAccountPayable = function (pcb) {
+                Model.aggregate([{
+                    $match: {
+                        date   : {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: objectId(CONSTANTS.ACCOUNT_PAYABLE)
+                    }
+                }, {
+                    $lookup: {
+                        from        : "chartOfAccount",
+                        localField  : "account",
+                        foreignField: "_id",
+                        as          : "account"
+                    }
+                }, {
+                    $project: {
+                        credit : {$divide: ['$credit', '$currency.rate']},
+                        debit  : {$divide: ['$debit', '$currency.rate']},
+                        account: {$arrayElemAt: ["$account", 0]}
+                    }
+                }, {
+                    $group: {
+                        _id   : '$account._id',
+                        name  : {$addToSet: '$account.name'},
+                        credit: {$sum: '$credit'},
+                        debit : {$sum: '$debit'}
+                    }
+                }, {
+                    $project: {
+                        _id   : 1,
+                        credit: 1,
+                        debit : 1,
+                        name  : {$arrayElemAt: ["$name", 0]},
+                        group : {$concat: ['liabilities']}
+                    }
+                }, {
+                    $sort: {
+                        name: 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pcb(err);
+                    }
+
+                    pcb(null, result);
+                });
+            }
+
+            var getOther = function (pcb) {
+                Model.aggregate([{
+                    $match: {
+                        date   : {
+                            $gte: new Date(startDate),
+                            $lte: new Date(endDate)
+                        },
+                        account: {$in: liabilities}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "chartOfAccount",
+                        localField  : "account",
+                        foreignField: "_id",
+                        as          : "account"
+                    }
+                }, {
+                    $project: {
+                        credit : {$divide: ['$credit', '$currency.rate']},
+                        account: {$arrayElemAt: ["$account", 0]}
+                    }
+                }, {
+                    $group: {
+                        _id   : '$account._id',
+                        name  : {$addToSet: '$account.name'},
+                        credit: {$sum: '$credit'}
+                    }
+                }, {
+                    $project: {
+                        _id   : 1,
+                        credit: 1,
+                        name  : {$arrayElemAt: ["$name", 0]},
+                        group : {$concat: ['liabilities']}
+                    }
+                }, {
+                    $sort: {
+                        name: 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pcb(err);
+                    }
+
+                    pcb(null, result);
+                });
+            }
+
+            parallelTasks = [getAccountPayable, getOther];
+
+            async.parallel(parallelTasks, function (err, result) {
+                if (err){
                     return cb(err);
                 }
 
-                cb(null, result);
+                var newResult = _.union(result[0], result[1]);
+                
+                cb(null, newResult);
             });
         };
 
@@ -5024,7 +5090,7 @@ var Module = function (models, event) {
                     journal: objectId(CONSTANTS.DIVIDEND_INVOICE_JOURNAL),
                     debit  : {$gt: 0}
                 }
-            },{
+            }, {
                 $group: {
                     _id  : null,
                     debit: {$sum: '$debit'}

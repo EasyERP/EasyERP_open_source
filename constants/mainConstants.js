@@ -78,7 +78,6 @@ module.exports = {
         '565eb53a6aa50532e5df0bdb',//current Liabilities
         '56c4444eb81fd51e19207f3e', //salary Payable
         '56c9d555c3b88f6d64490fb5',//overtime Payable
-        '565eb53a6aa50532e5df0bdc',
         '572346da8ba4fd1330062723' //dividends
     ],
 
