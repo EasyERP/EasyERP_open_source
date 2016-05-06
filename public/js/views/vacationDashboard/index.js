@@ -366,12 +366,13 @@ define([
             var table = this.$el.find('#dashboardBody');
             var allRows = table.find('[data-employee="' + employee + '"]');
             var tds = allRows.find('[data-date="' + dateByWeek + '"]:not([data-project="' + projectName + '"])');
+            var queryData;
 
             if (!projectName) {
                 return false;
             }
 
-            var queryData = {
+            queryData = {
                 projectName: projectName,
                 dateByWeek : dateByWeek,
                 employee   : employee
