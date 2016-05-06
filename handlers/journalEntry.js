@@ -3803,7 +3803,7 @@ var Module = function (models, event) {
                 }
             }
         }], function (err, result) {
-            if (err){
+            if (err) {
                 return next(err);
             }
 
