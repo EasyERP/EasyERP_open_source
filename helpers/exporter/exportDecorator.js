@@ -144,12 +144,12 @@ function exportToXlsx(options) {
 
             fs.unlink(nameOfFile + '.xlsx', function (err) {
                 if (err) {
-                    console.log(err)
+                    console.log(err);
                 } else {
                     console.log('done');
                 }
             });
-        })
+        });
 
     };
 

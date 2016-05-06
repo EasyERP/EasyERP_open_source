@@ -21,7 +21,7 @@
     <td><%=currencySplitter(job.profit ? job.profit.toFixed(2) : "")%></td>
     <td><%=currencySplitter(job.quotation ? (job.quotation.paymentInfo.total / 100).toFixed(2) : "")%></td>
     <td><%=currencySplitter(job.invoice ? (job.invoice.paymentInfo.total / 100).toFixed(2) : "")%></td>
-    <td><%=currencySplitter(job.payment ? (job.payment.paid / 100).toFixed(2) : "")%></td>
+        <td><%=currencySplitter(job.payment ? (job.payment.paid / 100).toFixed(2) : "")%></td>
     <td><%=job.payment ? job.payment.count : ""%></td>
 </tr>
 <%  }); %>

@@ -14,7 +14,45 @@ module.exports = (function () {
             'journal.debitAccount.name'  : 'Debit Account',
             'journal.creditAccount.name' : 'Credit Account',
             'debit'                      : 'Summ'
+        }
+    };
 
+    var jobs = {
+        collection: 'jobs',
+        schema    : 'jobs',
+        aliases   : {
+            salesmanager: 'Sales Manager',
+            project     : 'Project',
+            name        : 'Job Name',
+            workflow    : 'Status',
+            type        : 'Type',
+            cost        : 'All Costs',
+            costQA      : 'QA Costs',
+            costDesign  : 'Design Costs',
+            costIOS     : 'iOS Costs',
+            costAndroid : 'Android Costs',
+            costUnity   : 'Unity Costs',
+            costDotNet  : '.Net/WP Costs',
+            costWeb     : 'Web Costs',
+            costROR     : 'ROR Costs',
+            costDev     : 'Dev Costs',
+            hoursQA     : 'QA hours',
+            hoursDesign : 'Design hours',
+            hoursIOS    : 'iOS hours',
+            hoursAndroid: 'Android hours',
+            hoursUnity  : 'Unity hours',
+            hoursDotNet : '.Net/WP hours',
+            hoursWeb    : 'Web hours',
+            hoursROR    : 'ROR hours',
+            hoursDev    : 'Dev hours',
+            margin      : 'Margin %',
+            devMargin   : 'Dev. Margin %',
+            avDevRate   : 'Av. Dev. Rate',
+            profit      : 'Profit',
+            quotation   : 'Quotations',
+            invoice     : 'Invoices',
+            payment     : 'Payments',
+            count       : 'Payments Count'
         }
     };
 
@@ -643,7 +681,8 @@ module.exports = (function () {
         Industry    : industry,
         Tasks       : task,
         Products    : product,
-        journalEntry: journalEntry
+        journalEntry: journalEntry,
+        jobs        : jobs
     };
 
 })();
