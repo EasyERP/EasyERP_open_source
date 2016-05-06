@@ -1,5 +1,5 @@
 <% collection.forEach(function(account, index){ %>
-<%var value = account.debit - account.credit;%>
+<%var value = (account.debit || 0) - account.credit;%>
 <%if (account.group === 'liabilities'){value = Math.abs(value)}%>
 <tr data-id="<%=account._id%>" class="mainTr">
     <td class="expand centerCell">+</td>

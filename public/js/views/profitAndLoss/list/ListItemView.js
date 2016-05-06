@@ -19,6 +19,7 @@ define([
 
                 this.grossFit = this.collection.grossFit || [];
                 this.expenses = this.collection.expenses || [];
+                this.dividends = this.collection.dividends || 0;
 
                 this.startDate = options.startDate;
                 this.endDate = options.endDate;
@@ -39,6 +40,8 @@ define([
                 var trsGrossFit = this.$el.find('tr');
                 var trsExpenses = $('#listTableExpenses').find('tr');
                 var totalTd = $('#totalSumm');
+                var dividends = $('#dividends');
+                var retainedEarnings = $('#retainedEarnings');
                 var rowTdValGoss = 0;
                 var rowTdValExp = 0;
                 var rowTdVal = 0;
@@ -63,10 +66,14 @@ define([
                 });
 
                 totalTd.text('');
+                dividends.text('');
+                retainedEarnings.text('');
                 grossFooter.text('');
                 expFooter.text('');
 
                 totalTd.text(helpers.currencySplitter(((rowTdValGoss - rowTdValExp) / 100).toFixed(2)));
+                dividends.text(helpers.currencySplitter((this.dividends / 100).toFixed(2)));
+                retainedEarnings.text(helpers.currencySplitter(((rowTdValGoss - rowTdValExp - this.dividends) / 100).toFixed(2)));
                 grossFooter.text(helpers.currencySplitter((rowTdValGoss / 100).toFixed(2)));
                 expFooter.text(helpers.currencySplitter((rowTdValExp / 100).toFixed(2)));
                 totalTd.attr('data-value', (rowTdValGoss - rowTdValExp));

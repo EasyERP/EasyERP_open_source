@@ -3684,20 +3684,17 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     credit : {$divide: ['$credit', '$currency.rate']},
-                    debit  : {$divide: ['$debit', '$currency.rate']},
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
                 $group: {
                     _id   : '$account._id',
                     name  : {$addToSet: '$account.name'},
-                    credit: {$sum: '$credit'},
-                    debit : {$sum: '$debit'}
+                    credit: {$sum: '$credit'}
                 }
             }, {
                 $project: {
                     _id   : 1,
-                    debit : 1,
                     credit: 1,
                     name  : {$arrayElemAt: ["$name", 0]},
                     group : {$concat: ['liabilities']}
@@ -4892,13 +4889,9 @@ var Module = function (models, event) {
                     return cb(err);
                 }
 
-                var sum = result[0] ? result[0].debit - result[0].credit : 0;
+                var sum = result[0] ? result[0].credit : 0;
 
                 var sp = 0 - sum;
-
-                if (sp < 0) {
-                    sp = sp * (-1);
-                }
 
                 var fieldName = result[0] ? result[0].name[0] : '777777 Dividends Payable';
 
@@ -4919,6 +4912,7 @@ var Module = function (models, event) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var getGrossFit;
         var getExpenses;
+        var getDividends;
         var query = req.query;
         var startDate = query.startDate;
         var endDate = query.endDate;
@@ -5020,12 +5014,38 @@ var Module = function (models, event) {
             });
         };
 
-        async.parallel([getGrossFit, getExpenses], function (err, result) {
+        getDividends = function (cb) {
+            Model.aggregate([{
+                $match: {
+                    date   : {
+                        $gte: new Date(startDate),
+                        $lte: new Date(endDate)
+                    },
+                    journal: objectId(CONSTANTS.DIVIDEND_INVOICE_JOURNAL),
+                    debit  : {$gt: 0}
+                }
+            },{
+                $group: {
+                    _id  : null,
+                    debit: {$sum: '$debit'}
+                }
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                var dividends = result && result.length ? result[0].debit : 0;
+
+                cb(null, dividends);
+            });
+        };
+
+        async.parallel([getGrossFit, getExpenses, getDividends], function (err, result) {
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send({grossFit: result[0], expenses: result[1]});
+            res.status(200).send({grossFit: result[0], expenses: result[1], dividends: result[2]});
         });
     };
 

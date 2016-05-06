@@ -42,6 +42,7 @@ define([
                 var jsonCollection = this.collection.toJSON();
                 this.grossFit = jsonCollection[0] ? jsonCollection[0].grossFit : [];
                 this.expenses = jsonCollection[0] ? jsonCollection[0].expenses : [];
+                this.dividends = jsonCollection[0] ? jsonCollection[0].dividends : 0;
                 _.bind(this.collection.showMore, this.collection);
                 this.sort = options.sort || {};
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
@@ -159,6 +160,7 @@ define([
 
                 this.grossFit = collection[0].grossFit;
                 this.expenses = collection[0].expenses;
+                this.dividends = collection[0].dividends;
 
                 itemView = new ListItemView({
                     collection      : collection,
