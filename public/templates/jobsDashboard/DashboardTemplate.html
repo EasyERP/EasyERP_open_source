@@ -13,7 +13,7 @@
     <td><%=currencySplitter(job['cost' + el] ? (job['cost' + el] / 100).toFixed(2) : "0")%></td>
     <%  }); %>
     <% ArrayDepartments.forEach(function (el){%>
-    <td><%=currencySplitter(job['hours' + el] ? (job['hours' + el] / 100).toFixed(2) : "0")%></td>
+    <td><%=job['hours' + el] ? job['hours' + el]: "0"%></td>
     <%  }); %>
     <td><%=job.margin ? job.margin.toFixed(2) : "0"%></td>
     <td><%=job.devMargin ? job.devMargin.toFixed(2) : "0"%></td>

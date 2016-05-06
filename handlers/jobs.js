@@ -440,7 +440,7 @@ var Jobs = function (models, event) {
                         $filter: {
                             input: '$wTracksDocs',
                             as   : 'wTrack',
-                            cond : {$or: [{$eq: ['$$wTrack.department', objectId("56802eb31afe27f547b7ba52")]}, {$eq: ['$$wTrack.department', objectId("56802e9d1afe27f547b7ba51")]}, {$eq: ['$$wTrack.department', objectId("56802ec21afe27f547b7ba53")]}]}
+                            cond : {$or: [{$eq: ['$$wTrack.department', objectId("56802eb31afe27f547b7ba52")]}, {$eq: ['$$wTrack.department', objectId("56802e9d1afe27f547b7ba51")]}, {$eq: ['$$wTrack.department', objectId("56802ec21afe27f547b7ba53")]}, {$eq: ['$$wTrack.department', objectId("55b92ace21e4b7c40f000016")]}]}
                         }
                     },
                     wTracksDev    : {
@@ -500,15 +500,15 @@ var Jobs = function (models, event) {
                     costWeb       : '$wTracksWeb._id',
                     costROR       : '$wTracksROR._id',
                     costDev       : '$wTracksDev._id',
-                    hoursQa       : {$sum: '$wTracksQa.worked'},
-                    hoursDes      : {$sum: '$wTracksDesign.worked'},
+                    hoursQA       : {$sum: '$wTracksQa.worked'},
+                    hoursDesign   : {$sum: '$wTracksDesign.worked'},
                     hoursIOS      : {$sum: '$wTracksIOS.worked'},
                     hoursAndroid  : {$sum: '$wTracksAndroid.worked'},
                     hoursUnity    : {$sum: '$wTracksUnity.worked'},
                     hoursDotNet   : {$sum: '$wTracksDotNet.worked'},
                     hoursWeb      : {$sum: '$wTracksWeb.worked'},
                     hoursROR      : {$sum: '$wTracksROR.worked'},
-                    hoursDev      : {$sum: '$TracksDev.worked'},
+                    hoursDev      : {$sum: '$wTracksDev.worked'},
                     name          : 1,
                     workflow      : 1,
                     type          : 1,
@@ -549,8 +549,8 @@ var Jobs = function (models, event) {
                     costWeb     : 1,
                     costROR     : 1,
                     costDev     : 1,
-                    hoursQa     : 1,
-                    hoursDes    : 1,
+                    hoursQA     : 1,
+                    hoursDesign : 1,
                     hoursIOS    : 1,
                     hoursAndroid: 1,
                     hoursUnity  : 1,
@@ -587,8 +587,8 @@ var Jobs = function (models, event) {
                     costWeb     : 1,
                     costROR     : 1,
                     costDev     : 1,
-                    hoursQa     : 1,
-                    hoursDes    : 1,
+                    hoursQA     : 1,
+                    hoursDesign : 1,
                     hoursIOS    : 1,
                     hoursAndroid: 1,
                     hoursUnity  : 1,
@@ -639,9 +639,9 @@ var Jobs = function (models, event) {
                             cb(err);
                         }
 
-                        job.margin = job.quotation ? ((1 - job.cost / (100 * job.quotation.paymentInfo.total)) * 100) : 0;
-                        job.devMargin = job.quotation ? ((1 - job.costDev / (100 * job.quotation.paymentInfo.total)) * 100) : 0;
-                        job.avDevRate = job.quotation && job.hoursDev ? ((job.quotation.paymentInfo.total - ((job.costQA - job.costDesign) / 100)) / job.hoursDev) : 0;
+                        job.margin = job.quotation ? ((1 - job.cost / job.quotation.paymentInfo.total) * 100) : 0;
+                        job.devMargin = job.quotation ? ((1 - job.costDev / job.quotation.paymentInfo.total) * 100) : 0;
+                        job.avDevRate = job.quotation && job.hoursDev ? ((job.quotation.paymentInfo.total - job.costQA - job.costDesign) / (100 * job.hoursDev)) : 0;
                         job.profit = job.quotation ? ((job.quotation.paymentInfo.total - job.cost) / 100) : 0;
 
                         cb();
