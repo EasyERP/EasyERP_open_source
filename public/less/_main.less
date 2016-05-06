@@ -218,9 +218,25 @@ textarea {
 }
 
 /*------------------------Functions-----------------------------*/
-.money:before {
-  content: "$";
+.dollar, .money {
+  &:before {
+    content: "$";
+  }
 }
+.euro {
+  &:before {
+    content: "€";
+  }
+}
+
+.uah {
+  &:before {
+    //content: '€€';
+    content: '₴';
+  }
+}
+
+
 
 .errorContent {
   border: 1px solid red !important;
@@ -6662,4 +6678,5 @@ textarea#editInput {
     display: none;
   }
 }
+
 
