@@ -1,4 +1,5 @@
-<<% collection.forEach(function(job, count){ %>
+<% collection.forEach(function(job, count){ %>
+<% var ArrayDepartments = ['QA', 'Design', 'IOS', 'Android', 'Unity', 'DotNet', 'Web', 'ROR','Dev']; %>
 <tr data-id="<%=job._id%>" class="<%=getClass(job)%>">
     <td><%=startNumber + count + 1%></a></td>
     <td><%=job.project && job.salesmanager ? job.salesmanager.name.first + ' ' + job.salesmanager.name.last : "---"%></td>
@@ -8,17 +9,14 @@
     <td><%=job.workflow ? job.workflow.name : ''%></td>
     <td><%=job.type%></td>
     <td><%=currencySplitter(job.cost ? (job.cost / 100).toFixed(2) : "0")%></td>
-    <td><%=currencySplitter(job.costQA ? (job.costQA / 100).toFixed(2) : "0")%></td>
-    <td><%=currencySplitter(job.costDes ? (job.costDes / 100).toFixed(2) : "0")%></td>
-    <td><%=currencySplitter(job.costDev ? (job.costDev / 100).toFixed(2) : "0")%></td>
-    <td><%=job.percQA ? job.percQA.toFixed(2) : "0"%></td>
-    <td><%=job.percDes ? job.percDes.toFixed(2) : "0"%></td>
-    <td><%=job.percDev ? job.percDev.toFixed(2) : "0"%></td>
+    <% ArrayDepartments.forEach(function (el){%>
+    <td><%=currencySplitter(job['cost' + el] ? (job['cost' + el] / 100).toFixed(2) : "0")%></td>
+    <%  }); %>
+    <% ArrayDepartments.forEach(function (el){%>
+    <td><%=currencySplitter(job['hours' + el] ? (job['hours' + el] / 100).toFixed(2) : "0")%></td>
+    <%  }); %>
     <td><%=job.margin ? job.margin.toFixed(2) : "0"%></td>
     <td><%=job.devMargin ? job.devMargin.toFixed(2) : "0"%></td>
-    <td><%=job.hoursQa%></td>
-    <td><%=job.hoursDes%></td>
-    <td><%=job.hoursDev%></td>
     <td><%=job.avDevRate ? job.avDevRate.toFixed(2) : "0"%></td>
     <td><%=currencySplitter(job.profit ? job.profit.toFixed(2) : "")%></td>
     <td><%=currencySplitter(job.quotation ? (job.quotation.paymentInfo.total / 100).toFixed(2) : "")%></td>
