@@ -617,29 +617,50 @@ var Jobs = function (models, event) {
 
                 async.each(jobs, function (job, cb) {
 
-                    function costs(el, eachCb) {
-                        JournalEntryModel.aggregate([{
-                            $match: {
-                                'sourceDocument.model': 'wTrack',
-                                "sourceDocument._id"  : {$in: job[el]}
-                            }
-                        }, {
-                            $group: {
-                                _id  : null,
-                                debit: {$sum: '$debit'}
-                            }
-                        }], function (err, result) {
-                            job[el] = result[0] ? result[0].debit : 0;
-                            eachCb();
-                        });
-                    }
-
                     ArrayTasks = ['cost', 'costQA', 'costDesign', 'costIOS', 'costAndroid', 'costUnity', 'costDotNet', 'costWeb', 'costROR','costDev'];
 
-                    async.each(ArrayTasks, costs, function (err, result) {
+                    var aggregateArr = [{
+                        $match: {
+                            'sourceDocument.model': 'wTrack',
+                            "sourceDocument._id"  : {$in: job.cost}
+                        }
+                    }, {
+                        $group: {
+                            _id  : null,
+                            elements : {$addToSet : {
+                                _id : '$_id',
+                                sourceDocument : '$sourceDocument._id' ,
+                                debit : '$debit'
+                            }}
+                        }
+                    }, {$project : {
+
+                    }},{
+                        $project: {}
+                    }];
+                    ArrayTasks.forEach(function (el) {
+                        aggregateArr[2].$project[el] = {
+                            $filter: {
+                                input: '$elements',
+                                as   : 'element',
+                                cond : {$setIsSubset: [['$$element.sourceDocument'], job[el]]}
+                            }
+
+                        }
+                    });
+                    ArrayTasks.forEach(function (el) {
+                        var name = '$' + el + '.debit';
+                        aggregateArr[3].$project[el] = { $sum : name}
+                    });
+
+                    JournalEntryModel.aggregate(aggregateArr, function (err, result) {
                         if (err) {
                             cb(err);
                         }
+
+                        ArrayTasks.forEach(function (el){
+                            job[el] = result[0] ? result[0][el] : 0;
+                        });
 
                         job.margin = job.quotation ? ((1 - job.cost / job.quotation.paymentInfo.total) * 100) : 0;
                         job.devMargin = job.quotation ? ((1 - job.costDev / job.quotation.paymentInfo.total) * 100) : 0;
@@ -1048,31 +1069,48 @@ var Jobs = function (models, event) {
                 }
 
                 async.each(jobs, function (job, cb) {
-
-                    function costs(el, eachCb) {
-                        JournalEntryModel.aggregate([{
-                            $match: {
-                                'sourceDocument.model': 'wTrack',
-                                "sourceDocument._id"  : {$in: job[el]}
-                            }
-                        }, {
-                            $group: {
-                                _id  : null,
-                                debit: {$sum: '$debit'}
-                            }
-                        }], function (err, result) {
-                            job[el] = result[0] ? result[0].debit : 0;
-                            eachCb();
-                        });
-                    }
-
                     ArrayTasks = ['cost', 'costQA', 'costDesign', 'costIOS', 'costAndroid', 'costUnity', 'costDotNet', 'costWeb', 'costROR','costDev'];
 
-                    async.each(ArrayTasks, costs, function (err, result) {
+                    var aggregateArr = [{
+                        $match: {
+                            'sourceDocument.model': 'wTrack',
+                            "sourceDocument._id"  : {$in: job.cost}
+                        }
+                    }, {
+                            $group: {
+                                _id  : null,
+                                elements : {$addToSet : {
+                                    _id : '$_id',
+                                    sourceDocument : '$sourceDocument._id' ,
+                                    debit : '$debit'
+                                }}
+                            }
+                    }, {$project : {
+
+                    }},{
+                        $project: {}
+                    }];
+                    ArrayTasks.forEach(function (el) {
+                       aggregateArr[2].$project[el] = {
+                            $filter: {
+                                input: '$elements',
+                                as   : 'element',
+                                cond : {$setIsSubset: [['$$element.sourceDocument'], job[el]]}
+                            }
+
+                        }
+                    });
+                    ArrayTasks.forEach(function (el) {
+                        var name = '$' + el + '.debit';
+                        aggregateArr[3].$project[el] = { $sum : name}
+                    });
+                    JournalEntryModel.aggregate(aggregateArr, function (err, result) {
                         if (err) {
                             cb(err);
                         }
-
+                        ArrayTasks.forEach(function (el){
+                            job[el] = result[0] ? result[0][el] : 0;
+                        });
                         job.margin = job.quotation ? ((1 - job.cost / job.quotation.paymentInfo.total) * 100) : 0;
                         job.devMargin = job.quotation ? ((1 - job.costDev / job.quotation.paymentInfo.total) * 100) : 0;
                         job.avDevRate = job.quotation && job.hoursDev ? ((job.quotation.paymentInfo.total - job.costQA - job.costDesign) / (100 * job.hoursDev)) : 0;
@@ -1082,6 +1120,10 @@ var Jobs = function (models, event) {
                         job.payment = job.payment ? (job.payment.paid / 100).toFixed(2) : 0;
                         job.quotation = job.quotation ? (job.quotation.paymentInfo.total / 100).toFixed(2) : 0;
                         delete job.budget;
+
+                        ArrayTasks.forEach(function (el) {
+                            job[el] = (job[el] / 100).toFixed(2);
+                        });
 
                         cb();
                     });
