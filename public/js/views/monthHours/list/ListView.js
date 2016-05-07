@@ -190,9 +190,13 @@ define([
 
                         var sum = result.sum;
 
-                        tr.find('[data-content="adminBudget"]').text(helpers.currencySplitter((sum / 100).toFixed(2)));
-
-                        changedModels = self.changedModels[mothHoursId];
+                        if (tr.find('[data-content="adminBudget"]').find('.editing').length){
+                            tr.find('[data-content="adminBudget"]').find('.editing').val(helpers.currencySplitter((sum / 100).toFixed(2)));
+                        } else {
+                            tr.find('[data-content="adminBudget"]').text(helpers.currencySplitter((sum / 100).toFixed(2)));
+                        }
+                        
+                        changedModels = self.changedModels[mothHoursId] || {};
 
                         editModel = self.editCollection.get(mothHoursId);
 
@@ -217,8 +221,7 @@ define([
                         width = el.width() - 6;
                         el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
                     });
-                }
-                else {
+                } else {
                     tempContainer = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');

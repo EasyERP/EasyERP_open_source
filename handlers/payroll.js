@@ -835,43 +835,50 @@ var PayRoll = function (models) {
                     var hire = elem.transfer;
                     var fire = elem.fire;
                     var length = hire.length;
-                    var dateToCreate;
+                    var dateToCreate = endDate;
                     var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hour: 15, minute: 1, second: 0}));
                     var daysInMonth;
                     var payForDay;
                     var department;
+                    var hireKey = moment(new Date(hire[0].date)).year() * 100 + moment(new Date(hire[0].date)).month();
+                    var fireKey = fire[0] ? moment(new Date(fire[0])).year() * 100 + moment(new Date(fire[0])).month() : Infinity;
+                    var localKey = moment(dateToCreate).year() * 100 + moment(dateToCreate).month();
 
                     journalEntry.removeByDocId({'sourceDocument._id': elem._id, journal: CONSTANTS.ADMIN_SALARY_JOURNAL, date: localDate}, req.session.lastDb, function (err, result) {
 
                     });
-
-                    dateToCreate = endDate;
 
                     for (i = length - 1; i >= 0; i--) {
                         if (dateToCreate >= hire[i].date && (hire[i].status !== 'fired')) {
                             salary = hire[i].salary;
                             department = hire[i].department;
                             break;
+                        } else {
+                            department = hire[i].department;
                         }
                     }
 
-                    if ((moment(new Date(hire[0].date)).month() === moment(dateToCreate).month()) && (moment(new Date(hire[0].date)).year() === moment(dateToCreate).year())){
+                    if (elem._id.toString() === '55b92ad221e4b7c40f000042'){
+                        console.log('dddd');
+                    }
+
+                    if (hireKey === localKey){
                         daysInMonth = moment(dateToCreate).endOf('month').date();
                         payForDay = salary / daysInMonth;
 
                         salary = payForDay * (daysInMonth - moment(new Date(hire[0].date)).date() + 1);
                     }
 
-                    if ((moment(new Date(fire[0])).month() === moment(dateToCreate).month()) && (moment(new Date(fire[0])).year() === moment(dateToCreate).year())){
+                    if (fireKey === localKey){
                         daysInMonth = moment(dateToCreate).endOf('month').date();
                         payForDay = salary / daysInMonth;
 
                         salary = payForDay * moment(new Date(fire[0])).date();
-                    } else if ((moment(new Date(fire[0])).month() < moment(dateToCreate).month()) && (moment(new Date(fire[0])).year() <= moment(dateToCreate).year())){
+                    } else if (fireKey < localKey){
                         salary = 0;
                     }
 
-                    if (salary) {
+                    if (salary || (salary === 0)) {
                         ids[elem._id] = {
                             salary: salary,
                             department: department
@@ -1017,14 +1024,19 @@ var PayRoll = function (models) {
                         return asyncCb();
                     }
 
-                    newPayroll = new Payroll(startBody);
+                    if (startBody.calc){
+                        newPayroll = new Payroll(startBody);
 
-                    bodyAdminSalary.sourceDocument._id = employee;
-                    bodyAdminSalary.amount = empIds[employee].salary * 100;
+                        bodyAdminSalary.sourceDocument._id = employee;
+                        bodyAdminSalary.amount = empIds[employee].salary * 100;
 
-                    journalEntry.createReconciled(bodyAdminSalary, req.session.lastDb, cb, req.session.uId);
+                        journalEntry.createReconciled(bodyAdminSalary, req.session.lastDb, cb, req.session.uId);
 
-                    newPayroll.save(cb);
+                        newPayroll.save(cb);
+                    } else {
+                        asyncCb();
+                    }
+
                 }, function () {
                     pCb();
                 });

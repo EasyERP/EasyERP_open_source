@@ -158,9 +158,9 @@ dbObject.once('open', function callback() {
     WTrack.aggregate([{
             $match: //reconcile: true
 
-            {dateByMonth: {$lte: 201601, $gte: 201601}}
-            // {dateByWeek: {$eq: 201401}}
-
+            {
+                year: 2016, month: 1
+            }
         }, {
             $group: {
                 _id: '$dateByMonth',
