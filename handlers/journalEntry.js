@@ -3625,7 +3625,7 @@ var Module = function (models, event) {
         var allAssets = _.union(CONSTANTS.BANK_AND_CASH, currentAssets);
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
 
         getAssets = function (cb) {
             Model.aggregate([{
