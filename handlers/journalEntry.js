@@ -1358,7 +1358,7 @@ var Module = function (models, event) {
         var month = parseInt(query.month, 10);
         var year = parseInt(query.year, 10);
         var startDate = moment().isoWeekYear(year).month(month - 1).startOf('month');
-        var localDate = moment().isoWeekYear(year).month(month - 1).endOf('month');
+        var localDate = moment().isoWeekYear(year).month(month - 1).endOf('month').add(3, 'hours');
         var endDate = moment(localDate);
         var waterlallTasks;
         var productSales;
