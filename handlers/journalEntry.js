@@ -3323,7 +3323,7 @@ var Module = function (models, event) {
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
 
-        var match =  {
+        var match = {
             date   : {
                 $gte: new Date(startDate),
                 $lte: new Date(endDate)
@@ -3336,13 +3336,12 @@ var Module = function (models, event) {
         }
 
         /*if (account === CONSTANTS.FINISHED_GOODS){
-            match.journal = objectId(CONSTANTS.CLOSED_JOB);
-        }
+         match.journal = objectId(CONSTANTS.CLOSED_JOB);
+         }
 
-        if (account === CONSTANTS.ACCOUNT_RECEIVABLE){
-            match.journal = objectId(CONSTANTS.INVOICE_JOURNAL);
-        }*/
-
+         if (account === CONSTANTS.ACCOUNT_RECEIVABLE){
+         match.journal = objectId(CONSTANTS.INVOICE_JOURNAL);
+         }*/
 
         Model.aggregate([{
             $match: match
@@ -3747,6 +3746,7 @@ var Module = function (models, event) {
                     }
                 }, {
                     $project: {
+                        debit  : {$divide: ['$debit', '$currency.rate']},
                         credit : {$divide: ['$credit', '$currency.rate']},
                         account: {$arrayElemAt: ["$account", 0]}
                     }
@@ -3754,12 +3754,14 @@ var Module = function (models, event) {
                     $group: {
                         _id   : '$account._id',
                         name  : {$addToSet: '$account.name'},
-                        credit: {$sum: '$credit'}
+                        credit: {$sum: '$credit'},
+                        debit : {$sum: '$debit'}
                     }
                 }, {
                     $project: {
                         _id   : 1,
                         credit: 1,
+                        debit : 1,
                         name  : {$arrayElemAt: ["$name", 0]},
                         group : {$concat: ['liabilities']}
                     }
@@ -3779,7 +3781,7 @@ var Module = function (models, event) {
             parallelTasks = [getAccountPayable, getOther];
 
             async.parallel(parallelTasks, function (err, result) {
-                if (err){
+                if (err) {
                     return cb(err);
                 }
 
