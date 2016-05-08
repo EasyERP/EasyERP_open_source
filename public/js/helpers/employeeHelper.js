@@ -31,6 +31,9 @@ define([
                     _date = moment().isoWeekYear(year).isoWeek(week);
                 }
 
+                if (_date.day() === 0) {
+                    _date.subtract(4, 'days');
+                }
                 _monDate = moment(_date).day(1);
                 _sunDate = moment(_date).day(7);
 
