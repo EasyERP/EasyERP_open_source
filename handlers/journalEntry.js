@@ -4997,7 +4997,7 @@ var Module = function (models, event) {
         var endDate = query.endDate;
 
         startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
+        endDate = moment(new Date(endDate)).endOf('day').add(3, 'hours');
 
         getGrossFit = function (cb) {
             Model.aggregate([{
