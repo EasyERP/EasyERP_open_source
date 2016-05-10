@@ -654,8 +654,9 @@ define([
 
         render: function () {
             var self = this;
+            var model = this.currentModel.toJSON();
             var formString = this.template({
-                model        : this.currentModel.toJSON(),
+                model        : model,
                 visible      : this.visible,
                 hidePrAndCust: this.hidePrAndCust
             });
@@ -663,6 +664,26 @@ define([
             var notDiv;
             var model;
             var productItemContainer;
+            var buttons = [
+                {
+                    text : "Save",
+                    click: function () {
+                        self.saveItem();
+                    }
+                }, {
+                    text : "Cancel",
+                    click: function () {
+                        self.hideDialog();
+                    }
+                }
+            ];
+
+            if (!model.proformaCounter) {
+                buttons.push({
+                    text : "Delete",
+                        click: self.deleteItem
+                });
+            }
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
@@ -671,25 +692,7 @@ define([
                 dialogClass  : "edit-dialog",
                 title        : "Edit Quotation",
                 width        : "900px",
-                buttons      : [
-                    {
-                        text : "Save",
-                        click: function () {
-                            self.saveItem();
-                        }
-                    },
-
-                    {
-                        text : "Cancel",
-                        click: function () {
-                            self.hideDialog();
-                        }
-                    },
-                    {
-                        text : "Delete",
-                        click: self.deleteItem
-                    }
-                ]
+                buttons      : buttons
 
             });
 
