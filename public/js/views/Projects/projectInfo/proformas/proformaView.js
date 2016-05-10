@@ -424,7 +424,8 @@ define([
                 collection         : this.collection.toJSON(),
                 startNumber        : 0,
                 utcDateToLocaleDate: common.utcDateToLocaleDate,
-                currencySplitter   : helpers.currencySplitter
+                currencySplitter   : helpers.currencySplitter,
+                currencyClass      : helpers.currencyClass
             }));
 
             this.$el.find("#removeProforma").hide();

@@ -130,7 +130,8 @@ define([
                     quotations      : this.collection.toJSON(),
                     startNumber     : 0,
                     dateToLocal     : common.utcDateToLocaleDate,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    currencyClass: helpers.currencyClass
                 }));
             }
 
@@ -339,7 +340,8 @@ define([
                 quotations      : this.collection.toJSON(),
                 startNumber     : 0,
                 dateToLocal     : common.utcDateToLocaleDate,
-                currencySplitter: helpers.currencySplitter
+                currencySplitter: helpers.currencySplitter,
+                currencyClass: helpers.currencyClass
             }));
 
             this.$el.find('#removeQuotation').hide();

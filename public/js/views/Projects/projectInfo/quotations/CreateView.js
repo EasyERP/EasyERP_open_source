@@ -270,7 +270,8 @@ define([
                     quotation       : model.toJSON(),
                     startNumber     : currentNumber,
                     dateToLocal     : common.utcDateToLocaleDate,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    currencyClass   : helpers.currencyClass
                 }));
             }
         });

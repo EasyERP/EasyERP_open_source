@@ -242,7 +242,8 @@ define([
                     orderCollection: this.collection.toJSON(),
                     startNumber    : 0,
                     dateToLocal    : common.utcDateToLocaleDate,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    currencyClass: helpers.currencyClass
                 }));
             }
 
@@ -459,7 +460,8 @@ define([
                 orderCollection : this.collection.toJSON(),
                 startNumber     : 0,
                 dateToLocal     : common.utcDateToLocaleDate,
-                currencySplitter: helpers.currencySplitter
+                currencySplitter: helpers.currencySplitter,
+                currencyClass: helpers.currencyClass
             }));
 
             //this.renderPagination($currentEl, this);
