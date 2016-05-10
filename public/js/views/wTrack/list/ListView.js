@@ -1039,40 +1039,41 @@ define([
             this.$el.find('.edited').removeClass('edited');
         },
 
-        savedNewModel: function (modelObject) {
-            var savedRow = this.$listTable.find(".false[data-id='" + modelObject.cid + "']"); // additional selector for finding old row by cid (in case of multiply copying)
+        savedNewModel: function (modelObjects) {
+            var $savedRow = this.$listTable.find(".false[data-id='" + modelObjects.cid + "']"); // additional selector for finding old row by cid (in case of multiply copying)
+            var $checkbox = $savedRow.find('input[type=checkbox]');
             var modelId;
-            var checkbox = savedRow.find('input[type=checkbox]');
 
-            modelObject = modelObject.success;
+            // modelObject = modelObject.success;
 
-            if (modelObject) {
+            modelObjects.forEach(function (modelObject) { // now only one element from list? because we hav ot checkbox
                 modelId = modelObject._id;
-                savedRow.attr("data-id", modelId);
-                checkbox.val(modelId);
-                savedRow.removeAttr('id');
-                savedRow.removeClass('false');
-            }
+                $savedRow.attr('data-id', modelId);
+                $checkbox.val(modelId);
+                $savedRow.removeAttr('id');
+            });
 
             this.hideSaveCancelBtns();
-            this.hideOvertime();
-            this.resetCollection(modelObject);
+            // this.hideOvertime();
+            this.resetCollection(modelObjects);
         },
 
-        hideOvertime: function () {
+        /* hideOvertime: function () {
             this.$el.find('#overtime input').attr('checked', false);
             this.$el.find('#overtime').hide();
-        },
+        }, */
 
-        resetCollection: function (model) {
-            if (model && model._id) {
-                model = new currentModel(model);
-                this.collection.add(model);
+        resetCollection: function (models) {
+            var id;
+
+            if (models && models.length) {
+                // model = new currentModel(model);
+                this.collection.add(models);
             } else {
                 this.collection.set(this.editCollection.models, {remove: false});
             }
 
-            for (var id in this.changedModels) {
+            for (id in this.changedModels) {
                 delete this.changedModels[id];
                 this.editCollection.remove(id);
             }
@@ -1469,7 +1470,7 @@ define([
 
             if (this.createdCopied) {
                 copiedCreated = this.$el.find('.false');
-                this.hideOvertime();
+                // this.hideOvertime();
                 copiedCreated.each(function () {
                     dataId = $(this).attr('data-id');
                     self.editCollection.remove(dataId);

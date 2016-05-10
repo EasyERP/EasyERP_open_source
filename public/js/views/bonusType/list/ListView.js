@@ -306,12 +306,14 @@ define([
                 var checkbox = savedRow.find('input[type=checkbox]');
 
                 modelObject = modelObject.success;
+                
                 if (modelObject) {
                     modelId = modelObject._id;
                     savedRow.attr("data-id", modelId);
                     checkbox.val(modelId);
                     savedRow.removeAttr('id');
                 }
+                
                 this.hideSaveCancelBtns();
                 this.resetCollection(modelObject);
             },

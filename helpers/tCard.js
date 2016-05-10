@@ -10,6 +10,7 @@ module.exports = function (tCardBody) {
     overTimedTcard.worked = 0;
 
     for (day = 7; day > 0; day--) {
+        overTimedTcard[day] = 0;
         dayValue = tCardBody[day];
         overTimeDayValue = dayValue - 8;
 
