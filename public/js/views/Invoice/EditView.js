@@ -161,23 +161,27 @@ define([
                 invoiceDate: invoiceDate
             };
 
-            dataService.patchData(url, data, function (err, response) {
+            this.saveItem(function (err) {
                 if (!err) {
-                    self.currentModel.set({approved: true});
-                    $buttons.show();
+                    dataService.patchData(url, data, function (err, response) {
+                        if (!err) {
+                            self.currentModel.set({approved: true});
+                            $buttons.show();
 
-                    App.stopPreload();
+                            App.stopPreload();
 
-                    $span.text('Unpaid');
-                    $span.removeClass();
-                    $span.addClass('new');
+                            $span.text('Unpaid');
+                            $span.removeClass();
+                            $span.addClass('new');
 
-                    self.$el.find('.input-file').remove();
-                    self.$el.find('a.deleteAttach').remove();
-                } else {
-                    App.render({
-                        type   : 'error',
-                        message: 'Approve fail'
+                            self.$el.find('.input-file').remove();
+                            self.$el.find('a.deleteAttach').remove();
+                        } else {
+                            App.render({
+                                type   : 'error',
+                                message: 'Approve fail'
+                            });
+                        }
                     });
                 }
             });
