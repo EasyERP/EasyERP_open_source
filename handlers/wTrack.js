@@ -528,7 +528,7 @@ var wTrack = function (event, models) {
                     month       : '$doc.month',
                     year        : '$doc.year',
                     week        : '$doc.week',
-                    isPaid      : '$doc.isPaid'
+                    isPaid      : '$doc.isPaid',
                     _type      : '$doc._type'
                 }
             }, {
