@@ -192,7 +192,7 @@ define([
                          $("#jobs").attr("data-id", null);*/
                         aEl = $thisEl.find('.current-selected.jobs[data-id="jobs"]'); // if other jobs are on page
                         if (!aEl.text()) {
-                            aEl.text("Select");
+                            aEl.text('Select');
                         }
                     }
 
@@ -213,8 +213,8 @@ define([
             var target = $(e.target);
             var $parrent = target.closest('tbody');
             var $parrentRow = $parrent.find('.productItem').last();
-            var rowId = $parrentRow.attr("data-id");
-            var hasError = $parrentRow.attr("data-error") === 'true';
+            var rowId = $parrentRow.attr('data-id');
+            var hasError = $parrentRow.attr('data-error') === 'true';
             var $trEll = $parrent.find('tr.productItem');
             var products = this.products ? this.products.toJSON() : [];
             var templ = _.template(ProductInputContent);
@@ -272,8 +272,6 @@ define([
          */
 
         priceChange: function (e) {
-            e.preventDefault();
-
             var $targetEl = $(e.target);
             var parent = $targetEl.closest('td');
             var inputEl = parent.find('input');
@@ -281,6 +279,8 @@ define([
                 inputEl = parent.find('textarea');
             }
             var val = inputEl.val();
+
+            e.preventDefault();
 
             if (!val.length) {
                 val = '0';
@@ -575,9 +575,10 @@ define([
             var total;
             var date;
             var dates = [];
+            var i;
 
             if (totalEls) {
-                for (var i = totalEls - 1; i >= 0; i--) {
+                for (i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
                     //  quantity = $currentEl.find('[data-name="quantity"]').text();
                     cost = $currentEl.find('[data-name="price"] input').val() || '0';
