@@ -74,7 +74,8 @@ module.exports = (function () {
         editedBy      : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
-        }
+        },
+        proformaCounter: {type: Number, default: 0}
     }, {collection: 'Quotation'});
 
     mongoose.model('Quotation', quotationSchema);
