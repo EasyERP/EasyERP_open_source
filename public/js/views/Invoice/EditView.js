@@ -542,7 +542,7 @@ define([
 
             this.isPaid = (model && model.workflow) ? model.workflow.status === 'Done' : false;
 
-            if (this.isPaid && !dueDate) {
+            if (this.isPaid && !model.approved) {
                 paidAndNotApproved = true;
             }
 
