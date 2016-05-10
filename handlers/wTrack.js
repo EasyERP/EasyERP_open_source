@@ -456,6 +456,18 @@ var TCard = function (event, models) {
                 }
             }, {
                 $project: {
+                    customer     : {$arrayElemAt: ['$customer', 0]},
+                    salesmanagers: 1,
+                    dateByWeek   : 1,
+                    project      : 1,
+                    employee     : 1,
+                    department   : 1,
+                    month        : 1,
+                    year         : 1,
+                    week         : 1,
+                    isPaid       : 1,
+                    _type        : 1,
+
                     startDateWeek: {
                         $let: {
                             vars: {
@@ -471,18 +483,7 @@ var TCard = function (event, models) {
                             },
                             in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
                         }
-                    },
-                    customer     : {$arrayElemAt: ['$customer', 0]},
-                    salesmanagers: 1,
-                    dateByWeek   : 1,
-                    project      : 1,
-                    employee     : 1,
-                    department   : 1,
-                    month        : 1,
-                    year         : 1,
-                    week         : 1,
-                    isPaid       : 1,
-                    _type        : 1
+                    }
                 }
             }, {
                 $project: {
@@ -747,13 +748,6 @@ var TCard = function (event, models) {
                     jobs         : {$arrayElemAt: ['$jobs', 0]},
                     employee     : {$arrayElemAt: ['$employee', 0]},
                     department   : {$arrayElemAt: ['$department', 0]},
-                    salesmanagers: {
-                        $filter: {
-                            input: '$projectMembers',
-                            as   : 'projectMember',
-                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}
-                        }
-                    },
                     dateByWeek   : 1,
                     createdBy    : 1,
                     month        : 1,
@@ -773,7 +767,14 @@ var TCard = function (event, models) {
                     4            : 1,
                     5            : 1,
                     6            : 1,
-                    7            : 1
+                    7            : 1,
+                    salesmanagers: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]}
+                        }
+                    }
                 }
             }, {
                 $lookup: {
@@ -796,22 +797,6 @@ var TCard = function (event, models) {
                 }
             }, {
                 $project: {
-                    startDateWeek: {
-                        $let: {
-                            vars: {
-                                startDate: {$ifNull: ['$salesmanagers.startDate', null]}
-                            },
-                            in  : {$cond: [{$eq: ['$$startDate', null]}, null, {$add: [{$multiply: [{$year: '$$startDate'}, 100]}, {$week: '$$startDate'}]}]}
-                        }
-                    },
-                    endDateWeek  : {
-                        $let: {
-                            vars: {
-                                endDate: {$ifNull: ['$salesmanagers.startDate', null]}
-                            },
-                            in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
-                        }
-                    },
                     customer     : {$arrayElemAt: ['$customer', 0]},
                     workflow     : {$arrayElemAt: ['$workflow', 0]},
                     dateByWeek   : 1,
@@ -838,7 +823,23 @@ var TCard = function (event, models) {
                     4            : 1,
                     5            : 1,
                     6            : 1,
-                    7            : 1
+                    7            : 1,
+                    startDateWeek: {
+                        $let: {
+                            vars: {
+                                startDate: {$ifNull: ['$salesmanagers.startDate', null]}
+                            },
+                            in  : {$cond: [{$eq: ['$$startDate', null]}, null, {$add: [{$multiply: [{$year: '$$startDate'}, 100]}, {$week: '$$startDate'}]}]}
+                        }
+                    },
+                    endDateWeek  : {
+                        $let: {
+                            vars: {
+                                endDate: {$ifNull: ['$salesmanagers.startDate', null]}
+                            },
+                            in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
+                        }
+                    }
                 }
             }, {
                 $project: {
@@ -862,6 +863,7 @@ var TCard = function (event, models) {
                     cost         : 1,
                     worked       : 1,
                     isPaid       : 1,
+                    _type        : 1,
                     1            : 1,
                     2            : 1,
                     3            : 1,
@@ -911,6 +913,7 @@ var TCard = function (event, models) {
                     cost        : '$doc.cost',
                     worked      : '$doc.worked',
                     isPaid      : '$doc.isPaid',
+                    _type       : '$doc._type',
                     1           : '$doc.1',
                     2           : '$doc.2',
                     3           : '$doc.3',
@@ -1134,7 +1137,7 @@ var TCard = function (event, models) {
                     }
                 }, {
                     $project: {
-                        date : {$add: [{$multiply: ["$year", 100]}, "$month"]},
+                        date : {$add: [{$multiply: ['$year', 100]}, '$month']},
                         hours: '$hours'
 
                     }
@@ -1176,7 +1179,7 @@ var TCard = function (event, models) {
             var job = {
                 name    : jobName,
                 workflow: CONSTANTS.JOBSINPROGRESS,
-                type    : "Not Quoted",
+                type    : 'Not Quoted',
                 wTracks : [],
                 project : objectId(project)
             };
@@ -1200,7 +1203,7 @@ var TCard = function (event, models) {
                     jobId = job.toJSON()._id;
 
                     Project.findByIdAndUpdate(objectId(project), {
-                        $push: {"budget.projectTeam": jobId},
+                        $push: {'budget.projectTeam': jobId},
                         $set : {editedBy: editedBy}
                     }, {new: true}, function (err) {
                         if (err) {
@@ -1344,15 +1347,15 @@ var TCard = function (event, models) {
                         cost       : 0,
                         isPaid     : false,
                         jobs       : jobForwTrack,
-                        whoCanRW   : "everyOne",
+                        whoCanRW   : 'everyOne',
                         createdBy  : {
                             date: new Date(),
                             user: userId
                         },
                         groups     : {
-                            "group": [],
-                            "users": [],
-                            "owner": null
+                            group: [],
+                            users: [],
+                            owner: null
                         }
                     };
                     var canFillIt = !!options.canFillIt;
@@ -1743,13 +1746,13 @@ var TCard = function (event, models) {
                 as          : 'projectMembers'
             }
         }, /*, {
-            $lookup: {
-                from        : 'Employees',
-                localField  : 'project.projectmanager',
-                foreignField: '_id',
-                as          : 'projectmanager'
-            }
-        },*/ {
+         $lookup: {
+         from        : 'Employees',
+         localField  : 'project.projectmanager',
+         foreignField: '_id',
+         as          : 'projectmanager'
+         }
+         },*/ {
             $lookup: {
                 from        : 'Employees',
                 localField  : 'employee',

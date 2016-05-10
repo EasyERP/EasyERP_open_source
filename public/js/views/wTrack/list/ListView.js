@@ -237,15 +237,11 @@ define([
             var newRow = this.$el.find('.false');
             var id = newRow.attr('data-id');
 
-            if (newRow.hasClass('overtime')) {
-                return false;
-            }
-
             if (!this.changedModels[id]) {
                 this.changedModels[id] = {};
             }
 
-            if (target.prop('checked')){
+            if (target.prop('checked')) {
                 this.changedModels[id]._type = 'overtime';
                 newRow.addClass('overtime');
             } else {
@@ -475,7 +471,7 @@ define([
 
                         self.changedModels[editedElementRowId].week = weeks[0].week;
 
-                        self.checkVacHolMonth($tr, false, function (){
+                        self.checkVacHolMonth($tr, false, function () {
                             self.setChangedValueToModel($tr);
                         });
                     });
@@ -529,7 +525,7 @@ define([
                 year = year.slice(0, 4);
 
 
-                if (!isOvertime && holiday){
+                if (!isOvertime && holiday) {
                     App.render({
                         type   : 'error',
                         message: 'Please create Overtime tCard'
@@ -604,7 +600,7 @@ define([
                         if (isMonth) {
                             maxValue = 12;
                         } else {
-                            if (isOvertime){
+                            if (isOvertime) {
                                 maxValue = 24;
                             } else {
                                 maxValue = 8;
@@ -617,7 +613,7 @@ define([
 
                     insertedInput.keyup(function (e) {
                         if (insertedInput.val() > maxValue) {
-                            if (isDay && !isOvertime){
+                            if (isDay && !isOvertime) {
                                 App.render({
                                     type   : 'error',
                                     message: 'Сreate Overtime tCard for input more than 8 hours'
@@ -1561,7 +1557,7 @@ define([
                 self.responseObj['#employee'] = employees;
             });
 
-            dataService.getData('/department/getForDD', {devDepartments : true}, function (departments) {
+            dataService.getData('/department/getForDD', {devDepartments: true}, function (departments) {
                 departments = _.map(departments.data, function (department) {
                     department.name = department.departmentName;
 
