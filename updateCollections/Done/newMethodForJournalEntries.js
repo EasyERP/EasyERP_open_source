@@ -291,7 +291,7 @@ dbObject.once('open', function callback() {
 
             var createDirect = function (wfCb) {
 
-                result.forEach(function (element) {
+                async.each(result, function (element, cb) {
                     var employee = element._id.employees;
                     var overheadRate = element._id.overheadRate;
                     var hoursInMonth = element._id.hoursInMonth;
@@ -325,7 +325,7 @@ dbObject.once('open', function callback() {
                         if (hireDateByMonth === dateByMonth) {
                             startDareForMonth = moment(startDareForMonth).date(hireDay);
                         } else if (hireDateByMonth > dateByMonth) {
-                            console.log('hired later', employee)
+                            console.log('hired later', employee);
                         }
 
                         dateByMonthArray.push(dateByMonth);
@@ -337,7 +337,7 @@ dbObject.once('open', function callback() {
                             datesArray.push(moment(startDareForMonth).date(i));
                         }
 
-                        datesArray.forEach(function (date) {
+                        async.each(datesArray, function (date, eachCb) {
                             Model.remove({
                                 date: date.set(timeToSet),
                                 'sourceDocument.model': 'Employees'
@@ -509,16 +509,23 @@ dbObject.once('open', function callback() {
                                         createReconciled(bodyOverhead, "production", methodCb, "52203e707d4dba8813000003");
                                         createReconciled(bodyVacation, "production", methodCb, "52203e707d4dba8813000003");
                                     });
+
+                                    eachCb();
                                 });
 
                             });
+                        }, function () {
+                            cb();
                         });
+                    } else {
+                        cb();
                     }
 
 
+                }, function () {
+                    wfCb(null, createdDateObject);
                 });
 
-                wfCb(null, createdDateObject);
             };
 
             var dataFinder = function (createdDateObject, wfCb) {
