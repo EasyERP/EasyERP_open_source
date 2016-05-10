@@ -347,9 +347,8 @@ var Invoice = function (models, event) {
                 invoice.removable = true;
             }
 
-            if (paidAmount === order.paymentInfo.total) {
+            if (paidAmount >= order.paymentInfo.total) {
                 invoice.workflow = objectId(CONSTANTS.INVOICE_PAID);
-
             } else if (paidAmount) {
                 invoice.workflow = objectId(CONSTANTS.INVOICE_PARTIALY_PAID);
             } else {
