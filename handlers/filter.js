@@ -197,6 +197,7 @@ var Filters = function (models) {
                     year         : 1,
                     week         : 1,
                     isPaid       : 1,
+                    _type     : 1,
                     salesmanagers: {
                         $filter: {
                             input: '$salesmanagers',
@@ -234,7 +235,8 @@ var Filters = function (models) {
                     month         : 1,
                     year          : 1,
                     week          : 1,
-                    isPaid        : 1
+                    isPaid        : 1,
+                    _type         : 1
                 }
             }, {
                 $group: {
@@ -298,6 +300,12 @@ var Filters = function (models) {
                         $addToSet: {
                             _id : '$week',
                             name: '$week'
+                        }
+                    },
+                    '_type'          : {
+                        $addToSet: {
+                            _id : '$_type',
+                            name: '$_type'
                         }
                     }
                 }

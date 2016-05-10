@@ -18,7 +18,8 @@ define([
                 "click #top-bar-nextBtn"   : "nextEvent",
                 "click #top-bar-discardBtn": "discardEvent",
                 "click #top-bar-editBtn"   : "editEvent",
-                "click #top-bar-createBtn" : "createEvent"
+                "click #top-bar-createBtn" : "createEvent",
+                "click #top-bar-exportToXlsxBtn"    : "exportToXlsx",
             },
 
             nextEvent  : function (event) {
@@ -39,6 +40,12 @@ define([
             discardEvent : function () {
                 Backbone.history.navigate("home/content-" + this.contentType, {trigger: true});
             },
+
+            exportToXlsx: function (event) {
+                event.preventDefault();
+                this.trigger('exportToXlsx');
+            },
+
             editEvent    : function () {
                 event.preventDefault();
                 this.trigger('editEvent');

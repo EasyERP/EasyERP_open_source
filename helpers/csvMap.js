@@ -14,7 +14,45 @@ module.exports = (function () {
             'journal.debitAccount.name'  : 'Debit Account',
             'journal.creditAccount.name' : 'Credit Account',
             'debit'                      : 'Summ'
+        }
+    };
 
+    var jobs = {
+        collection: 'jobs',
+        schema    : 'jobs',
+        aliases   : {
+            salesmanager: 'salesmanager',
+            project     : 'project',
+            name        : 'name',
+            workflow    : 'workflow',
+            type        : 'type',
+            cost        : 'cost',
+            costQA      : 'costQA',
+            costDesign  : 'costDesign',
+            costIOS     : 'costIOS',
+            costAndroid : 'costAndroid',
+            costUnity   : 'costUnity',
+            costDotNet  : 'costDotNet',
+            costWeb     : 'costWeb',
+            costROR     : 'costROR',
+            costDev     : 'costDev',
+            hoursQA     : 'hoursQA',
+            hoursDesign : 'hoursDesign',
+            hoursIOS    : 'hoursIOS',
+            hoursAndroid: 'hoursAndroid',
+            hoursUnity  : 'hoursUnity',
+            hoursDotNet : 'hoursDotNet',
+            hoursWeb    : 'hoursWeb',
+            hoursROR    : 'hoursROR',
+            hoursDev    : 'hoursDev',
+            margin      : 'margin',
+            devMargin   : 'devMargin',
+            avDevRate   : 'avDevRate',
+            profit      : 'profit',
+            quotation   : 'quotation',
+            invoice     : 'invoice',
+            payment     : 'payment',
+            count       : 'count'
         }
     };
 
@@ -643,7 +681,8 @@ module.exports = (function () {
         Industry    : industry,
         Tasks       : task,
         Products    : product,
-        journalEntry: journalEntry
+        journalEntry: journalEntry,
+        jobs        : jobs
     };
 
 })();

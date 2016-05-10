@@ -44,6 +44,11 @@ define([], function () {
                 backend: 'week',
                 type   : 'integer'
             },
+            'Type'        : {
+                view   : '_type',
+                backend: '_type',
+                type   : 'string'
+            },
             'Status'      : {
                 view   : 'isPaid',
                 backend: 'isPaid',
