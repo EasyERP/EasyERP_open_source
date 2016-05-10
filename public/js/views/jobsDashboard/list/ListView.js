@@ -24,6 +24,7 @@ define([
             totalCollectionLengthUrl: '/jobs/totalCollectionLength',
             contentCollection       : JobsCollection,
             filterView              : FilterView,
+            exportToXlsxUrl         : '/jobs/exportToXlsx',
 
             events: {
                 'click .jobs': "showReport"
