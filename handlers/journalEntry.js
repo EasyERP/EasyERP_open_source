@@ -1698,7 +1698,7 @@ var Module = function (models, event) {
         var resultArray = [];
 
         reconcileInvoiceEntries = function (mainCallback) {
-            Invoice.find({reconcile: true, _type: {$ne: "Proforma"}}, function (err, result) {
+            Invoice.find({reconcile: true, approved: true, _type: {$ne: "Proforma"}}, function (err, result) {
                 if (err) {
                     return mainCallback(err);
                 }
