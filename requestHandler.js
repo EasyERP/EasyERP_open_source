@@ -117,7 +117,12 @@ var requestHandler = function (app, event, mainDb) {
         var query;
 
         if (options.wTrack) {
-            wTrackModel = options.wTrack.toJSON();
+            wTrackModel = options.wTrack;
+
+            if ('toJSON' in options.wTrack) {
+                wTrackModel = options.wTrack.toJSON();
+            }
+
             month = wTrackModel.month;
             week = wTrackModel.week;
             year = wTrackModel.year;
@@ -157,7 +162,7 @@ var requestHandler = function (app, event, mainDb) {
             var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
             var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
             var keyForRetrive;
-            
+
             if (monthFromSalary && yearFromSalary) {
                 year = parseInt(yearFromSalary);
                 month = parseInt(monthFromSalary);
@@ -192,7 +197,7 @@ var requestHandler = function (app, event, mainDb) {
                             }
 
                             if (monthFromSalary && yearFromSalary) {
-                                redisStore.readFromStorage('monthHours', keyForRetrive, function(err, monthHour){
+                                redisStore.readFromStorage('monthHours', keyForRetrive, function (err, monthHour) {
                                     if (err) {
                                         return console.log(err);
                                     }
@@ -368,19 +373,19 @@ var requestHandler = function (app, event, mainDb) {
         var year = options.year;
         var week = options.week;
         var dateNow = new Date();
-       // var dateKey = moment(dateNow).isoWeekYear() * 100 + moment(dateNow).isoWeek();
+        // var dateKey = moment(dateNow).isoWeekYear() * 100 + moment(dateNow).isoWeek();
         var query = {};
         var date;
 
-         if (month && year) {
+        if (month && year) {
             query = {month: month, year: year};
             date = moment().isoWeekYear(year).month(month).date(1);
-        } else if (year && week){
+        } else if (year && week) {
             query = {week: week, year: year};
             date = moment().isoWeekYear(year).isoWeek(week).day(1);
-        } else if (employee){
-             query.employee = employee;
-         }
+        } else if (employee) {
+            query.employee = employee;
+        }
 
 
         wTrackModel.update(query, {$set: {reconcile: true}}, {multi: true}, function (err, result) {
@@ -527,8 +532,8 @@ var requestHandler = function (app, event, mainDb) {
                         budgetTotal.costSum = 0;
                         budgetTotal.revenueSum = 0;
                         budgetTotal.hoursSum = 0;
-/*                        budgetTotal.revenueByQA = 0;
-                        budgetTotal.hoursByQA = 0;*/
+                        /*                        budgetTotal.revenueByQA = 0;
+                         budgetTotal.hoursByQA = 0;*/
 
                         wTRack.forEach(function (wTrack) {
                             var key;
@@ -559,10 +564,10 @@ var requestHandler = function (app, event, mainDb) {
 
                                 if (empId === emp) {
                                     if (projectTeam[empId]) {
-/*                                        if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
-                                            projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
-                                            projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
-                                        }*/
+                                        /*                                        if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                         projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
+                                         projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
+                                         }*/
                                         projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                         projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
                                         projectTeam[empId].rate += parseFloat(wTrack.rate);
@@ -571,11 +576,11 @@ var requestHandler = function (app, event, mainDb) {
                                     } else {
                                         projectTeam[empId] = {};
 
- /*                                       if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
-                                            projectTeam[empId].byQA = {};
-                                            projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
-                                            projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
-                                        }*/
+                                        /*                                       if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                         projectTeam[empId].byQA = {};
+                                         projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
+                                         projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
+                                         }*/
                                         projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                         projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
                                         projectTeam[empId].rate = parseFloat(wTrack.rate);
@@ -1385,7 +1390,7 @@ var requestHandler = function (app, event, mainDb) {
             return false;
         }
 
-       // totalAmount = quotation.paymentInfo.total;
+        // totalAmount = quotation.paymentInfo.total;
 
         async.each(quotation.products, wTrackUpdater, function (err) {
             if (err) {
@@ -1434,7 +1439,7 @@ var requestHandler = function (app, event, mainDb) {
                         return waterfallCb(err);
                     }
 
-                    if(quotation.currency && quotation.currency.rate){
+                    if (quotation.currency && quotation.currency.rate) {
                         totalAmount = product.unitPrice / quotation.currency.rate;
                     } else {
                         totalAmount = product.unitPrice;

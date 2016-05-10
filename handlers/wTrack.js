@@ -25,6 +25,7 @@ var TCard = function (event, models) {
     var filterMapper = new FilterMapper();
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
+    var overTimeHelper = require('../helpers/tCard');
     var exportMap = require('../helpers/csvMap').wTrack;
 
     var JournalEntryHandler = require('./journalEntry');
@@ -37,6 +38,8 @@ var TCard = function (event, models) {
 
     this.create = function (req, res, next) {
         access.getEditWritAccess(req, req.session.uId, 75, function (success) {
+            var docs = [];
+            var overTimeTcard;
             var WTrack;
             var body;
             var wTrack;
@@ -45,25 +48,51 @@ var TCard = function (event, models) {
             if (success) {
                 WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
                 body = mapObject(req.body);
+                overTimeTcard = overTimeHelper(body);
                 worked = parseInt(body.worked, 10);
                 worked = isNaN(worked) ? 0 : worked;
 
+                docs.push(body);
+
+                if (overTimeTcard) {
+                    docs.push(overTimeTcard);
+                }
+
                 if (worked) {
-                    wTrack = new WTrack(body);
-                    wTrack.save(function (err, _wTrack) {
+                    /* wTrack = new WTrack(body);
+                     wTrack.save(function (err, _wTrack) {
+                     if (err) {
+                     return next(err);
+                     }
+
+                     event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
+                     event.emit('updateRevenue', {wTrack: _wTrack, req: req});
+                     event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
+                     event.emit('dropHoursCashes', req);
+                     event.emit('recollectVacationDash');
+                     event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
+                     event.emit('recollectProjectInfo');
+
+                     res.status(200).send({success: _wTrack});
+                     }); */
+
+                    WTrack.collection.insertMany(docs, function (err, _wTracks) {
                         if (err) {
                             return next(err);
                         }
 
-                        event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
-                        event.emit('updateRevenue', {wTrack: _wTrack, req: req});
-                        event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
-                        event.emit('dropHoursCashes', req);
-                        event.emit('recollectVacationDash');
-                        event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
-                        event.emit('recollectProjectInfo');
+                        _wTracks = _wTracks.ops;
+                        _wTracks.forEach(function (_wTrack) {
+                            event.emit('setReconcileTimeCard', {req: req, week: _wTrack.week, year: _wTrack.year});
+                            event.emit('updateRevenue', {wTrack: _wTrack, req: req});
+                            event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
+                            event.emit('dropHoursCashes', req);
+                            event.emit('recollectVacationDash');
+                            event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
+                            event.emit('recollectProjectInfo');
+                        });
 
-                        res.status(200).send({success: _wTrack});
+                        res.status(200).send({success: _wTracks[0]});
                     });
                 } else {
                     res.status(200).send({success: 'Empty tCard'});
