@@ -631,7 +631,7 @@ var requestHandler = function (app, event, mainDb) {
 
                                 response = response || [];
 
-                                bonuses.forEach(function (element) {
+/*                                bonuses.forEach(function (element) {
                                     var objToSave = {};
 
                                     objToSave.bonus = 0;
@@ -650,7 +650,7 @@ var requestHandler = function (app, event, mainDb) {
                                         bonus.push(objToSave);
                                     }
 
-                                });
+                                });*/
 
                                 keysForPT = Object.keys(projectTeam);
 
