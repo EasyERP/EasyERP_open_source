@@ -42,6 +42,12 @@
         <%var paid = 0;%>
         <%var total = 0;%>
         <% collection.forEach(function(invoice, index){ %>
+        <% var overdue = 0%>
+        <% if(invoice.workflow && (invoice.workflow.status === 'Done')){ %>
+        <% overdue = new Date(invoice.paymentDate) - new Date(invoice.dueDate) %>
+        <% } else if (invoice.paymentInfo && invoice.paymentInfo.balance > 0){ %>
+        <% overdue = new Date() - new Date(invoice.dueDate) %>
+        <% } %>
         <tr data-id="<%=invoice._id%>">
         <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>"/>
         </td>
@@ -52,7 +58,12 @@
         <td><%=invoice.name%></td>
         <td><%=invoice.paymentDate%></td>
         <td><%=(invoice.salesPerson && invoice.salesPerson.name) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
-        <td data-content="dueDate"><%=invoice.dueDate%></td>
+        <td><% if (overdue > 0) {%>
+            <span class="red"><%=Math.ceil(overdue / (1000 * 3600 * 24)) + " days"%></span>
+            <% } else {%>
+            <span><%= invoice.dueDate%></span>
+            <%}%>
+        </td>
         <td class="money"><%=currencySplitter(invoice.paymentInfo.balance.toString())%></td>
         <td class="paid money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid.toString()) : '0.00'%></td>
         <td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total.toString()) : '0.00'%></td>
