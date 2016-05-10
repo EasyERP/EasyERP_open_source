@@ -21,9 +21,9 @@
                             <label for="paidAmount">Paid Amount</label>
                         </dt>
                         <dd>
-                            <input type="text" name="paidAmount" id="paidAmount" maxlength="10"
-                                   value="<%=model.paidAmount ? model.paidAmount : 0%>" readonly/>
-                            <span></span>
+<!--                            <input type="text" name="paidAmount" id="paidAmount" maxlength="10"
+                                   value="<%=model.paidAmount ? model.paidAmount : 0%>" readonly/>-->
+                            <span id="paidAmount" class="<%=currencyClass(model.currency._id)%>"> <%=model.paidAmount ? model.paidAmount : 0%></span>
                         </dd>
                         <dt>
                             <label for="paymentMethod">Bank account
@@ -37,8 +37,11 @@
                 <div class="half-block left">
                     <dl class="opp-info">
                         <dt><label for="paymentDate">Date</label></dt>
-                        <dd><input id="paymentDate" class="extrainfo" type="text" name="paymentDate"
-                                   value="<%=model.date%>" readonly/></dd>
+                        <dd>
+                            <span id="paymentDate"><%=model.date%></span>
+<!--                            <input id="paymentDate" class="extrainfo" type="text" name="paymentDate"
+                                   value="<%=model.date%>" readonly/>-->
+                        </dd>
                         <dt><label for="paymentRef">Invoice</label></dt>
                         <dd>
                             <a id="paymentRef" data-id="<%=model.invoice._id%>" href="javascript:;"><%=model.invoice.name%></a>
