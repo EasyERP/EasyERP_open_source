@@ -92,7 +92,6 @@ define([
         events: {
             'click .stageSelect'                               : 'showNewSelect',
             'click tr.enableEdit td.editable:not(.disabled)'   : 'editRow',
-            'click  #overtime'                                 : 'setOverTime',
             'click td.disabled'                                : 'notify',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'change .autoCalc'                                 : 'autoCalc',
@@ -232,8 +231,7 @@ define([
             $('#top-bar-createBtn').show();
         },
 
-        setOverTime: function (e) {
-            var target = $(e.target);
+        setOverTime: function (type) {
             var newRow = this.$el.find('.false');
             var id = newRow.attr('data-id');
 
@@ -241,7 +239,7 @@ define([
                 this.changedModels[id] = {};
             }
 
-            if (target.prop('checked')) {
+            if (type === 'OT') {
                 this.changedModels[id]._type = 'overtime';
                 newRow.addClass('overtime');
             } else {
@@ -495,6 +493,7 @@ define([
             var content = el.data('content');
             var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
             var isWeek = el.attr('data-content') === 'week';
+            var isType = el.attr('data-content') === 'type';
             var isYear = el.attr('data-content') === 'year';
             var isMonth = el.attr('data-content') === 'month';
             var isDay = el.hasClass('autoCalc');
@@ -560,6 +559,10 @@ define([
                             self.showNewSelect(e);
                             return false;
                         });
+                    } else if (isType) {
+                        el.append('<ul class="newSelectList"><li>OR</li><li>OT</li></ul>');
+
+                        return false;
                     } else {
                         this.showNewSelect(e);
                         return false;
@@ -575,7 +578,7 @@ define([
 
                     this.calculateCost(e, wTrackId);
                 } else if (isYear) {
-                    currentYear = parseInt(moment().year());
+                    currentYear = parseInt(moment().year(), 10);
                     previousYear = currentYear - 1;
                     nextYear = currentYear + 1;
 
@@ -771,6 +774,7 @@ define([
         chooseOption: function (e) {
             var self = this;
             var target = $(e.target);
+            var textVal = target.text();
             var targetElement = target.parents('td');
             var tr = target.parents('tr');
             var modelId = tr.attr('data-id');
@@ -850,6 +854,9 @@ define([
                     changedAttr.jobs = jobs;
 
                     tr.find('[data-content="jobs"]').removeClass('errorContent');
+                } else if (elementType === '#type') {
+                    changedAttr._type = textVal === 'OT' ? 'overtime' : 'ordinary';
+                    this.setOverTime(textVal);
                 } else if (elementType === '#employee') {
                     tr.find('[data-content="department"]').text(element.department.departmentName);
 
@@ -870,17 +877,13 @@ define([
 
                     changedAttr.department = department;
                 } else if (elementType === '#week') {
-                    week = $(e.target).text();
-
-                    changedAttr.week = week;
+                    changedAttr.week = textVal;
                 } else if (elementType === '#year') {
-                    year = $(e.target).text();
-
-                    changedAttr.year = year;
+                    changedAttr.year = textVal;
                 }
 
                 targetElement.removeClass('errorContent');
-                targetElement.text(target.text());
+                targetElement.text(textVal);
             } else if (id === 'createJob') {
                 self.generateJob(e);
             }
@@ -1059,9 +1062,9 @@ define([
         },
 
         /* hideOvertime: function () {
-            this.$el.find('#overtime input').attr('checked', false);
-            this.$el.find('#overtime').hide();
-        }, */
+         this.$el.find('#overtime input').attr('checked', false);
+         this.$el.find('#overtime').hide();
+         }, */
 
         resetCollection: function (models) {
             var id;
@@ -1129,7 +1132,7 @@ define([
         setChangedValue: function () {
             if (!this.changed) {
                 this.changed = true;
-                this.showSaveCancelBtns()
+                this.showSaveCancelBtns();
             }
         },
 
@@ -1154,7 +1157,7 @@ define([
                 _type       : 'ordinary'
             };
 
-            this.$el.find('#overtime').show();
+            // this.$el.find('#overtime').show();
 
             var model = new currentModel(startData);
 
