@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var wTrack = function (event, models) {
+var TCard = function (event, models) {
     'use strict';
     var access = require('../Modules/additions/access.js')(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
@@ -31,9 +31,9 @@ var wTrack = function (event, models) {
     var journalEntry = new JournalEntryHandler(models);
 
     //
-    //exportDecorator.addExportFunctionsToHandler(this, function (req) {
+    // exportDecorator.addExportFunctionsToHandler(this, function (req) {
     //    return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-    //}, exportMap, "wTrack");
+    // }, exportMap, "wTrack");
 
     this.create = function (req, res, next) {
         access.getEditWritAccess(req, req.session.uId, 75, function (success) {
@@ -45,7 +45,7 @@ var wTrack = function (event, models) {
             if (success) {
                 WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
                 body = mapObject(req.body);
-                worked = parseInt(body.worked);
+                worked = parseInt(body.worked, 10);
                 worked = isNaN(worked) ? 0 : worked;
 
                 if (worked) {
@@ -100,7 +100,7 @@ var wTrack = function (event, models) {
                     }
 
                     if (tCard) {
-                        event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
+                        event.emit('setReconcileTimeCard', {req: req, week: tCard.week, year: tCard.year});
                         event.emit('updateRevenue', {wTrack: tCard, req: req});
                         event.emit('updateProjectDetails', {req: req, _id: tCard.project});
                         event.emit('recollectProjectInfo');
@@ -171,13 +171,13 @@ var wTrack = function (event, models) {
                     cb(null, tCard);
                 }
 
-                async.each(body, function (data, cb) {
-                    var id;
+                async.each(body, function (_data, cb) {
                     var needUpdateKeys;
                     var worked;
+                    var data;
+                    var id;
 
-                    data = data || {};
-                    console.log(data);
+                    data = _data || {};
                     worked = data.worked;
 
                     id = data._id;
@@ -440,7 +440,7 @@ var wTrack = function (event, models) {
                     week         : 1,
                     isPaid       : 1,
                     customer     : 1,
-                    _type     : 1
+                    _type        : 1
                 }
             }, {
                 $lookup: {
@@ -482,7 +482,7 @@ var wTrack = function (event, models) {
                     year         : 1,
                     week         : 1,
                     isPaid       : 1,
-                    _type               : 1
+                    _type        : 1
                 }
             }, {
                 $project: {
@@ -496,7 +496,7 @@ var wTrack = function (event, models) {
                     week          : 1,
                     isPaid        : 1,
                     'customer._id': 1,
-                    _type               : 1
+                    _type         : 1
                 }
             }, {
                 $match: {
@@ -528,8 +528,8 @@ var wTrack = function (event, models) {
                     month       : '$doc.month',
                     year        : '$doc.year',
                     week        : '$doc.week',
-                    isPaid      : '$doc.isPaid'
-                    _type      : '$doc._type'
+                    isPaid      : '$doc.isPaid',
+                    _type       : '$doc._type'
                 }
             }, {
                 $project: {
@@ -542,7 +542,7 @@ var wTrack = function (event, models) {
                     year              : 1,
                     week              : 1,
                     isPaid            : 1,
-                    _type            : 1
+                    _type             : 1
                 }
             }, {
                 $match: queryObject
@@ -766,7 +766,7 @@ var wTrack = function (event, models) {
                     cost         : 1,
                     worked       : 1,
                     isPaid       : 1,
-                    _type     : 1,
+                    _type        : 1,
                     1            : 1,
                     2            : 1,
                     3            : 1,
@@ -831,7 +831,7 @@ var wTrack = function (event, models) {
                     cost         : 1,
                     worked       : 1,
                     isPaid       : 1,
-                    _type     : 1,
+                    _type        : 1,
                     1            : 1,
                     2            : 1,
                     3            : 1,
@@ -1937,4 +1937,4 @@ var wTrack = function (event, models) {
 
 };
 
-module.exports = wTrack;
+module.exports = TCard;
