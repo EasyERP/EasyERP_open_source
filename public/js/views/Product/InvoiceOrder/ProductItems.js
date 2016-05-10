@@ -191,7 +191,9 @@ define([
                         /* $("#jobs").text("Select");
                          $("#jobs").attr("data-id", null);*/
                         aEl = $thisEl.find('.current-selected.jobs[data-id="jobs"]'); // if other jobs are on page
-                        aEl.text("Select");
+                        if (!aEl.text()) {
+                            aEl.text("Select");
+                        }
                     }
 
                     if (!self.projectModel) {
