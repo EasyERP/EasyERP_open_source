@@ -1468,6 +1468,11 @@ var Invoice = function (models, event) {
             user: req.session.uId,
             date: new Date()
         };
+        var orderUpdateQuery = {
+            $set: {
+                workflow: CONSTANTS.ORDERNEW
+            }
+        };
 
         if (req.session && req.session.loggedIn && db) {
             access.getDeleteAccess(req, req.session.uId, moduleId, function (access) {
@@ -1482,13 +1487,16 @@ var Invoice = function (models, event) {
 
                         orderId = invoiceDeleted.sourceDocument;
 
-                        Order.findByIdAndUpdate(objectId(orderId), {
-                            $set: {
-                                workflow: CONSTANTS.ORDERNEW
-                            }
-                        }, {new: true}, function (err, result) {
+                        if (invoiceDeleted._type === 'Proforma') {
+                            orderUpdateQuery['$inc'] = {
+                                proformaCounter: -1
+                            };
+                        }
+
+                        Order.findByIdAndUpdate(objectId(orderId), orderUpdateQuery,
+                            {new: true}, function (err, result) {
                             if (err) {
-                                return next(err)
+                                return next(err);
                             }
                         });
 
