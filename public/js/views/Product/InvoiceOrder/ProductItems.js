@@ -191,7 +191,9 @@ define([
                         /* $("#jobs").text("Select");
                          $("#jobs").attr("data-id", null);*/
                         aEl = $thisEl.find('.current-selected.jobs[data-id="jobs"]'); // if other jobs are on page
-                        aEl.text("Select");
+                        if (!aEl.text()) {
+                            aEl.text('Select');
+                        }
                     }
 
                     if (!self.projectModel) {
@@ -211,8 +213,8 @@ define([
             var target = $(e.target);
             var $parrent = target.closest('tbody');
             var $parrentRow = $parrent.find('.productItem').last();
-            var rowId = $parrentRow.attr("data-id");
-            var hasError = $parrentRow.attr("data-error") === 'true';
+            var rowId = $parrentRow.attr('data-id');
+            var hasError = $parrentRow.attr('data-error') === 'true';
             var $trEll = $parrent.find('tr.productItem');
             var products = this.products ? this.products.toJSON() : [];
             var templ = _.template(ProductInputContent);
@@ -270,8 +272,6 @@ define([
          */
 
         priceChange: function (e) {
-            e.preventDefault();
-
             var $targetEl = $(e.target);
             var parent = $targetEl.closest('td');
             var inputEl = parent.find('input');
@@ -279,6 +279,8 @@ define([
                 inputEl = parent.find('textarea');
             }
             var val = inputEl.val();
+
+            e.preventDefault();
 
             if (!val.length) {
                 val = '0';
@@ -354,6 +356,7 @@ define([
             var jobId;
             var currentJob;
             var product = $('.productsDd');
+            var price;
 
             if (_id !== 'createJob') {
 
@@ -406,7 +409,16 @@ define([
                 datePicker.remove();
 
                 //  $($parrents[2]).attr('class', 'editable');
-                $('#editInput').val(salePrice); // changed on def 0
+//                $('#editInput').val(salePrice); // changed on def 0
+
+                if (currentJob && currentJob.budget) {
+                    price = currentJob.budget.budgetTotal.revenueSum;
+                    if (price) {
+                        $trEl.find('[data-name="price"]').find('input').val(price);
+                    } else {
+                        $trEl.find('[data-name="price"]').find('input').val('0');
+                    }
+                }
 
                 /* if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
                  $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
@@ -563,9 +575,10 @@ define([
             var total;
             var date;
             var dates = [];
+            var i;
 
             if (totalEls) {
-                for (var i = totalEls - 1; i >= 0; i--) {
+                for (i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
                     //  quantity = $currentEl.find('[data-name="quantity"]').text();
                     cost = $currentEl.find('[data-name="price"] input').val() || '0';

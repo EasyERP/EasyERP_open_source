@@ -245,31 +245,36 @@ define([
                     invoiceId: proformaId
                 };
 
-                dataService.patchData(url, data, function (err, response) {
+                this.saveItem(function (err) {
                     if (!err) {
+                        dataService.patchData(url, data, function (err, response) {
+                            if (!err) {
 
-                        self.currentModel.set({approved: true});
-                        $li.html(payBtnHtml);
-                        $currencyDd.removeClass('current-selected');
-                        $priceInputs.each(function() {
-                            var $td = $(this);
-                            var price = $td.find('input').val();
+                                self.currentModel.set({approved: true});
+                                $li.html(payBtnHtml);
+                                $currencyDd.removeClass('current-selected');
+                                $priceInputs.each(function() {
+                                    var $td = $(this);
+                                    var price = $td.find('input').val();
 
-                            $td.html('<span>' + price + '</span>');
-                        });
+                                    $td.html('<span>' + price + '</span>');
+                                });
 
-                        self.$el.find('.input-file').remove();
-                        self.$el.find('a.deleteAttach').remove();
+                                self.$el.find('.input-file').remove();
+                                self.$el.find('a.deleteAttach').remove();
 
-                        App.stopPreload();
+                                App.stopPreload();
 
-                    } else {
-                        App.render({
-                            type   : 'error',
-                            message: 'Approve fail'
+                            } else {
+                                App.render({
+                                    type   : 'error',
+                                    message: 'Approve fail'
+                                });
+                            }
                         });
                     }
                 });
+
             },
 
             saveItem: function (paymentCb) {

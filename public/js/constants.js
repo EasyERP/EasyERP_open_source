@@ -693,7 +693,7 @@ define([], function () {
             Companies   : 50
         },
 
-        MIN_DATE          : '2015-09-01',
+        MIN_DATE          : '2014-09-01',
 
         INVOICE_JOURNAL: '565ef6ba270f53d02ee71d65',
         PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146'

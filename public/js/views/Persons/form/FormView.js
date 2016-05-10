@@ -164,7 +164,8 @@ define([
                         changeMonth: true,
                         changeYear : true,
                         yearRange  : '-100y:c+nn',
-                        maxDate    : '-18y'
+                        maxDate    : '-18y',
+                        minDate    : null
                     });
                 } else if ($("#" + parent[0].id).hasClass('with-checkbox')) {
                     $("#" + parent[0].id + " input").removeAttr('disabled');

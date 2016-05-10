@@ -4,8 +4,9 @@ define([
     'communication',
     'custom',
     'socket.io',
-    'spinJs'
-], function (Router, Communication, Custom, io, Spinner) {
+    'spinJs',
+    'constants'
+], function (Router, Communication, Custom, io, Spinner, constants) {
     var initialize = function () {
         'use strict';
         var appRouter = new Router();
@@ -71,7 +72,8 @@ define([
     var applyDefaults = function () {
         $.datepicker.setDefaults({
             //dateFormat:"dd/mm/yy"
-            firstDay: 1
+            firstDay: 1,
+            minDate: new Date(constants.MIN_DATE)
         });
         //add ability to clear console by calling -> console.API.clear();
         if (typeof console._commandLineAPI !== 'undefined') {
