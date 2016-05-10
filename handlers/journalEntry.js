@@ -1695,14 +1695,13 @@ var Module = function (models, event) {
         var parallelRemoveCreate;
         var waterfallCreateEntries;
         var wTracks;
+        var resultArray = [];
 
         reconcileInvoiceEntries = function (mainCallback) {
             Invoice.find({reconcile: true, _type: {$ne: "Proforma"}}, function (err, result) {
                 if (err) {
                     return mainCallback(err);
                 }
-
-                var resultArray = [];
 
                 result.forEach(function (el) {
                     resultArray.push(el._id);
@@ -1728,8 +1727,6 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             payments   : 1,
-                            paymentDate: 1,
-                            dueDate    : 1,
                             _id        : 0
                         }
                     }, {
@@ -1743,9 +1740,7 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            payment    : {$arrayElemAt: ['$payment', 0]},
-                            paymentDate: 1,
-                            dueDate    : 1
+                            payment    : {$arrayElemAt: ['$payment', 0]}
                         }
                     }, {
                         $lookup: {
@@ -1757,21 +1752,11 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             payment    : 1,
-                            invoice    : {$arrayElemAt: ['$invoice', 0]},
-                            paymentDate: 1,
-                            dueDate    : 1
+                            invoice    : {$arrayElemAt: ['$invoice', 0]}
                         }
                     }, {
                         $match: {
                             'invoice._type': 'Proforma'
-                        }
-                    }, {
-                        $group: {
-                            _id         : '$invoice._id',
-                            paymentsInfo: {$push: '$payment'},
-                            payments    : {$push: '$payment._id'},
-                            paymentDate : {$first: '$paymentDate'},
-                            dueDate     : {$max: '$dueDate'}
                         }
                     }], function (err, result) {
                         if (err) {
@@ -1790,32 +1775,36 @@ var Module = function (models, event) {
                             }
 
                             var cb = asyncCb;
+                            var proformaPayments = [];
 
                             var proforma = _.find(result, function (el) {
-                                if (element && element._id) {
-                                    return el._id.toString() === element._id.toString()
-                                }
+                                invoice.payments.forEach(function (payment) {
+                                    if (el.payment && el.payment._id && (payment.toString() === el.payment._id.toString())){
+                                        proformaPayments.push(el);
+                                    }
+                                })
                             });
 
                             var paidAmount = 0;
                             var beforeInvoiceBody = {};
                             var journalEntryBody = {};
 
-                            if (proforma) {
-                                proforma.paymentsInfo.forEach(function (payment) {
-                                    var paid = payment.paidAmount;
-                                    var paidInUSD = paid / payment.currency.rate;
+                            if (proformaPayments.length) {
+                                proformaPayments.forEach(function (el) {
+                                    var paymentInfo = el.payment;
+                                    var paid = paymentInfo.paidAmount;
+                                    var paidInUSD = paid / paymentInfo.currency.rate;
 
                                     paidAmount += paidInUSD;
                                 });
 
-                                if (invoice.paymentInfo.total - paidAmount > 0) {
+                                if (paidAmount && (invoice.paymentInfo.total - paidAmount >= 0)) {
                                     cb = _.after(2, asyncCb);
 
                                     beforeInvoiceBody.date = invoice.invoiceDate;
-                                    beforeInvoiceBody.journal = invoice.journal;
+                                    beforeInvoiceBody.journal = CONSTANTS.BEFORE_INVOICE;
                                     beforeInvoiceBody.currency = invoice.currency ? invoice.currency._id : 'USD';
-                                    beforeInvoiceBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total - invoice.paymentInfo.balance : 0;
+                                    beforeInvoiceBody.amount = invoice.paymentInfo ? paidAmount : 0;
                                     beforeInvoiceBody.sourceDocument = {};
                                     beforeInvoiceBody.sourceDocument._id = invoice._id;
                                     beforeInvoiceBody.sourceDocument.model = 'Proforma';
@@ -1827,7 +1816,7 @@ var Module = function (models, event) {
                             journalEntryBody.date = invoice.invoiceDate;
                             journalEntryBody.journal = invoice.journal || CONSTANTS.INVOICE_JOURNAL;
                             journalEntryBody.currency = invoice.currency ? invoice.currency._id : 'USD';
-                            journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
+                            journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total - paidAmount : 0;
                             journalEntryBody.sourceDocument = {};
                             journalEntryBody.sourceDocument._id = invoice._id;
                             journalEntryBody.sourceDocument.model = 'Invoice';
@@ -1847,8 +1836,11 @@ var Module = function (models, event) {
                         return mainCallback(err);
                     }
 
-                    Invoice.update({_id: {$in: resultArray}}, {$set: {reconcile: false}}, {multi: true}, function () {
-                        mainCallback();
+                    Invoice.update({_id: {$in: resultArray}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
+                        if (err){
+                            return mainCallback(err);
+                        }
+
                         res.status(200).send({success: true});
                     });
                 });
