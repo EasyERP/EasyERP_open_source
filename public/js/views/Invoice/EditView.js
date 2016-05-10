@@ -634,8 +634,14 @@ define([
 
             populate.get2name("#supplier", "/supplier", {}, this, false);
             populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
-            populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
             populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+
+            if (!model.paymentMethod && model.project && model.project.paymentMethod) {
+                populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true, true, model.project.paymentMethod);
+            } else {
+                populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true, true);
+            }
+            populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
             populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
             if (model.workflow.status !== 'New' && model.dueDate) {

@@ -55,7 +55,7 @@ module.exports = (function () {
         incoterm      : {type: ObjectId, ref: 'Incoterm', default: null},
         invoiceControl: {type: ObjectId, ref: 'InvoicingControl', default: null},
         invoiceRecived: {type: Boolean, default: false},
-        paymentTerm   : {type: ObjectId, ref: 'PaymentTerm', default: null},
+        paymentTerms  : {type: ObjectId, ref: 'PaymentTerm', default: null},
         paymentInfo   : payments,
         products      : [products],
         workflow      : {type: ObjectId, ref: 'workflows', default: null},

@@ -1063,6 +1063,8 @@ var Project = function (models, event) {
             .populate('salesmanager', '_id name fullName')
             .populate('customer', '_id name fullName')
             .populate('workflow', '_id name')
+            .populate('paymentMethod', '_id name')
+            .populate('paymentTerms', '_id name');
 
         query.exec(function (err, project) {
             if (err) {

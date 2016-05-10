@@ -1425,6 +1425,7 @@ var Invoice = function (models, event) {
                             .populate('groups.owner', '_id login')
                             .populate('sourceDocument')
                             .populate('workflow', '_id name status')
+                            .populate('project', '_id name paymentMethod')
                             .populate('supplier', '_id name fullName');
 
                         query.lean().exec(waterfallCallback);

@@ -34,6 +34,8 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         },
         projecttype     : {type: String, default: ''},
+        paymentTerms    : {type: ObjectId, ref: 'PaymentTerm', default: null},
+        paymentMethod   : {type: ObjectId, ref: 'PaymentMethod', default: null},
         notes           : {type: Array, default: []},
         attachments     : {type: Array, default: []},
         editedBy        : {

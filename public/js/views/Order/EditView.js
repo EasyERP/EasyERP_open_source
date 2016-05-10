@@ -290,7 +290,7 @@ define([
                     destination      : destination ? destination : null,
                     incoterm         : incoterm ? incoterm : null,
                     invoiceControl   : invoiceControl ? invoiceControl : null,
-                    paymentTerm      : paymentTerm ? paymentTerm : null,
+                    paymentTerms      : paymentTerm ? paymentTerm : null,
                     fiscalPosition   : fiscalPosition ? fiscalPosition : null,
                     paymentInfo      : {
                         total  : total,

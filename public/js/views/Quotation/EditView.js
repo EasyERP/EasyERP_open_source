@@ -551,7 +551,7 @@ define([
                 destination      : destination,
                 incoterm         : incoterm,
                 invoiceControl   : invoiceControl,
-                paymentTerm      : paymentTerm,
+                paymentTerms     : paymentTerm,
                 fiscalPosition   : fiscalPosition,
                 paymentInfo      : {
                     total  : total,
@@ -654,8 +654,9 @@ define([
 
         render: function () {
             var self = this;
+            var currentModelJSON = this.currentModel.toJSON();
             var formString = this.template({
-                model        : this.currentModel.toJSON(),
+                model        : currentModelJSON,
                 visible      : this.visible,
                 hidePrAndCust: this.hidePrAndCust
             });
@@ -705,7 +706,13 @@ define([
             populate.get("#destination", "/destination", {}, 'name', this, false, true);
             populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
             populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
-            populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
+
+            if (!currentModelJSON.paymentTerms && currentModelJSON.project && currentModelJSON.project.paymentTerms) {
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true, currentModelJSON.project.paymentTerms);
+            } else {
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
+            }
+
             populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
 
             if (this.forSales) {
