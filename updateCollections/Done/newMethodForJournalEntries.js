@@ -159,7 +159,7 @@ dbObject.once('open', function callback() {
             $match: //reconcile: true
 
             {
-                year: 2016, month: 1
+                year: 2016, month: 2
             }
         }, {
             $group: {

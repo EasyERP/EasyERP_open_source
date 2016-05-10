@@ -39,7 +39,7 @@ var MonthHours = function (event, models) {
     this.create = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var body = req.body;
-        var dateByMonth = body.year * 100 + body.month;
+        var dateByMonth = parseInt(body.year, 10) * 100 + parseInt(body.month, 10);
 
         body.dateByMonth = dateByMonth;
 
@@ -88,7 +88,7 @@ var MonthHours = function (event, models) {
                         delete data._id;
 
                         if (data.year && data.month) {
-                            var dateByMonth = data.year * 100 + data.month;
+                            var dateByMonth = parseInt(data.year, 10) * 100 + parseInt(data.month, 10);
 
                             data.dateByMonth = dateByMonth;
                         }

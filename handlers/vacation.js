@@ -578,7 +578,7 @@ var Vacation = function (event, models) {
 
         body.monthTotal = result;
 
-        dateByMonth = body.year * 100 + body.month;
+        dateByMonth = parseInt(body.year, 10) * 100 + parseInt(body.month, 10);
 
         body.dateByMonth = dateByMonth;
 
