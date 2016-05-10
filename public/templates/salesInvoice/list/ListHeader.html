@@ -18,7 +18,7 @@
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paymentInfo.balance">Balance<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paymentInfo.unTaxed"><%= currentDb ? 'Paid' : 'Untaxed'%><span
+            <th class="oe_sortable" data-sort="paid">Paid<span
                     class="arrow down">7</span><span
                     class="arrow up">v</span></th>
             <th class="oe_sortable" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
@@ -36,7 +36,7 @@
         <tr>
             <td colspan="7"></td>
             <td class="money"> <span id="balance"></span></td>
-            <td class="money"><span id="unTaxed"></span></td>
+            <td class="money"><span id="paid"></span></td>
             <td class="money"><span id="total"></span></td>
         </tr>
         </tfoot>
