@@ -53,15 +53,15 @@ module.exports = (function () {
             date: {type: Date, default: Date.now}
         },
 
-        editedBy : {
+        editedBy   : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
         attachments: {type: Array, default: []},
-        invoiced : {type: Boolean, default: false},
-        removable: {type: Boolean, default: true},
-        approved : {type: Boolean, default: false},
-        emailed : {type: Boolean, default: false}
+        invoiced   : {type: Boolean, default: false},
+        removable  : {type: Boolean, default: true},
+        approved   : {type: Boolean, default: false},
+        emailed    : {type: Boolean, default: false}
     }, {collection: 'Invoice', discriminatorKey: '_type'});
 
     var jobsInvoiceSchema = baseSchema.extend({
@@ -103,7 +103,7 @@ module.exports = (function () {
         }]
     });
 
-        var expensesInvoiceSchema = invoiceSchema.extend({});
+    var expensesInvoiceSchema = invoiceSchema.extend({});
 
     var dividendInvoiceSchema = invoiceSchema.extend({
         products: [{
@@ -117,9 +117,9 @@ module.exports = (function () {
         }]
     });
 
-/*    function setPrice(num) {
-        return num * 100;
-    };*/
+    /*    function setPrice(num) {
+            return num * 100;
+        };*/
 
     dividendInvoiceSchema.pre('save', function (next) {
         var invoice = this;
@@ -159,6 +159,33 @@ module.exports = (function () {
     mongoose.model('expensesInvoice', expensesInvoiceSchema);
     mongoose.model('dividendInvoice', dividendInvoiceSchema);
     mongoose.model('Proforma', proformaSchema);
+
+    proformaSchema.pre('save', setName);
+
+    function setName(next) {
+        var proforma = this;
+        var db = proforma.db.db;
+
+        db.collection('settings').findOneAndUpdate({
+                dbName: db.databaseName,
+                name  : 'proforma',
+                quotation: proforma.name
+            }, {
+                $inc: {seq: 1}
+            }, {
+                returnOriginal: false,
+                upsert        : true
+            },
+            function (err, rate) {
+                if (err) {
+                    return next(err);
+                }
+
+                proforma.name += '_' + rate.value.seq;
+
+                next();
+            });
+    };
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};

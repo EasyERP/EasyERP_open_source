@@ -9,8 +9,8 @@
         <%}%>
     </td>
     <% if (forSales) {%>
-    <td data-name="jobs" data-content="<%=product.jobs._id%>" class="text-overflow">
-        <a class="<%=editable ? 'current-selected' : ''%>" id="jobs" href="javascript:;"><%=product.jobs.name%></a>
+    <td data-name="jobs" data-content="<%=product.jobs._id%>" class="text-overflow jobs">
+        <a class="<%=editable ? 'current-selected jobs' : ''%>" id="jobs" data-id="jobs" href="javascript:;"><%=product.jobs.name%></a>
     </td>
     <% } else {%>
     <td data-name="productDescr" class="<%=editable  ? 'editable' : ''%>">
