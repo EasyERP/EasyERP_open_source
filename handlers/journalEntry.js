@@ -3860,7 +3860,7 @@ var Module = function (models, event) {
         Model.aggregate([{
             $match: {
                 date                  : {$gte: new Date(startDate), $lte: new Date(endDate)},
-                "sourceDocument.model": 'dividendInvoice',
+                "sourceDocument.model": 'expensesInvoice',
                 debit                 : {$gt: 0}
             }
         }, {
