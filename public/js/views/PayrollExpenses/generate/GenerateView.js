@@ -157,10 +157,8 @@ define([
                 var year = moment(new Date()).get('year');
                 var newDialog;
 
-                var newDate = moment([month + 1, year]);
-
                 var dialog = this.template({
-                    month: newDate.get('month'),
+                    month: month,
                     year : year
                 });
 
