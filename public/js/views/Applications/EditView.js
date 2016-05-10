@@ -880,7 +880,8 @@
                 changeMonth: true,
                 changeYear : true,
                 yearRange  : '-100y:c+nn',
-                maxDate    : '-18y'
+                maxDate    : '-18y',
+                minDate    : null
             });
 
             $('.date').datepicker({
