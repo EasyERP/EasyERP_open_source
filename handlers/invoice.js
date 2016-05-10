@@ -45,7 +45,7 @@ var Invoice = function (models, event) {
         journalEntryBody.date = invoice.invoiceDate;
         journalEntryBody.journal = invoice.journal || CONSTANTS.INVOICE_JOURNAL;
         journalEntryBody.currency = invoice.currency || 'USD';
-        journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
+        journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.balance : 0;
         journalEntryBody.sourceDocument = {};
         journalEntryBody.sourceDocument._id = invoice._id;
         journalEntryBody.sourceDocument.model = 'Invoice';
@@ -54,7 +54,7 @@ var Invoice = function (models, event) {
             cb = _.after(2, waterfallCb);
 
             beforeInvoiceBody.date = invoice.invoiceDate;
-            beforeInvoiceBody.journal = invoice.journal;
+            beforeInvoiceBody.journal = CONSTANTS.BEFORE_INVOICE;
             beforeInvoiceBody.currency = invoice.currency ? invoice.currency._id : 'USD';
             beforeInvoiceBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total - invoice.paymentInfo.balance : 0;
             beforeInvoiceBody.sourceDocument = {};
