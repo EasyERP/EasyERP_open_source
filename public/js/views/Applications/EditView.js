@@ -161,11 +161,13 @@
             var maxDate = null;
 
             tempContainer = ($target.text()).trim();
-            $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
 
             if (dataId === 'salary') {
+                $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
                 return false;
             }
+
+            $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '" ' + 'readonly' + '>');
 
             if (parseInt(trNum) > 0) {
                 minDate = $tr.prev().find('td.date').text();
