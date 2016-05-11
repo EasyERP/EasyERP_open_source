@@ -1670,6 +1670,880 @@ var Module = function (models, event) {
         })
     }
 
+    /* this.reconcile = function (req, res, next) {
+     var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+     var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
+     var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+     var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
+     var Invoice = models.get(req.session.lastDb, 'Invoice', invoiceSchema);
+     var Holidays = models.get(req.session.lastDb, 'Holiday', holidaysSchema);
+     var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
+     var body = req.body;
+     var date = new Date(body.date);
+     var reconcileSalaryEntries;
+     var reconcileInvoiceEntries;
+     var timeToSet = {hour: 15, minute: 1, second: 0};
+     var createdDateObject = {};
+     var createDirect;
+     var parallelTasks;
+     var waterfallForSalary;
+     var wTrackFinder;
+     var parallelFunctionRemoveCreate;
+     var removeBySource;
+     var create;
+     var createIdle;
+     var parallelRemoveCreate;
+     var waterfallCreateEntries;
+     var wTracks;
+     var resultArray = [];
+
+     reconcileInvoiceEntries = function (mainCallback) {
+     Invoice.find({reconcile: true, approved: true, _type: {$ne: "Proforma"}}, function (err, result) {
+     if (err) {
+     return mainCallback(err);
+     }
+
+     result.forEach(function (el) {
+     resultArray.push(el._id);
+     });
+
+     var parallelRemove = function (cb) {
+     Model.remove({
+     "sourceDocument._id": {$in: resultArray}
+     }, function (err, result) {
+     if (err) {
+     return cb(err);
+     }
+
+     cb(null, resultArray);
+     });
+     };
+
+     function findProformaPayments(resultArray, cb) {
+     Invoice.aggregate([{
+     $match: {
+     _id: {$in: resultArray}
+     }
+     }, {
+     $project: {
+     payments   : 1,
+     _id        : 0
+     }
+     }, {
+     $unwind: '$payments'
+     }, {
+     $lookup: {
+     from        : 'Payment',
+     localField  : 'payments',
+     foreignField: '_id',
+     as          : 'payment'
+     }
+     }, {
+     $project: {
+     payment    : {$arrayElemAt: ['$payment', 0]}
+     }
+     }, {
+     $lookup: {
+     from        : 'Invoice',
+     localField  : 'payment.invoice',
+     foreignField: '_id',
+     as          : 'invoice'
+     }
+     }, {
+     $project: {
+     payment    : 1,
+     invoice    : {$arrayElemAt: ['$invoice', 0]}
+     }
+     }, {
+     $match: {
+     'invoice._type': 'Proforma'
+     }
+     }], function (err, result) {
+     if (err) {
+     return cb(err);
+     }
+
+     cb(null, result);
+     });
+     }
+
+     var parallelCreate = function (result, cb) {
+     async.each(resultArray, function (element, asyncCb) {
+     Invoice.findById(element, function (err, invoice) {
+     if (err) {
+     return asyncCb(err);
+     }
+
+     var cb = asyncCb;
+     var proformaPayments = [];
+
+     var proforma = _.find(result, function (el) {
+     invoice.payments.forEach(function (payment) {
+     if (el.payment && el.payment._id && (payment.toString() === el.payment._id.toString())){
+     proformaPayments.push(el);
+     }
+     })
+     });
+
+     var paidAmount = 0;
+     var beforeInvoiceBody = {};
+     var journalEntryBody = {};
+
+     if (proformaPayments.length) {
+     proformaPayments.forEach(function (el) {
+     var paymentInfo = el.payment;
+     var paid = paymentInfo.paidAmount;
+     var paidInUSD = paid / paymentInfo.currency.rate;
+
+     paidAmount += paidInUSD;
+     });
+
+     if (paidAmount && (invoice.paymentInfo.total - paidAmount >= 0)) {
+     cb = _.after(2, asyncCb);
+
+     beforeInvoiceBody.date = invoice.invoiceDate;
+     beforeInvoiceBody.journal = CONSTANTS.BEFORE_INVOICE;
+     beforeInvoiceBody.currency = invoice.currency ? invoice.currency._id : 'USD';
+     beforeInvoiceBody.amount = invoice.paymentInfo ? paidAmount : 0;
+     beforeInvoiceBody.sourceDocument = {};
+     beforeInvoiceBody.sourceDocument._id = invoice._id;
+     beforeInvoiceBody.sourceDocument.model = 'Proforma';
+
+     createReconciled(beforeInvoiceBody, req.session.lastDb, cb, req.session.uId);
+     }
+     }
+
+     journalEntryBody.date = invoice.invoiceDate;
+     journalEntryBody.journal = invoice.journal || CONSTANTS.INVOICE_JOURNAL;
+     journalEntryBody.currency = invoice.currency ? invoice.currency._id : 'USD';
+     journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total - paidAmount : 0;
+     journalEntryBody.sourceDocument = {};
+     journalEntryBody.sourceDocument._id = invoice._id;
+     journalEntryBody.sourceDocument.model = 'Invoice';
+
+     createReconciled(journalEntryBody, req.session.lastDb, cb, req.session.uId);
+     });
+     }, function () {
+     cb();
+     });
+
+     };
+
+     var waterfallTasks = [parallelRemove, findProformaPayments, parallelCreate];
+
+     async.waterfall(waterfallTasks, function (err) {
+     if (err) {
+     return mainCallback(err);
+     }
+
+     Invoice.update({_id: {$in: resultArray}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
+     if (err){
+     return mainCallback(err);
+     }
+
+     res.status(200).send({success: true});
+     });
+     });
+     });
+     };
+
+     reconcileSalaryEntries = function (mainCallback) {
+
+     wTrackFinder = function (wfcallback) {
+     WTrack.find({reconcile: true}, function (err, result) {
+     if (err) {
+     return wfcallback(err);
+     }
+     var resultArray = [];
+     var employeesObj = {};
+     var monthKeysObj = {};
+     var weekKeysObj = {};
+     var employees;
+     var monthKeys;
+     var weekKeys;
+
+     result.forEach(function (el) {
+     resultArray.push(el._id);
+     employeesObj[el.employee] = true;
+     monthKeysObj[el.dateByMonth] = true;
+     weekKeysObj[el.dateByWeek] = true;
+     });
+
+     wTracks = resultArray;
+
+     employees = Object.keys(employeesObj);
+     monthKeys = Object.keys(monthKeysObj);
+     weekKeys = Object.keys(weekKeysObj);
+
+     wfcallback(null, {
+     wTrackIds   : resultArray,
+     wTracks     : result,
+     employeesIds: employees,
+     monthKeys   : monthKeys,
+     weekKeys    : weekKeys
+     });
+     });
+     };
+
+     parallelFunctionRemoveCreate = function (wTrackResultObject, wfcallback) {
+     var wTrackIds = wTrackResultObject.wTrackIds;
+     var wTracks = wTrackResultObject.wTracks;
+     var employeesArray = wTrackResultObject.employeesIds;
+     var dateByMonthArray = wTrackResultObject.monthKeys;
+     var salaryObject = {};
+     var monthHoursObject = {};
+     var holidaysObject = {};
+     var vacationObject = {};
+
+     if (!wTrackIds.length) {
+     return wfcallback();
+     }
+
+     removeBySource = function (pbc) {
+     Model.remove({
+     "sourceDocument._id": {$in: wTrackIds}
+     }, pbc);
+     };
+
+     create = function (pcb) {
+
+     createDirect = function (createWaterfallCb) {
+     var salaryFinder = function (parallelCb) {
+     var query = Employee.find({_id: {$in: employeesArray}}, {transfer: 1}).lean();
+
+     query.exec(function (err, employees) {
+     if (err) {
+     return parallelCb(err);
+     }
+
+     employees.forEach(function (employee) {
+     var transferArray = employee.transfer;
+
+     if (!salaryObject[employee._id]) {
+     salaryObject[employee._id] = {};
+     }
+
+     transferArray.forEach(function (transferObj) {
+     if (transferObj.status !== 'fired') {
+     salaryObject[employee._id][transferObj.date] = transferObj.salary || 0;
+     }
+     });
+     });
+
+     parallelCb(null, salaryObject);
+     });
+     };
+
+     var monthHoursFinder = function (parallelCb) {
+     async.each(dateByMonthArray, function (key, cb) {
+     redisStore.readFromStorage('monthHours', key, function (err, result) {
+
+     if (!monthHoursObject[key]) {
+     monthHoursObject[key] = {};
+     }
+
+     result = JSON.parse(result);
+
+     if (result && result[0]) {
+     monthHoursObject[key] = result && result[0] ? result[0] : {};
+     cb();
+     } else {
+     //TODO
+     }
+
+     });
+     }, function () {
+     parallelCb(null, monthHoursObject);
+     });
+     };
+
+     var holidaysFinder = function (parallelCb) {
+     var query = Holidays.find().lean();
+
+     query.exec(function (err, result) {
+     if (err) {
+     return parallelCb(err);
+     }
+
+     result.forEach(function (holiday) {
+     var holidayDate = moment(holiday.date);
+     var key = (holidayDate.isoWeekYear() * 100 + holidayDate.month() + 1) * 100 + holidayDate.date();
+     holidaysObject[key] = true;
+     });
+
+     parallelCb(null, holidaysObject);
+     });
+     };
+
+     var vacationFinder = function (parallelCb) {
+     var query = Vacation.find({
+     employee: {$in: employeesArray}
+     }).lean();
+
+     query.exec(function (err, result) {
+     if (err) {
+     return parallelCb(err);
+     }
+
+     result.forEach(function (vacation) {
+     if (!vacationObject[vacation.employee]) {
+     vacationObject[vacation.employee] = {};
+     }
+     var newDate = moment(new Date()).year(vacation.year).month(vacation.month - 1).date(1);
+     var vacArray = vacation.vacArray;
+     var length = vacArray.length;
+     var i;
+
+     for (i = length - 1; i >= 0; i--) {
+     if (vacArray[i]) {
+     var key = (newDate.date(i + 1).year() * 100 + newDate.date(i + 1).month() + 1) * 100 + i + 1;
+     vacationObject[vacation.employee][key] = vacArray[i];
+     }
+     }
+
+     });
+
+     parallelCb(null, vacationObject);
+     });
+     };
+
+     async.parallel([salaryFinder, monthHoursFinder, holidaysFinder, vacationFinder], function (err, result) {
+     async.each(wTracks, function (wTrackModel, asyncCb) {
+     var j;
+     var dataObject = {};
+     var keys;
+     var employeeSubject = wTrackModel.employee;
+     var sourceDocumentId = wTrackModel._id;
+     var methodCb;
+     var year = wTrackModel.year;
+
+     if (wTrackModel.isoYear && wTrackModel.isoYear !== year) {
+     year = wTrackModel.isoYear;
+     }
+
+     var date = moment().isoWeekYear(year).month(wTrackModel.month - 1).isoWeek(wTrackModel.week).startOf('isoWeek');
+
+     for (j = 5; j >= 1; j--) {
+     date = moment(date).day(j);
+     dataObject[j] = date;
+     }
+
+     date = moment(date).day(6);
+     dataObject[6] = date;
+
+     date = moment(date).day(0);
+     dataObject[7] = date;
+
+     keys = Object.keys(dataObject);
+     methodCb = _.after(keys.length * 4, asyncCb);
+
+     keys.forEach(function (i) {
+     var hours = wTrackModel[i];
+     var date = dataObject[i];
+     var day = i;
+     var dateByMonth = wTrackModel.dateByMonth;
+     var monthHours = monthHoursObject[dateByMonth];
+     var overheadRate = monthHours ? monthHours.overheadRate : 0;
+     var employeeSalary = salaryObject[employeeSubject];
+     var salary = 0;
+     var salaryChangeDates = Object.keys(employeeSalary);
+     var costHour;
+     var hoursInMonth = monthHours ? monthHours.hours : 0;
+     var dateKey = (date.year() * 100 + date.month() + 1) * 100 + date.date();
+     var holidayDate = holidaysObject[dateKey];
+     var sameDayHoliday = holidayDate;
+     var vacationForEmployee = vacationObject[employeeSubject] || {};
+     var vacationSameDate = vacationForEmployee[dateKey];
+
+     var overtime = (wTrackModel._type === 'overtime') || false;
+
+     Model.remove({
+     "sourceDocument.model": 'Employees',
+     date                  : date.set(timeToSet)
+     }, function (err, result) {
+
+     for (var i = salaryChangeDates.length - 1; i >= 0; i--) {
+     var currentSalary = employeeSalary[salaryChangeDates[i]];
+     var salaryDate = moment(new Date(salaryChangeDates[i]));
+
+     if (salaryDate.isBefore(date)) {
+     salary = currentSalary;
+     break;
+     }
+     }
+
+     costHour = isFinite(salary / hoursInMonth) ? salary / hoursInMonth : 0;
+
+     if (!createdDateObject[dateKey]) {
+     createdDateObject[dateKey] = {};
+     createdDateObject[dateKey].employees = {};
+     }
+
+     if (!createdDateObject[dateKey].employees[employeeSubject]) {
+     createdDateObject[dateKey].employees[employeeSubject] = {
+     vacation: 0,
+     hours   : 0,
+     wTracks : {}
+     }
+     }
+
+     var bodySalary = {
+     currency      : CONSTANTS.CURRENCY_USD,
+     journal       : CONSTANTS.SALARY_PAYABLE,
+     date          : date.set(timeToSet),
+     sourceDocument: {
+     model: 'wTrack',
+     _id  : sourceDocumentId
+     }
+     };
+
+     var bodyVacation = {
+     currency      : CONSTANTS.CURRENCY_USD,
+     journal       : CONSTANTS.VACATION_PAYABLE,
+     date          : date.set(timeToSet),
+     sourceDocument: {
+     model: 'Employees',
+     _id  : employeeSubject
+     }
+     };
+
+     var bodyOvertime = {
+     currency      : CONSTANTS.CURRENCY_USD,
+     journal       : CONSTANTS.OVERTIME_PAYABLE,
+     date          : date.set(timeToSet),
+     sourceDocument: {
+     model: 'wTrack',
+     _id  : sourceDocumentId
+     }
+     };
+
+     var bodyOverhead = {
+     currency      : CONSTANTS.CURRENCY_USD,
+     journal       : CONSTANTS.OVERHEAD,
+     date          : date.set(timeToSet),
+     sourceDocument: {
+     model: 'wTrack',
+     _id  : sourceDocumentId
+     }
+     };
+
+     if (day <= 5 && !sameDayHoliday) {
+     if (hours - HOURSCONSTANT >= 0) {
+     bodySalary.amount = costHour * HOURSCONSTANT * 100;
+     bodyOvertime.amount = costHour * (hours - HOURSCONSTANT) * 100;
+     bodyOverhead.amount = overheadRate * HOURSCONSTANT * 100;
+     } else {
+     bodySalary.amount = costHour * hours * 100;
+     bodyOvertime.amount = 0;
+     bodyOverhead.amount = overheadRate * hours * 100;
+     }
+
+     if (vacationSameDate) {
+     if ((vacationForEmployee[dateKey] === "V") || (vacationForEmployee[dateKey] === "S")) {
+     bodyOvertime.amount = costHour * hours * 100;
+     bodyOverhead.amount = overheadRate * hours * 100;
+     bodySalary.amount = 0;
+
+     if (!createdDateObject[dateKey].employees[employeeSubject].vacation) {
+     createdDateObject[dateKey].employees[employeeSubject].vacation = HOURSCONSTANT;
+     bodyVacation.amount = costHour * HOURSCONSTANT * 100;
+     }
+     }
+     }
+
+     if (!createdDateObject[dateKey].employees[employeeSubject].wTracks[sourceDocumentId]) {
+     createdDateObject[dateKey].employees[employeeSubject].wTracks[sourceDocumentId] = 0;
+     }
+
+     createdDateObject[dateKey].employees[employeeSubject].costHour = costHour;
+     createdDateObject[dateKey].employees[employeeSubject].hours += hours;
+     createdDateObject[dateKey].employees[employeeSubject].wTracks[sourceDocumentId] += hours;
+     } else {
+     bodyOvertime.amount = costHour * hours * 100;
+     bodyOverhead.amount = overheadRate * hours * 100;
+
+     if (sameDayHoliday) {
+     bodyOvertime.amount = costHour * hours * 100;
+     }
+     }
+
+     //if (overtime) {
+     //    bodyOvertime.amount = costHour * hours * 100;
+     //    bodyOverhead.amount = overheadRate * hours * 100;
+     //}
+
+     createReconciled(bodySalary, req.session.lastDb, methodCb, req.session.uId);
+     createReconciled(bodyOvertime, req.session.lastDb, methodCb, req.session.uId);
+     createReconciled(bodyOverhead, req.session.lastDb, methodCb, req.session.uId);
+     createReconciled(bodyVacation, req.session.lastDb, methodCb, req.session.uId);
+
+     });
+
+     });
+     }, function () {
+     createWaterfallCb(null, createdDateObject);
+     });
+     });
+     };
+
+     createIdle = function (totalObject, createWaterfallCb) {
+     var dates = Object.keys(totalObject);
+     var totalIdleObject = {};
+     var findAllDevs;
+     var createIdleTime;
+     var matchObj;
+     var findMonthHours;
+     var monthHours = {};
+
+     if (!dates.length) {
+     return createWaterfallCb();
+     }
+
+     var minDate = _.min(dates);
+     var maxDate = _.max(dates);
+     var startYear = parseInt(minDate.slice(0, 4), 10);
+     var startMonth = parseInt(minDate.slice(4, 6), 10);
+     var dateOfMonth = parseInt(minDate.slice(6), 10);
+     var date = moment().year(startYear).month(startMonth - 1).date(dateOfMonth);
+     var endYear = parseInt(maxDate.slice(0, 4), 10);
+     var endMonth = parseInt(maxDate.slice(4, 6), 10);
+     var endDateOfMonth = parseInt(maxDate.slice(6), 10);
+     var endDate = moment().year(endYear).month(endMonth - 1).date(endDateOfMonth);
+     var j;
+
+     var startDateKey = startYear * 100 + moment(date).isoWeek();
+     var endDateKey = endYear * 100 + moment(endDate).isoWeek();
+
+     //var startOfMonth = moment(date).startOf('month');
+     //var startK = (moment(startOfMonth).isoWeekYear() * 100 + moment(startOfMonth).month() + 1) * 100 + moment(startOfMonth).date();
+     //var endOfMonth = moment(endDate).endOf('month');
+     //var endK = (moment(endOfMonth).isoWeekYear() * 100 + moment(endOfMonth).month() + 1) * 100 + moment(endOfMonth).date();
+     //var length = endK - startK;
+     //
+     //for (j = length - 1; j >= 0; j--){
+     //    newDateArrayWithIdle.push((startK + j).toString());
+     //}
+
+     matchObj = {
+     $and: [{
+     $or: [{
+     $and: [{
+     isEmployee: true
+     }, {
+     $or: [{
+     lastFire: null
+     }, {
+     lastFire: {
+     $ne : null,
+     $gte: startDateKey
+     }
+     }, {
+     lastHire: {
+     $ne : null,
+     $lte: endDateKey
+     }
+     }]
+     }]
+     }, {
+     $and: [{
+     isEmployee: false
+     }, {
+     lastFire: {
+     $ne : null,
+     $gte: startDateKey
+     }
+     }]
+     }
+     ]
+     }]
+     };
+
+     findAllDevs = function (callback) {
+     Employee
+     .aggregate([{
+     $match: {
+     //  'department': {$nin: notDevArray.objectID()},
+     hire: {$ne: []}
+     }
+     }, {
+     $project: {
+     isEmployee: 1,
+     hire      : 1,
+     transfer  : 1,
+     name      : 1,
+     lastFire  : 1,
+     lastHire  : {
+     $let: {
+     vars: {
+     lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+     },
+     in  : {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
+     }
+     }
+     }
+     }, {
+     $match: matchObj
+     }, {
+     $project: {
+     _id     : 1,
+     hire    : 1,
+     transfer: 1
+     }
+     }], function (err, result) {
+     if (err) {
+     callback(err);
+     }
+
+     var emps = _.pluck(result, '_id');
+
+     callback(null, {emps: emps, salary: result});
+     });
+     };
+
+     findMonthHours = function (empResult, callback) {
+     async.each(dates, function (dateKey, asyncCb) {
+     var year = parseInt(dateKey.slice(0, 4), 10);
+     var month = parseInt(dateKey.slice(4, 6), 10);
+     var key = year * 100 + month;
+
+     if (!monthHoursObject[key]) {
+     redisStore.readFromStorage('monthHours', key, function (err, result) {
+
+     if (!monthHoursObject[key]) {
+     monthHoursObject[key] = {};
+     }
+
+     result = JSON.parse(result);
+     monthHoursObject[key] = result && result[0] ? result[0] : {};
+     asyncCb();
+     });
+     } else {
+     asyncCb();
+     }
+
+     }, function (err, result) {
+     callback(null, {
+     monthHours: monthHoursObject,
+     emps      : empResult.emps,
+     salary    : empResult.salary
+     });
+     });
+     };
+
+     createIdleTime = function (empResult, callback) {
+     async.each(dates, function (dateKey, asyncCb) {
+     var year = parseInt(dateKey.slice(0, 4), 10);
+     var month = parseInt(dateKey.slice(4, 6), 10);
+     var dateOfMonth = parseInt(dateKey.slice(6), 10);
+     var date = moment().year(year).month(month - 1).date(dateOfMonth);
+     var objectForDay = totalObject[dateKey] || {};
+     var employeesObjects = objectForDay.employees || [];
+     var employeesIds = Object.keys(employeesObjects);
+
+     var stringIds = [];
+
+     empResult.emps.forEach(function (el) {
+     stringIds.push(el.toString());
+     });
+
+     var allEmployees = _.union(employeesIds, stringIds);
+     var employeesCount = allEmployees.length;
+     var i;
+     var employeesWithSalary = empResult.salary;
+     var monthHours = empResult.monthHours[year * 100 + month] || {};
+     var dayOfWeek = moment(date).day();
+     var cb = _.after(employeesCount, asyncCb);
+     var holidayDate = holidaysObject[dateKey];
+     var sameDayHoliday = holidayDate;
+
+     if ((dayOfWeek === 0) || (dayOfWeek === 6)) {
+     return asyncCb();
+     }
+
+     if (!totalIdleObject[dateKey]) {
+     totalIdleObject[dateKey] = 0;
+     }
+     Model.remove({
+     "sourceDocument.model": 'Employees',
+     date                  : date.set(timeToSet),
+     journal               : CONSTANTS.IDLE_PAYABLE
+     }, function (err, result) {
+     for (i = employeesCount - 1; i >= 0; i--) {
+     var employee = allEmployees[i];
+     var empObject = employeesObjects[employee] || {};
+     var vacation = empObject.vacation;
+     var totalWorkedForDay = empObject.hours || 0;
+     var salary = 0;
+     var employeeNotTracked = _.find(employeesWithSalary, function (elem) {
+     return elem._id.toString() === employee.toString();
+     });
+     var hireArray = employeeNotTracked ? employeeNotTracked.transfer : [];
+     var length = hireArray.length;
+     var j;
+     var costHour = 0;
+     var hours = monthHours.hours || 0;
+     var createVacation = false;
+     var department;
+
+     for (j = length - 1; j >= 0; j--) {
+     if (date >= hireArray[j].date) {
+     salary = hireArray[j].salary;
+     department = hireArray[j].department;
+     break;
+     }
+     }
+
+     if (!vacation) {
+     vacation = vacationObject[employee] ? vacationObject[employee][dateKey] : null;
+
+     if ((vacation === 'P') || (vacation === 'E')) {
+     vacation = null;
+     }
+
+     if (vacation) {
+     createVacation = true;
+     }
+     }
+
+     costHour = isFinite(salary / hours) ? (salary / hours) : 0;
+
+     var bodySalaryIdle = {
+     currency      : CONSTANTS.CURRENCY_USD,
+     journal       : CONSTANTS.IDLE_PAYABLE,
+     date          : date.set(timeToSet),
+     sourceDocument: {
+     model: 'Employees'
+     }
+     };
+
+     var idleTime = HOURSCONSTANT - totalWorkedForDay;
+
+     bodySalaryIdle.sourceDocument._id = employee;
+
+     if (totalWorkedForDay - HOURSCONSTANT < 0) {
+     if (!vacation) {
+     if (totalWorkedForDay - HOURSCONSTANT >= 0) {
+     bodySalaryIdle.amount = 0;
+     } else {
+     bodySalaryIdle.amount = costHour * idleTime * 100;
+     totalIdleObject[dateKey] += costHour * idleTime * 100;
+     }
+
+     } else {
+     bodySalaryIdle.amount = 0;
+     }
+     } else {
+     bodySalaryIdle.amount = 0;
+     }
+
+     if (createVacation) {
+     bodySalaryIdle.amount = costHour * HOURSCONSTANT * 100;
+     bodySalaryIdle.journal = CONSTANTS.VACATION_PAYABLE;
+     }
+
+     if (department && notDevArray.indexOf(department.toString()) !== -1) {
+     bodySalaryIdle.amount = 0;
+     cb();
+     continue;
+     }
+
+     if (sameDayHoliday) {
+     bodySalaryIdle.amount = 0;
+     }
+
+     if ((bodySalaryIdle.amount > 0) && (bodySalaryIdle.journal === CONSTANTS.VACATION_PAYABLE)) {
+     if (!employeesObjects[employee]) {
+     employeesObjects[employee] = {};
+     }
+
+     employeesObjects[employee].vacation = 'V';
+     }
+
+     if (bodySalaryIdle.amount > 0) {
+     createReconciled(bodySalaryIdle, req.session.lastDb, cb, req.session.uId);
+     } else {
+     cb();
+     }
+     }
+     });
+     }, function (err, result) {
+     callback(err, {totalIdleObject: totalIdleObject, totalObject: totalObject});
+     });
+     };
+
+     var waterfall = [findAllDevs, findMonthHours, createIdleTime];
+
+     async.waterfall(waterfall, function (err, result) {
+     if (err) {
+     return createWaterfallCb(err);
+     }
+
+     createWaterfallCb(err, {totalIdleObject: totalIdleObject, totalObject: totalObject});
+     });
+
+     };
+
+     waterfallCreateEntries = [createDirect, createIdle];
+
+     async.waterfall(waterfallCreateEntries, function (err, result) {
+     if (err) {
+     return pcb(err);
+     }
+
+     pcb(null, result);
+     });
+     };
+
+     parallelRemoveCreate = [removeBySource, create];
+
+     async.parallel(parallelRemoveCreate, function (err, result) {
+     if (err) {
+     return wfcallback(err);
+     }
+
+     wfcallback(null, result);
+     });
+     };
+
+     waterfallForSalary = [wTrackFinder, parallelFunctionRemoveCreate];
+
+     async.waterfall(waterfallForSalary, function (err, result) {
+     if (err) {
+     return mainCallback(err);
+     }
+
+     mainCallback(null, result);
+     });
+     };
+
+     parallelTasks = [reconcileInvoiceEntries, reconcileSalaryEntries];
+
+     async.parallel(parallelTasks, function (err, result) {
+     if (err) {
+     return next(err);
+     }
+
+     //res.status(200).send({success: true});
+
+     event.emit('sendMessage', {view: 'journalEntry', message: 'Please, refresh browser, data was changed.'});
+
+     var db = models.connection(req.session.lastDb);
+     var setObj = {date: date};
+
+     WTrack.update({_id: {$in: wTracks}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
+
+     });
+
+     db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: setObj}, function (err, result) {
+     if (err) {
+     return next(err);
+     }
+
+     });
+     });
+
+     };*/
+
     this.reconcile = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
@@ -1678,13 +2552,16 @@ var Module = function (models, event) {
         var Invoice = models.get(req.session.lastDb, 'Invoice', invoiceSchema);
         var Holidays = models.get(req.session.lastDb, 'Holiday', holidaysSchema);
         var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
+        var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var body = req.body;
         var date = new Date(body.date);
+        var jobId = body.jobs;
         var reconcileSalaryEntries;
         var reconcileInvoiceEntries;
         var timeToSet = {hour: 15, minute: 1, second: 0};
         var createdDateObject = {};
-        var createDirect;
+        var startOfMonth = moment(date).startOf('month');
+
         var parallelTasks;
         var waterfallForSalary;
         var wTrackFinder;
@@ -1696,6 +2573,7 @@ var Module = function (models, event) {
         var waterfallCreateEntries;
         var wTracks;
         var resultArray = [];
+        var createdVacations = {};
 
         reconcileInvoiceEntries = function (mainCallback) {
             Invoice.find({reconcile: true, approved: true, _type: {$ne: "Proforma"}}, function (err, result) {
@@ -1726,8 +2604,8 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            payments   : 1,
-                            _id        : 0
+                            payments: 1,
+                            _id     : 0
                         }
                     }, {
                         $unwind: '$payments'
@@ -1740,7 +2618,7 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            payment    : {$arrayElemAt: ['$payment', 0]}
+                            payment: {$arrayElemAt: ['$payment', 0]}
                         }
                     }, {
                         $lookup: {
@@ -1751,8 +2629,8 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            payment    : 1,
-                            invoice    : {$arrayElemAt: ['$invoice', 0]}
+                            payment: 1,
+                            invoice: {$arrayElemAt: ['$invoice', 0]}
                         }
                     }, {
                         $match: {
@@ -1779,7 +2657,7 @@ var Module = function (models, event) {
 
                             var proforma = _.find(result, function (el) {
                                 invoice.payments.forEach(function (payment) {
-                                    if (el.payment && el.payment._id && (payment.toString() === el.payment._id.toString())){
+                                    if (el.payment && el.payment._id && (payment.toString() === el.payment._id.toString())) {
                                         proformaPayments.push(el);
                                     }
                                 })
@@ -1837,677 +2715,355 @@ var Module = function (models, event) {
                     }
 
                     Invoice.update({_id: {$in: resultArray}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
-                        if (err){
+                        if (err) {
                             return mainCallback(err);
                         }
 
-                        res.status(200).send({success: true});
+                        //res.status(200).send({success: true});
+                        mainCallback();
                     });
                 });
             });
         };
 
         reconcileSalaryEntries = function (mainCallback) {
+            var waterfallTasks;
+            var getJobAndWTracks;
+            var createDirect;
 
-            wTrackFinder = function (wfcallback) {
-                WTrack.find({reconcile: true}, function (err, result) {
-                    if (err) {
-                        return wfcallback(err);
+            getJobAndWTracks = function (wfCb) {
+                Job.aggregate([{
+                    $match: {
+                        _id: objectId(jobId)
                     }
-                    var resultArray = [];
-                    var employeesObj = {};
-                    var monthKeysObj = {};
-                    var weekKeysObj = {};
-                    var employees;
-                    var monthKeys;
-                    var weekKeys;
+                }, {
+                    $project: {
+                        wTracks: 1
+                    }
+                }, {
+                    $unwind: '$wTracks'
+                }, {
+                    $lookup: {
+                        from        : 'journalentris',
+                        localField  : 'wTracks',
+                        foreignField: 'sourceDocument._id',
+                        as          : 'wTrack'
+                    }
+                }, {
+                    $match: {
+                        wTrack: []
+                    }
+                }, {
+                    $project: {
+                        wTracks: 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return wfCb(err);
+                    }
 
-                    result.forEach(function (el) {
-                        resultArray.push(el._id);
-                        employeesObj[el.employee] = true;
-                        monthKeysObj[el.dateByMonth] = true;
-                        weekKeysObj[el.dateByWeek] = true;
-                    });
+                    var wTracks = _.pluck(result, 'wTracks');
 
-                    wTracks = resultArray;
-
-                    employees = Object.keys(employeesObj);
-                    monthKeys = Object.keys(monthKeysObj);
-                    weekKeys = Object.keys(weekKeysObj);
-
-                    wfcallback(null, {
-                        wTrackIds   : resultArray,
-                        wTracks     : result,
-                        employeesIds: employees,
-                        monthKeys   : monthKeys,
-                        weekKeys    : weekKeys
-                    });
+                    wfCb(null, wTracks);
                 });
             };
 
-            parallelFunctionRemoveCreate = function (wTrackResultObject, wfcallback) {
-                var wTrackIds = wTrackResultObject.wTrackIds;
-                var wTracks = wTrackResultObject.wTracks;
-                var employeesArray = wTrackResultObject.employeesIds;
-                var dateByMonthArray = wTrackResultObject.monthKeys;
-                var salaryObject = {};
-                var monthHoursObject = {};
-                var holidaysObject = {};
-                var vacationObject = {};
+            createDirect = function (wTracks, wfCb) {
+                WTrack.aggregate([{
+                    $match: {
+                        _id: {$in: wTracks}
+                    }
+                }, {
+                    $group: {
+                        _id  : {
+                            employee   : '$employee',
+                            _type      : '$_type',
+                            dateByMonth: '$dateByMonth'
+                        },
+                        hours: {$sum: '$worked'}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'MonthHours',
+                        localField  : '_id.dateByMonth',
+                        foreignField: 'dateByMonth',
+                        as          : 'dateByMonth'
+                    }
+                }, {
+                    $project: {
+                        dateByMonth: {$arrayElemAt: ['$dateByMonth', 0]},
+                        hours      : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Vacation',
+                        localField  : '_id.dateByMonth',
+                        foreignField: 'dateByMonth',
+                        as          : 'vacations'
+                    }
+                }, {
+                    $project: {
+                        vacations   : 1,
+                        overheadRate: '$dateByMonth.overheadRate',
+                        hoursInMonth: '$dateByMonth.hours',
+                        dateByMonth : '$dateByMonth.dateByMonth',
+                        hours       : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : '_id.employee',
+                        foreignField: '_id',
+                        as          : 'employee'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Holiday',
+                        localField  : 'dateByMonth',
+                        foreignField: 'dateByMonth',
+                        as          : 'holidays'
+                    }
+                }, {
+                    $project: {
+                        vacations   : 1,
+                        employee    : {$arrayElemAt: ['$employee', 0]},
+                        overheadRate: 1,
+                        hoursInMonth: 1,
+                        dateByMonth : 1,
+                        holidays    : 1,
+                        hours       : 1
+                    }
+                }, {
+                    $project: {
+                        vacations   : {
+                            $filter: {
+                                input: "$vacations",
+                                as   : "vacation",
+                                cond : {$eq: ["$$vacation.employee", '$employee._id']}
+                            }
+                        },
+                        transfer    : '$employee.transfer',
+                        employee    : '$employee._id',
+                        dateByMonth : 1,
+                        hoursInMonth: 1,
+                        overheadRate: 1,
+                        holidays    : 1,
+                        hours       : 1
+                    }
+                }, {
+                    $unwind: '$transfer'
+                }, {
+                    $lookup: {
+                        from        : 'weekScheduler',
+                        localField  : 'transfer.weekScheduler',
+                        foreignField: '_id',
+                        as          : 'transfer.weekScheduler'
+                    }
+                }, {
+                    $project: {
+                        'transfer.weekScheduler': {$arrayElemAt: ['$transfer.weekScheduler', 0]},
+                        'transfer.date'         : 1,
+                        'transfer.salary'       : 1,
+                        vacations               : 1,
+                        employee                : 1,
+                        dateByMonth             : 1,
+                        hoursInMonth            : 1,
+                        overheadRate            : 1,
+                        holidays                : 1,
+                        hours                   : 1
+                    }
+                }, {
+                    $group: {
+                        _id         : {
+                            employee   : '$employee',
+                            _type      : '$_id._type',
+                            dateByMonth: '$dateByMonth'
+                        },
+                        vacations   : {$addToSet: '$vacations'},
+                        transfer    : {$addToSet: '$transfer'},
+                        employee    : {$addToSet: '$employee'},
+                        dateByMonth : {$addToSet: '$dateByMonth'},
+                        hoursInMonth: {$addToSet: '$hoursInMonth'},
+                        overheadRate: {$addToSet: '$overheadRate'},
+                        holidays    : {$addToSet: '$holidays'},
+                        hours       : {$addToSet: '$hours'}
+                    }
+                }, {
+                    $project: {
+                        vacations   : {$arrayElemAt: ['$vacations', 0]},
+                        transfer    : 1,
+                        employee    : {$arrayElemAt: ['$employee', 0]},
+                        dateByMonth : {$arrayElemAt: ['$dateByMonth', 0]},
+                        hoursInMonth: {$arrayElemAt: ['$hoursInMonth', 0]},
+                        overheadRate: {$arrayElemAt: ['$overheadRate', 0]},
+                        holidays    : {$arrayElemAt: ['$holidays', 0]},
+                        hours       : {$arrayElemAt: ['$hours', 0]}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return wfCb(err);
+                    }
 
-                if (!wTrackIds.length) {
-                    return wfcallback();
-                }
+                    async.each(result, function (item, cb) {
+                        var employee = item.employee;
+                        var hours = item.hours;
+                        var _type = item._id._type;
+                        var dateByMonth = item.dateByMonth;
+                        var vacations = item.vacations;
+                        var holidays = item.holidays;
+                        var transfer = item.transfer;
+                        var vacationObject = {};
+                        var transferLength = transfer.length;
+                        var salaryForDate = 0;
+                        var hoursInMonth = 0;
+                        /*item.hoursInMonth;*/
+                        var costForHour = 0;
+                        var vacationDate;
+                        var dayOfWeek;
+                        var weekScheduler;
+                        var hoursToRemove = 0;
+                        var endDate = moment(startOfMonth).endOf('month').date();
+                        var checkDate;
+                        var vacationHours = 0;
 
-                removeBySource = function (pbc) {
-                    Model.remove({
-                        "sourceDocument._id": {$in: wTrackIds}
-                    }, pbc);
-                };
+                        for (var i = transferLength - 1; i >= 0; i--) {
+                            var transferObj = transfer[i];
 
-                create = function (pcb) {
-
-                    createDirect = function (createWaterfallCb) {
-                        var salaryFinder = function (parallelCb) {
-                            var query = Employee.find({_id: {$in: employeesArray}}, {transfer: 1}).lean();
-
-                            query.exec(function (err, employees) {
-                                if (err) {
-                                    return parallelCb(err);
-                                }
-
-                                employees.forEach(function (employee) {
-                                    var transferArray = employee.transfer;
-
-                                    if (!salaryObject[employee._id]) {
-                                        salaryObject[employee._id] = {};
+                            if (moment(startOfMonth).isAfter(moment(transferObj.date))) {
+                                if (transferObj.status === 'fired') {
+                                    if (transfer[i - 1] && moment(startOfMonth).isAfter(transfer[i - 1].date)) {
+                                        salaryForDate = transferObj.salary;
+                                        weekScheduler = transferObj.weekScheduler;
+                                        break;
                                     }
-
-                                    transferArray.forEach(function (transferObj) {
-                                        if (transferObj.status !== 'fired') {
-                                            salaryObject[employee._id][transferObj.date] = transferObj.salary || 0;
-                                        }
-                                    });
-                                });
-
-                                parallelCb(null, salaryObject);
-                            });
-                        };
-
-                        var monthHoursFinder = function (parallelCb) {
-                            async.each(dateByMonthArray, function (key, cb) {
-                                redisStore.readFromStorage('monthHours', key, function (err, result) {
-
-                                    if (!monthHoursObject[key]) {
-                                        monthHoursObject[key] = {};
-                                    }
-
-                                    result = JSON.parse(result);
-
-                                    if (result && result[0]) {
-                                        monthHoursObject[key] = result && result[0] ? result[0] : {};
-                                        cb();
-                                    } else {
-                                        //TODO
-                                    }
-
-                                });
-                            }, function () {
-                                parallelCb(null, monthHoursObject);
-                            });
-                        };
-
-                        var holidaysFinder = function (parallelCb) {
-                            var query = Holidays.find().lean();
-
-                            query.exec(function (err, result) {
-                                if (err) {
-                                    return parallelCb(err);
+                                } else {
+                                    salaryForDate = transferObj.salary;
+                                    weekScheduler = transferObj.weekScheduler;
+                                    break;
                                 }
-
-                                result.forEach(function (holiday) {
-                                    var holidayDate = moment(holiday.date);
-                                    var key = (holidayDate.isoWeekYear() * 100 + holidayDate.month() + 1) * 100 + holidayDate.date();
-                                    holidaysObject[key] = true;
-                                });
-
-                                parallelCb(null, holidaysObject);
-                            });
-                        };
-
-                        var vacationFinder = function (parallelCb) {
-                            var query = Vacation.find({
-                                employee: {$in: employeesArray}
-                            }).lean();
-
-                            query.exec(function (err, result) {
-                                if (err) {
-                                    return parallelCb(err);
-                                }
-
-                                result.forEach(function (vacation) {
-                                    if (!vacationObject[vacation.employee]) {
-                                        vacationObject[vacation.employee] = {};
-                                    }
-                                    var newDate = moment(new Date()).year(vacation.year).month(vacation.month - 1).date(1);
-                                    var vacArray = vacation.vacArray;
-                                    var length = vacArray.length;
-                                    var i;
-
-                                    for (i = length - 1; i >= 0; i--) {
-                                        if (vacArray[i]) {
-                                            var key = (newDate.date(i + 1).year() * 100 + newDate.date(i + 1).month() + 1) * 100 + i + 1;
-                                            vacationObject[vacation.employee][key] = vacArray[i];
-                                        }
-                                    }
-
-                                });
-
-                                parallelCb(null, vacationObject);
-                            });
-                        };
-
-                        async.parallel([salaryFinder, monthHoursFinder, holidaysFinder, vacationFinder], function (err, result) {
-                            async.each(wTracks, function (wTrackModel, asyncCb) {
-                                var j;
-                                var dataObject = {};
-                                var keys;
-                                var employeeSubject = wTrackModel.employee;
-                                var sourceDocumentId = wTrackModel._id;
-                                var methodCb;
-                                var year = wTrackModel.year;
-
-                                if (wTrackModel.isoYear && wTrackModel.isoYear !== year) {
-                                    year = wTrackModel.isoYear;
-                                }
-
-                                var date = moment().isoWeekYear(year).month(wTrackModel.month - 1).isoWeek(wTrackModel.week).startOf('isoWeek');
-
-                                for (j = 5; j >= 1; j--) {
-                                    date = moment(date).day(j);
-                                    dataObject[j] = date;
-                                }
-
-                                date = moment(date).day(6);
-                                dataObject[6] = date;
-
-                                date = moment(date).day(0);
-                                dataObject[7] = date;
-
-                                keys = Object.keys(dataObject);
-                                methodCb = _.after(keys.length * 4, asyncCb);
-
-                                keys.forEach(function (i) {
-                                    var hours = wTrackModel[i];
-                                    var date = dataObject[i];
-                                    var day = i;
-                                    var dateByMonth = wTrackModel.dateByMonth;
-                                    var monthHours = monthHoursObject[dateByMonth];
-                                    var overheadRate = monthHours ? monthHours.overheadRate : 0;
-                                    var employeeSalary = salaryObject[employeeSubject];
-                                    var salary = 0;
-                                    var salaryChangeDates = Object.keys(employeeSalary);
-                                    var costHour;
-                                    var hoursInMonth = monthHours ? monthHours.hours : 0;
-                                    var dateKey = (date.year() * 100 + date.month() + 1) * 100 + date.date();
-                                    var holidayDate = holidaysObject[dateKey];
-                                    var sameDayHoliday = holidayDate;
-                                    var vacationForEmployee = vacationObject[employeeSubject] || {};
-                                    var vacationSameDate = vacationForEmployee[dateKey];
-
-                                    var overtime = (wTrackModel._type === 'overtime') || false;
-
-                                    Model.remove({
-                                        "sourceDocument.model": 'Employees',
-                                        date                  : date.set(timeToSet)
-                                    }, function (err, result) {
-
-                                        for (var i = salaryChangeDates.length - 1; i >= 0; i--) {
-                                            var currentSalary = employeeSalary[salaryChangeDates[i]];
-                                            var salaryDate = moment(new Date(salaryChangeDates[i]));
-
-                                            if (salaryDate.isBefore(date)) {
-                                                salary = currentSalary;
-                                                break;
-                                            }
-                                        }
-
-                                        costHour = isFinite(salary / hoursInMonth) ? salary / hoursInMonth : 0;
-
-                                        if (!createdDateObject[dateKey]) {
-                                            createdDateObject[dateKey] = {};
-                                            createdDateObject[dateKey].employees = {};
-                                        }
-
-                                        if (!createdDateObject[dateKey].employees[employeeSubject]) {
-                                            createdDateObject[dateKey].employees[employeeSubject] = {
-                                                vacation: 0,
-                                                hours   : 0,
-                                                wTracks : {}
-                                            }
-                                        }
-
-                                        var bodySalary = {
-                                            currency      : CONSTANTS.CURRENCY_USD,
-                                            journal       : CONSTANTS.SALARY_PAYABLE,
-                                            date          : date.set(timeToSet),
-                                            sourceDocument: {
-                                                model: 'wTrack',
-                                                _id  : sourceDocumentId
-                                            }
-                                        };
-
-                                        var bodyVacation = {
-                                            currency      : CONSTANTS.CURRENCY_USD,
-                                            journal       : CONSTANTS.VACATION_PAYABLE,
-                                            date          : date.set(timeToSet),
-                                            sourceDocument: {
-                                                model: 'Employees',
-                                                _id  : employeeSubject
-                                            }
-                                        };
-
-                                        var bodyOvertime = {
-                                            currency      : CONSTANTS.CURRENCY_USD,
-                                            journal       : CONSTANTS.OVERTIME_PAYABLE,
-                                            date          : date.set(timeToSet),
-                                            sourceDocument: {
-                                                model: 'wTrack',
-                                                _id  : sourceDocumentId
-                                            }
-                                        };
-
-                                        var bodyOverhead = {
-                                            currency      : CONSTANTS.CURRENCY_USD,
-                                            journal       : CONSTANTS.OVERHEAD,
-                                            date          : date.set(timeToSet),
-                                            sourceDocument: {
-                                                model: 'wTrack',
-                                                _id  : sourceDocumentId
-                                            }
-                                        };
-
-                                        if (day <= 5 && !sameDayHoliday) {
-                                            if (hours - HOURSCONSTANT >= 0) {
-                                                bodySalary.amount = costHour * HOURSCONSTANT * 100;
-                                                bodyOvertime.amount = costHour * (hours - HOURSCONSTANT) * 100;
-                                                bodyOverhead.amount = overheadRate * HOURSCONSTANT * 100;
-                                            } else {
-                                                bodySalary.amount = costHour * hours * 100;
-                                                bodyOvertime.amount = 0;
-                                                bodyOverhead.amount = overheadRate * hours * 100;
-                                            }
-
-                                            if (vacationSameDate) {
-                                                if ((vacationForEmployee[dateKey] === "V") || (vacationForEmployee[dateKey] === "S")) {
-                                                    bodyOvertime.amount = costHour * hours * 100;
-                                                    bodyOverhead.amount = overheadRate * hours * 100;
-                                                    bodySalary.amount = 0;
-
-                                                    if (!createdDateObject[dateKey].employees[employeeSubject].vacation) {
-                                                        createdDateObject[dateKey].employees[employeeSubject].vacation = HOURSCONSTANT;
-                                                        bodyVacation.amount = costHour * HOURSCONSTANT * 100;
-                                                    }
-                                                }
-                                            }
-
-                                            if (!createdDateObject[dateKey].employees[employeeSubject].wTracks[sourceDocumentId]) {
-                                                createdDateObject[dateKey].employees[employeeSubject].wTracks[sourceDocumentId] = 0;
-                                            }
-
-                                            createdDateObject[dateKey].employees[employeeSubject].costHour = costHour;
-                                            createdDateObject[dateKey].employees[employeeSubject].hours += hours;
-                                            createdDateObject[dateKey].employees[employeeSubject].wTracks[sourceDocumentId] += hours;
-                                        } else {
-                                            bodyOvertime.amount = costHour * hours * 100;
-                                            bodyOverhead.amount = overheadRate * hours * 100;
-
-                                            if (sameDayHoliday) {
-                                                bodyOvertime.amount = costHour * hours * 100;
-                                            }
-                                        }
-
-                                        //if (overtime) {
-                                        //    bodyOvertime.amount = costHour * hours * 100;
-                                        //    bodyOverhead.amount = overheadRate * hours * 100;
-                                        //}
-
-                                        createReconciled(bodySalary, req.session.lastDb, methodCb, req.session.uId);
-                                        createReconciled(bodyOvertime, req.session.lastDb, methodCb, req.session.uId);
-                                        createReconciled(bodyOverhead, req.session.lastDb, methodCb, req.session.uId);
-                                        createReconciled(bodyVacation, req.session.lastDb, methodCb, req.session.uId);
-
-                                    });
-
-                                });
-                            }, function () {
-                                createWaterfallCb(null, createdDateObject);
-                            });
-                        });
-                    };
-
-                    createIdle = function (totalObject, createWaterfallCb) {
-                        var dates = Object.keys(totalObject);
-                        var totalIdleObject = {};
-                        var findAllDevs;
-                        var createIdleTime;
-                        var matchObj;
-                        var findMonthHours;
-                        var monthHours = {};
-
-                        if (!dates.length) {
-                            return createWaterfallCb();
+                            }
                         }
 
-                        var minDate = _.min(dates);
-                        var maxDate = _.max(dates);
-                        var startYear = parseInt(minDate.slice(0, 4), 10);
-                        var startMonth = parseInt(minDate.slice(4, 6), 10);
-                        var dateOfMonth = parseInt(minDate.slice(6), 10);
-                        var date = moment().year(startYear).month(startMonth - 1).date(dateOfMonth);
-                        var endYear = parseInt(maxDate.slice(0, 4), 10);
-                        var endMonth = parseInt(maxDate.slice(4, 6), 10);
-                        var endDateOfMonth = parseInt(maxDate.slice(6), 10);
-                        var endDate = moment().year(endYear).month(endMonth - 1).date(endDateOfMonth);
-                        var j;
+                        holidays.forEach(function (holiday) {
+                            if ((holiday.day !== 0) && (holiday.day !== 6)) {
+                                hoursToRemove += weekScheduler[holiday.day];
+                            }
+                        });
 
-                        var startDateKey = startYear * 100 + moment(date).isoWeek();
-                        var endDateKey = endYear * 100 + moment(endDate).isoWeek();
+                        for (var i = endDate; i >= 1; i--) {
+                            checkDate = moment(endDate).date(i).day();
 
-                        //var startOfMonth = moment(date).startOf('month');
-                        //var startK = (moment(startOfMonth).isoWeekYear() * 100 + moment(startOfMonth).month() + 1) * 100 + moment(startOfMonth).date();
-                        //var endOfMonth = moment(endDate).endOf('month');
-                        //var endK = (moment(endOfMonth).isoWeekYear() * 100 + moment(endOfMonth).month() + 1) * 100 + moment(endOfMonth).date();
-                        //var length = endK - startK;
-                        //
-                        //for (j = length - 1; j >= 0; j--){
-                        //    newDateArrayWithIdle.push((startK + j).toString());
-                        //}
+                            if (checkDate === 0){
+                                checkDate = 7;
+                            }
+                            hoursInMonth += weekScheduler[checkDate];
+                        }
 
-                        matchObj = {
-                            $and: [{
-                                $or: [{
-                                    $and: [{
-                                        isEmployee: true
-                                    }, {
-                                        $or: [{
-                                            lastFire: null
-                                        }, {
-                                            lastFire: {
-                                                $ne : null,
-                                                $gte: startDateKey
-                                            }
-                                        }, {
-                                            lastHire: {
-                                                $ne : null,
-                                                $lte: endDateKey
-                                            }
-                                        }]
-                                    }]
-                                }, {
-                                    $and: [{
-                                        isEmployee: false
-                                    }, {
-                                        lastFire: {
-                                            $ne : null,
-                                            $gte: startDateKey
-                                        }
-                                    }]
-                                }
-                                ]
-                            }]
-                        };
+                        hoursInMonth -= hoursToRemove;
 
-                        findAllDevs = function (callback) {
-                            Employee
-                                .aggregate([{
-                                    $match: {
-                                        //  'department': {$nin: notDevArray.objectID()},
-                                        hire: {$ne: []}
-                                    }
-                                }, {
-                                    $project: {
-                                        isEmployee: 1,
-                                        hire      : 1,
-                                        transfer  : 1,
-                                        name      : 1,
-                                        lastFire  : 1,
-                                        lastHire  : {
-                                            $let: {
-                                                vars: {
-                                                    lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
-                                                },
-                                                in  : {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
-                                            }
-                                        }
-                                    }
-                                }, {
-                                    $match: matchObj
-                                }, {
-                                    $project: {
-                                        _id     : 1,
-                                        hire    : 1,
-                                        transfer: 1
-                                    }
-                                }], function (err, result) {
-                                    if (err) {
-                                        callback(err);
-                                    }
+                        costForHour = isFinite(salaryForDate / hoursInMonth) ? salaryForDate / hoursInMonth : 0;
 
-                                    var emps = _.pluck(result, '_id');
+                        if (!createdVacations[employee]) {
+                            createdVacations[employee] = {};
 
-                                    callback(null, {emps: emps, salary: result});
+                            if (!createdVacations[employee][dateByMonth]) {
+                                createdVacations[employee][dateByMonth] = true;
+
+                                vacationObject = _.find(vacations, function (vacation) {
+                                    return vacation.dateByMonth === dateByMonth
                                 });
-                        };
 
-                        findMonthHours = function (empResult, callback) {
-                            async.each(dates, function (dateKey, asyncCb) {
-                                var year = parseInt(dateKey.slice(0, 4), 10);
-                                var month = parseInt(dateKey.slice(4, 6), 10);
-                                var key = year * 100 + month;
+                                if (vacationObject && vacationObject.vacArray) {
+                                    vacationObject.vacArray.forEach(function (vac) {
+                                        vacationDate = moment(startOfMonth).date(vac + 1);
+                                        dayOfWeek = vacationDate.day();
 
-                                if (!monthHoursObject[key]) {
-                                    redisStore.readFromStorage('monthHours', key, function (err, result) {
-
-                                        if (!monthHoursObject[key]) {
-                                            monthHoursObject[key] = {};
+                                        if (vac && (vac !== 'P') && (vac !== 'E') && (dayOfWeek !== 6) && (dayOfWeek !== 0)) {
+                                            vacationHours += weekScheduler[dayOfWeek];
                                         }
-
-                                        result = JSON.parse(result);
-                                        monthHoursObject[key] = result && result[0] ? result[0] : {};
-                                        asyncCb();
                                     });
-                                } else {
-                                    asyncCb();
                                 }
 
-                            }, function (err, result) {
-                                callback(null, {
-                                    monthHours: monthHoursObject,
-                                    emps      : empResult.emps,
-                                    salary    : empResult.salary
-                                });
-                            });
-                        };
-
-                        createIdleTime = function (empResult, callback) {
-                            async.each(dates, function (dateKey, asyncCb) {
-                                var year = parseInt(dateKey.slice(0, 4), 10);
-                                var month = parseInt(dateKey.slice(4, 6), 10);
-                                var dateOfMonth = parseInt(dateKey.slice(6), 10);
-                                var date = moment().year(year).month(month - 1).date(dateOfMonth);
-                                var objectForDay = totalObject[dateKey] || {};
-                                var employeesObjects = objectForDay.employees || [];
-                                var employeesIds = Object.keys(employeesObjects);
-
-                                var stringIds = [];
-
-                                empResult.emps.forEach(function (el) {
-                                    stringIds.push(el.toString());
-                                });
-
-                                var allEmployees = _.union(employeesIds, stringIds);
-                                var employeesCount = allEmployees.length;
-                                var i;
-                                var employeesWithSalary = empResult.salary;
-                                var monthHours = empResult.monthHours[year * 100 + month] || {};
-                                var dayOfWeek = moment(date).day();
-                                var cb = _.after(employeesCount, asyncCb);
-                                var holidayDate = holidaysObject[dateKey];
-                                var sameDayHoliday = holidayDate;
-
-                                if ((dayOfWeek === 0) || (dayOfWeek === 6)) {
-                                    return asyncCb();
-                                }
-
-                                if (!totalIdleObject[dateKey]) {
-                                    totalIdleObject[dateKey] = 0;
-                                }
-                                Model.remove({
-                                    "sourceDocument.model": 'Employees',
-                                    date                  : date.set(timeToSet),
-                                    journal               : CONSTANTS.IDLE_PAYABLE
-                                }, function (err, result) {
-                                    for (i = employeesCount - 1; i >= 0; i--) {
-                                        var employee = allEmployees[i];
-                                        var empObject = employeesObjects[employee] || {};
-                                        var vacation = empObject.vacation;
-                                        var totalWorkedForDay = empObject.hours || 0;
-                                        var salary = 0;
-                                        var employeeNotTracked = _.find(employeesWithSalary, function (elem) {
-                                            return elem._id.toString() === employee.toString();
-                                        });
-                                        var hireArray = employeeNotTracked ? employeeNotTracked.transfer : [];
-                                        var length = hireArray.length;
-                                        var j;
-                                        var costHour = 0;
-                                        var hours = monthHours.hours || 0;
-                                        var createVacation = false;
-                                        var department;
-
-                                        for (j = length - 1; j >= 0; j--) {
-                                            if (date >= hireArray[j].date) {
-                                                salary = hireArray[j].salary;
-                                                department = hireArray[j].department;
-                                                break;
-                                            }
-                                        }
-
-                                        if (!vacation) {
-                                            vacation = vacationObject[employee] ? vacationObject[employee][dateKey] : null;
-
-                                            if ((vacation === 'P') || (vacation === 'E')) {
-                                                vacation = null;
-                                            }
-
-                                            if (vacation) {
-                                                createVacation = true;
-                                            }
-                                        }
-
-                                        costHour = isFinite(salary / hours) ? (salary / hours) : 0;
-
-                                        var bodySalaryIdle = {
-                                            currency      : CONSTANTS.CURRENCY_USD,
-                                            journal       : CONSTANTS.IDLE_PAYABLE,
-                                            date          : date.set(timeToSet),
-                                            sourceDocument: {
-                                                model: 'Employees'
-                                            }
-                                        };
-
-                                        var idleTime = HOURSCONSTANT - totalWorkedForDay;
-
-                                        bodySalaryIdle.sourceDocument._id = employee;
-
-                                        if (totalWorkedForDay - HOURSCONSTANT < 0) {
-                                            if (!vacation) {
-                                                if (totalWorkedForDay - HOURSCONSTANT >= 0) {
-                                                    bodySalaryIdle.amount = 0;
-                                                } else {
-                                                    bodySalaryIdle.amount = costHour * idleTime * 100;
-                                                    totalIdleObject[dateKey] += costHour * idleTime * 100;
-                                                }
-
-                                            } else {
-                                                bodySalaryIdle.amount = 0;
-                                            }
-                                        } else {
-                                            bodySalaryIdle.amount = 0;
-                                        }
-
-                                        if (createVacation) {
-                                            bodySalaryIdle.amount = costHour * HOURSCONSTANT * 100;
-                                            bodySalaryIdle.journal = CONSTANTS.VACATION_PAYABLE;
-                                        }
-
-                                        if (department && notDevArray.indexOf(department.toString()) !== -1) {
-                                            bodySalaryIdle.amount = 0;
-                                            cb();
-                                            continue;
-                                        }
-
-                                        if (sameDayHoliday) {
-                                            bodySalaryIdle.amount = 0;
-                                        }
-
-                                        if ((bodySalaryIdle.amount > 0) && (bodySalaryIdle.journal === CONSTANTS.VACATION_PAYABLE)) {
-                                            if (!employeesObjects[employee]) {
-                                                employeesObjects[employee] = {};
-                                            }
-
-                                            employeesObjects[employee].vacation = 'V';
-                                        }
-
-                                        if (bodySalaryIdle.amount > 0) {
-                                            createReconciled(bodySalaryIdle, req.session.lastDb, cb, req.session.uId);
-                                        } else {
-                                            cb();
-                                        }
+                                var bodyVacation = {
+                                    currency      : CONSTANTS.CURRENCY_USD,
+                                    journal       : CONSTANTS.VACATION_PAYABLE,
+                                    date          : date.set(timeToSet),
+                                    sourceDocument: {
+                                        model: 'Employees',
+                                        _id  : employee
                                     }
-                                });
-                            }, function (err, result) {
-                                callback(err, {totalIdleObject: totalIdleObject, totalObject: totalObject});
-                            });
-                        };
+                                };
 
-                        var waterfall = [findAllDevs, findMonthHours, createIdleTime];
+                                bodyVacation.amount = vacationHours * costForHour * 100;
+                                createReconciled(bodyVacation, res.session.lastDb, function () {
+                                }, req.session.uId);
+                            }
+                        }
 
-                        async.waterfall(waterfall, function (err, result) {
-                            if (err) {
-                                return createWaterfallCb(err);
+                        Model.remove({
+                            "sourceDocument._id"     : objectId(jobId),
+                            "sourceDocument.employee": objectId(employee)
+                        }, function () {
+
+                            var bodySalary = {
+                                currency      : CONSTANTS.CURRENCY_USD,
+                                journal       : CONSTANTS.SALARY_PAYABLE,
+                                date          : date.set(timeToSet),
+                                sourceDocument: {
+                                    model   : 'wTrack',
+                                    _id     : jobId,
+                                    employee: employee
+                                }
+                            };
+
+                            var bodyOvertime = {
+                                currency      : CONSTANTS.CURRENCY_USD,
+                                journal       : CONSTANTS.OVERTIME_PAYABLE,
+                                date          : date.set(timeToSet),
+                                sourceDocument: {
+                                    model   : 'wTrack',
+                                    _id     : jobId,
+                                    employee: employee
+                                }
+                            };
+
+                            var bodyOverhead = {
+                                currency      : CONSTANTS.CURRENCY_USD,
+                                journal       : CONSTANTS.OVERHEAD,
+                                date          : date.set(timeToSet),
+                                sourceDocument: {
+                                    model   : 'wTrack',
+                                    _id     : jobId,
+                                    employee: employee
+                                }
+                            };
+
+                            var methodCb = function () {
+                            };
+
+                            if (_type === 'overtime') {
+                                bodyOvertime.amount = hours * costForHour * 100;
+                                bodyOverhead.amount = hours * costForHour * 100;
+                                createReconciled(bodyOvertime, res.session.lastDb, methodCb, req.session.uId);
+                                createReconciled(bodyOverhead, res.session.lastDb, methodCb, req.session.uId);
+                            } else if (_type === 'ordinary') {
+                                bodySalary.amount = hours * costForHour * 100;
+                                bodyOverhead.amount = hours * costForHour * 100;
+                                createReconciled(bodySalary, res.session.lastDb, methodCb, req.session.uId);
+                                createReconciled(bodyOverhead, res.session.lastDb, methodCb, req.session.uId);
                             }
 
-                            createWaterfallCb(err, {totalIdleObject: totalIdleObject, totalObject: totalObject});
+                            cb();
                         });
-
-                    };
-
-                    waterfallCreateEntries = [createDirect, createIdle];
-
-                    async.waterfall(waterfallCreateEntries, function (err, result) {
-                        if (err) {
-                            return pcb(err);
-                        }
-
-                        pcb(null, result);
                     });
-                };
 
-                parallelRemoveCreate = [removeBySource, create];
-
-                async.parallel(parallelRemoveCreate, function (err, result) {
-                    if (err) {
-                        return wfcallback(err);
-                    }
-
-                    wfcallback(null, result);
                 });
+
             };
 
-            waterfallForSalary = [wTrackFinder, parallelFunctionRemoveCreate];
+            waterfallTasks = [getJobAndWTracks, createDirect];
 
-            async.waterfall(waterfallForSalary, function (err, result) {
+            async.waterfall(waterfallTasks, function (err, result) {
                 if (err) {
                     return mainCallback(err);
                 }
@@ -2541,7 +3097,6 @@ var Module = function (models, event) {
 
             });
         });
-
     };
 
     function createReconciled(body, dbIndex, cb, uId) {
