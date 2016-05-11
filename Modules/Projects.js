@@ -315,6 +315,14 @@ var Project = function (models, event) {
                         bonus: []
                     };
 
+                    if (data.paymentTerms) {
+                        _project.paymentTerms = data.paymentTerms;
+                    }
+
+                    if (data.paymentMethod) {
+                        _project.paymentMethod = data.paymentMethod;
+                    }
+
                     _project.save(function (err, result) {
                         try {
                             if (err) {
