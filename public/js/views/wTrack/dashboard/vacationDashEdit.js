@@ -66,7 +66,7 @@ define([
                 }
                 return;
             }
-            
+
             if (e.shiftKey || !keyCodes.isDigit(e.keyCode)) {
                 e.preventDefault();
             }
@@ -143,17 +143,18 @@ define([
 
             rows.each(function () {
                 var model;
-                var target = $(this);
-                var id = target.attr('data-id');
-                var jobs = target.find('[data-content="jobs"]');
-                var monEl = target.find('[data-content="1"]');
-                var tueEl = target.find('[data-content="2"]');
-                var wenEl = target.find('[data-content="3"]');
-                var thuEl = target.find('[data-content="4"]');
-                var friEl = target.find('[data-content="5"]');
-                var satEl = target.find('[data-content="6"]');
-                var sunEl = target.find('[data-content="7"]');
-                var worked = target.find('[data-content="worked"]');
+                var $target = $(this);
+                var id = $target.attr('data-id');
+                var jobs = $target.find('[data-content="jobs"]');
+                var monEl = $target.find('[data-content="1"]');
+                var tueEl = $target.find('[data-content="2"]');
+                var wenEl = $target.find('[data-content="3"]');
+                var thuEl = $target.find('[data-content="4"]');
+                var friEl = $target.find('[data-content="5"]');
+                var satEl = $target.find('[data-content="6"]');
+                var sunEl = $target.find('[data-content="7"]');
+                var worked = $target.find('[data-content="worked"]');
+                var _type = $target.find('[data-content="type"]');
                 var mo = retriveText(monEl);
                 var tu = retriveText(tueEl);
                 var we = retriveText(wenEl);
@@ -175,6 +176,7 @@ define([
                     6     : sa,
                     7     : su,
                     jobs  : jobs.attr('data-id'),
+                    _type : _type,
                     worked: worked
                 };
 
@@ -350,9 +352,9 @@ define([
 
             if (isSelect) {
                 if (content === 'jobs') {
-                    dataService.getData("/jobs/getForDD", {
-                        "projectId": self.wTracks[0].project._id,
-                        "all"      : true
+                    dataService.getData('/jobs/getForDD', {
+                        projectId: self.wTracks[0].project._id,
+                        all      : true
                     }, function (jobs) {
 
                         self.responseObj['#jobs'] = jobs;
@@ -362,6 +364,10 @@ define([
                         self.showNewSelect(e);
                         return false;
                     });
+                } else if (content === 'type') {
+                    el.append('<ul class="newSelectList"><li>OR</li><li>OT</li></ul>');
+
+                    return false;
                 } else {
                     // populate.showSelect(e, prev, next, this);
                     this.showNewSelect(e);
@@ -433,7 +439,7 @@ define([
 
                     jobs = element._id;
 
-                    targetElement.attr("data-id", jobs);
+                    targetElement.attr('data-id', jobs);
                     tr.find('[data-content="jobs"]').removeClass('errorContent');
                 }
                 targetElement.removeClass('errorContent');

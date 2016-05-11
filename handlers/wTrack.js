@@ -97,6 +97,7 @@ var TCard = function (event, models) {
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body) || {};
+        var overTimeTcard = overTimeHelper(data);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
 
@@ -1736,9 +1737,10 @@ var TCard = function (event, models) {
                 info       : 1,
                 department : 1,
                 employee   : 1,
-                project    : {$arrayElemAt: ["$project", 0]},
+                project    : {$arrayElemAt: ['$project', 0]},
                 jobs       : 1,
-                revenue    : 1
+                revenue    : 1,
+                _type      : 1
             }
         }, {
             $match: {
@@ -1788,34 +1790,36 @@ var TCard = function (event, models) {
             }
         }, {
             $project: {
-                1            : 1,
-                2            : 1,
-                3            : 1,
-                4            : 1,
-                5            : 1,
-                6            : 1,
-                7            : 1,
-                cost         : 1,
-                worked       : 1,
-                week         : 1,
-                month        : 1,
-                year         : 1,
-                dateByWeek   : 1,
-                dateByMonth  : 1,
-                info         : 1,
+                1          : 1,
+                2          : 1,
+                3          : 1,
+                4          : 1,
+                5          : 1,
+                6          : 1,
+                7          : 1,
+                cost       : 1,
+                worked     : 1,
+                week       : 1,
+                month      : 1,
+                year       : 1,
+                dateByWeek : 1,
+                dateByMonth: 1,
+                info       : 1,
+                _type      : 1,
+                revenue    : 1,
+                project    : 1,
+                department : {$arrayElemAt: ['$department', 0]},
+                customer   : {$arrayElemAt: ['$customer', 0]},
+                employee   : {$arrayElemAt: ['$employee', 0]},
+                jobs       : {$arrayElemAt: ['$jobs', 0]},
+
                 salesmanagers: {
                     $filter: {
                         input: '$projectMembers',
                         as   : 'projectMember',
                         cond : {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]}
                     }
-                },
-                department   : {$arrayElemAt: ['$department', 0]},
-                project      : 1,
-                customer     : {$arrayElemAt: ['$customer', 0]},
-                employee     : {$arrayElemAt: ['$employee', 0]},
-                jobs         : {$arrayElemAt: ['$jobs', 0]},
-                revenue      : 1
+                }
             }
         }, {
             $unwind: {
@@ -1861,7 +1865,8 @@ var TCard = function (event, models) {
                 customer     : 1,
                 employee     : 1,
                 jobs         : 1,
-                revenue      : 1
+                revenue      : 1,
+                _type        : 1
             }
         }, {
             $project: {
@@ -1889,6 +1894,7 @@ var TCard = function (event, models) {
                 employee     : 1,
                 jobs         : 1,
                 revenue      : 1,
+                _type        : 1,
                 isValid      : salesManagerMatch
             }
         }, {
@@ -1934,7 +1940,8 @@ var TCard = function (event, models) {
                 customer    : '$root.customer',
                 employee    : '$root.employee',
                 jobs        : '$root.jobs',
-                revenue     : '$root.revenue'
+                revenue     : '$root.revenue',
+                _type       : '$root._type'
             }
         }], function (err, wTrack) {
             var firstWtrack;
