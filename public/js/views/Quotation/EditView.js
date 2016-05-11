@@ -104,7 +104,7 @@ define([
             var newCurrencyClass = helpers.currencyClass(newCurrency);
 
             var array = this.$el.find('.' + oldCurrencyClass);
-            array.attr('class', newCurrencyClass);
+            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
 
             currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
 

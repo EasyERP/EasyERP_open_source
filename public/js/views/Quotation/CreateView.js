@@ -87,7 +87,7 @@ define([
                 var newCurrencyClass = helpers.currencyClass(newCurrency);
 
                 var array = this.$el.find('.' + oldCurrencyClass);
-                array.attr('class', newCurrencyClass);
+                array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
 
                 if (type ) {    // added condition for project with no data-level empty
                     this.salesManager = element.salesmanager;
