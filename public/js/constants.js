@@ -582,7 +582,7 @@ define([], function () {
         EXPENSESPAYMENTS  : 'ExpensesPayments',
         DIVIDENDINVOICE   : 'DividendInvoice',
         DIVIDENDPAYMENTS  : 'DividendPayments',
-        EMPLOYEESETTINGS  : 'EmployeeSettings',
+        SETTINGSEMPLOYEE  : 'settingsEmployee',
 
         RESPONSES: {
             BAD_RESPONSE            : 'Please try again',

@@ -1,9 +1,12 @@
 define([
-        'text!templates/SettingsEmployee/list/ListTemplate.html'
+        'jQuery',
+        'Underscore',
+        'Backbone',
+        'text!templates/settingsEmployee/list/ListTemplate.html'
     ],
 
-    function (listTemplate) {
-        var SettingsEmployeeListView = listViewBase.extend({
+    function ($, _, Backbone, listTemplate) {
+        var SettingsEmployeeListView = Backbone.View.extend({
             template            : listTemplate,
 
             initialize: function (options) {
