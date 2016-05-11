@@ -228,6 +228,7 @@ define([
                 var $priceInputs;
                 var payBtnHtml;
                 var $currencyDd;
+                var invoiceDate;
 
                 e.preventDefault();
 
@@ -236,13 +237,15 @@ define([
                 $tr = $('tr[data-id=' + proformaId + ']');
                 $priceInputs = self.$el.find('td[data-name="price"]');
                 $currencyDd = self.$el.find('#currencyDd');
+                invoiceDate = self.$el.find('#invoice_date').val();
 
                 App.startPreload();
 
                 payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
                 url = '/invoice/approve';
                 data = {
-                    invoiceId: proformaId
+                    invoiceId: proformaId,
+                    invoiceDate: invoiceDate
                 };
 
                 this.saveItem(function (err) {
