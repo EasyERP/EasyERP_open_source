@@ -55,7 +55,7 @@ var TCard = function (event, models) {
 
                 docs.push(body);
 
-                if (overTimeTcard) {
+                if (overTimeTcard && overTimeTcard.worked) {
                     docs.push(overTimeTcard);
                 }
 

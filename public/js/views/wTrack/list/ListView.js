@@ -24,7 +24,9 @@ define([
     'moment',
     'constants',
     'helpers/keyCodeHelper',
-    'helpers/employeeHelper'
+    'helpers/employeeHelper',
+    'helpers/overTime',
+    'helpers/isOverTime'
 ], function (Backbone,
              _,
              $,
@@ -50,7 +52,9 @@ define([
              moment,
              CONSTANTS,
              keyCodes,
-             employeeHelper) {
+             employeeHelper,
+             setOverTime,
+             isOverTime) {
     'use strict';
 
     var wTrackListView = listViewBase.extend({
@@ -87,6 +91,7 @@ define([
             this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
             this.stages = [];
+            this.setOverTime = setOverTime;
         },
 
         events: {
@@ -229,23 +234,6 @@ define([
             //$('#top-bar-generateBtn').hide();
             $('#top-bar-copyBtn').hide();
             $('#top-bar-createBtn').show();
-        },
-
-        setOverTime: function (type) {
-            var newRow = this.$el.find('.false');
-            var id = newRow.attr('data-id');
-
-            if (!this.changedModels[id]) {
-                this.changedModels[id] = {};
-            }
-
-            if (type === 'OT') {
-                this.changedModels[id]._type = 'overtime';
-                newRow.addClass('overtime');
-            } else {
-                this.changedModels[id]._type = 'ordinary';
-                newRow.removeClass('overtime');
-            }
         },
 
         copyRow: function (e) {
@@ -596,38 +584,7 @@ define([
                     insertedInput = el.find('input');
                     insertedInput.focus();
 
-                    // validation for month and days of week
-                    if (isMonth || isDay) {
-                        maxlength = 2;
-
-                        if (isMonth) {
-                            maxValue = 12;
-                        } else {
-                            if (isOvertime) {
-                                maxValue = 24;
-                            } else {
-                                maxValue = 8;
-                                maxlength = 1;
-                            }
-
-                        }
-                        insertedInput.attr('maxLength', maxlength);
-                    }
-
-                    insertedInput.keyup(function (e) {
-                        if (insertedInput.val() > maxValue) {
-                            if (isDay && !isOvertime) {
-                                App.render({
-                                    type   : 'error',
-                                    message: 'Сreate Overtime tCard for input more than 8 hours'
-                                });
-                            }
-                            e.preventDefault();
-                            insertedInput.val('' + maxValue);
-                        }
-                    });
-
-                    // end
+                    isOverTime(el);
                     insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                     this.autoCalc(e);
@@ -636,7 +593,7 @@ define([
                         this.calculateCost(e, wTrackId);
                     }
                 }
-
+                
                 return false;
             };
 
@@ -856,7 +813,7 @@ define([
                     tr.find('[data-content="jobs"]').removeClass('errorContent');
                 } else if (elementType === '#type') {
                     changedAttr._type = textVal === 'OT' ? 'overtime' : 'ordinary';
-                    this.setOverTime(textVal);
+                    this.setOverTime(textVal, tr);
                 } else if (elementType === '#employee') {
                     tr.find('[data-content="department"]').text(element.department.departmentName);
 

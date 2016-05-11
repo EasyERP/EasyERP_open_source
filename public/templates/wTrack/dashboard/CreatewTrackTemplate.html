@@ -42,7 +42,7 @@
         <div class="clearfix"></div>
         <div class="topContentHolder">
             <div id="wTrackItemsHolder">
-                <table id="rawTable" class="list">
+                <table id="_rawTable" class="list">
                     <thead>
                     <tr id="caption">
                         <th width="400"></th>
@@ -84,6 +84,7 @@
                 <table id="rawTable" class="list">
                     <thead>
                     <tr>
+                        <th>Type</th>
                         <th>
                             Sprint
                         </th>
@@ -130,8 +131,9 @@
                     </thead>
                     <tbody id="wTrackCreateTable">
                     <% if (nonWorkingDays && nonWorkingDays.splited) {
-                      nonWorkingDays.splited.forEach(function(dateObject){%>
-                            <tr>
+                      nonWorkingDays.splited.forEach(function(dateObject, index){%>
+                            <tr data-id="<%= index %>">
+                                <td class="editable centerCell" data-content="type">OR</td>
                                 <td data-content="jobs" data-id="<%=wTrack.jobs ? wTrack.jobs.name : '------'%>"
                                     class="editable errorContent" data-id="<%=wTrack.jobs ? wTrack.jobs._id : null%>">
                                     <%=wTrack.jobs ?
@@ -169,7 +171,8 @@
                             </tr>
                     <%});
                     } else { %>
-                        <tr>
+                        <tr data-id="0">
+                            <td class="editable centerCell" data-content="type">OR</td>
                             <td data-content="jobs" data-id="<%=wTrack.jobs ? wTrack.jobs.name : '------'%>"
                                 class="editable errorContent" data-id="<%=wTrack.jobs ? wTrack.jobs._id : null%>">
                                 <%=wTrack.jobs ?

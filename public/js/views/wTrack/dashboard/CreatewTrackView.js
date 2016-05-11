@@ -11,8 +11,24 @@ define([
     'common',
     'dataService',
     'helpers/employeeHelper',
-    'helpers/keyCodeHelper'
-], function (Backbone, $, _, selectView, CreateJob, template, WTrackModel, moment, async, common, dataService, employeeHelper, keyCodes) {
+    'helpers/keyCodeHelper',
+    'helpers/overTime',
+    'helpers/isOverTime'
+], function (Backbone,
+             $,
+             _,
+             selectView,
+             CreateJob,
+             template,
+             WTrackModel,
+             moment,
+             async,
+             common,
+             dataService,
+             employeeHelper,
+             keyCodes,
+             setOverTime,
+             isOverTime) {
     'use strict';
     var CreateView = Backbone.View.extend({
         template   : _.template(template),
@@ -38,6 +54,8 @@ define([
             var body;
 
             App.startPreload();
+
+            this.setOverTime = setOverTime;
 
             _.bindAll(self, 'saveItem');
 
@@ -81,9 +99,9 @@ define([
             options.wTrack = self.wTrack;
 
             employeeHelper.getNonWorkingDaysByWeek(year, self.week, null, options.employee, self.wTrack,
-                function (nonWorkingDays, self) {
+                function (nonWorkingDays, context) {
                     options.nonWorkingDays = nonWorkingDays;
-                    self.render(options);
+                    context.render(options);
                 }, self);
 
         },
@@ -135,12 +153,21 @@ define([
             var self = this;
             var currentModel = model.id ? model.toJSON() : model;
             var id = currentModel._id;
-            var pm = currentModel.projectmanager && currentModel.projectmanager._id ? currentModel.projectmanager._id : currentModel.projectmanager;
+            var pm;
             var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
             var fullName;
 
+            if (currentModel.projectmanager && currentModel.projectmanager._id) {
+                pm = currentModel.projectmanager._id;
+            } else {
+                pm = currentModel.projectmanager;
+            }
             if (pm) {
-                fullName = currentModel.projectmanager && currentModel.projectmanager.name ? currentModel.projectmanager.name.first + ' ' + currentModel.projectmanager.name.last : '';
+                if (currentModel.projectmanager && currentModel.projectmanager.name) {
+                    fullName = currentModel.projectmanager.name.first + ' ' + currentModel.projectmanager.name.last;
+                } else {
+                    fullName = '';
+                }
                 self.$el.find('#projectManager').text(fullName);
 
                 common.getImagesPM([pm], '/getEmployeesImages', '#' + id, function (result) {
@@ -151,7 +178,11 @@ define([
             }
 
             if (customer) {
-                fullName = currentModel.customer && currentModel.customer.name ? currentModel.customer.name.first + ' ' + currentModel.customer.name.last : '';
+                if (currentModel.customer && currentModel.customer.name) {
+                    fullName = currentModel.customer.name.first + ' ' + currentModel.customer.name.last;
+                } else {
+                    fullName = '';
+                }
                 self.$el.find('#customer').text(fullName);
 
                 common.getImagesPM([customer], '/getCustomersImages', '#' + id, function (result) {
@@ -174,19 +205,19 @@ define([
             var count = rows.length - 1;
 
             rows.each(function (index) {
-                var target = $(this);
-                var id = target.attr('data-id');
-                var jobs = target.find('[data-content="jobs"]');
-                var monEl = target.find('[data-content="1"]');
-                var tueEl = target.find('[data-content="2"]');
-                var wenEl = target.find('[data-content="3"]');
-                var thuEl = target.find('[data-content="4"]');
-                var friEl = target.find('[data-content="5"]');
-                var satEl = target.find('[data-content="6"]');
-                var sunEl = target.find('[data-content="7"]');
-                var worked = target.find('[data-content="worked"]');
-                var month = target.find('[data-content="month"]');
-                var year = target.find('[data-content="year"]');
+                var $target = $(this);
+                var jobs = $target.find('[data-content="jobs"]');
+                var monEl = $target.find('[data-content="1"]');
+                var tueEl = $target.find('[data-content="2"]');
+                var wenEl = $target.find('[data-content="3"]');
+                var thuEl = $target.find('[data-content="4"]');
+                var friEl = $target.find('[data-content="5"]');
+                var satEl = $target.find('[data-content="6"]');
+                var sunEl = $target.find('[data-content="7"]');
+                var worked = $target.find('[data-content="worked"]');
+                var _type = $target.find('[data-content="type"]').text();
+                var month = $target.find('[data-content="month"]');
+                var year = $target.find('[data-content="year"]');
                 var dateByMonth;
                 var mo;
                 var tu;
@@ -211,6 +242,7 @@ define([
                     return el.text() || 0;
                 }
 
+                _type = _type === 'OT' ? 'overtime' : 'ordinary';
                 mo = retriveText(monEl);
                 tu = retriveText(tueEl);
                 we = retriveText(wenEl);
@@ -237,7 +269,6 @@ define([
 
                 worked = retriveText(worked);
                 wTrack = {
-                    _id        : id,
                     1          : mo,
                     2          : tu,
                     3          : we,
@@ -254,7 +285,8 @@ define([
                     dateByMonth: dateByMonth,
                     employee   : self.employee,
                     department : self.department,
-                    week       : self.week
+                    week       : self.week,
+                    _type      : _type
                 };
 
                 model = new Model(wTrack);
@@ -265,7 +297,8 @@ define([
                             return self.hideDialog();
                         }
                     },
-                    error  : function (err) {
+
+                    error: function (err) {
                         App.render({
                             type   : 'error',
                             message: err.text
@@ -389,16 +422,29 @@ define([
             var td = el.closest('td');
             var tr = el.closest('tr');
             var isHours = td.hasClass('hours');
+            var content = el.attr('data-content');
+            var isType = content === 'type';
+            var isYear = content === 'year';
+            var isMonth = content === 'month';
+            var isOvertime = tr.hasClass('overtime');
             var input = tr.find('input.editing');
-            var content = el.data('content');
+            var colType = el.data('type');
+            var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
+            var holiday = td.is('.H, .V, .P, .S, .E, [data-content="6"], [data-content="7"]');
             var tempContainer;
             var width;
             var value;
             var insertedInput;
-            var colType = el.data('type');
-            var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
 
             $('.newSelectList').hide();
+
+            if (!isOvertime && holiday) {
+                App.render({
+                    type   : 'error',
+                    message: 'Please create Overtime tCard'
+                });
+                return false;
+            }
 
             if (isSelect) {
                 if (content === 'jobs') {
@@ -407,12 +453,10 @@ define([
                             projectId: self.project,
                             all      : true
                         }, function (jobs) {
-
                             self.responseObj['#jobs'] = jobs;
-
                             tr.find('[data-content="jobs"]').addClass('editable');
-                            // populate.showSelect(e, prev, next, self);
                             self.showNewSelect(e);
+
                             return false;
                         });
                     } else {
@@ -422,19 +466,24 @@ define([
                         });
                     }
 
+                } else if (isType) {
+                    el.append('<ul class="newSelectList"><li>OR</li><li>OT</li></ul>');
+
+                    return false;
                 } else {
                     // populate.showSelect(e, prev, next, this);
                     this.showNewSelect(e);
+
                     return false;
                 }
-            } else if (content === 'month') {
+            } else if (isMonth) {
                 if (this.startMonth === this.endMonth) {
                     return false;
                 }
 
                 el.append('<ul class="newSelectList"><li>' + this.startMonth + '</li><li>' + this.endMonth + '</li></ul>');
 
-            } else if (content === 'year') {
+            } else if (isYear) {
                 if (this.startYear === this.endYear) {
                     return false;
                 }
@@ -451,6 +500,8 @@ define([
                 insertedInput = el.find('input');
                 insertedInput.focus();
                 insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+
+                isOverTime(el);
 
                 if (input.length && !isHours) {
                     if (!input.val()) {
@@ -484,24 +535,25 @@ define([
 
         chooseOption: function (e) {
             var self = this;
-            var target = $(e.target);
-            var targetElement = target.parents('td');
+            var $target = $(e.target);
+            var textVal = $target.text();
+            var $targetElement = $target.parents('td');
             var jobs = {};
-            var tr;
+            var $tr;
             var id;
             var attr;
             var elementType;
             var element;
             var project;
 
-            if (!targetElement.length) {
-                targetElement = target.parents('span');
+            if (!$targetElement.length) {
+                $targetElement = $target.parents('span');
             }
 
 
-            tr = target.parents('tr');
-            id = target.attr('id');
-            attr = targetElement.data('content');
+            $tr = $target.parents('tr');
+            id = $target.attr('id');
+            attr = $targetElement.data('content');
             elementType = '#' + attr;
 
 
@@ -514,14 +566,16 @@ define([
 
                     jobs = element._id;
 
-                    targetElement.attr('data-id', jobs);
-                    tr.find('[data-content="jobs"]').removeClass('errorContent');
+                    $targetElement.attr('data-id', jobs);
+                    $tr.find('[data-content="jobs"]').removeClass('errorContent');
+                } else if (elementType === '#type') {
+                    this.setOverTime(textVal, $tr);
                 } else if (elementType === '#project') {
                     project = element._id;
                     this.project = project;
 
-                    targetElement.attr('data-id', project);
-                    targetElement.removeClass('error');
+                    $targetElement.attr('data-id', project);
+                    $targetElement.removeClass('error');
 
                     dataService.getData('/jobs/getForDD', {
                         projectId: project,
@@ -541,9 +595,9 @@ define([
 
                     this.asyncLoadImgs(element);
                 }
-                targetElement.removeClass('errorContent');
+                $targetElement.removeClass('errorContent');
 
-                targetElement.text(target.text());
+                $targetElement.text(textVal);
 
             } else if (id === 'createJob') {
                 self.generateJob(e);
@@ -644,5 +698,4 @@ define([
         }
     });
     return CreateView;
-})
-;
+});
