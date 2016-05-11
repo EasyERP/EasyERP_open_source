@@ -1,0 +1,28 @@
+<div class="form-holder">
+
+    <fieldset>
+        <dt><label for="paymentMethodName">Name</label></dt>
+        <dd>
+            <input id="paymentMethodName" value="<%=model.name%>">
+        </dd>
+        <dt><label for="bankName">Bank</label></dt>
+        <dd>
+            <input id="bankName" value="<%=model.bank%>">
+        </dd>
+
+        <!--<dt><label for="owner">Name</label></dt>
+        <dd>
+            <span id="owner" data-id="<%=model.owner%>"><%=model.owner%></span>
+        </dd>-->
+        <dt><label for="account">Account</label></dt>
+        <dd>
+            <input id="account" value="<%=model.account%>">
+        </dd>
+        <dt><label for="currency">Currency</label></dt>
+        <dd>
+            <a href="javascript;" class="current-selected" id="currency" data-id="<%=model.currency%>"><%=model.currency%></a>
+        </dd>
+    </fieldset>
+    <div class="clearfix"></div>
+</div>
+  
