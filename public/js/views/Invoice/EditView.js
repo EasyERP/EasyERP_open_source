@@ -170,9 +170,7 @@ define([
 
                             App.stopPreload();
 
-                            $span.text('Unpaid');
-                            $span.removeClass();
-                            $span.addClass('new');
+                            self.eventChannel.trigger('invoiceUpdated');
 
                             self.$el.find('.input-file').remove();
                             self.$el.find('a.deleteAttach').remove();
