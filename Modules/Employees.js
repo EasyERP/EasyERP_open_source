@@ -483,6 +483,7 @@ var Employee = function (event, models) {
                     _employee.salary = data.salary;
                 }
                 if (data.transfer) {
+                    data.transfer[0].salary = data.transfer[0].salary || 0;
                     _employee.transfer = data.transfer;
                 }
 
