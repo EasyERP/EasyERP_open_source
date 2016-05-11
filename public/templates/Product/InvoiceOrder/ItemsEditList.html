@@ -30,19 +30,19 @@
             <%=product.quantity%>
         </span>
     </td>
-    <td data-name="price" class="<%=editable  ? 'editable' : ''%> forNum">
+    <td data-name="price" class="<%=editable  ? 'editable' : ''%> forNum <%=currencyClass(currency._id._id)%>">
         <% if(editable) { %>
         <input id="editInput" class="statusInfo" maxlength="9" size=7 type="text" value="<%=product.unitPrice%>" />
         <% } else { %>
         <span><%=product.unitPrice.toString()%></span>
         <% } %>
     </td>
-    <td class="<%=editable  ? 'editable' : ''%>">
+    <td class="<%=editable  ? 'editable' : ''%> <%=currencyClass(currency._id._id)%>">
         <span>
             <%= product.taxes ?  currencySplitter(product.taxes.toString()) : ''%>
         </span>
     </td>
-    <td class="subtotal">
+    <td class="subtotal <%=currencyClass(currency._id._id)%>">
         <span>
             <%= product.subTotal ? currencySplitter(product.subTotal.toString()) : ''%>
         </span>

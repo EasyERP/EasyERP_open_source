@@ -613,9 +613,11 @@ define([
             var $thisEl = this.$el;
             var products;
             var self = this;
+            var currency;
 
             if (options && options.model) {
                 products = options.model.products;
+                currency = options.model.currency;
 
                 $thisEl.html(_.template(ProductItemsEditList, {model: options.model, forSales: self.forSales}));
 
@@ -625,13 +627,16 @@ define([
                         products        : products,
                         editable        : this.editable,
                         forSales        : self.forSales,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass,
+                        currency        : currency
                     }));
                     totalAmountContainer = $thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
                         model           : options.model,
                         balanceVisible  : this.visible,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass
                     }));
                 }
             } else {
@@ -640,7 +645,8 @@ define([
                 totalAmountContainer.append(_.template(totalAmount, {
                     model           : null,
                     balanceVisible  : this.visible,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    currencyClass   : helpers.currencyClass
                 }));
             }
 

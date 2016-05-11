@@ -288,9 +288,11 @@ define([
             var totalAmountContainer;
             var thisEl = this.$el;
             var products;
+            var currency;
 
             if (options && options.model) {
                 products = options.model.products;
+                currency = options.model.currency;
 
                 thisEl.html(_.template(productItemTemplate, {
                     model     : options.model,
@@ -302,18 +304,21 @@ define([
                 if (products) {
                     productsContainer = thisEl.find('#productList');
                     productsContainer.prepend(_.template(ProductItemsEditList, {
-                        products  : products,
-                        forSales  : self.forSales,
-                        isPaid    : self.isPaid,
-                        notAddItem: this.notAddItem,
-                        currencySplitter : helpers.currencySplitter
+                        products        : products,
+                        forSales        : self.forSales,
+                        isPaid          : self.isPaid,
+                        notAddItem      : this.notAddItem,
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass,
+                        currency        : currency
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
-                        model         : options.model,
-                        balanceVisible: this.visible,
-                        currencySplitter : helpers.currencySplitter
+                        model           : options.model,
+                        balanceVisible  : this.visible,
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass
                     }));
                 }
             } else {
