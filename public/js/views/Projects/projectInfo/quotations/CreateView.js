@@ -39,9 +39,6 @@ define([
                 if (options.collection) {
                     this.collection = options.collection;
                 }
-                if (this.projectModel) {
-                    this.projectModelJSON =   this.projectModel.toJSON();
-                }
 
                 _.bindAll(this, "saveItem", "render");
                 this.model = new QuotationModel();
@@ -52,7 +49,6 @@ define([
                 this.render();
                 this.getForDd(this.projectId, this.customerId);
                 this.forSales = true;
-
             },
 
             recalculatePriceByJob: function () {
@@ -192,7 +188,7 @@ define([
                     destination   : destination,
                     incoterm      : incoterm,
                     invoiceControl: invoiceControl,
-                    paymentTerms  : paymentTerm,
+                    paymentTerm   : paymentTerm,
                     fiscalPosition: fiscalPosition,
                     populate      : true, //Need Populate data from server
                     paymentInfo   : {
@@ -237,9 +233,6 @@ define([
 
                 if (projectID) {
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false, projectID);
-                    if (this.projectModelJSON && this.projectModelJSON.paymentTerms){
-                        populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true, this.projectModelJSON.paymentTerms._id);
-                    }
                 } else {
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, true, true);
                 }

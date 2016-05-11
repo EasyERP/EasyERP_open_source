@@ -641,7 +641,12 @@ define([
             } else {
                 populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true, true);
             }
-            populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
+            if (!model.paymentTerms && model.project && model.project.paymentTerms) {
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true, model.project.paymentTerms);
+            } else {
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
+            }
+
             populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
             if (model.workflow.status !== 'New' && model.dueDate) {
