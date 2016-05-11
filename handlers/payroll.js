@@ -858,10 +858,6 @@ var PayRoll = function (models) {
                         }
                     }
 
-                    if (elem._id.toString() === '55b92ad221e4b7c40f000042'){
-                        console.log('dddd');
-                    }
-
                     if (hireKey === localKey){
                         daysInMonth = moment(dateToCreate).endOf('month').date();
                         payForDay = salary / daysInMonth;
