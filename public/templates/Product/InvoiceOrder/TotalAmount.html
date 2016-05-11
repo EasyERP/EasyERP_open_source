@@ -13,6 +13,8 @@
         </td>
         <td class="<%if (model && model.currency && model.currency._id) {%>
                         <%=currencyClass(model.currency._id._id)%>
+                    <%} else {%>
+                        dollar
                     <%}%>">
                 <span><span id="totalUntaxes">
                     <%if (model && model.paymentInfo && model.paymentInfo.unTaxed) {%>
@@ -29,6 +31,8 @@
         </td>
         <td  class="<%if (model && model.currency && model.currency._id) {%>
                         <%=currencyClass(model.currency._id._id)%>
+                    <%} else {%>
+                        dollar
                     <%}%>">
                 <span><span id="taxes">
                     <%if (model && model.paymentInfo && model.paymentInfo.taxes) {%>
@@ -45,6 +49,8 @@
         </td>
         <td  class="<%if (model && model.currency && model.currency._id) {%>
                         <%=currencyClass(model.currency._id._id)%>
+                    <%} else {%>
+                        dollar
                     <%}%>">
                 <span class=""><span id="totalAmount">
                     <%if (model && model.paymentInfo && model.paymentInfo.total) {%>
@@ -62,6 +68,8 @@
         </td>
         <td  class="<%if (model && model.currency && model.currency._id) {%>
                         <%=currencyClass(model.currency._id._id)%>
+                    <%} else {%>
+                        dollar
                     <%}%>">
                 <span class=""><span id="balance">
                     <%if (model && model.paymentInfo && model.paymentInfo.balance) {%>

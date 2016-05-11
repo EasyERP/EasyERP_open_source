@@ -216,20 +216,27 @@ define([
             var $trEll = $parrent.find('tr.productItem');
             var products = this.products ? this.products.toJSON() : [];
             var templ = _.template(ProductInputContent);
+            var currency = {};
 
             e.preventDefault();
             e.stopPropagation();
 
+            currency._id = $('#currencyDd').attr('data-id');
+
             if (rowId === undefined || /* rowId !== 'false'*/ !hasError) {
                 if (!$trEll.length) {
                     return $parrent.prepend(templ({
-                        forSales: self.forSales,
-                        products: products
+                        forSales     : self.forSales,
+                        products     : products,
+                        currencyClass: helpers.currencyClass,
+                        currency     : currency
                     }));
                 }
                 $($trEll[$trEll.length - 1]).after(templ({
-                    forSales: self.forSales,
-                    products: products
+                    forSales     : self.forSales,
+                    products     : products,
+                    currencyClass: helpers.currencyClass,
+                    currency     : currency
                 }));
             }
 
@@ -406,7 +413,7 @@ define([
                 datePicker.remove();
 
                 //  $($parrents[2]).attr('class', 'editable');
-                $('#editInput').val(salePrice); // changed on def 0
+                $trEl.find('#editInput').val(salePrice); // changed on def 0
 
                 /* if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
                  $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
@@ -420,7 +427,11 @@ define([
 
                 salePrice = selectedProduct.info.salePrice;
 
-                $($parrents[4]).attr('class', 'editable forNum').find('span').text(salePrice);
+                var currency = {};
+                currency._id = $('#currencyDd').attr('data-id');
+                var classForParent = 'editable forNum ' + helpers.currencyClass(currency._id);
+
+                $($parrents[4]).attr('class', classForParent).find('span').text(salePrice);
                 total = parseFloat(selectedProduct.info.salePrice);
                 taxes = total * this.taxesRate;
                 subtotal = total + taxes;

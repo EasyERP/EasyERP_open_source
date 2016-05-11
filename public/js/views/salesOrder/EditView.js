@@ -71,6 +71,15 @@ define([
             },
 
             chooseOption : function (e) {
+                var currencyElement = $(e.target).parents('dd').find('.current-selected');
+                var oldCurrency = currencyElement.attr('data-id');
+                var newCurrency = $(e.target).attr('id');
+                var oldCurrencyClass = helpers.currencyClass(oldCurrency);
+                var newCurrencyClass = helpers.currencyClass(newCurrency);
+
+                var array = this.$el.find('.' + oldCurrencyClass);
+                array.attr('class', newCurrencyClass);
+
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
