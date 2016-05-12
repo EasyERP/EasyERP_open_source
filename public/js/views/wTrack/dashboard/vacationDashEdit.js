@@ -11,8 +11,10 @@ define([
     'common',
     'dataService',
     'helpers/employeeHelper',
-    'helpers/keyCodeHelper'
-], function (Backbone, $, _, selectView, CreateJob, template, wTrackModel, moment, async, common, dataService, employeeHelper, keyCodes) {
+    'helpers/keyCodeHelper',
+    'helpers/overTime',
+    'helpers/isOverTime'
+], function (Backbone, $, _, selectView, CreateJob, template, wTrackModel, moment, async, common, dataService, employeeHelper, keyCodes, overTime, isOverTime) {
     'use strict';
 
     var CreateView = Backbone.View.extend({
@@ -44,12 +46,13 @@ define([
             this.tds = options.tds;
             this.row = options.tr;
             this.wTracks = options.wTracks;
+            this.setOverTime = overTime;
 
-            employeeHelper.getNonWorkingDaysByWeek(year, week, null, employee, null,
-                function (nonWorkingDays, self) {
-                    options.nonWorkingDays = nonWorkingDays;
-                    self.render(options);
-                }, this);
+                employeeHelper.getNonWorkingDaysByWeek(year, week, null, employee, null,
+                    function (nonWorkingDays, self) {
+                        options.nonWorkingDays = nonWorkingDays;
+                        self.render(options);
+                    }, this);
 
         },
 
@@ -66,7 +69,7 @@ define([
                 }
                 return;
             }
-            
+
             if (e.shiftKey || !keyCodes.isDigit(e.keyCode)) {
                 e.preventDefault();
             }
@@ -143,17 +146,18 @@ define([
 
             rows.each(function () {
                 var model;
-                var target = $(this);
-                var id = target.attr('data-id');
-                var jobs = target.find('[data-content="jobs"]');
-                var monEl = target.find('[data-content="1"]');
-                var tueEl = target.find('[data-content="2"]');
-                var wenEl = target.find('[data-content="3"]');
-                var thuEl = target.find('[data-content="4"]');
-                var friEl = target.find('[data-content="5"]');
-                var satEl = target.find('[data-content="6"]');
-                var sunEl = target.find('[data-content="7"]');
-                var worked = target.find('[data-content="worked"]');
+                var $target = $(this);
+                var id = $target.attr('data-id');
+                var jobs = $target.find('[data-content="jobs"]');
+                var monEl = $target.find('[data-content="1"]');
+                var tueEl = $target.find('[data-content="2"]');
+                var wenEl = $target.find('[data-content="3"]');
+                var thuEl = $target.find('[data-content="4"]');
+                var friEl = $target.find('[data-content="5"]');
+                var satEl = $target.find('[data-content="6"]');
+                var sunEl = $target.find('[data-content="7"]');
+                var worked = $target.find('[data-content="worked"]');
+                var _type = $target.find('[data-content="type"]').text();
                 var mo = retriveText(monEl);
                 var tu = retriveText(tueEl);
                 var we = retriveText(wenEl);
@@ -162,6 +166,8 @@ define([
                 var sa = retriveText(satEl);
                 var su = retriveText(sunEl);
                 var wTrack;
+
+                _type = _type === 'OT' ? 'overtime' : 'ordinary';
 
                 worked = retriveText(worked);
                 totalWorked += parseInt(worked, 10);
@@ -175,6 +181,7 @@ define([
                     6     : sa,
                     7     : su,
                     jobs  : jobs.attr('data-id'),
+                    _type : _type,
                     worked: worked
                 };
 
@@ -188,7 +195,8 @@ define([
                     success: function (model) {
                         eachCb(null, model);
                     },
-                    error  : function (model, response) {
+
+                    error: function (model, response) {
                         eachCb(response);
                     }
                 });
@@ -333,8 +341,9 @@ define([
             var td = el.closest('td');
             var tr = el.closest('tr');
             var isHours = td.hasClass('hours');
+            var isOvertime = tr.hasClass('overtime');
             var input = tr.find('input.editing');
-            var wTrackId = tr.data('id');
+            var holiday = td.is('.H, .V, .P, .S, .E, [data-content="6"], [data-content="7"]');
             var content = el.data('content');
             var tempContainer;
             var width;
@@ -346,13 +355,21 @@ define([
 
             $('.newSelectList').hide();
 
+            if (!isOvertime && holiday) {
+                App.render({
+                    type   : 'error',
+                    message: 'Please create Overtime tCard'
+                });
+                return false;
+            }
+
             this.autoCalc(null, trs);
 
             if (isSelect) {
                 if (content === 'jobs') {
-                    dataService.getData("/jobs/getForDD", {
-                        "projectId": self.wTracks[0].project._id,
-                        "all"      : true
+                    dataService.getData('/jobs/getForDD', {
+                        projectId: self.wTracks[0].project._id,
+                        all      : true
                     }, function (jobs) {
 
                         self.responseObj['#jobs'] = jobs;
@@ -362,6 +379,10 @@ define([
                         self.showNewSelect(e);
                         return false;
                     });
+                } else if (content === 'type') {
+                    el.append('<ul class="newSelectList"><li>OR</li><li>OT</li></ul>');
+
+                    return false;
                 } else {
                     // populate.showSelect(e, prev, next, this);
                     this.showNewSelect(e);
@@ -378,6 +399,8 @@ define([
                 insertedInput = el.find('input');
                 insertedInput.focus();
                 insertedInput[0].setSelectionRange(0, insertedInput.val().length);
+
+                isOverTime(el);
 
                 if (input.length && !isHours) {
                     if (!input.val()) {
@@ -416,11 +439,12 @@ define([
 
         chooseOption: function (e) {
             var self = this;
-            var target = $(e.target);
-            var targetElement = target.parents('td');
-            var tr = target.parents('tr');
-            var id = target.attr('id');
-            var attr = targetElement.attr('id') || targetElement.data('content');
+            var $target = $(e.target);
+            var textVal = $target.text();
+            var $targetElement = $target.parents('td');
+            var $tr = $target.parents('tr');
+            var id = $target.attr('id');
+            var attr = $targetElement.attr('id') || $targetElement.data('content');
             var elementType = '#' + attr;
             var jobs = {};
 
@@ -433,13 +457,13 @@ define([
 
                     jobs = element._id;
 
-                    targetElement.attr("data-id", jobs);
-                    tr.find('[data-content="jobs"]').removeClass('errorContent');
+                    $targetElement.attr('data-id', jobs);
+                    $tr.find('[data-content="jobs"]').removeClass('errorContent');
+                } else if (elementType === '#type') {
+                    this.setOverTime(textVal, $tr);
                 }
-                targetElement.removeClass('errorContent');
-
-                targetElement.text(target.text());
-
+                $targetElement.removeClass('errorContent');
+                $targetElement.text(textVal);
             } else if (id === 'createJob') {
                 self.generateJob(e);
             }

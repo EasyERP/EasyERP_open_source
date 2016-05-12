@@ -4,9 +4,14 @@
     "App": true
   },
   "rules": {
-    /*"no-param-reassign": [2, {"props": false}],*/
+    "no-trailing-spaces": [
+      "error",
+      {
+        "skipBlankLines": true
+      }
+    ],
     "key-spacing": [
-      2,
+      "error",
       {
         "align": "colon"
       }

@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var wTrack = function (event, models) {
+var TCard = function (event, models) {
     'use strict';
     var access = require('../Modules/additions/access.js')(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
@@ -25,18 +25,22 @@ var wTrack = function (event, models) {
     var filterMapper = new FilterMapper();
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
+    var overTimeHelper = require('../helpers/tCard');
     var exportMap = require('../helpers/csvMap').wTrack;
 
     var JournalEntryHandler = require('./journalEntry');
     var journalEntry = new JournalEntryHandler(models);
 
     //
-    //exportDecorator.addExportFunctionsToHandler(this, function (req) {
+    // exportDecorator.addExportFunctionsToHandler(this, function (req) {
     //    return models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-    //}, exportMap, "wTrack");
+    // }, exportMap, "wTrack");
 
     this.create = function (req, res, next) {
         access.getEditWritAccess(req, req.session.uId, 75, function (success) {
+            var docs = [];
+            var wTracks = [];
+            var overTimeTcard;
             var WTrack;
             var body;
             var wTrack;
@@ -45,26 +49,42 @@ var wTrack = function (event, models) {
             if (success) {
                 WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
                 body = mapObject(req.body);
-                worked = parseInt(body.worked);
+                overTimeTcard = overTimeHelper(body);
+                worked = parseInt(body.worked, 10);
                 worked = isNaN(worked) ? 0 : worked;
 
+                docs.push(body);
+
+                if (overTimeTcard && overTimeTcard.worked) {
+                    docs.push(overTimeTcard);
+                }
+
                 if (worked) {
-                    wTrack = new WTrack(body);
-                    wTrack.save(function (err, _wTrack) {
+                    async.each(docs, function (body, cb) {
+                        wTrack = new WTrack(body);
+                        wTrack.save(function (err, _wTrack) {
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            wTracks.push(_wTrack);
+                            cb();
+                            event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
+                            event.emit('updateRevenue', {wTrack: _wTrack, req: req});
+                            event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
+                            event.emit('dropHoursCashes', req);
+                            event.emit('recollectVacationDash');
+                            event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
+                            event.emit('recollectProjectInfo');
+                        });
+                    }, function (err) {
                         if (err) {
                             return next(err);
                         }
 
-                        event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
-                        event.emit('updateRevenue', {wTrack: _wTrack, req: req});
-                        event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
-                        event.emit('dropHoursCashes', req);
-                        event.emit('recollectVacationDash');
-                        event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
-                        event.emit('recollectProjectInfo');
-
-                        res.status(200).send({success: _wTrack});
+                        res.status(200).send(wTracks);
                     });
+
                 } else {
                     res.status(200).send({success: 'Empty tCard'});
                 }
@@ -77,6 +97,7 @@ var wTrack = function (event, models) {
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body) || {};
+        var overTimeTcard = overTimeHelper(data);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
 
@@ -100,7 +121,7 @@ var wTrack = function (event, models) {
                     }
 
                     if (tCard) {
-                        event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
+                        event.emit('setReconcileTimeCard', {req: req, week: tCard.week, year: tCard.year});
                         event.emit('updateRevenue', {wTrack: tCard, req: req});
                         event.emit('updateProjectDetails', {req: req, _id: tCard.project});
                         event.emit('recollectProjectInfo');
@@ -171,13 +192,13 @@ var wTrack = function (event, models) {
                     cb(null, tCard);
                 }
 
-                async.each(body, function (data, cb) {
-                    var id;
+                async.each(body, function (_data, cb) {
                     var needUpdateKeys;
                     var worked;
+                    var data;
+                    var id;
 
-                    data = data || {};
-                    console.log(data);
+                    data = _data || {};
                     worked = data.worked;
 
                     id = data._id;
@@ -440,7 +461,7 @@ var wTrack = function (event, models) {
                     week         : 1,
                     isPaid       : 1,
                     customer     : 1,
-                    _type     : 1
+                    _type        : 1
                 }
             }, {
                 $lookup: {
@@ -456,6 +477,18 @@ var wTrack = function (event, models) {
                 }
             }, {
                 $project: {
+                    customer     : {$arrayElemAt: ['$customer', 0]},
+                    salesmanagers: 1,
+                    dateByWeek   : 1,
+                    project      : 1,
+                    employee     : 1,
+                    department   : 1,
+                    month        : 1,
+                    year         : 1,
+                    week         : 1,
+                    isPaid       : 1,
+                    _type        : 1,
+
                     startDateWeek: {
                         $let: {
                             vars: {
@@ -471,18 +504,7 @@ var wTrack = function (event, models) {
                             },
                             in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
                         }
-                    },
-                    customer     : {$arrayElemAt: ['$customer', 0]},
-                    salesmanagers: 1,
-                    dateByWeek   : 1,
-                    project      : 1,
-                    employee     : 1,
-                    department   : 1,
-                    month        : 1,
-                    year         : 1,
-                    week         : 1,
-                    isPaid       : 1,
-                    _type               : 1
+                    }
                 }
             }, {
                 $project: {
@@ -496,7 +518,7 @@ var wTrack = function (event, models) {
                     week          : 1,
                     isPaid        : 1,
                     'customer._id': 1,
-                    _type               : 1
+                    _type         : 1
                 }
             }, {
                 $match: {
@@ -529,7 +551,7 @@ var wTrack = function (event, models) {
                     year        : '$doc.year',
                     week        : '$doc.week',
                     isPaid      : '$doc.isPaid',
-                    _type      : '$doc._type'
+                    _type       : '$doc._type'
                 }
             }, {
                 $project: {
@@ -542,7 +564,7 @@ var wTrack = function (event, models) {
                     year              : 1,
                     week              : 1,
                     isPaid            : 1,
-                    _type            : 1
+                    _type             : 1
                 }
             }, {
                 $match: queryObject
@@ -747,13 +769,6 @@ var wTrack = function (event, models) {
                     jobs         : {$arrayElemAt: ['$jobs', 0]},
                     employee     : {$arrayElemAt: ['$employee', 0]},
                     department   : {$arrayElemAt: ['$department', 0]},
-                    salesmanagers: {
-                        $filter: {
-                            input: '$projectMembers',
-                            as   : 'projectMember',
-                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}
-                        }
-                    },
                     dateByWeek   : 1,
                     createdBy    : 1,
                     month        : 1,
@@ -766,14 +781,21 @@ var wTrack = function (event, models) {
                     cost         : 1,
                     worked       : 1,
                     isPaid       : 1,
-                    _type     : 1,
+                    _type        : 1,
                     1            : 1,
                     2            : 1,
                     3            : 1,
                     4            : 1,
                     5            : 1,
                     6            : 1,
-                    7            : 1
+                    7            : 1,
+                    salesmanagers: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]}
+                        }
+                    }
                 }
             }, {
                 $lookup: {
@@ -796,22 +818,6 @@ var wTrack = function (event, models) {
                 }
             }, {
                 $project: {
-                    startDateWeek: {
-                        $let: {
-                            vars: {
-                                startDate: {$ifNull: ['$salesmanagers.startDate', null]}
-                            },
-                            in  : {$cond: [{$eq: ['$$startDate', null]}, null, {$add: [{$multiply: [{$year: '$$startDate'}, 100]}, {$week: '$$startDate'}]}]}
-                        }
-                    },
-                    endDateWeek  : {
-                        $let: {
-                            vars: {
-                                endDate: {$ifNull: ['$salesmanagers.startDate', null]}
-                            },
-                            in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
-                        }
-                    },
                     customer     : {$arrayElemAt: ['$customer', 0]},
                     workflow     : {$arrayElemAt: ['$workflow', 0]},
                     dateByWeek   : 1,
@@ -831,14 +837,30 @@ var wTrack = function (event, models) {
                     cost         : 1,
                     worked       : 1,
                     isPaid       : 1,
-                    _type     : 1,
+                    _type        : 1,
                     1            : 1,
                     2            : 1,
                     3            : 1,
                     4            : 1,
                     5            : 1,
                     6            : 1,
-                    7            : 1
+                    7            : 1,
+                    startDateWeek: {
+                        $let: {
+                            vars: {
+                                startDate: {$ifNull: ['$salesmanagers.startDate', null]}
+                            },
+                            in  : {$cond: [{$eq: ['$$startDate', null]}, null, {$add: [{$multiply: [{$year: '$$startDate'}, 100]}, {$week: '$$startDate'}]}]}
+                        }
+                    },
+                    endDateWeek  : {
+                        $let: {
+                            vars: {
+                                endDate: {$ifNull: ['$salesmanagers.startDate', null]}
+                            },
+                            in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
+                        }
+                    }
                 }
             }, {
                 $project: {
@@ -862,6 +884,7 @@ var wTrack = function (event, models) {
                     cost         : 1,
                     worked       : 1,
                     isPaid       : 1,
+                    _type        : 1,
                     1            : 1,
                     2            : 1,
                     3            : 1,
@@ -911,6 +934,7 @@ var wTrack = function (event, models) {
                     cost        : '$doc.cost',
                     worked      : '$doc.worked',
                     isPaid      : '$doc.isPaid',
+                    _type       : '$doc._type',
                     1           : '$doc.1',
                     2           : '$doc.2',
                     3           : '$doc.3',
@@ -1134,7 +1158,7 @@ var wTrack = function (event, models) {
                     }
                 }, {
                     $project: {
-                        date : {$add: [{$multiply: ["$year", 100]}, "$month"]},
+                        date : {$add: [{$multiply: ['$year', 100]}, '$month']},
                         hours: '$hours'
 
                     }
@@ -1176,7 +1200,7 @@ var wTrack = function (event, models) {
             var job = {
                 name    : jobName,
                 workflow: CONSTANTS.JOBSINPROGRESS,
-                type    : "Not Quoted",
+                type    : 'Not Quoted',
                 wTracks : [],
                 project : objectId(project)
             };
@@ -1200,7 +1224,7 @@ var wTrack = function (event, models) {
                     jobId = job.toJSON()._id;
 
                     Project.findByIdAndUpdate(objectId(project), {
-                        $push: {"budget.projectTeam": jobId},
+                        $push: {'budget.projectTeam': jobId},
                         $set : {editedBy: editedBy}
                     }, {new: true}, function (err) {
                         if (err) {
@@ -1344,15 +1368,15 @@ var wTrack = function (event, models) {
                         cost       : 0,
                         isPaid     : false,
                         jobs       : jobForwTrack,
-                        whoCanRW   : "everyOne",
+                        whoCanRW   : 'everyOne',
                         createdBy  : {
                             date: new Date(),
                             user: userId
                         },
                         groups     : {
-                            "group": [],
-                            "users": [],
-                            "owner": null
+                            group: [],
+                            users: [],
+                            owner: null
                         }
                     };
                     var canFillIt = !!options.canFillIt;
@@ -1713,9 +1737,10 @@ var wTrack = function (event, models) {
                 info       : 1,
                 department : 1,
                 employee   : 1,
-                project    : {$arrayElemAt: ["$project", 0]},
+                project    : {$arrayElemAt: ['$project', 0]},
                 jobs       : 1,
-                revenue    : 1
+                revenue    : 1,
+                _type      : 1
             }
         }, {
             $match: {
@@ -1743,13 +1768,13 @@ var wTrack = function (event, models) {
                 as          : 'projectMembers'
             }
         }, /*, {
-            $lookup: {
-                from        : 'Employees',
-                localField  : 'project.projectmanager',
-                foreignField: '_id',
-                as          : 'projectmanager'
-            }
-        },*/ {
+         $lookup: {
+         from        : 'Employees',
+         localField  : 'project.projectmanager',
+         foreignField: '_id',
+         as          : 'projectmanager'
+         }
+         },*/ {
             $lookup: {
                 from        : 'Employees',
                 localField  : 'employee',
@@ -1765,34 +1790,36 @@ var wTrack = function (event, models) {
             }
         }, {
             $project: {
-                1            : 1,
-                2            : 1,
-                3            : 1,
-                4            : 1,
-                5            : 1,
-                6            : 1,
-                7            : 1,
-                cost         : 1,
-                worked       : 1,
-                week         : 1,
-                month        : 1,
-                year         : 1,
-                dateByWeek   : 1,
-                dateByMonth  : 1,
-                info         : 1,
+                1          : 1,
+                2          : 1,
+                3          : 1,
+                4          : 1,
+                5          : 1,
+                6          : 1,
+                7          : 1,
+                cost       : 1,
+                worked     : 1,
+                week       : 1,
+                month      : 1,
+                year       : 1,
+                dateByWeek : 1,
+                dateByMonth: 1,
+                info       : 1,
+                _type      : 1,
+                revenue    : 1,
+                project    : 1,
+                department : {$arrayElemAt: ['$department', 0]},
+                customer   : {$arrayElemAt: ['$customer', 0]},
+                employee   : {$arrayElemAt: ['$employee', 0]},
+                jobs       : {$arrayElemAt: ['$jobs', 0]},
+
                 salesmanagers: {
                     $filter: {
                         input: '$projectMembers',
                         as   : 'projectMember',
                         cond : {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]}
                     }
-                },
-                department   : {$arrayElemAt: ['$department', 0]},
-                project      : 1,
-                customer     : {$arrayElemAt: ['$customer', 0]},
-                employee     : {$arrayElemAt: ['$employee', 0]},
-                jobs         : {$arrayElemAt: ['$jobs', 0]},
-                revenue      : 1
+                }
             }
         }, {
             $unwind: {
@@ -1838,7 +1865,8 @@ var wTrack = function (event, models) {
                 customer     : 1,
                 employee     : 1,
                 jobs         : 1,
-                revenue      : 1
+                revenue      : 1,
+                _type        : 1
             }
         }, {
             $project: {
@@ -1866,6 +1894,7 @@ var wTrack = function (event, models) {
                 employee     : 1,
                 jobs         : 1,
                 revenue      : 1,
+                _type        : 1,
                 isValid      : salesManagerMatch
             }
         }, {
@@ -1911,7 +1940,8 @@ var wTrack = function (event, models) {
                 customer    : '$root.customer',
                 employee    : '$root.employee',
                 jobs        : '$root.jobs',
-                revenue     : '$root.revenue'
+                revenue     : '$root.revenue',
+                _type       : '$root._type'
             }
         }], function (err, wTrack) {
             var firstWtrack;
@@ -1937,4 +1967,4 @@ var wTrack = function (event, models) {
 
 };
 
-module.exports = wTrack;
+module.exports = TCard;

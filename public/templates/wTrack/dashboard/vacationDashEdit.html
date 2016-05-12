@@ -42,7 +42,7 @@
         <div class="clearfix"></div>
         <div class="topContentHolder">
             <div id="wTrackItemsHolder">
-                <table id="rawTable" class="list">
+                <table id="_rawTable" class="list">
                     <thead>
                     <tr id="caption">
                         <th width="400"></th>
@@ -84,6 +84,7 @@
                 <table id="rawTable" class="list">
                     <thead>
                     <tr>
+                        <th class="centerCell">Type</th>
                         <th>
                             Sprint
                         </th>
@@ -134,7 +135,8 @@
                         wTracks.forEach(function(wTrack){
                             if(wTrack.month === dateObject.month){
                             %>
-                            <tr data-id="<%=wTrack._id%>">
+                            <tr data-id="<%=wTrack._id%>" class="<%=(wTrack._type === 'overtime') ? 'overtime': ''%>">
+                                <td data-content="type" class="editable centerCell"><%=(wTrack._type === 'overtime') ? 'OT': 'OR'%></td>
                                 <td data-content="jobs" class="editable textUnderlineHover" data-id="<%=wTrack.jobs ? wTrack.jobs._id : null%>">
                                     <%=wTrack.jobs ?
                                     wTrack.jobs.name : '------'%>
@@ -171,7 +173,8 @@
                       });
                     } else { %>
                         <%wTracks.forEach(function(wTrack){%>
-                        <tr data-id="<%=wTrack._id%>">
+                        <tr data-id="<%=wTrack._id%>" class="<%=(wTrack._type === 'overtime') ? 'overtime': ''%>">
+                            <td data-content="type" class="editable centerCell"><%=(wTrack._type === 'overtime') ? 'OT': 'OR'%></td>
                             <td data-content="jobs" class="editable textUnderlineHover" data-id="<%=wTrack.jobs ? wTrack.jobs._id : null%>">
                                 <%=wTrack.jobs ?
                                 wTrack.jobs.name : '------'%>

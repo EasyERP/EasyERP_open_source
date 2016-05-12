@@ -18,10 +18,10 @@ wTrackSchema = mongoose.Schemas['wTrack'];
 vacationSchema = mongoose.Schemas['Vacation'];
 holidaySchema = mongoose.Schemas['Holiday'];
 
-dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, {
+dbObject = mongoose.createConnection('localhost', 'production', 27017, {
     db    : {native_parser: true},
     server: {poolSize: 5},
-    user  : 'easyerp',
+    user  : 'easyErp',
     pass  : '1q2w3e!@#'
 }); // toDo connection
 
@@ -116,7 +116,6 @@ wTrack.find({_type: 'ordinary'}, function (err, results) { // if _type was set
             var day;
 
             date.isoWeek(week);
-
             date.isoWeekday(1);
 
             startDate = new Date(date.toDate());
@@ -126,37 +125,34 @@ wTrack.find({_type: 'ordinary'}, function (err, results) { // if _type was set
             endDate = new Date(date.toDate());
 
             Holiday.aggregate([
-                    {
-                        $match: {
-                            date: {$gte: startDate, $lte: endDate}
-                        }
-                    },
-                    {
-                        $project: {
-                            _id    : 0,
-                            comment: 1,
-                            date   : 1
-                        }
-                    },
-                    {
-                        $sort: {
-                            date: 1
-                        }
+                {
+                    $match: {
+                        date: {$gte: startDate, $lte: endDate}
                     }
-                ],
-                function (err, result) {
-                    if (err) {
-                        parallelCb(err);
+                }, {
+                    $project: {
+                        _id    : 0,
+                        comment: 1,
+                        date   : 1
                     }
+                }, {
+                    $sort: {
+                        date: 1
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    parallelCb(err);
+                }
 
-                    result.forEach(function (holiday) {
-                        date = moment(holiday.date);
-                        day = date.isoWeekday();
-                        holidaysWeek[day] = 'H';
-                    });
-
-                    parallelCb(null, holidaysWeek);
+                result.forEach(function (holiday) {
+                    var date = moment(holiday.date);
+                    day = date.isoWeekday();
+                    holidaysWeek[day] = 'H';
                 });
+
+                parallelCb(null, holidaysWeek);
+            });
         }
 
         function getVacationAndHolidays(waterfallCb) {
@@ -224,7 +220,7 @@ wTrack.find({_type: 'ordinary'}, function (err, results) { // if _type was set
                         waterfallCb();
                     });
                 } else {
-                    wTrack.update({_id: id}, {$set : {_type: 'overtime'}}, function (err) {
+                    wTrack.update({_id: id}, {$set: {_type: 'overtime'}}, function (err) {
                         if (err) {
                             waterfallCb(err);
                         }
