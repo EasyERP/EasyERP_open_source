@@ -31,6 +31,8 @@ var Employee = function (event, models) {
         return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
     }, exportMap, 'Employees');
 
+    this.getNameAndDepartment = getNameAndDepartment;
+
     function getNameAndDepartment(db, isEmployee, callback) {
         var Employee = models.get(db, 'Employees', EmployeeSchema);
         var query;

@@ -53,6 +53,7 @@ define([
             },
 
             events: {
+                "click .trash"                                                    : "deleteItemPressed",
                 //"blur td.editable input"                                          : "hideInput",
                 "click td.editable, .current-selected"                            : "showNewSelect",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
@@ -75,6 +76,16 @@ define([
                 if (this.selectView) {
                     this.selectView.remove();
                 }
+            },
+
+            deleteItemPressed             : function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                var target = $(e.target);
+                var tr = target.closest("tr");
+                var modelId = tr.attr('data-id');
+                this.deleteItem(modelId);
+
             },
 
             savedNewModel: function (modelObject) {
@@ -518,6 +529,9 @@ define([
                 var element = _.find(this.responseObj[elementType], function (el) {
                     return el._id === id;
                 });
+                //ToDo refactor
+                var delHTML = '<span title="Delete" class="trash icon" style="display: inline">1</span>';
+
                 var editVacationModel;
                 var employee;
                 var department;
@@ -568,7 +582,7 @@ define([
                     //    return false;
                     //}
 
-                    tr.find('[data-content="employee"]').text(element.name);
+                    tr.find('[data-content="employee"]').html(delHTML + element.name);
                     tr.find('.department').text(element.department.departmentName);
 
                     employee = element._id;

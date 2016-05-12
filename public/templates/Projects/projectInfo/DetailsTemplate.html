@@ -79,9 +79,9 @@
                 element.invoice.name : ''%></a></td>
             <td><%=element.budget.projectTeam.length%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
-            <td><%= budgetTotal ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>
+            <td><%= budgetTotal.costSum ? currencySplitter(budgetTotal.costSum.toFixed()) : 0%></td>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.revenueSum.toFixed()) : 0%></td>
-            <td><%= budgetTotal ? currencySplitter(budgetTotal.profitSum.toFixed()) : 0%></td>
+            <td><%= budgetTotal.profitSum ? currencySplitter(budgetTotal.profitSum.toFixed()) : 0%></td>
 
         </tr>
         <% count++ %>

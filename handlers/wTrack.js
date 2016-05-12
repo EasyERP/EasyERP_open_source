@@ -90,6 +90,7 @@ var wTrack = function (event, models) {
                             event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                             event.emit('recollectProjectInfo');
                             event.emit('dropHoursCashes', req);
+                            event.emit('recollectVacationDash');
                         }
                         res.status(200).send({success: 'updated'});
                     });
@@ -137,6 +138,7 @@ var wTrack = function (event, models) {
                                 event.emit('recalculateKeys', {req: req, wTrack: wTrack});
                                 event.emit('updateProjectDetails', {req: req, _id: wTrack.project});
                                 event.emit('recollectProjectInfo');
+                                event.emit('recollectVacationDash');
                             }
 
                             cb(null, wTrack);
@@ -604,134 +606,6 @@ var wTrack = function (event, models) {
         });
     };
 
-    // region Not used ?
-
-    //todo Check it
-
-    //this.getById = function (req, res, next) {
-    //    var id = req.params.id;
-    //    var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
-    //    /* var queryParams = {};
-    //     for (var i in req.query) {
-    //     queryParams[i] = req.query[i];
-    //     }*/
-    //
-    //    var departmentSearcher;
-    //    var contentIdsSearcher;
-    //    var contentSearcher;
-    //    var waterfallTasks;
-    //
-    //    var contentType = req.query.contentType;
-    //    var isOrder = !!(contentType === 'Order');
-    //
-    //    /* var data = {};
-    //     for (var i in req.query) {
-    //     data[i] = req.query[i];
-    //     }*/
-    //
-    //    departmentSearcher = function (waterfallCallback) {
-    //        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-    //            {
-    //                $match: {
-    //                    users: objectId(req.session.uId)
-    //                }
-    //            }, {
-    //                $project: {
-    //                    _id: 1
-    //                }
-    //            },
-    //
-    //            waterfallCallback);
-    //    };
-    //
-    //    contentIdsSearcher = function (deps, waterfallCallback) {
-    //        var arrOfObjectId = deps.objectID();
-    //
-    //        models.get(req.session.lastDb, "Quotation", QuotationSchema).aggregate(
-    //            {
-    //                $match: {
-    //                    $and: [
-    //                        /*optionsObject,*/
-    //                        {
-    //                            $or: [
-    //                                {
-    //                                    $or: [
-    //                                        {
-    //                                            $and: [
-    //                                                {whoCanRW: 'group'},
-    //                                                {'groups.users': objectId(req.session.uId)}
-    //                                            ]
-    //                                        },
-    //                                        {
-    //                                            $and: [
-    //                                                {whoCanRW: 'group'},
-    //                                                {'groups.group': {$in: arrOfObjectId}}
-    //                                            ]
-    //                                        }
-    //                                    ]
-    //                                },
-    //                                {
-    //                                    $and: [
-    //                                        {whoCanRW: 'owner'},
-    //                                        {'groups.owner': objectId(req.session.uId)}
-    //                                    ]
-    //                                },
-    //                                {whoCanRW: "everyOne"}
-    //                            ]
-    //                        }
-    //                    ]
-    //                }
-    //            },
-    //            {
-    //                $project: {
-    //                    _id: 1
-    //                }
-    //            },
-    //            waterfallCallback
-    //        );
-    //    };
-    //
-    //    contentSearcher = function (quotationsIds, waterfallCallback) {
-    //        var queryObject = {_id: id};
-    //        var query;
-    //
-    //        queryObject.isOrder = isOrder;
-    //        query = Quotation.findOne(queryObject);
-    //
-    //        query.populate('supplier', '_id name fullName');
-    //        query.populate('destination');
-    //        query.populate('incoterm');
-    //        query.populate('invoiceControl');
-    //        query.populate('paymentTerm');
-    //        query.populate('products.product', '_id, name');
-    //        query.populate('groups.users');
-    //        query.populate('groups.group');
-    //        query.populate('groups.owner', '_id login');
-    //        query.populate('workflow', '-sequence');
-    //        query.populate('deliverTo', '_id, name');
-    //
-    //        query.exec(waterfallCallback);
-    //    };
-    //
-    //    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
-    //
-    //    access.getReadAccess(req, req.session.uId, 75, function (access) {
-    //        if (!access) {
-    //            return res.status(403).send();
-    //        }
-    //
-    //        async.waterfall(waterfallTasks, function (err, result) {
-    //            if (err) {
-    //                return next(err);
-    //            }
-    //
-    //            res.status(200).send(result);
-    //        });
-    //    });
-    //};
-
-    //endregion
-
     this.remove = function (req, res, next) {
         var id = req.params.id;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
@@ -937,15 +811,17 @@ var wTrack = function (event, models) {
                 wTracks : [],
                 project : objectId(project)
             };
+            var newJob;
+            var editedBy;
 
             if (createJob) {
-                var editedBy = {
+                editedBy = {
                     user: req.session.uId,
                     date: new Date()
                 };
                 job.createdBy = editedBy;
 
-                var newJob = new Job(job);
+                newJob = new Job(job);
 
                 newJob.save(function (err, job) {
                     if (err) {
@@ -1480,7 +1356,6 @@ var wTrack = function (event, models) {
             event.emit('recollectProjectInfo');
 
             res.status(200).send('success');
-
         });
 
     };

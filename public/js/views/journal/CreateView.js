@@ -130,11 +130,14 @@ define([
                 populate.get("#creditDd", "/chartOfAccount/getForDd", {}, 'name', this, true, true);
 
                 this.responseObj['#typeDd'] = [{
-                    _id : 'invoice',
+                    _id : 'Invoice',
                     name: 'Invoice'
                 }, {
-                    _id : 'payment',
+                    _id : 'Payment',
                     name: 'Payment'
+                }, {
+                    _id : 'Accrual',
+                    name: 'Accrual'
                 }];
 
                 this.delegateEvents(this.events);

@@ -35,5 +35,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['journalEntry'] = Schema;
+    mongoose.Schemas.journalEntry = Schema;
 })();

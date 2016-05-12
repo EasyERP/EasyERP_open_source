@@ -672,9 +672,9 @@ var Project = function (models, event) {
                                 }
                             }, {
                                 $project: {
-                                    /*notRemovable : {
+                                    notRemovable : {
                                         $size: {"$ifNull": [ "$budget.projectTeam", [] ]} // added check on field value null
-                                    },*/
+                                    },
                                     projectmanager  : {$arrayElemAt: ["$projectmanager", 0]},
                                     workflow        : {$arrayElemAt: ["$workflow", 0]},
                                     customer        : {$arrayElemAt: ["$customer", 0]},
@@ -1616,7 +1616,10 @@ var Project = function (models, event) {
                 res.send(500, {error: "Can't remove Project"});
             } else {
                 event.emit('recollectProjectInfo');
+                event.emit('recollectVacationDash');
+
                 removeTasksByPorjectID(req, _id);
+
                 res.send(200, {success: 'Remove all tasks Starting...'});
             }
         });

@@ -23,11 +23,12 @@ define([
             changedModels: {},
 
             events: {
-                "click .oe_sortable"    : "goSort",
-                "click td.editable"     : "editRow",
-                "change .editable"      : "setEditable",
-                "click .checkbox"       : "checked",
-                "keydown input.editing ": "keyDown"
+                "click .oe_sortable"                               : "goSort",
+                "click td.editable"                                : "editRow",
+                "change .editable"                                 : "setEditable",
+                "click .checkbox"                                  : "checked",
+                "keydown input.editing "                           : "keyDown",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
             },
 
             initialize: function (options) {
@@ -37,6 +38,42 @@ define([
                 this.render();
             },
 
+            chooseOption: function (e) {
+                var target = $(e.target);
+                var targetElement = target.parents("td");
+                var tr = target.parents("tr");
+                var modelId = tr.attr('data-id');
+                var attr = targetElement.data("content");
+                var changedAttr;
+
+                var editModel = this.editCollection.get(modelId) || this.collection.get(modelId);
+
+                if (!this.changedModels[modelId]) {
+                    if (!editModel.id) {
+                        this.changedModels[modelId] = editModel.attributes;
+                    } else {
+                        this.changedModels[modelId] = {};
+                    }
+                }
+
+                changedAttr = this.changedModels[modelId];
+                if (attr === 'accountType') {
+
+                    changedAttr.accountType = target.text();
+                }
+
+                targetElement.text(target.text());
+
+                this.hideNewSelect();
+                this.setEditable(targetElement);
+
+                return false;
+            },
+
+            hideNewSelect: function () {
+                this.$el.find('.newSelectList').hide();
+            },
+
             keyDown: function (e) {
                 if (e.which === 13) {
                     this.setChangedValueToModel();
@@ -44,7 +81,7 @@ define([
             },
 
             deleteItems: function () {
-                var that = this;
+                var self = this;
                 var mid = 82;
                 var model;
                 var localCounter = 0;
@@ -60,18 +97,20 @@ define([
                         $.each($("#chartOfAccount input:checked"), function (index, checkbox) {
                             value = checkbox.value;
 
-                            model = that.collection.get(value) || that.editCollection.get(value);
+                            model = self.collection.get(value) || self.editCollection.get(value);
                             model.destroy({
                                 headers: {
                                     mid: mid
                                 },
                                 wait   : true,
                                 success: function () {
-                                    that.listLength--;
+                                    self.listLength--;
                                     localCounter++;
 
+                                    delete self.changedModels[value];
+
                                     if (index === count - 1) {
-                                        that.deleteItemsRender(localCounter);
+                                        self.deleteItemsRender(localCounter);
                                     }
                                 },
                                 error  : function (model, res) {
@@ -81,14 +120,11 @@ define([
                                             message: "You do not have permission to perform this action"
                                         });
                                     }
-                                    that.listLength--;
+                                    self.listLength--;
                                     localCounter++;
                                     if (index === count - 1) {
-                                        if (index === count - 1) {
-                                            that.deleteItemsRender(localCounter);
-                                        }
+                                        self.deleteItemsRender(localCounter);
                                     }
-
                                 }
                             });
                         });
@@ -129,7 +165,7 @@ define([
                     var template = _.template(cancelEdit);
                     var model;
 
-                    if (!id) {
+                    if (!id || id.length < 24) {
                         return cb('Empty id');
                     }
 
@@ -137,12 +173,15 @@ define([
                     model = model.toJSON();
                     model.startNumber = rowNumber;
                     tr.replaceWith(template({chart: model}));
+
+                    delete self.changedModels[id];
+
                     cb();
                 }, function (err) {
                     if (!err) {
                         self.bindingEventsToEditedCollection(self);
-                        self.hideSaveCancelBtns();
                     }
+                    self.hideSaveCancelBtns();
                 });
 
                 if (this.createdItem) {
@@ -211,13 +250,19 @@ define([
                     checkLength = $("input.listCB:checked").length;
 
                     if (checkLength > 0) {
-                        $("#top-bar-deleteBtn").show();
+                        if (!this.changed) {
+                            $("#top-bar-deleteBtn").show();
+                            $("#top-bar-createBtn").hide();
+                        }
                         $('#check_all').prop('checked', false);
                         if (checkLength === this.collection.length) {
                             $('#check_all').prop('checked', true);
                         }
                     } else {
-                        $("#top-bar-deleteBtn").hide();
+                        if (!this.changed) {
+                            $("#top-bar-deleteBtn").hide();
+                            $("#top-bar-createBtn").show();
+                        }
                         $('#check_all').prop('checked', false);
                     }
                 }
@@ -245,9 +290,9 @@ define([
                 var saveBtnEl = $('#top-bar-saveBtn');
                 var cancelBtnEl = $('#top-bar-deleteBtn');
 
-                if (!this.changed) {
-                    createBtnEl.hide();
-                }
+                //if (this.changed) {
+                createBtnEl.hide();
+                //}
                 saveBtnEl.show();
                 cancelBtnEl.show();
 
@@ -255,21 +300,30 @@ define([
             },
 
             editRow: function (e) {
-                $(".newSelectList").hide();
+                //$(".newSelectList").hide();
+
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var trId = tr.data('id');
                 var tempContainer;
                 var width;
 
+                if(el.attr('id') === 'selectInput'){
+                    return false;
+                }
+
                 if (trId && el.prop('tagName') !== 'INPUT') {
                     this.modelId = trId;
                     this.setChangedValueToModel();
                 }
 
-                tempContainer = el.text();
-                width = el.width() - 6;
-                el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
+                if (isSelect) {
+                    el.append("<ul class='newSelectList'><li>Debit</li><li>Credit</li></ul>");
+                } else {
+                    tempContainer = el.text();
+                    width = el.width() - 6;
+                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
+                }
 
                 return false;
             },
@@ -425,13 +479,19 @@ define([
 
             saveItem: function () {
                 var model;
+                var code;
+                var account;
                 var id;
-
                 var errors = this.$el.find('.errorContent');
 
                 for (id in this.changedModels) {
                     model = this.editCollection.get(id) || this.collection.get(id);
-                    model.changed = this.changedModels[id];
+                    if (model) {
+                        model.changed = this.changedModels[id];
+                        code = this.changedModels[id].code || model.get('code');
+                        account = this.changedModels[id].account || model.get('account');
+                        model.changed.name = code + ' ' + account;
+                    }
                 }
 
                 if (errors.length) {
@@ -441,9 +501,14 @@ define([
 
                 for (id in this.changedModels) {
                     delete this.changedModels[id];
+                    this.editCollection.remove(id);
                 }
 
-                this.editCollection.remove(id);
+                this.deleteEditable();
+            },
+
+            deleteEditable: function(){
+                this.$el.find('.edited').removeClass('edited');
             },
 
             savedNewModel: function (modelObject) {

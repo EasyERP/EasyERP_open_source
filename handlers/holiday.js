@@ -4,6 +4,7 @@ var Holiday = function (models, event) {
     var HolidaySchema = mongoose.Schemas['Holiday'];
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
+    var moment = require('../public/js/libs/moment/moment');
 
     this.totalCollectionLength = function (req, res, next) {
         var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
@@ -17,7 +18,7 @@ var Holiday = function (models, event) {
                 }
 
                 res.status(200).send({count: result.length});
-            } else if (typeof res == 'function') {
+            } else if (typeof res === 'function') {
                 res(null, result.length);
             }
         });
@@ -79,7 +80,7 @@ var Holiday = function (models, event) {
                 if (access) {
                     data.editedBy = {
                         user: req.session.uId,
-                        date: new Date().toISOString()
+                        date: new Date()
                     };
                     Holiday.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
                         if (err) {
@@ -109,12 +110,24 @@ var Holiday = function (models, event) {
                 if (access) {
                     async.each(body, function (data, cb) {
                         var id = data._id;
+                        var date;
+
+                        if(data.date){
+                            date = data.date;
+                            date = moment(new Date(date));
+
+                            data.year = date.isoWeekYear();
+                            data.week = date.isoWeek();
+                            data.day = date.day();
+                        }
 
                         data.editedBy = {
                             user: uId,
-                            date: new Date().toISOString()
+                            date: new Date()
                         };
+
                         delete data._id;
+
                         Holiday.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
                     }, function (err) {
                         if (err) {
@@ -156,14 +169,26 @@ var Holiday = function (models, event) {
     this.create = function (req, res, next) {
         var HolidayModel = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
         var body = mapObject(req.body);
-        var Holiday = new HolidayModel(body);
+        var Holiday;
+        var date;
+
+        body.date = new Date(body.date);
+        date = moment(body.date);
+
+        body.year = date.isoWeekYear();
+        body.week = date.isoWeek();
+        body.day = date.day();
+
+        Holiday = new HolidayModel(body);
+
         access.getEditWritAccess(req, req.session.uId, 69, function (access) {
             if (access) {
-                Holiday.save(function (err, Holiday) {
+                Holiday.save(function (err, holiday) {
                     if (err) {
                         return next(err);
                     }
-                    res.status(200).send({success: Holiday});
+
+                    res.status(200).send({success: holiday});
                     event.emit('recollectVacationDash');
                 });
             } else {

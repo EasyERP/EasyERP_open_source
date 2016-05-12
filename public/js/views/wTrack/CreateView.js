@@ -1,10 +1,12 @@
 define([
-        "text!templates/wTrack/CreateTemplate.html",
+        'Backbone',
+        'Underscore',
+        "text!templates/wTrack/CreateTemplate.html"
     ],
-    function (CreateTemplate) {
+    function (Backbone, _, CreateTemplate) {
 
         var CreateView = Backbone.View.extend({
-            el      : '#listTable',
+            el: '#listTable',
             template: _.template(CreateTemplate),
 
             initialize: function (options) {

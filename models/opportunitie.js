@@ -175,5 +175,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Opportunitie'] = opportunitiesSchema;
+    mongoose.Schemas.Opportunitie = opportunitiesSchema;
 })();

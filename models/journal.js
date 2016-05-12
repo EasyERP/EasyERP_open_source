@@ -7,9 +7,9 @@ module.exports = (function () {
         name: {type: String, required: true},
         date  : {type: Date, default: Date.now},
         type     : {type: String, default: ""},
-        transaction     : {type: String, default: "invoice"},
+        transaction     : {type: String, enum: ['Invoice', 'Payment', 'Accrual'], default: "Invoice"},
         currency: {
-            name: {type: String, default: 'USD'},
+            name: {type: String, default: 'USD'}
             /*crossCourse: {type: Number, default: 1}*/ //not needed in journal, we have it in journalEntry
         },
         description: {type: String, default: ""},

@@ -120,10 +120,10 @@ if (!mongoose.Schemas) {
     mongoose.Schemas = {};
 }
 
-mongoose.Schemas['EmployeeOld'] = employeeSchema;
+mongoose.Schemas.EmployeeOld = employeeSchema;
 
-var EmployeeSchema = mongoose.Schemas['Employee'];
-var EmployeeSchemaOld = mongoose.Schemas['EmployeeOld'];
+var EmployeeSchema = mongoose.Schemas.Employee;
+var EmployeeSchemaOld = mongoose.Schemas.EmployeeOld;
 
 var dbObject = mongoose.createConnection('localhost', 'production');
 dbObject.on('error', console.error.bind(console, 'connection error:'));

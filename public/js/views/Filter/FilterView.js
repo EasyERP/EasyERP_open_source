@@ -527,7 +527,7 @@ define([
                     value          : dataItem.name,
                     data           : dataItem._id
                 };
-            })
+            });
 
             this.searchRessult = this.searchRessult.concat(mapData);
 

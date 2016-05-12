@@ -1,16 +1,17 @@
 var mongoose = require('mongoose');
 var Filters = function (models) {
-    var wTrackSchema = mongoose.Schemas['wTrack'];
-    var CustomerSchema = mongoose.Schemas['Customer'];
-    var EmployeeSchema = mongoose.Schemas['Employee'];
-    var ProjectSchema = mongoose.Schemas['Project'];
-    var TaskSchema = mongoose.Schemas['Tasks'];
-    var wTrackInvoiceSchema = mongoose.Schemas['wTrackInvoice'];
-    var customerPaymentsSchema = mongoose.Schemas['Payment'];
-    var QuotationSchema = mongoose.Schemas['Quotation'];
-    var productSchema = mongoose.Schemas['Products'];
-    var PayRollSchema = mongoose.Schemas['PayRoll'];
-    var JobsSchema = mongoose.Schemas['jobs'];
+    var wTrackSchema = mongoose.Schemas.wTrack;
+    var CustomerSchema = mongoose.Schemas.Customer;
+    var EmployeeSchema = mongoose.Schemas.Employee;
+    var ProjectSchema = mongoose.Schemas.Project;
+    var TaskSchema = mongoose.Schemas.Tasks;
+    var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
+    var customerPaymentsSchema = mongoose.Schemas.Payment;
+    var QuotationSchema = mongoose.Schemas.Quotation;
+    var productSchema = mongoose.Schemas.Products;
+    var PayRollSchema = mongoose.Schemas.PayRoll;
+    var JobsSchema = mongoose.Schemas.jobs;
+    var OpportunitiesSchema = mongoose.Schemas.Opportunitie;
     var _ = require('../node_modules/underscore');
     var async = require('async');
     var moment = require('../public/js/libs/moment/moment');
@@ -31,6 +32,7 @@ var Filters = function (models) {
         var Quotation = models.get(lastDB, 'Quotation', QuotationSchema);
         var PayRoll = models.get(lastDB, 'PayRoll', PayRollSchema);
         var Jobs = models.get(lastDB, 'jobs', JobsSchema);
+        var Opportunities = models.get(lastDB, 'Opportunities', OpportunitiesSchema);
         var startDate;
         var endDate;
         var dateRangeObject;
@@ -64,9 +66,7 @@ var Filters = function (models) {
             var year = moment().isoWeekYear();
             var week;
 
-            for (var i = 0;
-                i <= 11;
-                i++) {
+            for (var i = 0; i <= 11; i++) {
                 if (startWeek + i > 53) {
                     week = startWeek + i - 53;
                     weeksArr.push((year + 1) * 100 + week);
@@ -82,7 +82,7 @@ var Filters = function (models) {
                 startDate: weeksArr[0],
                 endDate  : weeksArr[weeksArr.length - 1]
             };
-        };
+        }
 
         if (query) {
             startFilter = query.filter;
@@ -123,7 +123,9 @@ var Filters = function (models) {
                 PayrollExpenses : getPayRollFiltersValues,
                 DashVacation    : getDashVacationFiltersValues,
                 jobsDashboard   : getDashJobsFiltersValues,
-                salaryReport    : getsalaryReportFiltersValues
+                salaryReport    : getsalaryReportFiltersValues,
+                Leads           : getLeadsFiltersValues,
+                Opportunities   : getOpportunitiesFiltersValues
             },
             function (err, result) {
                 if (err) {
@@ -164,7 +166,7 @@ var Filters = function (models) {
                     month     : 1,
                     year      : 1,
                     week      : 1,
-                    isPaid    : 1,
+                    isPaid    : 1
                 }
             }, {
                 $lookup: {
@@ -274,11 +276,10 @@ var Filters = function (models) {
                         }
                     ]
                 }
-                ;
 
                 callback(null, result);
             });
-        };
+        }
 
         function getPersonFiltersValues(callback) {
             Customer.aggregate([
@@ -324,7 +325,7 @@ var Filters = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         function getCompaniesFiltersValues(callback) {
             Customer.aggregate([
@@ -370,43 +371,43 @@ var Filters = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         function getsalaryReportFiltersValues(callback) {
             Employee.aggregate([{
-                    $lookup: {
-                        from        : "Department",
-                        localField  : "department",
-                        foreignField: "_id",
-                        as          : "department"
-                    }
-                }, {
-                    $project: {
-                        department: {$arrayElemAt: ["$department", 0]},
-                        name      : 1
-                    }
-                }, {
-                    $project: {
-                        department: 1,
-                        name      : 1
-                    }
-                }, {
-                    $group: {
-                        _id         : null,
-                        'employee'  : {
-                            $addToSet: {
-                                _id : '$_id',
-                                name: {$concat: ['$name.first', ' ', '$name.last']}
-                            }
-                        },
-                        'department': {
-                            $addToSet: {
-                                _id : '$department._id',
-                                name: {'$ifNull': ['$department.departmentName', 'None']}
-                            }
+                $lookup: {
+                    from        : "Department",
+                    localField  : "department",
+                    foreignField: "_id",
+                    as          : "department"
+                }
+            }, {
+                $project: {
+                    department: {$arrayElemAt: ["$department", 0]},
+                    name      : 1
+                }
+            }, {
+                $project: {
+                    department: 1,
+                    name      : 1
+                }
+            }, {
+                $group: {
+                    _id         : null,
+                    'employee'  : {
+                        $addToSet: {
+                            _id : '$_id',
+                            name: {$concat: ['$name.first', ' ', '$name.last']}
+                        }
+                    },
+                    'department': {
+                        $addToSet: {
+                            _id : '$department._id',
+                            name: {'$ifNull': ['$department.departmentName', 'None']}
                         }
                     }
                 }
+            }
             ], function (err, result) {
                 if (err) {
                     return callback(err);
@@ -415,7 +416,7 @@ var Filters = function (models) {
                 result = result[0];
 
                 result.onlyEmployees = {
-                    _id: 'true',
+                    _id : 'true',
                     name: 'true'
                 };
 
@@ -503,7 +504,7 @@ var Filters = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         function getApplicationFiltersValues(callback) {
             Employee.aggregate([
@@ -565,7 +566,7 @@ var Filters = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         function getProjectFiltersValues(callback) {
             Project
@@ -642,7 +643,7 @@ var Filters = function (models) {
                     }
 
                 });
-        };
+        }
 
         function getDashVacationFiltersValues(callback) {
             var matchObjectForDash = {
@@ -702,7 +703,7 @@ var Filters = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         function getTasksFiltersValues(callback) {   // added $lookups in aggregation and one new field Summary
             Task.aggregate([{
@@ -788,7 +789,8 @@ var Filters = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
+
         function getInvoiceFiltersValues(callback) {
             wTrackInvoice.aggregate([{
                 $match: {
@@ -852,7 +854,7 @@ var Filters = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         function getSalesInvoiceFiltersValues(callback) {
             wTrackInvoice.aggregate([{
@@ -939,7 +941,7 @@ var Filters = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         function getCustomerPaymentsFiltersValues(callback) {
             customerPayments.aggregate([
@@ -1033,7 +1035,7 @@ var Filters = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         function getSupplierPaymentsFiltersValues(callback) {
             customerPayments.aggregate([{
@@ -1109,7 +1111,7 @@ var Filters = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         function getProductsFiltersValues(callback) {
             Product.aggregate([
@@ -1174,7 +1176,7 @@ var Filters = function (models) {
 
                 callback(null, result);
             });
-        };
+        }
 
         function getQuotationFiltersValues(callback) {
             Quotation.aggregate([
@@ -1233,7 +1235,7 @@ var Filters = function (models) {
                 }
 
             });
-        };
+        }
 
         function getSalesQuotation(callback) {
             Quotation.aggregate([
@@ -1709,6 +1711,130 @@ var Filters = function (models) {
                 });
 
                 callback(null, result);
+
+            });
+        }
+
+        function getLeadsFiltersValues(callback) {
+            Opportunities.aggregate([
+                {
+                    $match: {
+                        isOpportunitie: false
+                    }
+                }, {
+                    $lookup: {
+                        from        : "workflows",
+                        localField  : "workflow",
+                        foreignField: "_id", as: "workflow"
+                    }
+                }, {
+                    $project: {
+                        workflow   : {$arrayElemAt: ["$workflow", 0]},
+                        source     : 1,
+                        contactName: {$concat: ["$contactName.first", " ", "$contactName.last"]}
+                    }
+                }, {
+                    $group: {
+                        _id        : null,
+                        contactName: {
+                            $addToSet: {
+                                _id : "$contactName",
+                                name: "$contactName"
+                            }
+                        },
+                        source     : {
+                            $addToSet: {
+                                _id : "$source",
+                                name: "$source"
+                            }
+                        },
+                        workflow   : {
+                            $addToSet: {
+                                _id : "$workflow._id",
+                                name: "$workflow.name"
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                if (result && result.length) {
+                    result = result[0];
+                    callback(null, result);
+                } else {
+                    callback(null, []);
+                }
+
+            });
+        }
+
+        function getOpportunitiesFiltersValues(callback) {
+            Opportunities.aggregate([
+                {
+                    $match: {
+                        isOpportunitie: true
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Customers",
+                        localField  : "customer",
+                        foreignField: "_id", as: "customer"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "workflows",
+                        localField  : "workflow",
+                        foreignField: "_id", as: "workflow"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "salesPerson",
+                        foreignField: "_id", as: "salesPerson"
+                    }
+                }, {
+                    $project: {
+                        customer   : {$arrayElemAt: ["$customer", 0]},
+                        workflow   : {$arrayElemAt: ["$workflow", 0]},
+                        salesPerson: {$arrayElemAt: ["$salesPerson", 0]}
+                    }
+                }, {
+                    $group: {
+                        _id        : null,
+                        customer   : {
+                            $addToSet: {
+                                _id : "$customer._id",
+                                name: {$concat: ["$customer.name.first", " ", "$customer.name.last"]}
+                            }
+                        },
+                        workflow   : {
+                            $addToSet: {
+                                _id : "$workflow._id",
+                                name: "$workflow.name"
+                            }
+                        },
+                        salesPerson: {
+                            $addToSet: {
+                                _id : "$salesPerson._id",
+                                name: {$concat: ["$salesPerson.name.first", " ", "$salesPerson.name.last"]}
+                            }
+                        }
+                    }
+                }
+            ], function (err, result) {
+                if (err) {
+                    callback(err);
+                }
+
+                if (result && result.length) {
+                    result = result[0];
+                    callback(null, result);
+                } else {
+                    callback(null, []);
+                }
 
             });
         }
