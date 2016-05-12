@@ -701,6 +701,7 @@ define([], function () {
         MIN_DATE          : '2014-08-01',
 
         INVOICE_JOURNAL: '565ef6ba270f53d02ee71d65',
-        PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146'
+        PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146',
+        END_OF_PROJECT  : 'To end of project'
     };
 });

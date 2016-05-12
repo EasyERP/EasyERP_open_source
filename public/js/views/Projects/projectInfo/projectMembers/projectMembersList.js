@@ -11,8 +11,9 @@ define([
     'collections/projectMembers/editCollection',
     'models/ProjectMemberModel',
     'moment',
-    'async'
-], function (Backbone, $, _, membersTemplate, cancelEdit, createMember, SelectView, common, dataService, prMembersCollection, CurrentModel, moment, async) {
+    'async',
+    'constants'
+], function (Backbone, $, _, membersTemplate, cancelEdit, createMember, SelectView, common, dataService, prMembersCollection, CurrentModel, moment, async, constants) {
     'use strict';
 
     var PMView = Backbone.View.extend({
@@ -48,11 +49,10 @@ define([
             var rowId = row.attr('data-id');
             var isNewRow = row.hasClass('false');
             var text;
-            var startDate;
+            var startDate = this.prevEndDate(row);;
             var nextDay = new Date(2014, 8, 2);
 
-            if (this.prevEndDate(row)) {
-                startDate = new Date(this.prevEndDate(row));
+            if (startDate) {
                 nextDay = moment(startDate).add(1, 'd').toDate();
             }
 
@@ -119,7 +119,7 @@ define([
                 return false;
             }
 
-            if (prevEndDate === 'To end of project'){
+            if (prevEndDate === constants.END_OF_PROJECT){
                 return prevEndDate;
             }
 
@@ -326,7 +326,7 @@ define([
                 //this.removePrevPosition();
                 startDate = this.prevEndDate(targetRow);
 
-                if (startDate === 'To end of project') {
+                if (startDate === constants.END_OF_PROJECT) {
                     return App.render({
                         type   : 'error',
                         message: "Please choose previous Member's End Date"
@@ -343,7 +343,7 @@ define([
                 if (startDate) {
                     nextDay = common.utcDateToLocaleDate(moment(startDate).add(1, 'd').toDate());
                     targetRow.find('.startDateManager').text(nextDay);
-                    this.changedModels[rowId].startDate = startDate;
+                    this.changedModels[rowId].startDate = nextDay;
                 } else {
                     targetRow.find('.startDateManager').text('From start of project');
                     this.changedModels[rowId].startDate = null;
