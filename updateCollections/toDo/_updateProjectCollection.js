@@ -5,7 +5,7 @@ var async = require('async');
 var ProjectSchema = mongoose.Schemas.Project;
 
 var connectOptions = {
-    user  : 'easyerp',
+    user  : 'easyErp',
     pass  : '1q2w3e!@#',
     w     : 1,
     j     : true
