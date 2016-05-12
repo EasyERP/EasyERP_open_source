@@ -3982,6 +3982,30 @@ var Module = function (models, event) {
                         project: {$arrayElemAt: ['$project', 0]},
                         debit  : 1
                     }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "project.salesmanager",
+                        foreignField: "_id",
+                        as          : "salesmanager"
+                    }
+                },{
+                    $project: {
+                        _id    : 1,
+                        name   : 1,
+                        project: 1,
+                        debit  : 1,
+                        salesmanager :  {$arrayElemAt: ['$salesmanager', 0]}
+
+                    }
+                }, {
+                    $project: {
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
+                    }
                 }], function (err, result) {
                     if (err) {
                         return pCb(err);
@@ -4040,7 +4064,32 @@ var Module = function (models, event) {
                         project: {$arrayElemAt: ['$project', 0]},
                         debit  : 1
                     }
-                }], function (err, result) {
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "project.salesmanager",
+                        foreignField: "_id",
+                        as          : "salesmanager"
+                    }
+                },{
+                    $project: {
+                        _id    : 1,
+                        name   : 1,
+                        project: 1,
+                        debit  : 1,
+                        salesmanager :  {$arrayElemAt: ['$salesmanager', 0]}
+
+                    }
+                }, {
+                    $project: {
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
+                    }
+                }
+                ], function (err, result) {
                     if (err) {
                         return pCb(err);
                     }
@@ -4114,6 +4163,7 @@ var Module = function (models, event) {
                     newElement.name = opening ? opening.name : (inwards ? inwards.name : '');
 
                     project = opening ? opening.project : (inwards ? inwards.project : {});
+                    newElement.salesmanager = opening ? opening.salesmanager : (inwards ? inwards.salesmanager : '');
 
                     newElement.project = project._id;
                     newElement.projectName = project.projectName;
