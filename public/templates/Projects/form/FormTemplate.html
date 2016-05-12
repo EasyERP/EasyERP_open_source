@@ -8,8 +8,7 @@
             <li><a href="javascript:;" class="countable" id="proformaTab">Proforma<span></span></a></li>
             <li><a href="javascript:;" class="countable" id="invoicesTab">Invoices<span></span></a></li>
             <li><a href="javascript:;" class="countable" id="paymentsTab">Payments<span></span></a></li>
-            <li><a href="javascript:;" class="" id="commentsTab">Comments</a></li>
-            <li><a href="javascript:;" class="" id="projectMembersTab">Members</a></li>
+            <li><a href="javascript:;" class="" id="commentsTab">Other Info</a></li>
             <li><a href="javascript:;" class="" id="assigneesTab">Assignees</a></li>
         </ul>
         <div class="clearfix"></div>
@@ -117,6 +116,15 @@
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
                 <div id="comments">
+                    <br>
+                    <dt><label for="payment_method">Bank Account</label></dt>
+                    <dd>
+                        <a id="payment_method" class="current-selected" href="javascript:;" data-id="<%= (model.paymentMethod) ? model.paymentMethod._id : ''%>"><%= (model.paymentMethod) ? model.paymentMethod.name : 'Select'%></a>
+                    </dd>
+                    <dt><label for="payment_terms">Payment Terms</label></dt>
+                    <dd>
+                        <a id="payment_terms" class="current-selected" href="javascript:;" data-id="<%= (model.paymentTerms) ? model.paymentTerms._id : ''%>"><%=(model.paymentTerms) ? model.paymentTerms.name :  'Select'%></a>
+                    </dd>
                     <div class="textarea-wrapper">
                         <textarea type="text" class="projectDescriptionEdit" name="description"
                                   placeholder="Add a Description..." id="description"
@@ -130,14 +138,12 @@
 
             <div class="clearfix"></div>
             <div class="dialog-tabs-item">
-                <div id="projectMembers" class="projectMembers">
-                    <div id="projectMembers-container"></div>
-                </div>
-            </div>
-            <div class="clearfix"></div>
-            <div class="dialog-tabs-item">
                 <div id="assignees">
                     <div id="assignees-container"></div>
+                </div>
+                <h3> Project Members</h3>
+                <div id="projectMembers" class="projectMembers">
+                    <div id="projectMembers-container"></div>
                 </div>
             </div>
         </div>

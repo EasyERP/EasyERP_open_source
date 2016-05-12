@@ -34,6 +34,7 @@ var Project = function (models) {
             .populate('workflow', '_id name')
             .populate('customer', '_id name')
             .populate('salesmanager', '_id name')
+            .populate('paymentTerms', '_id name')
             .exec(function (err, projects) {
                 if (err) {
                     return next(err);

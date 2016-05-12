@@ -315,6 +315,14 @@ var Project = function (models, event) {
                         bonus: []
                     };
 
+                    if (data.paymentTerms) {
+                        _project.paymentTerms = data.paymentTerms;
+                    }
+
+                    if (data.paymentMethod) {
+                        _project.paymentMethod = data.paymentMethod;
+                    }
+
                     _project.save(function (err, result) {
                         try {
                             if (err) {
@@ -1063,6 +1071,8 @@ var Project = function (models, event) {
             .populate('salesmanager', '_id name fullName')
             .populate('customer', '_id name fullName')
             .populate('workflow', '_id name')
+            .populate('paymentMethod', '_id name')
+            .populate('paymentTerms', '_id name');
 
         query.exec(function (err, project) {
             if (err) {
