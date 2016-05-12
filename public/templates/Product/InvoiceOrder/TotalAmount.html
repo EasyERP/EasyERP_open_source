@@ -4,7 +4,11 @@
         </span>
 </div>
 <%var currencyClassVal;%>
-<%currencyClassVal = currencyClass(model.currency._id._id)%>
+<%if (model && model.currency && model.currency._id) {%>
+    <%currencyClassVal = currencyClass(model.currency._id._id)%>
+<%} else {%>
+    <%currencyClassVal = "dollar"%>
+<%}%>
 <table border="0" cellpadding="0" cellspacing="0" class="right calculateTotal">
     <tbody>
     <tr>
@@ -13,11 +17,7 @@
                 Untaxed Amount
             </label>
         </td>
-        <td class="<%if (model && model.currency && model.currency._id) {%>
-                        <%=currencyClassVal%>
-                    <%} else {%>
-                        dollar
-                    <%}%>">
+        <td class="<%=currencyClassVal%>">
                 <span><span id="totalUntaxes">
                     <%if (model && model.paymentInfo && model.paymentInfo.unTaxed) {%>
                         <%=currencySplitter(model.paymentInfo.unTaxed.toString())%>
@@ -31,11 +31,7 @@
         <td>
             <label>Taxes</label>
         </td>
-        <td  class="<%if (model && model.currency && model.currency._id) {%>
-                        <%=currencyClassVal%>
-                    <%} else {%>
-                        dollar
-                    <%}%>">
+        <td class="<%=currencyClassVal%>">
                 <span><span id="taxes">
                     <%if (model && model.paymentInfo && model.paymentInfo.taxes) {%>
                         <%=currencySplitter(model.paymentInfo.taxes.toString())%>
@@ -49,11 +45,7 @@
         <td>
             <label class="" data-original-title="" title="">Total</label>
         </td>
-        <td  class="<%if (model && model.currency && model.currency._id) {%>
-                        <%=currencyClassVal%>
-                    <%} else {%>
-                        dollar
-                    <%}%>">
+        <td class="<%=currencyClassVal%>">
                 <span class=""><span id="totalAmount">
                     <%if (model && model.paymentInfo && model.paymentInfo.total) {%>
                         <%=currencySplitter(model.paymentInfo.total.toString())%>
@@ -68,11 +60,7 @@
         <td>
             <label>Balance</label>
         </td>
-        <td  class="<%if (model && model.currency && model.currency._id) {%>
-                        <%=currencyClassVal%>
-                    <%} else {%>
-                        dollar
-                    <%}%>">
+        <td class="<%=currencyClassVal%>">
                 <span class=""><span id="balance">
                     <%if (model && model.paymentInfo && model.paymentInfo.balance) {%>
                         <%=currencySplitter(model.paymentInfo.balance.toString())%>
