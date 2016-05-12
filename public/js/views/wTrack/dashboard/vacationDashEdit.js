@@ -401,7 +401,7 @@ define([
                 insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                 isOverTime(el);
-                
+
                 if (input.length && !isHours) {
                     if (!input.val()) {
                         input.val(0);

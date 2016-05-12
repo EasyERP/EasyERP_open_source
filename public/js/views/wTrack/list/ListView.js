@@ -63,6 +63,7 @@ define([
         listItemView            : listItemView,
         contentCollection       : contentCollection,
         filterView              : filterView,
+        setOverTime             : setOverTime,
         contentType             : 'wTrack',
         viewType                : 'list',
         responseObj             : {},
@@ -91,7 +92,6 @@ define([
             this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
             this.stages = [];
-            this.setOverTime = setOverTime;
         },
 
         events: {
@@ -593,7 +593,7 @@ define([
                         this.calculateCost(e, wTrackId);
                     }
                 }
-                
+
                 return false;
             };
 
