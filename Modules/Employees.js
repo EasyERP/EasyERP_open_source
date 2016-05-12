@@ -1280,6 +1280,7 @@ var Employee = function (event, models) {
             .populate('transfer.department', '_id departmentName')
             .populate('transfer.jobPosition', '_id name')
             .populate('transfer.manager', '_id name')
+            .populate('transfer.weeklyScheduler', '_id name')
             .populate('groups.owner', '_id login');
 
         query.exec(function (err, findedEmployee) {

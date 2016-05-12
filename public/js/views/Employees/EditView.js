@@ -409,6 +409,7 @@ define([
             },
 
             saveItem: function () {
+                var weeklyScheduler;
                 var transferArray;
                 var homeAddress;
                 var dateBirthSt;
@@ -476,6 +477,7 @@ define([
                     date = new Date($.trim($tr.find('td').eq(2).text()));
                     jobPosition = $tr.find('#jobPositionDd').attr('data-id');
                     department = $tr.find('#departmentsDd').attr('data-id');
+                    weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
                     jobType = $.trim($tr.find('#jobTypeDd').text());
                     info = $tr.find('#statusInfoDd').val();
                     event = $tr.attr('data-content');
@@ -495,7 +497,8 @@ define([
                             manager    : $previousTr.find('#projectManagerDD').attr('data-id') || null,
                             jobType    : $.trim($previousTr.find('#jobTypeDd').text()),
                             salary     : salary,
-                            info       : $previousTr.find('#statusInfoDd').val()
+                            info       : $previousTr.find('#statusInfoDd').val(),
+                            weeklyScheduler: $previousTr.find('#weeklySchedulerDd').attr('data-id')
                         });
 
                         previousDep = department;
@@ -509,7 +512,8 @@ define([
                         manager    : manager,
                         jobType    : jobType,
                         salary     : salary,
-                        info       : info
+                        info       : info,
+                        weeklyScheduler: weeklyScheduler
                     });
 
                     if (!salary && self.isSalary) {
@@ -748,6 +752,7 @@ define([
                     $('.endContractReasonList').attr('data-id', workflow[0]._id);
                 });
                 populate.get('#jobTypeDd', '/jobType', {}, 'name', this);
+                populate.get("#weeklySchedulerDd", "/weeklyScheduler/forDd", {}, "name", this);
                 populate.get('#departmentManagers', '/DepartmentsForDd', {}, 'departmentManager', this);
                 populate.get('#nationality', '/nationality', {}, '_id', this);
                 populate.get2name('#projectManagerDD', '/getPersonsForDd', {}, this);

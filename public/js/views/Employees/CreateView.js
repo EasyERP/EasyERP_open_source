@@ -93,9 +93,9 @@ define([
             },
 
             editJob: function (e) {
-                var self    = this;
+                var self = this;
                 var $target = $(e.target);
-                var dataId  = $target.attr('data-id');
+                var dataId = $target.attr('data-id');
                 var tempContainer;
 
                 tempContainer = ($target.text()).trim();
@@ -126,14 +126,14 @@ define([
             chooseOption: function (e) {
                 //$(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
 
-                var $target     = $(e.target);
-                var $td          = $target.closest('td');
-                var parentUl    = $target.parent();
-                var element     = $target.closest('a') || parentUl.closest('a');
-                var id          = element.attr('id') || parentUl.attr('id');
-                var valueId     = $target.attr('id');
+                var $target = $(e.target);
+                var $td = $target.closest('td');
+                var parentUl = $target.parent();
+                var element = $target.closest('a') || parentUl.closest('a');
+                var id = element.attr('id') || parentUl.attr('id');
+                var valueId = $target.attr('id');
                 var managersIds = this.responseObj['#departmentManagers'];
-                var managers    = this.responseObj['#projectManagerDD'];
+                var managers = this.responseObj['#projectManagerDD'];
                 var managerId;
                 var manager;
 
@@ -416,6 +416,7 @@ define([
             },*/
 
             saveItem: function () {
+                var weeklyScheduler;
                 var transferArray;
                 var employeeModel;
                 var homeAddress;
@@ -452,7 +453,7 @@ define([
 
                 if ($('.errorContent').length) {
                     return App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'Please fill Job tab'
                     });
                 }
@@ -461,46 +462,48 @@ define([
 
                 employeeModel = new EmployeeModel();
 
-                relatedUser   = self.$el.find("#relatedUsersDd").data("id") || null;
-                coach         = $.trim(self.$el.find("#coachDd").data("id")) || null;
-                whoCanRW      = self.$el.find("[name='whoCanRW']:checked").val();
-                dateBirthSt   = $.trim(self.$el.find("#dateBirth").val());
-                $jobTable     = self.$el.find('#hireFireTable');
-                marital       = $("#maritalDd").data("id") || null;
-                nationality   = $("#nationality").data("id");
-                gender        = $("#genderDd").data("id") || null;
-                $tr       = $jobTable.find('tr.transfer');
-                sourceId      = $("#sourceDd").data("id");
-                homeAddress   = {};
-                fireArray     = [];
-                hireArray     = [];
-                groupsId      = [];
-                usersId       = [];
+                relatedUser = self.$el.find("#relatedUsersDd").data("id") || null;
+                coach = $.trim(self.$el.find("#coachDd").data("id")) || null;
+                whoCanRW = self.$el.find("[name='whoCanRW']:checked").val();
+                dateBirthSt = $.trim(self.$el.find("#dateBirth").val());
+                $jobTable = self.$el.find('#hireFireTable');
+                marital = $("#maritalDd").data("id") || null;
+                nationality = $("#nationality").data("id");
+                gender = $("#genderDd").data("id") || null;
+                $tr = $jobTable.find('tr.transfer');
+                sourceId = $("#sourceDd").data("id");
+                homeAddress = {};
+                fireArray = [];
+                hireArray = [];
+                groupsId = [];
+                usersId = [];
 
 
                 $("dd").find(".homeAddress").each(function (index, addressLine) {
-                    el                           = $(addressLine);
+                    el = $(addressLine);
                     homeAddress[el.attr("name")] = $.trim(el.val());
                 });
 
-                salary      = self.isSalary ? parseInt($tr.find('[data-id="salary"]').text()) : null;
-                manager     = $tr.find('#projectManagerDD').attr('data-id') || null;
-                date        = new Date($.trim($tr.find("td").eq(2).text()));
+                salary = self.isSalary ? parseInt($tr.find('[data-id="salary"]').text()) : null;
+                manager = $tr.find('#projectManagerDD').attr('data-id') || null;
+                date = new Date($.trim($tr.find("td").eq(2).text()));
                 jobPosition = $tr.find('#jobPositionDd').attr('data-id');
-                department  = $tr.find('#departmentsDd').attr('data-id');
-                jobType     = $.trim($tr.find('#jobTypeDd').text());
-                info        = $tr.find('#statusInfoDd').val();
-                event       = $tr.attr('data-content');
+                weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
+                department = $tr.find('#departmentsDd').attr('data-id');
+                jobType = $.trim($tr.find('#jobTypeDd').text());
+                info = $tr.find('#statusInfoDd').val();
+                event = $tr.attr('data-content');
 
                 transferArray = [{
-                    status     : event,
-                    date       : date,
-                    department : department,
-                    jobPosition: jobPosition,
-                    manager    : manager,
-                    jobType    : jobType,
-                    salary     : salary,
-                    info       : info
+                    status         : event,
+                    date           : date,
+                    department     : department,
+                    jobPosition    : jobPosition,
+                    manager        : manager,
+                    jobType        : jobType,
+                    salary         : salary,
+                    info           : info,
+                    weeklyScheduler: weeklyScheduler
                 }];
 
                 hireArray.push(date);
@@ -598,7 +601,7 @@ define([
                             self.jobPositionData === jobPosition &&
                             self.projectManagerData === manager) {
 
-                            model    = model.toJSON();
+                            model = model.toJSON();
                             empThumb = $('#' + model._id);
 
                             empThumb.find('.age').html(model.result.age);
@@ -663,6 +666,7 @@ define([
                 );
 
                 populate.get("#jobTypeDd", "/jobType", {}, "name", this, true);
+                populate.get("#weeklySchedulerDd", "/weeklyScheduler/forDd", {}, "name", this, true);
                 populate.get("#departmentManagers", "/DepartmentsForDd", {}, "departmentManager", this);
                 populate.get("#nationality", "/nationality", {}, "_id", this, true);
                 populate.get2name("#projectManagerDD", "/getPersonsForDd", {}, this, true);

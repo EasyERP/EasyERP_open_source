@@ -33,6 +33,33 @@ var WeeklyScheduler = function (models) {
         }
     };
 
+    this.getForDd = function (req, res, next) {
+        var db = req.session.lastDb;
+        var moduleId = 103;
+
+        if (req.session && req.session.loggedIn && db) {
+            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
+                var WeeklyScheduler = models.get(db, 'weeklyScheduler', WeeklySchedulerSchema);
+
+                if (access) {
+
+                    WeeklyScheduler.find({}, {name: 1}, function(err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+                        res.status(200).send({data: result});
+                    });
+
+                } else {
+                    res.status(403).send();
+                }
+            });
+
+        } else {
+            res.status(401).send();
+        }
+    };
+
     this.create = function (req, res, next) {
         var db = req.session.lastDb;
         var moduleId = 103;

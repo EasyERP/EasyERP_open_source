@@ -5,6 +5,7 @@ var WeeklySchedulerHandler = require('../handlers/weeklyScheduler');
 module.exports = function (models) {
     var handler = new WeeklySchedulerHandler(models);
 
+    router.get('/forDd', handler.getForDd);
     router.get('/:viewType', function (req, res, next) {
         var viewType = req.params.viewType;
         switch (viewType) {
