@@ -41,7 +41,9 @@
         <%var balance = 0;%>
         <%var paid = 0;%>
         <%var total = 0;%>
+        <%var currencyClassVal;%>
         <% collection.forEach(function(invoice, index){ %>
+        <%currencyClassVal = currencyClass(invoice.currency._id)%>
         <tr data-id="<%=invoice._id%>">
         <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>"/>
         </td>
@@ -53,9 +55,9 @@
         <td><%=invoice.paymentDate%></td>
         <td><%=(invoice.salesPerson && invoice.salesPerson.name) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
         <td data-content="dueDate"><%=invoice.dueDate%></td>
-        <td class="<%=currencyClass(invoice.currency._id)%>"><%=currencySplitter(invoice.paymentInfo.balance.toString())%></td>
-        <td class="paid <%=currencyClass(invoice.currency._id)%>"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid.toString()) : '0.00'%></td>
-        <td class="total <%=currencyClass(invoice.currency._id)%>"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total.toString()) : '0.00'%></td>
+        <td class="<%=currencyClassVal%>"><%=currencySplitter(invoice.paymentInfo.balance.toString())%></td>
+        <td class="paid <%=currencyClassVal%>"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid.toString()) : '0.00'%></td>
+        <td class="total <%=currencyClassVal%>"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total.toString()) : '0.00'%></td>
         <td id='<%=invoice._id%>'>
             <%if(invoice.workflow && invoice.approved){%>
             <span class=" <%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></span>

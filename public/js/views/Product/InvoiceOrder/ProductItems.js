@@ -361,6 +361,8 @@ define([
             var jobId;
             var currentJob;
             var product = $('.productsDd');
+            var currency = {};
+            var classForParent;
 
             if (_id !== 'createJob') {
 
@@ -427,9 +429,8 @@ define([
 
                 salePrice = selectedProduct.info.salePrice;
 
-                var currency = {};
                 currency._id = $('#currencyDd').attr('data-id');
-                var classForParent = 'editable forNum ' + helpers.currencyClass(currency._id);
+                classForParent = 'editable forNum ' + helpers.currencyClass(currency._id);
 
                 $($parrents[4]).attr('class', classForParent).find('span').text(salePrice);
                 total = parseFloat(selectedProduct.info.salePrice);
