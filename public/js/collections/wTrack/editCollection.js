@@ -7,17 +7,15 @@
     var EditableColection = ParrantCollection.extend({
 
         initialize: function () {
-            this.on("change", this.change, this);
+            this.on('change', this.change, this);
         },
 
-        save: function (changedValues) {
+        save: function () {
             var self = this;
             var model;
             var models = [];
             var newModel;
             var modelObject;
-            var dateByWeek;
-            var dateByMonth;
             var year;
             var month;
             var week;
@@ -32,20 +30,6 @@
                     return models;
                 }
             };
-
-            //var saveObject = {
-            //    trigger: this.trigger,
-            //    url: this.url,
-            //    toJSON: function () {
-            //        return newModel;
-            //    }
-            //};
-            //
-            //var options = {
-            //    success: function (model, resp, xhr) {
-            //        self.trigger('saved', model);
-            //    }
-            //};
 
             var updatedOptions = {
                 success: function () {
@@ -64,15 +48,6 @@
                     month = modelObject.month || model.get('month');
                     week = modelObject.week || model.get('week');
 
-                    /*if (year && week) {
-                     dateByWeek = parseInt(year) * 100 + parseInt(week);
-                     modelObject.dateByWeek = dateByWeek;
-                     }
-                     if (year && month) {
-                     dateByMonth = parseInt(year) * 100 + parseInt(month);
-                     modelObject.dateByMonth = dateByMonth;
-                     }*/
-
                     models.push(modelObject);
                 } else if (model && !model.id) {
                     cid = model.cid;
@@ -86,7 +61,7 @@
                     };
 
                     options = {
-                        success: function thisFunction(model, resp, xhr) {
+                        success: function thisFunction(model) {
                             model.cid = thisFunction.cid; // (in case of multi copying)
                             self.trigger('saved', model);
                         }
@@ -101,21 +76,12 @@
                     month = newModel.month || model.get('month');
                     week = newModel.week || model.get('week');
 
-                    /*if (year && week) {
-                     dateByWeek = parseInt(year) * 100 + parseInt(week);
-                     newModel.dateByWeek = dateByWeek;
-                     }
-                     if (year && month) {
-                     dateByMonth = parseInt(year) * 100 + parseInt(month);
-                     newModel.dateByMonth = dateByMonth;
-                     }*/
-
-                    Backbone.sync("create", saveObject, options);
+                    Backbone.sync('create', saveObject, options);
                 }
             }
 
             if (models.length) {
-                Backbone.sync("patch", syncObject, updatedOptions);
+                Backbone.sync('patch', syncObject, updatedOptions);
             }
         }
     });

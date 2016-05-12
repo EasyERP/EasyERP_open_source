@@ -3,7 +3,7 @@
 <%if (quotation.workflow && quotation.workflow.status === 'Cancelled') { %>
 class="canceledListItem"
 <%}%>>
-<td class="notForm centerCell"><input type="checkbox" value="<%=quotation._id%>" class="checkbox"/></td>
+<td class="notForm centerCell"><input type="checkbox" value="<%=quotation._id%>" class="checkbox <%=quotation.proformaCounter ? 'notRemovable' : ''%>"/></td>
 <td class="countNumber centerCell"><%=startNumber + index + 1%></td>
 <td><%=quotation.name ? quotation.name : '-------'%></td>
 <td><%=quotation.project ? quotation.project.projectName : '-------'%></td>
@@ -11,7 +11,7 @@ class="canceledListItem"
 <td><%=(quotation.salesmanager) ? quotation.salesmanager.name.first + ' ' + quotation.salesmanager.name.last :
     '-------'%>
 </td>
-<td class="total"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total) : '0'%></td>
+<td class="total <%=currencyClass(quotation.currency._id)%>"><%=(quotation.paymentInfo) ? currencySplitter(quotation.paymentInfo.total) : '0'%></td>
 <!--<td class="type"><%=quotation.type%></td>-->
 <td id='<%=quotation._id%>'>
     <a href="javascript:;" class=""><%=quotation.workflow ? quotation.workflow.name: 'Undefinded'%></a>

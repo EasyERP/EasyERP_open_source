@@ -559,6 +559,8 @@ define([
                 var workflow = {};
 
                 var projecttype = thisEl.find('#projectTypeDD').data('id');
+                var paymentTerm = thisEl.find('#payment_terms').data('id');
+                var paymentMethod = thisEl.find('#payment_method').data('id');
                 var $userNodes = $('#usereditDd option:selected');
                 //var startDate = $.trim(thisEl.find('#StartDate').val());
                 //var endDate = $.trim(thisEl.find('#EndDate').val());
@@ -580,6 +582,8 @@ define([
                     workflow        : workflow ? workflow : null,
                     projecttype     : projecttype ? projecttype : '',
                     description     : description,
+                    paymentTerms    : paymentTerm,
+                    paymentMethod   : paymentMethod,
                     teams           : {
                         users: users
                     },
@@ -972,7 +976,8 @@ define([
                 statsContainer.html(this.invoiceStatsTmpl({
                         invoceStats     : data.invoices,
                         invoceStat      : data,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass: helpers.currencyClass
                     })
                 );
             },
@@ -983,7 +988,8 @@ define([
                 statsContainer.html(this.proformaStatsTmpl({
                         invoceStats     : data.invoices,
                         invoceStat      : data,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass: helpers.currencyClass
                     })
                 );
             },
@@ -1327,7 +1333,8 @@ define([
 
                 proformContainer.html(this.proformRevenue({
                         proformValues   : self.proformValues,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass: helpers.currencyClass
                     })
                 );
 
@@ -1529,6 +1536,8 @@ define([
                 populate.get2name('#customerDd', '/Customer', {}, this, false, false);
                 populate.getWorkflow('#workflowsDd', '#workflowNamesDd', '/WorkflowsForDd', {id: 'Projects'}, 'name', this);
                 populate.getWorkflow('#workflow', '#workflowNames', '/WorkflowsForDd', {id: 'Jobs'}, 'name', this);
+                populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
+                populate.get("#payment_method", "/paymentMethod", {}, 'name', this, true, true);
 
                 notDiv = this.$el.find('#divForNote');
                 notDiv.html(notesEl);

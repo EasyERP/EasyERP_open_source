@@ -145,24 +145,24 @@ define([
 
             e.preventDefault();
 
-            $selfEl.find('button.approve').hide();
-
-            invoiceId = self.currentModel.get('_id');
-            invoiceDate = this.$el.find('#invoice_date').val();
-            $tr = $('tr[data-id=' + invoiceId + ']');
-            $span = $tr.find('td').eq(10).find('span');
-
-            App.startPreload();
-
-            $buttons = $selfEl.find('button.sendEmail, button.newPayment');
-            url = '/invoice/approve';
-            data = {
-                invoiceId  : invoiceId,
-                invoiceDate: invoiceDate
-            };
-
             this.saveItem(function (err) {
                 if (!err) {
+                    $selfEl.find('button.approve').hide();
+
+                    invoiceId = self.currentModel.get('_id');
+                    invoiceDate = self.$el.find('#invoice_date').val();
+                    $tr = $('tr[data-id=' + invoiceId + ']');
+                    $span = $tr.find('td').eq(10).find('span');
+
+                    App.startPreload();
+
+                    $buttons = $selfEl.find('button.sendEmail, button.newPayment');
+                    url = '/invoice/approve';
+                    data = {
+                        invoiceId  : invoiceId,
+                        invoiceDate: invoiceDate
+                    };
+
                     dataService.patchData(url, data, function (err, response) {
                         if (!err) {
                             self.currentModel.set({approved: true});
@@ -170,9 +170,7 @@ define([
 
                             App.stopPreload();
 
-                            $span.text('Unpaid');
-                            $span.removeClass();
-                            $span.addClass('new');
+                            self.eventChannel.trigger('invoiceUpdated');
 
                             self.$el.find('.input-file').remove();
                             self.$el.find('a.deleteAttach').remove();
@@ -359,7 +357,12 @@ define([
             var whoCanRW = $thisEl.find("[name='whoCanRW']:checked").val();
 
             if (errors.length) {
-                return false;
+                App.stopPreload();
+
+                return App.render({
+                    type: 'error',
+                    message: 'Please fill all required fields.'
+                });
             }
 
             if (selectedLength) {
@@ -572,6 +575,7 @@ define([
                 customer          : customer,
                 total             : total,
                 currencySplitter  : helpers.currencySplitter,
+                currencyClass     : helpers.currencyClass,
                 isFinancial       : isFinancial
             });
 
@@ -634,48 +638,42 @@ define([
 
             populate.get2name("#supplier", "/supplier", {}, this, false);
             populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
-            populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
             populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+
+            if (!model.paymentMethod && model.project && model.project.paymentMethod) {
+                populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true, true, model.project.paymentMethod);
+            } else {
+                populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true, true);
+            }
+            if (!model.paymentTerms && model.project && model.project.paymentTerms) {
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true, model.project.paymentTerms);
+            } else {
+                populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
+            }
+
             populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
-            if (model.workflow.status !== 'New' && model.dueDate) {
-                this.$el.find('#invoice_date').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    disabled   : true,
-                    maxDate    : 0,
-                    onSelect   : function () {
-                        var dueDatePicker = $('#due_date');
-                        var endDate = $(this).datepicker('getDate');
+            this.$el.find('#invoice_date').datepicker({
+                dateFormat : "d M, yy",
+                changeMonth: true,
+                changeYear : true,
+                disabled   : model.approved,
+                maxDate    : 0,
+                onSelect   : function () {
+                    var dueDatePicker = $('#due_date');
+                    var endDate = $(this).datepicker('getDate');
 
-                        endDate.setDate(endDate.getDate());
+                    endDate.setDate(endDate.getDate());
 
-                        dueDatePicker.datepicker('option', 'minDate', endDate);
-                    }
-                });
-            } else {
-                this.$el.find('#invoice_date').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    minDate    : new Date(model.sourceDocument.orderDate),
-                    maxDate    : 0,
-                    onSelect   : function () {
-                        var dueDatePicker = $('#due_date');
-                        var endDate = $(this).datepicker('getDate');
-
-                        endDate.setDate(endDate.getDate());
-
-                        dueDatePicker.datepicker('option', 'minDate', endDate);
-                    }
-                });
-            }
+                    dueDatePicker.datepicker('option', 'minDate', endDate);
+                }
+            });
 
             this.$el.find('#due_date').datepicker({
                 defaultValue: invoiceDate,
                 dateFormat  : "d M, yy",
                 changeMonth : true,
+                disabled    : model.approved,
                 changeYear  : true,
                 onSelect    : function () {
                     var targetInput = $(this);

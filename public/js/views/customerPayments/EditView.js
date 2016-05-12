@@ -33,7 +33,8 @@ define([
 
                 formString = this.template({
                     model           : model,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    currencyClass: helpers.currencyClass
                 });
 
                 buttons = [

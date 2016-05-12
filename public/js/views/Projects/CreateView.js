@@ -6,9 +6,11 @@ define([
         'views/Assignees/AssigneesView',
         'views/Bonus/BonusView',
         'views/selectView/selectView',
-        'custom'
+        'custom',
+        'constants'
+
     ],
-    function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView, selectView, customFile) {
+    function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView, selectView, customFile, constants) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -128,6 +130,8 @@ define([
                 var customer = this.$el.find("#customerDd").attr("data-id");
                 var projecttype = this.$el.find("#projectTypeDD").data("id");
                 var workflow = this.$el.find("#workflowsDd").data("id");
+                var paymentMethod = this.$el.find('#paymentMethod').data('id');
+                var paymentTerms = this.$el.find('#paymentTerms').data('id');
 
                 var bonusContainer = $('#bonusTable');
                 var bonusRow = bonusContainer.find('tr');
@@ -200,6 +204,8 @@ define([
                             customer        : customer ? customer : "",
                             workflow        : workflow ? workflow : "",
                             projecttype     : projecttype ? projecttype : "",
+                            paymentMethod   : paymentMethod,
+                            paymentTerms    : paymentTerms,
                             description     : description,
                             groups          : {
                                 owner: $("#allUsersSelect").data("id"),
@@ -218,7 +224,6 @@ define([
                             },
                             wait   : true,
                             success: function (model, response) {
-
 
                                 customFile.getFiltersValues(true); // added for refreshing filters after creating
 
@@ -280,6 +285,8 @@ define([
                     model: new ProjectModel()
                 });
                 populate.get("#projectTypeDD", "/projectType", {}, "name", this, true, true);
+                populate.get("#paymentTerms", "/paymentTerm", {}, 'name', this, true, true, constants.PAYMENT_TERMS);
+                populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true, true, constants.PAYMENT_METHOD);
                 populate.get2name("#customerDd", "/Customer", {}, this, true, true);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this, true);
 

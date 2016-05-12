@@ -24,7 +24,9 @@ define([
     'moment',
     'constants',
     'helpers/keyCodeHelper',
-    'helpers/employeeHelper'
+    'helpers/employeeHelper',
+    'helpers/overTime',
+    'helpers/isOverTime'
 ], function (Backbone,
              _,
              $,
@@ -50,7 +52,9 @@ define([
              moment,
              CONSTANTS,
              keyCodes,
-             employeeHelper) {
+             employeeHelper,
+             setOverTime,
+             isOverTime) {
     'use strict';
 
     var wTrackListView = listViewBase.extend({
@@ -59,6 +63,7 @@ define([
         listItemView            : listItemView,
         contentCollection       : contentCollection,
         filterView              : filterView,
+        setOverTime             : setOverTime,
         contentType             : 'wTrack',
         viewType                : 'list',
         responseObj             : {},
@@ -92,7 +97,6 @@ define([
         events: {
             'click .stageSelect'                               : 'showNewSelect',
             'click tr.enableEdit td.editable:not(.disabled)'   : 'editRow',
-            'click  #overtime'                                 : 'setOverTime',
             'click td.disabled'                                : 'notify',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'change .autoCalc'                                 : 'autoCalc',
@@ -230,28 +234,6 @@ define([
             //$('#top-bar-generateBtn').hide();
             $('#top-bar-copyBtn').hide();
             $('#top-bar-createBtn').show();
-        },
-
-        setOverTime: function (e) {
-            var target = $(e.target);
-            var newRow = this.$el.find('.false');
-            var id = newRow.attr('data-id');
-
-            if (newRow.hasClass('overtime')) {
-                return false;
-            }
-
-            if (!this.changedModels[id]) {
-                this.changedModels[id] = {};
-            }
-
-            if (target.prop('checked')){
-                this.changedModels[id]._type = 'overtime';
-                newRow.addClass('overtime');
-            } else {
-                this.changedModels[id]._type = 'ordinary';
-                newRow.removeClass('overtime');
-            }
         },
 
         copyRow: function (e) {
@@ -475,7 +457,7 @@ define([
 
                         self.changedModels[editedElementRowId].week = weeks[0].week;
 
-                        self.checkVacHolMonth($tr, false, function (){
+                        self.checkVacHolMonth($tr, false, function () {
                             self.setChangedValueToModel($tr);
                         });
                     });
@@ -499,6 +481,7 @@ define([
             var content = el.data('content');
             var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
             var isWeek = el.attr('data-content') === 'week';
+            var isType = el.attr('data-content') === 'type';
             var isYear = el.attr('data-content') === 'year';
             var isMonth = el.attr('data-content') === 'month';
             var isDay = el.hasClass('autoCalc');
@@ -529,7 +512,7 @@ define([
                 year = year.slice(0, 4);
 
 
-                if (!isOvertime && holiday){
+                if (!isOvertime && holiday) {
                     App.render({
                         type   : 'error',
                         message: 'Please create Overtime tCard'
@@ -564,6 +547,10 @@ define([
                             self.showNewSelect(e);
                             return false;
                         });
+                    } else if (isType) {
+                        el.append('<ul class="newSelectList"><li>OR</li><li>OT</li></ul>');
+
+                        return false;
                     } else {
                         this.showNewSelect(e);
                         return false;
@@ -579,7 +566,7 @@ define([
 
                     this.calculateCost(e, wTrackId);
                 } else if (isYear) {
-                    currentYear = parseInt(moment().year());
+                    currentYear = parseInt(moment().year(), 10);
                     previousYear = currentYear - 1;
                     nextYear = currentYear + 1;
 
@@ -597,38 +584,7 @@ define([
                     insertedInput = el.find('input');
                     insertedInput.focus();
 
-                    // validation for month and days of week
-                    if (isMonth || isDay) {
-                        maxlength = 2;
-
-                        if (isMonth) {
-                            maxValue = 12;
-                        } else {
-                            if (isOvertime){
-                                maxValue = 24;
-                            } else {
-                                maxValue = 8;
-                                maxlength = 1;
-                            }
-
-                        }
-                        insertedInput.attr('maxLength', maxlength);
-                    }
-
-                    insertedInput.keyup(function (e) {
-                        if (insertedInput.val() > maxValue) {
-                            if (isDay && !isOvertime){
-                                App.render({
-                                    type   : 'error',
-                                    message: 'Сreate Overtime tCard for input more than 8 hours'
-                                });
-                            }
-                            e.preventDefault();
-                            insertedInput.val('' + maxValue);
-                        }
-                    });
-
-                    // end
+                    isOverTime(el);
                     insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                     this.autoCalc(e);
@@ -775,6 +731,7 @@ define([
         chooseOption: function (e) {
             var self = this;
             var target = $(e.target);
+            var textVal = target.text();
             var targetElement = target.parents('td');
             var tr = target.parents('tr');
             var modelId = tr.attr('data-id');
@@ -854,6 +811,9 @@ define([
                     changedAttr.jobs = jobs;
 
                     tr.find('[data-content="jobs"]').removeClass('errorContent');
+                } else if (elementType === '#type') {
+                    changedAttr._type = textVal === 'OT' ? 'overtime' : 'ordinary';
+                    this.setOverTime(textVal, tr);
                 } else if (elementType === '#employee') {
                     tr.find('[data-content="department"]').text(element.department.departmentName);
 
@@ -874,17 +834,13 @@ define([
 
                     changedAttr.department = department;
                 } else if (elementType === '#week') {
-                    week = $(e.target).text();
-
-                    changedAttr.week = week;
+                    changedAttr.week = textVal;
                 } else if (elementType === '#year') {
-                    year = $(e.target).text();
-
-                    changedAttr.year = year;
+                    changedAttr.year = textVal;
                 }
 
                 targetElement.removeClass('errorContent');
-                targetElement.text(target.text());
+                targetElement.text(textVal);
             } else if (id === 'createJob') {
                 self.generateJob(e);
             }
@@ -1043,40 +999,41 @@ define([
             this.$el.find('.edited').removeClass('edited');
         },
 
-        savedNewModel: function (modelObject) {
-            var savedRow = this.$listTable.find(".false[data-id='" + modelObject.cid + "']"); // additional selector for finding old row by cid (in case of multiply copying)
+        savedNewModel: function (modelObjects) {
+            var $savedRow = this.$listTable.find(".false[data-id='" + modelObjects.cid + "']"); // additional selector for finding old row by cid (in case of multiply copying)
+            var $checkbox = $savedRow.find('input[type=checkbox]');
             var modelId;
-            var checkbox = savedRow.find('input[type=checkbox]');
 
-            modelObject = modelObject.success;
+            // modelObject = modelObject.success;
 
-            if (modelObject) {
+            modelObjects.forEach(function (modelObject) { // now only one element from list? because we hav ot checkbox
                 modelId = modelObject._id;
-                savedRow.attr("data-id", modelId);
-                checkbox.val(modelId);
-                savedRow.removeAttr('id');
-                savedRow.removeClass('false');
-            }
+                $savedRow.attr('data-id', modelId);
+                $checkbox.val(modelId);
+                $savedRow.removeAttr('id');
+            });
 
             this.hideSaveCancelBtns();
-            this.hideOvertime();
-            this.resetCollection(modelObject);
+            // this.hideOvertime();
+            this.resetCollection(modelObjects);
         },
 
-        hideOvertime: function () {
-            this.$el.find('#overtime input').attr('checked', false);
-            this.$el.find('#overtime').hide();
-        },
+        /* hideOvertime: function () {
+         this.$el.find('#overtime input').attr('checked', false);
+         this.$el.find('#overtime').hide();
+         }, */
 
-        resetCollection: function (model) {
-            if (model && model._id) {
-                model = new currentModel(model);
-                this.collection.add(model);
+        resetCollection: function (models) {
+            var id;
+
+            if (models && models.length) {
+                // model = new currentModel(model);
+                this.collection.add(models);
             } else {
                 this.collection.set(this.editCollection.models, {remove: false});
             }
 
-            for (var id in this.changedModels) {
+            for (id in this.changedModels) {
                 delete this.changedModels[id];
                 this.editCollection.remove(id);
             }
@@ -1132,7 +1089,7 @@ define([
         setChangedValue: function () {
             if (!this.changed) {
                 this.changed = true;
-                this.showSaveCancelBtns()
+                this.showSaveCancelBtns();
             }
         },
 
@@ -1157,7 +1114,7 @@ define([
                 _type       : 'ordinary'
             };
 
-            this.$el.find('#overtime').show();
+            // this.$el.find('#overtime').show();
 
             var model = new currentModel(startData);
 
@@ -1473,7 +1430,7 @@ define([
 
             if (this.createdCopied) {
                 copiedCreated = this.$el.find('.false');
-                this.hideOvertime();
+                // this.hideOvertime();
                 copiedCreated.each(function () {
                     dataId = $(this).attr('data-id');
                     self.editCollection.remove(dataId);
@@ -1561,7 +1518,7 @@ define([
                 self.responseObj['#employee'] = employees;
             });
 
-            dataService.getData('/department/getForDD', {devDepartments : true}, function (departments) {
+            dataService.getData('/department/getForDD', {devDepartments: true}, function (departments) {
                 departments = _.map(departments.data, function (department) {
                     department.name = department.departmentName;
 

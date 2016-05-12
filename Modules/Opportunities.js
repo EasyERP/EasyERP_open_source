@@ -592,9 +592,9 @@ var Opportunities = function (models, event) {
             var tempObj = {};
             var query = {};
             var ids;
+
             query['$or'] = [];
             filter['$and'] = [];
-
 
             for (var key in data) {
                 ids = [];

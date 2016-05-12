@@ -71,6 +71,15 @@ define([
             },
 
             chooseOption : function (e) {
+                //var currencyElement = $(e.target).parents('dd').find('.current-selected');
+                //var oldCurrency = currencyElement.attr('data-id');
+                //var newCurrency = $(e.target).attr('id');
+                //var oldCurrencyClass = helpers.currencyClass(oldCurrency);
+                //var newCurrencyClass = helpers.currencyClass(newCurrency);
+                //
+                //var array = this.$el.find('.' + oldCurrencyClass);
+                //array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
@@ -596,7 +605,7 @@ define([
                     }).render().el
                 );
 
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this/*, true, true*/);
+                //populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this/*, true, true*/);
 
                 populate.get("#destination", "/destination", {}, 'name', this, false, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);

@@ -1,6 +1,7 @@
 <tr class="false enableEdit" data-id="<%=cid%>">
     <td class="notForm"><input type="checkbox" class="checkbox listCB" value="<%=cid%>"/></td>
     <td>New</td>
+    <td class="editable centerCell textUnderlineHover" data-content="type">OR</td>
     <td data-content="jobs" class="<%= projectModel ? 'editable' : ''%> errorContent"></td>
     <td data-content="assigned"><%= projectModel && projectModel.salesmanager ? projectModel.salesmanager.name.first + ' ' +
         projectModel.salesmanager.name.last : ''%>

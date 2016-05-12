@@ -700,7 +700,9 @@ define([], function () {
 
         MIN_DATE          : '2014-08-01',
 
-        INVOICE_JOURNAL: '565ef6ba270f53d02ee71d65',
-        PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146'
+        INVOICE_JOURNAL : '565ef6ba270f53d02ee71d65',
+        PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146',
+        PAYMENT_TERMS   : '55536e52475b7be475f335f6',
+        PAYMENT_METHOD  : '565f2e05ab70d49024242e07'
     };
 });

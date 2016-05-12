@@ -325,9 +325,9 @@
                                 <div class="other-info-container">
                                     <div class="half-block left">
                                         <dl class="opp-info">
-                                            <dt><label for="bank_account">Bank Account</label></dt>
+                                            <dt><label for="paymentMethod">Bank Account</label></dt>
                                             <dd>
-                                                <a id="bank_account" href="javascript:;">Select</a>
+                                                <a id="paymentMethod" class="current-selected" href="javascript:;"><%=model.paymentMethod || 'Select'%></a>
                                             </dd>
 
                                             <!--<dt><label for="salesPerson">Responsible</label></dt>
@@ -337,9 +337,9 @@
                                                    class="current-selected" href="javascript:;"></a>
                                             </dd>-->
 
-                                            <dt><label for="payment_terms">Payment Terms</label></dt>
+                                            <dt><label for="paymentTerm">Payment Terms</label></dt>
                                             <dd>
-                                                <a id="payment_terms" href="javascript:;">Select</a>
+                                                <a id="paymentTerm" class="current-selected" href="javascript:;"><%=model.paymentTerms || 'Select'%></a>
                                             </dd>
                                         </dl>
                                     </div>
