@@ -30,7 +30,7 @@ define([
             "easyErp/productSettings"                                                                       : "productSettings",
             "easyErp/myProfile"                                                                             : "goToUserPages",
             "easyErp/Workflows"                                                                             : "goToWorkflows",
-            "easyErp/Accounts"                                                                            : "goToAccounts",
+            "easyErp/Accounts"                                                                              : "goToAccounts",
             "easyErp/Dashboard"                                                                             : "goToDashboard",
             "easyErp/DashBoardVacation(/filter=:filter)"                                                    : "dashBoardVacation",
             "easyErp/invoiceCharts(/filter=:filter)"                                                        : "invoiceCharts",
