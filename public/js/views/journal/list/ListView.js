@@ -52,7 +52,7 @@ define([
             },
 
             removeInputs: function () {
-                //this.setChangedValueToModel();
+                this.setChangedValueToModel();
                 if (this.selectView) {
                     this.selectView.remove();
                 }
@@ -370,17 +370,18 @@ define([
                         this.changedModels[editedElementRowId] = {};
                     }
 
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                    if (editedElementContent === 'name') {
+                        if (!editedElementValue.length){
+                            editedElement.addClass('errorContent');
 
-                    if (editedElementContent === 'code') {
-                        editedElementValue = parseInt(editedElementValue, 10);
-
-                        if (isNaN(editedElementValue)) {
-                            editedCol.addClass('errorContent');
-                            editedElementValue = '';
+                            return App.render({
+                                type   : 'error',
+                                message: "Journal Name field can't be empty."
+                            });
                         } else {
-                            editedCol.removeClass('errorContent');
+                            editedElement.removeClass('errorContent');
                         }
+
                     }
 
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
