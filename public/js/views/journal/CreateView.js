@@ -72,6 +72,13 @@ define([
                 data.debitAccount = thisEl.find('#debitDd').attr('data-id');
                 data.creditAccount = thisEl.find('#creditDd').attr('data-id');
 
+                if (!data.name.length){
+                   return App.render({
+                       type   : 'error',
+                       message: "Journal Name field can't be empty."
+                   });
+                }
+
                 this.model.save(data, {
                     headers: {
                         mid: mid
