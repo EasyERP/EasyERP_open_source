@@ -1626,7 +1626,7 @@ var Invoice = function (models, event) {
                                         req     : req,
                                         jobId   : id,
                                         workflow: CONSTANTS.JOBSINPROGRESS,
-                                        wTracks : result.wTracks,
+                                        wTracks : result ? result.wTracks : [],
                                         date    : invoiceDeleted.invoiceDate
                                     });
 

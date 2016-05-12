@@ -992,11 +992,11 @@ var TCard = function (event, models) {
 
                     projectId = tCard ? tCard.project : null;
 
-                    journalEntry.removeBySourceDocument(req, wTrack._id);
+                    journalEntry.removeBySourceDocument(req, tCard._id);
 
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
-                    event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
+                    event.emit('setReconcileTimeCard', {req: req, week: tCard.week, year: tCard.year});
                     event.emit('updateRevenue', {wTrack: tCard, req: req});
 
                     if (projectId) {

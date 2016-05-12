@@ -546,7 +546,9 @@ var Project = function (models, event) {
                     condition.push({'customer._id': {$in: filter.customer.value.objectID()}});
                     break;
                 case 'projectmanager':
-                    condition.push({'projectmanager._id': {$in: filter.projectmanager.value.objectID()}});
+                    if (filter.projectmanager && filter.projectmanager.value){
+                        condition.push({'projectmanager._id': {$in: filter.projectmanager.value.objectID()}});
+                    }
                     break;
                 case 'salesmanager':
                     condition.push({'salesmanager._id': {$in: filter.salesmanager.value.objectID()}});
