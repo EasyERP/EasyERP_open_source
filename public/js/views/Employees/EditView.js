@@ -203,11 +203,13 @@ define([
                 var maxDate = null;
 
                 tempContainer = ($target.text()).trim();
-                $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
 
                 if (dataId === 'salary') {
+                    $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '">');
                     return false;
                 }
+
+                $target.html('<input class="editing statusInfo" type="text" value="' + tempContainer + '" ' + 'readonly' + '>');
 
                 if (parseInt(trNum) > 0) {
                     minDate = $tr.prev().find('td.date').text();
@@ -473,7 +475,8 @@ define([
                     $tr = $($tr);
                     salary = self.isSalary ? parseInt($tr.find('[data-id="salary"] input').val() || $tr.find('[data-id="salary"]').text()) : null;
                     manager = $tr.find('#projectManagerDD').attr('data-id') || null;
-                    date = new Date($.trim($tr.find('td').eq(2).text()));
+                    date = $.trim($tr.find('td').eq(2).text());
+                    date = date ? new Date(date) : new Date();
                     jobPosition = $tr.find('#jobPositionDd').attr('data-id');
                     department = $tr.find('#departmentsDd').attr('data-id');
                     jobType = $.trim($tr.find('#jobTypeDd').text());
