@@ -110,7 +110,6 @@ define([
             var prevTd = row.nextAll().find('td[data-id="' + content + '"]').first();
             var prevRow = prevTd.closest('tr');
             var prevEndDate = prevRow.find('.endDateManager').text();
-            var prevDate;
 
             if (!prevTd.length) {
                 return false;
@@ -308,13 +307,46 @@ define([
             var targetRow = target.parents('tr');
             var isNewRow = targetRow.hasClass('false');
             var rowId = targetRow.attr('data-id');
-            var startDate;
             var id = target.attr('id') || null;
+            var today = moment().startOf('day');
             var dataType;
             var nextDay;
-            var today = moment().startOf('day').toDate().getTime();
+            var startDate;
+
 
             dataType = targetElement.data('content') + 'Id';
+
+            targetElement.attr('data-id', id);
+
+            if (dataType === 'projectPositionId') {
+                //this.removePrevPosition();
+                startDate = this.prevEndDate(targetRow);
+
+                if (startDate === 'To end of project') {
+                    return App.render({
+                        type   : 'error',
+                        message: "Please choose previous Member's End Date"
+                    });
+                }
+
+                if (startDate && today.isSame(startDate)) {
+                    return App.render({
+                        type   : 'error',
+                        message: "Previous Member's End Date is today"
+                    });
+                }
+
+                if (startDate) {
+                    nextDay = common.utcDateToLocaleDate(moment(startDate).add(1, 'd').toDate());
+                    targetRow.find('.startDateManager').text(nextDay);
+                    this.changedModels[rowId].startDate = startDate;
+                } else {
+                    targetRow.find('.startDateManager').text('From start of project');
+                    this.changedModels[rowId].startDate = null;
+                }
+
+                targetElement.removeClass('errorContent');
+            }
 
             if (!this.changedModels[rowId]) {
                 this.changedModels[rowId] = {};
@@ -330,41 +362,8 @@ define([
                 targetElement.text('');
             }
 
-            targetElement.attr('data-id', id);
-
             if (!isNewRow) {
                 targetRow.addClass('edited');
-            }
-
-            if (dataType === 'projectPositionId') {
-                //this.removePrevPosition();
-
-                if (this.prevEndDate(targetRow) === 'To end of project') {
-                    return App.render({
-                        type   : 'error',
-                        message: "Please choose previous Member's End Date"
-                    });
-                }
-                if (today === this.prevEndDate(targetRow).getTime()) {
-                    return App.render({
-                        type   : 'error',
-                        message: "Previous Member's End Date is today"
-                    });
-                }
-
-                startDate = this.prevEndDate(targetRow);
-                nextDay = common.utcDateToLocaleDate(moment(startDate).add(1, 'd').toDate());
-
-                if (this.prevEndDate(targetRow)) {
-                    targetRow.find('.startDateManager').text(nextDay);
-                    this.changedModels[rowId].startDate = startDate;
-                    //this.updatePrevMembers(targetRow, startDate);
-                } else {
-                    targetRow.find('.startDateManager').text('From start of project');
-                    this.changedModels[rowId].startDate = null;
-                }
-
-                targetElement.removeClass('errorContent');
             }
 
             this.hideNewSelect();
