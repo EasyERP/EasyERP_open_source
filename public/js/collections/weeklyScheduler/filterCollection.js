@@ -4,7 +4,7 @@
     function (WeeklySchedulerModel) {
         var InvoiceCollection = Backbone.Collection.extend({
             model       : WeeklySchedulerModel,
-            url         : '/weeklyScheduler/',
+            url         : '/weeklyScheduler/list/',
             page        : null,
             namberToShow: null,
             viewType    : null,

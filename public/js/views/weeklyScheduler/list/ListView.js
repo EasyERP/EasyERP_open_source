@@ -44,12 +44,51 @@ define([
                 self.eventChannel = eventChannel;
                 self.collection = new ContentCollection({count: 100});
 
-                this.collection.bind('reset', this.render, self);
+                self.collection.bind('reset', this.render, self);
             },
 
             events: {
                 "click  .list tbody td:not(.notForm, .validated)": "goToEditDialog",
-                "click .newSelectList li"                        : "chooseOption"
+                "click  .fa-plus": "create",
+                "click  .fa-trash-o": "remove"
+            },
+
+            create: function (e) {
+                var self = this;
+
+                e.preventDefault();
+
+                new CreateView({eventChannel: self.eventChannel});
+            },
+
+            remove: function (e) {
+                var self = this;
+                var modelId = $(e.target).closest('tr').attr('data-id');
+                var model;
+
+                e.preventDefault();
+                e.stopPropagation();
+
+                if (confirm('Are you sure you want to DELETE this Weekly Scheduler?')) {
+                    model = self.collection.get(modelId);
+                    model.destroy({
+                        success: function(model, response) {
+                            self.eventChannel.trigger('updateWeeklyScheduler');
+                    }});
+                }
+            },
+
+            goToEditDialog: function (e) {
+                var self = this;
+                var modelId = $(e.target).closest('tr').attr('data-id');
+                var model = self.collection.get(modelId);
+
+                e.preventDefault();
+
+                new editView({
+                    eventChannel: self.eventChannel,
+                    model: model
+                });
             },
 
             render: function () {
@@ -73,7 +112,8 @@ define([
 
                     itemView = new listItemView({
                         collection : self.collection,
-                        page       : self.page
+                        page       : self.page,
+                        itemsNumber:1
                     });
 
                     $currentEl.append(itemView.render());

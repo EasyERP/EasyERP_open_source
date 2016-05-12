@@ -1,396 +1,149 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone',
-    'text!templates/DividendInvoice/EditTemplate.html',
-    'views/Notes/AttachView',
-    'views/Assignees/AssigneesView',
-    'views/DividendInvoice/InvoiceProductItems',
-    'views/salesInvoice/wTrack/wTrackRows',
-    'views/DividendPayments/CreateView',
-    'views/salesInvoice/EmailView',
-    'views/Payment/list/ListHeaderInvoice',
-    'common',
-    'custom',
-    'dataService',
-    'populate',
-    'constants',
-    'helpers'
-], function ($,
-             _,
-             Backbone,
-             EditTemplate,
-             attachView,
-             AssigneesView,
-             InvoiceItemView,
-             wTrackRows,
-             PaymentCreateView,
-             EmailVew,
-             listHederInvoice,
-             common,
-             Custom,
-             dataService,
-             populate,
-             CONSTANTS,
-             helpers) {
-    'use strict';
+        'jQuery',
+        'Underscore',
+        'Backbone',
+        "text!templates/weeklyScheduler/EditTemplate.html",
+        "models/WeeklySchedulerModel",
+        "common",
+        "populate",
+        "dataService",
+        'constants'
+    ],
+    function ($, _, Backbone, CreateTemplate, WeeklySchedulerModel, common, populate, dataService, CONSTANTS) {
 
-    var EditView = Backbone.View.extend({
-        contentType: 'Invoice',
-        template   : _.template(EditTemplate),
+        var EditView = Backbone.View.extend({
+            el         : '#content-holder',
+            contentType: 'weeklyScheduler',
+            template   : _.template(CreateTemplate),
 
-        events: {
-            'click #saveBtn'                                                  : 'saveItem',
-            'click #cancelBtn'                                                : 'hideDialog',
-            'click .current-selected'                                         : 'showNewSelect',
-            click                                                             : 'hideNewSelect',
-            'click .dialog-tabs a'                                            : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
-            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
-            'click .details'                                                  : 'showDetailsBox',
-            'click .newPayment'                                               : 'newPayment',
-            'click .sendEmail'                                                : 'sendEmail',
-            'click .approve'                                                  : 'approve',
-            'click .cancelInvoice'                                            : 'cancelInvoice',
-            // 'click .refund': 'refund',
-            'click .setDraft'                                                 : 'setDraft'
+            initialize: function (options) {
+                var self = this;
 
-        },
+                self.model = options.model;
+                self.eventChannel = options.eventChannel;
 
-        initialize: function (options) {
+                self.render();
+            },
 
-            _.bindAll(this, 'render', 'deleteItem');
+            events: {
+                'keyup td[data-type="input"]': 'recalcTotal'
+            },
 
-            this.eventChannel = options.eventChannel;
+            recalcTotal: function(e) {
+                var self = this;
+                var totalHours = 0;
+                var $currentEl = this.$el;
+                var hours;
 
-            this.isWtrack = !!options.isWtrack;
-            this.filter = options.filter;
+                e.preventDefault();
 
-            this.currentModel = (options.model) ? options.model : options.collection.getElement();
-            this.currentModel.urlRoot = '/Invoice';
-            this.responseObj = {};
+                for (var i = 7; i > 0; i--) {
+                    hours = parseInt($currentEl.find('td[data-content="' + i + '"] input').val());
+                    totalHours += isNaN(hours) ? 0 : hours;
+                }
 
-            this.redirect = options.redirect;
-            this.collection = options.collection;
+                $currentEl.find('#totalHours span').text(totalHours);
+            },
 
-            this.notCreate = options.notCreate ? false : true;
+            saveItem: function () {
+                var self = this;
+                var model;
+                var hours;
+                var $currentEl = this.$el;
 
-            this.render();
+                var name = $.trim($currentEl.find('#weeklySchedulerName input').val());
+                var totalHours = $currentEl.find('#totalHours span').text();
 
-            App.stopPreload();
-        },
+                var data = {
+                    name: name,
+                    totalHours: totalHours
+                };
 
-        newPayment: function (e) {
-            var paymentView;
-            var self = this;
-            var model = self.currentModel.toJSON();
-
-            model.currency.name = model.currency._id.name;
-            model.currency._id = model.currency._id._id;
-
-            self.currentModel.set({currency:  model.currency});
-
-            e.preventDefault();
-
-            self.hideDialog();
-
-            paymentView = new PaymentCreateView({
-                model       : self.currentModel,
-                redirect    : self.redirect,
-                collection  : self.collection,
-                mid         : 100,
-                currency    : model.currency,
-                eventChannel: self.eventChannel
-            });
-
-        },
-
-        cancelInvoice: function (e) {
-            e.preventDefault();
-
-            var wId;
-
-            var self = this;
-            var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
-
-            if (self.forSales) {
-                wId = 'Sales Invoice';
-            } else {
-                wId = 'Purchase Invoice';
-            }
-
-            populate.fetchWorkflow({
-                wId         : wId,
-                source      : 'purchase',
-                targetSource: 'invoice',
-                status      : 'Cancelled',
-                order       : 1
-            }, function (workflow) {
-                if (workflow && workflow.error) {
+                if (!name) {
                     return App.render({
-                        type   : 'error',
-                        message: workflow.error.statusText
+                        type: 'error',
+                        message: 'name can\'t be empty'
                     });
                 }
 
-                self.currentModel.save({
-                    workflow: workflow._id
-                }, {
-                    headers: {
-                        mid: 57
-                    },
+                for (var i = 7; i > 0; i--) {
+                    hours = parseInt($currentEl.find('td[data-content="' + i + '"] input').val());
+                    hours = isNaN(hours) ? 0 : hours;
+
+                    if (hours < 0 || hours > 24) {
+                        return App.render({
+                            type: 'error',
+                            message: 'hours should be in 0-24 range'
+                        });
+                    }
+
+                    data[i] = hours;
+                }
+
+                model = self.model;
+                model.urlRoot = function () {
+                    return 'weeklyScheduler';
+                };
+
+                model.save(data, {
                     patch  : true,
-                    success: function () {
-                        Backbone.history.navigate(redirectUrl, {trigger: true});
-                    }
-                });
-            });
-        },
-
-        setDraft: function (e) {
-            e.preventDefault();
-
-            var self = this;
-            var wId;
-
-            if (self.forSales) {
-                wId = 'Sales Invoice';
-            } else {
-                wId = 'Purchase Invoice';
-            }
-
-            var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
-
-            populate.fetchWorkflow({
-                wId: wId
-            }, function (workflow) {
-                if (workflow && workflow.error) {
-                    return App.render({
-                        type   : 'error',
-                        message: workflow.error.statusText
-                    });
-                }
-
-                self.currentModel.save({
-                    workflow: workflow._id
-                }, {
                     headers: {
-                        mid: 57
+                        mid: 103
                     },
-                    patch  : true,
+                    wait   : true,
                     success: function () {
-                        Backbone.history.navigate(redirectUrl, {trigger: true});
-                    }
-                });
-            });
-        },
-
-        showDetailsBox: function (e) {
-            $(e.target).parent().find(".details-box").toggle();
-        },
-        notHide       : function () {
-            return false;
-        },
-        nextSelect    : function (e) {
-            this.showNewSelect(e, false, true);
-        },
-        prevSelect    : function (e) {
-            this.showNewSelect(e, true, false);
-        },
-
-        changeTab: function (e) {
-            var holder = $(e.target);
-            var n;
-            var dialog_holder;
-            var closestEl = holder.closest('.dialog-tabs');
-            var dataClass = closestEl.data('class');
-            var selector = '.dialog-tabs-items.' + dataClass;
-            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
-            var itemSelector = '.dialog-tabs-item.' + dataClass;
-
-            closestEl.find("a.active").removeClass("active");
-            holder.addClass("active");
-
-            n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-            dialog_holder = $(selector);
-
-            dialog_holder.find(itemActiveSelector).removeClass("active");
-            dialog_holder.find(itemSelector).eq(n).addClass("active");
-        },
-
-        chooseUser: function (e) {
-            $(e.target).toggleClass("choosen");
-        },
-
-        hideDialog: function () {
-            $('.edit-invoice-dialog').remove();
-        },
-
-        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $(".newSelectList").hide();
-        },
-        chooseOption : function (e) {
-            var holder = $(e.target).parents("dd").find(".current-selected");
-            holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-        },
-
-        deleteItem: function (event) {
-            var url = window.location.hash;
-            var self = this;
-
-            // var redirectUrl = this.forSales ? url : "easyErp/Invoice";
-
-            event.preventDefault();
-
-            var answer = confirm("Really DELETE items ?!");
-            if (answer == true) {
-                this.currentModel.destroy({
-                    success: function () {
-                        $('.edit-invoice-dialog').remove();
-
                         self.hideDialog();
-                        self.eventChannel && self.eventChannel.trigger('invoiceRemove');
+                        self.eventChannel.trigger('updateWeeklyScheduler');
                     },
-                    error  : function (model, err) {
-                        if (err.status === 403) {
-                            App.render({
-                                type   : 'error',
-                                message: "You do not have permission to perform this action"
-                            });
-                        }
+                    error  : function (model, xhr) {
+                        self.errorNotification(xhr);
                     }
                 });
-            }
+            },
 
-        },
+            hideDialog: function () {
+                $(".edit-dialog").remove();
+                $(".add-group-dialog").remove();
+                $(".add-user-dialog").remove();
+                $(".crop-images-dialog").remove();
+            },
 
-        render: function () {
-            var self = this;
-            var formString;
-            var notDiv;
-            var model;
-            var invoiceItemContainer;
-            var paymentContainer;
-            var wTracks;
-            var project;
-            var assigned;
-            var customer;
-            var total;
-            var wTracksDom;
-            var buttons;
-            var invoiceDate;
-            var isFinancial;
+            render: function () {
+                var self = this;
+                var formString = this.template({model: self.model.toJSON()});
 
-            model = this.currentModel.toJSON();
-            invoiceDate = model.invoiceDate;
+                this.$el = $(formString).dialog({
+                    closeOnEscape: false,
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Create WeeklyScheduler",
+                    width        : "900px",
+                    position     : {within: $("#wrapper")},
+                    buttons      : [
+                        {
+                            id   : "create-weeklyScheduler-dialog",
+                            text : "Save",
+                            click: function () {
+                                self.saveItem();
+                            }
+                        },
 
-            this.isPaid = (model && model.workflow) ? model.workflow.status === 'Done' : false;
+                        {
+                            text : "Cancel",
+                            click: function () {
+                                self.hideDialog();
+                            }
+                        }]
 
-            this.notAddItem = true;
-
-            if (this.isWtrack) {
-                wTracks = _.map(model.products, function (product) {
-                    return product.product;
                 });
-                project = model.project;
-                assigned = model.salesPerson;
-                customer = model.supplier;
-                total = model.paymentInfo ? model.paymentInfo.total : '0.00';
+
+                this.delegateEvents(this.events);
+
+                return this;
             }
 
-            isFinancial = CONSTANTS.INVOICE_APPROVE_PROFILES.indexOf(App.currentUser.profile._id) !== -1;
+        });
 
-            formString = this.template({
-                model           : this.currentModel.toJSON(),
-                isWtrack        : self.isWtrack,
-                isPaid          : this.isPaid,
-                notAddItem      : this.notAddItem,
-                wTracks         : wTracks,
-                project         : project,
-                assigned        : assigned,
-                customer        : customer,
-                total           : total,
-                currencySplitter: helpers.currencySplitter,
-                isFinancial     : isFinancial
-            });
-
-
-            buttons = [
-                {
-                    text : "Close",
-                    click: function () {
-                        self.hideDialog();
-                    }
-                }, {
-                    text : "Delete",
-                    click: self.deleteItem
-                }
-            ];
-
-
-            this.$el = $(formString).dialog({
-                closeOnEscape: false,
-                autoOpen     : true,
-                resizable    : true,
-                dialogClass  : "edit-invoice-dialog",
-                title        : "Edit Invoice",
-                width        : '900',
-                position     : {my: "center bottom", at: "center", of: window},
-                buttons      : buttons
-
-            });
-
-            notDiv = this.$el.find('.assignees-container');
-            notDiv.append(
-                new AssigneesView({
-                    model: this.currentModel
-                }).render().el
-            );
-
-            paymentContainer = this.$el.find('#payments-container');
-            paymentContainer.append(
-                new listHederInvoice().render({model: this.currentModel.toJSON()}).el
-            );
-
-            this.delegateEvents(this.events);
-
-            invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
-
-            invoiceItemContainer.append(
-                new InvoiceItemView({
-                    balanceVisible: true,
-                    forSales      : self.forSales,
-                    isPaid        : this.isPaid,
-                    notAddItem    : this.notAddItem
-                }).render({model: model}).el
-            );
-
-            if (model.groups) {
-                if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $(".groupsAndUser").show();
-                    model.groups.group.forEach(function (item) {
-                        $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.departmentName + "</td><td class='text-right'></td></tr>");
-                        $("#targetGroups").append("<li id='" + item._id + "'>" + item.departmentName + "</li>");
-                    });
-                    model.groups.users.forEach(function (item) {
-                        $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                        $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
-                    });
-
-                }
-            }
-
-            return this;
-        }
-
+        return EditView;
     });
-
-    return EditView;
-});

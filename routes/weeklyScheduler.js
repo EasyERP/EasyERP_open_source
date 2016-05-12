@@ -16,5 +16,9 @@ module.exports = function (models) {
         }
     });
 
+    router.post('/', handler.create);
+    router.delete('/:id', handler.delete);
+    router.patch('/:id', handler.update);
+
     return router;
 };

@@ -11,6 +11,7 @@ define([
               Backbone,
               listTemplate,
               weeklySchedulerView) {
+
         var SettingsEmployeeListView = Backbone.View.extend({
             el         : '#content-holder',
             template: _.template(listTemplate),
@@ -24,7 +25,17 @@ define([
 
                 this.render();
 
-                self.weeklySchedulerView = new weeklySchedulerView({eventChannel: eventChannel});
+                self.eventChannel.on('updateWeeklyScheduler', self.getWeeklyScheduler, self);
+            },
+
+            getWeeklyScheduler: function () {
+                var self = this;
+
+                if (self.weeklySchedulerView) {
+                    self.weeklySchedulerView.undelegateEvents();
+                }
+
+                self.weeklySchedulerView = new weeklySchedulerView({eventChannel: self.eventChannel});
             },
 
             render: function () {
@@ -33,6 +44,8 @@ define([
 
                 $currentEl.html('');
                 $currentEl.append(self.template());
+
+                self.getWeeklyScheduler();
 
             }
 
