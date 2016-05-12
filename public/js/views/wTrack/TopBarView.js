@@ -8,7 +8,7 @@ define([
 ], function (Backbone, _, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
     var TopBarView = Backbone.View.extend({
         el         : '#top-bar',
-        contentType: CONSTANTS.WTRACK,
+        contentType: 'tCard',
         template   : _.template(ContentTopBarTemplate),
 
         events: {
