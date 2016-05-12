@@ -186,7 +186,12 @@ var Proforma = function (models) {
                 if (err) {
                     return next(err);
                 }
-                callback(err, quotation[0]);
+                Quotation.update({_id: objectId(id)}, {$inc: {proformaCounter: 1}}, {new: true}, function(err, res) {
+                    if (err) {
+                        return next(err);
+                    }
+                    callback(err, quotation[0]);
+                });
             });
         }
 

@@ -297,21 +297,34 @@ define([
         },
 
         checked: function (e) {
+            e.stopPropagation();
+
             var el = this.$el;
-
+            var $targetEl = $(e.target);
             var checkLength = el.find("input.checkbox:checked").length;
+            var checkAll$ = el.find('#check_all_quotations');
+            var removeBtnEl = $('#removePayment');
 
-            if (el.find("input.checkbox:checked").length > 0) {
-                el.find("#removeQuotation").show();
-                el.find('#check_all_quotations').prop('checked', false);
+            if ($targetEl.hasClass('notRemovable')) {
+                $targetEl.prop('checked', false);
 
-                if (checkLength === this.collection.length) {
-                    el.find('#check_all_quotations').prop('checked', true);
-                }
+                return false;
             }
-            else {
-                el.find("#removeQuotation").hide();
-                el.find('#check_all_quotations').prop('checked', false);
+
+            if (this.collection.length > 0) {
+                if (checkLength > 0) {
+                    checkAll$.prop('checked', false);
+
+                    removeBtnEl.show();
+
+                    if (checkLength == this.collection.length) {
+
+                        checkAll$.prop('checked', true);
+                    }
+                } else {
+                    removeBtnEl.hide();
+                    checkAll$.prop('checked', false);
+                }
             }
         },
 
@@ -347,7 +360,7 @@ define([
             this.$el.find('#removeQuotation').hide();
 
             $('#check_all_quotations').click(function () {
-                self.$el.find(':checkbox').prop('checked', this.checked);
+                self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
                     $("#removeQuotation").show();
                 } else {
