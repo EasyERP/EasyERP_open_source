@@ -1294,16 +1294,25 @@ define([
                 var orderSum = 0;
                 var jobSum = 0;
                 var jobsCount = 0;
+                var tempSum = 0;
 
                 ordersCollectionJSON.forEach(function (element) {
                     if (element.paymentInfo) {
-                        orderSum += parseFloat(element.paymentInfo.total);
+                        tempSum = parseFloat(element.paymentInfo.total);
+                        if (element.currency && element.currency.rate) {
+                            tempSum /= element.currency.rate;
+                        }
+                        orderSum += tempSum;
                     }
                 });
 
                 qCollectionJSON.forEach(function (element) {
                     if (element.paymentInfo) {
-                        sum += parseFloat(element.paymentInfo.total);
+                        tempSum = parseFloat(element.paymentInfo.total);
+                        if (element.currency && element.currency.rate) {
+                            tempSum /= element.currency.rate;
+                        }
+                        sum += tempSum;
                     }
                 });
 
