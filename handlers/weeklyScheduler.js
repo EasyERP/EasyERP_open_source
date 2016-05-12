@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var Invoice = function (models) {
+var WeeklyScheduler = function (models) {
     "use strict";
 
     var WeeklySchedulerSchema = mongoose.Schemas.weeklyScheduler;
@@ -121,4 +121,4 @@ var Invoice = function (models) {
 
 };
 
-module.exports = Invoice;
+module.exports = WeeklyScheduler;
