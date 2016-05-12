@@ -232,24 +232,25 @@ define([
 
                 e.preventDefault();
 
-                proformaId = self.currentModel.get('_id');
-                $li = $('button.approve').parent('li');
-                $tr = $('tr[data-id=' + proformaId + ']');
-                $priceInputs = self.$el.find('td[data-name="price"]');
-                $currencyDd = self.$el.find('#currencyDd');
-                invoiceDate = self.$el.find('#invoice_date').val();
-
-                App.startPreload();
-
-                payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
-                url = '/invoice/approve';
-                data = {
-                    invoiceId: proformaId,
-                    invoiceDate: invoiceDate
-                };
-
                 this.saveItem(function (err) {
                     if (!err) {
+
+                        proformaId = self.currentModel.get('_id');
+                        $li = $('button.approve').parent('li');
+                        $tr = $('tr[data-id=' + proformaId + ']');
+                        $priceInputs = self.$el.find('td[data-name="price"]');
+                        $currencyDd = self.$el.find('#currencyDd');
+                        invoiceDate = self.$el.find('#invoice_date').val();
+
+                        App.startPreload();
+
+                        payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
+                        url = '/invoice/approve';
+                        data = {
+                            invoiceId: proformaId,
+                            invoiceDate: invoiceDate
+                        };
+
                         dataService.patchData(url, data, function (err, response) {
                             if (!err) {
 
@@ -340,7 +341,12 @@ define([
                 };
 
                 if (errors.length) {
-                    return false;
+                    App.stopPreload();
+
+                    return App.render({
+                        type: 'error',
+                        message: 'Please fill all required fields.'
+                    });
                 }
 
                 if (selectedLength) {
@@ -615,45 +621,28 @@ define([
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
               //  populate.get("#journal", "/journal/getForDd", {}, 'name', this, true);
 
-                if (model.workflow.status !== 'New') {
-                    this.$el.find('#invoice_date').datepicker({
-                        dateFormat : "d M, yy",
-                        changeMonth: true,
-                        changeYear : true,
-                        disabled   : true,
-                        maxDate    : 0,
-                        onSelect   : function () {
-                            var dueDatePicker = $('#due_date');
-                            var endDate = $(this).datepicker('getDate');
+                this.$el.find('#invoice_date').datepicker({
+                    dateFormat : "d M, yy",
+                    changeMonth: true,
+                    changeYear : true,
+                    disabled   : model.approved,
+                    maxDate    : 0,
+                    onSelect   : function () {
+                        var dueDatePicker = $('#due_date');
+                        var endDate = $(this).datepicker('getDate');
 
-                            endDate.setDate(endDate.getDate());
+                        endDate.setDate(endDate.getDate());
 
-                            dueDatePicker.datepicker('option', 'minDate', endDate);
-                        }
-                    });
-                } else {
-                    this.$el.find('#invoice_date').datepicker({
-                        dateFormat : "d M, yy",
-                        changeMonth: true,
-                        changeYear : true,
-                        minDate    : new Date(model.sourceDocument.orderDate),
-                        maxDate    : 0,
-                        onSelect   : function () {
-                            var dueDatePicker = $('#due_date');
-                            var endDate = $(this).datepicker('getDate');
-
-                            endDate.setDate(endDate.getDate());
-
-                            dueDatePicker.datepicker('option', 'minDate', endDate);
-                        }
-                    });
-                }
+                        dueDatePicker.datepicker('option', 'minDate', endDate);
+                    }
+                });
 
                 this.$el.find('#due_date').datepicker({
                     defaultValue: invoiceDate,
                     dateFormat  : "d M, yy",
                     changeMonth : true,
                     changeYear  : true,
+                    disabled    : model.approved,
                     onSelect    : function () {
                         var targetInput = $(this);
 
