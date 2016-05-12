@@ -50,7 +50,6 @@ define([
             var text;
             var startDate;
             var nextDay = new Date(2014, 8, 2);
-            var type = target.hasClass('startDateManager') ? 'startDate' : 'endDate';
 
             if (this.prevEndDate(row)) {
                 startDate = new Date(this.prevEndDate(row));
@@ -73,15 +72,20 @@ define([
                 maxDate    : new Date(),
                 onSelect   : function (dateText) {
                     var $editedCol = target.closest('td');
+
                     if (!self.changedModels[rowId]) {
                         self.changedModels[rowId] = {};
                     }
-                    self.changedModels[rowId][type] = dateText;
+                    
+                    if (target.hasClass('endDateManager')) {
+                        self.changedModels[rowId].endDate = moment(new Date(dateText)).endOf('day').toDate();
+                    } else {
+                        self.changedModels[rowId].startDate = dateText;
+                    }
+
                     if (!isNewRow) {
                         row.addClass('edited');
                     }
-
-                    //self.updatePrevMembers(row, dateText);
 
                     $editedCol.text(dateText);
                     self.showSaveBtn();
