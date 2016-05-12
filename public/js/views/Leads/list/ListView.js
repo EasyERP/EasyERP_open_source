@@ -122,16 +122,18 @@ define([
             },
 
             hideNewSelect: function () {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
             },
 
             showNewSelect: function (e) {
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
                     return false;
+                } else {
+                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
+                    return false;
                 }
-                $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
-                return false;
+
             },
 
             goToEditDialog: function (e) {

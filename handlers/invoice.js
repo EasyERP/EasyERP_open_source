@@ -958,7 +958,6 @@ var Invoice = function (models, event) {
 
     this.totalCollectionLength = function (req, res, next) {
 
-
         var Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         var departmentSearcher;
         var contentIdsSearcher;

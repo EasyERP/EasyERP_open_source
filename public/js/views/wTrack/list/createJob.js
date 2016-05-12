@@ -1,9 +1,13 @@
 /**
  * Created by lilya on 01/12/15.
  */
-define(["text!templates/wTrack/createJob.html"
+define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        "text!templates/wTrack/createJob.html"
     ],
-    function (generateTemplate) {
+    function (Backbone, $, _, generateTemplate) {
         "use strict";
         var CreateView = Backbone.View.extend({
                 template   : _.template(generateTemplate),

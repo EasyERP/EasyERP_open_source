@@ -1,7 +1,9 @@
 define([
+        'Backbone',
+        'Underscore',
         "text!templates/Tasks/kanban/KanbanItemTemplate.html"
     ],
-    function (KanbanItemTemplate) {
+    function (Backbone, _, KanbanItemTemplate) {
         var TasksItemView = Backbone.View.extend({
             className: "item",
             id       : function () {

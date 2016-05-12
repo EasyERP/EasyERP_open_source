@@ -98,7 +98,7 @@
                 $(".edit-dialog").remove();
             },
 
-            switchTab: function (e) {
+            /*switchTab: function (e) {
                 e.preventDefault();
                 var link = this.$("#tabList a");
                 if (link.hasClass("selected")) {
@@ -106,7 +106,7 @@
                 }
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
-            },
+            },*/
 
             saveItem: function (event) {
                 event.preventDefault();
@@ -276,6 +276,7 @@
                         success: function (model) {
                             model = model.toJSON();
                             var viewType = custom.getCurrentVT();
+
                             switch (viewType) {
                                 case 'list':
                                 {

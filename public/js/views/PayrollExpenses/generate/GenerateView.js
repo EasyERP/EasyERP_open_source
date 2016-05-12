@@ -2,11 +2,14 @@
  * Created by lilya on 10/11/15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/PayrollExpenses/generate/generate.html",
         "moment",
         "populate"
     ],
-    function (GenetareTemplate, moment, populate) {
+    function (Backbone, $, _, GenetareTemplate, moment, populate) {
         "use strict";
         var CreateView = Backbone.View.extend({
             template: _.template(GenetareTemplate),
@@ -78,7 +81,7 @@ define([
                 }
             },
 
-            setChangedValue: function () {
+            /*setChangedValue: function () {
                 var editedElement = $('.edit');
                 var self = this;
 
@@ -88,7 +91,7 @@ define([
                     self.year = $('#year').val();
 
                 }
-            },
+            },*/
 
             generate: function () {
                 this.generateItems();

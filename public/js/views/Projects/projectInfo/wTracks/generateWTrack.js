@@ -1,15 +1,19 @@
-define(["text!templates/Projects/projectInfo/wTracks/generate.html",
-        "text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html",
-        'views/Projects/projectInfo/wTracks/wTrackPerEmployee',
-        'views/selectView/selectView',
-        'collections/Jobs/filterCollection',
-        'populate',
-        'dataService',
-        'moment',
-        'common',
+define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    "text!templates/Projects/projectInfo/wTracks/generate.html",
+    "text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html",
+    'views/Projects/projectInfo/wTracks/wTrackPerEmployee',
+    'views/selectView/selectView',
+    'collections/Jobs/filterCollection',
+    'populate',
+    'dataService',
+    'moment',
+    'common',
     'constants'
     ],
-    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, selectView, JobsCollection, populate, dataService, moment, common, CONSTANTS) {
+    function (Backbone, $, _, generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, selectView, JobsCollection, populate, dataService, moment, common, CONSTANTS) {
         "use strict";
         var CreateView = Backbone.View.extend({
                 template                 : _.template(generateTemplate),

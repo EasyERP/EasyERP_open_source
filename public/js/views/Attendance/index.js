@@ -168,14 +168,14 @@ define([
             });
         },
 
-        changeStatus: function () {
+        /*changeStatus: function () {
             var self = this;
             self.currentStatus = this.$el.find("#currentStatus option:selected").attr('id');
 
             dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function () {
                 //ToDo Hired and Not Hired
             });
-        },
+        },*/
 
         changeTime: function () {
             var startTime = new Date();

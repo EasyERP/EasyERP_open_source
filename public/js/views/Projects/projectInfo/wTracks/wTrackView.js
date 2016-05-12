@@ -2,6 +2,8 @@
  * Created by liliya on 17.09.15.
  */
 define([
+    'jQuery',
+    'Underscore',
     'text!templates/Projects/projectInfo/wTrackTemplate.html',
     'text!templates/Projects/projectInfo/wTracks/wTrackHeader.html',
     'text!templates/Pagination/PaginationTemplate.html',
@@ -17,7 +19,7 @@ define([
     'async',
     'constants'
 
-], function (wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, createView, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async, CONSTANTS) {
+], function ($, _, wTrackTemplate, wTrackTopBar, paginationTemplate, cancelEdit, createView, listView, listItemView, currentModel, EditCollection, wTrackCollection, dataService, populate, async, CONSTANTS) {
     var wTrackView = listView.extend({
 
         el                      : '#timesheet',
@@ -811,9 +813,12 @@ define([
                 self.responseObj['#department'] = departments;
             });
 
+            self.bindingEventsToEditedCollection(self);
+            self.$listTable = $('#listTable');
+
             setTimeout(function () {
-                self.bindingEventsToEditedCollection(self);
-                self.$listTable = $('#listTable');
+                //self.bindingEventsToEditedCollection(self);
+                //self.$listTable = $('#listTable');
             }, 10);
 
             return this;

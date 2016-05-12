@@ -180,7 +180,7 @@
             },
 
             hideItemsNumber: function (e) {
-                var el = e.target;
+                var el = $(e.target);
 
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {

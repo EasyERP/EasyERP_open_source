@@ -18,7 +18,7 @@ define([
                 this.fetch({
                     data   : $.param({
                         mid: mid
-                    }),
+                    }),  // maybe not used query mid
                     reset  : true,
                     success: this.fetchSuccess,
                     error  : function (models, xhr) {

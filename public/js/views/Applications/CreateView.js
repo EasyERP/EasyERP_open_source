@@ -78,6 +78,7 @@ define([
                 $(".add-user-dialog").remove();
                 $(".crop-images-dialog").remove();
             },
+
             getWorkflowValue: function (value) {
                 var workflows = [];
                 var i;

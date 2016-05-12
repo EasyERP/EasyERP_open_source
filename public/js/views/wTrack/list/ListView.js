@@ -907,7 +907,7 @@ define([
                     this.showSaveCancelBtns();
                     this.editCollection.add(model);
 
-                    new createView(startData);
+                    new this.createView(startData);
                 } else {
                     App.render({
                         type: 'notify',
@@ -1297,6 +1297,7 @@ define([
                 });
 
                 this.renderFilter(self);
+
 
                 setTimeout(function () {
                     /*self.editCollection = new EditCollection(self.collection.toJSON());

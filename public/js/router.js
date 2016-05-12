@@ -1,5 +1,7 @@
 define([
     'Backbone',
+    'Underscore',
+    'jQuery',
     'views/main/MainView',
     'views/login/LoginView',
     'dataService',
@@ -7,7 +9,7 @@ define([
     'common',
     'constants'
 
-], function (Backbone, mainView, loginView, dataService, custom, common, CONTENT_TYPES) {
+], function (Backbone, _, $, mainView, loginView, dataService, custom, common, CONTENT_TYPES) {
     'use strict';
     var appRouter = Backbone.Router.extend({
 
@@ -73,7 +75,6 @@ define([
             });
             $(window).on("resize", function (e) {
                 $("#ui-datepicker-div").hide();
-                //				$(".hasDatepicker").datepicker("destroy");
             });
             $(document).on("paste", ".onlyNumber", function (e) {
                 return false;
@@ -97,7 +98,6 @@ define([
                     }
                 });
             }
-            ;
         },
 
         dashBoardVacation: function (filter) {
@@ -673,6 +673,7 @@ define([
                 App.weTrack = false;
             }
 
+            App.weTrack = true; //todo remove
             App.currentDb = db;
         },
 
@@ -901,6 +902,7 @@ define([
                     //getModel.urlRoot = '/' + contentType + '/form';
                     getModel.urlRoot = getModel.url() + modelId;
                     getModel.fetch({
+                        //data: {id: modelId},
                         success: function (model) {
                             var topbarView = new topBarView({actionType: "Content"});
                             var contentView = new contentFormView({model: model, startTime: startTime});

@@ -40,6 +40,7 @@
             },
 
             initialize: function (options) {
+
                 this.startTime = new Date();
 
                 var that = this;

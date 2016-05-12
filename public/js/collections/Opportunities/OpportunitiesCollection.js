@@ -1,9 +1,10 @@
 define([
         'Backbone',
+        'Underscore',
         'models/OpportunitiesModel',
         'common'
     ],
-    function (Backbone, OpportunityModel, common) {
+    function (Backbone, _, OpportunityModel, common) {
         'use strict';
 
         var OpportunitiesCollection = Backbone.Collection.extend({

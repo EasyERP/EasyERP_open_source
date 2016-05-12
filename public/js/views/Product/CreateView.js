@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Product/CreateTemplate.html",
         "models/ProductModel",
         "common",
@@ -8,7 +11,7 @@ define([
         'constants',
         "jqueryBarcode"
     ],
-    function (CreateTemplate, ProductModel, common, populate, attachView, AssigneesView, CONSTANTS) {
+    function (Backbone, $, _, CreateTemplate, ProductModel, common, populate, attachView, AssigneesView, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el      : "#content-holder",

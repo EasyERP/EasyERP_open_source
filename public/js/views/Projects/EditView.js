@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Projects/EditTemplate.html",
         'views/Notes/NoteView',
         'views/Notes/AttachView',
@@ -10,7 +13,7 @@ define([
         "populate",
         'constants'
     ],
-    function (EditTemplate, noteView, attachView, AssigneesView, BonusView, custom, common, dataService, populate, CONSTANTS) {
+    function (Backbone, $, _, EditTemplate, noteView, attachView, AssigneesView, BonusView, custom, common, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Projects",

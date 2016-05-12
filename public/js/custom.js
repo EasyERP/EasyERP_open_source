@@ -1,13 +1,12 @@
 define([
     'Backbone',
     'jQuery',
-    'libs/date.format',
     'common',
     'constants',
     'dataService',
     'moment',
     'constants'
-], function (Backbone, $, dateformat, common, CONTENT_TYPES, dataService, moment, CONSTANTS) {
+], function (Backbone, $, common, CONTENT_TYPES, dataService, moment, CONSTANTS) {
     'use strict';
 
     var Store = function () {

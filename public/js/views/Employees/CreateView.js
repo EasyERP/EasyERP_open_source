@@ -9,9 +9,10 @@ define([
         'views/Notes/AttachView',
         'views/Assignees/AssigneesView',
         'views/selectView/selectView',
-        'constants'
+        'constants',
+        'moment'
     ],
-    function (Backbone, $, _, CreateTemplate, EmployeeModel, common, populate, AttachView, AssigneesView, SelectView, CONSTANTS) {
+    function (Backbone, $, _, CreateTemplate, EmployeeModel, common, populate, AttachView, AssigneesView, SelectView, CONSTANTS, moment) {
         "use strict";
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -354,7 +355,10 @@ define([
             },
 
             render: function () {
-                var formString = this.template();
+                var formString = this.template({
+                    moment: moment
+                });
+
                 var self = this;
                 this.$el = $(formString).dialog({
                     dialogClass: "edit-dialog",

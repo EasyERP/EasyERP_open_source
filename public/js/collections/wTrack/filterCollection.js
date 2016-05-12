@@ -15,16 +15,18 @@
             contentType : null,
 
             initialize: function (options) {
+                options = options || {};
+
                 this.startTime = new Date();
                 var that = this;
                 this.namberToShow = options.count || 100;
 
                 if (options && options.viewType) {
-                    this.viewType = options.viewType || 'wTrack';
+                    this.viewType = options.viewType || 'list';
                     this.url += this.viewType;
                 }
 
-                this.contentType = options.contentType || 'list';
+                this.contentType = options.contentType || 'wTrack';
                 this.count = options.count || 100;
                 this.page = options.page || 1;
                 this.filter = options.filter;

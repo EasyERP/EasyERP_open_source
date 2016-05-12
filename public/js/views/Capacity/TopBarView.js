@@ -1,10 +1,13 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Capacity/TopBarTemplate.html',
         'custom',
         'common',
         'constants'
     ],
-    function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+    function (Backbone, $, _, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: CONSTANTS.CAPACITY,
@@ -29,10 +32,10 @@ define([
                 this.render();
             },
 
-            createEvent: function (event) {
+            /*createEvent: function (event) {  ui tests
                 event.preventDefault();
                 this.trigger('createEvent');
-            },
+            },*/
 
             render: function () {
                 $('title').text(this.contentType);
@@ -43,10 +46,10 @@ define([
                 return this;
             },
 
-            editEvent: function (event) {
+            /*editEvent: function (event) { ui tests
                 event.preventDefault();
                 this.trigger('editEvent');
-            },
+            },*/
 
             deleteEvent: function (event) {
                 event.preventDefault();
