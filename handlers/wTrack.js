@@ -55,7 +55,7 @@ var wTrack = function (event, models) {
                             return next(err);
                         }
 
-                        event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
+                        event.emit('setReconcileTimeCard', {req: req, jobs: _wTrack.jobs});
                         event.emit('updateRevenue', {wTrack: _wTrack, req: req});
                         event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
                         event.emit('dropHoursCashes', req);
@@ -100,7 +100,7 @@ var wTrack = function (event, models) {
                     }
 
                     if (tCard) {
-                        event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
+                        event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
                         event.emit('updateRevenue', {wTrack: tCard, req: req});
                         event.emit('updateProjectDetails', {req: req, _id: tCard.project});
                         event.emit('recollectProjectInfo');
@@ -156,7 +156,7 @@ var wTrack = function (event, models) {
                     }
 
                     if (tCard) {
-                        event.emit('setReconcileTimeCard', {req: req, week: tCard.week, year: tCard.year});
+                        event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
                         event.emit('updateRevenue', {wTrack: tCard, req: req});
                         event.emit('updateProjectDetails', {req: req, _id: tCard.project});
                         event.emit('recollectProjectInfo');
@@ -968,11 +968,11 @@ var wTrack = function (event, models) {
 
                     projectId = tCard ? tCard.project : null;
 
-                    journalEntry.removeBySourceDocument(req, wTrack._id);
+                    journalEntry.removeBySourceDocument(req, tCard._id);
 
                     event.emit('dropHoursCashes', req);
                     event.emit('recollectVacationDash');
-                    event.emit('setReconcileTimeCard', {req: req, week: wTrack.week, year: wTrack.year});
+                    event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
                     event.emit('updateRevenue', {wTrack: tCard, req: req});
 
                     if (projectId) {

@@ -362,11 +362,13 @@ var requestHandler = function (app, event, mainDb) {
     event.on('setReconcileTimeCard', function (options) {
         var req = options.req;
         var wTrackModel = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var jobsModel = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var employee = options.employee;
         var month = options.month;
         var year = options.year;
         var week = options.week;
+        var jobs = options.jobs;
         var dateNow = new Date();
        // var dateKey = moment(dateNow).isoWeekYear() * 100 + moment(dateNow).isoWeek();
         var query = {};
@@ -374,20 +376,39 @@ var requestHandler = function (app, event, mainDb) {
 
          if (month && year) {
             query = {month: month, year: year};
-            date = moment().isoWeekYear(year).month(month).date(1);
+            date = moment().year(year).month(month).date(1);
         } else if (year && week){
             query = {week: week, year: year};
-            date = moment().isoWeekYear(year).isoWeek(week).day(1);
-        } else if (employee){
+            date = moment().year(year).isoWeek(week).day(1);
+        }
+
+        if (employee){
              query.employee = employee;
          }
 
+        if (jobs){
+            jobsModel.update({_id: jobs}, {$set: {reconcile: true}}, function (err, result) {
+                if (err) {
+                    console.log(err);
+                }
+            });
+        } else {
+            wTrackModel.find(query, {jobs: 1}, function (err, result) {
+                if (err) {
+                    console.log(err);
+                }
 
-        wTrackModel.update(query, {$set: {reconcile: true}}, {multi: true}, function (err, result) {
-            if (err) {
-                console.log(err);
-            }
-        });
+                var groupedResult = _.group(result, 'jobs');
+                var jobs = Object.keys(groupedResult);
+
+                jobsModel.update({_id: {$in: jobs}}, {$set: {reconcile: true}}, function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    }
+                });
+            });
+        }
+
 
         if (date) {
             journalEntry.setReconcileDate(req, date);
