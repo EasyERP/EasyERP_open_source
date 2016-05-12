@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/invoiceAging/list/ListHeader.html',
         'views/invoiceAging/list/ListItemView',
@@ -8,7 +10,7 @@ define([
         'custom'
     ],
 
-    function (listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom) {
+    function ($, _, listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom) {
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
             listItemView            : listItemView,

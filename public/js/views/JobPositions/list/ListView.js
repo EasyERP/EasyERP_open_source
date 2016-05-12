@@ -49,7 +49,7 @@ define([
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").hide();
+            $(".newSelectList").remove();  //ui tests
         },
 
         showNewSelect: function (e) {

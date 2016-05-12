@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/salesOrder/EditTemplate.html",
         "text!templates/salesOrder/ViewTemplate.html",
         'views/Assignees/AssigneesView',
@@ -11,7 +14,7 @@ define([
         "populate",
         "constants"
     ],
-    function (EditTemplate, ViewTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS) {
+    function (Backbone, $, _, EditTemplate, ViewTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Order",

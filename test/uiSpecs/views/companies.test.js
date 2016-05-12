@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'router',
@@ -25,7 +24,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -518,7 +518,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeCompaniesList = {
         data: [
             {
@@ -2139,7 +2138,6 @@ define([
             }
         ]
     };
-
     var fakeAlphabet = {
         data: [
             {
@@ -2198,7 +2196,6 @@ define([
             }
         ]
     };
-
     var fakeCompaniesThumb = {
         data: [
             {
@@ -2843,7 +2840,6 @@ define([
             }
         ]
     };
-
     var fakeCompanyWithId = {
         _id: "55b92ad521e4b7c40f00060d",
         ID: 6,
@@ -2853,10 +2849,10 @@ define([
             industry: null
         },
         editedBy: {
-            date: "2015-07-30T09:33:13.062Z",
+            date: "2016-04-21T09:34:15.219Z",
             user: {
-                _id: "55b9dd7a7a3632120b000006",
-                login: "larysa.popp"
+                _id: "52203e707d4dba8813000003",
+                login: "admin"
             }
         },
         createdBy: {
@@ -2866,12 +2862,12 @@ define([
                 login: "admin"
             }
         },
-        history: [],
-        attachments: [],
-        notes: [],
+        history: [ ],
+        attachments: [ ],
+        notes: [ ],
         groups: {
-            group: [],
-            users: [],
+            group: [ ],
+            users: [ ],
             owner: {
                 _id: "52203e707d4dba8813000003",
                 login: "admin"
@@ -2880,7 +2876,7 @@ define([
         whoCanRW: "everyOne",
         social: {
             LI: "",
-            FB: ""
+            FB: "adsda"
         },
         color: "#4d5a75",
         relatedUser: null,
@@ -2897,7 +2893,7 @@ define([
         },
         title: "",
         internalNotes: "",
-        contacts: [],
+        contacts: [ ],
         phones: {
             fax: "",
             mobile: "",
@@ -2927,7 +2923,6 @@ define([
         fullName: "Sportsman Tracker ",
         id: "55b92ad521e4b7c40f00060d"
     };
-
     var fakePersonsForMiveView = {
         data: [
             {
@@ -2984,12 +2979,10 @@ define([
             }
         ]
     };
-
     var fakeCollectionTotal = {
         showMore: false,
         count: 40
     };
-
     var fakeUsersForDD = {
         data: [
             {
@@ -3114,7 +3107,6 @@ define([
             }
         ]
     };
-
     var fakeDepsForDD = {
         data: [
             {
@@ -3209,7 +3201,6 @@ define([
             }
         ]
     };
-
     var fakeEmplLang = {
         data: [
             {
@@ -3219,7 +3210,6 @@ define([
             }
         ]
     };
-
     var fakeEmplRelUser = {
         data: [
             {
@@ -3233,7 +3223,6 @@ define([
             }
         ]
     };
-
     var fakeCustomers = {
         data: [
             {
@@ -13345,7 +13334,6 @@ define([
             }
         ]
     };
-
     var fakePersnosForMiniView = {
         data: [
             {
@@ -13402,7 +13390,6 @@ define([
             }
         ]
     };
-
     var fakeWorkflowForDD = {
         data: [
             {
@@ -13432,7 +13419,6 @@ define([
             }
         ]
     };
-
     var fakeTaskPriority = {
         data: [
             {
@@ -13457,7 +13443,6 @@ define([
             }
         ]
     };
-
     var fakeCustomerForDD = {
         data: [
             {
@@ -13790,6 +13775,249 @@ define([
             }
         ]
     };
+    var fakeOpportunitiesForFormView = {
+        listLength: 5,
+        data: [
+            {
+                _id: "571882f0e611193c13905945",
+                workflow: {
+                    _id: "528cdcb4f3f67bc40b000006",
+                    name: "New"
+                },
+                nextAction: {
+                    date: "2016-04-21T21:00:00.000Z"
+                },
+                expectedRevenue: {
+                    currency: "$",
+                    value: 12233
+                },
+                name: "Test"
+            },
+            {
+                _id: "5718830ee611193c13905946",
+                workflow: {
+                    _id: "528cdcb4f3f67bc40b000006",
+                    name: "New"
+                },
+                nextAction: {
+                    date: "2016-04-26T21:00:00.000Z"
+                },
+                expectedRevenue: {
+                    currency: "$",
+                    value: 15000
+                },
+                name: "Test1"
+            },
+            {
+                _id: "5718844de611193c13905947",
+                workflow: {
+                    _id: "528cdcb4f3f67bc40b000006",
+                    name: "New"
+                },
+                nextAction: {
+                    date: ""
+                },
+                expectedRevenue: {
+                    currency: "$",
+                    value: 0
+                },
+                name: "ads"
+            },
+            {
+                _id: "57188454e611193c13905948",
+                workflow: {
+                    _id: "528cdcb4f3f67bc40b000006",
+                    name: "New"
+                },
+                nextAction: {
+                    date: ""
+                },
+                expectedRevenue: {
+                    currency: "$",
+                    value: 0
+                },
+                name: "adasdasds"
+            },
+            {
+                _id: "5718845ae611193c13905949",
+                workflow: {
+                    _id: "528cdcb4f3f67bc40b000006",
+                    name: "New"
+                },
+                nextAction: {
+                    date: ""
+                },
+                expectedRevenue: {
+                    currency: "$",
+                    value: 0
+                },
+                name: "aaaaa"
+            }
+        ]
+    };
+    var fakeOpportunitiesById = {
+        _id: "571882f0e611193c13905945",
+        __v: 0,
+        attachments: [ ],
+        notes: [ ],
+        convertedDate: "2016-04-21T07:36:16.212Z",
+        isConverted: false,
+        source: "",
+        campaign: "",
+        editedBy: {
+            date: "2016-04-21T07:36:16.211Z",
+            user: null
+        },
+        createdBy: {
+            date: "2016-04-21T07:36:16.211Z",
+            user: null
+        },
+        sequence: 3,
+        groups: {
+            group: [ ],
+            users: [ ],
+            owner: {
+                _id: "560c099da5d4a2e20ba5068b",
+                login: "AlexSvatuk"
+            }
+        },
+        whoCanRW: "everyOne",
+        workflow: {
+            _id: "528cdcb4f3f67bc40b000006",
+            __v: 0,
+            attachments: [ ],
+            name: "New",
+            sequence: 5,
+            status: "New",
+            wId: "Opportunities",
+            wName: "opportunity",
+            source: "opportunity",
+            targetSource: [
+                "opportunity"
+            ],
+            visible: true,
+            color: "#2C3E50"
+        },
+        reffered: "",
+        optout: false,
+        active: false,
+        color: "#4d5a75",
+        categories: {
+            name: "",
+            id: ""
+        },
+        priority: "P1 ",
+        expectedClosing: "2016-04-28T21:00:00.000Z",
+        nextAction: {
+            date: "2016-04-21T21:00:00.000Z",
+            desc: ""
+        },
+        internalNotes: "",
+        salesTeam: null,
+        salesPerson: null,
+        func: "",
+        phones: {
+            fax: "",
+            phone: "",
+            mobile: ""
+        },
+        email: "",
+        contactName: {
+            last: "",
+            first: ""
+        },
+        address: {
+            country: "",
+            zip: "",
+            state: "",
+            city: "",
+            street: ""
+        },
+        customer: {
+            _id: "55b92ad521e4b7c40f00060d",
+            ID: 6,
+            __v: 0,
+            companyInfo: {
+                size: "1-50",
+                industry: null
+            },
+            editedBy: {
+                date: "2016-04-21T09:34:15.219Z",
+                user: "52203e707d4dba8813000003"
+            },
+            createdBy: {
+                date: "2015-07-29T19:34:45.990Z",
+                user: "52203e707d4dba8813000003"
+            },
+            history: [ ],
+            attachments: [ ],
+            notes: [ ],
+            groups: {
+                group: [ ],
+                users: [ ],
+                owner: "52203e707d4dba8813000003"
+            },
+            whoCanRW: "everyOne",
+            social: {
+                LI: "",
+                FB: "adsda"
+            },
+            color: "#4d5a75",
+            relatedUser: null,
+            salesPurchases: {
+                receiveMessages: 0,
+                language: "",
+                reference: "",
+                active: false,
+                implementedBy: null,
+                salesTeam: null,
+                salesPerson: null,
+                isSupplier: false,
+                isCustomer: true
+            },
+            title: "",
+            internalNotes: "",
+            contacts: [ ],
+            phones: {
+                fax: "",
+                mobile: "",
+                phone: "+16162403185"
+            },
+            skype: "",
+            jobPosition: "",
+            website: "http://www.sportsmantracker.com",
+            address: {
+                country: "USA",
+                zip: "49525 ",
+                state: "Michigan",
+                city: "Grand Rapids",
+                street: "4647 Shearwood Ct."
+            },
+            timezone: "UTC",
+            department: null,
+            company: null,
+            email: "jeff@sportsmantracker.com",
+            imageSrc: "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAMCAgICAgMCAgIDAwMDBAYEBAQEBAgGBgUGCQgKCgkICQkKDA8MCgsOCwkJDRENDg8QEBEQCgwSExIQEw8QEBD/2wBDAQMDAwQDBAgEBAgQCwkLEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBAQEBD/wAARCACMAIwDASIAAhEBAxEB/8QAHwAAAQUBAQEBAQEAAAAAAAAAAAECAwQFBgcICQoL/8QAtRAAAgEDAwIEAwUFBAQAAAF9AQIDAAQRBRIhMUEGE1FhByJxFDKBkaEII0KxwRVS0fAkM2JyggkKFhcYGRolJicoKSo0NTY3ODk6Q0RFRkdISUpTVFVWV1hZWmNkZWZnaGlqc3R1dnd4eXqDhIWGh4iJipKTlJWWl5iZmqKjpKWmp6ipqrKztLW2t7i5usLDxMXGx8jJytLT1NXW19jZ2uHi4+Tl5ufo6erx8vP09fb3+Pn6/8QAHwEAAwEBAQEBAQEBAQAAAAAAAAECAwQFBgcICQoL/8QAtREAAgECBAQDBAcFBAQAAQJ3AAECAxEEBSExBhJBUQdhcRMiMoEIFEKRobHBCSMzUvAVYnLRChYkNOEl8RcYGRomJygpKjU2Nzg5OkNERUZHSElKU1RVVldYWVpjZGVmZ2hpanN0dXZ3eHl6goOEhYaHiImKkpOUlZaXmJmaoqOkpaanqKmqsrO0tba3uLm6wsPExcbHyMnK0tPU1dbX2Nna4uPk5ebn6Onq8vP09fb3+Pn6/9oADAMBAAIRAxEAPwD8qqKKKACiiigAooooAKKKMGgAooooAKKKKACiiigAooooAKKKKACiiigAoopUUuwRQSScAAck0AJivTfhh+zt8T/isi3+g6OtppLHb/al+xitifmHyHBaTlSDsVgDgMRX0D+zv+yHZ2NrbeNfi5pouLuXbLaaHOuY4V4Ia5U/ec8fujwo4fJJVPq+KKOGNIYkCIihVUDAAHQAV8PnPGEMLJ0MClKS3k9vl39dvU4a2MUXywPmjwZ+wr4C0rybrxp4h1LXJ0O5oLfFpbNx9043SED1Dr06dq9Z0L9n74K+HbZrXT/hpoUqM/mZvrYXrg+ge43sBx0Bx145r0Gk5P6V8NiM7zHFv95Wl6J2X3KxxyrVJvc5b/hVHwuH3fht4VUdcLo9uB+QSmN8I/hS7B5Phh4RcgY+bRLU/wA0rTvPGng7TpPJ1Dxbo1rIOqzX0SEfgWFT6Z4m8N60/l6P4i0y/brttruOU/8AjpNc/tcZH3+aXrdkXn5/ieVeJP2Q/gZ4hjn8jwzcaPcTv5hn068kQoc5IWNy0Sj2CY9MV4b8QP2FPE+mLLffDrxFBrUS/MtjegW9x14VXz5bnvlvLFfbI5GfWivRwfEuZ4N6VXJdpa/nqvk0aQxFSD3PyS8QeGtf8KapLoniXSLvTL+DG+3uomjcA9Dg9QRyCOCORWbX6q/EP4YeCvijo50fxho8d0qK32e5QBbi1Y4+aKTGVOQpI5U4G4EcV8A/Hj9n7xL8FtVSaV21Lw/fORZ6miYG7k+TKP4JMAkdmAJB4YL+h5JxLh82tRmuSp26P0/y/M9ChiY1dHozyiiiivpTpCiiigAooooAK+rf2MPghFrN5/wtrxLZLJaWEpi0eGaLKyXC/euBngiPovB+fJ4KDPy7pGl32uatZaLplu1xeahcR2tvEpAMkrsFVRnjJJAr9W/BfhXTPA/hTSvCWkLi10q1jtkbaAZCo+aRsADczZY+7GvkuL80lgcKqFJ2lUuvRLf79vvOTF1XCPKuptdetYPjfxz4W+Hfh6bxP4v1WKxsYjsUty80hBIjjUcs5AOAOwJOACRusyqpZmAA6k9q/NP9of4y3/xf8dT3sN1J/YOmO9to8GSEEWcNLtIBDSFQxyMgbVOdor4XIMllnOIcZO0I6yf5Jeb/ACOGhRdaVnseh/E39tzxzr1xLY/Dm1i8O6aHO25ljWe9lX5h824GOMEEHaoJBHDmvAvEPjPxb4skWbxP4n1XVnQkob28kn259N7HH4VjUV+s4PLcJgI8uHppedtfv3PVhShTVooMmgEg8GtPQfDHiHxRLeQeHdEvtTk0+xuNSultLd5TBawIZJpn2g7Y0RSWY8ADmszpXcaHeeDPjp8V/AXlp4c8bajHbxKEW0uJPtFuF9BFJuVfTKgHHevrP4OftmeF/Gk8GgfEO2t/D2qyDbHeIx+wTuW6EsS0JweNxZfl+8MgV8IUoYjoea8bMchwOZxftIJS/mWj/wCD8zGpQhUWq1P1/rO8Q+HdC8W6LeeHPEumQ3+m38RiuLeVcq69uhBBBAIYEMpAIIIBr49/ZS/aVudMvbH4X+Pb1pdPnZbfSL+VyWtX6JBIe8R4Ct/AcA/JjZ9pV+UZnluIyXFezm/OMl1812Z5VWnKjKzPzI+O3wb1T4NeMpdFmMtxpV4GuNLvXA/fQ55ViOPMTIDDjs2AGFeb1+nHx++FVt8W/h1f6FHAh1i2U3WkzHgpcKDhM5GFcZQ54G4NglRX5kyRvE7RyKVdCVYEYII7V+ocOZx/a2EvU/iR0l+j+f5pnp4at7WOu6G0UUV9AdAUUUUAeqfsv6LZ698ePCNleqWjhupL0YOP3lvDJNH/AOPxrX6WV+cn7ITKP2gPDKn+Jb4Z9D9jmP8ASv0br8u44lJ4+Eeigvzdzy8b8a9DzT9pLxBdeGfgd4v1KzAMslkLHlsfLcSJAxHuBKSPcV+ZVfov+2DDPL8A9faE4WKayeTn+H7TGP5la/Oivf4Igll85dXN/gkdGCS9m2FFFelfs4fBPXf2hvjT4W+EuhGSI65ehby6RQfsdkgL3M+GIBKRK7BSRuYKo5YV9kdh+n3/AASH/ZfsNB+EWvfG7xtokFxefEOGTSLC2uoQ6/2IjEShlbgrcSqdysCCkETA4c1+b37X/wCz/ffs0/H3xN8MXiuDpMU/27QriYNm40ybLQHeQN7IMxOwGPMikA6V/Rd4Y8OaL4Q8OaX4V8N6dHp+k6NZQafY2kZJW3t4kCRxjJJwqqB17V8L/wDBXb9mtfid8F7b42eHNMEviP4db3vTDCDLc6NIR5wYqhZvIcLMu5giRm6OMtQB+Luk30OnahDe3Gm2uoRxMGa2ut/lSj+62xlbH+6wPvX238G/h7+yx8aNAOq6F8O4bW/tgov9Nk1G5aW1c9OfMG9Dg7XAGcchSCB8M11Hw2+Iev8Aww8W2Xi3w9cFZrZsTQk/u7mEkb4ZB3VsfgQGGCAR5GcZdVx9B/V6jhUWzTaT8n0+fQxrU3UXuuzPv8fsq/AJTkfD2AEf9P11/wDHK4j9pzW/jn8LbK18YfDzxpdf8I0ix2l3ay2NvdPZSYCpIZZY2kdH4BaRmO89TvUD3bwZ4t0nx34V0vxhobs1lqtuJ4gwwyHJVkb/AGlZWU44ypxV7V9Ksdc0q80XVLVLmyv4JLa4gckLJE6lWU4IPIJHBr8qw+aYjDYpPG3qKLs4z971te9noeXGpKMrz19T87T+1z+0JnB8fD/wVWX/AMZryrWtY1DxDrF7r2rTLLe6jcSXVzIqKgeV2LO21QFGSScAADPAFdV8Zfhte/Cr4g6n4SuN728cnnWM7D/X2z8xt0AJA+VsDG5WA6VxFfsGDpYVU1WwsIpSSd0krr5HrwUErwW4UUUV2FhRRRQB03wy8V/8IP8AELw74td5Vh0vUoLi4EX32gDjzVAyM7k3LjIzmv1YjkSVFljcMjjcrKcgg9CK/IEcEGv0L/ZD+KkHjv4aW/hu/uEGseF0SxlQ8GW2AxBIOAPujYQMnMeT94V8JxvgJVKMMZBfDo/R7P7/AMzhxtO6U10PSPix4N/4WD8OPEPg9I0ebUbGRbYO21RcL88JJ7ASKhP0r8rpI2iYo6kMpwwIwQfSv196ivgz9sf4My+DPGMnxC0W3Y6L4luDJPtyRbXzAtIpJ7SENIvuXAACjPBwTmUaNSeBqP4tY+uzXzX5GeCq2bgz5zr9h/8AgjZ+zq/hL4eaz+0T4h09U1LxkW0rQ2YgsmlQyfvpBhjjzbhNpVlBAtEYZD5P5e/s8/BzWfj58ZvCvwm0aY2769fLHc3QAP2W0QGS4nwSASkSSMFyNxAUckV96/tof8FI9P8ABWkQfs4/sa6rBp2g+H7CPRZ/FFk5kKRQoIkt9NlJPyoi7Tc5LMeYiMCVv0o9I/U/xH4+8C+DpYYfF3jPQ9EkuAWhXUdRhtjIB1KiRhn8KuXtroXizQ7ixvbe01bSNUtHhljcLNb3dvKpDKQcq6Mp9wQa/l11XV9V13UrnWda1K6v7+9laa5urmZpZppGOWZ3YlmYnkkkk16b8AP2o/jT+zT4jj174WeL7iztmmSW+0e4ZptN1AAjIntyQpJA2712yKCdrrnNAE/7WfwA1T9mj47+JvhZeJO+nWs/2vQ7uUMftmmTZa3k3lEDsFzHIVXaJYpVGQua8gr9M/2zPFHw2/b5/Zh0/wDaW+Flp9n8d/DMLH4r8O58y/tNNmIEu7bHunhilxLHMNsYia5Zgjq8a/mZQB9f/sG+PZWm1/4bXjMU2f2xZfKMKQVjmUnqc5iIA4GHPevsGvzZ/ZS1YaT8e/CzvIyxXUs9pIAcBvMgkVQfUbyp/Cv0mznnFfkvGWFjh8y54rSaT+ez/I8nGR5al+58q/t4eB7e88M6H8QYFAutOuTplxthyzwShnQs+chUdGAGDzMeR3+Ka/S79p/T31X4DeL7RDgpaR3J+kM0cp/9Ar80a+u4NxMq+Xezl9iTXy0a/M68HLmp27BRRRX1h1hRRRQApUjGR1rrvhV8Sde+FHjSy8X6HK5MJ8q6tvNZEu7ZiN8L46g4BGQcMqtglRXqH7HmoeBLrxzd+CfHfhjRNUj1uFTp0uo2ENwYrqPJ8tTIDtDoWzjqyIO9faX/AAp74SZwfhb4R/8ABHbf/EV8pnXEVHL6ssHiaLkmu6s0/wCmjkr4hU3ySRoeBfHHh34i+F7Lxb4YvVuLK8TO0kCSFx96KRQTtdTwR9CCQQTe8R+HtG8W6De+GfEVhHfaZqERiuLeTowyCCD1DAgEMMEEAgggGvPPiT8GVv8Awbd2Hwjuj4G1pH+0W8mhMdOjunVSPKnEG0Opzwx5U8jjcrfCOtfEv46eHdVutE1r4j+NrO+spTDPBLrV0rI47H56+PyrIqebSlWwdbkcXs17y7O6evqclKgqvvQlY7f4u/Br4kfs8X+q33hTWdWHhbXbWXTJdRsrh4mms5WXfZXgjIBViEyrfJJtBxnKr4VXVXvxY+Keo2kthqPxK8VXVtcI0UsM2s3DxyIwwyspfBBBIIPUVytfqODhiKdJQxUlKS6pWv8ALuepBSStIKKKK6ijT8OeJ9f8JaidV8N6tc6fdNBLbO8LkCWCVCksMi9JI3RmR42BR1YqwIJFZlFGCegoA9c/ZT8Pza/8dfDYWKRobB5r6d0GRGI4mKk+xkMa/wDAhX6Rivnb9jv4K3fgHwxP468SWvk6z4jiUW8TAh7axzuAYEDa7sAxGTgLH0O4D6Kr8g4sx8MdmDVJ3jBct+73f4ux5GKqKpPToeZ/tJ6pHpHwO8YXMmP3unG1HPOZpEiH6uK/MuvuX9unx3HpXgXTPAVpcst1rt0Lq5RWGPssHIDDOfmlMZHHPlN6c/DVfY8F4aVHLnUl9uTa9Ekv0Z2YONqd31CiiivrjrCiiigCxp2o32kahbappt1LbXdnMlxBNE214pEYMrKexBAINfpf8BvjFpvxj8EQayjQQaxZhbfVrONuYZ8cOqnkRvgsuc/xLklSa/Miur+GfxJ8R/C3xXa+KvDc4E0P7uaB8+VcwkgtHIB1BwD7EAjkCvA4gyWOcYe0dKkfhf6Pyf4MwxFFVo+Z+qnWvLvjT+z14L+M9oJ9RDabrkAIttVt0Bkxg4jlU8Sx5IOCQwx8rLls6/wk+MfhH4xaANY8OXHlXUAC32nysPPtZCO46sh52uBg4PQhlHd1+TRnispxN1eFSP8AXzX4M8lOdKWmjPzJ+Jn7PPxQ+F0k0+t6BJd6XEN39qWAM1rtyBlmAzHywGHC5PTI5rzbafSv1+wOCecEH8RXB+KPgR8H/GW5te+H2kySPI0zzW0RtZZHJyS8kJR2ySSck8nPWvtcFxzaPLjaV33j/k/8zthjek0fl5QAT0r9Fpv2PPgHI+6Pwjcxj+6uqXOP1cmtTRv2WvgPod1He2vw/tppovum7up7lD9Y5HZD+K16UuN8uSvGM2/RL9TR42n2Z+eHhPwT4r8c6omj+EtAvdUumxlbeEsIwSBudvuouSPmYgD1r7G+An7Htl4Rubbxd8T/ALNqWqxbZbbS0+e3tm67pG6SuOBjGwYP38gr9J6Vo2kaFYR6VoelWenWUJJjtrSBIYlycnCKAB+VXK+azXi/E46Do4dezi99byfz6fL7zmq4uU9I6ITuT61T1rWtK8OaTea7rl4lpYWED3FxM+cIigkngEnp0AJPQDNLq+r6XoOmz6vrWoW9jZWq75rieQJHGM4yWPA5IH418E/tM/tJ3HxVvG8JeEpJbfwpZS5MhUpJqUiniRweVjB5RDz0Zhu2qnk5LktbOKyjHSC+KXb/AIL/AOCZUaLrS8jzv41fE+8+LfxB1DxbcRvDasfs2n27HmC1QnYp5PzHJZucbnbGBiuFoJyc0V+z0aMMPTjSpq0Yqy9EezFKKsgooorUYUUUUAFFFFAGr4Z8U+IPB2s23iDwxq1zpuoWrbop4H2keoPZlPQqcgjIIIr62+F/7c9hdJDpXxV0l7afCodXsULxscgbpYfvLxySm7J6IK+NKK83McowmaR5cTC76NaNfP8AR6GVSjCqrSR+sHhP4geCfHVv9p8IeKdN1VQgkdLe4VpI1PTfH99PowBrfz3r8g4p5YZFmhkZJEIZWUkEEdCCK7nRfjz8ZdAnW4074la+Si7FS5vGuYgMY4jl3J+lfG4ngWV74at8pL9V/kcksD/Kz9Q85pa/N5P2t/2g0XaPH+R76XZE/n5NUdW/af8AjxrNo1nefEW+jRzktaRQ2sg+jxIrD8DXEuBsc3rUhb5/5EfUp90fpPfX9jplrJf6leQWltCu6SaeQRxoPUsSAB9a8S+JX7YPwq8DwzWug3T+KtVX5Uh09wLVTkffuCCpBBOPLD8g5x1r4I17xV4m8U3C3XiXxBqWrTICFkvrqSdlHoC5JFZea9nBcEYelLmxVRz8lovzv+RrDBRXxu56J8WPjv4/+MF2D4k1EQ6bFJ5lvpdqDHbRMBgMVyS74J+ZiSNzYwDivO6KK+zoUKWGpqlRioxXRHZGKgrRCiiitSgooooAKKKKACiiigAooooAKKKKACiiigAooooAKKKKACiiigAooooA/9k=",
+            name: {
+                last: "",
+                first: "Sportsman Tracker"
+            },
+            isOwn: false,
+            type: "Company",
+            fullName: "Sportsman Tracker ",
+            id: "55b92ad521e4b7c40f00060d"
+        },
+        company: null,
+        tempCompanyField: "",
+        creationDate: "2016-04-21T07:36:16.210Z",
+        expectedRevenue: {
+            currency: "$",
+            progress: null,
+            value: 12233
+        },
+        name: "Test",
+        isOpportunitie: true
+    };
 
     var view;
     var formView;
@@ -13815,7 +14043,6 @@ define([
             thumbnailsView.remove();
             listView.remove();
             topBarView.remove();
-            createView.remove();
             formView.remove();
             editView.remove();
 
@@ -13830,7 +14057,6 @@ define([
                 $elFixture = $fixture.find('#wrapper');
 
                 server = sinon.fakeServer.create();
-
             });
 
             after(function () {
@@ -13882,6 +14108,24 @@ define([
                 server.restore();
             });
 
+            it('Try to fetch collection with 401 error', function(){
+                var companyUrl = new RegExp('\/companies\/list', 'i');
+
+                server.respondWith('GET', companyUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeCompaniesList)]);
+
+                companiesCollection = new CompaniesCollection({
+                    contentType: 'Companies',
+                    count: 100,
+                    filter: null,
+                    newCollection: false,
+                    viewType: 'list'
+                });
+
+                server.respond();
+
+                //expect(window.location.hash).to.be.equals('#login');
+            });
+
             it('Try to create TopBarView', function () {
                 var $topBarEl;
                 var $createBtnEl;
@@ -13925,7 +14169,6 @@ define([
                 expect(window.location.hash).to.equals('#easyErp/Companies/thumbnails')
             });
         });
-
 
         describe('Companies list View', function () {
             var server;
@@ -13973,6 +14216,7 @@ define([
         describe('Companies thumbnail view', function () {
             var companiesCollection;
             var server;
+            var $thisEl;
 
             before(function () {
                 server = sinon.fakeServer.create();
@@ -14011,72 +14255,190 @@ define([
 
                 server.respond();
 
-                $contentHolderEl = thumbnailsView.$el;
-                $searchContainerEl = $contentHolderEl.find('.search-view');
-                $alphabetEl = $contentHolderEl.find('#startLetter');
+                $thisEl = thumbnailsView.$el;
+                $searchContainerEl = $thisEl.find('.search-view');
+                $alphabetEl = $thisEl.find('#startLetter');
 
-                expect($contentHolderEl).to.exist;
                 expect($searchContainerEl).to.exist;
                 expect($alphabetEl).to.exist;
+
+                topBarView.bind('createEvent', thumbnailsView.createItem, thumbnailsView);
+                topBarView.bind('editEvent', thumbnailsView.editItem, thumbnailsView);
+                topBarView.bind('deleteEvent', thumbnailsView.deleteItems, thumbnailsView);
+                topBarView.bind('exportToCsv', thumbnailsView.exportToCsv, thumbnailsView);
+                topBarView.bind('exportToXlsx', thumbnailsView.exportToXlsx, thumbnailsView);
+                topBarView.bind('importEvent', thumbnailsView.importFiles, thumbnailsView);
+
+                companiesCollection.bind('showmore', thumbnailsView.showMoreContent, thumbnailsView);
+                companiesCollection.bind('showmoreAlphabet', thumbnailsView.showMoreAlphabet, thumbnailsView);
             });
 
-            it('Try click on company', function () {
-                var $gotoFormBtn = $('.gotoForm');
+            it('Try to filter Persons ThumbnailsView by FullName and Country', function(){
+                var $fullName;
+                var $country;
+                var $selectedItem;
+                var $next;
+                var $prev;
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var companiesThumbUrl = new RegExp('\/companies\/thumbnails', 'i');
 
-                $gotoFormBtn[0].click();
+                // open filter dropdown
+                $searchArrow.mouseover();
+                expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
 
-                expect(window.location.hash).to.equals('#easyErp/Companies/form/55b92ad521e4b7c40f00060d');
+                // select Company Name
+                $fullName = $searchContainer.find('#nameFullContainer .groupName');
+                $fullName.click();
+                $next = $searchContainer.find('.next');
+                $next.click();
+                $prev = $searchContainer.find('.prev');
+                $prev.click();
+                $selectedItem = $searchContainer.find('li[data-value="55ba0301d79a3a343900000d"]');
 
+                server.respondWith('GET', companiesThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakeCompaniesThumb.data[0], fakeCompaniesThumb.data[1]]})]);
+                $selectedItem.click();
+                server.respond();
+
+                // select Country
+                $country = $searchContainer.find('#countryFullContainer .groupName');
+                $country.click();
+                $next = $searchContainer.find('.next');
+                $next.click();
+                $prev = $searchContainer.find('.prev');
+                $prev.click();
+                $selectedItem = $searchContainer.find('li[data-value="Australia"]');
+
+                server.respondWith('GET', companiesThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakeCompaniesThumb.data[0]]})]);
+                $selectedItem.click();
+                server.respond();
+
+                expect($thisEl).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar').length).to.equals(1);
+
+                // uncheck Country filter
+                server.respondWith('GET', companiesThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakeCompaniesThumb.data[0], fakeCompaniesThumb.data[1]]})]);
+                $selectedItem.click();
+                server.respond();
+
+                expect($thisEl).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar').length).to.equals(2);
+
+                //close filter dropdown
+                $searchArrow.mouseover();
+                expect($searchContainer.find('.search-options')).to.have.class('hidden');
             });
 
+            it('Try to delete FullName filter', function(){
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
+                var companiesThumbUrl = new RegExp('\/companies\/thumbnails', 'i');
+
+                server.respondWith('GET', companiesThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCompaniesThumb)]);
+                $closeBtn.click();
+                server.respond();
+
+                expect($thisEl).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar').length).to.equals(40);
+            });
 
             it('Try to click alphabetic letter', function () {
                 var $searchContainerEl;
                 var $alphabetEl;
-                var $contentHolderEl;
-                var $letterEl = thumbnailsView.$el.find('#startLetter a');
+                var $letterEl = thumbnailsView.$el.find('#startLetter a:nth-child(4)');
                 var companiesThumbUrl = new RegExp('\/companies\/thumbnails', 'i');
                 var companiesTotalCollUrl = new RegExp('\/customers\/totalCollectionLength', 'i');
 
-                server.respondWith('GET', companiesThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCompaniesThumb)]);
-                server.respondWith('GET', companiesTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCollectionTotal)]);
-
+                server.respondWith('GET', companiesThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: fakeCompaniesThumb.data[0]})]);
+                server.respondWith('GET', companiesTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    showMore: true,
+                    count: 1
+                })]);
                 $letterEl.click();
-
                 server.respond();
 
-                $contentHolderEl = thumbnailsView.$el;
-                $searchContainerEl = $contentHolderEl.find('.search-view');
-                $alphabetEl = $contentHolderEl.find('#startLetter');
+                $searchContainerEl = $thisEl.find('.search-view');
+                $alphabetEl = $thisEl.find('#startLetter');
 
-                expect($contentHolderEl).to.exist;
                 expect($searchContainerEl).to.exist;
                 expect($alphabetEl).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar').length).to.be.equals(1);
 
             });
 
-        });
+            it('Try to showMore content with error', function(){
+                var $showMoreBtn = $thisEl.find('#showMore');
+                var companiesThumbUrl = new RegExp('\/companies\/thumbnails', 'i');
 
+                server.respondWith('GET', companiesThumbUrl, [401, {"Content-Type": "application/json"}, JSON.stringify({data: [fakeCompaniesThumb.data[1]]})]);
+                $showMoreBtn.click();
+                server.respond();
+                expect(window.location.hash).to.be.equals('#login');
+            });
+
+            it('Try to showMore content', function(){
+                var $searchContainerEl;
+                var $alphabetEl;
+                var $showMoreBtn = $thisEl.find('#showMore');
+                var companiesThumbUrl = new RegExp('\/companies\/thumbnails', 'i');
+                var companiesTotalCollUrl = new RegExp('\/customers\/totalCollectionLength', 'i');
+
+                server.respondWith('GET', companiesThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakeCompaniesThumb.data[1]]})]);
+                server.respondWith('GET', companiesTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    showMore: false,
+                    count: 1
+                })]);
+                $showMoreBtn.click();
+                server.respond();
+
+                $searchContainerEl = $thisEl.find('.search-view');
+                $alphabetEl = $thisEl.find('#startLetter');
+
+                expect($searchContainerEl).to.exist;
+                expect($alphabetEl).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar').length).to.be.equals(2);
+            });
+
+            it('Try to import', function(){
+                var $importBtn = topBarView.$el.find('#top-bar-importBtn');
+
+                $importBtn.click();
+            });
+
+            it('Try to go to Company form', function(){
+                var $firsEl = $($thisEl.find('.thumbnailwithavatar')[0]);
+                var $goToFormBtn = $firsEl.find('.gotoForm');
+                var id = $goToFormBtn.attr('data-id');
+                var expectedUrl = '#easyErp/Companies/form/' + id;
+
+                $goToFormBtn.click();
+
+                expect(window.location.hash).to.be.equals(expectedUrl);
+            });
+
+        });
 
         describe('Form View', function () {
             var companyModel;
             var server;
             var mainSpy;
+            var clock;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
+                clock = sinon.useFakeTimers();
             });
 
             after(function () {
                 server.restore();
                 mainSpy.restore();
+                clock.restore();
 
                 editView.remove();
             });
 
             it('Try to open form', function (done) {
-                var opportunitiesUrl = new RegExp('\/opportunities\/OpportunitiesForMiniView');
                 var companyIdUrl = new RegExp('\/companies', 'i');
                 var $contentHolder;
 
@@ -14088,19 +14450,31 @@ define([
 
                 companyModel.fetch({
                     success: function (model) {
-                        server.respondWith('GET', opportunitiesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({listLength: 0})]);
-                        server.respondWith('GET', '/persons/getPersonsForMiniView?companyId=55b92ad521e4b7c40f00060d&page=1&count=4&onlyCount=true', [200, {"Content-Type": "application/json"}, JSON.stringify({listLength: 98})]);
-                        server.respondWith('GET', '/persons/getPersonsForMiniView?companyId=55b92ad521e4b7c40f00060d&page=1&count=4&onlyCount=false', [200, {"Content-Type": "application/json"}, JSON.stringify(fakePersonsForMiveView)]);
-
                         formView = new FormView({
                             model: model,
                             startTime: new Date()
                         });
 
-                        server.respond();
+                        server.respondWith('GET', '/opportunities/OpportunitiesForMiniView?person=&company=55b92ad521e4b7c40f00060d&page=1&count=4&onlyCount=true', [200, {"Content-Type": "application/json"}, JSON.stringify({listLength: 5})]);
+                        server.respondWith('GET', '/opportunities/OpportunitiesForMiniView?person=&company=55b92ad521e4b7c40f00060d&page=1&count=4&onlyCount=false', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOpportunitiesForFormView)]);
+                        server.respondWith('GET', '/persons/getPersonsForMiniView?companyId=55b92ad521e4b7c40f00060d&page=1&count=4&onlyCount=true', [200, {"Content-Type": "application/json"}, JSON.stringify({listLength: 98})]);
+                        server.respondWith('GET', '/persons/getPersonsForMiniView?companyId=55b92ad521e4b7c40f00060d&page=1&count=4&onlyCount=false', [200, {"Content-Type": "application/json"}, JSON.stringify(fakePersonsForMiveView)]);
 
                         formView.render();
 
+                        server.respond();
+                        server.respond();
+                        server.respond();
+                        server.respond();
+
+                        topBarView.bind('pay', formView.newPayment, formView);
+                        topBarView.bind('deleteEvent', formView.deleteItems, formView);
+                        topBarView.bind('editEvent', formView.editItem, formView);
+                        topBarView.bind('saveEvent', formView.saveItem, formView);
+                        topBarView.bind('copyEvent', formView.copy, formView);
+                        topBarView.bind('generateEvent', formView.generate, formView);
+                        topBarView.bind('createEvent', formView.createItem, formView);
+                        
                         done();
                     },
 
@@ -14113,6 +14487,89 @@ define([
                 $contentHolder = formView.$el;
 
                 expect($contentHolder).to.exist;
+
+            });
+
+            it('Try to click on pagination for opportunity miniView', function(){
+                var $formEl = formView.$el;
+                var $next = $formEl.find('.next');
+                var $prev;
+                var $last;
+                var $first;
+                var opportunityUrl = new RegExp('\/opportunities\/OpportunitiesForMiniView', 'i');
+
+                expect($formEl.find('.prev')).to.have.class('not-active');
+                expect($formEl.find('.first')).to.have.class('not-active');
+                server.respondWith('GET', opportunityUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOpportunitiesForFormView)]);
+                $next.click();
+                server.respond();
+                expect($formEl.find('.next')).to.have.class('not-active');
+                expect($formEl.find('.last')).to.have.class('not-active');
+
+                $prev = $formEl.find('.prev');
+                $prev.click();
+                server.respond();
+                expect($formEl.find('.prev')).to.have.class('not-active');
+                expect($formEl.find('.first')).to.have.class('not-active');
+
+                $last = $formEl.find('.last');
+                $last.click();
+                server.respond();
+                expect($formEl.find('.next')).to.have.class('not-active');
+                expect($formEl.find('.last')).to.have.class('not-active');
+
+                $first = $formEl.find('.first');
+                $first.click();
+                server.respond();
+                expect($formEl.find('.prev')).to.have.class('not-active');
+                expect($formEl.find('.first')).to.have.class('not-active');
+
+            });
+
+            it('Try to click on pagination for persons miniView', function(){
+                var $formEl = formView.$el;
+                var $next = $formEl.find('.nextPersons');
+                var $prev;
+                var $last;
+                var $first;
+                var personsUrl = new RegExp('\/persons\/getPersonsForMiniView', 'i');
+
+                server.respondWith('GET', personsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePersnosForMiniView)]);
+                expect($formEl.find('.prevPersons')).to.have.class('not-active');
+                expect($formEl.find('.firstPersons')).to.have.class('not-active');
+
+                $next.click();
+                server.respond();
+                expect($formEl.find('.prevPersons')).to.have.not.class('not-active');
+                expect($formEl.find('.firstPersons')).to.have.not.class('not-active');
+
+                $prev = $formEl.find('.prevPersons');
+                $prev.click();
+                server.respond();
+                expect($formEl.find('.prevPersons')).to.have.class('not-active');
+                expect($formEl.find('.firstPersons')).to.have.class('not-active');
+
+                $last = $formEl.find('.lastPersons');
+                $last.click();
+                server.respond();
+                expect($formEl.find('.nextPersons')).to.have.class('not-active');
+                expect($formEl.find('.lastPersons')).to.have.class('not-active');
+
+                $first = $formEl.find('.firstPersons');
+                $first.click();
+                server.respond();
+                expect($formEl.find('.prevPersons')).to.have.class('not-active');
+                expect($formEl.find('.firstPersons')).to.have.class('not-active');
+            });
+
+            it('Try to change social active', function(){
+                var $formEl = formView.$el;
+                var $social = $formEl.find('.social a');
+
+                $social.mouseover();
+
+                $social.mouseleave();
+
 
             });
 
@@ -14153,6 +14610,11 @@ define([
                 var $formHolder = formView.$el;
                 var $editableEl = $($formHolder.find('.editable')[0]);
                 var companyIdUrl = new RegExp('/Companies/', 'i');
+
+                $editableEl.mouseenter();
+                expect($editableEl.find('#editSpan')).to.exist;
+                $editableEl.mouseleave();
+                expect($editableEl.find('#editSpan')).to.not.exist;
 
                 $editableEl.mouseenter();
                 $editSpan = $formHolder.find('#editSpan a');
@@ -14199,24 +14661,55 @@ define([
 
             });
 
+            it('Try to change tab', function(){
+                var $dialog = $('.ui-dialog');
+                var $firstTab = $dialog.find('.dialog-tabs > li:nth-child(1) > a');
+                var $secondTab = $dialog.find('.dialog-tabs > li:nth-child(2) > a');
+                var $thirdTab = $dialog.find('.dialog-tabs > li:nth-child(3) > a');
+
+                expect($firstTab).to.have.class('active');
+
+                $secondTab.click();
+                expect($dialog.find('.dialog-tabs > li:nth-child(2) > a')).to.have.class('active');
+
+                $thirdTab.click();
+                expect($dialog.find('.dialog-tabs > li:nth-child(3) > a')).to.have.class('active');
+
+                $firstTab.click();
+                expect($dialog.find('.dialog-tabs > li:nth-child(1) > a')).to.have.class('active');
+            });
+
             it ('Try to save opportunity without need data', function(){
                 var saveBtn = $('.btn')[6];
                 var spyResponse;
 
                 saveBtn.click();
-                spyResponse = mainSpy.args[0][0];
+                spyResponse = mainSpy.args[1][0];
 
                 expect(spyResponse).to.have.property('type', 'error');
 
             });
 
             it ('Try to save opportunity', function(){
+                var $selectedItem;
+                var $prev;
+                var $next;
                 var saveBtn = $('.btn')[6];
-                var $form = $('#createOpportunities');
+                var $form = $('.ui-dialog');
+                var $customer = $form.find('#customerDd');
 
                 $form.find('#name').val('test');
                 $form.find('#internalNotes').val('test');
                 $form.find('#expectedRevenueValue').val('10000');
+
+                // select customers
+                $customer.click();
+                $next = $customer.find('.next');
+                $next.click();
+                $prev = $customer.find('.prev');
+                $prev.click();
+                $selectedItem = $customer.find('#55b92ad621e4b7c40f000637');
+                $selectedItem.click();
 
                 server.respondWith('POST', '/Opportunities/', [200, {"Content-Type": "application/json"}, JSON.stringify({success: "A new Opportunities create success", id: '123'})]);
 
@@ -14228,6 +14721,66 @@ define([
 
                 expect(window.location.hash).to.be.equals('#easyErp/Companies/form/55b92ad521e4b7c40f00060d');
 
+            });
+
+            it('Try to open editOpportunityForm with fetch model error', function(){
+                var $formEl = formView.$el;
+                var spyResponse;
+                var $oppBtn = $formEl.find('#571882f0e611193c13905945');
+                var oppFormUrl = new RegExp('\/Opportunities\/form');
+
+                server.respondWith('GET', oppFormUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $oppBtn.click();
+                server.respond();
+
+                spyResponse = mainSpy.args[2][0];
+                expect(spyResponse).to.have.property('type', 'error');
+                expect(spyResponse).to.have.property('message', 'Please refresh browser');
+            });
+
+            it('Try to open editOpportunityForm', function(){
+                var $formEl = formView.$el;
+                var $oppBtn = $formEl.find('#571882f0e611193c13905945');
+                var oppFormUrl = new RegExp('\/Opportunities\/form');
+
+                server.respondWith('GET', oppFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOpportunitiesById)]);
+                $oppBtn.click();
+                server.respond();
+
+                expect($('.ui-dialog')).to.exist;
+            });
+
+            it('Try to edit opportunity', function(){
+                var $selectedItem;
+                var $prev;
+                var $next;
+                var saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                var $form = $('.ui-dialog');
+                var $customer = $form.find('#customerDd');
+                var opportunityUrl = new RegExp('\/Opportunities\/', 'i');
+
+                $form.find('#name').val('test');
+                $form.find('#internalNotes').val('test');
+                $form.find('#expectedRevenueValue').val('10000');
+
+                // select customers
+                $customer.click();
+                $next = $customer.find('.next');
+                $next.click();
+                $prev = $customer.find('.prev');
+                $prev.click();
+                $selectedItem = $customer.find('#55b92ad621e4b7c40f000637');
+                $selectedItem.click();
+
+                server.respondWith('PATCH', opportunityUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: "A new Opportunities create success", id: '123'})]);
+
+                saveBtn.click();
+
+                server.respond();
+
+                $('.ui-dialog').remove();
+
+                expect(window.location.hash).to.be.equals('#easyErp/Companies/form/55b92ad521e4b7c40f00060d');
             });
 
             it('Try to add person', function(){
@@ -14249,13 +14802,68 @@ define([
                 $createPersonBtn.click();
 
                 server.respond();
+                server.respond();
+                server.respond();
+                server.respond();
+                server.respond();
+                server.respond();
 
                 expect('.ui-dialog').to.exist;
             });
 
+            it('Try to cancel PersonCreateForm', function(){
+                var $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
+
+                $cancelBtn.click();
+                expect($('.ui-dialog')).to.not.exist;
+            });
+
+            it('Try to showEdit|hideEdit PersonCreateForm', function(){
+                var $createPersonBtn = formView.$el.find('.formRightColumn .btnHolder .add.persons');
+                var $dialog;
+                var $avatar;
+
+                $createPersonBtn.click();
+
+                server.respond();
+                server.respond();
+                server.respond();
+                server.respond();
+                server.respond();
+                server.respond();
+
+                expect('.ui-dialog').to.exist;
+
+                $dialog = $('.ui-dialog');
+                $avatar = $dialog.find('.avatar');
+
+                $avatar.mouseenter();
+                //clock.tick(260000);
+                //expect($avatar.find('.upload')).to.have.css('height', '20px');
+                $avatar.mouseleave();
+                //clock.tick(260000);
+                //expect($avatar.find('.upload')).to.have.css('height', '0px');
+
+            });
+
             it('Try to save person', function(){
+                var $selectedItem;
+                var $next;
+                var $prev;
                 var $createBtn = $('#create-person-dialog');
-                var $form = $('#createPersonsForm');
+                var $form = $('.ui-dialog');
+                var $secondTab = $form.find('.dialog-tabs > li:nth-child(2) > a');
+                var $salesTeam = $form.find('#departmentDd');
+
+                $secondTab.click();
+
+                $salesTeam.click();
+                $next = $salesTeam.find('.next');
+                $next.click();
+                $prev = $salesTeam.find('.prev');
+                $prev.click();
+                $selectedItem = $salesTeam.find('#55b92ace21e4b7c40f000012');
+                $selectedItem.click();
 
                 $form.find('#firstName').val('Test');
                 $form.find('#lastName').val('Test');
@@ -14272,7 +14880,7 @@ define([
             });
 
             it ('Try to go to person form', function(){
-                var $gotoPersonBtn = $('#persons p>a');
+                var $gotoPersonBtn = $('#persons p > a');
 
                 $gotoPersonBtn.click();
 
@@ -14322,6 +14930,22 @@ define([
                 expect($thirdTab).to.have.class('active');
             });
 
+            it ('Try to showEdit|hideEdit', function(){
+                var $firstTab = $('.dialog-tabs > li:nth-child(1) > a');
+                var $dialog = $('.ui-dialog');
+                var $avatar = $dialog.find('.avatar');
+
+
+                $avatar.mouseover();
+                //clock.tick(260000);
+                //expect($avatar.find('.upload')).to.have.css('height', '20px');
+                $avatar.mouseleave();
+                //clock.tick(260000);
+                //expect($avatar.find('.upload')).to.have.css('height', '0px');
+
+               // done();
+            });
+
             it ('Try to PATCH company with error', function(){
                 var spyResponse;
                 var editBtn = $('.ui-button')[1];
@@ -14330,22 +14954,22 @@ define([
                 $form.find('#name').val('');
 
                 editBtn.click();
-                spyResponse = mainSpy.args[0][0];
+                spyResponse = mainSpy.args[3][0];
 
                 expect(spyResponse).to.have.property('type', 'error');
             });
 
-            it ('Try to delete company with error', function(){
+            it ('Try to delete company with 403 error', function(){
                 var deleteBtn = $('.ui-button')[3];
                 var companiesUrl = new RegExp('\/Companies\/', 'i');
                 var spyResponse;
 
-                server.respondWith('DELETE', companiesUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(new Error())]);
+                server.respondWith('DELETE', companiesUrl, [403, {"Content-Type": "application/json"}, JSON.stringify(new Error())]);
 
                 deleteBtn.click();
 
                 server.respond();
-                spyResponse = mainSpy.args[0][0];
+                spyResponse = mainSpy.args[4][0];
 
                 expect(spyResponse).to.have.property('type', 'error');
             });
@@ -14445,18 +15069,29 @@ define([
 
             });
 
+            it('Try to delete company from the form with 403 error', function() {
+                var spyResponse;
+                var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                var companyUrl = new RegExp('\/Companies\/', 'i');
+
+                server.respondWith('DELETE', companyUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({success: 'customer removed'})]);
+                $deleteBtn.click();
+                server.respond();
+
+                spyResponse = mainSpy.args[5][0];
+                expect(spyResponse).to.have.property('type', 'error');
+                expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+            });
+
             it('Try to delete company from the form', function(){
                 var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                 var companyUrl = new RegExp('\/Companies\/', 'i');
 
                 server.respondWith('DELETE', companyUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'customer removed'})]);
-
                 $deleteBtn.click();
-
                 server.respond();
 
-                //expect(window.location.hash).to.be.equals('#easyErp/Companies/thumbnails');
-
+                expect(window.location.hash).to.be.equals('#easyErp/Companies/thumbnails');
             });
 
         });
@@ -14476,28 +15111,26 @@ define([
             });
 
             it('Try to create CreateForm', function () {
-                var $contentHolderEl;
                 var userForDdUrl = new RegExp('\/users\/forDd', 'i');
                 var depsForDdUrl = new RegExp('\/departments\/getForDD', 'i');
                 var emplLangUrl = new RegExp('\/employees\/languages', 'i');
                 var emplRelUserUrl = new RegExp('\/employees\/getForDdByRelatedUser', 'i');
                 var customersUrl = new RegExp('\/customers\/', 'i');
+                var $createBtn = topBarView.$el.find('#top-bar-createBtn');
 
                 server.respondWith('GET', userForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
                 server.respondWith('GET', depsForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
                 server.respondWith('GET', emplLangUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplLang)]);
                 server.respondWith('GET', emplRelUserUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplRelUser)]);
                 server.respondWith('GET', customersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
-
                 expect($('#dialogContainer')).to.empty;
-
-                createView = new CreateView();
-
+                $createBtn.click();
+                server.respond();
+                server.respond();
+                server.respond();
+                server.respond();
                 server.respond();
 
-                $contentHolderEl = createView.$el;
-
-                expect($contentHolderEl).to.exist;
                 expect($('.ui-dialog')).to.exist;
                 expect($('.form-holder')).to.exist;
             });
@@ -14532,6 +15165,32 @@ define([
 
             });
 
+            it ('Try to showEdit|hideEdit', function(){
+                var $firstTab = $('.dialog-tabs > li:nth-child(1) > a');
+                var $dialog = $('.ui-dialog');
+                var $avatar = $dialog.find('.avatar');
+
+                $avatar.mouseover();
+                //clock.tick(260000);
+                //expect($avatar.find('.upload')).to.have.css('height', '20px');
+                $avatar.mouseleave();
+                //clock.tick(260000);
+                //expect($avatar.find('.upload')).to.have.css('height', '0px');
+
+                // done();
+            });
+
+            it('Try to save company with error', function(){
+                var createBtn = $('.ui-button')[1];
+
+                server.respondWith('POST', '/companies/', [400, {"Content-Type": "application/json"}, JSON.stringify({
+                    success: 'A new Person crate success',
+                    id: '123'
+                })]);
+                createBtn.click();
+                server.respond();
+            });
+
             it('Try to save company with correct data', function () {
                 var $salesTeam;
                 var $afterForm;
@@ -14562,10 +15221,10 @@ define([
                     success: 'A new Person crate success',
                     id: '123'
                 })]);
-
                 createBtn.click();
-
                 server.respond();
+
+                expect(window.location.hash).to.be.equals('#easyErp/Companies');
             });
         });
 
@@ -14574,4 +15233,3 @@ define([
 
 
 });
-*/

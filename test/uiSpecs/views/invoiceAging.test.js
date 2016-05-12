@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/invoiceAging/filterCollection',
@@ -19,7 +18,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -512,7 +512,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeInvoiceAging = [
         {
             _id: "56e68f6e04f9482d4273ed27",
@@ -1079,27 +1078,19 @@ define([
         }
     ];
 
-
     var invoiveAgingCollection;
     var view;
     var topBarView;
     var listView;
-    var windowConfirmStub;
 
     describe('InvoiceAging View', function () {
         var $fixture;
         var $elFixture;
 
-        before(function(){
-            windowConfirmStub = sinon.stub(window, 'confirm');
-        });
-
         after(function(){
             view.remove();
             topBarView.remove();
             listView.remove();
-
-            windowConfirmStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -1163,18 +1154,28 @@ define([
                 server.restore();
             });
 
+            it('Try to fetch collection with error result', function(){
+                var invoiceAging = new RegExp('\/invoice\/stats/', 'i');
+
+                server.respondWith('GET', invoiceAging, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeInvoiceAging)]);
+                invoiveAgingCollection = new InvoiceAgingCollection({
+                    viewType: 'list',
+                    count: 100,
+                    contentType: 'invoiceAging'
+                });
+                server.respond();
+            });
+
             it('Try to create TopBarView', function(){
                 var invoiceAging = new RegExp('\/invoice\/stats/', 'i');
 
                 server.respondWith('GET', invoiceAging, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeInvoiceAging)]);
-
                 invoiveAgingCollection = new InvoiceAgingCollection({
                     viewType: 'list',
                     page: 1,
                     count: 100,
                     contentType: 'invoiceAging'
                 });
-
                 server.respond();
 
                 topBarView = new TopBarView({
@@ -1207,20 +1208,46 @@ define([
                     var $listHolder;
                     var invoiceAging = new RegExp('\/invoice\/stats/', 'i');
                     server.respondWith('GET', invoiceAging, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeInvoiceAging)]);
-
                     listView = new ListView({
                         collection: invoiveAgingCollection,
                         startTime: new Date(),
                         count: 100
                     });
-
                     server.respond();
-
                     $listHolder = listView.$el;
 
                     expect($listHolder.find('table')).to.exist;
 
+                    invoiveAgingCollection.bind('showmore', listView.showMoreContent, listView);
+                });
 
+                it('Try to showMore collection with error', function(){
+                    var spyResponse;
+                    var invoiceAging = new RegExp('\/invoice\/stats/', 'i');
+
+                    server.respondWith('GET', invoiceAging, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    invoiveAgingCollection.showMore();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                });
+
+                it('Try to showMore collection', function(){
+                    var $listHolder;
+                    var invoiceAging = new RegExp('\/invoice\/stats/', 'i');
+
+                    server.respondWith('GET', invoiceAging, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    invoiveAgingCollection.showMore({
+                        page: 1,
+                        count: 10,
+                        viewType: 'list',
+                        contentType: 'invoiceAging'
+                    });
+                    server.respond();
+
+                    $listHolder = listView.$el;
+                    expect($listHolder.find('table')).to.exist;
                 });
             });
 
@@ -1229,4 +1256,3 @@ define([
     });
 
 });
-*/

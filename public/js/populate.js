@@ -1,8 +1,9 @@
 define([
+        'Underscore',
         "dataService",
         'text!templates/main/selectTemplate.html'
     ],
-    function (dataService, selectTemplate) {
+    function (_, dataService, selectTemplate) {
         var dataFormServer = {};
 
         var get = function (id, url, data, field, content, isCreate, canBeEmpty, parrrentContentId) {

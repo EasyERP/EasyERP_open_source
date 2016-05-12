@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/wTrack/filterCollection',
@@ -21,7 +20,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -514,7 +514,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeTCard = [
         {
             1: 8,
@@ -1021,7 +1020,8 @@ define([
                 ],
                 visible: true
             }
-        }, {
+        },
+        {
             1: 8,
             2: 8,
             3: 8,
@@ -1953,7 +1953,6 @@ define([
             }
         }
     ];
-
     var fakeProjectForWTrack = {
         data: [
             {
@@ -2081,7 +2080,6 @@ define([
             }
         ]
     };
-
     var fakeEmployee = {
         data: [
             {
@@ -2108,7 +2106,6 @@ define([
             }
         ]
     };
-
     var fakeDepsForDD = {
         data: [
             {
@@ -2125,7 +2122,6 @@ define([
             }
         ]
     };
-
     var fakeJobsWithId = [
         {
             _id: "56e6f1ae0d773c634e918b68",
@@ -2201,9 +2197,9 @@ define([
         var $fixture;
         var $elFixture;
 
-
         after(function () {
             view.remove();
+            listView.remove();
             topBarView.remove();
         });
 
@@ -2268,10 +2264,25 @@ define([
                 server.restore();
             });
 
+            it('Try to fetch collection with error', function(){
+                var tCardUrl = new RegExp('\/wTrack\/list', 'i');
+
+                server.respondWith('GET', tCardUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeTCard)]);
+
+                tCardCollection = new TCardCollection({
+                    contentType: 'wTrack',
+                    viewType: 'list'
+                });
+                server.respond();
+
+                //expect(window.location.hash).to.be.equals('#easyErp/wTrack');
+            });
+
             it('Try to create TopBarView', function () {
                 var tCardUrl = new RegExp('\/wTrack\/list', 'i');
 
                 server.respondWith('GET', tCardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeTCard)]);
+
                 tCardCollection = new TCardCollection({
                     contentType: 'wTrack',
                     viewType: 'list'
@@ -2293,48 +2304,104 @@ define([
 
         describe('tCardView', function () {
             var server;
-            var mainSpy;
             var windowConfirmStub;
+            var mainSpy;
+            var clock;
 
             before(function () {
                 server = sinon.fakeServer.create();
-                mainSpy = sinon.spy(App, 'render');
                 windowConfirmStub = sinon.stub(window, 'confirm');
+                windowConfirmStub.returns(true);
+                mainSpy = sinon.spy(App, 'render');
+                clock = sinon.useFakeTimers();
             });
 
             after(function () {
-                listView.remove();
-
                 server.restore();
-                mainSpy.restore();
                 windowConfirmStub.restore();
+                mainSpy.restore();
+                clock.restore();
             });
 
             describe('INITIALIZE', function () {
 
-                it('Try to create ListView', function () {
+                it('Try to create ListView', function (done) {
                     var $listHolder;
                     var projectsUrl = new RegExp('\/project\/getForWtrack', 'i');
                     var employeeUrl = new RegExp('\/employees\/getForDD', 'i');
                     var depsUrl = new RegExp('\/departments\/getForDD', 'i');
+                    var tCardTotal = new RegExp('\/wTrack\/totalCollectionLength', 'i');var tCardUrl = new RegExp('\/wTrack\/list', 'i');
 
                     server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectForWTrack)]);
                     server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployee)]);
                     server.respondWith('GET', depsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployee)]);
-
+                    server.respondWith('GET', tCardTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 2
+                    })]);
+                    server.respondWith('GET', tCardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeTCard)]);
                     listView = new ListView({
                         startTime: new Date(),
                         collection: tCardCollection,
                         page: 1
 
                     });
-
                     server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+
+                    clock.tick(200);
 
                     $listHolder = listView.$el;
 
                     expect($listHolder.find('table')).to.exist;
 
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+
+                    tCardCollection.bind('showmore', listView.showMoreContent, listView);
+
+                    done();
+                });
+
+                it('Try to delete item with 403 error', function(){
+                    var spyResponse;
+                    var $needCheckBtn = listView.$el.find('#listTable > tr:nth-child(1) > td.notForm > input');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var wTrackUrl = new RegExp('\/wTrack\/', 'i');
+
+                    $needCheckBtn.click();
+
+                    server.respondWith('DELETE', wTrackUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    $deleteBtn.click();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+                });
+
+                it('Try to delete item', function(){
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var wTrackUrl = new RegExp('\/wTrack\/', 'i');
+
+                    server.respondWith('DELETE', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    $deleteBtn.click();
+                    server.respond();
+
+                    expect(listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(4)').text().trim()).to.be.equals('Eugen Lendyel')
                 });
 
                 it('Try to go sort', function () {
@@ -2350,6 +2417,42 @@ define([
                     $sortEl.click();
                     server.respond();
                     expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('56efb9a06f572c5034f6f172');
+
+                });
+
+                it('Try to showMore tCard with error response', function(){
+                    var spyResponse;
+                    var $pageList = listView.$el.find('.pageList');
+                    var $needBtn = $pageList.find('a:nth-child(2)');
+                    var tCardUrl = new RegExp('\/wTrack\/list', 'i');
+
+                    server.respondWith('GET', tCardUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeTCard)]);
+                    $needBtn.click();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[1][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Some Error.');
+                });
+
+                it('Try to showMore tCard', function(){
+                    var $pageList = listView.$el.find('.pageList');
+                    var $needBtn = $pageList.find('a:nth-child(2)');
+                    var tCardUrl = new RegExp('\/wTrack\/list', 'i');
+
+                    server.respondWith('GET', tCardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeTCard)]);
+                    $needBtn.click();
+                    server.respond();
+                    expect(listView.$el.find('#listTable > tr').length).to.be.equals(2);
+                });
+
+                it('Try to check|uncheck all checkboxes', function(){
+                    var $checkAllBtn = listView.$el.find('#check_all');
+
+                    $checkAllBtn.click();
+                    expect(listView.$el.find('input[type="checkbox"]').prop('checked')).to.be.true;
+
+                    $checkAllBtn.click();
 
                 });
 
@@ -2375,13 +2478,13 @@ define([
                     $select = listView.$el.find('#55b92ad221e4b7c40f000030');
                     $select.click();
 
-                    /!*$sprintBtn = listView.$el.find('#listTable > tr.false > td:nth-child(3)');
-                    server.respondWith('GET', jobUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobsWithId)]);
-                    $sprintBtn.click();
-                    server.respond();
+                    /*$sprintBtn = listView.$el.find('#listTable > tr.false > td:nth-child(3)');
+                     server.respondWith('GET', jobUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobsWithId)]);
+                     $sprintBtn.click();
+                     server.respond();
 
-                    $select = listView.$el.find('#56e6f1ae0d773c634e918b68');
-                    $select.click();*!/
+                     $select = listView.$el.find('#56e6f1ae0d773c634e918b68');
+                     $select.click();*/
 
                     $sprintBtn = listView.$el.find('#listTable > tr.false > td:nth-child(3)');
                     $sprintBtn.removeClass(' errorContent');
@@ -2395,25 +2498,80 @@ define([
 
                 });
 
-                it('Try to delete item', function(){
+                it('Try to copy tCard row', function () {
+                    var $copyBtn;
+                    var $needCheckBox = listView.$el.find('#listTable > tr:nth-child(1) > td.notForm > input');
+
+                    $needCheckBox.click();
+                    $copyBtn = topBarView.$el.find('#top-bar-copyBtn');
+                    $copyBtn.click();
+
+                    expect(listView.$el.find('#listTable > tr').length).to.be.equals(4);
+                });
+
+                it('Try to delete item with changes ', function(){
                     var $needCheckBtn = listView.$el.find('#listTable > tr:nth-child(2) > td.notForm > input');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var wTrackUrl = new RegExp('\/wTrack\/', 'i');
 
-                    windowConfirmStub.returns(true);
                     $needCheckBtn.click();
 
                     server.respondWith('DELETE', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
                     $deleteBtn.click();
-                    listView.deleteItems();
                     server.respond();
 
-                    expect(listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(4)').text()).to.be.equals('Peter Voloshchuk')
-
+                    //expect(listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(4)').text().trim()).to.be.equals('Eugen Lendyel')
                 });
 
+                it('Try to edit wTrack', function(){
+                    var $selectedItem;
+                    var $input;
+                    var $yearBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="year"]');
+                    var $jobsBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="jobs"]');
+                    var $monthBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="month"]');
+                    var $weekBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="week"]');
+                    var $mondayBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="1"]');
+                    var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
+                    var jobsUrl = new RegExp('/jobs/getForDD', 'i');
+                    var wTrackUrl = '/wTrack/';
+                    var keyDownEvent = $.Event('keydown');
+                    var keyUpEvent = $.Event('keyup');
+
+                    // change year
+                    $yearBtn.click();
+                    $selectedItem = $yearBtn.find('.newSelectList > li:nth-child(1)');
+                    $selectedItem.click();
+
+                    // change month
+                    $monthBtn.click();
+                    $input = $mondayBtn.find('input');
+                    $input.trigger(keyDownEvent);
+                    $input.trigger(keyUpEvent);
+                    $input.val('12');
+                    $input.trigger('change');
+
+                    // change job
+                    server.respondWith('GET', jobsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobsWithId)]);
+                    $jobsBtn.click();
+                    server.respond();
+
+                    // chang week
+                    $weekBtn.click();
+                    $selectedItem = $weekBtn.find('.newSelectList > li:nth-child(1)');
+                    $selectedItem.click();
+
+                    // change monday hours
+                    $mondayBtn.click();
+                    $input = $mondayBtn.find('input');
+                    $input.val('10');
+                    $input.trigger('change');
+
+                    server.respondWith('PATCH', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+                    $saveBtn.click();
+                    server.respond();
 
 
+                });
             });
 
         });
@@ -2421,4 +2579,3 @@ define([
     });
 
 });
-*/

@@ -541,7 +541,7 @@ define([
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users: [],
                         departmentManager: null,
                         parentDepartment: "56cebdf6541812c07197358f",
                         departmentName: ".NET/WP",
@@ -580,7 +580,7 @@ define([
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users: [],
                         departmentManager: null,
                         parentDepartment: "56cebdf6541812c07197358f",
                         departmentName: ".NET/WP",
@@ -619,7 +619,7 @@ define([
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users: [],
                         departmentManager: null,
                         parentDepartment: "56cebdf6541812c07197358f",
                         departmentName: ".NET/WP",
@@ -658,7 +658,7 @@ define([
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users: [],
                         departmentManager: null,
                         parentDepartment: "56cebdf6541812c07197358f",
                         departmentName: ".NET/WP",
@@ -697,7 +697,7 @@ define([
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users: [],
                         departmentManager: null,
                         parentDepartment: "56cebdf6541812c07197358f",
                         departmentName: ".NET/WP",
@@ -743,7 +743,7 @@ define([
                             date: "2015-07-29T19:34:38.909Z",
                             user: "52203e707d4dba8813000003"
                         },
-                        users: [ ],
+                        users: [],
                         departmentManager: null,
                         parentDepartment: "56cebdf6541812c07197358f",
                         departmentName: ".NET/WP",
@@ -776,8 +776,8 @@ define([
 
         after(function () {
             view.remove();
-            //topBarView.remove();
-            //listView.remove();
+            topBarView.remove();
+            listView.remove();
         });
 
         describe('#initialize()', function () {
@@ -796,24 +796,19 @@ define([
                 server.restore();
             });
 
-            it('Should create main view', function (done) {
+            it('Should create main view', function () {
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                setTimeout(function () {
-                    server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
-                    view = new MainView({el: $elFixture, contentType: 'salaryReport'});
-                    server.respond();
+                server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
+                view = new MainView({el: $elFixture, contentType: 'salaryReport'});
+                server.respond();
 
-                    $expectedMenuEl = view.$el.find('#mainmenu-holder');
-                    $expectedSubMenuEl = view.$el.find('#submenu-holder');
+                $expectedMenuEl = view.$el.find('#mainmenu-holder');
+                $expectedSubMenuEl = view.$el.find('#submenu-holder');
 
-                    expect($expectedMenuEl).to.exist;
-                    expect($expectedSubMenuEl).to.exist;
-
-                    done();
-                }, 300);
-
+                expect($expectedMenuEl).to.exist;
+                expect($expectedSubMenuEl).to.exist;
 
             });
 
@@ -836,18 +831,30 @@ define([
 
         describe('TopBarView', function () {
             var server;
+            var consoleSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
+                consoleSpy = sinon.spy(console, 'log');
             });
 
             after(function () {
                 server.restore();
+                consoleSpy.restore();
+            });
+
+            it('Try to fetch collection with error', function(){
+                var salaryReportUrl = new RegExp('\/salaryReport\/list', 'i');
+
+                server.respondWith('GET', salaryReportUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeSalaryReport)]);
+                salaryReportCollection = new SalaryReportCollection();
+                server.respond();
+
+                expect(consoleSpy.called).to.be.true;
             });
 
             it('Try to create TopBarView', function () {
                 var salaryReportUrl = new RegExp('\/salaryReport\/list', 'i');
-
 
                 App['cashedData'] = {
                     salaryReportDateRange: {
@@ -860,7 +867,9 @@ define([
                 salaryReportCollection = new SalaryReportCollection();
                 server.respond();
 
-                topBarView = new TopBarView({});
+                topBarView = new TopBarView({
+                    collection: salaryReportCollection
+                });
 
                 expect(topBarView.$el.find('.vocationFilter')).to.exist;
                 expect(topBarView.$el.find('h3')).to.exist;
@@ -871,20 +880,14 @@ define([
 
         describe('SalaryReport ListView', function () {
             var server;
-            var mainSpy;
-            var windowConfirmStub;
 
             before(function () {
                 App.currentViewType = 'list';
                 server = sinon.fakeServer.create();
-                //mainSpy = sinon.spy(App, 'render');
-                windowConfirmStub = sinon.stub(window, 'confirm').returns(true);
             });
 
             after(function () {
                 server.restore();
-                //mainSpy.restore();
-                windowConfirmStub.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -896,9 +899,25 @@ define([
                     });
 
                     expect(listView.$el.find('table')).to.have.class('list');
+                    
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+
+                    salaryReportCollection.bind('showmore', listView.showMoreContent, listView);
                 });
 
-                it('Try to sort list', function(){
+                it('Try to sort list', function () {
                     var $employeeSortBtn = listView.$el.find('th[data-sort="name"]');
                     var salaryReportUrl = new RegExp('\/salaryReport\/list', 'i');
 
@@ -911,6 +930,31 @@ define([
                     $employeeSortBtn.click();
                     server.respond();
                     expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ad221e4b7c40f000098');
+
+                });
+
+                it('Try to change date range', function () {
+                    var $startDate;
+                    var $endDate;
+                    var $updateDateBtn;
+                    var $dateRangeEl = topBarView.$el.find('.dateRange');
+                    var salaryReportUrl = new RegExp('\/salaryReport\/list', 'i');
+
+                    $dateRangeEl.click();
+
+                    $startDate = topBarView.$el.find('#startDate');
+                    $endDate = topBarView.$el.find('#endDate');
+
+                    $startDate.val('1 Feb, 2016');
+                    $startDate.trigger('onSelect');
+                    $endDate.val('1 Mar, 2016');
+
+                    $updateDateBtn = topBarView.$el.find('#updateDate');
+                    server.respondWith('GET', salaryReportUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSalaryReport)]);
+                    $updateDateBtn.click();
+                    server.respond();
+
+                    expect(window.location.hash).to.be.equals('#easyErp/salaryReport');
 
                 });
 

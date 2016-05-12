@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/Birthdays/filterCollection',
@@ -19,7 +18,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -512,7 +512,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeBirthdays = {
         data: {
             weekly: [
@@ -1225,4 +1224,3 @@ define([
     });
 
 });
-*/

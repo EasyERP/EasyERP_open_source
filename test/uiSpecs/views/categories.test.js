@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/Product/ProductCategories',
@@ -20,7 +19,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -513,7 +513,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeCategories = {
         data: [
             {
@@ -700,7 +699,6 @@ define([
             }
         ]
     };
-
     var fakeCategoryById = {
         _id: "564591f9624e48551dfe3b23",
         __v: 0,
@@ -960,4 +958,3 @@ define([
 
 
 });
-*/

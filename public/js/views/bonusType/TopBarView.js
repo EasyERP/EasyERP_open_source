@@ -2,11 +2,14 @@
  * Created by Liliya_Pikiner on 7/1/2015.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/bonusType/topBarTemplate.html',
     'custom',
     'common',
     'constants'
-], function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+], function (Backbone, $, _, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
 
     var topBarView = Backbone.View.extend({
         el           : '#top-bar',
@@ -23,9 +26,9 @@ define([
             "click #top-bar-saveBtn"   : "saveEvent"
         },
 
-        changeContentViewType: function (e) {
+        /*changeContentViewType: function (e) {
             Custom.changeContentViewType(e, this.contentType, this.collection);
-        },
+        },*/
 
         createEvent: function (event) {
             event.preventDefault();

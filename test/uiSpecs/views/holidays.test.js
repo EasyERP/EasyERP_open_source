@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/Holiday/filterCollection',
@@ -9,10 +8,8 @@ define([
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai',
-    'custom',
-    'async'
-], function (fixtures, HolidaysCollection, MainView, ListView, TopBarView,  CreateView, $, chai, chaiJquery, sinonChai, Custom, async) {
+    'sinon-chai'
+], function (fixtures, HolidaysCollection, MainView, ListView, TopBarView,  CreateView, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
 
@@ -20,7 +17,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -513,7 +511,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeHoliday = {
         success: [
             {
@@ -765,22 +762,15 @@ define([
     var view;
     var topBarView;
     var listView;
-    var windowConfirmStub;
 
     describe('Holidays View', function () {
         var $fixture;
         var $elFixture;
 
-        before(function(){
-            windowConfirmStub = sinon.stub(window, 'confirm');
-        });
-
         after(function(){
             view.remove();
             topBarView.remove();
             listView.remove();
-
-            windowConfirmStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -792,7 +782,6 @@ define([
                 $elFixture = $fixture.find('#wrapper');
 
                 server = sinon.fakeServer.create();
-
             });
 
             after(function () {
@@ -804,12 +793,9 @@ define([
                 var $expectedMenuEl;
 
                 server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
-
                 view = new MainView({el: $elFixture, contentType: 'Holiday'});
-
                 $expectedMenuEl = view.$el.find('#mainmenu-holder');
                 $expectedSubMenuEl = view.$el.find('#submenu-holder');
-
                 server.respond();
 
                 expect($expectedMenuEl).to.exist;
@@ -828,9 +814,7 @@ define([
 
                 expect($expectedMenuEl).to.have.class('selected');
                 expect(window.location.hash).to.be.equals('#easyErp/Holiday');
-
             });
-
         });
 
         describe('TopBarView', function(){
@@ -844,16 +828,32 @@ define([
                 server.restore();
             });
 
-            it('Try to create TopBarView', function(){
+            it('Try to fetch collection with 401 error', function(){
                 var holidaysUrl = new RegExp('\/Holiday\/list', 'i');
 
-                server.respondWith('GET', holidaysUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeHoliday)]);
+                server.respondWith('GET', holidaysUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeHoliday)]);
 
                 holidaysCollection = new HolidaysCollection({
                     viewType: 'list',
                     page: 1
                 });
 
+                server.respond();
+                //expect(window.location.hash).to.be.equals('#login');
+            });
+
+            it('Try to create TopBarView', function(){
+                var holidaysUrl = new RegExp('\/Holiday\/list', 'i');
+                var holidaysTotalUrl = new RegExp('\/holiday\/totalCollectionLength');
+
+                server.respondWith('GET', holidaysTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    count: 29
+                })]);
+                server.respondWith('GET', holidaysUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeHoliday)]);
+                holidaysCollection = new HolidaysCollection({
+                    viewType: 'list',
+                    page: 1
+                });
                 server.respond();
 
                 topBarView = new TopBarView({
@@ -868,85 +868,157 @@ define([
                 var $listTypeBtn = topBarView.$el.find('a[data-view-type="list"].changeContentView');
 
                 $listTypeBtn.click();
-
                 expect(window.location.hash).to.be.equals('#easyErp/Holiday/list');
             });
-
         });
 
         describe('Holidays list view', function () {
             var server;
             var mainSpy;
+            var windowConfirmStub;
+            var clock;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
+                windowConfirmStub = sinon.stub(window, 'confirm');
+                windowConfirmStub.returns(true);
+                clock = sinon.useFakeTimers();
             });
 
             after(function () {
                 server.restore();
                 mainSpy.restore();
+                windowConfirmStub.restore();
+                clock.restore();
             });
 
             describe('INITIALIZE', function(){
 
-                it('Try to create holidays list view', function () {
-                    var holidayTotalCollectionUrl = new RegExp('\/holiday\/totalCollectionLength', 'i');
+                it('Try to create holidays list view', function (done) {
                     var $listHolder;
+                    var holidayTotalCollectionUrl = new RegExp('\/holiday\/totalCollectionLength', 'i');
+                    var holidaysUrl = new RegExp('\/Holiday\/list', 'i');
 
+                    server.respondWith('GET', holidaysUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeHoliday)]);
                     server.respondWith('GET', holidayTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
                         count: 29
                     })]);
-
                     listView = new ListView({
                         collection: holidaysCollection,
                         startTime: new Date()
                     });
-
                     server.respond();
+                    server.respond();
+
+                    clock.tick(200);
 
                     $listHolder = listView.$el;
 
                     expect($listHolder.find('table')).to.exist;
 
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+
+                    holidaysCollection.bind('showmore', listView.showMoreContent, listView);
+
+                    done();
                 });
 
-                /!*it('Try to delete item', function(){
-                    var holidaysUrl = new RegExp('\/Holiday\/', 'i');
-                    var $firstEl = $(listView.$el.find('#listTable input')[0]);
-                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                it('Try to showMore collection with error', function(){
+                    var spyResponse;
+                    var holidayTotalCollectionUrl = new RegExp('\/holiday\/totalCollectionLength', 'i');
+                    var holidaysUrl = new RegExp('\/Holiday\/list', 'i');
 
-                    windowConfirmStub.returns(true);
-
-                    $firstEl.prop('checked', true);
-
-                    server.respondWith('DELETE', holidaysUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
-
-                    $deleteBtn.click();
-
-                    listView.deleteItems();
-
+                    server.respondWith('GET', holidaysUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeHoliday)]);
+                    server.respondWith('GET', holidayTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 29
+                    })]);
+                    holidaysCollection.showMore();
+                    server.respond();
                     server.respond();
 
-                    $firstEl.click();
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Some Error.');
+                });
 
-                });*!/
+                it('Try to showMore collection', function(){
+                    var holidayTotalCollectionUrl = new RegExp('\/holiday\/totalCollectionLength', 'i');
+                    var holidaysUrl = new RegExp('\/Holiday\/list', 'i');
 
-                /!*it('Try to delete with changes', function () {
+                    server.respondWith('GET', holidaysUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeHoliday)]);
+                    server.respondWith('GET', holidayTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 29
+                    })]);
+                    holidaysCollection.showMore();
+                    server.respond();
+                    server.respond();
+                });
+
+                it('Try to delete with changes', function () {
                     var $input;
                     var $expenseInput = listView.$el.find('td[data-type="input"]')[0];
-                    var $body = $('body');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var keyDownEven = $.Event('keydown', {which: 13});
 
                     $expenseInput.click();
                     $input = listView.$el.find('input.editing');
                     $input.val('test');
-                    $body.click();
+                    $input.trigger('change');
+                    $input.click();
+                    $input.trigger(keyDownEven);
 
-                    listView.deleteItems();
+                    $deleteBtn.click();
+                    expect($(listView.$el.find('td[data-type="input"]')[0]).text()).to.be.equals('Defender of Ukraine Day');
+                });
 
-                    expect($(listView.$el.find('td[data-type="input"]')[0]).text()).to.be.equals('Independence Day Ukraine');
+                it('Try to delete item', function(){
+                    var holidaysUrl = new RegExp('\/Holiday\/', 'i');
+                    var holidayTotalCollectionUrl = new RegExp('\/holiday\/totalCollectionLength', 'i');
+                    var $firstEl = listView.$el.find('#listTable > tr[data-id="569fad3e62d172544baf0de2"] > td.notForm > input');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
-                });*!/
+                    $firstEl.click();
+
+                    server.respondWith('GET', holidayTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 28
+                    })]);
+                    server.respondWith('DELETE', holidaysUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
+                    $deleteBtn.click();
+                    server.respond();
+                    server.respond();
+                });
+
+                it('Try to delete item with 403 error', function(){
+                    var spyResponse;
+                    var $firstEl = listView.$el.find('#listTable > tr[data-id="569fa6fc62d172544baf0db9"] > td.notForm > input');
+                    var $secondEl = listView.$el.find('#listTable > tr[data-id="569fad3e62d172544baf0de2"] > td.notForm > input');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var holidaysUrl = new RegExp('\/Holiday\/', 'i');
+
+                    $firstEl.click();
+                    $secondEl.click();
+
+                    server.respondWith('DELETE', holidaysUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    $deleteBtn.click();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[1][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+                });
 
                 it('Try to create item', function(){
                     var $dateInput;
@@ -957,7 +1029,6 @@ define([
                     var $tableContainer = listView.$el.find('table');
 
                     $createBtn.click();
-                    listView.createItem();
 
                     $dateInput = listView.$el.find('td[data-content="date"]')[0];
                     $commentInput = listView.$el.find('td[data-content="comment"]')[0];
@@ -973,14 +1044,9 @@ define([
                     $input.val('test');
 
                     server.respondWith('POST', '/Holiday/', [200, {"Content-Type": "application/json"}, JSON.stringify({"success":{"__v":0,"date":"2016-03-11T22:00:00.000Z","year":null,"week":null,"_id":"56e2cd4a3abb6ba70f73ad73"}})]);
-
                     $saveBtn.click();
-                    listView.saveItem();
-
                     server.respond();
-
                     expect($tableContainer.find('input[type="text"]').length).to.equals(0);
-
                 });
 
                 it('Try to edit item', function(){
@@ -998,23 +1064,13 @@ define([
                     $body.click();
 
                     server.respondWith('PATCH', '/Holiday/', [200, {"Content-Type": "application/json"}, JSON.stringify({"success":{"__v":0,"date":"2016-03-11T22:00:00.000Z","year":null,"week":null,"_id":"56e2cd4a3abb6ba70f73ad73"}})]);
-
                     $saveBtn.click();
-                    listView.saveItem();
-
                     server.respond();
 
                     expect($tableContainer.find('input[type="text"]').length).to.equals(0);
                     expect($(listView.$el.find('td[data-content="comment"]')[0]).text()).to.be.equals('TEST Comment');
-
                 });
-
-
             });
-
         });
-
     });
-
 });
-*/

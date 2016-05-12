@@ -1,5 +1,4 @@
 define([
-        'Backbone',
         'jQuery',
         'Underscore',
         'views/listViewBase',
@@ -13,7 +12,7 @@ define([
         'helpers'
     ],
 
-    function (Backbone, $, _, listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom, CONSTANTS, helpers) {
+    function ($, _, listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom, CONSTANTS, helpers) {
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
             listItemView            : listItemView,

@@ -2,6 +2,9 @@
  * Created by Liliya_Pikiner on 7/1/2015.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/bonusType/list/listHeader.html',
         'text!templates/bonusType/cancelEdit.html',
@@ -19,7 +22,7 @@ define([
         'helpers/keyCodeHelper'
     ],
 
-    function (paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants, keyCodes) {
+    function (Backbone, $, _, paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants, keyCodes) {
         var bonusTypeListView = Backbone.View.extend({
             el                 : '#content-holder',
             defaultItemsNumber : null,
@@ -297,6 +300,7 @@ define([
 
                 this.setChangedValueToModel();
                 for (var id in this.changedModels) {
+
                     model = this.editCollection.get(id);
                     model.changed = this.changedModels[id];
                 }
@@ -612,7 +616,7 @@ define([
                 }, this);
             },
 
-            switchPageCounter: function (event) {
+            /*switchPageCounter: function (event) {
                 event.preventDefault();
                 this.startTime = new Date();
                 var itemsNumber = event.target.textContent;
@@ -633,7 +637,7 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
-            },
+            },*/
 
             showFilteredPage: function () {
                 var itemsNumber;

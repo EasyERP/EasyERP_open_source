@@ -1,8 +1,11 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Bonus/CreateTemplate.html",
         'models/BonusModel'
     ],
-    function (CreateTemplate, currentModel) {
+    function (Backbone, $, _, CreateTemplate, currentModel) {
 
         var CreateView = Backbone.View.extend({
             el      : '#bonusTable',

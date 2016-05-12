@@ -1,5 +1,7 @@
 ﻿define([
-    'Underscore',
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Projects/thumbnails/ThumbnailsItemTemplate.html",
         'text!templates/stages.html',
         'views/Projects/EditView',
@@ -13,7 +15,7 @@
         'custom'
     ],
 
-    function (_, thumbnailsItemTemplate, stagesTamplate, editView, createView, formView, dataService, currentModel, filterView, common, populate, custom) {
+    function (Backbone, $, _, thumbnailsItemTemplate, stagesTamplate, editView, createView, formView, dataService, currentModel, filterView, common, populate, custom) {
         var ProjectThumbnalView = Backbone.View.extend({
             el                : '#content-holder',
             countPerPage      : 0,
@@ -286,22 +288,22 @@
                 App.projectInfo = App.projectInfo || {};
                 App.projectInfo.currentTab = 'overview';
 
-                //var clas = $(e.target).parent().attr("class");
-                //if ((clas === "dropDown") || (clas === "inner")) {
-                //} else {
-                //    e.preventDefault();
-                //    var id = $(e.target).closest('.thumbnail').attr("id");
-                //    var model = new currentModel({validate: false});
-                //    model.urlRoot = '/Projects/form/' + id;
-                //    model.fetch({
-                //        success: function (model) {
-                //            new editView({model: model});
-                //        },
-                //        error: function () {
-                //            alert('Please refresh browser');
-                //        }
-                //    });
-                //}
+                /*var clas = $(e.target).parent().attr("class");
+                if ((clas === "dropDown") || (clas === "inner")) {
+                } else {
+                    e.preventDefault();
+                    var id = $(e.target).closest('.thumbnail').attr("id");
+                    var model = new currentModel({validate: false});
+                    model.urlRoot = '/Projects/form/' + id;
+                    model.fetch({
+                        success: function (model) {
+                            new editView({model: model});
+                        },
+                        error: function () {
+                            alert('Please refresh browser');
+                        }
+                    });
+                }*/
             },
 
             showMore: function (event) {

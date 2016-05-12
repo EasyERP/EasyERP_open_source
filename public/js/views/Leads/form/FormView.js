@@ -1,3 +1,4 @@
+/*
 define([
         'text!templates/Leads/form/FormTemplate.html',
         'views/Leads/EditView'
@@ -99,3 +100,4 @@ define([
 
         return FormView;
     });
+*/

@@ -1,10 +1,13 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Profiles/CreateProfileTemplate.html",
         "models/ProfilesModel",
         "text!templates/Profiles/ModulesAccessListTemplate.html",
         "populate"
     ],
-    function (CreateProfileTemplate, ProfilesModel, ModulesAccessTemplate, populate) {
+    function (Backbone, $, _, CreateProfileTemplate, ProfilesModel, ModulesAccessTemplate, populate) {
         var CreateView = Backbone.View.extend({
             el           : '#content-holder',
             contentType  : "Profiles",

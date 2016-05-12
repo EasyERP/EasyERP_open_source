@@ -1,7 +1,9 @@
 /**
  * Created by German on 30.06.2015.
  */
-define([], function () {
+define([
+    'Backbone'
+], function (Backbone) {
     var AttendanceModel = Backbone.Model.extend({
         defaults: {
             employees      : [],

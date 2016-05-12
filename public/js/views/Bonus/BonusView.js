@@ -1,4 +1,7 @@
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Bonus/BonusTemplate.html',
     'views/selectView/selectView',
     'views/Bonus/CreateView',
@@ -8,7 +11,7 @@ define([
     "populate",
     'moment',
     'constants'
-], function (bonusTemplate, selectView, createView, currentModel, dataService, common, populate, moment, CONSTANTS) {
+], function (Backbone, $, _, bonusTemplate, selectView, createView, currentModel, dataService, common, populate, moment, CONSTANTS) {
     var BonusView = Backbone.View.extend({
 
         initialize: function (options) {

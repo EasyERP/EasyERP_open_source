@@ -1,8 +1,10 @@
 define([
     'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Notes/NoteTemplate.html'
 
-], function (Backbone, NoteTemplate) {
+], function (Backbone, $, _, NoteTemplate) {
     var NoteView = Backbone.View.extend({
 
         initialize : function () {

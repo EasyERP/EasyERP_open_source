@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Product/TopBarTemplate.html',
         'text!templates/Notes/importTemplate.html',
         'views/Notes/AttachView',
@@ -6,7 +9,7 @@ define([
         'common',
         'constants'
     ],
-    function (ContentTopBarTemplate, importTemplate, attachView, Custom, Common, CONSTANTS) {
+    function (Backbone, $, _, ContentTopBarTemplate, importTemplate, attachView, Custom, Common, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: CONSTANTS.PRODUCT,

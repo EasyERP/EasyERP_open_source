@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/Holiday/list/ListHeader.html',
         'text!templates/Holiday/list/cancelEdit.html',
@@ -14,7 +16,7 @@ define([
         'moment'
     ],
 
-    function (listViewBase, listTemplate, cancelEdit, createView, listItemView, holidayModel, holidayCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
+    function ($, _, listViewBase, listTemplate, cancelEdit, createView, listItemView, holidayModel, holidayCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
         var HolidayListView = listViewBase.extend({
             page                    : null,
             sort                    : null,
@@ -259,11 +261,10 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                //todo put in setTimeOut
-                self.$listTable = $('#listTable');
-                self.editCollection = new editCollection(self.collection.toJSON());
 
                 setTimeout(function () {
+                    self.$listTable = $('#listTable');
+                    self.editCollection = new editCollection(self.collection.toJSON());
                     self.editCollection.on('saved', self.savedNewModel, self);
 
                     self.editCollection.on('updated', self.updatedOptions, self);
@@ -372,6 +373,7 @@ define([
                     model;
                 var localCounter = 0;
                 var count = $("#listTable input:checked").length;
+
                 this.collectionLength = this.collection.length;
 
                 if (!this.changed) {

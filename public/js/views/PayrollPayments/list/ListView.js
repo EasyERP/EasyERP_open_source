@@ -2,6 +2,9 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/PayrollPayments/list/ListHeader.html',
         'views/Filter/FilterView',
@@ -16,7 +19,7 @@ define([
         'async',
     'constants'
     ],
-    function (paginationTemplate, listTemplate, filterView, DialogView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, CONSTANTS) {
+    function (Backbone, $, _, paginationTemplate, listTemplate, filterView, DialogView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, CONSTANTS) {
         "use strict";
 
         var PaymentListView = Backbone.View.extend({

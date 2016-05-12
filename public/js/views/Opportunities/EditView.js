@@ -141,7 +141,7 @@
 
             },
 
-            switchTab: function (e) {
+            /*switchTab: function (e) {  ui tests
                 e.preventDefault();
                 var link = this.$("#tabList a");
                 if (link.hasClass("selected")) {
@@ -149,7 +149,7 @@
                 }
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
-            },
+            },*/
 
             saveItem: function () {
                 var self = this;
@@ -306,6 +306,8 @@
                                 break;
                             case 'kanban':
                             {
+
+                                console.log(JSON.stringify(result));
                                 var kanban_holder = $("#" + model._id);
                                 kanban_holder.find(".opportunity-header h4").text(name);
                                 kanban_holder.find(".opportunity-header h3").text("$" + parseInt(expectedRevenueValue));

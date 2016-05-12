@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/bonusType/filterCollection',
@@ -21,7 +20,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -514,7 +514,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeBonusTypes = [
         {
             _id: "55b92ad521e4b7c40f000602",
@@ -607,22 +606,6 @@ define([
             bonusType: "PM"
         },
         {
-            _id: "56053965cdc112333a000009",
-            name: "hjkhg",
-            value: 6,
-            isPercent: true,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
-            _id: "5605396a82ca87623a00000b",
-            name: "hjkhgytryt",
-            value: 6,
-            isPercent: true,
-            __v: 0,
-            bonusType: "Sales"
-        },
-        {
             _id: "560eaaa5c90e2fb026ce061e",
             name: "Sales/Usual 4%",
             value: 4,
@@ -631,7 +614,6 @@ define([
             bonusType: "Sales"
         }
     ];
-
     var fakeSortedDownBonusType = [
         {
             _id: "55b92ad521e4b7c40f000602",
@@ -764,7 +746,6 @@ define([
             bonusType: "Sales"
         }
     ];
-
     var fakeSortedUpBonusType = [
         {
             _id: "55b92ad521e4b7c40f000603",
@@ -908,16 +889,11 @@ define([
         var $fixture;
         var $elFixture;
 
-        before(function(){
-            windowConfirmStub = sinon.stub(window, 'confirm');
-        });
-
-        after(function(){
+        after(function () {
             view.remove();
             topBarView.remove();
             listView.remove();
 
-            windowConfirmStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -970,28 +946,41 @@ define([
 
         });
 
-        describe('TopBarView', function(){
+        describe('TopBarView', function () {
             var server;
+            var consoleSpy;
 
-            before(function(){
+            before(function () {
                 server = sinon.fakeServer.create();
+                consoleSpy = sinon.spy(console, 'log');
             });
 
-            after(function(){
+            after(function () {
                 server.restore();
+                consoleSpy.restore();
             });
 
-            it('Try to create TopBarView', function(){
+            it('Try to fetch collection with error', function(){
                 var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
 
-                server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypes)]);
-
+                server.respondWith('GET', bonusTypeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypes)]);
                 bonusTypesCollection = new BonusTypeCollection({
                     viewType: 'list',
                     page: 1,
                     count: 13
                 });
+                server.respond();
 
+                expect(consoleSpy.called).to.be.true;
+            });
+
+            it('Try to create TopBarView', function () {
+                var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
+
+                server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypes)]);
+                bonusTypesCollection = new BonusTypeCollection({
+                    viewType: 'list'
+                });
                 server.respond();
 
                 topBarView = new TopBarView({
@@ -1007,90 +996,231 @@ define([
         describe('BonusType list view', function () {
             var server;
             var mainSpy;
+            var clock;
+            var windowConfirmStub;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
+                clock = sinon.useFakeTimers();
+                windowConfirmStub = sinon.stub(window, 'confirm');
+                windowConfirmStub.returns(true);
             });
 
             after(function () {
                 server.restore();
                 mainSpy.restore();
+                clock.restore();
+                windowConfirmStub.restore();
             });
 
-            describe('INITIALIZE', function(){
+            describe('INITIALIZE', function () {
 
                 it('Try to create bonusType list view', function (done) {
-                    var bonusTypeTotalCollUrl = new RegExp('\/bonusType\/list\/totalCollectionLength', 'i');
                     var $listHolder;
+                    var bonusTypeTotalCollUrl = new RegExp('\/bonusType\/list\/totalCollectionLength', 'i');
+                    var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
 
-                    setTimeout(function(){
-                        server.respondWith('GET', bonusTypeTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                            count: 13
-                        })]);
+                    server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypes)]);
+                    server.respondWith('GET', bonusTypeTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 13
+                    })]);
+                    listView = new ListView({
+                        collection: bonusTypesCollection,
+                        startTime: new Date()
+                    });
+                    server.respond();
+                    server.respond();
 
-                        listView = new ListView({
-                            collection: bonusTypesCollection,
-                            startTime: new Date()
-                        });
+                    clock.tick(100);
 
-                        server.respond();
+                    $listHolder = listView.$el;
 
-                        $listHolder = listView.$el;
+                    expect($listHolder.find('table')).to.exist;
 
-                        expect($listHolder.find('table')).to.exist;
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
 
-                        done();
-                    }, 50);
+                    bonusTypesCollection.bind('showmore', listView.showMoreContent, listView);
+
+                    done();
 
                 });
 
-                it('Try to delete item', function () {
-                    var bonusTypeUrl = new RegExp('\/bonusType\/', 'i');
-                    var $firstEl = $(listView.$el.find('#listTable input')[0]);
+                it('Try to check|uncheck all checckboxes', function(){
+                    var $checkAllBtn = listView.$el.find('#check_all');
+
+                    $checkAllBtn.click();
+                    expect(listView.$el.find('input[type=checkbox]').prop('checked')).to.be.true;
+
+                    $checkAllBtn.click();
+                    expect(listView.$el.find('input[type=checkbox]').prop('checked')).to.be.false;
+                });
+
+                it('Try to switchPageCounter with error', function(done){
+                    var spyResponse;
+                    var $thisEl = listView.$el;
+                    var $pageList = $thisEl.find('.pageList');
+                    var $needBtn = $pageList.find('a:nth-child(2)');
+                    var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
+
+                    server.respondWith('GET', bonusTypeUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypes)]);
+                    $needBtn.click();
+                    server.respond();
+
+                    clock.tick(200);
+
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Some Error.');
+
+                    done();
+                });
+
+                it('Try to switchPageCounter', function(done){
+                    var $thisEl = listView.$el;
+                    var $pageList = $thisEl.find('.pageList');
+                    var $needBtn = $pageList.find('a:nth-child(2)');
+                    var bonusTypeTotalCollUrl = new RegExp('\/bonusType\/list\/totalCollectionLength', 'i');
+                    var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
+
+                    server.respondWith('GET', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypes)]);
+                    server.respondWith('GET', bonusTypeTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 13
+                    })]);
+                    $needBtn.click();
+                    server.respond();
+                    server.respond();
+
+                    clock.tick(200);
+
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(11);
+
+                    done();
+                });
+
+                it('Try to change page', function(){
+                    var $thisEl = listView.$el;
+                    var $firstShowPage = $thisEl.find('#firstShowPage');
+                    var $previousPage = $thisEl.find('#previousPage');
+                    var $nextPage = $thisEl.find('#nextPage');
+                    var $lastShowPage = $thisEl.find('#lastShowPage');
+
+                    $firstShowPage.prop('disabled', false);
+                    $firstShowPage.click();
+                    $previousPage.prop('disabled', false);
+                    $previousPage.click();
+                    $nextPage.prop('disabled', false);
+                    $nextPage.click();
+                    $lastShowPage.prop('disabled', false);
+                    $lastShowPage.click();
+                });
+
+                it('Try to delete with changes', function(){
+                    var $input;
+                    var $selectedItem;
+                    var $thisEl = listView.$el;
+                    var $valueInput = $thisEl.find('tr[data-id="55b92ad521e4b7c40f000602"] > td[data-content="value"]');
+                    var $type = $thisEl.find('tr[data-id="55b92ad521e4b7c40f000602"] > td[data-content="bonusType"]');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
-                    windowConfirmStub.returns(true);
+                    // set value
+                    $valueInput.click();
+                    $input = $valueInput.find('input.editing');
+                    $input.val('10');
+                    $input.trigger('change');
 
-                    $firstEl.prop('checked', true);
-
-                    server.respondWith('DELETE', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
+                    // change type
+                    $type.click();
+                    $selectedItem = $thisEl.find('li[data-id="PM"]');
+                    $selectedItem.click();
+                    $selectedItem.trigger('change');
 
                     $deleteBtn.click();
 
-                    listView.deleteItems();
-
-                    server.respond();
-
-                    $firstEl.click();
-
+                    expect($thisEl.find('tr[data-id="55b92ad521e4b7c40f000602"] > td[data-content="value"]').text().trim()).to.be.equals('8');
+                    expect($thisEl.find('tr[data-id="55b92ad521e4b7c40f000602"] > td[data-content="bonusType"]').text().trim()).to.be.equals('Sales');
                 });
 
-                it('Try to create item', function(){
+                it('Try to delete item with 403 error', function () {
+                    var spyResponse;
+                    var $firstEl = listView.$el.find('#listTable > tr[data-id="55b92ad521e4b7c40f000602"] > td.notForm > input');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var bonusTypeUrl = new RegExp('\/bonusType\/', 'i');
+
+                    $firstEl.click();
+                    server.respondWith('DELETE', bonusTypeUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
+                    $deleteBtn.click();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[1][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+                });
+
+                it('Try to delete item', function () {
+                    var $firstEl = listView.$el.find('#listTable > tr[data-id="55b92ad521e4b7c40f000602"] > td.notForm > input');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var bonusTypeUrl = new RegExp('\/bonusType\/', 'i');
+
+                    $firstEl.click();
+                    server.respondWith('DELETE', bonusTypeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
+                    $deleteBtn.click();
+                    server.respond();
+                });
+
+                it('Try to create item', function () {
                     var $nameInput;
                     var $bonusTypeInput;
                     var $valueInput;
                     var $isPercentInput;
                     var $input;
+                    var $newSelectEl;
+                    var spyResponse;
                     var $createBtn = topBarView.$el.find('#top-bar-createBtn');
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var $tableContainer = listView.$el.find('table');
-                    var $newSelectEl;
 
                     $createBtn.click();
-                    listView.createItem();
 
                     $nameInput = listView.$el.find('td[data-content="name"]')[0];
                     $bonusTypeInput = listView.$el.find('td[data-content="bonusType"]')[0];
                     $valueInput = listView.$el.find('td[data-content="value"]')[0];
                     $isPercentInput = listView.$el.find('td[data-content="isPercent"]')[0];
 
-                    $nameInput.click();
+                    server.respondWith('POST', '/bonusType/', [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        "success": {
+                            "__v": 0,
+                            "date": "2016-03-11T22:00:00.000Z",
+                            "year": null,
+                            "week": null,
+                            "_id": "56e2cd4a3abb6ba70f73ad73"
+                        }
+                    })]);
+                    $saveBtn.click();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[2][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Fill all fields please');
+
+                    /*$nameInput.click();
                     $input = listView.$el.find('input.editing');
                     $input.val('test');
 
                     $bonusTypeInput.click();
-                    $newSelectEl = listView.$el.find('.newSelectList li')[0];
+                    $newSelectEl = listView.$el.find('li[data-id="PM"]');
                     $newSelectEl.click();
 
                     $valueInput.click();
@@ -1098,21 +1228,18 @@ define([
                     $input.val('15');
 
                     $isPercentInput.click();
-                    $newSelectEl = listView.$el.find('.newSelectList li')[0];
+                    $newSelectEl = listView.$el.find('li[data-id="true"]');
                     $newSelectEl.click();
 
-                    server.respondWith('POST', '/bonusType/', [200, {"Content-Type": "application/json"}, JSON.stringify({"success":{"__v":0,"date":"2016-03-11T22:00:00.000Z","year":null,"week":null,"_id":"56e2cd4a3abb6ba70f73ad73"}})]);
+                    server.respondWith('POST', '/bonusType/', [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
 
                     $saveBtn.click();
-                    listView.saveItem();
-
                     server.respond();
 
-                    expect($tableContainer.find('input[type="text"]').length).to.equals(0);
-
+                    expect($tableContainer.find('input[type="text"]').length).to.equals(0);*/
                 });
 
-                it('Try to edit item', function(){
+                /*it('Try to edit item', function () {
                     var $input;
                     var $valueInput = listView.$el.find('td[data-content="value"]')[0];
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
@@ -1126,7 +1253,15 @@ define([
 
                     $body.click();
 
-                    server.respondWith('PATCH', '/bonusType/', [200, {"Content-Type": "application/json"}, JSON.stringify({"success":{"__v":0,"date":"2016-03-11T22:00:00.000Z","year":null,"week":null,"_id":"56e2cd4a3abb6ba70f73ad73"}})]);
+                    server.respondWith('PATCH', '/bonusType/', [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        "success": {
+                            "__v": 0,
+                            "date": "2016-03-11T22:00:00.000Z",
+                            "year": null,
+                            "week": null,
+                            "_id": "56e2cd4a3abb6ba70f73ad73"
+                        }
+                    })]);
 
                     $saveBtn.click();
                     listView.saveItem();
@@ -1136,9 +1271,9 @@ define([
                     expect($tableContainer.find('input[type="text"]').length).to.equals(0);
                     expect($(listView.$el.find('td[data-content="value"]')[0]).text()).to.be.equals('17');
 
-                });
+                });*/
 
-                it ('Try to sort down list', function(){
+                it('Try to sort down list', function () {
                     var $sortTypeBtn = listView.$el.find('th[data-sort="bonusType"]');
                     var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
                     var totalCollUrl = new RegExp('\/bonusType\/list\/totalCollectionLength', 'i')
@@ -1159,7 +1294,7 @@ define([
 
                 });
 
-                it ('Try to sort up list', function(){
+                it('Try to sort up list', function () {
                     var $sortTypeBtn = listView.$el.find('th[data-sort="bonusType"]');
                     var bonusTypeUrl = new RegExp('\/bonusType\/list', 'i');
                     var totalCollUrl = new RegExp('\/bonusType\/list\/totalCollectionLength', 'i')
@@ -1169,23 +1304,14 @@ define([
                     server.respondWith('GET', totalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
                         count: 15
                     })]);
-
                     $sortTypeBtn.click();
-
                     server.respond();
 
                     $bonusTypeInput = $(listView.$el.find('td[data-content="bonusType"]')[0]);
 
                     expect($bonusTypeInput.text()).to.be.equals('Sales');
-
                 });
-
-
             });
-
         });
-
     });
-
 });
-*/

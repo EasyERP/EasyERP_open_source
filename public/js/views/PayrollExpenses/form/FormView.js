@@ -1081,6 +1081,8 @@ define([
                 var self = this;
                 var collection = this.collection.toJSON();
 
+                console.log(JSON.stringify(collection));
+
                 this.$el.html(_.template(PayrollTemplate, {
                     collection      : collection,
                     currencySplitter: helpers.currencySplitter

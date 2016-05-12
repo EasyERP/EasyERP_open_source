@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/journal/filterCollection',
@@ -20,7 +19,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -513,7 +513,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeJournal = [
         {
             _id: "565ef6ba270f53d02ee71d65",
@@ -726,7 +725,6 @@ define([
             date: "2016-02-23T14:58:11.149Z"
         }
     ];
-
     var fakeChartofAccoutnForDD = {
         data: [
             {
@@ -1545,22 +1543,15 @@ define([
     var view;
     var topBarView;
     var listView;
-    var windowConfirmStub;
 
     describe('Journal View', function () {
         var $fixture;
         var $elFixture;
 
-        before(function(){
-            windowConfirmStub = sinon.stub(window, 'confirm');
-        });
-
-        after(function(){
+        after(function () {
             view.remove();
             topBarView.remove();
             listView.remove();
-
-            windowConfirmStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -1613,18 +1604,30 @@ define([
 
         });
 
-        describe('TopBarView', function(){
+        describe('TopBarView', function () {
             var server;
 
-            before(function(){
+            before(function () {
                 server = sinon.fakeServer.create();
             });
 
-            after(function(){
+            after(function () {
                 server.restore();
             });
 
-            it('Try to create TopBarView', function(){
+            it('Try to fetch collection with error', function(){
+                var journalUrl = new RegExp('\/journal\/list', 'i');
+
+                server.respondWith('GET', journalUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeJournal)]);
+                journalCollection = new JournalCollection({
+                    viewType: 'list',
+                    page: 1,
+                    count: 100
+                });
+                server.respond();  
+            });
+            
+            it('Try to create TopBarView', function () {
                 var journalUrl = new RegExp('\/journal\/list', 'i');
 
                 server.respondWith('GET', journalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJournal)]);
@@ -1647,43 +1650,86 @@ define([
 
         });
 
-        describe('ChartsOfAccount list view', function () {
+        describe('Journal list view', function () {
             var server;
+            var windowConfirmStub;
+            var clock;
             var mainSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
+                windowConfirmStub = sinon.stub(window, 'confirm');
+                windowConfirmStub.returns(true);
+                clock = sinon.useFakeTimers();
                 mainSpy = sinon.spy(App, 'render');
             });
 
             after(function () {
                 server.restore();
+                windowConfirmStub.restore();
+                clock.restore();
                 mainSpy.restore();
             });
 
-            describe('INITIALIZE', function(){
+            describe('INITIALIZE', function () {
 
                 it('Try to create Journal list view', function (done) {
                     var $listHolder;
+
+                    listView = new ListView({
+                        collection: journalCollection,
+                        startTime: new Date()
+                    });
+
+                    clock.tick(200);
+
+                    $listHolder = listView.$el;
+
+                    expect($listHolder.find('table')).to.exist;
+
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+
+                    journalCollection.bind('showmore', listView.showMoreContent, listView);
+                    
+                    done();
+                });
+
+                it('Try to showMore collection with error', function(){
+                    var spyResponse;
                     var journalUrl = new RegExp('\/journal\/list', 'i');
 
-                    setTimeout(function(){
-                        server.respondWith('GET', journalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJournal)]);
+                    server.respondWith('GET', journalUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeJournal)]);
+                    journalCollection.showMore();
+                    server.respond();
 
-                        listView = new ListView({
-                            collection: journalCollection,
-                            startTime: new Date()
-                        });
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Some Error.');
+                });
 
-                        server.respond();
+                it('Try to showMore collection', function(){
+                    var $listHolder;
+                    var journalUrl = new RegExp('\/journal\/list', 'i');
 
-                        $listHolder = listView.$el;
+                    server.respondWith('GET', journalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJournal)]);
+                    journalCollection.showMore();
+                    server.respond();
 
-                        expect($listHolder.find('table')).to.exist;
+                    $listHolder = listView.$el;
 
-                        done();
-                    }, 50);
-
+                    expect($listHolder.find('table')).to.exist;
                 });
 
                 it('Try to delete item', function () {
@@ -1691,22 +1737,18 @@ define([
                     var $firstEl = listView.$el.find('tr:nth-child(1) > td:nth-child(1) > .checkbox');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
-                   windowConfirmStub.returns(true);
+                    windowConfirmStub.returns(true);
 
                     $firstEl.prop('checked', true);
 
                     server.respondWith('DELETE', journalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
-
                     $deleteBtn.click();
-
-                    listView.deleteItems();
-
                     server.respond();
 
                     expect(windowConfirmStub.called).to.be.true;
                 });
 
-                it('Try to create item', function(){
+                it('Try to create item', function () {
                     var $dialogEl;
                     var $journalName;
                     var $transactionEl;
@@ -1718,10 +1760,7 @@ define([
                     var $createBtn = topBarView.$el.find('#top-bar-createBtn');
 
                     server.respondWith('GET', '/chartOfAccount/getForDd', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeChartofAccoutnForDD)]);
-
                     $createBtn.click();
-                    listView.createItem();
-
                     server.respond();
 
                     $dialogEl = $('.ui-dialog');
@@ -1748,10 +1787,8 @@ define([
                     $creditEl = $dialogEl.find('.newSelectList li:nth-child(1)');
                     $creditEl.click();
 
-                    server.respondWith('POST', '/journal/', [201, {"Content-Type": "application/json"}, JSON.stringify({})]);
-
+                    server.respondWith('POST', '/journal/', [201, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
                     $createDialogBtn.click();
-
                     server.respond();
 
                     expect(window.location.hash).to.be.equals('#easyErp/journal');
@@ -1766,4 +1803,3 @@ define([
     });
 
 });
-*/

@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/journalEntry/filterCollection',
@@ -19,7 +18,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -512,7 +512,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeJournalEntry = [
         {
             _id: "565f470c2ceb020214aa003a",
@@ -5494,7 +5493,7 @@ define([
         var $fixture;
         var $elFixture;
 
-        after(function(){
+        after(function () {
             view.remove();
             topBarView.remove();
             listView.remove();
@@ -5550,18 +5549,18 @@ define([
 
         });
 
-        describe('TopBarView', function(){
+        describe('TopBarView', function () {
             var server;
 
-            before(function(){
+            before(function () {
                 server = sinon.fakeServer.create();
             });
 
-            after(function(){
+            after(function () {
                 server.restore();
             });
 
-            it('Try to create TopBarView', function(){
+            it('Try to create TopBarView', function () {
                 var journalEntryUrl = new RegExp('\/journal\/journalEntry\/list', 'i');
 
                 server.respondWith('GET', journalEntryUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJournalEntry)]);
@@ -5587,41 +5586,43 @@ define([
         describe('ChartsOfAccount list view', function () {
             var server;
             var mainSpy;
+            var clock;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
+                clock = sinon.useFakeTimers();
             });
 
             after(function () {
                 server.restore();
                 mainSpy.restore();
+                clock.restore();
             });
 
-            describe('INITIALIZE', function(){
+            describe('INITIALIZE', function () {
 
                 it('Try to create JournalEntry list view', function (done) {
                     var $listHolder;
                     var journalEntryUrl = new RegExp('\/journal\/journalEntry\/list', 'i');
 
-                    setTimeout(function(){
-                        server.respondWith('GET', journalEntryUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJournalEntry)]);
+                    server.respondWith('GET', journalEntryUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJournalEntry)]);
+                    listView = new ListView({
+                        collection: journalEntryCollection,
+                        startTime: new Date()
+                    });
+                    server.respond();
 
-                        listView = new ListView({
-                            collection: journalEntryCollection,
-                            startTime: new Date()
-                        });
+                    clock.tick(100);
 
-                        server.respond();
+                    $listHolder = listView.$el;
 
-                        $listHolder = listView.$el;
+                    expect($listHolder.find('table')).to.exist;
+                    expect($listHolder.find('#listFooter')).to.exist;
+                    expect($listHolder.find('td#totalDebit').text()).to.be.equals('549 386.00');
+                    expect($listHolder.find('td#totalCredit').text()).to.be.equals('549 386.00');
 
-                        expect($listHolder.find('table')).to.exist;
-                        expect($listHolder.find('#listFooter')).to.exist;
-                        expect($listHolder.find('td#totalDebit').text()).to.be.equals('549 386.00');
-                        expect($listHolder.find('td#totalCredit').text()).to.be.equals('549 386.00');
-                        done();
-                    }, 50);
+                    done();
 
                 });
             });
@@ -5631,4 +5632,3 @@ define([
     });
 
 });
-*/

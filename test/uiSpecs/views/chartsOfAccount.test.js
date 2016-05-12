@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/ChartOfAccount/filterCollection',
@@ -12,7 +11,7 @@ define([
     'sinon-chai',
     'custom',
     'async'
-], function (fixtures, ChartOfAccountCollection, MainView, ListView, TopBarView, CreateView, $, chai, chaiJquery, sinonChai, Custom, async) {
+], function (fixtures, ChartOfAccountCollection, MainView, ListView, topBarView, CreateView, $, chai, chaiJquery, sinonChai, Custom, async) {
     'use strict';
     var expect;
 
@@ -20,7 +19,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -513,7 +513,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeChartOfAccount = [
         {
             _id: "565eb53a6aa50532e5df0bc8",
@@ -1317,7 +1316,6 @@ define([
             account: "Administrative Expenses"
         }
     ];
-
     var fakeChartOfAccountSortedUp = [{
         _id: "56e95e24347c942527b6f6f4",
         code: 1,
@@ -1333,7 +1331,6 @@ define([
         type: "12",
         account: "1"
     }];
-
     var fakeChartOfAccountSortedDown = [{
         _id: "56e95546347c942527b6f6f3",
         code: 111111,
@@ -1422,18 +1419,35 @@ define([
 
         });
 
-        describe('TopBarView', function(){
+        describe('topBarView', function(){
             var server;
+            var consoleSpy;
 
             before(function(){
                 server = sinon.fakeServer.create();
+                consoleSpy = sinon.spy(console, 'log');
             });
 
             after(function(){
                 server.restore();
+                consoleSpy.restore();
             });
 
-            it('Try to create TopBarView', function(){
+            it('Try to fetch collection with error', function(){
+                var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
+
+                server.respondWith('GET', chartOfAccountUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeChartOfAccount)]);
+                chartOfAccountCollection = new ChartOfAccountCollection({
+                    viewType: 'list',
+                    page: 1,
+                    count: 100
+                });
+                server.respond();
+
+                expect(consoleSpy.called).to.be.true;
+            });
+
+            it('Try to create topBarView', function(){
                 var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
 
                 server.respondWith('GET', chartOfAccountUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeChartOfAccount)]);
@@ -1446,7 +1460,7 @@ define([
 
                 server.respond();
 
-                topBarView = new TopBarView({
+                topBarView = new topBarView({
                     collection: chartOfAccountCollection
                 });
 
@@ -1458,15 +1472,18 @@ define([
         describe('ChartsOfAccount list view', function () {
             var server;
             var mainSpy;
+            var fakeClock;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
+                fakeClock = sinon.useFakeTimers();
             });
 
             after(function () {
                 server.restore();
                 mainSpy.restore();
+                fakeClock.restore();
             });
 
             describe('INITIALIZE', function(){
@@ -1475,46 +1492,47 @@ define([
                     var $listHolder;
                     var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
 
-                    setTimeout(function(){
-                        server.respondWith('GET', chartOfAccountUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeChartOfAccount)]);
+                    server.respondWith('GET', chartOfAccountUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeChartOfAccount)]);
+                    listView = new ListView({
+                        collection: chartOfAccountCollection,
+                        startTime: new Date()
+                    });
+                    server.respond();
 
-                        listView = new ListView({
-                            collection: chartOfAccountCollection,
-                            startTime: new Date()
-                        });
+                    fakeClock.tick(200);
 
-                        server.respond();
+                    $listHolder = listView.$el;
 
-                        $listHolder = listView.$el;
+                    expect($listHolder.find('table')).to.exist;
 
-                        expect($listHolder.find('table')).to.exist;
 
-                        done();
-                    }, 50);
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
 
+                    chartOfAccountCollection.bind('showmore', listView.showMoreContent, listView);
+                    done();
                 });
 
-                /!*it('Try to cancel changes', function(){
-                 var $input;
-                 var $codeInput = listView.$el.find('td[data-content="code"]')[0];
-                 var $accountInput = listView.$el.find('td[data-content="account"]')[0];
+                it('Try to check|uncheck all checkboxes', function(){
+                    var $checkAllBtn = listView.$el.find('#check_all');
 
-                 $codeInput.click();
-                 $input = listView.$el.find('input.editing');
-                 $input.val('01010101');
-                 $input.focusout();
+                    $checkAllBtn.click();
+                    expect(listView.$el.find('input[type="checkbox"]').prop('checked')).to.be.true;
 
-                 $accountInput.click();
-                 $input = listView.$el.find('input.editing');
-                 $input.val('test');
-
-                 listView.changed = true; // TODO delete crutch
-
-                 listView.deleteItems();
-
-                 expect(listView.$el.find('tr:nth-child(1) > td:nth-child(3)').text()).to.be.equals('1010101');
-
-                 });*!/
+                    $checkAllBtn.click();
+                    expect(listView.$el.find('input[type="checkbox"]').prop('checked')).to.be.false;
+                });
 
                 it('Try to delete item with Forbidden error result', function(){
                     var spyResponse;
@@ -1530,8 +1548,6 @@ define([
 
                     $deleteBtn.click();
 
-                    listView.deleteItems();
-
                     server.respond();
                     spyResponse = mainSpy.args[0][0];
 
@@ -1546,20 +1562,20 @@ define([
 
                     windowConfirmStub.returns(true);
 
-                    $firstEl.prop('checked', true);
+                    // check|uncheck checkbox
+                    $firstEl.click();
+                    expect($firstEl.prop('checked')).to.be.true;
 
+                    $firstEl.click();
+                    expect($firstEl.prop('checked')).to.be.false;
+
+                    $firstEl.click();
                     server.respondWith('DELETE', chartOfAccountUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
-
                     $deleteBtn.click();
-
-                    listView.deleteItems();
-
                     server.respond();
 
                     $firsElAfterDeleteCode = listView.$el.find('tr:nth-child(1) > td:nth-child(3)');
-
                     expect($firsElAfterDeleteCode.text()).to.be.equals('101200');
-
 
                 });
 
@@ -1571,7 +1587,6 @@ define([
                     var $tableContainer = listView.$el.find('table');
                     var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
 
-                    $codeInput.change();
                     $codeInput.click();
                     $input = listView.$el.find('input.editing');
                     $input.val('1111111');
@@ -1579,10 +1594,7 @@ define([
                     $accountInput.click();
 
                     server.respondWith('PATCH', chartOfAccountUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-
                     $saveBtn.click();
-                    listView.saveItem();
-
                     server.respond();
 
                     expect($tableContainer.find('input[type="text"]').length).to.equals(1);
@@ -1622,13 +1634,33 @@ define([
                     $input.focusout();
 
                     server.respondWith('POST', chartOfAccountUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-
                     $saveBtn.click();
-                    listView.saveItem();
-
                     server.respond();
 
                     expect(listView.$el.find('input[type="text"].editing').length).to.equals(1);
+                });
+
+                it('Try to cancel changes', function () {
+                    var $input;
+                    var $firstRow = listView.$el.find('#chartOfAccount > tr[data-id="565eb53a6aa50532e5df0bce"]');
+                    var $codeInput = $firstRow.find('td[data-content="code"]');
+                    var $accountInput = $firstRow.find('td[data-content="account"]');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+
+                    $codeInput.click();
+                    $input = listView.$el.find('input.editing');
+                    $input.val('01010101');
+                    $input.trigger('change');
+
+                    $accountInput.click();
+                    $input = listView.$el.find('input.editing');
+                    $input.val('test');
+                    $input.trigger('change');
+
+                    $deleteBtn.click();
+
+                    expect(listView.$el.find('tr:nth-child(1) > td:nth-child(3)').text()).to.be.equals('1111111');
+
                 });
 
                 it ('Try to sort up list', function(){
@@ -1672,4 +1704,3 @@ define([
     });
 
 });
-*/

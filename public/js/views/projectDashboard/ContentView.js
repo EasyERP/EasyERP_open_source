@@ -128,7 +128,7 @@ define([
                 }
             },
 
-            renderProjectStatus: function () {
+            /*renderProjectStatus: function () {
                 var self = this;
                 this.populateProjectForDashboard("/getProjectStatusCountForDashboard", function (collection) {
                     var n = collection.workflow.length;
@@ -194,7 +194,7 @@ define([
                     }
 
                 });
-            },
+            },*/
 
             render: function () {
                 this.$el.html(this.template());

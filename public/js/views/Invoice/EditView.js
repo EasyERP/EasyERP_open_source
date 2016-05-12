@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Invoice/EditTemplate.html',
         'views/Assignees/AssigneesView',
         'views/Invoice/InvoiceProductItems',
@@ -12,7 +15,7 @@ define([
         'constants',
         'helpers'
     ],
-    function (EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+    function (Backbone, $, _, EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({
@@ -59,11 +62,14 @@ define([
                         if (response && !response.error) {
                             App.currentDb = response;
 
-                            if ((response === "weTrack") || (response === "production") || (response === "development")) {
+                            App.weTrack = true;
+
+                            // TODO
+                            /*if ((response === "weTrack") || (response === "production") || (response === "development")) {
                                 App.weTrack = true;
                             } else {
                                 App.weTrack = false;
-                            }
+                            }*/
                         } else {
                             console.log('can\'t fetch current db');
                         }

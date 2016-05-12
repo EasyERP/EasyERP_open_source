@@ -2,8 +2,8 @@
  * Created by German on 08.07.2015.
  */
 define([
-    ''
-], function () {
+    'Backbone'
+], function (Backbone) {
     var BonusModel = Backbone.Model.extend({
         defaults: {
             employee : {},

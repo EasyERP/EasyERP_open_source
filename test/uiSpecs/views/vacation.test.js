@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/Vacation/filterCollection',
@@ -20,7 +19,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -513,7 +513,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeVacations = [
         {
             _id: "56eed169ce4bd3e35766cb61",
@@ -1616,7 +1615,6 @@ define([
             }
         }
     ];
-
     var fakeEmployees = {
         data: [
             {
@@ -4811,16 +4809,11 @@ define([
         var $fixture;
         var $elFixture;
 
-        before(function(){
-            windowConfirmStub = sinon.stub(window, 'confirm');
-        });
 
-        after(function(){
+        after(function () {
             view.remove();
             topBarView.remove();
             listView.remove();
-
-            windowConfirmStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -4873,18 +4866,33 @@ define([
 
         });
 
-        describe('TopBarView', function(){
+        describe('TopBarView', function () {
             var server;
 
-            before(function(){
+            before(function () {
                 server = sinon.fakeServer.create();
             });
 
-            after(function(){
+            after(function () {
                 server.restore();
             });
 
-            it('Try to create TopBarView', function(){
+            it('Try to fetch collection with error', function(){
+                var vacationUrl = new RegExp('\/vacation\/list', 'i');
+
+                server.respondWith('GET', vacationUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
+
+                vacationsCollection = new VacationsCollection({
+                    count: 100,
+                    viewType: 'list',
+                    contentType: 'Vacation'
+                });
+
+                server.respond();
+
+            });
+
+            it('Try to create TopBarView', function () {
                 var vacationUrl = new RegExp('\/vacation\/list', 'i');
 
                 server.respondWith('GET', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
@@ -4905,7 +4913,7 @@ define([
                 expect(topBarView.$el.find('#template-switcher')).to.exist;
             });
 
-            it('Try to switch view type', function(){
+            it('Try to switch view type', function () {
                 var $listTemplateBtn = topBarView.$el.find('#listBtn');
 
                 $listTemplateBtn.click();
@@ -4917,15 +4925,20 @@ define([
 
         describe('VacationsView', function () {
             var server;
+            var clock;
             var mainSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
+                windowConfirmStub = sinon.stub(window, 'confirm');
+                clock = sinon.useFakeTimers();
                 mainSpy = sinon.spy(App, 'render');
             });
 
             after(function () {
                 server.restore();
+                windowConfirmStub.restore();
+                clock.restore();
                 mainSpy.restore();
             });
 
@@ -4936,24 +4949,39 @@ define([
                     var vacationUrl = new RegExp('\/vacation\/list', 'i');
                     var employeeUrl = new RegExp('\/employees\/getForDD', 'i');
 
-                    setTimeout(function(){
-                        server.respondWith('GET', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
-                        server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployees)]);
+                    server.respondWith('GET', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
+                    server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployees)]);
 
-                        listView = new ListView({
-                            collection: vacationsCollection,
-                            startTime: new Date()
-                        });
+                    listView = new ListView({
+                        collection: vacationsCollection,
+                        startTime: new Date()
+                    });
 
-                        server.respond();
-                        server.respond();
+                    server.respond();
+                    server.respond();
 
-                        $listHolder = listView.$el;
-                        expect($listHolder).to.exist;
+                    clock.tick(100);
 
-                        done();
+                    $listHolder = listView.$el;
+                    expect($listHolder).to.exist;
 
-                    }, 100);
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+
+                    vacationsCollection.bind('showmore', listView.showMoreContent, listView);
+
+                    done();
                 });
 
                 it('Try to sort list', function () {
@@ -4964,21 +4992,18 @@ define([
 
                     $thSortEl.click();
                     expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('56e6875e3d5bc25541857e34');  //todo find out how it sort
-
                 });
 
-                it('Try to create vacation item', function(){
+                it('Try to create vacation item', function () {
                     var createBtn = topBarView.$el.find('#top-bar-createBtn');
                     var $listTableEl = listView.$el.find('#listTable');
 
                     createBtn.click();
-                    listView.createItem();
-
                     expect($listTableEl.find('tr:nth-child(1) > td:nth-child(1)').text()).to.be.equals('Select');
 
                 });
 
-                it ('Try to save item', function(){
+                it('Try to save item', function () {
                     var $prevBtn;
                     var $nextBtn;
                     var $needEmployee;
@@ -5005,13 +5030,12 @@ define([
 
                     server.respondWith('POST', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
                     $saveBtn.click();
-                    listView.saveItem();
                     server.respond();
 
                     expect(listView.$el.find('#listTable > tr:nth-child(1) > td.editable.E.selectedType').text()).to.equals('E');
                 });
 
-                it('Try to edit item', function(){
+                it('Try to edit item', function () {
                     var $needType;
                     var $saveBtn;
                     var $needGrid = listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)');
@@ -5025,14 +5049,28 @@ define([
 
                     server.respondWith('PATCH', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
                     $saveBtn.click();
-                    listView.saveItem();
                     server.respond();
 
                     expect(listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)').text()).to.equals('P');
 
                 });
 
-                it('Try to delete item', function(){
+                it('Try to cancel changes on item', function(){
+                    var $needType;
+                    var $deleteBtn;
+                    var $needGrid = listView.$el.find('#listTable > tr:nth-child(2) > td.editable:nth-child(3)');
+
+                    $needGrid.click();
+                    $needType = listView.$el.find('#P');
+                    $needType.click();
+
+                    $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    $deleteBtn.click();
+
+                    expect(listView.$el.find('#listTable > tr:nth-child(2) > td.editable:nth-child(3)')).to.not.have.class('P');
+                });
+
+                it('Try to delete item', function () {
                     var $emptyEl;
                     var $needGrid = listView.$el.find('#listTable > tr:nth-child(5) > td.editable.V.selectedType');
                     var vacationUrl = new RegExp('\/vacation\/', 'i');
@@ -5046,6 +5084,28 @@ define([
                     server.respond();
 
                     //expect(listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)').text()).to.equals('');
+                });
+
+                it('Try to show more with error', function(){
+                    var vacationUrl = new RegExp('\/vacation\/list', 'i');
+                    var spyResponse;
+
+                    server.respondWith('GET', vacationUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
+                    vacationsCollection.showMore();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Some Error.');
+                });
+
+                it('Try to show more with', function(){
+                    var vacationUrl = new RegExp('\/vacation\/list', 'i');
+                    var spyResponse;
+
+                    server.respondWith('GET', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
+                    vacationsCollection.showMore();
+                    server.respond();
 
                 });
 
@@ -5056,4 +5116,3 @@ define([
     });
 
 });
-*/

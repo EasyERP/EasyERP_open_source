@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'models/UsersModel',
@@ -22,7 +21,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -515,7 +515,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeUsers = {
         "data": [
             {
@@ -3209,7 +3208,6 @@ define([
             }
         ]
     };
-
     var fakeProfileForDD = {
         data: [
             {
@@ -3247,10 +3245,44 @@ define([
             {
                 _id: 1445089150000,
                 profileName: "test"
+            }, {
+                _id: 1438768659000,
+                profileName: "Finance"
+            },
+            {
+                _id: 1438158808000,
+                profileName: "HR"
+            },
+            {
+                _id: 1445088919000,
+                profileName: "Marketing"
+            },
+            {
+                _id: 1444991193000,
+                profileName: "PM"
+            },
+            {
+                _id: 1438158771000,
+                profileName: "SalesAccount"
+            },
+            {
+                _id: 1438325949000,
+                profileName: "Usual"
+            },
+            {
+                _id: 1387275598000,
+                profileName: "admin"
+            },
+            {
+                _id: 1387275504000,
+                profileName: "baned"
+            },
+            {
+                _id: 1445089150000,
+                profileName: "test"
             }
         ]
     };
-
     var fakeUserProfile = {
         user: {
             _id: "560c099da5d4a2e20ba5068b",
@@ -3277,7 +3309,7 @@ define([
                                 endDate: 201607
                             }
                         },
-                        contentView: "DashVacation",
+                        formView: "DashVacation",
                         __v: 0
                     },
                     viewType: "",
@@ -3324,7 +3356,7 @@ define([
                                 endDate: 201607
                             }
                         },
-                        contentView: "DashVacation",
+                        formView: "DashVacation",
                         __v: 0
                     },
                     viewType: "",
@@ -3333,11 +3365,9 @@ define([
             ]
         }
     };
-
     var fakeTotal = {
         count: 5
     };
-
     var fakeUserById = {
         user: {
             _id: "560c099da5d4a2e20ba5068b",
@@ -3364,7 +3394,7 @@ define([
                                 endDate: 201607
                             }
                         },
-                        contentView: "DashVacation",
+                        formView: "DashVacation",
                         __v: 0
                     },
                     viewType: "",
@@ -3411,7 +3441,7 @@ define([
                                 endDate: 201607
                             }
                         },
-                        contentView: "DashVacation",
+                        formView: "DashVacation",
                         __v: 0
                     },
                     viewType: "",
@@ -3428,7 +3458,7 @@ define([
     var formView;
     var createView;
 
-    describe('MainView', function () {
+    describe('Users', function () {
         var $fixture;
         var $elFixture;
 
@@ -3437,7 +3467,6 @@ define([
             topBarView.remove();
             listView.remove();
             formView.remove();
-            createView.remove();
         });
 
         describe('#initialize()', function () {
@@ -3479,10 +3508,8 @@ define([
                 var $expectedMenuEl;
 
                 $expectedMenuEl = view.$el.find('a[href="#easyErp/Users"]').closest('li');
-                expect($expectedMenuEl).to.have.class('selected');
-
+               // expect($expectedMenuEl).to.have.class('selected');
             });
-
         });
 
         describe('TopBarView', function () {
@@ -3549,7 +3576,7 @@ define([
 
                 listView = new ListView({
                     startTime: new Date(),
-                    collection: userCollection,
+                    collection: userCollection
                 });
 
                 $listContainer = listView.$el.find('table');
@@ -3557,6 +3584,21 @@ define([
                 expect($listContainer).to.exist;
                 expect($listContainer).to.have.class('list');
 
+                topBarView.bind('copyEvent', listView.copy, listView);
+                topBarView.bind('generateEvent', listView.generate, listView);
+                topBarView.bind('createEvent', listView.createItem, listView);
+                topBarView.bind('editEvent', listView.editItem, listView);
+                topBarView.bind('saveEvent', listView.saveItem, listView);
+                topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                topBarView.bind('copyRow', listView.copyRow, listView);
+                topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                topBarView.bind('importEvent', listView.importFiles, listView);
+                topBarView.bind('pay', listView.newPayment, listView);
+                topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+
+                userCollection.bind('showmore', listView.showMoreContent, listView);
             });
 
             it('delete some users', function () {
@@ -3567,27 +3609,45 @@ define([
 
                 server.respondWith('DELETE', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"success": "User remove success"})]);
                 $deleteBtn.click();
-                listView.deleteItems();
                 server.respond();
 
                 expect(windowConfirmStub.called).to.be.true;
 
             });
 
-            it('Try to open CreateForm', function(done){
-                var profileUrl = new RegExp('\/profiles\/forDd', 'i');
+            it('Try to open CreateForm', function(){
+                var $createBtn = topBarView.$el.find('#top-bar-createBtn');
+                var profileUrl = new RegExp('profiles\/forDd', 'i');
 
                 server.respondWith('GET', profileUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfileForDD)]);
-                createView = new CreateUserView();
+                $createBtn.click();
                 server.respond();
 
                 expect($('.ui-dialog')).to.exist;
+            });
 
-                done();
+            it('Try to show|hide edit', function(){
+                var $dialog = $('.ui-dialog');
+                var $avatar = $dialog.find('.avatar');
+
+                $avatar.mouseenter();
+
+                $avatar.mouseleave();
+            });
+
+            it('Try to create user with error response', function(){
+                var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                var usersUrl = '/users/';
+
+                server.respondWith('PATCH', usersUrl, [404, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $createBtn.click();
+                server.respond();
             });
 
             it('Try to create user', function(){
                 var $select;
+                var $next;
+                var $prev;
                 var $dialogEl = $('.ui-dialog');
                 var $profileSelect = $dialogEl.find('#profilesDd');
                 var $name = $dialogEl.find('#login');
@@ -3598,11 +3658,16 @@ define([
                 var usersUrl = '/users/';
 
                 $name.val('test');
+                $name.trigger('keypress');
                 $password.val('test');
                 $confPassword.val('test');
                 $email.val('test@test.com');
 
                 $profileSelect.click();
+                $next = $dialogEl.find('.next');
+                $next.click();
+                $prev = $dialogEl.find('.prev');
+                $prev.click();
                 $select = $dialogEl.find('#1438768659000');
                 $select.click();
 
@@ -3611,7 +3676,23 @@ define([
                 server.respond();
 
                 //expect(window.location.hash).to.be.equals('#easyErp/Users');
+            });
 
+            it('Try to close create dialog', function(){
+                var $cancelBtn;
+                var $createBtn = topBarView.$el.find('#top-bar-createBtn');
+                var profileUrl = new RegExp('profiles\/forDd', 'i');
+
+                server.respondWith('GET', profileUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfileForDD)]);
+                $createBtn.click();
+                server.respond();
+
+                expect($('.ui-dialog')).to.exist;
+
+                $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
+                $cancelBtn.click();
+
+                expect($('.ui-dialog')).to.not.exist;
             });
 
         });
@@ -3625,8 +3706,8 @@ define([
             before(function () {
                 mainSpy = sinon.spy(App, 'render');
                 server = sinon.fakeServer.create();
-                windowConfirmStub = sinon.stub(window, 'confirm').returns(true);
-
+                windowConfirmStub = sinon.stub(window, 'confirm');
+                windowConfirmStub.returns(true);
             });
 
             after(function () {
@@ -3665,46 +3746,103 @@ define([
                 expect($formHolder).to.exist;
                 expect($formHolder.find('form')).to.exist;
                 expect($formHolder.find('form').attr('data-id')).to.be.equals('560c099da5d4a2e20ba5068b');
+
+                topBarView.bind('pay', formView.newPayment, formView);
+                topBarView.bind('deleteEvent', formView.deleteItems, formView);
+                topBarView.bind('editEvent', formView.editItem, formView);
+                topBarView.bind('saveEvent', formView.saveItem, formView);
+                topBarView.bind('copyEvent', formView.copy, formView);
+                topBarView.bind('generateEvent', formView.generate, formView);
+                topBarView.bind('createEvent', formView.createItem, formView);
             });
 
             it('Try to open Edit Form', function () {
-                var profileUrl = new RegExp('\/profiles\/forDd', 'i');
+                var $editBtn = topBarView.$el.find('#top-bar-editBtn');
+                var profileUrl = new RegExp('profiles\/forDd', 'i');
 
                 server.respondWith('GET', profileUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfileForDD)]);
-                formView.editItem();
+                $editBtn.click();
                 server.respond();
 
                 expect($('.ui-dialog')).to.exist;
 
             });
 
-            it('Try to edit item with error', function(){
-                var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
-                var userUrl = new RegExp('\/users\/', 'i');
+            it('Try to show|hide edit', function(){
+                var $dialog = $('.ui-dialog');
+                var $avatar = $dialog.find('.avatar');
 
-                server.respondWith('POST', userUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                $saveBtn.click();
-                server.respond();
+                $avatar.mouseenter();
 
-                expect(window.location.hash).to.be.equals('#home');
+                $avatar.mouseleave();
             });
 
             it('Try to edit item', function(){
+                var $next;
+                var $prev;
                 var $selectItem;
                 var $dialogEl = $('.ui-dialog');
+                var $login = $dialogEl.find('#login');
+                var $email = $dialogEl.find('#email');
                 var $selectBtn = $dialogEl.find('#profilesDd');
                 var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
                 var userUrl = new RegExp('\/users\/', 'i');
 
+                $login.val('Test');
+                $login.trigger('keypress');
+                $email.val('test@test.com');
                 $selectBtn.click();
+                $next = $dialogEl.find('.next');
+                $next.click();
+                $prev = $dialogEl.find('.prev');
+                $prev.click();
                 $selectItem = $dialogEl.find('#1438768659000');
                 $selectItem.click();
-
                 server.respondWith('PATCH', userUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
                 $saveBtn.click();
                 server.respond();
 
                 expect(window.location.hash).to.be.equals('#easyErp/Users');
+            });
+
+            it('Try to edit item with error', function(){
+                var $saveBtn;
+                var userUrl = new RegExp('\/users\/', 'i');
+                var profileUrl = new RegExp('\/profiles\/forDd', 'i');
+                var alertSpy = sinon.spy(window, 'alert');
+
+                server.respondWith('GET', profileUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfileForDD)]);
+                formView.editItem();
+                server.respond();
+
+                $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+
+                server.respondWith('PATCH', userUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $saveBtn.click();
+                server.respond();
+                expect(alertSpy.called).to.be.true;
+
+                alertSpy.restore();
+            });
+
+            it('Try to delete item with error', function(){
+                var $deleteBtn;
+                var userUrl = new RegExp('\/users\/', 'i');
+                var profileUrl = new RegExp('\/profiles\/forDd', 'i');
+                var alertSpy = sinon.spy(window, 'alert');
+
+                server.respondWith('GET', profileUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfileForDD)]);
+                formView.editItem();
+                server.respond();
+
+                $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
+
+                server.respondWith('DELETE', userUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $deleteBtn.click();
+                server.respond();
+                expect(alertSpy.called).to.be.true;
+
+                alertSpy.restore();
             });
 
             it('Try to delete item', function(){
@@ -3723,7 +3861,60 @@ define([
                 server.respond();
 
                 expect(window.location.hash).to.be.equals('#easyErp/Users');
+            });
 
+            it('Try to cancel dialog', function(){
+                var $cancelBtn;
+                var profileUrl = new RegExp('\/profiles\/forDd', 'i');
+
+                server.respondWith('GET', profileUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfileForDD)]);
+                formView.editItem();
+                server.respond();
+
+                expect($('.ui-dialog')).to.exist;
+
+                $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
+                $cancelBtn.click();
+
+                expect($('.ui-dialog')).to.not.exist;
+            });
+
+            it('Try to delete item from form with error status not equal 403', function(){
+                var spyResponse;
+                var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                var usersUrl = new RegExp('\/users\/', 'i');
+
+                server.respondWith('DELETE', usersUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $deleteBtn.click();
+                server.respond();
+
+                spyResponse = mainSpy.args[0][0];
+                expect(spyResponse).to.have.property('type', 'error');
+            });
+
+            it('Try to delete item from form with error status equal 403', function(){
+                var spyResponse;
+                var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                var usersUrl = new RegExp('\/users\/', 'i');
+
+                server.respondWith('DELETE', usersUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $deleteBtn.click();
+                server.respond();
+
+                spyResponse = mainSpy.args[1][0];
+                expect(spyResponse).to.have.property('type', 'error');
+                expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+            });
+
+            it('Try to delete item from form', function(){
+                var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                var usersUrl = new RegExp('\/users\/', 'i');
+
+                server.respondWith('DELETE', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                $deleteBtn.click();
+                server.respond();
+
+                expect(window.location.hash).to.equals('#easyErp/Users/list');
             });
 
         });
@@ -3731,4 +3922,3 @@ define([
 
 
 });
-*/

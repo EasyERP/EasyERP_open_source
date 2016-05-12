@@ -135,7 +135,7 @@ define([
 
             },
 
-            switchTab: function (e) {
+            /*switchTab: function (e) {
                 e.preventDefault();
                 var link = this.$("#tabList a");
                 if (link.hasClass("selected")) {
@@ -143,7 +143,7 @@ define([
                 }
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
-            },
+            },*/
 
             hideDialog: function () {
                 $(".edit-dialog").remove();

@@ -81,7 +81,7 @@ define([
                 }
             },
 
-            setChangedValue: function () {
+            /*setChangedValue: function () {
                 var editedElement = $('.edit');
                 var self = this;
 
@@ -91,7 +91,7 @@ define([
                     self.year = $('#year').val();
 
                 }
-            },
+            },*/
 
             generate: function () {
                 this.generateItems();

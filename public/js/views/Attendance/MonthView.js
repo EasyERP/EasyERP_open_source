@@ -2,10 +2,13 @@
  * Created by German on 30.06.2015.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Attendance/monthTemplate.html',
     'views/Attendance/StatisticsView',
     'moment'
-], function (ListTemplate, StatisticsView, moment) {
+], function (Backbone, $, _, ListTemplate, StatisticsView, moment) {
     var MonthView = Backbone.View.extend({
         el: '#attendanceMonth',
 

@@ -1,5 +1,7 @@
 define([
         'Backbone',
+        'jQuery',
+        'Underscore',
         "views/salesQuotation/CreateView",
         "text!templates/Projects/projectInfo/quotations/CreateTemplate.html",
         "text!templates/Projects/projectInfo/quotations/newRow.html",
@@ -14,7 +16,7 @@ define([
         'dataService',
         'helpers'
     ],
-    function (Backbone, createView, CreateTemplate, newRow, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, helpers) {
+    function (Backbone, $, _, createView, CreateTemplate, newRow, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, helpers) {
         "use strict";
 
         var CreateView = createView.extend({
@@ -210,6 +212,7 @@ define([
                 populate.get("#supplierDd", CONSTANTS.URLS.CUSTOMERS, {}, "fullName", this, false, false, customerId);
 
                 if (projectID) {
+
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false, projectID);
                 } else {
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, true, true);

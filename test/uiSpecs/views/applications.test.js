@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/Applications/filterCollection',
@@ -571,7 +570,7 @@ define([
             {
                 _id: "528ce51cf3f67bc40b000015",
                 __v: 0,
-                attachments: [ ],
+                attachments: [],
                 name: "Initial dsf",
                 sequence: 4,
                 status: "New",
@@ -587,7 +586,7 @@ define([
             {
                 _id: "528ce53bf3f67bc40b000016",
                 __v: 0,
-                attachments: [ ],
+                attachments: [],
                 name: "First Interview",
                 sequence: 4,
                 status: "In Progress",
@@ -603,7 +602,7 @@ define([
             {
                 _id: "52fa5108a7bec22c19000018",
                 __v: 0,
-                attachments: [ ],
+                attachments: [],
                 name: "Ready to teach",
                 sequence: 4,
                 status: "Pending",
@@ -619,7 +618,7 @@ define([
             {
                 _id: "528ce553f3f67bc40b000017",
                 __v: 0,
-                attachments: [ ],
+                attachments: [],
                 name: "Second Interview",
                 sequence: 3,
                 status: "In Progress",
@@ -635,7 +634,7 @@ define([
             {
                 _id: "528ce5e3f3f67bc40b000018",
                 __v: 0,
-                attachments: [ ],
+                attachments: [],
                 name: "Internship",
                 sequence: 2,
                 status: "Pending",
@@ -651,7 +650,7 @@ define([
             {
                 _id: "528ce61bf3f67bc40b000019",
                 __v: 0,
-                attachments: [ ],
+                attachments: [],
                 name: "Contract Signed",
                 sequence: 1,
                 status: "Hired",
@@ -667,7 +666,7 @@ define([
             {
                 _id: "52d2c1369b57890814000005",
                 __v: 0,
-                attachments: [ ],
+                attachments: [],
                 name: "Contract End",
                 sequence: 0,
                 status: "Cancelled",
@@ -804,13 +803,13 @@ define([
             date: "2016-02-15T22:00:00.000Z",
             reason: "Fired"
         },
-        attachments: [ ],
+        attachments: [],
         editedBy: {
             date: "2016-04-04T06:35:07.821Z",
             user: {
                 _id: "52203e707d4dba8813000003",
                 __v: 0,
-                attachments: [ ],
+                attachments: [],
                 lastAccess: "2016-04-04T06:06:58.757Z",
                 profile: 1387275598000,
                 relatedEmployee: "55b92ad221e4b7c40f00004f",
@@ -943,7 +942,7 @@ define([
                         countPerPage: 100
                     },
                     opportunities: {
-                        foldWorkflows: [ ],
+                        foldWorkflows: [],
                         countPerPage: 10
                     }
                 },
@@ -962,7 +961,7 @@ define([
             user: {
                 _id: "52203e707d4dba8813000003",
                 __v: 0,
-                attachments: [ ],
+                attachments: [],
                 lastAccess: "2016-04-04T06:06:58.757Z",
                 profile: 1387275598000,
                 relatedEmployee: "55b92ad221e4b7c40f00004f",
@@ -1095,7 +1094,7 @@ define([
                         countPerPage: 100
                     },
                     opportunities: {
-                        foldWorkflows: [ ],
+                        foldWorkflows: [],
                         countPerPage: 10
                     }
                 },
@@ -1113,8 +1112,8 @@ define([
         color: "#4d5a75",
         otherInfo: "",
         groups: {
-            group: [ ],
-            users: [ ],
+            group: [],
+            users: [],
             owner: {
                 _id: "55ba28c8d79a3a3439000016",
                 login: "AndrianaLemko"
@@ -1124,7 +1123,7 @@ define([
         workflow: {
             _id: "52d2c1369b57890814000005",
             __v: 0,
-            attachments: [ ],
+            attachments: [],
             name: "Contract End",
             sequence: 0,
             status: "Cancelled",
@@ -4569,7 +4568,8 @@ define([
                     first: "Michael"
                 },
                 isEmployee: false
-            }, {
+            },
+            {
                 _id: "55c98aa7cbb0f4910b000005",
                 dateBirth: "1994-07-28T00:00:00.000Z",
                 fire: [
@@ -4619,7 +4619,7 @@ define([
                     user: {
                         _id: "52203e707d4dba8813000003",
                         __v: 0,
-                        attachments: [ ],
+                        attachments: [],
                         credentials: {
                             access_token: "",
                             refresh_token: ""
@@ -4772,15 +4772,15 @@ define([
                         profile: 1438158808000,
                         kanbanSettings: {
                             tasks: {
-                                foldWorkflows: [ ],
+                                foldWorkflows: [],
                                 countPerPage: 10
                             },
                             applications: {
-                                foldWorkflows: [ ],
+                                foldWorkflows: [],
                                 countPerPage: 10
                             },
                             opportunities: {
-                                foldWorkflows: [ ],
+                                foldWorkflows: [],
                                 countPerPage: 10
                             }
                         },
@@ -4794,7 +4794,7 @@ define([
                         imageSrc: "data:image/jpeg;base64,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",
                         __v: 0,
                         lastAccess: "2016-03-21T07:48:07.268Z",
-                        savedFilters: [ ],
+                        savedFilters: [],
                         relatedEmployee: null
                     }
                 },
@@ -4802,7 +4802,7 @@ define([
                 workflow: {
                     _id: "52d2c1369b57890814000005",
                     __v: 0,
-                    attachments: [ ],
+                    attachments: [],
                     color: "#2C3E50",
                     name: "Contract End",
                     sequence: 0,
@@ -4971,7 +4971,7 @@ define([
                         date: "2015-07-29T19:34:42.437Z",
                         reason: ""
                     },
-                    attachments: [ ],
+                    attachments: [],
                     editedBy: {
                         date: "2016-03-11T13:41:16.494Z",
                         user: "55ba2f3ed79a3a343900001d"
@@ -4984,8 +4984,8 @@ define([
                     color: "#4d5a75",
                     otherInfo: "",
                     groups: {
-                        group: [ ],
-                        users: [ ],
+                        group: [],
+                        users: [],
                         owner: "55ba28c8d79a3a3439000016"
                     },
                     whoCanRW: "everyOne",
@@ -5052,8 +5052,8 @@ define([
                     totalForecastedEmployees: 38,
                     numberOfEmployees: 23,
                     groups: {
-                        group: [ ],
-                        users: [ ],
+                        group: [],
+                        users: [],
                         owner: null
                     },
                     whoCanRW: "everyOne",
@@ -5075,7 +5075,7 @@ define([
                         date: "2015-07-29T19:34:38.908Z",
                         user: "52203e707d4dba8813000003"
                     },
-                    users: [ ],
+                    users: [],
                     departmentManager: null,
                     parentDepartment: "56cebdf6541812c07197358f",
                     departmentName: "Android",
@@ -5224,13 +5224,13 @@ define([
             date: "2016-02-04T22:00:00.000Z",
             reason: "Fired"
         },
-        attachments: [ ],
+        attachments: [],
         editedBy: {
             date: "2016-04-04T08:36:29.197Z",
             user: {
                 _id: "52203e707d4dba8813000003",
                 __v: 0,
-                attachments: [ ],
+                attachments: [],
                 lastAccess: "2016-04-04T06:06:58.757Z",
                 profile: 1387275598000,
                 relatedEmployee: "55b92ad221e4b7c40f00004f",
@@ -5363,7 +5363,7 @@ define([
                         countPerPage: 100
                     },
                     opportunities: {
-                        foldWorkflows: [ ],
+                        foldWorkflows: [],
                         countPerPage: 10
                     }
                 },
@@ -5382,7 +5382,7 @@ define([
             user: {
                 _id: "52203e707d4dba8813000003",
                 __v: 0,
-                attachments: [ ],
+                attachments: [],
                 lastAccess: "2016-04-04T06:06:58.757Z",
                 profile: 1387275598000,
                 relatedEmployee: "55b92ad221e4b7c40f00004f",
@@ -5515,7 +5515,7 @@ define([
                         countPerPage: 100
                     },
                     opportunities: {
-                        foldWorkflows: [ ],
+                        foldWorkflows: [],
                         countPerPage: 10
                     }
                 },
@@ -5533,8 +5533,8 @@ define([
         color: "#4d5a75",
         otherInfo: "",
         groups: {
-            group: [ ],
-            users: [ ],
+            group: [],
+            users: [],
             owner: {
                 _id: "55ba28c8d79a3a3439000016",
                 login: "AndrianaLemko"
@@ -5544,7 +5544,7 @@ define([
         workflow: {
             _id: "52d2c1369b57890814000005",
             __v: 0,
-            attachments: [ ],
+            attachments: [],
             name: "Contract End",
             sequence: 0,
             status: "Cancelled",
@@ -5656,26 +5656,19 @@ define([
                 server.restore();
             });
 
-            it('Should create main view', function (done) {
-                //this.timeout(300);
-
+            it('Should create main view', function () {
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                setTimeout(function () {
-                    server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
-                    view = new MainView({el: $elFixture, contentType: 'Applications'});
-                    server.respond();
+                server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
+                view = new MainView({el: $elFixture, contentType: 'Applications'});
+                server.respond();
 
-                    $expectedMenuEl = view.$el.find('#mainmenu-holder');
-                    $expectedSubMenuEl = view.$el.find('#submenu-holder');
+                $expectedMenuEl = view.$el.find('#mainmenu-holder');
+                $expectedSubMenuEl = view.$el.find('#submenu-holder');
 
-                    expect($expectedMenuEl).to.exist;
-                    expect($expectedSubMenuEl).to.exist;
-
-                    done();
-                }, 300);
-
+                expect($expectedMenuEl).to.exist;
+                expect($expectedSubMenuEl).to.exist;
 
             });
 
@@ -5723,25 +5716,24 @@ define([
             var server;
             var mainSpy;
             var windowConfirmStub;
+            var clock;
 
             before(function () {
                 App.currentViewType = 'kanban';
                 server = sinon.fakeServer.create();
-                //mainSpy = sinon.spy(App, 'render');
-                 windowConfirmStub = sinon.stub(window, 'confirm').returns(true);
+                windowConfirmStub = sinon.stub(window, 'confirm');
+                clock = sinon.useFakeTimers();
             });
 
             after(function () {
                 server.restore();
-                //mainSpy.restore();
+                clock.restore();
                 windowConfirmStub.restore();
             });
 
             describe('INITIALIZE', function () {
 
                 it('Try to application KanBanView', function (done) {
-                    //this.timeout(600);
-
                     var workflowsUrl = new RegExp('\/Workflows', 'i');
                     var applicationUrl = '/applications/kanban?workflowId=52d2c1369b57890814000005&viewType=kanban';
                     var applicationLengthUrl = new RegExp('\/applications\/getApplicationsLengthByWorkflows', 'i');
@@ -5765,21 +5757,20 @@ define([
                     });
                     server.respond();
 
-                    setTimeout(function(){
-                        server.respondWith('GET', applicationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeApplication)]);
-                        kanbanView = new KanBanView({
-                            workflowCollection: workflowCollection
-                        });
-                        server.respond();
+                    server.respondWith('GET', applicationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeApplication)]);
+                    kanbanView = new KanBanView({
+                        workflowCollection: workflowCollection
+                    });
+                    server.respond();
+                    clock.tick(100);
 
-                        expect(kanbanView.$el.find('.kanban')).to.exist;
+                    expect(kanbanView.$el.find('.kanban')).to.exist;
 
-                        done();
-                    }, 300);
+                    done();
 
                 });
 
-                it('Try to open EditForm', function(){
+                it('Try to open EditForm', function () {
                     var $needApplication = kanbanView.$el.find('#55b92ad221e4b7c40f000078');
                     var applicationUrl = new RegExp('\/applications\/', 'i');
                     var usersUrl = '/users/forDd';
@@ -5794,7 +5785,7 @@ define([
 
                 });
 
-                it ('Try to switch tabs', function(){
+                it('Try to switch tabs', function () {
                     var $dialog = $('.ui-dialog');
                     var $firstTab = $dialog.find('.dialog-tabs li:nth-child(1) > a');
                     var $secondTab = $dialog.find('.dialog-tabs li:nth-child(2) > a');
@@ -5808,7 +5799,7 @@ define([
                     expect($firstTab).to.have.class('active');
                 });
 
-                it('Try to save application', function(){
+                it('Try to save application', function () {
                     var $next;
                     var $prev;
                     var $selectedItem;
@@ -5838,11 +5829,13 @@ define([
 
                 });
 
-                it('Try delete item from edit form', function(){
+                it('Try delete item from edit form', function () {
                     var $deleteBtn;
                     var $needApplication = kanbanView.$el.find('#55b92ad221e4b7c40f000078');
                     var applicationUrl = new RegExp('\/applications\/', 'i');
                     var usersUrl = '/users/forDd';
+
+                    windowConfirmStub.returns(true);
 
                     $needApplication.dblclick();
                     server.respond();
@@ -5864,43 +5857,105 @@ define([
             var server;
             var mainSpy;
             var windowConfirmStub;
+            var $thisEl;
 
             before(function () {
                 App.currentViewType = 'list';
                 server = sinon.fakeServer.create();
-                //mainSpy = sinon.spy(App, 'render');
-                windowConfirmStub = sinon.stub(window, 'confirm').returns(true);
+                windowConfirmStub = sinon.stub(window, 'confirm');
+                mainSpy = sinon.spy(App, 'render');
             });
 
             after(function () {
                 server.restore();
-                //mainSpy.restore();
                 windowConfirmStub.restore();
+                mainSpy.restore();
             });
 
             describe('INITIALIZE', function () {
 
+                it('Try to fetch application collection with error', function(){
+                    var applicationListUrl = new RegExp('\/applications\/list', 'i');
+
+                    server.respondWith('GET', applicationListUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeApplicationsForList)]);
+                    applicationCollection = new ApplicationCollection({
+                        contentType: 'Applications',
+                        viewType: 'list',
+                        page: 1,
+                        count: 2
+                    });
+                    server.respond();
+                });
+
                 it('Try to application ListView', function () {
                     var applicationListUrl = new RegExp('\/applications\/list', 'i');
                     var workflowUrl = new RegExp('\/Workflows', 'i');
+
                     server.respondWith('GET', applicationListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeApplicationsForList)]);
                     applicationCollection = new ApplicationCollection({
                         contentType: 'Applications',
                         viewType: 'list',
-                        page: 1
+                        page: 1,
+                        count: 2
                     });
                     server.respond();
 
-                    server.respondWith('GET', applicationListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflows)]);
+                    server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflows)]);
                     listView = new ListView({
                         collection: applicationCollection
                     });
                     server.respond();
 
                     expect(listView.$el.find('table')).to.have.class('list');
+                    
+                    $thisEl = listView.$el;
+
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+
+                    applicationCollection.bind('showmore', listView.showMoreContent, listView);
                 });
 
-                it('Try to go to EditForm', function(){
+                it('Try to showMore applications with error response', function(){
+                    var spyResponse;
+                    var $pageList = $thisEl.find('.pageList');
+                    var $needBtn = $pageList.find('a:nth-child(2)');
+                    var applicationListUrl = new RegExp('\/applications\/list', 'i');
+
+                    server.respondWith('GET', applicationListUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeApplicationsForList)]);
+                    $needBtn.click();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Some Error.');
+                });
+
+                it('Try to showMore applications', function(){
+                    var spyResponse;
+                    var $pageList = $thisEl.find('.pageList');
+                    var $needBtn = $pageList.find('a:nth-child(2)');
+                    var applicationListUrl = new RegExp('\/applications\/list', 'i');
+
+                    server.respondWith('GET', applicationListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeApplicationsForList)]);
+                    $needBtn.click();
+                    server.respond();
+
+                    expect(listView.$el.find('table')).to.have.class('list');
+                });
+
+                it('Try to go to EditForm', function () {
                     var $needTd = listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
                     var applicationUrl = new RegExp('\/applications\/', 'i');
                     var usersUrl = '/users/forDd';
@@ -5915,7 +5970,7 @@ define([
 
                 });
 
-                it ('Try to switch tabs', function(){
+                it('Try to switch tabs', function () {
                     var $dialog = $('.ui-dialog');
                     var $firstTab = $dialog.find('.dialog-tabs li:nth-child(1) > a');
                     var $secondTab = $dialog.find('.dialog-tabs li:nth-child(2) > a');
@@ -5929,7 +5984,7 @@ define([
                     expect($firstTab).to.have.class('active');
                 });
 
-                it('Try to add new job row', function(){
+                it('Try to add new job row', function () {
                     var $updateBtn;
                     var $hireDate;
                     var $dialogEl = $('.ui-dialog');
@@ -5943,14 +5998,16 @@ define([
 
                 });
 
-                it('Try to delete row in job table', function(){
+                it('Try to delete row in job table', function () {
                     var $dialogEl = $('.ui-dialog');
                     var $deleteRowBtn = $dialogEl.find('.fa-trash');
+
+                    windowConfirmStub.returns(true);
 
                     $deleteRowBtn.click();
                 });
 
-                it('Try to edit job row', function(){
+                it('Try to edit job row', function () {
                     var $needInput;
                     var $dialogEl = $('.ui-dialog');
                     var $needTd = $dialogEl.find('#hire0 > td:nth-child(8)');
@@ -5961,7 +6018,8 @@ define([
                     $dialogEl.find('#hire0 > td:nth-child(7)').click();
                 });
 
-                it('Try to save application', function(){
+                it('Try to save application', function () {
+                    window.location.hash = '#easyErp/Applications';
                     var $next;
                     var $prev;
                     var $selectedItem;
@@ -5991,10 +6049,12 @@ define([
 
                 });
 
-                it('Try delete item from edit form', function(){
+                it('Try delete item from edit form', function () {
                     var $deleteBtn;
                     var $needTd = listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
                     var applicationUrl = new RegExp('\/applications\/', 'i');
+
+                    windowConfirmStub.returns(true);
 
                     $needTd.click();
                     server.respond();
@@ -6021,19 +6081,17 @@ define([
             before(function () {
                 App.currentViewType = 'list';
                 server = sinon.fakeServer.create();
-                //mainSpy = sinon.spy(App, 'render');
                 windowConfirmStub = sinon.stub(window, 'confirm').returns(true);
             });
 
             after(function () {
                 server.restore();
-                //mainSpy.restore();
                 windowConfirmStub.restore();
 
                 createView.remove();
             });
 
-            it('Try to create CreateView', function(){
+            it('Try to create CreateView', function () {
                 var usersUrl = '/users/forDd';
 
                 server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
@@ -6044,7 +6102,7 @@ define([
 
             });
 
-            it ('Try to switch tabs', function(){
+            it('Try to switch tabs', function () {
                 var $dialog = $('.ui-dialog');
                 var $firstTab = $dialog.find('.dialog-tabs li:nth-child(1) > a');
                 var $secondTab = $dialog.find('.dialog-tabs li:nth-child(2) > a');
@@ -6058,7 +6116,7 @@ define([
                 expect($firstTab).to.have.class('active');
             });
 
-            it ('Try to save application', function(){
+            it('Try to save application', function () {
                 var $selectedItem;
                 var $prev;
                 var $next;
@@ -6087,8 +6145,6 @@ define([
 
                 expect(window.location.hash).to.be.equals('#easyErp/Applications');
             });
-
-
         });
 
 
@@ -6096,4 +6152,3 @@ define([
 
 
 });
-*/

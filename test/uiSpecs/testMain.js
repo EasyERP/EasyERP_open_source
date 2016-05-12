@@ -1131,8 +1131,10 @@ require.config({
         views        : './public/js/views',
         templates    : './public/templates',
         helpers      : './public/js/helpers',
+        d3           : './public/js/libs/d3.v3.min',
         jQuery       : './public/js/libs/jquery-2.1.0.min.map',
         jqueryui     : './public/js/libs/jquery-ui.min',
+        jqueryBarcode: './public/js/libs/jquery-barcode.min',
         Underscore   : './public/js/libs/underscore-min.map.1.6.0',
         Backbone     : './public/js/libs/backbone-min.map.1.1.2',
         text         : './public/js/libs/text',
@@ -1149,7 +1151,8 @@ require.config({
         chai         : './node_modules/chai/chai',
         'chai-jquery': './node_modules/chai-jquery/chai-jquery',
         'sinon-chai' : './node_modules/sinon-chai/lib/sinon-chai',
-        fixtures     : './test/uiSpecs/fixtures'
+        fixtures     : './test/uiSpecs/fixtures',
+        images       : './public/images'
     },
     shim   : {
         'jqueryui' : ['jQuery'],
@@ -1166,6 +1169,9 @@ require.config({
         },
         'jqueryui': {
             exports: 'jqueryui'
+        },
+        'd3'        : {
+            exports: 'd3'
         }
     },
     deps   : allTestFiles,

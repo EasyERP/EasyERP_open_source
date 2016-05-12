@@ -2,6 +2,9 @@
  * Created by Roman on 27.04.2015.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Product/InvoiceOrder/ProductItems.html',
     'text!templates/Product/InvoiceOrder/ProductInputContent.html',
     'text!templates/Product/InvoiceOrder/ProductItemsEditList.html',
@@ -13,7 +16,7 @@ define([
     'helpers',
     'dataService',
     'constants'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, GenerateWTrack, populate, helpers, dataService, CONSTANTS) {
+], function (Backbone, $, _, productItemTemplate, ProductInputContent, ProductItemsEditList, ItemsEditList, totalAmount, productCollection, GenerateWTrack, populate, helpers, dataService, CONSTANTS) {
     "use strict";
     var ProductItemTemplate = Backbone.View.extend({
         el: '#productItemsHolder',

@@ -10,8 +10,9 @@ define([
     'async',
     'custom',
     'moment',
-    'constants'
-], function (Backbone, $, _, mainTemplate, tableBodyTemplate, InvoiceCharts, dataService, helpers, async, custom, moment, CONSTANTS) {
+    'constants',
+    'd3'
+], function (Backbone, $, _, mainTemplate, tableBodyTemplate, InvoiceCharts, dataService, helpers, async, custom, moment, CONSTANTS, d3) {
     "use strict";
     var View = Backbone.View.extend({
         el: '#content-holder',

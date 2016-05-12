@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/Projects/projectInfoCollection',
@@ -19,7 +18,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -512,7 +512,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeDashboardProjects = {
         data: [
             {
@@ -1160,35 +1159,37 @@ define([
 
         describe('ProjectsDashboardList view', function () {
             var server;
-            var mainSpy;
+            var clock;
 
             before(function () {
                 server = sinon.fakeServer.create();
-                mainSpy = sinon.spy(App, 'render');
+                clock = sinon.useFakeTimers()
             });
 
             after(function () {
                 server.restore();
-                mainSpy.restore();
+                clock.restore();
             });
 
             describe('INITIALIZE', function () {
 
-                it('Try to create ListView', function () {
+                it('Try to create ListView', function (done) {
                     var $listHolder;
                     var projectsDashboardUrl = new RegExp('project\/getProjectPMForDashboard', 'i');
 
                     server.respondWith('GET', projectsDashboardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDashboardProjects)]);
-
                     contentView = new ContentView({
                         startTime: new Date()
                     });
-
                     server.respond();
+
+                    clock.tick(200);
 
                     $listHolder = contentView.$el;
 
                     expect($listHolder.find('table')).to.exist;
+
+                    done();
                 });
 
                 it('Try to go sort', function () {
@@ -1213,19 +1214,32 @@ define([
                 });
 
                 it('Try to click on sales manager', function(){
+                    var firefoxPattern = new RegExp('firefox', 'i');
+                    var userAgent = navigator.userAgent;
                     var needItem = contentView.$el.find('#ProjectPMContent > tr:nth-child(1) > td:nth-child(2) > a')[0];
 
                     needItem.click();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Employees/form/55b92ad221e4b7c40f00004f');
+                    if(firefoxPattern.test(userAgent)){
+                        expect(window.location.hash).to.be.equals('#easyErp/projectDashboard');
+                    } else {
+                        expect(window.location.hash).to.be.equals('#easyErp/Employees/form/55b92ad221e4b7c40f00004f');
+                    }
+
                 });
 
                 it('Try to click on project name', function(){
+                    var firefoxPattern = new RegExp('firefox', 'i');
+                    var userAgent = navigator.userAgent;
                     var needItem = contentView.$el.find('#ProjectPMContent > tr:nth-child(1) > td:nth-child(3) > a')[0];
 
                     needItem.click();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/form/56dff1b4a12a4f3c26919c91');
+                    if(firefoxPattern.test(userAgent)){
+                        expect(window.location.hash).to.be.equals('#easyErp/projectDashboard');
+                    } else {
+                        expect(window.location.hash).to.be.equals('#easyErp/Projects/form/56dff1b4a12a4f3c26919c91');
+                    }
                 });
 
             });
@@ -1235,4 +1249,3 @@ define([
     });
 
 });
-*/

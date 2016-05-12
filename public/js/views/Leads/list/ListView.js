@@ -1,4 +1,6 @@
 define([
+        'Underscore',
+        'jQuery',
         'views/listViewBase',
         'text!templates/Leads/list/ListHeader.html',
         'text!templates/stages.html',
@@ -12,7 +14,7 @@ define([
         'dataService'
     ],
 
-    function (listViewBase, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService) {
+    function (_, $, listViewBase, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService) {
         var LeadsListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -112,8 +114,8 @@ define([
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            hideNewSelect: function (e) {
-                $(".newSelectList").hide();
+            hideNewSelect: function () {
+                $(".newSelectList").remove();
             },
 
             showNewSelect: function (e) {

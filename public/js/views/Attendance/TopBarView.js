@@ -2,10 +2,12 @@
  * Created by liliya on 9/10/15.
  */
 define([
+        'Backbone',
+        'Underscore',
         'text!templates/Attendance/TopBarTemplate.html',
         'constants'
     ],
-    function (ContentTopBarTemplate, CONSTANTS) {
+    function (Backbone, _, ContentTopBarTemplate, CONSTANTS) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: CONSTANTS.ATTENDANCE,

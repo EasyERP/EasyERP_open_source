@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/Quotation/filterCollection',
@@ -23,7 +22,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -516,7 +516,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeQuotation = [
         {
             _id: "56e7c1d6c64e96844ef3d6a6",
@@ -1024,7 +1023,6 @@ define([
             }
         }
     ];
-
     var fakeWorkflow = [
         {
             _id: "55647b932e4aa3804a765ec5",
@@ -1041,7 +1039,6 @@ define([
             color: "#2C3E50"
         }
     ];
-
     var fakeQuotationForm = {
         _id: "56e7c1d6c64e96844ef3d6a6",
         expectedDate: "2016-03-14T22:00:00.000Z",
@@ -1128,7 +1125,6 @@ define([
             }
         }
     };
-
     var fakeCurrencies = {
         data: [
             {
@@ -1153,22 +1149,16 @@ define([
     var view;
     var topBarView;
     var listView;
-    var windowConfirmStub;
 
     describe('QuotationView', function () {
         var $fixture;
         var $elFixture;
-
-        before(function(){
-            windowConfirmStub = sinon.stub(window, 'confirm');
-        });
 
         after(function(){
             view.remove();
             topBarView.remove();
             listView.remove();
 
-            windowConfirmStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -1266,15 +1256,18 @@ define([
         describe('List View', function () {
             var server;
             var mainSpy;
+            var clock;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
+                clock = sinon.useFakeTimers();
             });
 
             after(function () {
                 server.restore();
                 mainSpy.restore();
+                clock.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -1284,24 +1277,23 @@ define([
                     var quotationUrl = new RegExp('\/quotation\/list', 'i');
                     var workflowUrl = new RegExp('\/workflows\/fetch', 'i');
 
-                    setTimeout(function(){
-                        server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
-                        server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflow)]);
+                    server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
+                    server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflow)]);
 
-                        listView = new ListView({
-                            collection: quotationCollection,
-                            startTime: new Date()
-                        });
+                    listView = new ListView({
+                        collection: quotationCollection,
+                        startTime: new Date()
+                    });
 
-                        server.respond();
-                        server.respond();
+                    server.respond();
+                    server.respond();
 
-                        $listHolder = listView.$el;
-                        expect($listHolder).to.exist;
+                    clock.tick(100);
 
-                        done();
+                    $listHolder = listView.$el;
+                    expect($listHolder).to.exist;
 
-                    }, 100);
+                    done();
                 });
 
                 it('Try to sort list', function () {
@@ -1351,7 +1343,7 @@ define([
 
                 });
 
-                /!*it('Try to confirm order', function(){
+                /*it('Try to confirm order', function(){
                     var workflowUrl = new RegExp('\/workflows\/getFirstForConvert', 'i');
                     var quotationUrl = new RegExp('\/quotation\/', 'i');
                     var $dialogContainer = $('.ui-dialog');
@@ -1379,10 +1371,10 @@ define([
                     //server.respond();
 
                     expect(window.location.hash).to.be.equals('#easyErp/Order/list');
-                });*!/
+                });*/
 
 
-                /!*it('Try to create vacation item', function(){
+                /*it('Try to create vacation item', function(){
                     var createBtn = topBarView.$el.find('#top-bar-createBtn');
                     var $listTableEl = listView.$el.find('#listTable');
 
@@ -1462,7 +1454,7 @@ define([
 
                     //expect(listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)').text()).to.equals('');
 
-                });*!/
+                });*/
 
             });
 
@@ -1471,4 +1463,3 @@ define([
     });
 
 });
-*/

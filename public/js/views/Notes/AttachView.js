@@ -1,10 +1,12 @@
 define([
     'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Notes/AttachTemplate.html',
     'text!templates/Notes/AddAttachments.html',
     'common'
 
-], function (Backbone, AttachTemplate, addAttachTemplate, common) {
+], function (Backbone, $, _, AttachTemplate, addAttachTemplate, common) {
     var AttachView = Backbone.View.extend({
 
         initialize: function (options) {
@@ -107,10 +109,10 @@ define([
                     data       : [addInptAttach],
 
                     beforeSend: function (xhr) {
+                        var statusVal = '0%';
                         xhr.setRequestHeader("id", currentModelId);
                         xhr.setRequestHeader("modelname", self.contentType);
                         status.show();
-                        var statusVal = '0%';
                         bar.width(statusVal);
                         status.html(statusVal);
                     },

@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/supplierPayments/filterCollection',
@@ -514,7 +513,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeSupplierPayments = [
         {
             _id: "55b92ae421e4b7c40f0014d0",
@@ -4779,7 +4777,6 @@ define([
             paidAmount: 100000
         }
     ];
-
     var fakeBonusTypeForDD = {
         data: [
             {
@@ -4844,7 +4841,6 @@ define([
             }
         ]
     };
-
     var fakeEmplForDD = {
         data: [
             {
@@ -7764,8 +7760,8 @@ define([
             }
         ]
     };
-
-    var fakeSortedUpSupplierPaayments = [{
+    var fakeSortedUpSupplierPaayments = [
+        {
         _id: "56017c16139400f22c000005",
         year: 2015,
         month: 12,
@@ -8091,22 +8087,16 @@ define([
     var view;
     var topBarView;
     var listView;
-    var windowConfirmStub;
 
     describe('SupplierPayments View', function () {
         var $fixture;
         var $elFixture;
-
-        before(function(){
-            windowConfirmStub = sinon.stub(window, 'confirm');
-        });
 
         after(function(){
             view.remove();
             topBarView.remove();
             listView.remove();
 
-            windowConfirmStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -8118,7 +8108,6 @@ define([
                 $elFixture = $fixture.find('#wrapper');
 
                 server = sinon.fakeServer.create();
-
             });
 
             after(function () {
@@ -8205,49 +8194,65 @@ define([
         describe('SupplierPayments list view', function () {
             var server;
             var mainSpy;
+            var $thisEl;
+            var clock;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
+                clock = sinon.useFakeTimers();
             });
 
             after(function () {
                 server.restore();
                 mainSpy.restore();
+                clock.restore();
             });
 
             describe('INITIALIZE', function(){
 
                 it('Try to create supplierPayments list view', function (done) {
-                    var $listHolder;
                     var supplierPaymentsUrl = new RegExp('\/payment\/supplier\/list', 'i');
 
-                    setTimeout(function(){
-                        server.respondWith('GET', '/bonusType/getForDD', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypeForDD)]);
-                        server.respondWith('GET', '/employees/getForDD', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplForDD)]);
-                        server.respondWith('GET', supplierPaymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSupplierPayments)]);
+                    server.respondWith('GET', '/bonusType/getForDD', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBonusTypeForDD)]);
+                    server.respondWith('GET', '/employees/getForDD', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplForDD)]);
+                    server.respondWith('GET', supplierPaymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSupplierPayments)]);
 
-                        listView = new ListView({
-                            collection: supplierPaymentsCollecion,
-                            startTime: new Date(),
-                            count: 100
-                        });
+                    listView = new ListView({
+                        collection: supplierPaymentsCollecion,
+                        startTime: new Date()
+                    });
 
-                        server.respond();
-                        server.respond();
-                        server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
 
-                        $listHolder = listView.$el;
+                    clock.tick(200);
 
-                        expect($listHolder.find('table')).to.exist;
+                    $thisEl = listView.$el;
 
-                        done();
-                    }, 200);
+                    expect($thisEl.find('table')).to.exist;
+
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+
+                    done();
 
                 });
 
                 it ('Try to sort up list', function(){
-                    var $sortTypeBtn = listView.$el.find('th[data-sort="month"]');
+                    var $sortTypeBtn = $thisEl.find('th[data-sort="month"]');
                     var supplierPayments = new RegExp('\/payment\/supplier\/list', 'i');
                     var $firstTableRow;
 
@@ -8255,35 +8260,131 @@ define([
                     $sortTypeBtn.click();
                     server.respond();
 
-                    $firstTableRow = listView.$el.find('#listTable > tr:nth-child(1)');
+                    $firstTableRow = $thisEl.find('#listTable > tr:nth-child(1)');
                     expect($firstTableRow.attr('data-id')).to.be.equals('55bf426165cda0810b000009');
 
                     server.respondWith('GET', supplierPayments, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSortedUpSupplierPaayments)]);
                     $sortTypeBtn.click();
                     server.respond();
 
-                    $firstTableRow = listView.$el.find('#listTable > tr:nth-child(1)');
+                    $firstTableRow = $thisEl.find('#listTable > tr:nth-child(1)');
                     expect($firstTableRow.attr('data-id')).to.be.equals('56017c16139400f22c000005');
 
                 });
 
+                it('Try to cancel change when created new row', function(){
+                    var $createBtn = topBarView.$el.find('#top-bar-createBtn');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var cancelChangesSpy = sinon.spy(listView, 'cancelChanges');
+
+                    $createBtn.click();
+
+                    $deleteBtn.click();
+                    expect(cancelChangesSpy.called).to.be.true;
+
+                    cancelChangesSpy.restore();
+                });
+
+                it('Try to cancel change', function(){
+                    var $yearInput;
+                    var $firstRow = $thisEl.find('#listTable > tr:nth-child(1)');
+                    var $yearEl = $firstRow.find('td[data-content="year"]');
+                    var $bonusEl = $yearEl.prev();
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var cancelChangesSpy = sinon.spy(listView, 'cancelChanges');
+
+                    $yearEl.click();
+                    $yearInput = $yearEl.find('input');
+                    $yearInput.val('2015');
+                    $yearInput.trigger('change');
+                    $bonusEl.click();
+
+                    $deleteBtn.click();
+                    expect(cancelChangesSpy.called).to.be.true;
+
+                    cancelChangesSpy.restore();
+                });
+
+                it('Try to delete item with 403 server error', function () {
+                    var spyResponse;
+                    var supplierPaymentsUrl = new RegExp('\/payment\/', 'i');
+                    var $firstEl = $(listView.$el.find('#listTable input')[1]);
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+
+                    $firstEl.prop('checked', true);
+                    server.respondWith('DELETE', supplierPaymentsUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    $deleteBtn.click();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+                });
+
                 it('Try to delete item', function () {
                     var supplierPaymentsUrl = new RegExp('\/payment\/', 'i');
-                    var $firstEl = $(listView.$el.find('#listTable input')[5]);
+                    var $firstEl = $(listView.$el.find('#listTable input')[1]);
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
                     $firstEl.prop('checked', true);
 
                     server.respondWith('DELETE', supplierPaymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
-
                     $deleteBtn.click();
+                    server.respond();
+                });
 
-                    listView.deleteItems();
+                it('Try to filter listView by Employee and BonusType', function(){
+                    var $employee;
+                    var $bonusType;
+                    var $selectedItem;
+                    var $closeBtn;
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var supplierPaymentsUrl = new RegExp('\/payment\/supplier\/list', 'i');
 
+                    $searchArrow.mouseover();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // select employee
+                    $employee = $searchContainer.find('#supplierFullContainer > .groupName');
+                    $employee.click();
+                    $selectedItem = $searchContainer.find('li[data-value="55b92ad221e4b7c40f00004a"]');
+                    server.respondWith('GET', supplierPaymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeSupplierPayments[0], fakeSupplierPayments[1]])]);
+                    $selectedItem.click();
                     server.respond();
 
-                    $firstEl.click();
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
+                    expect($searchContainer.find('li[data-value="55b92ad221e4b7c40f00004a"]')).to.have.class('checkedValue');
 
+                    //select BonusType
+                    $bonusType = $searchContainer.find('#paymentRefFullContainer > .groupName');
+                    $bonusType.click();
+                    $selectedItem = $searchContainer.find('li[data-value="Sales/Head 8%"]');
+                    server.respondWith('GET', supplierPaymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeSupplierPayments[0]])]);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(1);
+                    expect($searchContainer.find('li[data-value="Sales/Head 8%"]')).to.have.class('checkedValue');
+
+                    // uncheck Bonus Filter
+                    server.respondWith('GET', supplierPaymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeSupplierPayments[0], fakeSupplierPayments[1]])]);
+                    $selectedItem.click();
+                    server.respond();
+
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
+                    expect($searchContainer.find('li[data-value="Sales/Head 8%"]')).to.have.not.class('checkedValue');
+
+                    //close filter dropdown
+                    $searchArrow.mouseover();
+                    expect($searchContainer.find('.search-options')).to.have.class('hidden');
+
+                    //close Employee filter
+                    $closeBtn = $thisEl.find('span[data-value="supplier"]').next();
+                    server.respondWith('GET', supplierPaymentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSupplierPayments)]);
+                    $closeBtn.click();
+                    server.respond();
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(32);
                 });
 
                 it('Try to create item', function(){
@@ -8384,4 +8485,3 @@ define([
     });
 
 });
-*/

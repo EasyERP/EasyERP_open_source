@@ -69,10 +69,16 @@ define([
 
                 this.parseFilter();
 
-                this.setDbOnce = _.debounce(
+                this.setDbOnce = function(){
+                    console.log('------------------->>>>');
+                    this.trigger('filter', App.filter);
+                };
+
+                /*this.setDbOnce = _.debounce(
                     function () {
+                        console.log('------------------->>>>');
                         this.trigger('filter', App.filter);
-                    }, 500);
+                    }, 500);*/
             },
 
             useFilter: function (e) {

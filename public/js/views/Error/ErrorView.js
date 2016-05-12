@@ -1,7 +1,9 @@
 define([
+        'Backbone',
+        'Underscore',
         "text!templates/Error/ErrorPageTemplate.html"
     ],
-    function (ErrorPageTemplate) {
+    function (Backbone, _, ErrorPageTemplate) {
         var ErrorView = Backbone.View.extend({
             el      : "#content-holder",
             template: _.template(ErrorPageTemplate),

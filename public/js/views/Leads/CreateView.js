@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Leads/CreateTemplate.html",
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
@@ -8,7 +11,7 @@ define([
         "dataService",
         'constants'
     ],
-    function (CreateTemplate, selectView, AssigneesView, LeadModel, common, populate, dataService, CONSTANTS) {
+    function (Backbone, $, _, CreateTemplate, selectView, AssigneesView, LeadModel, common, populate, dataService, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -141,7 +144,7 @@ define([
                 //$("#selectWorkflow").html(_.template(selectTemplate, { workflows: this.getWorkflowValue(value) }));
             },
 
-            switchTab: function (e) {
+            /*switchTab: function (e) {
                 e.preventDefault();
                 var link = this.$("#tabList a");
                 if (link.hasClass("selected")) {
@@ -149,7 +152,7 @@ define([
                 }
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
-            },
+            },*/
 
             saveItem: function () {
                 var afterPage = '';                                                                 //Masalovych bag 803

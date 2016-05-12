@@ -2,6 +2,8 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+        'jQuery',
+        'Underscore',
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/supplierPayments/forWTrack/ListHeader.html',
@@ -22,7 +24,7 @@ define([
         'helpers',
     'constants'
     ],
-    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase,helpers, CONSTANTS) {
+    function ($, _,paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase,helpers, CONSTANTS) {
         var PaymentListView = ListViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -390,7 +392,6 @@ define([
                 var edited = this.$listTable.find('.edited');
 
                 this.edited = edited;
-
                 return !!edited.length;
             },
 

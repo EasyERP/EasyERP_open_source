@@ -1,13 +1,17 @@
-/**
+/*
+/!**
  * Created by Liliya_Pikiner on 7/1/2015.
- */
+ *!/
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     "common",
     "custom",
     "dataService",
     "populate",
     'constants'
-], function (common, Custom, dataService, populate, CONSTANTS) {
+], function (Backbone, $, _, common, Custom, dataService, populate, CONSTANTS) {
 
     var EditView = Backbone.View.extend({
         contentType: CONSTANTS.BONUSTYPE,
@@ -202,3 +206,4 @@ define([
 
     return EditView;
 });
+*/

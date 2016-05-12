@@ -721,7 +721,7 @@ define([
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            renderContent: function () {
+            /*renderContent: function () {
                 var $currentEl = this.$el;
                 var tBody = $currentEl.find('#listTable');
                 $("#top-bar-deleteBtn").hide();
@@ -762,7 +762,7 @@ define([
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
-            },
+            },*/
 
             showMoreContent: function (newModels) {
                 var holder = this.$el;

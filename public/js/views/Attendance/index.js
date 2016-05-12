@@ -2,6 +2,9 @@
  * Created by German on 30.06.2015.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Attendance/index.html',
     'models/AttendanceModel',
     'views/Attendance/MonthView',
@@ -11,7 +14,7 @@ define([
     'dataService',
     'views/selectView/selectView',
     'constants'// added view for employees dd list
-], function (mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService, selectView, CONSTANTS) {
+], function (Backbone, $, _, mainTemplate, AttendanceModel, MonthView, StatisticsView, populate, moment, dataService, selectView, CONSTANTS) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -150,14 +153,14 @@ define([
             });
         },
 
-        changeStatus: function () {
+        /*changeStatus: function () {
             var self = this;
             self.currentStatus = this.$el.find("#currentStatus option:selected").attr('id');
 
             dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function (result) {
                 //ToDo Hired and Not Hired
             });
-        },
+        },*/
 
         changeTime: function () {
             var startTime = new Date();

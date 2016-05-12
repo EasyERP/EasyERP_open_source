@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/Jobs/filterCollection',
@@ -19,7 +18,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -512,7 +512,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeJobsDashboard = [
         {
             _id: "564cfd8ba6e6390160c9ef5e",
@@ -2027,7 +2026,6 @@ define([
                         collection: jobsCollection
 
                     });
-
                     $listHolder = listView.$el;
 
                     expect($listHolder.find('table')).to.exist;
@@ -2056,4 +2054,3 @@ define([
     });
 
 });
-*/

@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/monthHours/filterCollection',
@@ -21,7 +20,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -514,7 +514,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeMonthHours = [
         {
             _id: "55b92ace21e4b7c40f000005",
@@ -574,16 +573,6 @@ define([
             hours: 176,
             month: 1,
             ID: 7,
-            __v: 0
-        },
-        {
-            _id: "55b92ace21e4b7c40f00000b",
-            fixedExpense: 265,
-            expenseCoefficient: 1.12,
-            year: 2015,
-            hours: 160,
-            month: 2,
-            ID: 8,
             __v: 0
         },
         {
@@ -658,22 +647,16 @@ define([
     var view;
     var topBarView;
     var listView;
-    var windowConfirmStub;
 
     describe('MonthHours View', function () {
         var $fixture;
         var $elFixture;
 
-        before(function(){
-            windowConfirmStub = sinon.stub(window, 'confirm');
-        });
 
         after(function(){
             view.remove();
             topBarView.remove();
             listView.remove();
-
-            windowConfirmStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -685,7 +668,6 @@ define([
                 $elFixture = $fixture.find('#wrapper');
 
                 server = sinon.fakeServer.create();
-
             });
 
             after(function () {
@@ -728,20 +710,39 @@ define([
 
         describe('TopBarView', function(){
             var server;
+            var consoleSpy;
 
             before(function(){
                 server = sinon.fakeServer.create();
+                consoleSpy = sinon.spy(console, 'log');
             });
 
             after(function(){
                server.restore();
+                consoleSpy.restore();
+            });
+
+            it('Try to fetch collection with error', function(){
+                var monthHoursUrl = new RegExp('\/monthHours\/list', 'i');
+                
+                server.respondWith('GET', monthHoursUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeMonthHours)]);
+                monthHoursCollection = new MonthHoursCollection({
+                    viewType: 'list',
+                    page: 1,
+                    count: 13
+                });
+                server.respond();
+                
+                expect(consoleSpy.called).to.be.true;
             });
 
             it('Try to create TopBarView', function(){
                 var monthHoursUrl = new RegExp('\/monthHours\/list', 'i');
-
+                var monthTotalCollectionUrl = new RegExp('\/monthHours\/list\/totalCollectionLength', 'i');
                 server.respondWith('GET', monthHoursUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeMonthHours)]);
-
+                server.respondWith('GET', monthTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    count: 13
+                })]);
                 monthHoursCollection = new MonthHoursCollection({
                     viewType: 'list',
                     page: 1,
@@ -770,79 +771,153 @@ define([
 
         describe('MonthHours list view', function () {
             var server;
+            var clock;
+            var windowConfirmStub;
             var mainSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
+                clock = sinon.useFakeTimers();
+                windowConfirmStub = sinon.stub(window, 'confirm');
+                windowConfirmStub.returns(true);
                 mainSpy = sinon.spy(App, 'render');
             });
 
             after(function () {
                 server.restore();
+                clock.restore();
+                windowConfirmStub.restore();
                 mainSpy.restore();
             });
 
             describe('INITIALIZE', function(){
 
                 it('Try to create monthHours list view', function (done) {
+                    var monthTotalCollectionUrl = new RegExp('\/monthHours\/list\/totalCollectionLength', 'i');
+                    var monthHoursUrl = new RegExp('\/monthHours\/list', 'i');
 
-                    setTimeout(function(){
-                        var monthTotalCollectionUrl = new RegExp('\/monthHours\/list\/totalCollectionLength', 'i');
+                    server.respondWith('GET', monthHoursUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeMonthHours)]);
+                    server.respondWith('GET', monthTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 13
+                    })]);
+                    listView = new ListView({
+                        collection: monthHoursCollection,
+                        startTime: new Date(),
+                        newCollection: false
+                    });
+                    server.respond();
+                    server.respond();
 
+                    clock.tick(200);
 
-                        server.respondWith('GET', monthTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                            count: 14
-                        })]);
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
 
-                        listView = new ListView({
-                            collection: monthHoursCollection,
-                            startTime: new Date(),
-                            newCollection: false
-                        });
+                    monthHoursCollection.bind('showmore', listView.showMoreContent, listView);
 
-                        server.respond();
-
-                        done();
-                    }, 200);
+                    done();
                 });
 
-                it('Try to delete item', function(){
+                it('Try to switchPageCounter with error', function(done){
+                    var spyResponse;
+                    var $thisEl = listView.$el;
+                    var $pageList = $thisEl.find('.pageList');
+                    var $needBtn = $pageList.find('a:nth-child(2)');
+                    var monthHoursUrl = new RegExp('\/monthHours\/list', 'i');
+
+                    server.respondWith('GET', monthHoursUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeMonthHours)]);
+
+                    $needBtn.click();
+                    server.respond();
+
+                    clock.tick(200);
+
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Some Error.');
+
+                    done();
+                });
+
+                it('Try to switchPageCounter', function(done){
+                    var $thisEl = listView.$el;
+                    var $pageList = $thisEl.find('.pageList');
+                    var $needBtn = $pageList.find('a:nth-child(2)');
+                    var monthTotalCollectionUrl = new RegExp('\/monthHours\/list\/totalCollectionLength', 'i');
+                    var monthHoursUrl = new RegExp('\/monthHours\/list', 'i');
+
+                    server.respondWith('GET', monthHoursUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeMonthHours)]);
+                    server.respondWith('GET', monthTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 13
+                    })]);
+                    $needBtn.click();
+                    server.respond();
+                    server.respond();
+
+                    clock.tick(200);
+
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(13);
+
+                    done();
+                });
+
+                it('Try to delete with changes', function(){
+                    var $input;
+                    var $expenseInput = listView.$el.find('tr[data-id="55b92ace21e4b7c40f000005"] > td[data-content="expenseCoefficient"]');
+                    var $fixedInput = listView.$el.find('tr[data-id="55b92ace21e4b7c40f000005"] > td[data-content="fixedExpense"]');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var keyDownEvent = $.Event('keydown', {which: 13});
+
+                    $expenseInput.click();
+                    $input = $expenseInput.find('input.editing');
+                    $input.val('1.7878787');
+                    $input.trigger('change');
+
+                    $fixedInput.click();
+                    $input = $fixedInput.find('input.editing');
+                    $input.trigger(keyDownEvent);
+
+                    $deleteBtn.click();
+
+                    expect($(listView.$el.find('td[data-content="expenseCoefficient"]')[0]).text()).to.be.equals('1.2');
+                });
+
+                it('Try to delete item with 403 error', function(){
+                    var spyResponse;
                     var monthHoursUrl = new RegExp('\/monthHours\/', 'i');
                     var $firstEl = $(listView.$el.find('.notForm input')[0]);
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
-                    windowConfirmStub.returns(true);
-
                     $firstEl.click();
 
-                    server.respondWith('DELETE', monthHoursUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
-
+                    server.respondWith('DELETE', monthHoursUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
                     $deleteBtn.click();
-
-                    listView.deleteItems();
-
                     server.respond();
 
-                    $firstEl.click();
-
+                    spyResponse = mainSpy.args[1][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
                 });
 
-                /!*it('Try to delete with changes', function(){
-                    var $input;
-                    var $firstEl = $(listView.$el.find('.notForm input')[0]);
-                    var $expenseInput = listView.$el.find('td[data-content="expenseCoefficient"]')[0];
-                    var $body = $('body');
+                it('Try to delete item', function(){
+                    var monthHoursUrl = new RegExp('\/monthHours\/', 'i');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
-                    $expenseInput.click();
-                    $input = listView.$el.find('input.editing');
-                    $input.val('1.7878787');
-                    $body.click();
-
-                    listView.deleteItems();
-
-                    expect($(listView.$el.find('td[data-content="expenseCoefficient"]')[0]).text()).to.be.equals('1.2');
-
-                });*!/
+                    server.respondWith('DELETE', monthHoursUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Delete success'})]);
+                    $deleteBtn.click();
+                    server.respond();
+                });
 
                 it('Try to create item', function(){
                     var $monthInput;
@@ -851,12 +926,12 @@ define([
                     var $expenseInput;
                     var $fixedInput;
                     var $input;
+                    var spyResponse;
                     var $createBtn = topBarView.$el.find('#top-bar-createBtn');
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var $tableContainer = listView.$el.find('table');
 
                     $createBtn.click();
-                    listView.createItem();
 
                     $monthInput = listView.$el.find('td[data-content="month"]')[0];
 
@@ -864,6 +939,13 @@ define([
                     $yearInput = listView.$el.find('td[data-content="year"]')[0];
                     $expenseInput = listView.$el.find('td[data-content="expenseCoefficient"]')[0];
                     $fixedInput = listView.$el.find('td[data-content="fixedExpense"]')[0];
+
+                    server.respondWith('POST', '/monthHours/', [200, {"Content-Type": "application/json"}, JSON.stringify({"month":8,"hours":150,"year":2016,"expenseCoefficient":1.45,"fixedExpense":78,"_id":"56e19608c5df6692126cc41f"})]);
+                    $saveBtn.click();
+                    server.respond();
+                    spyResponse = mainSpy.args[2][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Fill all fields please');
 
                     $monthInput.click();
 
@@ -890,11 +972,8 @@ define([
                     $input = listView.$el.find('input.editing');
                     $input.val('45');
 
-                    server.respondWith('POST', '/monthHours/', [200, {"Content-Type": "application/json"}, JSON.stringify({"month":8,"hours":150,"year":2016,"expenseCoefficient":1.45,"fixedExpense":78,"_id":"56e19608c5df6692126cc41f"})]);
-
+                    //server.respondWith('POST', '/monthHours/', [200, {"Content-Type": "application/json"}, JSON.stringify({"month":8,"hours":150,"year":2016,"expenseCoefficient":1.45,"fixedExpense":78,"_id":"56e19608c5df6692126cc41f"})]);
                     $saveBtn.click();
-                    listView.saveItem();
-
                     server.respond();
 
                     expect($tableContainer.find('input[type="text"]').length).to.equals(0);
@@ -918,13 +997,11 @@ define([
                     server.respondWith('PATCH', '/monthHours/', [200, {"Content-Type": "application/json"}, JSON.stringify({"month":8,"hours":150,"year":2016,"expenseCoefficient":1.45,"fixedExpense":78,"_id":"56e19608c5df6692126cc41f"})]);
 
                     $saveBtn.click();
-                    listView.saveItem();
 
                     server.respond();
 
                     expect($tableContainer.find('input[type="text"]').length).to.equals(0);
                     expect($(listView.$el.find('td[data-content="fixedExpense"]')[0]).text()).to.be.equals('165');
-
                 });
 
             });
@@ -935,4 +1012,3 @@ define([
 
 
 });
-*/

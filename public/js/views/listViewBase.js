@@ -260,6 +260,7 @@ define([
 
             // carried off eventHandlers for pages in one
             checkPage: function (event) {
+
                 var newRows = this.$el.find('#false');
                 var elementId = $(event.target).attr('id');
                 var data = {

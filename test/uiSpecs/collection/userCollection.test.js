@@ -2717,40 +2717,27 @@ define([
         });
 
         it ('Try to create collection with error', function(){
+            var usersUrl = new RegExp('\/users\/', 'i');
 
-            server.respondWith('GET', '/users/', [404, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
-
+            server.respondWith('GET', usersUrl, [404, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
             userCollection = new UserCollection({});
-
             server.respond();
         });
 
         it ('Try to create collection with unauthorized error', function(){
+            var usersUrl = new RegExp('\/users\/', 'i');
 
-            server.respondWith('GET', '/users/', [401, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
-
+            server.respondWith('GET', usersUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
             userCollection = new UserCollection({});
-
             server.respond();
         });
 
-        it ('Try to use showMore with error', function(done){
+        it ('Try to use showMore with error', function(){
             var spyResponse;
+            var usersUrl = new RegExp('\/users\/', 'i');
 
-            server.respondWith('GET', '/users/', [400, {"Content-Type": "application/json"}, JSON.stringify(new Error())]);
-
-            userCollection.showMore({
-                page: 2,
-                count: 2,
-
-                success: function(){
-                    done();
-                },
-
-                error: function(сollection, response){
-                    done(response.responseJSON);
-                }
-            });
+            server.respondWith('GET', usersUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(new Error())]);
+            userCollection.showMore();
 
             server.respond();
 
@@ -2760,19 +2747,11 @@ define([
 
         });
 
-        it ('Try to use showMore without options', function(done){
-            server.respondWith('GET', '/users/', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
+        it ('Try to use showMore without options', function(){
+            var usersUrl = new RegExp('\/users\/', 'i');
 
-            userCollection.showMore({
-                success: function(){
-                    done();
-                },
-
-                error: function(сollection, response){
-                    done(response.responseJSON);
-                }
-            });
-
+            server.respondWith('GET', usersUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
+            userCollection.showMore();
             server.respond();
 
             expect(userCollection).is.an('object');
@@ -2781,7 +2760,9 @@ define([
         });
 
         it ('Try to use showMore', function(done){
-            server.respondWith('GET', '/users/', [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
+            var usersUrl = new RegExp('\/users\/', 'i');
+
+            server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
 
             userCollection.showMore({
                 page: 1,
@@ -2800,9 +2781,7 @@ define([
 
             expect(userCollection).is.an('object');
             expect(userCollection.page).is.equals(4);
-
         });
-
 
     });
 });

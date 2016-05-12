@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/Dashboard/vacationDashboard',
@@ -1534,27 +1533,19 @@ define([
                 server.restore();
             });
 
-            it('Should create main view', function (done) {
-                //this.timeout(300);
-
+            it('Should create main view', function () {
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                setTimeout(function () {
-                    server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
-                    view = new MainView({el: $elFixture, contentType: 'DashBoardVacation'});
-                    server.respond();
+                server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
+                view = new MainView({el: $elFixture, contentType: 'DashBoardVacation'});
+                server.respond();
 
-                    $expectedMenuEl = view.$el.find('#mainmenu-holder');
-                    $expectedSubMenuEl = view.$el.find('#submenu-holder');
+                $expectedMenuEl = view.$el.find('#mainmenu-holder');
+                $expectedSubMenuEl = view.$el.find('#submenu-holder');
 
-                    expect($expectedMenuEl).to.exist;
-                    expect($expectedSubMenuEl).to.exist;
-
-                    done();
-                }, 300);
-
-
+                expect($expectedMenuEl).to.exist;
+                expect($expectedSubMenuEl).to.exist;
             });
 
             it('Should render menu and subMenu', function () {
@@ -1607,14 +1598,14 @@ define([
             before(function () {
 
                 server = sinon.fakeServer.create();
-                /!*mainSpy = sinon.spy(App, 'render');
-                windowConfirmStub = sinon.stub(window, 'confirm').returns(true);*!/
+                /*mainSpy = sinon.spy(App, 'render');
+                windowConfirmStub = sinon.stub(window, 'confirm').returns(true);*/
             });
 
             after(function () {
                 server.restore();
-                /!*mainSpy.restore();
-                windowConfirmStub.restore();*!/
+                /*mainSpy.restore();
+                windowConfirmStub.restore();*/
             });
 
             describe('INITIALIZE', function () {
@@ -1737,4 +1728,3 @@ define([
 
 
 });
-*/

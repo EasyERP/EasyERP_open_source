@@ -1,5 +1,6 @@
 define([
         'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/Users/list/ListHeader.html',
         'views/Users/CreateView',
@@ -8,7 +9,7 @@ define([
         'dataService'
     ],
 
-    function ($, listViewBase, listTemplate, createView, ListItemView, contentCollection) {
+    function ($, _, listViewBase, listTemplate, createView, ListItemView, contentCollection) {
         'use strict';
         var UsersListView = listViewBase.extend({
             createView              : createView,

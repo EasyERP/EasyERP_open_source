@@ -19,7 +19,8 @@ define([
     chai.use(sinonChai);
     expect = chai.expect;
 
-    var modules = [{
+    var modules = [
+        {
         "_id": 19,
         "attachments": [],
         "link": false,
@@ -512,7 +513,6 @@ define([
         "ancestors": [],
         "href": "DashBoardVacation"
     }];
-
     var fakeWorkflows = {
         data: [
             {
@@ -1198,7 +1198,6 @@ define([
             }
         ]
     };
-
     var fakeStatuses = {
         data: [
             {
@@ -1240,8 +1239,9 @@ define([
         var $elFixture;
 
         after(function () {
+            topBarView.remove();
+            listView.remove();
             view.remove();
-
         });
 
         describe('#initialize()', function () {
@@ -1252,7 +1252,6 @@ define([
                 $elFixture = $fixture.find('#wrapper');
 
                 server = sinon.fakeServer.create();
-
             });
 
             after(function () {
@@ -1264,7 +1263,6 @@ define([
                 var $expectedMenuEl;
 
                 server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
-                server.respondWith('GET', '/account/authenticated', [200, {"Content-Type": "application/json"}, 'OK']);
 
                 view = new MainView({el: $elFixture, contentType: 'Workflows'});
 
@@ -1370,8 +1368,12 @@ define([
                     expect($contentHolderEl).to.exist;
                     expect($workflowListEl).to.exist;
                     expect($workflowListEl).to.have.class('left');
-                    expect($workflowAccordEl.find('#workflowNames').text()).to.equals('\n        ');
+                    expect($workflowAccordEl.find('#workflowNames').text().trim()).to.equals('');
 
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editWorkflowsDetails, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('saveEvent', listView.saveProfile, listView);
                 });
 
                 it('Try to click li Applications', function(){
@@ -1415,19 +1417,69 @@ define([
                     var workflowUrl = new RegExp('\/workflows\/', 'i');
 
                     $needInput.val('Test workflow');
-
                     server.respondWith('PUT', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([{
                         status  : 'Pending'
                     }])]);
 
                     $saveBtn.click();
+                    server.respond();
+                });
 
+                /!*it('Try to edit item with error response', function(done){
+                    var alertSpy = sinon.spy(window, 'alert');
+                    var $firstAccEl = $('.row:nth-child(1)');
+                    var $needAEl = $firstAccEl.find('.edit');
+                    var $needInput = $firstAccEl.find('input');
+                    var $saveBtn = $firstAccEl.find('.save');
+                    var workflowUrl = new RegExp('\/workflows\/', 'i');
+
+                    $needAEl.click();
+                    $needInput.val('Test workflow');
+                    server.respondWith('PUT', workflowUrl, [400, {"Content-Type": "application/json"}, JSON.stringify([{}])]);
+                    $saveBtn.click({
+                        success: done,
+                        error: function(model, xhr){
+                            done(xhr);
+                        }
+                    });
                     server.respond();
 
+                    expect(alertSpy.called).to.be.true;
+                });*!/
+
+                it('Try to cancel edit', function(){
+                    var $cancelBtn;
+                    var $firstAccEl = $('.row:nth-child(1)');
+                    var $needAEl = $firstAccEl.find('.edit');
+                    var $needInput = $firstAccEl.find('input');
+
+                    $needAEl.click();
+                    $needInput.val('Test workflow');
+                    $cancelBtn = $firstAccEl.find('.cancel');
+                    $cancelBtn.click();
+
+                    expect($firstAccEl.find('input').length).to.equals(0);
+                });
+
+                it('Try to delete item with error response', function(){
+                    var alertStub = sinon.stub(window, 'alert');
+                    var $firstEl = $('#workflows > div:nth-child(1)');
+                    var $deleteBtn = $firstEl.find('.delete');
+                    var workflowUrl = new RegExp('\/workflows\/', 'i');
+
+                    alertStub.returns(true);
+                    windowConfirmStub.returns(true);
+
+                    server.respondWith('DELETE', workflowUrl, [400, {"Content-Type": "application/json"}, JSON.stringify([{}])]);
+                    $deleteBtn.click();
+                    server.respond();
+
+                    expect(alertStub.called).to.be.true;
+                    alertStub.restore();
                 });
 
                 it('Try to delete item', function(){
-                    var $firstEl = $('#workflows > div:nth-child(1)');
+                    var $firstEl = $('#workflows > div:nth-child(2)');
                     var $deleteBtn = $firstEl.find('.delete');
                     var workflowUrl = new RegExp('\/workflows\/', 'i');
 
@@ -1438,7 +1490,19 @@ define([
                     server.respond();
 
                     expect($('#workflows > div:nth-child(2) > div.name').attr('data-id')).to.be.equals('528ce53bf3f67bc40b000016');
+                });
 
+                it('Try to cancel new status', function(){
+                    var $cancelStatus;
+                    var $createBtn = listView.$el.find('#addNewStatus');
+
+                    $createBtn.click();
+                    expect(listView.$el.find('.addnew')).to.exist;
+
+                    $cancelStatus = listView.$el.find('#cancelStatus');
+                    $cancelStatus.click();
+
+                    expect(listView.$el.find('.addnew')).to.not.exist;
                 });
 
                 it('Try to create new status', function(){
