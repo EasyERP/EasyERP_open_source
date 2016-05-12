@@ -44,7 +44,7 @@
             </td>
             <td data-id="<%=payment.invoice._id%>"><%=payment.invoice ? payment.invoice.name : ''%></td>
             <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
-            <td class="totalPaidAmount money <%= payment.paidAmount != payment.invoiced ? 'red' :''%>">
+            <td class="totalPaidAmount <%=currencyClass(payment.currency._id)%> <%= payment.paidAmount != payment.invoiced ? 'red' :''%>">
                 <%=currencySplitter(parseFloat(payment.paidAmount).toFixed(2))%>
             </td>
             <!--<td data-content="workflow" class=""><a href="javascript:;" class="<%= payment.workflow === 'Paid' ? 'done' : 'new'%>"><%=payment.workflow%></a></td>-->
@@ -58,7 +58,7 @@
         <tfoot id="listTotal">
         <tr>
             <td colspan="6"></td>
-            <td><span id="totalPaidAmount" class="money"><%=currencySplitter(totalPaidAmount.toFixed(2))%></span></td>
+            <td><span id="totalPaidAmount" class="dollar"><%=currencySplitter(totalPaidAmount.toFixed(2))%></span></td>
             <td></td>
         </tr>
         </tfoot>

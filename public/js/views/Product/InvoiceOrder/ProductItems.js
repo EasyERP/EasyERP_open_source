@@ -218,20 +218,27 @@ define([
             var $trEll = $parrent.find('tr.productItem');
             var products = this.products ? this.products.toJSON() : [];
             var templ = _.template(ProductInputContent);
+            var currency = {};
 
             e.preventDefault();
             e.stopPropagation();
 
+            currency._id = $('#currencyDd').attr('data-id');
+
             if (rowId === undefined || /* rowId !== 'false'*/ !hasError) {
                 if (!$trEll.length) {
                     return $parrent.prepend(templ({
-                        forSales: self.forSales,
-                        products: products
+                        forSales     : self.forSales,
+                        products     : products,
+                        currencyClass: helpers.currencyClass,
+                        currency     : currency
                     }));
                 }
                 $($trEll[$trEll.length - 1]).after(templ({
-                    forSales: self.forSales,
-                    products: products
+                    forSales     : self.forSales,
+                    products     : products,
+                    currencyClass: helpers.currencyClass,
+                    currency     : currency
                 }));
             }
 
@@ -357,6 +364,8 @@ define([
             var currentJob;
             var product = $('.productsDd');
             var price;
+            var currency = {};
+            var classForParent;
 
             if (_id !== 'createJob') {
 
@@ -409,17 +418,15 @@ define([
                 datePicker.remove();
 
                 //  $($parrents[2]).attr('class', 'editable');
-//                $('#editInput').val(salePrice); // changed on def 0
-
-                if (currentJob && currentJob.budget) {
+                $trEl.find('#editInput').val(salePrice); // changed on def 0
+                /*if (currentJob && currentJob.budget) {
                     price = currentJob.budget.budgetTotal.revenueSum;
                     if (price) {
                         $trEl.find('[data-name="price"]').find('input').val(price);
                     } else {
                         $trEl.find('[data-name="price"]').find('input').val('0');
                     }
-                }
-
+                }*/
                 /* if (selectedProduct && selectedProduct.name === CONSTANTS.IT_SERVICES) {
                  $($parrents[4]).attr('class', 'editable').find('span').text(salePrice);
 
@@ -432,7 +439,10 @@ define([
 
                 salePrice = selectedProduct.info.salePrice;
 
-                $($parrents[4]).attr('class', 'editable forNum').find('span').text(salePrice);
+                currency._id = $('#currencyDd').attr('data-id');
+                classForParent = 'editable forNum ' + helpers.currencyClass(currency._id);
+
+                $($parrents[4]).attr('class', classForParent).find('span').text(salePrice);
                 total = parseFloat(selectedProduct.info.salePrice);
                 taxes = total * this.taxesRate;
                 subtotal = total + taxes;
@@ -626,9 +636,11 @@ define([
             var $thisEl = this.$el;
             var products;
             var self = this;
+            var currency;
 
             if (options && options.model) {
                 products = options.model.products;
+                currency = options.model.currency;
 
                 $thisEl.html(_.template(ProductItemsEditList, {model: options.model, forSales: self.forSales}));
 
@@ -638,13 +650,16 @@ define([
                         products        : products,
                         editable        : this.editable,
                         forSales        : self.forSales,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass,
+                        currency        : currency
                     }));
                     totalAmountContainer = $thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
                         model           : options.model,
                         balanceVisible  : this.visible,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass
                     }));
                 }
             } else {
@@ -653,7 +668,8 @@ define([
                 totalAmountContainer.append(_.template(totalAmount, {
                     model           : null,
                     balanceVisible  : this.visible,
-                    currencySplitter: helpers.currencySplitter
+                    currencySplitter: helpers.currencySplitter,
+                    currencyClass   : helpers.currencyClass
                 }));
             }
 

@@ -17,22 +17,24 @@ define([
     "populate",
     'dataService',
     'constants',
-    'helpers/keyValidator'], function (Backbone,
-                                       $,
-                                       _,
-                                       CreateTemplate,
-                                       PersonCollection,
-                                       DepartmentCollection,
-                                       invoiceCollection,
-                                       paymentCollection,
-                                       PaymentView,
-                                       /*invoiceView, */
-                                       PaymentModel,
-                                       common,
-                                       populate,
-                                       dataService,
-                                       constants,
-                                       keyValidator) {
+    'helpers/keyValidator',
+    'helpers'], function (Backbone,
+                          $,
+                          _,
+                          CreateTemplate,
+                          PersonCollection,
+                          DepartmentCollection,
+                          invoiceCollection,
+                          paymentCollection,
+                          PaymentView,
+                          /*invoiceView, */
+                          PaymentModel,
+                          common,
+                          populate,
+                          dataService,
+                          constants,
+                          keyValidator,
+                          helpers) {
     var CreateView = Backbone.View.extend({
         el         : "#paymentHolder",
         contentType: "Payment",
@@ -133,6 +135,12 @@ define([
         },
 
         chooseOption: function (e) {
+            var newCurrency = $(e.target).attr('id');
+            var newCurrencyClass = helpers.currencyClass(newCurrency);
+
+            var array = this.$el.find('#paidAmountDd');
+            array.attr('class', newCurrencyClass);
+
             $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
 
             this.changePaidAmount();
@@ -169,7 +177,7 @@ define([
             };
 
             paidAmount = parseFloat(paidAmount);
-            if (isNaN(paidAmount) || paidAmount <=0) {
+            if (isNaN(paidAmount) || paidAmount <= 0) {
                 return App.render({
                     type   : 'error',
                     message: 'Please, enter Paid Amount!'
@@ -235,8 +243,9 @@ define([
             var self = this;
             var model = this.invoiceModel.toJSON();
             var htmBody = this.template({
-                invoice : model,
-                currency: self.currency
+                invoice      : model,
+                currency     : self.currency,
+                currencyClass: helpers.currencyClass
             });
 
             this.$el = $(htmBody).dialog({

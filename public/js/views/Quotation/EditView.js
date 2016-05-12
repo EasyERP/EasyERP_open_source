@@ -97,7 +97,16 @@ define([
                 return el._id === id;
             });
 
-            $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+            var currencyElement = $(e.target).parents('dd').find('.current-selected');
+            var oldCurrency = currencyElement.attr('data-id');
+            var newCurrency = $(e.target).attr('id');
+            var oldCurrencyClass = helpers.currencyClass(oldCurrency);
+            var newCurrencyClass = helpers.currencyClass(newCurrency);
+
+            var array = this.$el.find('.' + oldCurrencyClass);
+            array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+
+            currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
 
             if (type !== $.trim(this.$el.find('#supplierDd').text()) && element && element.customer && element.customer.name) {
                 this.$el.find('#supplierDd').text(element.customer.name && element.customer.name.first ? element.customer.name.first + ' ' + element.customer.name.last : element.customer.name);
@@ -199,13 +208,13 @@ define([
 
                                         self.ordersCollection.bind('reset', function () {
                                             self.ordersView = new OrdersView({
-                                                collection    : self.ordersCollection,
-                                                projectId     : self.pId,
-                                                customerId    : self.customerId,
-                                                salesManager  : self.salesManager,
-                                                filter        : filter,
-                                                activeTab     : true,
-                                                eventChannel  : self.eventChannel
+                                                collection  : self.ordersCollection,
+                                                projectId   : self.pId,
+                                                customerId  : self.customerId,
+                                                salesManager: self.salesManager,
+                                                filter      : filter,
+                                                activeTab   : true,
+                                                eventChannel: self.eventChannel
                                             });
 
                                             self.ordersView.showOrderDialog(id);
@@ -502,7 +511,7 @@ define([
                         quantity = targetEl.find('[data-name="quantity"]').text();
                         price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
                         price = parseFloat(price) * 100;
-                        
+
                         if (isNaN(price) || price <= 0) {
                             App.stopPreload();
                             return App.render({

@@ -35,12 +35,12 @@ define([
         template: _.template(invoiceTemplate),
 
         events: {
-            "click .checkbox"                               : "checked",
+            "click .checkbox"        : "checked",
             //"click .list tbody td:not(.notForm, .validated)": "goToEditDialog",
-            "click #removeInvoice"                          : "deleteItems",
-            "click #saveInvoice"                            : "saveItems",
-            "click .selectList"                             : "showSelects",
-            "click .newSelectList li"                       : "chooseOption"
+            "click #removeInvoice"   : "deleteItems",
+            "click #saveInvoice"     : "saveItems",
+            "click .selectList"      : "showSelects",
+            "click .newSelectList li": "chooseOption"
         },
 
         showSelects: function (e) {
@@ -176,7 +176,7 @@ define([
                     error  : function (model, res) {
                         if (res.status === 403 && index === 0) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: "You do not have permission to perform this action"
                             });
                         }
@@ -230,16 +230,16 @@ define([
                 },
                 success: function (model) {
                     new editView({
-                        model: model,
-                        redirect: true,
-                        collection: this.collection,
-                        notCreate: true,
+                        model       : model,
+                        redirect    : true,
+                        collection  : this.collection,
+                        notCreate   : true,
                         eventChannel: self.eventChannel
                     });
                 },
                 error  : function () {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'Please refresh browser'
                     });
                 }
@@ -263,16 +263,17 @@ define([
                 success: function (model) {
                     // var isWtrack = App.weTrack;
 
-                    new editView({model: model,
-                        redirect: true,
-                        collection: self.collection,
-                        notCreate: true,
+                    new editView({
+                        model       : model,
+                        redirect    : true,
+                        collection  : self.collection,
+                        notCreate   : true,
                         eventChannel: self.eventChannel
                     });
                 },
                 error  : function () {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'Please refresh browser'
                     });
                 }
@@ -423,7 +424,8 @@ define([
                 collection         : this.collection.toJSON(),
                 startNumber        : 0,
                 utcDateToLocaleDate: common.utcDateToLocaleDate,
-                currencySplitter   : helpers.currencySplitter
+                currencySplitter   : helpers.currencySplitter,
+                currencyClass      : helpers.currencyClass
             }));
 
             dataService.getData("/workflow/fetch", {

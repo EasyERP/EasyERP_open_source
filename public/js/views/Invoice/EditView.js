@@ -572,6 +572,7 @@ define([
                 customer          : customer,
                 total             : total,
                 currencySplitter  : helpers.currencySplitter,
+                currencyClass     : helpers.currencyClass,
                 isFinancial       : isFinancial
             });
 

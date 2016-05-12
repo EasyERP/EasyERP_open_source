@@ -801,7 +801,8 @@ var Quotation = function (models, event) {
                     paymentInfo  : 1,
                     orderDate    : 1,
                     forSales     : 1,
-                    isOrder      : 1
+                    isOrder      : 1,
+                    currency     : 1
                 }
             }, {
                 $unwind: {
@@ -819,7 +820,8 @@ var Quotation = function (models, event) {
                     workflow     : 1,
                     supplier     : 1,
                     project      : 1,
-                    isOrder      : 1
+                    isOrder      : 1,
+                    currency     : 1
                 }
             }, {
                 $match: {
@@ -846,7 +848,8 @@ var Quotation = function (models, event) {
                     workflow    : 1,
                     supplier    : 1,
                     project     : 1,
-                    isOrder     : 1
+                    isOrder     : 1,
+                    currency    : 1
                 }
             }, {
                 $match: newQueryObj

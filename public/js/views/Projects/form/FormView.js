@@ -972,7 +972,8 @@ define([
                 statsContainer.html(this.invoiceStatsTmpl({
                         invoceStats     : data.invoices,
                         invoceStat      : data,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass: helpers.currencyClass
                     })
                 );
             },
@@ -983,7 +984,8 @@ define([
                 statsContainer.html(this.proformaStatsTmpl({
                         invoceStats     : data.invoices,
                         invoceStat      : data,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass: helpers.currencyClass
                     })
                 );
             },
@@ -1327,7 +1329,8 @@ define([
 
                 proformContainer.html(this.proformRevenue({
                         proformValues   : self.proformValues,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass: helpers.currencyClass
                     })
                 );
 

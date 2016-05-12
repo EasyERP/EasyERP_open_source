@@ -268,9 +268,11 @@ define([
             var totalAmountContainer;
             var thisEl = this.$el;
             var products;
+            var currency;
 
             if (options && options.model) {
                 products = options.model.products;
+                currency = options.model.currency;
 
                 thisEl.html(_.template(productItemTemplate, {
                     model     : options.model,
@@ -288,14 +290,17 @@ define([
                         notAddItem      : this.notAddItem,
                         model           : options.model,
                         currencySplitter: helpers.currencySplitter,
-                        approved        : self.approved
+                        currencyClass   : helpers.currencyClass,
+                        approved        : self.approved,
+                        currency        : currency
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
                         model           : options.model,
                         balanceVisible  : this.visible,
-                        currencySplitter: helpers.currencySplitter
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass
                     }));
                 }
             } else {
