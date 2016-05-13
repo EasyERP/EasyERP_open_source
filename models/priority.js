@@ -6,7 +6,8 @@ module.exports = (function () {
 
     var prioritySchema = mongoose.Schema({
         _id: Number,
-        priority: String
+        priority: String,
+        type : String
     }, { collection: 'Priority' });
 
     mongoose.model('Priority', prioritySchema);

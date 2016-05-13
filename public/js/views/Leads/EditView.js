@@ -346,10 +346,20 @@ define([
                         model: this.currentModel
                     }).render().el
                 );
-                populate.getPriority("#priorityDd", this);
+                dataService.getData('/Priority/leads', {}, function (priorities) {
+                    self.responseObj['#priorityDd'] = priorities;
+                });
                 populate.getWorkflow("#workflowsDd", "", "/WorkflowsForDd", {id: "Leads"}, "name", this);
                 populate.get2name("#customerDd", "/Customer", {}, this, null, true);
-                populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this);
+                dataService.getData('/employee/getForDD', {}, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee;
+                    });
+
+                    self.responseObj['#salesPerson'] = employees;
+                });
                 populate.get("#campaignDd", "/Campaigns", {}, "name", this);
                 populate.get("#sourceDd", "/sources", {}, "name", this);
 
