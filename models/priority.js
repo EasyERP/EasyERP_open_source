@@ -5,7 +5,7 @@ module.exports = (function () {
     var mongoose = require('mongoose');
 
     var prioritySchema = mongoose.Schema({
-        _id: Number,
+        _id: String,
         priority: String,
         type : String
     }, { collection: 'Priority' });

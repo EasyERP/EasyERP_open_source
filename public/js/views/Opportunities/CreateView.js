@@ -321,9 +321,24 @@ define([
 
                 $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
-                populate.getPriority("#priorityDd", this, true);
+                dataService.getData('/Priority/leads', {}, function (priorities) {
+                    priorities = _.map(priorities.data, function (priority) {
+                        priority.name = priority.priority;
+
+                        return priority;
+                    });
+                    self.responseObj['#priorityDd'] = priorities;
+                });
                 populate.get2name("#customerDd", "/Customer", {}, this, true, true, (this.model) ? this.model._id : null);
-                populate.get2name("#salesPersonDd", "/getForDdByRelatedUser", {}, this, true, true);
+                dataService.getData('/employee/getForDD', {isEmployee : true}, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee;
+                    });
+
+                    self.responseObj['#salesPersonDd'] = employees;
+                });
                 populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, true);
                 populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, true, true);
 
