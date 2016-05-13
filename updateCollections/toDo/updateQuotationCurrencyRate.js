@@ -6,8 +6,9 @@ var currencyHalper = require('../../helpers/currency.js');
 
 require('../../models/index.js');
 
-var Quotation = mongoose.Schemas.Quotation;
 var Currency = mongoose.Schemas.currency;
+var Quotation = mongoose.Schemas.Quotation;
+
 var connectOptions = {
     user: 'easyerp',
     pass: '1q2w3e!@#',
@@ -15,16 +16,16 @@ var connectOptions = {
     j   : true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111', 'dendb', 28017, connectOptions);
-// var dbObject = mongoose.createConnection('localhost', 'production');
+//var dbObject = mongoose.createConnection('144.76.56.111', 'dendb', 28017, connectOptions);
+ var dbObject = mongoose.createConnection('localhost', 'production');
 
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log('Connection to production is success');
     var counter = 0;
 
-    var Quotation = dbObject.model('Quotation', Quotation);
     var Currency = dbObject.model('currency', Currency);
+    var Quotation = dbObject.model('Quotation', Quotation);
 
     Currency.find({}, function (err, res) {
         if (err) {
@@ -32,8 +33,7 @@ dbObject.once('open', function callback() {
         }
 
         Quotation.find({
-            'currency.rate': {$exists: false},
-            'currency._id' : {$ne: '565eab29aeb95fa9c0f9df2d'}
+            'currency.rate': {$exists: false}
         }, function (err, result) {
 
             if (err) {
@@ -45,6 +45,7 @@ dbObject.once('open', function callback() {
                 currencyHalper(quotation.orderDate, function (err, oxr) {
                     var rates;
                     var currency = quotation.currency;
+                    var currencyName;
                     var modelCur = _.find(res, function(model){
                         return model._id.toString() === currency._id.toString();
                     });
@@ -55,7 +56,7 @@ dbObject.once('open', function callback() {
 
                     oxr = oxr || {};
                     rates = oxr.rates;
-                    var currencyName = modelCur.get('name');
+                    currencyName = modelCur.get('name');
 
                     if (rates && rates[currencyName]) {
                         currency.rate = rates[currencyName];
@@ -64,11 +65,7 @@ dbObject.once('open', function callback() {
                         return cb(err);
                     }
 
-                    console.log(quotation.orderDate);
-                    console.log(currency.rate);
-                    console.log();
-
-/*                    Quotation.findByIdAndUpdate(quotation._id, {
+                    Quotation.findByIdAndUpdate(quotation._id, {
                         $set: {
                             currency   : currency
                         }
@@ -78,7 +75,7 @@ dbObject.once('open', function callback() {
                         }
                         console.log(counter++);
                         cb();
-                    });*/
+                    });
                 });
             }, function (err, cb) {
                 if (err) {
