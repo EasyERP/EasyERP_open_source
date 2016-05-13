@@ -8,7 +8,7 @@
 
                 setTimeout(function() {
                     self.trigger('reset', []);
-                }, 50);
+                }, 0);
             }
         });
     });
