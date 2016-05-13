@@ -338,6 +338,7 @@
         },
 
         saveItem: function (e, toEmployyes) {
+            var weeklyScheduler;
             var currentWorkflow;
             var proposedSalary;
             var expectedSalary;
@@ -428,6 +429,7 @@
                 date = new Date($.trim($tr.find("td").eq(2).text()));
                 jobPosition = $tr.find('#jobPositionDd').attr('data-id');
                 department = $tr.find('#departmentsDd').attr('data-id');
+                weeklyScheduler = $tr.find('#weeklySchedulerDd').attr('data-id');
                 manager = $tr.find('#projectManagerDD').attr('data-id') || null;
                 info = $tr.find('#statusInfoDd').val();
                 jobType = $.trim($tr.find('#jobTypeDd').text());
@@ -448,7 +450,8 @@
                         manager    : $previousTr.find('#projectManagerDD').attr('data-id') || null,
                         jobType    : $.trim($previousTr.find('#jobTypeDd').text()),
                         salary     : salary,
-                        info       : $previousTr.find('#statusInfoDd').val()
+                        info       : $previousTr.find('#statusInfoDd').val(),
+                        weeklyScheduler: $previousTr.find('#weeklySchedulerDd').attr('data-id')
                     });
 
                     previousDep = department;
@@ -462,7 +465,8 @@
                     manager    : manager,
                     jobType    : jobType,
                     salary     : salary,
-                    info       : info
+                    info       : info,
+                    weeklyScheduler: weeklyScheduler
                 });
 
                 if (!salary && self.isSalary) {
@@ -498,6 +502,7 @@
                 position = $.trim(el.find('#jobPositionDd').text());
                 jobType = $.trim(el.find('#jobTypeDd').text());
                 jobPosition = el.find('#jobPositionDd').attr('data-id');
+                weeklyScheduler = el.find('#weeklySchedulerDd').attr('data-id');
                 department = el.find('#departmentsDd').attr('data-id');
                 manager = el.find('#projectManagerDD').attr('data-id');
                 expectedSalary = parseInt($.trim(el.find("#expectedSalary").val()), 10) || 0;
@@ -511,6 +516,7 @@
                         date       : moment(),
                         department : department,
                         jobPosition: jobPosition,
+                        weeklyScheduler: weeklyScheduler,
                         manager    : manager,
                         jobType    : jobType,
                         salary     : salary,
@@ -567,6 +573,7 @@
                 jobPosition   : jobPosition,
                 manager       : manager,
                 coach         : coach,
+                weeklyScheduler: weeklyScheduler,
                 identNo       : $.trim($("#identNo").val()),
                 passportNo    : $.trim(this.$el.find("#passportNo").val()),
                 otherId       : $.trim(this.$el.find("#otherId").val()),
@@ -861,6 +868,7 @@
             });
 
             populate.get("#departmentsDd", "/DepartmentsForDd", {}, "departmentName", this);
+            populate.get("#weeklySchedulerDd", "/weeklyScheduler/forDd", {}, "name", this);
             populate.get("#departmentManagers", "/DepartmentsForDd", {}, "departmentManager", this);
             populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this);
             populate.get("#jobTypeDd", "/jobType", {}, "_id", this);

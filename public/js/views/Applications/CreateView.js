@@ -175,6 +175,9 @@ define([
                 var jobPositionName = jobPositionDd.text();
                 var jobPosition = jobPositionId ? jobPositionId : null;
 
+                var weeklySchedulerDd = this.$el.find("#weeklySchedulerDd");
+                var weeklyScheduler = jobPositionDd.data("id");
+
                 var projectManagerDD = this.$el.find("#projectManagerDD");
                 var projectManagerId = projectManagerDD.data("id");
                 var projectManagerName = projectManagerDD.text();
@@ -254,6 +257,7 @@ define([
                         relatedUser: relatedUser,
                         department : department,
                         jobPosition: jobPosition,
+                        weeklyScheduler: weeklyScheduler,
                         manager    : manager,
                         identNo    : identNo,
                         passportNo : passportNo,
@@ -350,6 +354,7 @@ define([
                     }
                 });
                 populate.get("#departmentDd", "/DepartmentsForDd", {}, "departmentName", this);
+                populate.get("#weeklySchedulerDd", "/weeklyScheduler/forDd", {}, "name", this, true);
                 populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this);
                 populate.get("#jobTypeDd", "/jobType", {}, "_id", this);
                 populate.get("#nationality", "/nationality", {}, "_id", this);

@@ -23,6 +23,7 @@ module.exports = function (app, mainDb) {
     var quotationRouter = require('./quotation')(models, event);
     var destinationRouter = require('./destination')(models);
     var incotermRouter = require('./incoterm')(models);
+    var weeklySchedulerRouter = require('./weeklyScheduler')(models);
     var invoicingControlRouter = require('./invoicingControl')(models);
     var paymentTermRouter = require('./paymentTerm')(models);
     var deliverToTermRouter = require('./deliverTo')(models);
@@ -178,6 +179,7 @@ module.exports = function (app, mainDb) {
     app.use('/invoicingControl', invoicingControlRouter);
     app.use('/paymentTerm', paymentTermRouter);
     app.use('/deliverTo', deliverToTermRouter);
+    app.use('/weeklyScheduler', weeklySchedulerRouter);
     app.use('/workflow', workflowRouter);
     app.use('/payment', paymentRouter);
     app.use('/period', periodRouter);
