@@ -500,7 +500,7 @@ var TCard = function (event, models) {
                     endDateWeek  : {
                         $let: {
                             vars: {
-                                endDate: {$ifNull: ['$salesmanagers.startDate', null]}
+                                endDate: {$ifNull: ['$salesmanagers.endDate', null]}
                             },
                             in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
                         }
@@ -856,7 +856,7 @@ var TCard = function (event, models) {
                     endDateWeek  : {
                         $let: {
                             vars: {
-                                endDate: {$ifNull: ['$salesmanagers.startDate', null]}
+                                endDate: {$ifNull: ['$salesmanagers.endDate', null]}
                             },
                             in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
                         }
@@ -1839,7 +1839,7 @@ var TCard = function (event, models) {
                 endDateWeek  : {
                     $let: {
                         vars: {
-                            endDate: {$ifNull: ['$salesmanagers.startDate', null]}
+                            endDate: {$ifNull: ['$salesmanagers.endDate', null]}
                         },
                         in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
                     }
