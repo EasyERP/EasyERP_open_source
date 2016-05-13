@@ -296,6 +296,11 @@ define([
                 );
 
                 dataService.getData('/Priority/leads', {}, function (priorities) {
+                    priorities = _.map(priorities.data, function (priority) {
+                        priority.name = priority.priority;
+
+                        return priority;
+                    });
                     self.responseObj['#priorityDd'] = priorities;
                 });
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Leads"}, "name", this, true);
