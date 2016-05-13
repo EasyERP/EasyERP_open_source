@@ -25,9 +25,9 @@ module.exports = (function () {
         },
 
         sourceDocument: {
-            _id  : {type: ObjectId, default: null},
-            model: {type: String, default: 'Invoice'},
-            tCards: {type: Array, default: []}
+            _id     : {type: ObjectId, default: null},
+            model   : {type: String, default: 'Invoice'},
+            employee: {type: ObjectId, default: null}
         },
 
         debit : {type: Number, default: 0},

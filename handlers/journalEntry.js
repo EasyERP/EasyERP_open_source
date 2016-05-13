@@ -44,13 +44,6 @@ var Module = function (models, event) {
             }
         }, {
             $lookup: {
-                from        : "wTrack",
-                localField  : "sourceDocument._id",
-                foreignField: "_id",
-                as          : "sourceDocument._id"
-            }
-        }, {
-            $lookup: {
                 from        : "journals",
                 localField  : "journal",
                 foreignField: "_id",
@@ -58,11 +51,11 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
-                debit               : {$divide: ['$debit', '$currency.rate']},
-                journal             : {$arrayElemAt: ["$journal", 0]},
-                account             : {$arrayElemAt: ["$account", 0]},
-                'sourceDocument._id': {$arrayElemAt: ["$sourceDocument._id", 0]},
-                date                : 1
+                debit         : {$divide: ['$debit', '$currency.rate']},
+                journal       : {$arrayElemAt: ["$journal", 0]},
+                account       : {$arrayElemAt: ["$account", 0]},
+                sourceDocument: 1,
+                date          : 1
             }
         }, {
             $lookup: {
@@ -74,9 +67,9 @@ var Module = function (models, event) {
         }, {
             $lookup: {
                 from        : "jobs",
-                localField  : "sourceDocument._id.jobs",
+                localField  : "sourceDocument._id",
                 foreignField: "_id",
-                as          : "sourceDocument._id.jobs"
+                as          : "sourceDocument._id"
             }
         }, {
             $lookup: {
@@ -88,9 +81,9 @@ var Module = function (models, event) {
         }, {
             $lookup: {
                 from        : "Employees",
-                localField  : "sourceDocument._id.employee",
+                localField  : "sourceDocument.employee",
                 foreignField: "_id",
-                as          : "sourceDocument._id.employee"
+                as          : "sourceDocument.employee"
             }
         }, {
             $project: {
@@ -100,8 +93,8 @@ var Module = function (models, event) {
                 'journal.name'          : 1,
                 date                    : 1,
                 'sourceDocument._id'    : 1,
-                'sourceDocument.subject': {$arrayElemAt: ["$sourceDocument._id.employee", 0]},
-                'sourceDocument.name'   : '$sourceDocument._id.jobs.name'
+                'sourceDocument.subject': {$arrayElemAt: ["$sourceDocument.employee", 0]},
+                'sourceDocument.name'   : '$sourceDocument._id.name'
             }
         }, {
             $project: {
@@ -909,25 +902,21 @@ var Module = function (models, event) {
         var endDate = moment(new Date()).year(year).month(month - 1).endOf('month');
         var parallelFuncs;
         var waterfallFuncs;
-        var holidaysObject = {};
+        var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var date = endDate;
+        var dateByMonth = year * 100 + month;
 
         function parallelFuncFind(wfCb) {
 
             function findHolidays(pCb) {
-                var query = Holidays.find().lean();
+                var query = Holidays.find({dateByMonth: year * 100 + month}).lean();
 
                 query.exec(function (err, result) {
                     if (err) {
                         return pCb(err);
                     }
 
-                    result.forEach(function (holiday) {
-                        var holidayDate = moment(holiday.date);
-                        var key = (holidayDate.isoWeekYear() * 100 + holidayDate.month() + 1) * 100 + holidayDate.date();
-                        holidaysObject[key] = true;
-                    });
-
-                    pCb(null, holidaysObject);
+                    pCb(null, result);
                 });
             }
 
@@ -968,8 +957,8 @@ var Module = function (models, event) {
 
                 Employee.aggregate([{
                     $match: {
-                        'department': {$nin: notDevArray},
-                        hire        : {$ne: []}
+                        // 'department': {$nin: notDevArray},
+                        hire: {$ne: []}
                     }
                 }, {
                     $project: {
@@ -988,12 +977,39 @@ var Module = function (models, event) {
                             }
                         }
                     }
-                }, {
-                    $match: query
-                }, {
+                }/*, {
+                 $match: query
+                 }*/, {
                     $project: {
                         _id     : 1,
-                        transfer: 1
+                        transfer: 1,
+                        hire    : 1,
+                        fire    : 1
+                    }
+                }, {
+                    $unwind: '$transfer'
+                }, {
+                    $lookup: {
+                        from        : 'weeklyScheduler',
+                        localField  : 'transfer.weeklyScheduler',
+                        foreignField: '_id',
+                        as          : 'transfer.weeklyScheduler'
+                    }
+                }, {
+                    $project: {
+                        'transfer.weeklyScheduler': {$arrayElemAt: ['$transfer.weeklyScheduler', 0]},
+                        'transfer.date'           : 1,
+                        'transfer.salary'         : 1,
+                        'transfer.department'     : 1,
+                        hire                      : 1,
+                        fire                      : 1
+                    }
+                }, {
+                    $group: {
+                        _id     : '$_id',
+                        transfer: {$addToSet: '$transfer'},
+                        hire    : {$addToSet: 'hire'},
+                        fire    : {$addToSet: '$fire'}
                     }
                 }], function (err, employees) {
                     if (err) {
@@ -1085,14 +1101,16 @@ var Module = function (models, event) {
         function forEachEmployee(result, wfCb) {
             var holidays = result.holidays;
             var employeeWorked = result.employeeWorked;
-            var hoursInMonth = 0;
             var employees = result.employees;
 
-            employees.forEach(function (empObject) {
+            async.each(employees, function (empObject, asyncCb) {
                 var employeeId = empObject._id;
                 var transfer = empObject.transfer;
+                var hire = empObject.hire;
+                var fire = empObject.fire;
                 var salaryForDate = 0;
-                var weeklyScheduler;
+                var hoursInMonth = 0;
+                var weeklyScheduler = {};
                 var hoursToRemove = 0;
                 var costForHour;
                 var checkDate;
@@ -1106,9 +1124,9 @@ var Module = function (models, event) {
                     return el._id.toString() === employeeId.toString()
                 });
                 var vacations = employeeWorkedObject && employeeWorkedObject.vacations ? employeeWorkedObject.vacations : [];
-                var journalEntriesArray = employeeWorkedObject && employeeWorkedObject.journalEntriesArray ? employeeWorkedObject.journalEntriesArray : [];
-                var entriesSum = 0;
                 var localEndDate = moment(endDate).date();
+                var localStartKey = 1;
+                var department = '';
                 var vacationBody = {
                     currency      : CONSTANTS.CURRENCY_USD,
                     journal       : CONSTANTS.VACATION_PAYABLE,
@@ -1119,6 +1137,8 @@ var Module = function (models, event) {
                     },
                     amount        : 0
                 };
+
+                var cb = _.after(2, asyncCb);
 
                 var salaryIdleBody = {
                     currency      : CONSTANTS.CURRENCY_USD,
@@ -1131,42 +1151,57 @@ var Module = function (models, event) {
                 };
                 var worked = employeeWorkedObject && employeeWorkedObject.worked ? employeeWorkedObject.worked : 0;
                 var idleHours;
+                var hireKey = moment(new Date(hire[hire.length - 1])).year() * 100 + moment(new Date(hire[hire.length - 1])).month();
+                var fireKey = fire[0] ? moment(new Date(fire[fire.length - 1])).year() * 100 + moment(new Date(fire[fire.length - 1])).month() : Infinity;
+                var localKey = moment(endDate).year() * 100 + moment(endDate).month();
 
-                for (var i = transferLength - 1; i >= 0; i--) {
+                for (var i = 0; i <= transferLength - 1; i++) {
                     var transferObj = transfer[i];
 
-                    if (moment(startDate).isAfter(moment(transferObj.date))) {
+                    if (moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) {
                         if (transferObj.status === 'fired') {
                             if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
                                 salaryForDate = transferObj.salary;
                                 weeklyScheduler = transferObj.weeklyScheduler;
+                                department = transferObj.department;
                                 break;
                             }
                         } else {
                             salaryForDate = transferObj.salary;
                             weeklyScheduler = transferObj.weeklyScheduler;
+                            department = transferObj.department;
                             break;
                         }
                     }
                 }
 
+                if (notDevArray.indexOf(department.toString()) !== -1) {
+                    salaryForDate = 0;
+                }
+
                 holidays.forEach(function (holiday) {
                     if ((holiday.day !== 0) && (holiday.day !== 6)) {
-                        hoursToRemove += weeklyScheduler[holiday.day];
+                        hoursToRemove += parseInt(weeklyScheduler[holiday.day], 10) || 0;
                     }
                 });
 
-                journalEntriesArray.forEach(function (entry) {
-                    entriesSum += entry.debit;
-                });
+                if (hireKey === localKey) {
+                    localStartKey = moment(new Date(hire[hire.length - 1])).date();
+                }
 
-                for (var i = localEndDate; i >= 1; i--) {
+                if (fireKey === localKey) {
+                    localEndDate = moment(new Date(fire[fire.length - 1])).date();
+                } else if (fireKey < localKey) {
+                    localEndDate = localStartKey - 1;
+                }
+
+                for (var i = localEndDate; i >= localStartKey; i--) {
                     checkDate = moment(endDate).date(i).day();
 
                     if (checkDate === 0) {
                         checkDate = 7;
                     }
-                    hoursInMonth += weeklyScheduler[checkDate];
+                    hoursInMonth += parseInt(weeklyScheduler[checkDate], 10) || 0;
                 }
 
                 hoursInMonth -= hoursToRemove;
@@ -1187,7 +1222,7 @@ var Module = function (models, event) {
                             dayOfWeek = vacationDate.day();
 
                             if (vac && (vac !== 'P') && (vac !== 'E') && (dayOfWeek !== 6) && (dayOfWeek !== 0)) {
-                                vacationHours += weeklyScheduler[dayOfWeek];
+                                vacationHours += parseInt(weeklyScheduler[dayOfWeek], 10) || 0;
                             }
                         });
                     }
@@ -1197,18 +1232,18 @@ var Module = function (models, event) {
                     salaryIdleBody.amount = idleHours * costForHour * 100;
                     vacationBody.amount = vacationCost;
 
-                    createReconciled(vacationBody, req.session.lastDb, function () {
-                    }, req.session.uId);
-                    createReconciled(salaryIdleBody, req.session.lastDb, function () {
-                    }, req.session.uId);
+                    createReconciled(vacationBody, req.session.lastDb, cb, req.session.uId);
+                    createReconciled(salaryIdleBody, req.session.lastDb, cb, req.session.uId);
 
                 } else if (idleHours < 0) {
-                    console.log('bad employees wTracks', employeeId);
+                    console.log('bad employees wTracks', employeeId, localKey, hoursInMonth);
+                    asyncCb();
                 }
 
+            }, function () {
+                wfCb();
             });
 
-            wfCb();
         }
 
         waterfallFuncs = [parallelFuncFind, forEachEmployee];
@@ -2447,24 +2482,45 @@ var Module = function (models, event) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var body = req.body;
-        var date = body.date ? moment(new Date(body.date)) : new Date();
+        var month = parseInt(body.month, 10);
+        var year = parseInt(body.year, 10);
+        var date = body.date ? moment(new Date(body.date)) : moment().year(year).month(month - 1).endOf('month');
         var jobIds = body.jobs;
         var reconcileSalaryEntries;
         var reconcileInvoiceEntries;
         var timeToSet = {hour: 15, minute: 1, second: 0};
-        var startOfMonth = moment(date).startOf('month');
-        var endOfMonth = moment(date).endOf('month');
         var parallelTasks;
-        var wTracks;
         var resultArray = [];
         var parallelFunction;
         var reconcileJobs;
         var removeEntries;
         var createForJob;
+        var mainWaterfallTasks;
+        var getJobsToCreateExpenses;
 
-        if (!Array.isArray(jobIds)){
+        if (jobIds && !Array.isArray(jobIds)) {
             jobIds = [jobIds];
         }
+
+        getJobsToCreateExpenses = function (mainCb) {
+            WTrack.aggregate([{
+                $match: {
+                   dateByMonth: {$lte: 201605}
+                }
+            }, {
+                $group: {
+                    _id: '$jobs'
+                }
+            }], function (err, result) {
+                if (err) {
+                    return mainCb(err);
+                }
+
+                jobIds = _.pluck(result, '_id');
+
+                mainCb();
+            });
+        };
 
         parallelFunction = function (mainCb) {
             reconcileInvoiceEntries = function (mainCallback) {
@@ -2626,7 +2682,7 @@ var Module = function (models, event) {
                 getJobAndWTracks = function (wfCb) {
                     Job.aggregate([{
                         $match: {
-                            _id: {$in: jobIds.objectID()}
+                            _id: {$in: jobIds}
                         }
                     }, {
                         $lookup: {
@@ -2635,11 +2691,11 @@ var Module = function (models, event) {
                             foreignField: 'sourceDocument._id',
                             as          : 'jobs'
                         }
-                    }, {
-                        $match: {
-                            jobs: []
-                        }
-                    }, {
+                    }, /*{
+                     $match: {
+                     jobs: []
+                     }
+                     },*/ {
                         $project: {
                             _id: 1
                         }
@@ -2755,7 +2811,7 @@ var Module = function (models, event) {
                                 employee   : '$employee',
                                 _type      : '$_id._type',
                                 dateByMonth: '$dateByMonth',
-                                jobs       : '$jobs'
+                                jobs       : '$_id.jobs'
                             },
                             transfer    : {$addToSet: '$transfer'},
                             employee    : {$addToSet: '$employee'},
@@ -2785,6 +2841,8 @@ var Module = function (models, event) {
                             var hours = item.hours;
                             var jobId = item._id.jobs;
                             var _type = item._id._type;
+                            var overheadRate = item.overheadRate;
+                            var dateByMonth = item.dateByMonth;
                             var holidays = item.holidays;
                             var transfer = item.transfer;
                             var transferLength = transfer.length;
@@ -2793,13 +2851,23 @@ var Module = function (models, event) {
                             var costForHour = 0;
                             var weeklyScheduler = {};
                             var hoursToRemove = 0;
-                            var endDate = moment(startOfMonth).endOf('month').date();
+
+                            if (!dateByMonth){
+                                console.log('notDateBymonth');
+                               return cb();
+                            }
+
+                            var year = dateByMonth.toString().slice(0, 4);
+                            var month = dateByMonth.toString().slice(4);
+                            var endDate = moment().year(year).month(month - 1).endOf('month');
                             var checkDate;
+                            var startDate = moment().year(year).month(month - 1).startOf('month');
+                            var entryDate = moment(endDate);
 
                             var bodySalary = {
                                 currency      : CONSTANTS.CURRENCY_USD,
                                 journal       : CONSTANTS.SALARY_PAYABLE,
-                                date          : date.set(timeToSet),
+                                date          : entryDate.set(timeToSet),
                                 sourceDocument: {
                                     model   : 'wTrack',
                                     _id     : jobId,
@@ -2810,7 +2878,7 @@ var Module = function (models, event) {
                             var bodyOvertime = {
                                 currency      : CONSTANTS.CURRENCY_USD,
                                 journal       : CONSTANTS.OVERTIME_PAYABLE,
-                                date          : date.set(timeToSet),
+                                date          : entryDate.set(timeToSet),
                                 sourceDocument: {
                                     model   : 'wTrack',
                                     _id     : jobId,
@@ -2821,7 +2889,7 @@ var Module = function (models, event) {
                             var bodyOverhead = {
                                 currency      : CONSTANTS.CURRENCY_USD,
                                 journal       : CONSTANTS.OVERHEAD,
-                                date          : date.set(timeToSet),
+                                date          : entryDate.set(timeToSet),
                                 sourceDocument: {
                                     model   : 'wTrack',
                                     _id     : jobId,
@@ -2829,12 +2897,12 @@ var Module = function (models, event) {
                                 }
                             };
 
-                            for (var i = transferLength - 1; i >= 0; i--) {
+                            for (var i = 0; i <= transferLength - 1; i++) {
                                 var transferObj = transfer[i];
 
-                                if (moment(startOfMonth).isAfter(moment(transferObj.date))) {
+                                if (moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) {
                                     if (transferObj.status === 'fired') {
-                                        if (transfer[i - 1] && moment(startOfMonth).isAfter(transfer[i - 1].date)) {
+                                        if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
                                             salaryForDate = transferObj.salary;
                                             weeklyScheduler = transferObj.weeklyScheduler;
                                             break;
@@ -2853,7 +2921,7 @@ var Module = function (models, event) {
                                 }
                             });
 
-                            for (var i = endDate; i >= 1; i--) {
+                            for (var i = endDate.date(); i >= 1; i--) {
                                 checkDate = moment(endDate).date(i).day();
 
                                 if (checkDate === 0) {
@@ -2868,7 +2936,7 @@ var Module = function (models, event) {
 
                             Model.remove({
                                 "sourceDocument._id"     : jobId,
-                                date                     : {$gt: new Date(startOfMonth), $lt: new Date(endOfMonth)},
+                                date                     : {$gt: new Date(startDate), $lt: new Date(endDate)},
                                 "sourceDocument.employee": objectId(employee)
                             }, function () {
 
@@ -2877,19 +2945,21 @@ var Module = function (models, event) {
 
                                 if (_type === 'overtime') {
                                     bodyOvertime.amount = hours * costForHour * 100;
-                                    bodyOverhead.amount = hours * costForHour * 100;
-                                    createReconciled(bodyOvertime, res.session.lastDb, methodCb, req.session.uId);
-                                    createReconciled(bodyOverhead, res.session.lastDb, methodCb, req.session.uId);
+                                    bodyOverhead.amount = hours * overheadRate * 100;
+                                    createReconciled(bodyOvertime, req.session.lastDb, methodCb, req.session.uId);
+                                    createReconciled(bodyOverhead, req.session.lastDb, methodCb, req.session.uId);
                                 } else if (_type === 'ordinary') {
                                     bodySalary.amount = hours * costForHour * 100;
-                                    bodyOverhead.amount = hours * costForHour * 100;
-                                    createReconciled(bodySalary, res.session.lastDb, methodCb, req.session.uId);
-                                    createReconciled(bodyOverhead, res.session.lastDb, methodCb, req.session.uId);
+                                    bodyOverhead.amount = hours * overheadRate * 100;
+                                    createReconciled(bodySalary, req.session.lastDb, methodCb, req.session.uId);
+                                    createReconciled(bodyOverhead, req.session.lastDb, methodCb, req.session.uId);
                                 }
 
                             });
 
                             cb();
+                        }, function () {
+                            wfCb();
                         });
 
                     });
@@ -2922,28 +2992,17 @@ var Module = function (models, event) {
             removeEntries = function (cb) {
                 Model.remove({
                     journal             : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]},
-                    "sourceDocument._id": {$in: jobIds.objectID()}
-                }, cb);
+                    "sourceDocument._id": {$in: jobIds}
+                }, function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, result);
+                });
             };
 
-            createForJob = function (cb) {
-                var bodyFinishedJob = {
-                    currency      : CONSTANTS.CURRENCY_USD,
-                    journal       : CONSTANTS.FINISHED_JOB_JOURNAL,
-                    sourceDocument: {
-                        model: 'jobs'
-                    },
-                    amount        : 0
-                };
-
-                var bodyClosedJob = {
-                    currency      : CONSTANTS.CURRENCY_USD,
-                    journal       : CONSTANTS.CLOSED_JOB,
-                    sourceDocument: {
-                        model: 'jobs'
-                    },
-                    amount        : 0
-                };
+            createForJob = function (result, cb) {
 
                 Job.find({_id: {$in: jobIds}}, {invoice: 1}).populate('invoice').exec(function (err, result) {
                     if (err) {
@@ -2956,6 +3015,7 @@ var Module = function (models, event) {
                         }
                         var date = moment(new Date(model.invoice.invoiceDate)).subtract(1, 'seconds');
                         var jobId = model._id;
+                        var callback = _.after(2, asyncCb);
 
                         Model.aggregate([{
                             $match: {
@@ -2972,18 +3032,32 @@ var Module = function (models, event) {
                             if (err) {
                                 return console.log(err);
                             }
+                            var bodyFinishedJob = {
+                                currency      : CONSTANTS.CURRENCY_USD,
+                                journal       : CONSTANTS.FINISHED_JOB_JOURNAL,
+                                sourceDocument: {
+                                    model: 'jobs'
+                                },
+                                amount        : 0
+                            };
 
+                            var bodyClosedJob = {
+                                currency      : CONSTANTS.CURRENCY_USD,
+                                journal       : CONSTANTS.CLOSED_JOB,
+                                sourceDocument: {
+                                    model: 'jobs'
+                                },
+                                amount        : 0
+                            };
                             bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
                             bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
                             bodyFinishedJob.date = new Date(date);
                             bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds'));
-                            bodyFinishedJob.sourceDocument.model = jobId;
-                            bodyClosedJob.sourceDocument.model = jobId;
+                            bodyFinishedJob.sourceDocument._id = jobId;
+                            bodyClosedJob.sourceDocument._id = jobId;
 
-                            createReconciled(bodyFinishedJob, req.session.lastDb, function () {
-                            }, req.session.uId);
-                            createReconciled(bodyClosedJob, req.session.lastDb, function () {
-                            }, req.session.uId);
+                            createReconciled(bodyFinishedJob, req.session.lastDb, callback, req.session.uId);
+                            createReconciled(bodyClosedJob, req.session.lastDb, callback, req.session.uId);
                         });
                     }, function () {
                         cb();
@@ -2991,10 +3065,22 @@ var Module = function (models, event) {
                 });
             };
 
-            async.waterfall([removeEntries, createForJob], mainCb);
+            async.waterfall([removeEntries, createForJob], function (err, result) {
+                if (err) {
+                    return mainCb(err)
+                }
+
+                mainCb(null, result);
+            });
         };
 
-        async.waterfall([parallelFunction, reconcileJobs], function (err, resut) {
+        if (jobIds && jobIds.length) {
+            mainWaterfallTasks = [parallelFunction, reconcileJobs];
+        } else if (month && year) {
+            mainWaterfallTasks = [getJobsToCreateExpenses, parallelFunction, reconcileJobs];
+        }
+
+        async.waterfall(mainWaterfallTasks, function (err, resut) {
             if (err) {
                 return next(err);
             }
@@ -3397,13 +3483,6 @@ var Module = function (models, event) {
                         }
                     }, {
                         $lookup: {
-                            from        : "wTrack",
-                            localField  : "sourceDocument._id",
-                            foreignField: "_id",
-                            as          : "sourceDocument._id"
-                        }
-                    }, {
-                        $lookup: {
                             from        : "journals",
                             localField  : "journal",
                             foreignField: "_id",
@@ -3411,16 +3490,16 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            debit               : {$divide: ['$debit', '$currency.rate']},
-                            journal             : {$arrayElemAt: ["$journal", 0]},
-                            'sourceDocument._id': {$arrayElemAt: ["$sourceDocument._id", 0]}
+                            debit         : {$divide: ['$debit', '$currency.rate']},
+                            journal       : {$arrayElemAt: ["$journal", 0]},
+                            sourceDocument: 1
                         }
                     }, {
                         $project: {
                             debit                   : 1,
                             'journal.creditAccount' : 1,
                             'journal.name'          : 1,
-                            'sourceDocument.subject': "$sourceDocument._id.employee"
+                            'sourceDocument.subject': "$sourceDocument.employee"
                         }
                     }];
 
@@ -3884,13 +3963,6 @@ var Module = function (models, event) {
                         }
                     }, {
                         $lookup: {
-                            from        : "wTrack",
-                            localField  : "sourceDocument._id",
-                            foreignField: "_id",
-                            as          : "sourceDocument"
-                        }
-                    }, {
-                        $lookup: {
                             from        : "journals",
                             localField  : "journal",
                             foreignField: "_id",
@@ -3900,7 +3972,7 @@ var Module = function (models, event) {
                         $project: {
                             date          : 1,
                             debit         : {$divide: ['$debit', '$currency.rate']},
-                            sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]},
+                            sourceDocument: 1,
                             journal       : {$arrayElemAt: ["$journal", 0]}
                         }
                     }, {
@@ -4413,20 +4485,13 @@ var Module = function (models, event) {
                         "sourceDocument._id": {$in: wTracks}
                     }
                 }, {
-                    $lookup: {
-                        from        : "wTrack",
-                        localField  : "sourceDocument._id",
-                        foreignField: "_id",
-                        as          : "sourceDocument"
-                    }
-                }, {
                     $project: {
-                        sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
+                        sourceDocument: 1,
                         debit         : 1
                     }
                 }, {
                     $group: {
-                        _id  : '$sourceDocument.jobs',
+                        _id  : '$sourceDocument._id',
                         debit: {$sum: '$debit'}
                     }
                 }, {
@@ -4462,13 +4527,13 @@ var Module = function (models, event) {
                         foreignField: "_id",
                         as          : "salesmanager"
                     }
-                },{
+                }, {
                     $project: {
-                        _id    : 1,
-                        name   : 1,
-                        project: 1,
-                        debit  : 1,
-                        salesmanager :  {$arrayElemAt: ['$salesmanager', 0]}
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        salesmanager: {$arrayElemAt: ['$salesmanager', 0]}
 
                     }
                 }, {
@@ -4496,20 +4561,13 @@ var Module = function (models, event) {
                         "sourceDocument._id": {$in: wTracks}
                     }
                 }, {
-                    $lookup: {
-                        from        : "wTrack",
-                        localField  : "sourceDocument._id",
-                        foreignField: "_id",
-                        as          : "sourceDocument"
-                    }
-                }, {
                     $project: {
-                        sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
+                        sourceDocument: 1,
                         debit         : 1
                     }
                 }, {
                     $group: {
-                        _id  : '$sourceDocument.jobs',
+                        _id  : '$sourceDocument._id',
                         debit: {$sum: '$debit'}
                     }
                 }, {
@@ -4544,13 +4602,13 @@ var Module = function (models, event) {
                         foreignField: "_id",
                         as          : "salesmanager"
                     }
-                },{
+                }, {
                     $project: {
-                        _id    : 1,
-                        name   : 1,
-                        project: 1,
-                        debit  : 1,
-                        salesmanager :  {$arrayElemAt: ['$salesmanager', 0]}
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        salesmanager: {$arrayElemAt: ['$salesmanager', 0]}
 
                     }
                 }, {
@@ -4737,19 +4795,13 @@ var Module = function (models, event) {
                         "sourceDocument._id": {$in: wTracks}
                     }
                 }, {
-                    $lookup: {
-                        from        : "wTrack",
-                        localField  : "sourceDocument._id",
-                        foreignField: "_id", as: "sourceDocument"
-                    }
-                }, {
                     $project: {
-                        sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
+                        sourceDocument: 1,
                         debit         : 1
                     }
                 }, {
                     $group: {
-                        _id  : '$sourceDocument.jobs',
+                        _id  : '$sourceDocument._id',
                         debit: {$sum: '$debit'}
                     }
                 }, {
@@ -4786,19 +4838,13 @@ var Module = function (models, event) {
                         "sourceDocument._id": {$in: wTracks}
                     }
                 }, {
-                    $lookup: {
-                        from        : "wTrack",
-                        localField  : "sourceDocument._id",
-                        foreignField: "_id", as: "sourceDocument"
-                    }
-                }, {
                     $project: {
-                        sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
+                        sourceDocument: 1,
                         debit         : 1
                     }
                 }, {
                     $group: {
-                        _id  : '$sourceDocument.jobs',
+                        _id  : '$sourceDocument._id',
                         debit: {$sum: '$debit'}
                     }
                 }, {
@@ -5796,13 +5842,6 @@ var Module = function (models, event) {
                 }
             }, {
                 $lookup: {
-                    from        : "wTrack",
-                    localField  : "sourceDocument._id",
-                    foreignField: "_id",
-                    as          : "sourceDocument"
-                }
-            }, {
-                $lookup: {
                     from        : "journals",
                     localField  : "journal",
                     foreignField: "_id",
@@ -5814,7 +5853,7 @@ var Module = function (models, event) {
                     currency      : 1,
                     debit         : {$divide: ['$debit', '$currency.rate']},
                     credit        : {$divide: ['$credit', '$currency.rate']},
-                    sourceDocument: {$arrayElemAt: ["$sourceDocument", 0]},
+                    sourceDocument: 1,
                     journal       : {$arrayElemAt: ["$journal", 0]}
                 }
             }, {
@@ -5838,7 +5877,7 @@ var Module = function (models, event) {
                     'journal.creditAccount': {$arrayElemAt: ["$journal.creditAccount", 0]},
                     'journal.debitAccount' : {$arrayElemAt: ["$journal.debitAccount", 0]},
                     journalName            : '$journal.name',
-                    wTrack                 : "$sourceDocument",
+                    sourceDocument         : 1,
                     date                   : 1
                 }
             }, {
@@ -5847,7 +5886,7 @@ var Module = function (models, event) {
                     credit     : '$credit',
                     journal    : 1,
                     journalName: 1,
-                    employee   : '$wTrack.employee',
+                    employee   : '$sourceDocument.employee',
                     date       : 1
                 }
             }, {
@@ -6370,13 +6409,6 @@ var Module = function (models, event) {
                             }
                         }, {
                             $lookup: {
-                                from        : "wTrack",
-                                localField  : "sourceDocument._id",
-                                foreignField: "_id",
-                                as          : "sourceDocument._id"
-                            }
-                        }, {
-                            $lookup: {
                                 from        : "journals",
                                 localField  : "journal",
                                 foreignField: "_id",
@@ -6384,20 +6416,21 @@ var Module = function (models, event) {
                             }
                         }, {
                             $project: {
-                                debit                 : {$divide: ['$debit', '$currency.rate']},
-                                currency              : 1,
-                                journal               : {$arrayElemAt: ["$journal", 0]},
-                                account               : {$arrayElemAt: ["$account", 0]},
-                                'sourceDocument._id'  : {$arrayElemAt: ["$sourceDocument._id", 0]},
-                                'sourceDocument.model': 1,
-                                date                  : 1
+                                debit                    : {$divide: ['$debit', '$currency.rate']},
+                                currency                 : 1,
+                                journal                  : {$arrayElemAt: ["$journal", 0]},
+                                account                  : {$arrayElemAt: ["$account", 0]},
+                                'sourceDocument._id'     : 1,
+                                'sourceDocument.model'   : 1,
+                                'sourceDocument.employee': 1,
+                                date                     : 1
                             }
                         }, {
                             $lookup: {
                                 from        : "jobs",
-                                localField  : "sourceDocument._id.jobs",
+                                localField  : "sourceDocument._id",
                                 foreignField: "_id",
-                                as          : "sourceDocument._id.jobs"
+                                as          : "sourceDocument._id"
                             }
                         }, {
                             $lookup: {
@@ -6416,9 +6449,9 @@ var Module = function (models, event) {
                         }, {
                             $lookup: {
                                 from        : "Employees",
-                                localField  : "sourceDocument._id.employee",
+                                localField  : "sourceDocument.employee",
                                 foreignField: "_id",
-                                as          : "sourceDocument._id.employee"
+                                as          : "employee"
                             }
                         }, {
                             $project: {
@@ -6430,9 +6463,23 @@ var Module = function (models, event) {
                                 date                    : 1,
                                 'sourceDocument._id'    : 1,
                                 'sourceDocument.model'  : 1,
-                                'sourceDocument.jobs'   : {$arrayElemAt: ["$sourceDocument._id.jobs", 0]},
-                                'sourceDocument.subject': {$arrayElemAt: ["$sourceDocument._id.employee", 0]},
-                                'sourceDocument.name'   : '$sourceDocument._id.jobs.name',
+                                'sourceDocument.jobs'   : {$arrayElemAt: ["$sourceDocument._id", 0]},
+                                'sourceDocument.subject': {$arrayElemAt: ["$employee", 0]},
+                                'sourceDocument.name'   : 1,
+                                account                 : 1
+                            }
+                        }, {
+                            $project: {
+                                debit                   : 1,
+                                currency                : 1,
+                                'journal.debitAccount'  : 1,
+                                'journal.creditAccount' : 1,
+                                'journal.name'          : 1,
+                                date                    : 1,
+                                'sourceDocument._id'    : 1,
+                                'sourceDocument.model'  : 1,
+                                'sourceDocument.subject': 1,
+                                'sourceDocument.name'   : '$sourceDocument._id.name',
                                 account                 : 1
                             }
                         }, {

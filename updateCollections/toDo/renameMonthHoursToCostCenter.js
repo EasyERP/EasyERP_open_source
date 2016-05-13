@@ -11,9 +11,9 @@ var connectOptions = {
     j     : true
 };
 
-var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
+//var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
 
-//var dbObject = mongoose.createConnection('localhost', 'production');
+var dbObject = mongoose.createConnection('localhost', 'production');
 
 var module = dbObject.model("modules", ModuleSchema);
 
