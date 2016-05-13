@@ -1,8 +1,9 @@
 /**
  * Created by liliy on 22.01.2016.
  */
-"use strict";
+
 module.exports = function (models) {
+    'use strict';
     var mongoose = require('mongoose');
     var rewriteAccess = require('./rewriteAccess');
     var _ = require('../node_modules/underscore');
