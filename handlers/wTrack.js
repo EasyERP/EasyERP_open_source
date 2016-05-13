@@ -500,7 +500,7 @@ var TCard = function (event, models) {
                     endDateWeek  : {
                         $let: {
                             vars: {
-                                endDate: {$ifNull: ['$salesmanagers.startDate', null]}
+                                endDate: {$ifNull: ['$salesmanagers.endDate', null]}
                             },
                             in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
                         }
@@ -856,7 +856,7 @@ var TCard = function (event, models) {
                     endDateWeek  : {
                         $let: {
                             vars: {
-                                endDate: {$ifNull: ['$salesmanagers.startDate', null]}
+                                endDate: {$ifNull: ['$salesmanagers.endDate', null]}
                             },
                             in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
                         }
@@ -1246,9 +1246,6 @@ var TCard = function (event, models) {
             async.each(data, function (options, asyncCb) {
                 var startDate = moment(new Date(options.startDate));
                 var startIsoYear = startDate.isoWeekYear();
-
-                journalEntry.setReconcileDate(req, startDate);
-
                 var endDate = moment(new Date(options.endDate));
                 var endIsoYear = options.endDate ? endDate.isoWeekYear() : startIsoYear + 1;
                 var hours = parseInt(options.hours, 10);
@@ -1256,6 +1253,8 @@ var TCard = function (event, models) {
                 var employee = options.employee;
                 var department = options.department;
                 var hoursInWeek = 0;
+
+                journalEntry.setReconcileDate(req, startDate);
 
                 function canFillIt(hours) {
                     return (isFinite(hours) && hours > 0) || isNaN(hours);
@@ -1386,9 +1385,10 @@ var TCard = function (event, models) {
                     var diffHours;
                     var worked;
 
-                    startDay = startDay || 1;
-
-                    if (!endDay && endDay === 0) {
+                    if (startDay !== 0 && endDay !== 0) {
+                        startDay = startDay || 1;
+                    }
+                    if (!endDay && endDay === 0 && endDay !== startDay) {
                         endDay = 7;
                     }
 
@@ -1839,7 +1839,7 @@ var TCard = function (event, models) {
                 endDateWeek  : {
                     $let: {
                         vars: {
-                            endDate: {$ifNull: ['$salesmanagers.startDate', null]}
+                            endDate: {$ifNull: ['$salesmanagers.endDate', null]}
                         },
                         in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
                     }

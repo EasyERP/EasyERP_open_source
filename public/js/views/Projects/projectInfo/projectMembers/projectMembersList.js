@@ -11,8 +11,9 @@ define([
     'collections/projectMembers/editCollection',
     'models/ProjectMemberModel',
     'moment',
-    'async'
-], function (Backbone, $, _, membersTemplate, cancelEdit, createMember, SelectView, common, dataService, prMembersCollection, CurrentModel, moment, async) {
+    'async',
+    'constants'
+], function (Backbone, $, _, membersTemplate, cancelEdit, createMember, SelectView, common, dataService, prMembersCollection, CurrentModel, moment, async, constants) {
     'use strict';
 
     var PMView = Backbone.View.extend({
@@ -48,11 +49,10 @@ define([
             var rowId = row.attr('data-id');
             var isNewRow = row.hasClass('false');
             var text;
-            var startDate;
+            var startDate = this.prevEndDate(row);;
             var nextDay = new Date(2014, 8, 2);
 
-            if (this.prevStartDate(row)) {
-                startDate = new Date(this.prevStartDate(row));
+            if (startDate) {
                 nextDay = moment(startDate).add(1, 'd').toDate();
             }
 
@@ -72,15 +72,20 @@ define([
                 maxDate    : new Date(),
                 onSelect   : function (dateText) {
                     var $editedCol = target.closest('td');
+
                     if (!self.changedModels[rowId]) {
                         self.changedModels[rowId] = {};
                     }
-                    self.changedModels[rowId].startDate = dateText;
+                    
+                    if (target.hasClass('endDateManager')) {
+                        self.changedModels[rowId].endDate = moment(new Date(dateText)).endOf('day').toDate();
+                    } else {
+                        self.changedModels[rowId].startDate = dateText;
+                    }
+
                     if (!isNewRow) {
                         row.addClass('edited');
                     }
-
-                    self.updatePrevMembers(row, dateText);
 
                     $editedCol.text(dateText);
                     self.showSaveBtn();
@@ -104,24 +109,21 @@ define([
             });
         },
 
-        prevStartDate: function (row) {
+        prevEndDate: function (row) {
             var content = row.find('[data-content="projectPosition"]').attr('data-id');
             var prevTd = row.nextAll().find('td[data-id="' + content + '"]').first();
-            var prevRow;
-            var prevStartDate;
-            var prevDate;
-            var nextDay;
-            var projectStartDate = this.project.StartDate || new Date(2014, 8, 1);
+            var prevRow = prevTd.closest('tr');
+            var prevEndDate = prevRow.find('.endDateManager').text();
 
             if (!prevTd.length) {
                 return false;
             }
 
-            prevRow = prevTd.closest('tr');
-            prevStartDate = prevRow.find('.startDateManager').text() === 'From start of project' ? projectStartDate : prevRow.find('.startDateManager').text();
-            prevDate = new Date(prevStartDate);
+            if (prevEndDate === constants.END_OF_PROJECT){
+                return prevEndDate;
+            }
 
-            return common.utcDateToLocaleDate(prevDate);
+            return new Date(prevEndDate);
         },
 
         editLastMember: function () {
@@ -139,48 +141,11 @@ define([
 
                 tr.find('td').first().html(removeBtn);
 
-                if (tds.length > 1) {
-                    tr.find('td.startDateManager').addClass('editable');
-                }
+                tr.find('td.startDateManager').addClass('editable');
+                tr.find('td.endDateManager').addClass('editable');
 
                 tr.find('td[data-content]:not([data-content="projectPosition"])').addClass('selectCurrent');
             });
-        },
-
-        putPrevDate: function (prPosition, e) {
-            var td = this.$el.find('[data-id="' + prPosition + '"]').first();
-            var row = td.closest('tr');
-            var id = row.attr('data-id');
-            var endDate = row.find('.endDateManager');
-
-            endDate.text('To end of project');
-
-            if (!this.changedModels[id]) {
-                this.changedModels[id] = {};
-            }
-
-            this.changedModels[id].endDate = null;
-            this.saveItem(e);
-        },
-
-        updatePrevMembers: function (row, date) {
-            var content = row.find('[data-content="projectPosition"]').attr('data-id');
-            var td = row.nextAll().find('td[data-id="' + content + '"]').first();
-            var tr = td.closest('tr');
-            var id = tr.attr('data-id');
-            var prevSalesDate = row.text() === 'From start of project' ? this.project.StartDate : date;
-            var prevDate = new Date(prevSalesDate);
-            var prevDay = moment(prevDate).subtract(1, 'm').toDate();
-            var endDate = common.utcDateToLocaleDate(prevDay);
-
-            tr.find('.endDateManager').text(endDate);
-
-            if (!this.changedModels[id]) {
-                this.changedModels[id] = {};
-            }
-
-            this.changedModels[id].endDate = prevDay;
-            tr.addClass('edited');
         },
 
         deleteItems: function (e) {
@@ -346,11 +311,46 @@ define([
             var targetRow = target.parents('tr');
             var isNewRow = targetRow.hasClass('false');
             var rowId = targetRow.attr('data-id');
-            var startDate;
             var id = target.attr('id') || null;
+            var today = moment().startOf('day');
             var dataType;
+            var nextDay;
+            var startDate;
+
 
             dataType = targetElement.data('content') + 'Id';
+
+            targetElement.attr('data-id', id);
+
+            if (dataType === 'projectPositionId') {
+                //this.removePrevPosition();
+                startDate = this.prevEndDate(targetRow);
+
+                if (startDate === constants.END_OF_PROJECT) {
+                    return App.render({
+                        type   : 'error',
+                        message: "Please choose previous Member's End Date"
+                    });
+                }
+
+                if (startDate && today.isSame(startDate)) {
+                    return App.render({
+                        type   : 'error',
+                        message: "Previous Member's End Date is today"
+                    });
+                }
+
+                if (startDate) {
+                    nextDay = common.utcDateToLocaleDate(moment(startDate).add(1, 'd').toDate());
+                    targetRow.find('.startDateManager').text(nextDay);
+                    this.changedModels[rowId].startDate = nextDay;
+                } else {
+                    targetRow.find('.startDateManager').text('From start of project');
+                    this.changedModels[rowId].startDate = null;
+                }
+
+                targetElement.removeClass('errorContent');
+            }
 
             if (!this.changedModels[rowId]) {
                 this.changedModels[rowId] = {};
@@ -366,33 +366,8 @@ define([
                 targetElement.text('');
             }
 
-            targetElement.attr('data-id', id);
-
             if (!isNewRow) {
                 targetRow.addClass('edited');
-            }
-
-            if (dataType === 'projectPositionId') {
-                this.removePrevPosition();
-                startDate = common.utcDateToLocaleDate(new Date());
-
-                if (startDate === this.prevStartDate(targetRow)) {
-                    return App.render({
-                        type   : 'error',
-                        message: "Previous Member's Start Date is today"
-                    });
-                }
-
-                if (this.prevStartDate(targetRow)) {
-                    targetRow.find('.startDateManager').text(startDate);
-                    this.changedModels[rowId].startDate = startDate;
-                    this.updatePrevMembers(targetRow, startDate);
-                } else {
-                    targetRow.find('.startDateManager').text('From start of project');
-                    this.changedModels[rowId].startDate = null;
-                }
-
-                targetElement.removeClass('errorContent');
             }
 
             this.hideNewSelect();
@@ -400,16 +375,6 @@ define([
             this.showSaveBtn();
 
             return false;
-        },
-
-        removePrevPosition: function (){
-            var row = this.$el.find('.edited');
-            var id = row.attr('data-id');
-
-            delete this.changedModels[id];
-
-            row.find('td.endDateManager').text('To end of project');
-            row.removeClass('edited');
         },
 
         addMember: function (e) {
@@ -485,7 +450,7 @@ define([
                         var delModel = res.success;
                         row.remove();
                         self.editLastMember();
-                        self.putPrevDate(content, e);
+                        //self.putPrevDate(content, e);
                         self.isChangedSales(delModel);
                     },
                     error  : function (model, res) {
@@ -501,7 +466,7 @@ define([
                 row.remove();
                 this.collection.remove(model);
                 self.editLastMember();
-                self.putPrevDate(content, e);
+                //self.putPrevDate(content, e);
             }
         },
 
@@ -514,7 +479,7 @@ define([
                 utcDateToLocaleDate: common.utcDateToLocaleDate
             }));
 
-            dataService.getData('/employee/getForDD', {isEmployee: true}, function (employees) {
+            dataService.getData('/employee/getForDD', {}, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 

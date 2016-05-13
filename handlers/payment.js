@@ -255,31 +255,35 @@ var Payment = function (models, event) {
                     contentSearcher = function (paymentsIds, waterfallCallback) {
                         optionsObject['$and'].push({_id: {$in: _.pluck(paymentsIds, '_id')}});
                         var salesManagerMatch = {
-                            $or: [{
-                                $and: [{
-                                    $eq: ['$salesmanagers.startDate', null]
-                                }, {
-                                    $eq: ['$salesmanagers.endDate', null]
+                            $and: [
+                                {$eq: ["$$projectMember.projectPositionId", objectId(MAIN_CONSTANTS.SALESMANAGER)]},
+                                {
+                                    $or: [{
+                                        $and: [{
+                                            $eq: ['$$projectMember.startDate', null]
+                                        }, {
+                                            $eq: ['$$projectMember.endDate', null]
+                                        }]
+                                    }, {
+                                        $and: [{
+                                            $lte: ['$$projectMember.startDate', '$quotation.orderDate']
+                                        }, {
+                                            $eq: ['$$projectMember.endDate', null]
+                                        }]
+                                    }, {
+                                        $and: [{
+                                            $eq: ['$$projectMember.startDate', null]
+                                        }, {
+                                            $gte: ['$$projectMember.endDate', '$quotation.orderDate']
+                                        }]
+                                    }, {
+                                        $and: [{
+                                            $lte: ['$$projectMember.startDate', '$quotation.orderDate']
+                                        }, {
+                                            $gte: ['$$projectMember.endDate', '$quotation.orderDate']
+                                        }]
+                                    }]
                                 }]
-                            }, {
-                                $and: [{
-                                    $lte: ['$salesmanagers.startDate', '$date']
-                                }, {
-                                    $eq: ['$salesmanagers.endDate', null]
-                                }]
-                            }, {
-                                $and: [{
-                                    $eq: ['$salesmanagers.startDate', null]
-                                }, {
-                                    $gte: ['$salesmanagers.endDate', '$date']
-                                }]
-                            }, {
-                                $and: [{
-                                    $lte: ['$salesmanagers.startDate', '$date']
-                                }, {
-                                    $gte: ['$salesmanagers.endDate', '$date']
-                                }]
-                            }]
                         };
 
                         Payment.aggregate([{
@@ -355,7 +359,7 @@ var Payment = function (models, event) {
                                     $filter: {
                                         input: '$projectMembers',
                                         as   : 'projectMember',
-                                        cond : {$eq: ["$$projectMember.projectPositionId", objectId(MAIN_CONSTANTS.SALESMANAGER)]}
+                                        cond : salesManagerMatch
                                     }
                                 },
                                 forSale           : 1,
@@ -373,13 +377,7 @@ var Payment = function (models, event) {
                                 _type             : 1
                             }
                         }, {
-                            $unwind: {
-                                path                      : '$salesmanagers',
-                                preserveNullAndEmptyArrays: true
-                            }
-                        }, {
                             $project: {
-                                isValid           : salesManagerMatch,
                                 supplier          : 1,
                                 'currency.name'   : 1,
                                 'currency._id'    : 1,
@@ -387,7 +385,7 @@ var Payment = function (models, event) {
                                 'invoice._id'     : 1,
                                 'invoice.name'    : 1,
                                 'invoice.workflow': 1,
-                                salesmanagers     : 1,
+                                salesmanagers     : {$arrayElemAt: ["$salesmanagers", 0]},
                                 forSale           : 1,
                                 differenceAmount  : 1,
                                 paidAmount        : 1,
@@ -403,14 +401,6 @@ var Payment = function (models, event) {
                                 _type             : 1
                             }
                         }, {
-                            $match: {
-                                $or: [
-                                    {isValid: true},
-                                    {
-                                        salesmanagers: {$exists: false}
-                                    }]
-                            }
-                        },{
                             $lookup: {
                                 from        : 'Employees',
                                 localField  : 'salesmanagers.employeeId',
@@ -1177,31 +1167,35 @@ var Payment = function (models, event) {
 
         contentSearcher = function (paymentIds, waterfallCallback) {
             var salesManagerMatch = {
-                $or: [{
-                    $and: [{
-                        $eq: ['$salesmanagers.startDate', null]
-                    }, {
-                        $eq: ['$salesmanagers.endDate', null]
+                $and: [
+                    {$eq: ["$$projectMember.projectPositionId", objectId(MAIN_CONSTANTS.SALESMANAGER)]},
+                    {
+                        $or: [{
+                            $and: [{
+                                $eq: ['$$projectMember.startDate', null]
+                            }, {
+                                $eq: ['$$projectMember.endDate', null]
+                            }]
+                        }, {
+                            $and: [{
+                                $lte: ['$$projectMember.startDate', '$quotation.orderDate']
+                            }, {
+                                $eq: ['$$projectMember.endDate', null]
+                            }]
+                        }, {
+                            $and: [{
+                                $eq: ['$$projectMember.startDate', null]
+                            }, {
+                                $gte: ['$$projectMember.endDate', '$quotation.orderDate']
+                            }]
+                        }, {
+                            $and: [{
+                                $lte: ['$$projectMember.startDate', '$quotation.orderDate']
+                            }, {
+                                $gte: ['$$projectMember.endDate', '$quotation.orderDate']
+                            }]
+                        }]
                     }]
-                }, {
-                    $and: [{
-                        $lte: ['$salesmanagers.startDate', '$date']
-                    }, {
-                        $eq: ['$salesmanagers.endDate', null]
-                    }]
-                }, {
-                    $and: [{
-                        $eq: ['$salesmanagers.startDate', null]
-                    }, {
-                        $gte: ['$salesmanagers.endDate', '$date']
-                    }]
-                }, {
-                    $and: [{
-                        $lte: ['$salesmanagers.startDate', '$date']
-                    }, {
-                        $gte: ['$salesmanagers.endDate', '$date']
-                    }]
-                }]
             };
 
             paymentIds = _.pluck(paymentIds, '_id');
@@ -1263,7 +1257,7 @@ var Payment = function (models, event) {
                         $filter: {
                             input: '$projectMembers',
                             as   : 'projectMember',
-                            cond : {$eq: ['$$projectMember.projectPositionId', objectId(MAIN_CONSTANTS.SALESMANAGER)]}
+                            cond : salesManagerMatch
                         }
                     },
                     forSale         : 1,
@@ -1280,16 +1274,10 @@ var Payment = function (models, event) {
                     period          : 1
                 }
             }, {
-                $unwind: {
-                    path                      : '$salesmanagers',
-                    preserveNullAndEmptyArrays: true
-                }
-            }, {
                 $project: {
-                    isValid         : salesManagerMatch,
                     supplier        : 1,
                     invoice         : 1,
-                    salesmanagers   : 1,
+                    salesmanagers   : {$arrayElemAt: ["$salesmanagers", 0]},
                     forSale         : 1,
                     differenceAmount: 1,
                     paidAmount      : 1,
@@ -1302,14 +1290,6 @@ var Payment = function (models, event) {
                     year            : 1,
                     month           : 1,
                     period          : 1
-                }
-            }, {
-                $match: {
-                    $or: [
-                        {isValid: true},
-                        {
-                            salesmanagers: {$exists: false}
-                        }]
                 }
             }, {
                 $lookup: {
