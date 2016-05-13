@@ -1011,6 +1011,20 @@ var Module = function (models, event) {
                         hire    : {$addToSet: 'hire'},
                         fire    : {$addToSet: '$fire'}
                     }
+                }, {
+                    $lookup: {
+                        from        : 'Vacation',
+                        localField  : '_id',
+                        foreignField: 'employee',
+                        as          : 'vacations'
+                    }
+                }, {
+                    $project: {
+                        vacations: 1,
+                        transfer : 1,
+                        hire     : 1,
+                        fire     : 1
+                    }
                 }], function (err, employees) {
                     if (err) {
                         return pCb(err);
@@ -1038,32 +1052,6 @@ var Module = function (models, event) {
                     $project: {
                         dateByMonth: {$arrayElemAt: ['$dateByMonth', 0]},
                         worked     : 1
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Vacation',
-                        localField  : 'dateByMonth',
-                        foreignField: 'dateByMonth',
-                        as          : 'vacations'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'journalEntries',
-                        localField  : '_id',
-                        foreignField: 'sourceDocument._id',
-                        as          : 'journalEntriesArray'
-                    }
-                }, {
-                    $project: {
-                        vacations          : 1,
-                        worked             : 1,
-                        journalEntriesArray: {
-                            $filter: {
-                                input: "$journalEntriesArray",
-                                as   : "entry",
-                                cond : {$and: [{$eq: ["$$entry.journal", objectId(CONSTANTS.VACATION_PAYABLE)]}, {$gt: ['$$entry.debit', 0]}, {$eq: ['$dateByMonth', {$add: [{$multiply: [{$year: '$$entry.date'}, 100]}, {$week: '$$entry.date'}]}]}]}
-                            }
-                        }
                     }
                 }], function (err, result) {
                     if (err) {
@@ -1123,7 +1111,7 @@ var Module = function (models, event) {
                 var employeeWorkedObject = _.find(employeeWorked, function (el) {
                     return el._id.toString() === employeeId.toString()
                 });
-                var vacations = employeeWorkedObject && employeeWorkedObject.vacations ? employeeWorkedObject.vacations : [];
+                var vacations = empObject && empObject.vacations ? empObject.vacations : [];
                 var localEndDate = moment(endDate).date();
                 var localStartKey = 1;
                 var department = '';
@@ -1151,9 +1139,10 @@ var Module = function (models, event) {
                 };
                 var worked = employeeWorkedObject && employeeWorkedObject.worked ? employeeWorkedObject.worked : 0;
                 var idleHours;
+                var totalInMonth = 0;
                 var hireKey = moment(new Date(hire[hire.length - 1])).year() * 100 + moment(new Date(hire[hire.length - 1])).month();
-                var fireKey = fire[0] ? moment(new Date(fire[fire.length - 1])).year() * 100 + moment(new Date(fire[fire.length - 1])).month() : Infinity;
-                var localKey = moment(endDate).year() * 100 + moment(endDate).month();
+                var fireKey = fire[0] ? moment(new Date(fire[fire.length - 1])).year() * 100 + moment(new Date(fire[fire.length - 1])).month() + 1 : Infinity;
+                var localKey = moment(endDate).year() * 100 + moment(endDate).month() + 1;
 
                 for (var i = 0; i <= transferLength - 1; i++) {
                     var transferObj = transfer[i];
@@ -1202,23 +1191,33 @@ var Module = function (models, event) {
                         checkDate = 7;
                     }
                     hoursInMonth += parseInt(weeklyScheduler[checkDate], 10) || 0;
+
                 }
 
-                hoursInMonth -= hoursToRemove;
+                for (var i = moment(endDate).date(); i >= 1; i--) {
+                    checkDate = moment(endDate).date(i).day();
 
+                    if (checkDate === 0) {
+                        checkDate = 7;
+                    }
+                    totalInMonth += parseInt(weeklyScheduler[checkDate], 10) || 0;
+
+                }
+                totalInMonth -= hoursToRemove;
+                hoursInMonth -= hoursToRemove;
                 idleHours = hoursInMonth - worked;
 
-                costForHour = isFinite(salaryForDate / hoursInMonth) ? salaryForDate / hoursInMonth : 0;
+                costForHour = isFinite(salaryForDate / totalInMonth) ? salaryForDate / totalInMonth : 0;
 
                 if (idleHours >= 0) {
 
                     vacationObject = _.find(vacations, function (vacation) {
-                        return vacation.dateByMonth === dateByMonth
+                        return ((vacation.employee.toString() === employeeId.toString()) && (vacation.dateByMonth === dateByMonth));
                     });
 
                     if (vacationObject && vacationObject.vacArray) {
-                        vacationObject.vacArray.forEach(function (vac) {
-                            vacationDate = moment(startDate).date(vac + 1);
+                        vacationObject.vacArray.forEach(function (vac, index) {
+                            vacationDate = moment(startDate).date(index + 1);
                             dayOfWeek = vacationDate.day();
 
                             if (vac && (vac !== 'P') && (vac !== 'E') && (dayOfWeek !== 6) && (dayOfWeek !== 0)) {
@@ -1229,7 +1228,7 @@ var Module = function (models, event) {
 
                     vacationCost = vacationHours * costForHour * 100;
 
-                    salaryIdleBody.amount = idleHours * costForHour * 100;
+                    salaryIdleBody.amount = (idleHours - vacationHours) * costForHour * 100;
                     vacationBody.amount = vacationCost;
 
                     createReconciled(vacationBody, req.session.lastDb, cb, req.session.uId);
@@ -2505,7 +2504,7 @@ var Module = function (models, event) {
         getJobsToCreateExpenses = function (mainCb) {
             WTrack.aggregate([{
                 $match: {
-                   dateByMonth: {$lte: 201605}
+                    dateByMonth: {$lte: 201605}
                 }
             }, {
                 $group: {
@@ -2808,9 +2807,9 @@ var Module = function (models, event) {
                     }, {
                         $group: {
                             _id         : {
-                                employee   : '$employee',
+                                employee   : '$_id.employee',
                                 _type      : '$_id._type',
-                                dateByMonth: '$dateByMonth',
+                                dateByMonth: '$_id.dateByMonth',
                                 jobs       : '$_id.jobs'
                             },
                             transfer    : {$addToSet: '$transfer'},
@@ -2842,7 +2841,7 @@ var Module = function (models, event) {
                             var jobId = item._id.jobs;
                             var _type = item._id._type;
                             var overheadRate = item.overheadRate;
-                            var dateByMonth = item.dateByMonth;
+                            var dateByMonth = item.dateByMonth || item._id.dateByMonth;
                             var holidays = item.holidays;
                             var transfer = item.transfer;
                             var transferLength = transfer.length;
@@ -2852,9 +2851,9 @@ var Module = function (models, event) {
                             var weeklyScheduler = {};
                             var hoursToRemove = 0;
 
-                            if (!dateByMonth){
+                            if (!dateByMonth) {
                                 console.log('notDateBymonth');
-                               return cb();
+                                return cb();
                             }
 
                             var year = dateByMonth.toString().slice(0, 4);

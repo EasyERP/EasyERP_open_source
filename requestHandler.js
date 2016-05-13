@@ -761,9 +761,9 @@ var requestHandler = function (app, event, mainDb) {
             date: new Date()
         };
 
-        Job.aggregate([{
+        Job.aggregate([/*{
             $match: {project: ObjectId(pId)}
-        }, {
+        },*/ {
             $unwind: {
                 path                      : '$wTracks',
                 preserveNullAndEmptyArrays: true
