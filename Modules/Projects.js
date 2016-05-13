@@ -1896,7 +1896,22 @@ var Project = function (models, event) {
     function getTasksPriority(req, response) {
         var res = {};
         res['data'] = [];
-        models.get(req.session.lastDb, 'Priority', prioritySchema).find({}, function (err, _priority) {
+        models.get(req.session.lastDb, 'Priority', prioritySchema).find({type : 'Tasks'}, function (err, _priority) {
+            if (err) {
+                console.log(err);
+                logWriter.log("Project.js getTasksPriority priority.find " + err);
+                response.send(500, {error: "Can't find Priority"});
+            } else {
+                res['data'] = _priority;
+                response.send(res);
+            }
+        });
+    };
+
+    function getLeadsPriority(req, response) {
+        var res = {};
+        res['data'] = [];
+        models.get(req.session.lastDb, 'Priority', prioritySchema).find({type : 'Leads'}, function (err, _priority) {
             if (err) {
                 console.log(err);
                 logWriter.log("Project.js getTasksPriority priority.find " + err);
@@ -2290,6 +2305,8 @@ var Project = function (models, event) {
         taskUpdateOnlySelectedFields: taskUpdateOnlySelectedFields,//Tasks Patch Method
 
         remove: remove,
+
+        getLeadsPriority : getLeadsPriority,
 
         createTask: createTask,
 

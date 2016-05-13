@@ -1035,6 +1035,9 @@ module.exports = function (app, mainDb) {
     app.get('/Priority', function (req, res) {
         requestHandler.getTasksPriority(req, res);
     });
+    app.get('/Priority/leads', function (req, res) {
+        requestHandler.getLeadsPriority(req, res);
+    });
 
     app.put('/Tasks/:_id', function (req, res) {
         var data = {};

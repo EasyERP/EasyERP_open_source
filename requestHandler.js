@@ -2270,7 +2270,14 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    };
+    }
+    function getLeadsPriority(req, res) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            project.getLeadsPriority(req, res);
+        } else {
+            res.send(401);
+        }
+    }
 
 //------------------Workflow---------------------------------
 
@@ -3350,6 +3357,7 @@ var requestHandler = function (app, event, mainDb) {
         uploadTasksFiles         : uploadTasksFiles,
         removeTask               : removeTask,
         getTasksPriority         : getTasksPriority,
+        getLeadsPriority         : getLeadsPriority,
 
         getCompaniesForDd              : getCompaniesForDd,
         getCompanyById                 : getCompanyById,
