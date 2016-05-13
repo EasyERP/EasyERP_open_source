@@ -10,9 +10,8 @@
 
         initialize: function (options) {
             this.page = parseInt(options.page, 10);
-
-            this.collection = options.collection;
             this.type = options.type;
+            this.collection = options.collection;
             this.page = isNaN(this.page) ? 1 : this.page;
             this.startNumber = (this.page - 1) * options.itemsNumber;
         },

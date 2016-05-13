@@ -63,7 +63,10 @@ define([
 
                 e.preventDefault();
 
-                new CreateView({eventChannel: self.eventChannel});
+                new CreateView({
+                    eventChannel: self.eventChannel,
+                    type: self.type
+                });
             },
 
             remove: function (e) {
@@ -74,11 +77,15 @@ define([
                 e.preventDefault();
                 e.stopPropagation();
 
-                if (confirm('Are you sure you want to DELETE this Weekly Scheduler?')) {
+                if (confirm('Are you sure you want to DELETE this Payroll Component Type?')) {
                     model = self.collection.get(modelId);
                     model.destroy({
                         success: function(model, response) {
-                            self.eventChannel.trigger('updateWeeklyScheduler');
+                            if (self.type === 'deductions') {
+                                self.eventChannel.trigger('updatePayrollDeductionsType');
+                            } else if (self.type === 'earnings') {
+                                self.eventChannel.trigger('updatePayrollEarningsType');
+                            }
                     }});
                 }
             },
@@ -92,7 +99,8 @@ define([
 
                 new editView({
                     eventChannel: self.eventChannel,
-                    model: model
+                    model: model,
+                    type: self.type
                 });
             },
 
@@ -112,14 +120,26 @@ define([
 
                 function currentEllistRenderer(self) {
                     var itemView;
+                    var header;
 
-                    $currentEl.append(_.template(listTemplate, {currentDb: true}));
+                    if (self.type === 'deductions') {
+                        header = 'Payroll Deduction Types';
+                    } else if (self.type === 'earnings') {
+                        header = 'Payroll Earning Types';
+                    }
+
+                    $currentEl.append(_.template(listTemplate, {
+                        currentDb: true,
+                        header   : header,
+                        type     : self.type
+                    }));
 
                     itemView = new listItemView({
                         collection : self.collection,
                         page       : self.page,
+                        itemsNumber: 1,
                         type       : self.type,
-                        itemsNumber: 1
+                        el         : '#listTable'  + self.type
                     });
 
                     $currentEl.append(itemView.render());

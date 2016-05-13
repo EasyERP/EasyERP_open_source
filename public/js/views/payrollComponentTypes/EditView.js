@@ -2,8 +2,8 @@ define([
         'jQuery',
         'Underscore',
         'Backbone',
-        "text!templates/weeklyScheduler/EditTemplate.html",
-        "models/WeeklySchedulerModel",
+        "text!templates/payrollComponentTypes/EditTemplate.html",
+        "models/PayrollComponentTypeModel",
         "common",
         "populate",
         "dataService",
@@ -13,13 +13,14 @@ define([
 
         var EditView = Backbone.View.extend({
             el         : '#content-holder',
-            contentType: 'weeklyScheduler',
+            contentType: 'payrollComponentTypes',
             template   : _.template(CreateTemplate),
 
             initialize: function (options) {
                 var self = this;
 
                 self.model = options.model;
+                self.type = options.type;
                 self.eventChannel = options.eventChannel;
 
                 self.render();
@@ -29,34 +30,18 @@ define([
                 'keyup td[data-type="input"]': 'recalcTotal'
             },
 
-            recalcTotal: function(e) {
-                var self = this;
-                var totalHours = 0;
-                var $currentEl = this.$el;
-                var hours;
-
-                e.preventDefault();
-
-                for (var i = 7; i > 0; i--) {
-                    hours = parseInt($currentEl.find('td[data-content="' + i + '"] input').val());
-                    totalHours += isNaN(hours) ? 0 : hours;
-                }
-
-                $currentEl.find('#totalHours span').text(totalHours);
-            },
-
             saveItem: function () {
                 var self = this;
                 var model;
-                var hours;
                 var $currentEl = this.$el;
 
-                var name = $.trim($currentEl.find('#weeklySchedulerName input').val());
-                var totalHours = $currentEl.find('#totalHours span').text();
+                var name = $.trim($currentEl.find('#payrollComponentTypeName').val());
+                var description = $currentEl.find('#payrollComponentTypeComment').val();
 
                 var data = {
                     name: name,
-                    totalHours: totalHours
+                    description: description,
+                    type: self.type
                 };
 
                 if (!name) {
@@ -66,23 +51,9 @@ define([
                     });
                 }
 
-                for (var i = 7; i > 0; i--) {
-                    hours = parseInt($currentEl.find('td[data-content="' + i + '"] input').val());
-                    hours = isNaN(hours) ? 0 : hours;
-
-                    if (hours < 0 || hours > 24) {
-                        return App.render({
-                            type: 'error',
-                            message: 'hours should be in 0-24 range'
-                        });
-                    }
-
-                    data[i] = hours;
-                }
-
                 model = self.model;
                 model.urlRoot = function () {
-                    return 'weeklyScheduler';
+                    return 'payrollComponentTypes';
                 };
 
                 model.save(data, {
@@ -93,7 +64,12 @@ define([
                     wait   : true,
                     success: function () {
                         self.hideDialog();
-                        self.eventChannel.trigger('updateWeeklyScheduler');
+
+                        if (self.type === 'deductions') {
+                            self.eventChannel.trigger('updatePayrollDeductionsType');
+                        } else if (self.type === 'earnings') {
+                            self.eventChannel.trigger('updatePayrollEarningsType');
+                        }
                     },
                     error  : function (model, xhr) {
                         self.errorNotification(xhr);
@@ -110,7 +86,10 @@ define([
 
             render: function () {
                 var self = this;
-                var formString = this.template({model: self.model.toJSON()});
+                var formString = this.template({
+                    model: self.model.toJSON(),
+                    type: self.type
+                });
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,

@@ -13,7 +13,7 @@ var PayrollComponentType = function (models) {
         if (req.session && req.session.loggedIn && db) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
                 var PayrollComponentType = models.get(db, 'PayrollComponentType', PayrollComponentTypesSchema);
-                var type = req.params.type;
+                var type = req.query.type;
 
                 if (access) {
 

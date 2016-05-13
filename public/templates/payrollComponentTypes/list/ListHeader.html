@@ -1,11 +1,14 @@
 <div id="createBtnHolder">
     <a href="javascript;" class="fa fa-plus" title="Create" id="top-bar-createBtn"></a>
-    <h3><%= type %></h3>
+    <h3><%= header %></h3>
 </div>
 
 <div id="searchContainer"></div>
 <div>
     <table class="list task-list">
+        <col width="5%">
+        <col width="25%">
+        <col width="70%">
         <thead>
         <tr>
             <th class="centerCell">N</th>
@@ -17,6 +20,6 @@
             </th>
         </tr>
         </thead>
-        <tbody id="listTable" class="enableTableOdd"></tbody>
+        <tbody id="listTable<%= type %>" class="enableTableOdd"></tbody>
     </table>
 </div>
