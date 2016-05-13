@@ -409,6 +409,9 @@
                     model: this.currentModel.toJSON()
                 });
                 var self = this;
+                var model = this.currentModel.toJSON();
+                var notDiv;
+
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
                     dialogClass  : "edit-dialog",
@@ -431,7 +434,7 @@
                         }
                     }
                 });
-                var notDiv = this.$el.find('#divForNote');
+                notDiv = this.$el.find('#divForNote');
                 notDiv.append(
                     new noteView({
                         model: this.currentModel
@@ -452,7 +455,7 @@
                 );
                 $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
-                var model = this.currentModel.toJSON();
+
                 dataService.getData('/Priority/leads', {}, function (priorities) {
                     priorities = _.map(priorities.data, function (priority) {
                         priority.name = priority.priority;
@@ -473,6 +476,7 @@
                 });
                 populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this);
                 populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, false, true);
+
                 if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();

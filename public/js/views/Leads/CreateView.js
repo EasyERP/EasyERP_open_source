@@ -264,6 +264,8 @@ define([
             render: function () {
                 var self = this;
                 var formString = this.template();
+                var notDiv;
+
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
                     autoOpen     : true,
@@ -288,12 +290,13 @@ define([
                     ]
 
                 });
-                var notDiv = this.$el.find('.assignees-container');
+                notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
                     }).render().el
                 );
+
 
                 dataService.getData('/Priority/leads', {}, function (priorities) {
                     priorities = _.map(priorities.data, function (priority) {
