@@ -1320,6 +1320,7 @@ define([
                     if (element.type === 'Not Quoted') {
                         if (element.budget.budgetTotal && (element.budget.budgetTotal.revenueSum !== 0)) {
                             jobSum += parseFloat(element.budget.budgetTotal.revenueSum);
+                            jobSum /=100;
                             jobsCount++;
                         }
                     }
