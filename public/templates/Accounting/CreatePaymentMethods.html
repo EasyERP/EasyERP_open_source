@@ -1,28 +1,38 @@
 <div class="form-holder">
 
-    <fieldset>
-        <dt><label for="paymentMethodName">Name</label></dt>
-        <dd>
-            <input id="paymentMethodName" value="">
-        </dd>
-        <dt><label for="bankName">Bank</label></dt>
-        <dd>
-            <input id="bankName" value="">
-        </dd>
 
-        <!--<dt><label for="owner">Name</label></dt>
-        <dd>
-            <span id="owner" data-id="<%=model.owner%>"><%=model.owner%></span>
-        </dd>-->
-        <dt><label for="account">Account</label></dt>
-        <dd>
-            <input id="account" value="">
-        </dd>
-        <dt><label for="currency">Currency</label></dt>
-        <dd>
-            <a href="javascript:;" class="current-selected" id="currency" data-id=""></a>
-        </dd>
-    </fieldset>
+        <div class="half-block left">
+            <dl>
+                <dt><label for="paymentMethodName">Name</label></dt>
+                <dd>
+                    <input id="paymentMethodName" value="">
+                </dd>
+
+
+                <!--<dt><label for="owner">Name</label></dt>
+                <dd>
+                    <span id="owner" data-id="<%=model.owner%>"><%=model.owner%></span>
+                </dd>-->
+
+                <dt><label for="currency">Currency</label></dt>
+                <dd>
+                    <a href="javascript:;" class="current-selected" id="currency" data-id=""></a>
+                </dd>
+            </dl>
+        </div>
+    <div class="half-block left">
+        <dl>
+            <dt><label for="bankName">Bank</label></dt>
+            <dd>
+                <input id="bankName" value="">
+            </dd>
+            <dt><label for="account">Account</label></dt>
+            <dd>
+                <input id="account" value="">
+            </dd>
+        </dl>
+    </div>
+
     <div class="clearfix"></div>
 </div>
   

@@ -1,24 +1,51 @@
-<div class="half-block left">
-    <h3>Bank Accounts</h3>
-    <a href="javascript:;" class="fa fa-plus" title="Create" id="top-bar-createBtn"></a>
+<div id="forInfo" class="accounting">
 
-    <table>
-        <tbody>
-        <% collection.forEach(function(elem,index){ %>
+    <div class="accounting-half-block left">
+        <table class="list tableProjects tableFixed" >
+            <colgroup>
+                <col width="35%"/>
+                <col width="15%"/>
+                <col width="20%"/>
+                <col width="15%"/>
+                <col width="15%"/>
+            </colgroup>
+            <thead>
+            <tr>
+                <th colspan="4" class="forCaption">Bank Accounts</th>
+                <th class="forCaption">
+                    <a href="javascript:;" class="fa fa-angle-down"></a>
+                    <a href="javascript:;" class="btnAdd" title="Create" id="top-bar-createBtn">Add</a>
+                </th>
+            </tr>
+            <tr>
+                <th>Name</th>
+                <th>Bank</th>
+                <th>Account</th>
+                <th>Currency</th>
+                <th></th>
+            </tr>
+            </thead>
+            <tbody>
+            <% collection.forEach(function(elem,index){ %>
 
             <tr data-id="<%= elem._id%>" >
-                <td ><%=elem.name %></td>
-                <td ><%=elem.bank %></td>
-                <td ><%=elem.account %></td>
-                <td ><%=elem.currency %></td>
-
+                <td ><span><%=elem.name %></span></td>
+                <td ><span><%=elem.bank %></span></td>
+                <td ><span><%=elem.account %></span></td>
+                <td ><span><%=elem.currency %></span></td>
+                <td class="centerCell">
+                    <a class="fa fa-pencil-square-o" aria-hidden="true"></a>
+                    <a class="fa fa-trash-o" aria-hidden="true"></a>
+                </td>
             </tr>
 
 
-        <% }) %>
+            <% }) %>
 
-        </tbody>
-    </table>
+            </tbody>
+        </table>
+    </div>
+
 </div>
 
 

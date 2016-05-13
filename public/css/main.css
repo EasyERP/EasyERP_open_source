@@ -1250,6 +1250,27 @@ tr.redBorder {
 #forInfo .innerTableProject .innerTableProject-footer td {
   border-width: 0;
 }
+#forInfo.accounting .accounting-half-block {
+  width: 50%;
+}
+#forInfo.accounting th .fa {
+  display: inline-block;
+  font-size: 17px;
+  line-height: 23px;
+  height: 100%;
+  text-decoration: none;
+}
+#forInfo.accounting td span {
+  display: inline-block;
+  width: 99%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 12px;
+}
+#forInfo.accounting td a.fa {
+  margin-right: 10px;
+}
 li.fired {
   background-color: rgba(235, 0, 4, 0.73);
 }
