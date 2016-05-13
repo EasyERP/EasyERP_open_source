@@ -59,4 +59,5 @@ module.exports = (function () {
     require('./projectPosition.js');
     require('./projectMember.js');
     require('./weeklyScheduler.js');
+    require('./payrollComponentType.js');
 })();
