@@ -120,6 +120,7 @@ module.exports = (function () {
         visibility: {type: String, default: 'Public'},
         department: {type: ObjectId, ref: 'Department', default: null},
         jobPosition: {type: ObjectId, ref: 'JobPosition', default: null},
+        weeklyScheduler: {type: ObjectId, ref: 'weeklyScheduler', default: null},
         manager: {type: ObjectId, ref: 'Employees', default: null},
         coach: {type: ObjectId, ref: 'Employees', default: null},
         nationality: {type: String, default: ''},

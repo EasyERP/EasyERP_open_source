@@ -560,6 +560,7 @@ define([
                     jobPosition   : jobPosition,
                     manager       : manager,
                     coach         : coach,
+                    weeklyScheduler: weeklyScheduler,
                     identNo       : $.trim($("#identNo").val()),
                     passportNo    : $.trim(this.$el.find("#passportNo").val()),
                     otherId       : $.trim(this.$el.find("#otherId").val()),

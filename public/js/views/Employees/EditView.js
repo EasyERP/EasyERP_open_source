@@ -591,6 +591,7 @@ define([
                     relatedUser   : relatedUser,
                     department    : department,
                     jobPosition   : jobPosition,
+                    weeklyScheduler: weeklyScheduler,
                     manager       : manager,
                     coach         : coach,
                     identNo       : $.trim($('#identNo').val()),

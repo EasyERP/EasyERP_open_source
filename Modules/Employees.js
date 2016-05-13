@@ -496,10 +496,12 @@ var Employee = function (event, models) {
                     Department.findById(_employee.department,
                         function (error, dep) {
 
-                            if (dep && dep.parentDepartment && dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
-                                _employee.transfer[0].isDeveloper = true;
-                            } else if (_employee.transfer && _employee.transfer[0]) {
-                                _employee.transfer[0].isDeveloper = false;
+                            if(_employee.transfer && _employee.transfer[0]) {
+                                if (dep && dep.parentDepartment && dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
+                                    _employee.transfer[0].isDeveloper = true;
+                                } else if (_employee.transfer && _employee.transfer[0]) {
+                                    _employee.transfer[0].isDeveloper = false;
+                                }
                             }
 
                             _employee.save(function (err, result) {
@@ -1275,6 +1277,7 @@ var Employee = function (event, models) {
             .populate('groups.users')
             .populate('manager', '_id name')
             .populate('jobPosition', '_id name fullName')
+            .populate('weeklyScheduler', '_id name')
             .populate('department', '_id departmentName')
             .populate('groups.group')
             .populate('transfer.department', '_id departmentName')

@@ -500,6 +500,7 @@
                 position = $.trim(el.find('#jobPositionDd').text());
                 jobType = $.trim(el.find('#jobTypeDd').text());
                 jobPosition = el.find('#jobPositionDd').attr('data-id');
+                weeklyScheduler = el.find('#weeklySchedulerDd').attr('data-id');
                 department = el.find('#departmentsDd').attr('data-id');
                 manager = el.find('#projectManagerDD').attr('data-id');
                 expectedSalary = parseInt($.trim(el.find("#expectedSalary").val()), 10) || 0;
@@ -513,6 +514,7 @@
                         date       : moment(),
                         department : department,
                         jobPosition: jobPosition,
+                        weeklyScheduler: weeklyScheduler,
                         manager    : manager,
                         jobType    : jobType,
                         salary     : salary,
@@ -569,6 +571,7 @@
                 jobPosition   : jobPosition,
                 manager       : manager,
                 coach         : coach,
+                weeklyScheduler: weeklyScheduler,
                 identNo       : $.trim($("#identNo").val()),
                 passportNo    : $.trim(this.$el.find("#passportNo").val()),
                 otherId       : $.trim(this.$el.find("#otherId").val()),
