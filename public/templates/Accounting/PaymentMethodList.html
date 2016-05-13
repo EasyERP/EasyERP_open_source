@@ -17,7 +17,7 @@
                     <a href="javascript:;" class="btnAdd" title="Create" id="top-bar-createBtn">Add</a>
                 </th>
             </tr>
-            <tr>
+            <tr class="forToggle">
                 <th>Name</th>
                 <th>Bank</th>
                 <th>Account</th>
@@ -25,7 +25,7 @@
                 <th></th>
             </tr>
             </thead>
-            <tbody>
+            <tbody class="forToggle">
             <% collection.forEach(function(elem,index){ %>
 
             <tr data-id="<%= elem._id%>" >
@@ -34,8 +34,8 @@
                 <td ><span><%=elem.account %></span></td>
                 <td ><span><%=elem.currency %></span></td>
                 <td class="centerCell">
-                    <a class="fa fa-pencil-square-o" aria-hidden="true"></a>
-                    <a class="fa fa-trash-o" aria-hidden="true"></a>
+                    <a href="javascript:;" class="fa fa-pencil-square-o" aria-hidden="true"></a>
+                    <a href="javascript:;" class="fa fa-trash-o" aria-hidden="true"></a>
                 </td>
             </tr>
 

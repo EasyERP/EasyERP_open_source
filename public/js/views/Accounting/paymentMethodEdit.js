@@ -14,7 +14,6 @@ define([
         initialize: function (options) {
 
             _.bindAll(this, "render", "saveItem");
-            _.bindAll(this, "render", "deleteItem");
 
             if (options.model) {
                 this.currentModel = options.model;
@@ -55,6 +54,8 @@ define([
 
             return false;
         },
+
+
 
         hideNewSelect: function () {
             $(".newSelectList").hide();
@@ -113,35 +114,7 @@ define([
             $(".crop-images-dialog").remove();
         },
 
-        deleteItem: function (event) {
-            var self = this;
-            var mid = this.forSales ? 62 : 55;
-            var url;
-            var answer = confirm("Really DELETE items ?!");
 
-            event.preventDefault();
-
-            if (answer === true) {
-                this.currentModel.destroy({
-                    headers: {
-                        mid: mid
-                    },
-                    success: function (model) {
-                        $('a[data-id="' + model.id + '"]').remove();
-                        self.hideDialog();
-                    },
-                    error  : function (model, err) {
-                        if (err.status === 403) {
-                            App.render({
-                                type   : 'error',
-                                message: "You do not have permission to perform this action"
-                            });
-                        }
-                    }
-                });
-            }
-
-        },
 
         render: function () {
             var self = this;
@@ -169,10 +142,6 @@ define([
                         click: function () {
                             self.hideDialog();
                         }
-                    },
-                    {
-                        text : "Delete",
-                        click: self.deleteItem
                     }
                 ]
 
