@@ -8,9 +8,11 @@ var Module = function (date, cb) {
     //ToDo set it to process.env
     oxr.set({app_id: 'b81387a200c2463e9ae3d31cc60eda62'});
 
-    if(typeof date === 'function'){
+    if (typeof date === 'function') {
         cb = date;
         date = moment();
+    } else if (date instanceof Date) {
+        date = moment(date);
     } else {
         date = new Date();
     }
@@ -19,8 +21,8 @@ var Module = function (date, cb) {
     date = date.format('YYYY-MM-DD');
 
     oxr.historical(date, function () {
-        if(oxr.error){
-            return oxr.latest(function() {
+        if (oxr.error) {
+            return oxr.latest(function () {
                 cb(null, oxr);
             });
         }

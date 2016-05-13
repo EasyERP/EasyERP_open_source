@@ -40,7 +40,7 @@ module.exports = (function () {
     quotationSchema = new Schema({
         currency      : {
             _id : {type: ObjectId, ref: 'currency', default: null},
-            rate: {type: Number, default: 1}
+            rate: {type: Number, default: 0} //changed default to '0' for catching errors
         },
         forSales      : {type: Boolean, default: true},
         type          : {type: String, default: 'Not Ordered', enum: ['Not Ordered', 'Not Invoiced', 'Invoiced']},
