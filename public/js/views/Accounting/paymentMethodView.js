@@ -18,14 +18,15 @@ define([
             },
 
             events: {
-                "click a[data-id]" : "goToEditDialog",
+                "click tr" : "goToEditDialog",
                 "click #top-bar-createBtn" : "createPaymentMethod"
             },
 
             goToEditDialog: function (e) {
                 e.preventDefault();
+                var tr = $(e.target).closest('tr');
 
-                var id = $(e.target).data("id");
+                var id = tr.attr("data-id");
                 var model = this.collection.get(id);
                 if (model) {
                     new editView({model: model});

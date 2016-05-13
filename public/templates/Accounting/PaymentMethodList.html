@@ -1,15 +1,24 @@
 <div class="half-block left">
     <h3>Bank Accounts</h3>
     <a href="javascript:;" class="fa fa-plus" title="Create" id="top-bar-createBtn"></a>
-    <ul >
-        <br>
+
+    <table>
+        <tbody>
         <% collection.forEach(function(elem,index){ %>
-        <li>
-            <a href="#easyErp/Accounts" data-id="<%= elem._id%>" title="<%= elem.name %>"><%=elem.name %></a>
-        </li>
-        <br>
+
+            <tr data-id="<%= elem._id%>" >
+                <td ><%=elem.name %></td>
+                <td ><%=elem.bank %></td>
+                <td ><%=elem.account %></td>
+                <td ><%=elem.currency %></td>
+
+            </tr>
+
+
         <% }) %>
-    </ul>
+
+        </tbody>
+    </table>
 </div>
 
 
