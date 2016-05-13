@@ -381,7 +381,8 @@ define([
 
                     $parrent.find('.jobs').text($target.text()).attr('data-id', jobId);
                     $parrent.attr('data-content', jobId); // in case of getting id  on edit quotation
-                    $hoursContainer.text(currentJob.budget.budgetTotal.hoursSum);
+                    //$hoursContainer.text(currentJob.budget.budgetTotal.hoursSum);
+                    $hoursContainer.text(1); //for quantity = 1
 
                     model = this.products.get(_id);
 

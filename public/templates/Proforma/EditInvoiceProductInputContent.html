@@ -8,7 +8,7 @@
     <% } else {%>
     <td data-name="productDescr" class="<%=editable  ? 'editable' : ''%>"><span><%=product.description%></span></td>
     <% } %>
-    <td data-name="quantity" class=""><span><%=product.quantity%></span></td>
+    <td data-name="quantity" class=""><span>1</span></td>
     <% var editable = !approved %>
     <td data-name="price" class="<%= editable ? 'editable' : ''%> forNum <%=currencyClass(currency._id._id)%>">
         <% if(editable) { %>
