@@ -731,6 +731,7 @@ var PayRoll = function (models) {
 
     this.getSalaryReport = function (req, res, next) {
         var error;
+        var mid = 88;
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, mid, function (access) {
