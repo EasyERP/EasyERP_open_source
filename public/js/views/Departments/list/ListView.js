@@ -165,7 +165,7 @@ define([
                 new CreateView();
             },
 
-            checked: function () {
+            /*checked: function () {
                 if (this.collection.length > 0) {
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
@@ -189,7 +189,7 @@ define([
                     });
                 });
                 this.collection.trigger('reset');
-            }
+            }*/
         });
         return DepartmentsListView;
     });

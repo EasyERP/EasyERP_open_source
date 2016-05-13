@@ -2,10 +2,14 @@
  * Created by Liliya on 23.06.2015.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/monthHours/createTemplate.html"
 
     ],
-    function (CreateTemplate) {
+    function (Backbone, $, _,CreateTemplate) {
+
         var CreateView = Backbone.View.extend({
             el      : "#listTable",
             template: _.template(CreateTemplate),

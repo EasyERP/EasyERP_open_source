@@ -1,7 +1,10 @@
 define([
+        'Backbone',
+        'Underscore',
+        'jQuery',
         'views/menu/TopMenuItemView'
-    ],
-    function (TopMenuItemView) {
+    ], function (Backbone, _, $, TopMenuItemView) {
+        "use strict";
 
         var TopMenuView = Backbone.View.extend({
             tagName       : 'ul',

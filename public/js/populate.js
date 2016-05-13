@@ -1,8 +1,9 @@
 define([
+        'Underscore',
         "dataService",
         'text!templates/main/selectTemplate.html'
     ],
-    function (dataService, selectTemplate) {
+    function (_, dataService, selectTemplate) {
         var dataFormServer = {};
 
         var get = function (id, url, data, field, content, isCreate, canBeEmpty, parrrentContentId) {
@@ -82,7 +83,7 @@ define([
         };
 
         var getPriority = function (id, content, isCreate) {
-            dataService.getData("/Priority", {}, function (response) {
+            dataService.getData("/tasks/priority", {}, function (response) {
                 content.responseObj[id] = _.map(response.data, function (item) {
                     return {_id: item.priority, name: item.priority};
                 });

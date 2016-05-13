@@ -355,7 +355,7 @@ define([
 
                 if (icon.html() === '-') {
                     icon.html('+');
-                    $(subRowCheck).hide();
+                    $(subRowCheck).remove();
                 } else {
                     icon.html('-');
                     $('<tr id=' + subId + ' class="subRow">' +

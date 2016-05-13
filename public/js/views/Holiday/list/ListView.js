@@ -255,9 +255,11 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
+
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());
                     self.editCollection.on('saved', self.savedNewModel, self);
+
                     self.editCollection.on('updated', self.updatedOptions, self);
 
                     self.$listTable = $('#listTable');
@@ -365,6 +367,7 @@ define([
                     model;
                 var localCounter = 0;
                 var count = $("#listTable input:checked").length;
+
                 this.collectionLength = this.collection.length;
 
                 if (!this.changed) {

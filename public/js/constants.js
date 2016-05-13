@@ -505,6 +505,7 @@ define([], function () {
 
         DASH_VAC_WEEK_BEFORE: 2,
         DASH_VAC_WEEK_AFTER : 8,
+        DASH_VAC_RANGE_WEEKS_MIN : 6,
 
         URLS: {
             PROFILES_FOR_DD       : '/profiles/forDd',

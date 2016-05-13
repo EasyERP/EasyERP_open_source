@@ -3,11 +3,12 @@
  */
 define([
     'Backbone',
+    'jQuery',
     'Underscore',
     'text!templates/Attendance/monthTemplate.html',
     'views/Attendance/StatisticsView',
     'moment'
-], function (Backbone, _,ListTemplate, StatisticsView, moment) {
+], function (Backbone, $, _, ListTemplate, StatisticsView, moment) {
     'use strict';
     var MonthView = Backbone.View.extend({
         el: '#attendanceMonth',

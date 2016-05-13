@@ -2,6 +2,8 @@
  * Created by Roman on 17.06.2015.
  */
 define([
+    'Backbone',
+    'Underscore',
     'text!templates/Revenue/index.html',
     'text!templates/Revenue/weeksArray.html',
     'text!templates/Revenue/tableByDep.html',
@@ -30,7 +32,7 @@ define([
     'd3',
     'constants',
     'helpers'
-], function (mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, bonusBySales, allBonus, allBonusByMonth, perMonthForAllBonus, hoursSold, RevenueModel, moment, dataService, async, custom, d3, CONSTANTS, helpers) {
+], function (Backbone, _, mainTemplate, weeksArray, tableByDep, bySalesByDep, perWeek, paidBySales, paidBySalesItems, projectBySalesItems, unpaidBySales, monthsArray, perMonth, perMonthInt, tableSold, hoursByDepItem, hoursByDepTotal, bonusBySales, allBonus, allBonusByMonth, perMonthForAllBonus, hoursSold, RevenueModel, moment, dataService, async, custom, d3, CONSTANTS, helpers) {
     var View = Backbone.View.extend({
         el: '#content-holder',
 

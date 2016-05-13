@@ -4,7 +4,7 @@ var logWriter = function () {
     function erfunc(destination, errorString) {
         var _dest = 'log.txt';
         var _error = errorString;
-        fs.open(_dest, "a", 0644, function (err, file_handle) {
+        fs.open(_dest, "a", 644, function (err, file_handle) {
             if (!err) {
                 var date = new Date();
                 var res = "------------------------------" + destination + "-------------------------------------------------------\r\n"

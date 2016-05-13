@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/Product/list/ListHeader.html',
         'views/Product/CreateView',
@@ -12,7 +14,7 @@ define([
         'dataService'
     ],
 
-    function (listViewBase, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, filterView, common, dataService) {
+    function ($, _, listViewBase, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, filterView, common, dataService) {
         var ProductsListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,

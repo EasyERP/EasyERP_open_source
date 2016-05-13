@@ -18,6 +18,7 @@ define([
 
         initialize: function (options) {
             options = options || {};
+
             this.startTime = new Date();
             this.filter = options.filter || Custom.retriveFromCash('salaryReport.filter');
             var startDate = new Date();

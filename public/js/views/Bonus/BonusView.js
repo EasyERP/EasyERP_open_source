@@ -13,7 +13,6 @@ define([
     'use strict';
 
     var BonusView = Backbone.View.extend({
-
         initialize: function (options) {
             this.model = options.model;
             this.responseObj = {};

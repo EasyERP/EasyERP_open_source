@@ -38,7 +38,7 @@ define([
                 Common.displayControlBtnsByActionType(this.actionType);
 
                 return this;
-            },
+            }/*,
 
             deleteEvent: function (event) {
                 event.preventDefault();
@@ -55,7 +55,7 @@ define([
             createEvent : function (event) {
                 event.preventDefault();
                 this.trigger('createEvent');
-            }
+            }*/
         });
 
         return TopBarView;

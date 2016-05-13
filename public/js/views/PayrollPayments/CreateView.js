@@ -1,8 +1,11 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/PayrollPayments/CreateTemplate.html",
         "helpers"
     ],
-    function (CreateTemplate, helpers) {
+    function (Backbone, $, _, CreateTemplate, helpers) {
         "use strict";
 
         var CreateView = Backbone.View.extend({

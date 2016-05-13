@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Projects/CreateTemplate.html",
         "models/ProjectsModel",
         "populate",
@@ -9,7 +12,7 @@ define([
         'custom',
     'constants'
     ],
-    function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView, selectView, customFile, CONSTANTS) {
+    function (Backbone, $, _, CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView, selectView, customFile, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -38,9 +41,11 @@ define([
                 "click .current-selected"                                         : "showNewSelect"
 
             },
-            notHide      : function () {
+
+            /*notHide      : function () {
                 return false;
-            },
+            },*/
+
             showNewSelect: function (e, prev, next) {
                 //populate.showSelect(e, prev, next, this);
 
@@ -70,13 +75,13 @@ define([
                 this.hideHealth();
             },
 
-            nextSelect   : function (e) {
+            /*nextSelect   : function (e) {
                 this.showNewSelect(e, false, true);
             },
 
             prevSelect   : function (e) {
                 this.showNewSelect(e, true, false);
-            },
+            },*/
 
             hideHealth   : function () {
                // $(".newSelectList").hide();

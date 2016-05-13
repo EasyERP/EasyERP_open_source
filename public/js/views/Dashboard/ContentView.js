@@ -2,14 +2,15 @@ define([
         'Backbone',
         'jQuery',
         'Underscore',
-        "text!templates/Dashboard/DashboardTemplate.html",
+        'text!templates/Dashboard/DashboardTemplate.html',
         "d3",
         "common",
-        "dataService"
+        "dataService",
+        'moment'
     ],
-    function (Backbone, $, _, DashboardTemplate, d3, common, dataService) {
+    function (Backbone, $, _, DashboardTemplate, d3, common, dataService, moment) {
         'use strict';
-
+        
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
             actionType : "Content",
@@ -60,7 +61,8 @@ define([
                 this.renderPopulate();
             },
             getDateFromDayOfYear: function (index) {
-                return dateFormat(new Date(this.numberToDate[index]).toString('MMMM ,yyyy'), "mmmm dd, yyyy");
+                //return dateFormat(new Date(this.numberToDate[index]).toString('MMMM ,yyyy'), "mmmm dd, yyyy");
+                return moment(new Date(this.numberToDate[index]).toString('MMMM ,yyyy')).format('MMMM DD, YYYY'); //todo changed after ui unit tests
             },
             getDay              : function (index) {
                 switch (index) {

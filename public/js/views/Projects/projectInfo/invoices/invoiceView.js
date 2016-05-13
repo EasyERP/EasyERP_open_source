@@ -147,7 +147,7 @@ define([
                         cb();
                     },
                     error  : function (model, res) {
-                        if (res.status === 403 && index === 0) {
+                        if (res.status === 403 /*&& index === 0*/) {
                             App.render({
                                 type   : 'error',
                                 message: "You do not have permission to perform this action"
@@ -187,7 +187,7 @@ define([
             });
         },
 
-        showDialog: function (orderId) {
+        /*showDialog: function (orderId) {
             var invoice = _.find(this.collection.toJSON(), function (el) {
                 return (el.sourceDocument ? el.sourceDocument._id.toString() === orderId.toString() : null);
             });
@@ -211,11 +211,11 @@ define([
                 }
             });
 
-        },
+        },*/
 
         goToEditDialog: function (e) {
             e.preventDefault();
-
+            var self = this;
             var id = $(e.target).closest('tr').data("id");
             var model = new InvoiceModel({validate: false});
 
@@ -226,7 +226,7 @@ define([
                     currentDb: App.currentDb
                 },
                 success: function (model) {
-                    new EditView({model: model, redirect: true, collection: this.collection, notCreate: true});
+                    new editView({model: model, redirect: true, collection: self.collection, notCreate: true});
                 },
                 error  : function () {
                     App.render({

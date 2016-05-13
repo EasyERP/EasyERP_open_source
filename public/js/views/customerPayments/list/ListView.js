@@ -130,9 +130,10 @@ define([
             },
 
             deleteItems: function () {
-                var that = this,
-                    mid = 68,
-                    model;
+                var $currentEl = this.$el;
+                var that = this;
+                var mid = 68;
+                var model;
                 var localCounter = 0;
                 var count = $("#listTable input:checked").length;
                 this.collectionLength = this.collection.length;
@@ -494,6 +495,8 @@ define([
                 this.renderPagination($currentEl, this);
 
                 this.renderFilter(self);
+
+                // self.editCollection = new editCollection(self.collection.toJSON()); //todo move into setTimeOut
 
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());

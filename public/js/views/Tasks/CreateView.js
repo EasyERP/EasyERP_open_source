@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Tasks/CreateTemplate.html",
         "models/TasksModel",
         "common",
@@ -7,7 +10,7 @@ define([
         'views/selectView/selectView',
         'constants'
     ],
-    function (CreateTemplate, TaskModel, common, populate, attachView, selectView, CONSTANTS) {
+    function (Backbone, $, _, CreateTemplate, TaskModel, common, populate, attachView, selectView, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",

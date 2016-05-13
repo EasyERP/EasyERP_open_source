@@ -351,7 +351,7 @@ define([
                 }, 250);
             },
 
-            switchTab: function (e) {
+            /*switchTab: function (e) {
                 var index;
                 var link;
 
@@ -364,7 +364,7 @@ define([
 
                 index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
-            },
+            },*/
 
             saveItem  : function () {
 

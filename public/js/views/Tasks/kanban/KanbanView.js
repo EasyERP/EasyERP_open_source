@@ -225,7 +225,7 @@
         },
 
         getCollectionLengthByWorkflows: function (context, parrentContentId) {
-            dataService.getData('/getTasksLengthByWorkflows', {parrentContentId: parrentContentId}, function (data) {
+            dataService.getData('/tasks/getLengthByWorkflows', {parrentContentId: parrentContentId}, function (data) {
                 data.arrayOfObjects.forEach(function (object) {
                     var column = context.$el.find("#" + object._id);
                     column.find('.totalCount').text(object.count);
@@ -244,7 +244,8 @@
 
         gotoEditForm: function (e) {
             e.preventDefault();
-            var id = $(e.target).closest(".inner").data("id");
+            var id = $(e.target).closest(".inner").attr("data-id");
+            console.log(id);
             var model = new CurrentModel();
             model.urlRoot = '/Tasks/form';
             model.fetch({
@@ -368,7 +369,7 @@
         },
 
         hideItemsNumber: function (e) {
-            var el = e.target;
+            var el = $(e.target);
 
             this.$el.find(".allNumberPerPage, .newSelectList").hide();
             if (!el.closest('.search-view')) {

@@ -12,7 +12,7 @@ define([
         'constants',
         'helpers'
     ],
-    function (Backbone, $, _, EditTemplate, AssigneesView, InvoiceItemView, PaymentCreateView, ListHederInvoice, dataService, populate, CONSTANTS, helpers) {
+    function (Backbone, $, _, EditTemplate, AssigneesView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({
@@ -58,6 +58,8 @@ define([
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
+
+                            // App.weTrack = true;
 
                             if ((response === "weTrack") || (response === "production") || (response === "development")) {
                                 App.weTrack = true;

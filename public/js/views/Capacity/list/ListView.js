@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/Capacity/list/listHeader.html',
         'text!templates/Capacity/list/cancelEdit.html',
@@ -19,7 +21,7 @@ define([
         'custom'
     ],
 
-    function (listViewBase, listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, departmentCollection, common, dataService, CONSTANTS, async, moment, populate, custom) {
+    function ($, _, listViewBase, listHeaderTemplate, cancelEdit, listTotal, departmentListTemplate, listTemplate, createTemplate, currentModel, filterCollection, editCollection, departmentCollection, common, dataService, CONSTANTS, async, moment, populate, custom) {
         var CapacityListView = listViewBase.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -347,7 +349,7 @@ define([
                 return false;
             },
 
-            renderContent: function () {
+            /*renderContent: function () {
                 var $currentEl = this.$el;
                 var tBody = $currentEl.find('#listTable');
                 $("#top-bar-deleteBtn").hide();
@@ -367,7 +369,7 @@ define([
                 } else {
                     pagenation.show();
                 }
-            },
+            },*/
 
             goSort: function (e) {
                 var self = this;
@@ -649,7 +651,7 @@ define([
 
                             capacityArray[i] = vacArray[i];
 
-                            currentTd.text(vacArray[i])
+                            currentTd.text(vacArray[i]);
                             currentTd.addClass(vacArray[i]);
                         } else {
                             currentTd.text(capacityArray[i]);
@@ -1051,8 +1053,8 @@ define([
                 var that = this;
 
                 this.collectionLength = this.collection.length;
-
                 if (!this.changed) {
+
                     var answer = confirm("Really DELETE items ?!");
                     var value;
                     var tr;

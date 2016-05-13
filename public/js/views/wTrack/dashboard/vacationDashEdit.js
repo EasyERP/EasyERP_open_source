@@ -230,7 +230,7 @@ define([
                 workedEl.text(worked);
             },
 
-            autoHoursPerDay: function (e) {
+            /*autoHoursPerDay: function (e) {
                 var targetEl = $(e.target);
                 var isInput = targetEl.prop("tagName") === 'INPUT';
                 var tr = targetEl.closest('tr');
@@ -264,7 +264,7 @@ define([
                 edited.remove();
 
                 workedEl.text(worked);
-            },
+            },*/
 
             editRow: function (e) {
                 $(".newSelectList").hide();

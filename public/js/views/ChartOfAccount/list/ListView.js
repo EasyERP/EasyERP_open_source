@@ -561,11 +561,11 @@ define([
 
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());
+                    self.$listTable = currentEl.find('#chartOfAccount');
+
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('error', self.errorFunction, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
-
-                    self.$listTable = currentEl.find('#chartOfAccount');
                 }, 10);
 
                 return this;

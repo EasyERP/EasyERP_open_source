@@ -1,9 +1,11 @@
 define([
+        'Backbone',
+        'Underscore',
         'text!templates/Dashboard/TopBarTemplate.html',
         'custom',
         "common"
     ],
-    function (TopBarTemplate, Custom, Common) {
+    function (Backbone, _, TopBarTemplate, Custom, Common) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: "Dashboard",

@@ -2,6 +2,9 @@
  * Created by soundstorm on 28.04.15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Product/InternalMoves.html',
         "collections/Persons/PersonsCollection",
         "collections/Departments/DepartmentsCollection",
@@ -9,7 +12,7 @@ define([
         'populate',
         'constants'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, PersonsModel, populate, CONSTANTS) {
+    function (Backbone, $, _, reateTemplate, PersonsCollection, DepartmentsCollection, PersonsModel, populate, CONSTANTS) {
         var CreateProductItemTemplate = Backbone.View.extend({
             el         : '#createProductItemHolder',
             contentType: "ProductItem",

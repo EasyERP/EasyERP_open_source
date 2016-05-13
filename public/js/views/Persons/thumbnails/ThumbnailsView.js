@@ -189,7 +189,7 @@
             },
 
             hideItemsNumber: function (e) {
-                var el = e.target;
+                var el = $(e.target);  // change after ui tests
 
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {

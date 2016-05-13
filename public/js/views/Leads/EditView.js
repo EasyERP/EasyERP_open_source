@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Leads/EditTemplate.html",
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
@@ -8,7 +11,7 @@ define([
         "populate",
         'constants'
     ],
-    function (EditTemplate, selectView, AssigneesView, Custom, common, dataService, populate, CONSTANTS) {
+    function (Backbone, $, _, EditTemplate, selectView, AssigneesView, Custom, common, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             el         : "#content-holder",

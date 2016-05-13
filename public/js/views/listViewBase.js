@@ -1,6 +1,7 @@
 define([
         'Backbone',
         'jQuery',
+        'Underscore',
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Alpabet/AphabeticTemplate.html',
         'text!templates/Notes/importTemplate.html',
@@ -10,7 +11,7 @@ define([
         'constants'
     ],
 
-    function (Backbone, $, paginationTemplate, aphabeticTemplate, importForm, AttachView, common, dataService, CONSTANTS) {
+    function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, AttachView, common, dataService, CONSTANTS) {
         "use strict";
 
         var ListViewBase = Backbone.View.extend({
@@ -259,6 +260,7 @@ define([
 
             // carried off eventHandlers for pages in one
             checkPage: function (event) {
+
                 var newRows = this.$el.find('#false');
                 var elementId = $(event.target).attr('id');
                 var data = {
@@ -360,7 +362,7 @@ define([
             },
 
             hidePagesPopup: function (e) {
-                var el = e.target;
+                var el = $(e.target);
 
                 if (this.selectView) {
                     this.selectView.remove();

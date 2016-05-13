@@ -301,6 +301,7 @@ define([
 
                 this.setChangedValueToModel();
                 for (var id in this.changedModels) {
+
                     model = this.editCollection.get(id);
                     model.changed = this.changedModels[id];
                 }
@@ -400,7 +401,7 @@ define([
             },
 
             hideItemsNumber: function (e) {
-                var el = e.target;
+                var el = $(e.target);
                 var editedElement = this.$listTable.find('.editing');
 
                 this.$el.find(".allNumberPerPage").hide();
@@ -615,7 +616,7 @@ define([
                 }, this);
             },
 
-            switchPageCounter: function (event) {
+            /*switchPageCounter: function (event) {
                 event.preventDefault();
                 this.startTime = new Date();
                 var itemsNumber = event.target.textContent;
@@ -636,7 +637,7 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
-            },
+            },*/
 
             showFilteredPage: function () {
                 var itemsNumber;

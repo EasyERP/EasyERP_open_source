@@ -1,5 +1,5 @@
 define([
-    'Backbone',
+        'Backbone',
         'jQuery',
         'Underscore',
         'views/listViewBase',

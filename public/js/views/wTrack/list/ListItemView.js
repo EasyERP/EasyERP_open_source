@@ -1,8 +1,10 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'text!templates/wTrack/list/ListTemplate.html'
     ],
 
-    function (listTemplate) {
+    function (Backbone, _, listTemplate) {
         var QuotationListItemView = Backbone.View.extend({
             el: '#listTable',
 

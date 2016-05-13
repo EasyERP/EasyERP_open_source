@@ -19,28 +19,28 @@ define([
 
     var FilterView;
     FilterView = Backbone.View.extend({
-        el                 : '#searchContainer',
-        contentType        : "Filter",
-        savedFilters       : {},
-        filterIcons        : {},
-        template           : _.template(ContentFilterTemplate),
+        el: '#searchContainer',
+        contentType: "Filter",
+        savedFilters: {},
+        filterIcons: {},
+        template: _.template(ContentFilterTemplate),
         searchGroupTemplate: _.template(searchGroupLiTemplate),
 
         events: {
-            "mouseover .search-content"            : 'showSearchContent',
-            "mouseleave .search-options"           : 'showSearchContent',
-            "click .search-content"                : 'showSearchContent',
+            "mouseover .search-content": 'showSearchContent',
+            "mouseleave .search-options": 'showSearchContent',
+            "click .search-content": 'showSearchContent',
             "click .filter-dialog-tabs .filterTabs": 'showFilterContent',
-            'click #applyFilter'                   : 'applyFilter',
-            'click .condition li'                  : 'conditionClick',
-            'click .groupName'                     : 'showHideValues',
-            "click .filterValues li"               : "selectValue",
-            "click .filters"                       : "useFilter",
-            "click #saveFilterButton"              : "saveFilter",
-            "click .removeSavedFilter"             : "removeFilterFromDB",
-            "click .removeValues"                  : "removeFilter",
-            "keydown #forFilterName"               : "keyDown",
-            "click .showLast"                      : "showManyFilters"   // toDO overflow for many filters
+            'click #applyFilter': 'applyFilter',
+            'click .condition li': 'conditionClick',
+            'click .groupName': 'showHideValues',
+            "click .filterValues li": "selectValue",
+            "click .filters": "useFilter",
+            "click #saveFilterButton": "saveFilter",
+            "click .removeSavedFilter": "removeFilterFromDB",
+            "click .removeValues": "removeFilter",
+            "keydown #forFilterName": "keyDown",
+            "click .showLast": "showManyFilters"   // toDO overflow for many filters
         },
 
         keyDown: function (e) {
@@ -59,7 +59,6 @@ define([
             this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
 
             this.enable = true;
-
             //App.filter = {};
 
             this.currentCollection = {};
@@ -71,10 +70,14 @@ define([
 
             this.parseFilter();
 
-            this.setDbOnce = _.debounce(
+             this.setDbOnce = function(){
+             console.log('------------------->>>>');
+             this.trigger('filter', App.filter);
+             };
+          /*  this.setDbOnce = _.debounce(
                 function () {
                     this.trigger('filter', App.filter);
-                }, 500);
+                }, 500);*/
         },
 
         useFilter: function (e) {
@@ -86,7 +89,7 @@ define([
             var keys;
             var i;
 
-            dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response) {
+            dataService.getData('/currentUser', null, function (response) {
                 if (response && !response.error) {
                     App.currentUser = response.user;
                     App.savedFilters = response.savedFilters;
@@ -134,7 +137,7 @@ define([
                     newFilterValue = filter[filterkey];
                 }
                 newFilter[filterkey] = {
-                    key  : filterKey,
+                    key: filterKey,
                     value: newFilterValue
                 };
             });
@@ -189,16 +192,14 @@ define([
             }
 
             if (!allowName) {
-                App.render({
-                    type   : 'error',
+                return App.render({
+                    type: 'error',
                     message: 'Filter with same name already exists! Please, change filter name.'
                 });
-                bool = false;
             }
 
             if ((Object.keys(App.filter)).length === 0) {
-                App.render({type: 'error', message: 'Please, use some filter!'});
-                bool = false;
+                return App.render({type: 'error', message: 'Please, use some filter!'});
             }
 
             if (bool && filterName.length > 0) {
@@ -214,26 +215,26 @@ define([
                 currentUser.save(
                     filterObj,
                     {
-                        headers : {
+                        headers: {
                             mid: mid
                         },
-                        wait    : true,
-                        patch   : true,
+                        wait: true,
+                        patch: true,
                         validate: false,
-                        success : function (model) {
+                        success: function (model) {
                             updatedInfo = model.get('success');
                             filters = updatedInfo.savedFilters;
                             length = filters.length;
                             id = filters[length - 1]._id;
                             App.savedFilters[self.parentContentType].push(
                                 {
-                                    _id      : {
-                                        _id        : id,
+                                    _id: {
+                                        _id: id,
                                         contentView: key,
-                                        filter     : filterForSave
+                                        filter: filterForSave
                                     },
                                     byDefault: byDefault,
-                                    viewType : viewType
+                                    viewType: viewType
                                 }
                             );
                             favouritesContent.append('<li class="filters"  id ="' + id + '">' + filterName + '</li><button class="removeSavedFilter" id="' + id + '">' + 'x' + '</button>');
@@ -243,7 +244,7 @@ define([
                             //self.$el.find('.forFilterIcons').html('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
                             self.selectedFilter(id);
                         },
-                        error   : function (model, xhr) {
+                        error: function (model, xhr) {
                             console.error(xhr);
                         },
                         editMode: false
@@ -269,15 +270,15 @@ define([
             currentUser.save(
                 filterObj,
                 {
-                    headers : {
+                    headers: {
                         mid: mid
                     },
-                    wait    : true,
-                    patch   : true,
+                    wait: true,
+                    patch: true,
                     validate: false,
-                    success : function (model) {
+                    success: function (model) {
                     },
-                    error   : function (model, xhr) {
+                    error: function (model, xhr) {
                         console.error(xhr);
                     },
                     editMode: false
@@ -307,6 +308,7 @@ define([
             var collectionElement;
             var intVal;
             var index;
+            var self = this;
 
             $currentElement.toggleClass('checkedValue');
 
@@ -320,9 +322,9 @@ define([
 
                 if (!App.filter[filterObjectName]) {
                     App.filter[filterObjectName] = {
-                        key  : groupType,
+                        key: groupType,
                         value: [],
-                        type : filterType || null
+                        type: filterType || null
                     };
                 }
 
@@ -367,12 +369,14 @@ define([
 
                 if (groupName.length > 0) {
                     filterIc.addClass('active');
-                    filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                    filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                    //filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                 } else {
-                    if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate')) {
+                    if ((key !== 'forSales') && (key !== 'startDate') && (key !== 'endDate') && (key !== 'workflowId')) {
                         groupName = 'Letter';
                         filterIc.addClass('active');
-                        filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                        filterValues.prepend('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + key + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
+                        //filterValues.append('<div class="forFilterIcons"><span class="fa fa-filter funnelIcon"></span><span data-value="' + 'letter' + '" class="filterValues">' + groupName + '</span><span class="removeValues">x</span></div>');
                     }
                 }
             });
@@ -401,7 +405,7 @@ define([
             var collectionElement;
 
             if (filterView) {
-                valuesArray = App.filter[filterView]['value'];
+                valuesArray = App.filter[filterView] || App.filter[filterView]['value'];
             } else {
                 App.filter = {};
                 this.removeSelectedFilter();
@@ -495,6 +499,13 @@ define([
             var sortOptions;
             var intFiltersArray = ['week', 'month', 'year'];
 
+            if (!groupOptions) {
+                groupOptions = {};
+            }
+
+            groupOptions.sort = {};
+            groupOptions.sort.order = 1;
+
             if (!App.filtersValues || !App.filtersValues[self.parentContentType]) {
                 return setTimeout(function () {
                     self.renderGroup(key, filterView, groupStatus, null, null, cb);
@@ -506,10 +517,7 @@ define([
             this.currentCollection[filterView] = new filterValuesCollection(this.filterObject[filterView]);
 
             if (intFiltersArray.indexOf(filterView) !== -1) {
-                groupOptions = {};
-                groupOptions.sort = {};
                 groupOptions.sort.key = 'name';
-                groupOptions.sort.order = 1;
                 groupOptions.sort.int = true;
             }
 
@@ -520,12 +528,12 @@ define([
 
             mapData = _.map(this.currentCollection[filterView].toJSON(), function (dataItem) {
                 return {
-                    category       : key,
-                    categoryView   : filterView,
+                    category: key,
+                    categoryView: filterView,
                     categoryBackend: filterBackend,
-                    label          : dataItem.name,
-                    value          : dataItem.name,
-                    data           : dataItem._id
+                    label: dataItem.name,
+                    value: dataItem.name,
+                    data: dataItem._id
                 };
             });
 
@@ -539,14 +547,14 @@ define([
             }
 
             itemView = new valuesView({
-                groupStatus      : groupStatus,
+                groupStatus: groupStatus,
                 parentContentType: this.parentContentType,
-                element          : idString,
-                status           : status,
-                groupName        : key,
-                groupViewName    : filterView,
+                element: idString,
+                status: status,
+                groupName: key,
+                groupViewName: filterView,
                 currentCollection: this.currentCollection[filterView],
-                sortOptions      : sortOptions
+                sortOptions: sortOptions
             });
 
             container.html('');
@@ -584,9 +592,9 @@ define([
 
             if (!App.filter[filterObjectName]) {
                 App.filter[filterObjectName] = {
-                    key  : groupType,
+                    key: groupType,
                     value: [],
-                    type : filterType ? filterType : null // added type for filterMapper (bug of no searching in searchfield on wTrack)
+                    type: filterType ? filterType : null // added type for filterMapper (bug of no searching in searchfield on wTrack)
                 };
             }
 
@@ -625,7 +633,7 @@ define([
             this.renderSavedFilters();
 
             $.widget("custom.catcomplete", $.ui.autocomplete, {
-                _create    : function () {
+                _create: function () {
                     this._super();
                     this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
                 },
@@ -687,7 +695,7 @@ define([
 
                     if (!allResults.length && searchInput.html()) {  // added message in case of search unsuccessful
                         App.render({
-                            type   : 'error',
+                            type: 'error',
                             message: 'No such result'
                         });
                     }
@@ -699,7 +707,7 @@ define([
             });
 
             searchInput.catcomplete({
-                source  : this.searchRessult,
+                source: this.searchRessult,
                 appendTo: searchInput.closest('#searchGlobalContainer')
                 /*focus : function (event, ui) {
                  $(this).closest("#mainSearch").text(ui.item.label);
