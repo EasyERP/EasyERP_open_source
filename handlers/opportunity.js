@@ -13,6 +13,7 @@ var Opportunity = function (models, event) {
         var async = require('async');
         var validator = require('validator');
         var objectId = mongoose.Types.ObjectId;
+        var CONSTANTS = require('../constants/mainConstants.js');
         var fs = require('fs');
 
         var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -1049,8 +1050,6 @@ var Opportunity = function (models, event) {
 
         function getFilter(req, res, next) {
             var Opportunities = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
-            var departmentSearcher;
-            var contentIdsSearcher;
             var accessRollSearcher;
             var contentSearcher;
             var waterfallTasks;
