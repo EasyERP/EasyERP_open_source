@@ -142,7 +142,6 @@ define([
                     case CONTENT_TYPES.EXPENSESPAYMENTS:
                     case CONTENT_TYPES.DIVIDENDINVOICE:
                     case CONTENT_TYPES.DIVIDENDPAYMENTS:
-                    case CONTENT_TYPES.SETTINGSEMPLOYEE:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
@@ -205,7 +204,6 @@ define([
                     case CONTENT_TYPES.EXPENSESPAYMENTS:
                     case CONTENT_TYPES.DIVIDENDINVOICE:
                     case CONTENT_TYPES.DIVIDENDPAYMENTS:
-                    case CONTENT_TYPES.SETTINGSEMPLOYEE:
                         App.currentViewType = 'list';
                         break;
                     case CONTENT_TYPES.APPLICATIONS:
