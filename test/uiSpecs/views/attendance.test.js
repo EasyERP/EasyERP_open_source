@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'views/main/MainView',
@@ -3324,12 +3323,9 @@ define([
                 var $expectedMenuEl;
 
                 server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
-
                 view = new MainView({el: $elFixture, contentType: 'Attendance'});
-
                 $expectedMenuEl = view.$el.find('#mainmenu-holder');
                 $expectedSubMenuEl = view.$el.find('#submenu-holder');
-
                 server.respond();
 
                 expect($expectedMenuEl).to.exist;
@@ -3405,7 +3401,7 @@ define([
                     server.respond();
                     server.respond();
 
-                    clock.tick(200);
+                    //clock.tick(200);
 
                     $thisEl = indexView.$el;
 
@@ -3416,7 +3412,7 @@ define([
                     done();
                 });
 
-                it('Try to change employee', function(){
+               /* it('Try to change employee', function(){
                     var $next;
                     var $prev;
                     var $selectedItem;
@@ -3438,7 +3434,6 @@ define([
                     expect($thisEl.find('.grid-conatiner')).to.exist;
                     expect($thisEl.find('.grid-conatiner > .attendance')).to.exist;
                     expect($thisEl.find('.grid-conatiner > .statisticsAtten')).to.exist;
-
                 });
 
                 it('Try to change time', function(){
@@ -3452,8 +3447,7 @@ define([
                     expect($thisEl.find('.grid-conatiner')).to.exist;
                     expect($thisEl.find('.grid-conatiner > .attendance')).to.exist;
                     expect($thisEl.find('.grid-conatiner > .statisticsAtten')).to.exist;
-
-                });
+                });*/
             });
 
         });
@@ -3461,4 +3455,3 @@ define([
     });
 
 });
-*/

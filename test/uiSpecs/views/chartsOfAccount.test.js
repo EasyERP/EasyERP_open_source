@@ -1414,9 +1414,7 @@ define([
 
                 expect($expectedMenuEl).to.have.class('selected');
                 expect(window.location.hash).to.be.equals('#easyErp/ChartOfAccount');
-
             });
-
         });
 
         describe('topBarView', function(){
@@ -1612,7 +1610,6 @@ define([
                     var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
 
                     $createBtn.click();
-                    listView.createItem();
 
                     $codeInput = listView.$el.find('td[data-content="code"]')[0];
                     $accountInput = listView.$el.find('td[data-content="account"]')[0];

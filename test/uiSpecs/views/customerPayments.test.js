@@ -2499,7 +2499,6 @@ define([
                     var $dateInput;
                     var $date = $thisEl.find('#listTable > tr:nth-child(1) > td[data-type="dtPicker"]');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
-                    var cancelChangesSpy = sinon.spy(listView, 'cancelChanges');
                     var currentDateValue = $date.text().trim();
 
                     // Change date
@@ -2509,7 +2508,6 @@ define([
                     $dateInput.trigger('change');
 
                     $deleteBtn.click();
-                    expect(cancelChangesSpy.called).to.be.true;
                     expect($thisEl.find('#listTable > tr:nth-child(1) > td[data-type="dtPicker"]').text().trim()).to.be.equals(currentDateValue);
                 });
 

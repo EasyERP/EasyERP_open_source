@@ -8,10 +8,8 @@ define([
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai',
-    'custom',
-    'async'
-], function (fixtures, VacationsCollection, MainView, ListView, TopBarView, CreateView, $, chai, chaiJquery, sinonChai, Custom, async) {
+    'sinon-chai'
+], function (fixtures, VacationsCollection, MainView, ListView, TopBarView, CreateView, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
 
@@ -4809,7 +4807,6 @@ define([
         var $fixture;
         var $elFixture;
 
-
         after(function () {
             view.remove();
             topBarView.remove();
@@ -4825,7 +4822,6 @@ define([
                 $elFixture = $fixture.find('#wrapper');
 
                 server = sinon.fakeServer.create();
-
             });
 
             after(function () {
@@ -4861,9 +4857,7 @@ define([
 
                 expect($expectedMenuEl).to.have.class('selected');
                 expect(window.location.hash).to.be.equals('#easyErp/Vacation');
-
             });
-
         });
 
         describe('TopBarView', function () {
@@ -4896,13 +4890,11 @@ define([
                 var vacationUrl = new RegExp('\/vacation\/list', 'i');
 
                 server.respondWith('GET', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
-
                 vacationsCollection = new VacationsCollection({
                     count: 100,
                     viewType: 'list',
                     contentType: 'Vacation'
                 });
-
                 server.respond();
 
                 topBarView = new TopBarView({
@@ -4917,7 +4909,6 @@ define([
                 var $listTemplateBtn = topBarView.$el.find('#listBtn');
 
                 $listTemplateBtn.click();
-
                 expect(window.location.hash).to.be.equals('#easyErp/Vacation/list');
             });
 
@@ -4951,12 +4942,10 @@ define([
 
                     server.respondWith('GET', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
                     server.respondWith('GET', employeeUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployees)]);
-
                     listView = new ListView({
                         collection: vacationsCollection,
                         startTime: new Date()
                     });
-
                     server.respond();
                     server.respond();
 
@@ -4999,7 +4988,7 @@ define([
                     var $listTableEl = listView.$el.find('#listTable');
 
                     createBtn.click();
-                    expect($listTableEl.find('tr:nth-child(1) > td:nth-child(1)').text()).to.be.equals('Select');
+                    expect($listTableEl.find('tr:nth-child(1) > td:nth-child(1)').text().trim()).to.be.equals('1\n        Select');
 
                 });
 
@@ -5052,7 +5041,6 @@ define([
                     server.respond();
 
                     expect(listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)').text()).to.equals('P');
-
                 });
 
                 it('Try to cancel changes on item', function(){
@@ -5082,7 +5070,6 @@ define([
                     $emptyEl = listView.$el.find('#content > ul > li:nth-child(1)');
                     $emptyEl.click();
                     server.respond();
-
                     //expect(listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)').text()).to.equals('');
                 });
 
@@ -5101,18 +5088,12 @@ define([
 
                 it('Try to show more with', function(){
                     var vacationUrl = new RegExp('\/vacation\/list', 'i');
-                    var spyResponse;
 
                     server.respondWith('GET', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
                     vacationsCollection.showMore();
                     server.respond();
-
                 });
-
             });
-
         });
-
     });
-
 });

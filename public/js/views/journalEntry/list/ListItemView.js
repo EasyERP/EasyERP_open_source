@@ -17,7 +17,6 @@
             },
 
             render: function () {
-
                 this.$el.append(_.template(listTemplate, {
                     currencySplitter: helpers.currencySplitter,
                     collection      : this.collection.toJSON(),

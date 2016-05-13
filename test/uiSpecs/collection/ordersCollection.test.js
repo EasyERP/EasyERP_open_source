@@ -709,16 +709,6 @@ define([
             expect(window.location.hash).to.be.equals('#login');
         });
 
-        it ('Try showMore collection', function(){
-            var orderUrl = new RegExp('/quotation/list', 'i');
-
-            server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOrders)]);
-            orderCollection.showMore();
-            server.respond();
-
-            expect(orderCollection.toJSON().length).to.be.equals(2);
-        });
-
         it ('Try showMore collection with error response', function(){
             var spyResponse;
             var orderUrl = new RegExp('/quotation/list', 'i');
@@ -730,6 +720,16 @@ define([
             spyResponse = mainSpy.args[0][0];
             expect(spyResponse).to.have.property('type', 'error');
             expect(spyResponse).to.have.property('message', 'Some Error.');
+        });
+
+        it ('Try showMore collection', function(){
+            var orderUrl = new RegExp('/quotation/list', 'i');
+
+            server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOrders)]);
+            orderCollection.showMore();
+            server.respond();
+
+            expect(orderCollection.toJSON().length).to.be.equals(2);
         });
 
     });

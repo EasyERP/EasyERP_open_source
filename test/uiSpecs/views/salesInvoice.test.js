@@ -2562,7 +2562,6 @@ define([
                 $elFixture = $fixture.find('#wrapper');
 
                 server = sinon.fakeServer.create();
-
             });
 
             after(function () {
@@ -2582,7 +2581,6 @@ define([
 
                 expect($expectedMenuEl).to.exist;
                 expect($expectedSubMenuEl).to.exist;
-
             });
 
             it('Should render menu and subMenu', function () {
@@ -2597,7 +2595,6 @@ define([
 
                 expect($expectedMenuEl).to.have.class('selected');
                 expect(window.location.hash).to.be.equals('#easyErp/salesInvoice');
-
             });
 
         });
@@ -2764,7 +2761,7 @@ define([
                     expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
                 });
 
-                it('Try to go to edit dialog', function () {
+                it('Try to go to edit dialog with error response', function () {
                     var spyResponse;
                     var $needTd = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
                     var invoiceUrl = new RegExp('\/Invoice\/form', 'i');

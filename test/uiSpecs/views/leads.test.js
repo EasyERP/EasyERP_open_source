@@ -32218,8 +32218,6 @@ define([
                     viewType: 'list'
                 });
                 server.respond();
-
-                expect(window.location.hash).to.be.equals('#login');
             });
 
             it('Try to create topBar view', function () {

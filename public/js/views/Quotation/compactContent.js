@@ -1,8 +1,9 @@
 ﻿define([
-        "text!templates/Persons/compactContentTemplate.html",
-        "common"
+        'Backbone',
+        'jQuery',
+        'text!templates/Persons/compactContentTemplate.html'
     ],
-    function (compactContentTemplate, common) {
+    function (Backbone, $, compactContentTemplate) {
         var compactContentView = Backbone.View.extend({
 
             className: "form",
@@ -20,6 +21,7 @@
             gotoPersonsForm: function (e) {
                 e.preventDefault();
                 var itemIndex = $(e.target).closest("a").attr("id");
+
                 Backbone.history.navigate("#easyErp/Persons/form/" + itemIndex, {trigger: true});
             },
 

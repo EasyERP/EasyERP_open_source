@@ -70,6 +70,8 @@ define([
                 status = self.model.get('status');
                 years = self.model.get('years');
 
+                console.log(years);
+
                 relatedEmployeeId = App.currentUser.relatedEmployee ? App.currentUser.relatedEmployee._id : null;
                 if (relatedEmployeeId) {
                     employeeArray = self.model.get('employees');

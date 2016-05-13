@@ -3,6 +3,7 @@ define([
     'router',
     'models/CompaniesModel',
     'collections/Companies/filterCollection',
+    'views/Filter/FilterView',
     'views/main/MainView',
     'views/Companies/TopBarView',
     'views/Companies/CreateView',
@@ -13,10 +14,8 @@ define([
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai',
-    'custom',
-    'constants'
-], function (fixtures, router, CompanyModel, CompaniesCollection, MainView, TopBarView, CreateView, EditView, FormView, ListView, ThumbnailsView, $, chai, chaiJquery, sinonChai, Custom, CONSTANTS) {
+    'sinon-chai'
+], function (fixtures, router, CompanyModel, CompaniesCollection, FilterView, MainView, TopBarView, CreateView, EditView, FormView, ListView, ThumbnailsView, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
 
@@ -14026,8 +14025,9 @@ define([
     var topBarView;
     var createView;
     var editView;
-    var windowConfirmStub;
     var companiesCollection;
+    var setDbOnceStub;
+    var windowConfirmStub;
 
     describe('CompaniesView', function () {
         var $fixture;
@@ -14035,7 +14035,8 @@ define([
         var server;
 
         before(function(){
-            windowConfirmStub = sinon.stub(window, 'confirm').returns(true);
+            windowConfirmStub = sinon.stub(window, 'confirm');
+            windowConfirmStub.returns(true);
         });
 
         after(function () {
@@ -14046,6 +14047,7 @@ define([
             formView.remove();
             editView.remove();
 
+            //setDbOnceStub.restore();
             windowConfirmStub.restore();
         });
 

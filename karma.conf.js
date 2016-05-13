@@ -15,7 +15,7 @@ module.exports = function (config) {
             {pattern: 'public/js/libs/**/*.js', included: false, watching: false},
 
             {pattern: 'test/uiSpecs/jqueryPrivate.js', included: false, watching: false},
-           /* {pattern: 'public/js/populate.js', included: false, watching: false},
+            /*{pattern: 'public/js/populate.js', included: false, watching: false},
             {pattern: 'public/js/dataService.js', included: false, watching: false},
             {pattern: 'public/js/router.js', included: false, watching: false},*/
 
@@ -35,14 +35,14 @@ module.exports = function (config) {
 
             //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
 
-            //{pattern: 'test/uiSpecs/**/dashboardVacation.test.js', included: false, watching: true},
-            //{pattern: 'test/uiSpecs/**/login.test.js', included: false, watching: true},
-            //
-            //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
-            //{pattern: 'test/uiSpecs/fixtures/*.test.js', included: false, watching: true},
-            //{pattern: 'test/uiSpecs/models/*.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/**/vacation.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/**/login.test.js', included: false, watching: true},
 
-            {pattern: 'test/uiSpecs/**/*.test.js', included: false, watching: true}
+            {pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/fixtures/*.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/models/*.test.js', included: false, watching: true},
+
+            //{pattern: 'test/uiSpecs/**/*.test.js', included: false, watching: true}
         ],
 
         exclude: [],
