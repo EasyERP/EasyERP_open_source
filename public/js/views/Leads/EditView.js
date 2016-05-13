@@ -318,6 +318,9 @@ define([
                     model: this.currentModel.toJSON()
                 });
                 var self = this;
+                var model = this.currentModel.toJSON();
+                var notDiv;
+
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
                     dialogClass  : "edit-dialog",
@@ -340,18 +343,24 @@ define([
                         }
                     }
                 });
-                var notDiv = this.$el.find('.assignees-container');
+
+                notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
                     }).render().el
                 );
                 dataService.getData('/Priority/leads', {}, function (priorities) {
+                    priorities = _.map(priorities.data, function (priority) {
+                        priority.name = priority.priority;
+
+                        return priority;
+                    });
                     self.responseObj['#priorityDd'] = priorities;
                 });
                 populate.getWorkflow("#workflowsDd", "", "/WorkflowsForDd", {id: "Leads"}, "name", this);
                 populate.get2name("#customerDd", "/Customer", {}, this, null, true);
-                dataService.getData('/employee/getForDD', {}, function (employees) {
+                dataService.getData('/employee/getForDD', {isEmployee : true}, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -365,8 +374,6 @@ define([
 
                 this.delegateEvents(this.events);
 
-                var model = this.currentModel.toJSON();
-                var that = this;
                 $("#convert-dialog-form").dialog({
                     autoOpen: false,
                     height  : 150,
@@ -377,7 +384,7 @@ define([
                         "Create opportunity": function () {
                             var self = this;
                             var createCustomer = ($("select#createCustomerOrNot option:selected").val()) ? true : false;
-                            that.currentModel.set({
+                            self.currentModel.set({
                                 isOpportunitie : true,
                                 isConverted    : true,
                                 convertedDate  : new Date(),
@@ -388,7 +395,7 @@ define([
                                     value   : 0
                                 }
                             });
-                            that.currentModel.save(that.currentModel.changed, {
+                            self.currentModel.save(self.currentModel.changed, {
                                 validate: false,
                                 headers : {
                                     mid: 39
@@ -400,7 +407,7 @@ define([
                                     Backbone.history.navigate("easyErp/Opportunities", {trigger: true});
                                 },
                                 error   : function (model, xhr) {
-                                    that.errorNotification(xhr);
+                                    self.errorNotification(xhr);
                                 }
 
                             });

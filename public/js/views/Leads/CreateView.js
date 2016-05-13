@@ -264,6 +264,8 @@ define([
             render: function () {
                 var self = this;
                 var formString = this.template();
+                var notDiv;
+
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
                     autoOpen     : true,
@@ -288,19 +290,35 @@ define([
                     ]
 
                 });
-                var notDiv = this.$el.find('.assignees-container');
+                notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
                     }).render().el
                 );
 
-                populate.getPriority("#priorityDd", this, true);
+
+                dataService.getData('/Priority/leads', {}, function (priorities) {
+                    priorities = _.map(priorities.data, function (priority) {
+                        priority.name = priority.priority;
+
+                        return priority;
+                    });
+                    self.responseObj['#priorityDd'] = priorities;
+                });
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Leads"}, "name", this, true);
                 populate.get2name("#customerDd", "/Customer", {}, this, true, true);
                 populate.get("#sourceDd", "/sources", {}, "name", this, true, true);
                 populate.get("#campaignDd", "/Campaigns", {}, "name", this, true, true);
-                populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
+                dataService.getData('/employee/getForDD', {isEmployee : true}, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee;
+                    });
+
+                    self.responseObj['#salesPerson'] = employees;
+                });
                 this.delegateEvents(this.events);
 
                 return this;

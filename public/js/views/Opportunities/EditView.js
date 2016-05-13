@@ -409,6 +409,9 @@
                     model: this.currentModel.toJSON()
                 });
                 var self = this;
+                var model = this.currentModel.toJSON();
+                var notDiv;
+
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
                     dialogClass  : "edit-dialog",
@@ -431,7 +434,7 @@
                         }
                     }
                 });
-                var notDiv = this.$el.find('#divForNote');
+                notDiv = this.$el.find('#divForNote');
                 notDiv.append(
                     new noteView({
                         model: this.currentModel
@@ -452,12 +455,28 @@
                 );
                 $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
-                var model = this.currentModel.toJSON();
-                populate.getPriority("#priorityDd", this);
+
+                dataService.getData('/Priority/leads', {}, function (priorities) {
+                    priorities = _.map(priorities.data, function (priority) {
+                        priority.name = priority.priority;
+
+                        return priority;
+                    });
+                    self.responseObj['#priorityDd'] = priorities;
+                });
                 populate.get2name("#customerDd", "/Customer", {}, this, false, true);
-                populate.get2name("#salesPersonDd", "/getForDdByRelatedUser", {}, this, false, true);
+                dataService.getData('/employee/getForDD', {isEmployee : true}, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee;
+                    });
+
+                    self.responseObj['#salesPersonDd'] = employees;
+                });
                 populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this);
                 populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, false, true);
+
                 if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
