@@ -407,6 +407,49 @@ var Opportunities = function (models, event) {
                                             id     : result._id
                                         }
                                     });
+
+                                    //send email to _opportunitie.salesPerson
+
+                                    var Mailer = require('../helpers/mailer');
+                                    var mailer = new Mailer();
+                                    var EmployeeSchema = mongoose.Schemas.Employee;
+                                    var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+                                    var mailOptions;
+
+                                    if (_opportunitie.salesPerson) {
+
+                                        Employee.findById(_opportunitie.salesPerson, {}, function (err, modelEmployee) {
+
+                                            if (err) {
+                                                res.send(500, {error: 'email send to assigned error'});
+                                            }
+
+                                            var workEmail = modelEmployee.get('workEmail');
+                                            var employee = modelEmployee.get('name');
+
+                                            var opportunityName = _opportunitie.name || (_opportunitie.isOpportunitie ? 'Opportunity' : 'Lead');
+                                            var opportunityDescription = _opportunitie.internalNotes || '';
+
+                                            if (workEmail) {
+                                                mailOptions = {
+                                                    to                    : workEmail,
+                                                    employee              : employee,
+                                                    opportunityName       : opportunityName,
+                                                    opportunityDescription: opportunityDescription
+                                                };
+
+                                                mailer.sendAssignedToLead(mailOptions, function (err, result) {
+                                                    if (err) {
+                                                        console.log(err);
+                                                    }
+                                                    console.log('email was send to ' + workEmail);
+                                                });
+                                            } else {
+                                                console.log('employee have not email');
+                                            }
+                                        });
+                                    }
                                 }
                             });
                         });

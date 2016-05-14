@@ -54,6 +54,23 @@ module.exports = function () {
     };
 
 
+    this.sendAssignedToLead = function(mailOptions, cb){
+
+        var templateOptions = {
+            employee: mailOptions.employee.first + ' ' + mailOptions.employee.last,
+            opportunityName: mailOptions.opportunityName,
+            opportunityDescription: mailOptions.opportunityDescription
+        };
+
+        mailOptions.generateTextFromHTML = true;
+        mailOptions.from = 'easyerp <no-replay@easyerp.com>';
+        mailOptions.subject = 'You was assigned'; // + name Leads
+
+        mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/sendAssignedToLead.html', encoding = "utf8"), templateOptions);
+
+        deliver(mailOptions, cb);
+    };
+
     this.registeredNewUser = function (options){
         var templateOptions = {
             name: options.firstName + ' ' + options.lastName,
