@@ -8,6 +8,10 @@ var Opportunities = function (models, event) {
         var workflowSchema = mongoose.Schemas.workflow;
         var fs = require('fs');
 
+        var Mailer = require('../helpers/mailer');
+        var mailer = new Mailer();
+        var EmployeeSchema = mongoose.Schemas.Employee;
+
         function getTotalCount(req, response) {
             var res = {};
             var filterObj = {};
@@ -395,6 +399,10 @@ var Opportunities = function (models, event) {
                             _opportunitie.source = data.source;
                         }
                         event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
+
+                            var mailOptions;
+                            var Employee;
+
                             _opportunitie.sequence = sequence;
                             _opportunitie.save(function (err, result) {
                                 if (err) {
@@ -408,28 +416,27 @@ var Opportunities = function (models, event) {
                                         }
                                     });
 
-                                    //send email to _opportunitie.salesPerson
-
-                                    var Mailer = require('../helpers/mailer');
-                                    var mailer = new Mailer();
-                                    var EmployeeSchema = mongoose.Schemas.Employee;
-                                    var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-
-                                    var mailOptions;
-
+                                    // send email to _opportunitie.salesPerson
                                     if (_opportunitie.salesPerson) {
 
+                                        Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
                                         Employee.findById(_opportunitie.salesPerson, {}, function (err, modelEmployee) {
+
+                                            var workEmail;
+                                            var employee;
+                                            var opportunityName;
+                                            var opportunityDescription;
 
                                             if (err) {
                                                 res.send(500, {error: 'email send to assigned error'});
                                             }
 
-                                            var workEmail = modelEmployee.get('workEmail');
-                                            var employee = modelEmployee.get('name');
+                                            workEmail = modelEmployee.get('workEmail');
+                                            employee = modelEmployee.get('name');
 
-                                            var opportunityName = _opportunitie.name || (_opportunitie.isOpportunitie ? 'Opportunity' : 'Lead');
-                                            var opportunityDescription = _opportunitie.internalNotes || '';
+                                            opportunityName = _opportunitie.name || (_opportunitie.isOpportunitie ? 'Opportunity' : 'Lead');
+                                            opportunityDescription = _opportunitie.internalNotes || '';
 
                                             if (workEmail) {
                                                 mailOptions = {
@@ -446,7 +453,7 @@ var Opportunities = function (models, event) {
                                                     console.log('email was send to ' + workEmail);
                                                 });
                                             } else {
-                                                console.log('employee have not email');
+                                                console.log('employee have not work email');
                                             }
                                         });
                                     }
