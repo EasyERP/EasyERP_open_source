@@ -64,8 +64,8 @@ module.exports = function () {
         };
 
         mailOptions.generateTextFromHTML = true;
-        mailOptions.from = 'easyerp <no-replay@easyerp.com>';
-        mailOptions.subject = 'You was assigned'; // + name Leads
+        mailOptions.from = 'ThinkMobiles <no-replay@easyerp.com>';
+        mailOptions.subject = 'Lead is assigned'; // + name Leads
 
         mailOptions.html = _.template(fs.readFileSync('public/templates/mailer/sendAssignedToLead.html', encoding = "utf8"), templateOptions);
 
