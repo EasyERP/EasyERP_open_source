@@ -1147,6 +1147,7 @@ var Opportunities = function (models, event) {
                 var employee;
                 var opportunityName;
                 var opportunityDescription;
+                var isOpportunity;
 
                 if (err) {
                     res.send(500, {error: 'email send to assigned error'});
@@ -1155,12 +1156,14 @@ var Opportunities = function (models, event) {
                 workEmail = modelEmployee.get('workEmail');
                 employee = modelEmployee.get('name');
 
-                opportunityName = opportunity.name || (opportunity.isOpportunitie ? 'Opportunity' : 'Lead');
+                opportunityName = opportunity.name || '';
                 opportunityDescription = opportunity.internalNotes || '';
+                isOpportunity = opportunity.isOpportunitie ? 'Opportunity' : 'Lead';
 
                 if (workEmail) {
                     mailOptions = {
                         to                    : workEmail,
+                        isOpportunity         : isOpportunity,
                         employee              : employee,
                         opportunityName       : opportunityName,
                         opportunityDescription: opportunityDescription
@@ -1189,15 +1192,27 @@ var Opportunities = function (models, event) {
                             if (data.workflow == data.workflowStart) {
                                 data.sequence -= 1;
                             }
-                            models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                                if (!err) {
-                                    res.send(200, {success: 'Opportunities updated', sequence: result.sequence});
-                                } else {
-                                    res.send(500, {error: "Can't update Opportunitie"});
-                                }
+                            models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findById(_id, function(err, oldOpportunity){
+                                models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                                    if (!err) {
+                                        res.send(200, {success: 'Opportunities updated', sequence: result.sequence});
 
+                                        if (result.salesPerson) {
+                                            if (oldOpportunity.salesPerson) {
+                                                if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                                    sendEmailToAssigned(req, result);
+                                                }
+                                            } else {
+                                                sendEmailToAssigned(req, result);
+                                            }
+                                        }
+
+                                    } else {
+                                        res.send(500, {error: "Can't update Opportunitie"});
+                                    }
+
+                                });
                             });
-
                         });
                     });
                 } else {
@@ -1206,13 +1221,27 @@ var Opportunities = function (models, event) {
                         delete data.workflowStart;
                         data.info = {};
                         data.sequence = sequence;
-                        models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                            if (!err) {
-                                res.send(200, {success: 'Opportunities updated'});
-                            } else {
-                                res.send(500, {error: "Can't update Opportunitie"});
-                            }
 
+                        models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findById(_id, function(err, oldOpportunity) {
+                            models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                                if (!err) {
+                                    res.send(200, {success: 'Opportunities updated'});
+
+                                    if (result.salesPerson) {
+                                        if (oldOpportunity.salesPerson) {
+                                            if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                                sendEmailToAssigned(req, result);
+                                            }
+                                        } else {
+                                            sendEmailToAssigned(req, result);
+                                        }
+                                    }
+
+                                } else {
+                                    res.send(500, {error: "Can't update Opportunitie"});
+                                }
+
+                            });
                         });
                     });
                 }
@@ -1288,7 +1317,6 @@ var Opportunities = function (models, event) {
                                     sequence: result.sequence
                                 });
 
-                                // send Opport updated
                                 if (result.salesPerson) {
                                     if (oldOpportunity.salesPerson) {
                                         if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {

@@ -57,6 +57,7 @@ module.exports = function () {
     this.sendAssignedToLead = function(mailOptions, cb){
 
         var templateOptions = {
+            isOpportunity: mailOptions.isOpportunity,
             employee: mailOptions.employee.first + ' ' + mailOptions.employee.last,
             opportunityName: mailOptions.opportunityName,
             opportunityDescription: mailOptions.opportunityDescription
