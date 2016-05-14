@@ -1,6 +1,6 @@
 @import "_colors";
 @import "_darckColor";
-//@import "_whiteColor";
+@import "_whiteColor";
 @import "generals/_index";
 @import "_topBar";
 @import "_list";
@@ -766,7 +766,7 @@ input::-ms-clear {
   float: none;
   .position(relative);
   width: 100%;
-  background: @bg-main-menu;
+  background: @bg-main;
   height: @height;
   .noPaddingMargin;
   border-bottom: @thin-border @border-color;
@@ -783,7 +783,7 @@ input::-ms-clear {
         height: @height;
         width: 120px;
         text-align: center;
-        color: @mainText-color;
+        color: @main-menu-text;
         line-height: @height;
         overflow: hidden;
         .left;
@@ -792,7 +792,7 @@ input::-ms-clear {
 
         a {
           letter-spacing: 1.5px;
-          color: @mainText-color;
+          color: @main-menu-text;
           font-size: 0.75rem;
           text-decoration: none;
           display: block;
@@ -1096,7 +1096,7 @@ input::-ms-clear {
   font-size: 13px;
 }
 
-.thumbnail(@background: @bg-main-menu, @width: 280px) {
+.thumbnail(@background: @thumbnail-bg, @width: 280px) {
   .left;
   margin-top: 4px;
   margin-left: 4px;
@@ -1155,7 +1155,7 @@ input::-ms-clear {
 
       .left {
         label {
-          color: @grey;
+          color: @status-color;
           line-height: 16px;
         }
       }
@@ -1236,9 +1236,10 @@ input::-ms-clear {
 }
 
 .cell-bg {
-  background: linear-gradient(45deg, fade(@border-color-main, 0) 48%, fade(@border-color-main, 20%) 50%, fade(@border-color-main, 0) 52%), linear-gradient(-45deg, fade(@border-color-main, 0) 48%, fade(@border-color-main, 20%) 50%, fade(@border-color-main, 0) 52%);
-  background-size: 16px 16px;
-  background-color: darken(@bg-main, 2%);
+  //for darck theme
+  //background: linear-gradient(45deg, fade(@border-color-main, 0) 48%, fade(@border-color-main, 20%) 50%, fade(@border-color-main, 0) 52%), linear-gradient(-45deg, fade(@border-color-main, 0) 48%, fade(@border-color-main, 20%) 50%, fade(@border-color-main, 0) 52%);
+  //background-size: 16px 16px;
+  //background-color: darken(@bg-main, 2%);
 }
 
 .kanban {
@@ -1277,7 +1278,7 @@ input::-ms-clear {
   }
 
   .column {
-    border-left: 10px solid @defaultBgHover-color;
+    //border-left: 10px solid @defaultBgHover-color; for darck Theme
     //vertical-align: text-top;
     min-height: 100%;
     width: auto;
@@ -1802,7 +1803,7 @@ input::-ms-clear {
   }
 }
 
-.dialog(@background: @bg-main-menu, @color: @mainText-color, @borderColor: @border-color-main) {
+.dialog(@background: @dialog-bg, @color: @mainText-color, @borderColor: @border-color-main) {
   background: @background;
   color: @color;
   z-index: 1000;
@@ -1889,7 +1890,7 @@ input::-ms-clear {
 
   .inner {
     padding: 5px;
-    background: @bg-main-menu;
+    background: @background;
   }
 
   .form-holder {
@@ -3237,7 +3238,7 @@ button.red, a.red {
   }
 
   .info {
-    color: #FFF;
+    color: @birth-text;
     background: @fontColor-2;
     margin-left: 160px;
     margin-right: 40px;
@@ -3252,7 +3253,7 @@ button.red, a.red {
 
     &:after {
       right: 100%;
-      border: solid rgba(0, 0, 0, 0);
+      border: solid @birth-bg;
       content: " ";
       height: 0;
       width: 0;
@@ -3407,7 +3408,7 @@ button.red, a.red {
 }
 
 .ui-widget-overlay {
-  background-color: #aaa;
+  background-color: @dialog-overlay-bg;
   opacity: .3;
   filter: Alpha(Opacity=30);
   position: fixed;
@@ -3872,13 +3873,7 @@ table#workflows {
 
 .createBtnHolder, #createBtnHolder {
   float: left;
-  //margin-top: 6px;
   margin-left: 5px;
-  /*.add {
-        font-size: 22px !important;
-        font-weight: 900;
-        line-height: 22px;
-    }*/
   a {
     float: left;
     display: block;
@@ -3896,7 +3891,7 @@ table#workflows {
     }
   }
   .fa {
-    font-size: 16px;
+    font-size: 1px;
     text-decoration: none;
     text-align: center;
     &:before {
@@ -3927,6 +3922,10 @@ table#workflows {
         line-height: 29px;
       }
     }
+  }
+  .btn {
+    max-height: 26px;
+    line-height: 14px;
   }
 }
 
@@ -4319,7 +4318,7 @@ ul.chart-tabs {
 h3.dashboard {
   text-align: center;
   line-height: 50px;
-  color: @mainText-color-selected;
+  color: @dashboard-title;
 }
 
 .leadChart, .chart {
@@ -5097,27 +5096,27 @@ textarea#editInput {
 
         &.dgreen {
           background: @overWork;
-          color: @overiewText-color;
+          color: @inactivate;
         }
         &.green {
           background: @normalWork;
-          color: @overiewText-color;
+          color: @inactivate;
         }
         &.brown {
           background: #5cb85c;
-          color: @overiewText-color;
+          color: @inactivate;
         }
         &.yellow {
           background: @littleWork;
-          color: @overiewText-color;
+          color: @inactivate;
         }
         &.pink {
           background: @oneWorkDay;
-          color: @overiewText-color;
+          color: @inactivate;
         }
         &.red {
           background-color: @free;
-          color: white;
+          color: @inactivate;
           border-bottom: 1px solid @border-color-main;
           border-left: 1px solid @border-color-main;
         }
@@ -5396,7 +5395,8 @@ textarea#editInput {
 .grid-conatiner {
   .attendanceTop {
     margin-bottom: 10px;
-    div {
+    > div {
+      display: inline-block;
       border: 1px solid @border-color-main;
       padding: 5px;
 
@@ -5413,6 +5413,14 @@ textarea#editInput {
 
       &.pull-left {
         margin-right: 10px;
+        height: 20px;
+        >div {
+          display: inline-block;
+        }
+        .editable {
+          position: relative;
+          cursor: pointer;
+        }
       }
     }
     &:after {
@@ -5526,7 +5534,7 @@ textarea#editInput {
 }
 
 .grid-conatiner.revenue {
-  background-color: #303031;
+  //background-color: #303031;
   color: #ffffff;
   padding: 20px;
   font-size: 13px;
@@ -6361,7 +6369,7 @@ textarea#editInput {
   float: right;
   width: 35%;
   position: relative;
-  margin-top: -26px;
+  margin-top: -27px;
   margin-right: 90px;
 
   .btn {

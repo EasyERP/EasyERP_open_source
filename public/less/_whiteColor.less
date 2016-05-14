@@ -1,6 +1,18 @@
-@tilte-color: #3E88B9;
+@transparent: transparent;
+
+@black: #000;
+@white: #fff;
+
+@grey-1: #E7E7E7;
+@grey-2: #4d5a75;
+@grey-3: #444;
+
+@blue-1: #3e88b9;
+
+
+@tilte-color: @blue-1;
 //for hover
-@fontColor-2: #393939;
+@fontColor-2: @black;
 //@mainText-color: #fff;
 @mainText-color: @fontColor-2;
 @mainText-color-selected: @tilte-color;
@@ -20,7 +32,8 @@
 /*==Main menu==========================*/
 
 @bg-main: #fff;
-@bg-main-menu: @bg-main;
+@bg-main-menu: @grey-2;
+@main-menu-text: @white;
 @bg-main-menu-selected: @tilte-color;
 //@bg-main-menu-selected: #b4b4b5;
 @span-color: @bg-main-menu-selected;
@@ -33,7 +46,7 @@
 
 @bg-submenu: @bg-main;
 @submenu-text-color: @mainText-color;
-@normal-submenu-text: #C1C1C1;
+@normal-submenu-text: @grey-2;
 @current-submenu-text: @tilte-color;
 @non-active-submenu-text: desaturate(@normal-submenu-text, 19%);
 @creatBtn-color: @mainText-color;
@@ -55,11 +68,14 @@
 
 /*==LIST ============================*/
 
-@defaultBgColorOdd-color: #DBDBDB;
+@defaultBgColorOdd-color: @grey-1;
 @list-color-text: @submenu-text-color;
-@defaultBgHover-color: darken(@bg-main, 20%);
+@defaultBgHover-color: darken(@bg-main, 15%);
 @list-border-color: @border-color-main;
 @list-caption-color: @mainText-color;
+@list-overtime-bg: @grey-1;
+@forCaption-color: @blue-1;
+@forCaption-text-color: @white;
 
 /*==Form Colum=================================*/
 
@@ -93,6 +109,14 @@
 @dashBoard-bg-menu-color: @bg-main-menu;
 @dashBoard-bg-menu-hoverColor: @defaultBgHover-color;
 
+@free: #A22A2D;
+@oneWorkDay: #CC5457;
+@littleWork: #F9A203;
+@normalWork: #3E7F42;
+@overWork: darken(@normalWork, 10%);
+@vacation: #3C86E0;
+@inactivate: @white;
+
 /*== forInfo ======================================*/
 @forInfo-caption-color: #1EBBEA;
 @forInfo-caption-color2: @tilte-color;
@@ -109,12 +133,18 @@
 @notifikation-error-color: #FE7E86;
 @notifikation-notify-color: #00DB30;
 
-/*VocationDashBoard =============================*/
+/*== DashBoard =============================*/
+@dashboard-title: @grey-2;
 
-@free: #A22A2D;
-@oneWorkDay: #CC5457;
-@littleWork: #F9A203;
-@normalWork: #3E7F42;
-@overWork: darken(@normalWork, 10%);
-@vacation: #3C86E0;
-@inactivate: #515151;
+/*== Thumbnail ==============================*/
+@thumbnail-bg: @transparent;
+@status-color: @black;
+
+/*== Dialog =============================*/
+@dialog-bg: @white;
+@dialog-overlay-bg: @grey-3;
+
+/*== Birthday ===========================*/
+@birth-bg: @grey-2;
+@birth-text: @white;
+@birth-title: @white;

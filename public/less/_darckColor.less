@@ -21,6 +21,7 @@
 //@bg-main: #1a2227;
 @bg-main: #303031;
 @bg-main-menu: @bg-main;
+@main-menu-text: @mainText-color;
 @bg-main-menu-selected: @mainText-color-selected;
 //@bg-main-menu-selected: #b4b4b5;
 @span-color: @bg-main-menu-selected;
@@ -61,6 +62,8 @@
 @list-border-color: #7f7f80;
 @list-caption-color: @grey;
 @list-overtime-bg: #3D3D4E;
+@forCaption-color: #7a7e8d;
+@forCaption-text-color: @black;
 
 /*==Form Colum=================================*/
 
@@ -94,6 +97,14 @@
 @dashBoard-bg-menu-color: @bg-main-menu;
 @dashBoard-bg-menu-hoverColor: @defaultBgHover-color;
 
+@free: #A22A2D;
+@oneWorkDay: #CC5457;
+@littleWork: #F9A203;
+@normalWork: #3E7F42;
+@overWork: darken(@normalWork, 10%);
+@vacation: #3C86E0;
+@inactivate: #515151;
+
 /*== forInfo ======================================*/
 @forInfo-caption-color: @tilte-color;
 @forInfo-caption-color2: @tilte-color;
@@ -115,15 +126,12 @@
 @btn-main-color: #f4f4f4;
 @btn-color-hover: #000;
 
-/*== VocationDashBoard =============================*/
+/*== DashBoard =============================*/
+@dashboard-title: @grey-2;
 
-@free: #A22A2D;
-@oneWorkDay: #CC5457;
-@littleWork: #F9A203;
-@normalWork: #3E7F42;
-@overWork: darken(@normalWork, 10%);
-@vacation: #3C86E0;
-@inactivate: #515151;
+/*== Thumbnail ==============================*/
+@status-color: @grey-2;
+@thumbnail-bg: @bg-main-menu;
 
 /*== Capacity =====================================*/
 
@@ -136,3 +144,11 @@
 
 @btnAttentionColor: #A22A2D;
 @btnSuccessColor: #3E7F42;
+
+/*== Dialog =============================*/
+@dialog-bg: @bg-main-menu;
+@dialog-overlay-bg: @bg-main-menu;
+
+/*== Birthday ===========================*/
+@birth-bg: @fontColor-2;
+@birth-text: #fff;
