@@ -374,6 +374,7 @@ define([
 
                 this.delegateEvents(this.events);
 
+                var that = this;
                 $("#convert-dialog-form").dialog({
                     autoOpen: false,
                     height  : 150,
@@ -384,7 +385,7 @@ define([
                         "Create opportunity": function () {
                             var self = this;
                             var createCustomer = ($("select#createCustomerOrNot option:selected").val()) ? true : false;
-                            self.currentModel.set({
+                            that.currentModel.set({
                                 isOpportunitie : true,
                                 isConverted    : true,
                                 convertedDate  : new Date(),
@@ -395,7 +396,7 @@ define([
                                     value   : 0
                                 }
                             });
-                            self.currentModel.save(self.currentModel.changed, {
+                            that.currentModel.save(that.currentModel.changed, {
                                 validate: false,
                                 headers : {
                                     mid: 39
@@ -407,7 +408,7 @@ define([
                                     Backbone.history.navigate("easyErp/Opportunities", {trigger: true});
                                 },
                                 error   : function (model, xhr) {
-                                    self.errorNotification(xhr);
+                                    that.errorNotification(xhr);
                                 }
 
                             });
