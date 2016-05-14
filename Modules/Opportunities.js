@@ -1093,19 +1093,20 @@ var Opportunities = function (models, event) {
                                     createPersonCustomer({});
                                 }
                             }
-                            res.send(200, {success: 'Opportunities updated success', result: result});
 
                             // send email to assigned when update Lead
-
                             if (result.salesPerson) {
                                 if (oldOpportunity.salesPerson) {
-                                   if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
-                                       sendEmailToAssigned(req, result);
-                                   }
+                                    if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                        sendEmailToAssigned(req, result);
+                                    }
                                 } else {
                                     sendEmailToAssigned(req, result);
                                 }
                             }
+
+                            res.send(200, {success: 'Opportunities updated success', result: result});
+
                         }
                         });
                     });

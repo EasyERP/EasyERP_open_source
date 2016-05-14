@@ -374,7 +374,7 @@ define([
 
                 this.delegateEvents(this.events);
 
-                var that = this;
+                var that = this; // DO NOT confuse with "self" below! it's other context!
                 $("#convert-dialog-form").dialog({
                     autoOpen: false,
                     height  : 150,
@@ -386,6 +386,7 @@ define([
                             var self = this;
                             var createCustomer = ($("select#createCustomerOrNot option:selected").val()) ? true : false;
                             that.currentModel.set({
+                                salesPerson    : $('a#salesPerson').attr('data-id') || '',
                                 isOpportunitie : true,
                                 isConverted    : true,
                                 convertedDate  : new Date(),
