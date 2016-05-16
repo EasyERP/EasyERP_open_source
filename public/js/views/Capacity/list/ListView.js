@@ -382,8 +382,8 @@ define([
                     currentCollection = self.departmentsCollections[key];
 
                     if (!sortClass) {
-                        target$.addClass('sortDn');
-                        sortClass = "sortDn";
+                        target$.addClass('sortUp');
+                        sortClass = "sortUp";
                     }
 
                     switch (sortClass) {
@@ -391,14 +391,14 @@ define([
                         {
                             target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
                             target$.removeClass('sortDn').addClass('sortUp');
-                            self.sortConst = -1;
+                            self.sortConst = 1;
                         }
                             break;
                         case "sortUp":
                         {
                             target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
                             target$.removeClass('sortUp').addClass('sortDn');
-                            self.sortConst = 1;
+                            self.sortConst = -1;
                         }
                             break;
                     }

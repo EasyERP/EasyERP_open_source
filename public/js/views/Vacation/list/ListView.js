@@ -378,22 +378,22 @@ define([
             collection = this.collection.toJSON();
 
             if (!sortClass) {
-                target.addClass('sortDn');
-                sortClass = "sortDn";
+                target.addClass('sortUp');
+                sortClass = "sortUp";
             }
             switch (sortClass) {
                 case "sortDn":
                 {
                     target.parent().find("th").removeClass('sortDn').removeClass('sortUp');
                     target.removeClass('sortDn').addClass('sortUp');
-                    sortConst = -1;
+                    sortConst = 1;
                 }
                     break;
                 case "sortUp":
                 {
                     target.parent().find("th").removeClass('sortDn').removeClass('sortUp');
                     target.removeClass('sortUp').addClass('sortDn');
-                    sortConst = 1;
+                    sortConst = -1;
                 }
                     break;
             }

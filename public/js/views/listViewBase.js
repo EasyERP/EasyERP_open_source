@@ -87,8 +87,8 @@ define([
                 sortObject = {};
 
                 if (!sortClass) {
-                    target$.addClass('sortDn');
-                    sortClass = "sortDn";
+                    target$.addClass('sortUp');
+                    sortClass = "sortUp";
                 }
                 switch (sortClass) {
                     case "sortDn":
