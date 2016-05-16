@@ -382,7 +382,7 @@ var PayRoll = function (models) {
         var id = req.query.id;
         var data = req.query;
         var error;
-        var sort = data.sort || {"employee.name.first": 1, "employee.name.last" : 1};
+        var sort = data.sort || {"employee.name.first": 1, "employee.name.last": 1};
         var sortKeys = Object.keys(sort);
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
@@ -534,8 +534,8 @@ var PayRoll = function (models) {
         var key = 'salaryReport' + filter + startDate.toString() + endDate.toString();
         var redisStore = require('../helpers/redisClient');
         var waterfallTasks;
-        var startDateKey = moment(startDate).year() * 100 +  moment(startDate).week(); // todo isoWeek (changed on week)
-        var endDateKey = moment(endDate).year() * 100 +  moment(endDate).week(); // todo isoWeek (changed on week)
+        var startDateKey = moment(startDate).year() * 100 + moment(startDate).week(); // todo isoWeek (changed on week)
+        var endDateKey = moment(endDate).year() * 100 + moment(endDate).week(); // todo isoWeek (changed on week)
         var filterValue;
 
         function caseFilterEmployee(filter) {
@@ -580,15 +580,15 @@ var PayRoll = function (models) {
                         $and: [{
                             isEmployee: true
                         }, /*{ // commented in case of employee that was fired and again hired
-                            $or: [{
-                                lastFire: null
-                            }, {
-                                lastFire: {
-                                    $ne : null,
-                                    $gte: startDateKey
-                                }
-                            }]
-                        },*/{
+                         $or: [{
+                         lastFire: null
+                         }, {
+                         lastFire: {
+                         $ne : null,
+                         $gte: startDateKey
+                         }
+                         }]
+                         },*/{
                             firstHire: {
                                 $ne : null,
                                 $lte: endDateKey
@@ -635,7 +635,7 @@ var PayRoll = function (models) {
                         name      : 1,
                         lastFire  : 1,
                         transfer  : 1,
-                        firstHire  : {
+                        firstHire : {
                             $let: {
                                 vars: {
                                     firstHired: {$arrayElemAt: ["$hire", 0]}
@@ -762,14 +762,23 @@ var PayRoll = function (models) {
         salaryReport(req, cb);
     };
 
-    this.recount = function (req, res, next) {
+    function recount(req, res, next) {
         var db = req.session.lastDb;
         var data = req.body;
         var dataKey = parseInt(data.dataKey, 10);
-        var year = parseInt(data.dataKey.slice(0, 4), 10);
-        var month = parseInt(data.dataKey.slice(4), 10);
+        var year;
+        var month;
         var Payroll = models.get(db, 'PayRoll', PayRollSchema);
         var waterfallFunc;
+
+        if (!dataKey) {
+            year = parseInt(data.year, 10);
+            month = parseInt(data.month, 10);
+            dataKey = year * 100 + month;
+        } else {
+            year = parseInt(data.dataKey.slice(0, 4), 10);
+            month = parseInt(data.dataKey.slice(4), 10);
+        }
 
         req.body.month = month;
         req.body.year = year;
@@ -778,15 +787,15 @@ var PayRoll = function (models) {
             Payroll.remove({dataKey: dataKey}, wfCb);
         }
 
-        /* function createIdleByMonth(removed, wfCb) {
-         journalEntry.createIdleByMonth({req: req, callback: wfCb, month: month, year: year});
-         }*/
+        function createIdleByMonth(removed, wfCb) {
+            journalEntry.createIdleByMonth({req: req, callback: wfCb, month: month, year: year});
+        }
 
-        function generateByDataKey(created, wfCb) {
+        function generateByDataKey(wfCb) {
             generate(req, res, next, wfCb);
         }
 
-        waterfallFunc = [removeByDataKey, /*createIdleByMonth,*/ generateByDataKey];
+        waterfallFunc = [removeByDataKey, createIdleByMonth, generateByDataKey];
 
         async.waterfall(waterfallFunc, function (err, result) {
             if (err) {
@@ -796,7 +805,7 @@ var PayRoll = function (models) {
             res.status(200).send({success: true});
         });
 
-    };
+    }
 
     function generate(req, res, next, cbFromRecalc) {
         var db = req.session.lastDb;
@@ -816,7 +825,7 @@ var PayRoll = function (models) {
 
         function getEmployees(callback) {
             var queryObject = {
-              //  isEmployee: true,
+                //  isEmployee: true,
                 department: {
                     $in: departmentArray
                 }
@@ -837,15 +846,23 @@ var PayRoll = function (models) {
                     var fire = elem.fire;
                     var length = hire.length;
                     var dateToCreate = endDate;
-                    var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hour: 15, minute: 1, second: 0}));
+                    var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({
+                        hour  : 15,
+                        minute: 1,
+                        second: 0
+                    }));
                     var daysInMonth;
                     var payForDay;
                     var department;
-                    var hireKey = moment(new Date(hire[0].date)).year() * 100 + moment(new Date(hire[0].date)).month();
-                    var fireKey = fire[0] ? moment(new Date(fire[0])).year() * 100 + moment(new Date(fire[0])).month() : Infinity;
-                    var localKey = moment(dateToCreate).year() * 100 + moment(dateToCreate).month();
+                    var hireKey = moment(new Date(hire[0].date)).year() * 100 + moment(new Date(hire[0].date)).month() + 1;
+                    var fireKey = fire[0] ? moment(new Date(fire[0])).year() * 100 + moment(new Date(fire[0])).month() + 1 : Infinity;
+                    var localKey = moment(dateToCreate).year() * 100 + moment(dateToCreate).month() + 1;
 
-                    journalEntry.removeByDocId({'sourceDocument._id': elem._id, journal: CONSTANTS.ADMIN_SALARY_JOURNAL, date: localDate}, req.session.lastDb, function (err, result) {
+                    journalEntry.removeByDocId({
+                        'sourceDocument._id': elem._id,
+                        journal             : CONSTANTS.ADMIN_SALARY_JOURNAL,
+                        date                : localDate
+                    }, req.session.lastDb, function (err, result) {
 
                     });
 
@@ -859,31 +876,27 @@ var PayRoll = function (models) {
                         }
                     }
 
-                    if (elem._id.toString() === '55b92ad221e4b7c40f000042'){
-                        console.log('dddd');
-                    }
-
-                    if (hireKey === localKey){
+                    if (hireKey === localKey) {
                         daysInMonth = moment(dateToCreate).endOf('month').date();
                         payForDay = salary / daysInMonth;
 
                         salary = payForDay * (daysInMonth - moment(new Date(hire[0].date)).date() + 1);
                     }
 
-                    if (fireKey === localKey){
+                    if (fireKey === localKey) {
                         daysInMonth = moment(dateToCreate).endOf('month').date();
                         payForDay = salary / daysInMonth;
 
                         salary = payForDay * moment(new Date(fire[0])).date();
-                    } else if (fireKey < localKey){
+                    } else if (fireKey < localKey) {
                         salary = 0;
                     }
 
                     if (salary || (salary === 0)) {
                         ids[elem._id] = {
-                            salary: salary,
+                            salary    : salary,
                             department: department
-                        } ;
+                        };
                     }
                 });
 
@@ -896,6 +909,7 @@ var PayRoll = function (models) {
                 JournalEntry.aggregate([{
                     $match: {
                         'sourceDocument.model': "Employees",
+                        journal: {$in: [ObjectId(CONSTANTS.IDLE_PAYABLE), ObjectId(CONSTANTS.VACATION_PAYABLE)]},
                         date                  : {
                             $gte: new Date(date),
                             $lte: new Date(endDate)
@@ -935,26 +949,12 @@ var PayRoll = function (models) {
                         }
                     }
                 }, {
-                    $lookup: {
-                        from        : "wTrack",
-                        localField  : "sourceDocument._id",
-                        foreignField: "_id", as: "sourceDocument"
-                    }
-                }, {
                     $project: {
-                        debit  : {$divide: ['$debit', 100]},
-                        credit : {$divide: ['$credit', 100]},
-                        journal: 1,
-                        wTrack : {$arrayElemAt: ["$sourceDocument", 0]},
-                        date   : 1
-                    }
-                }, {
-                    $project: {
-                        debit   : '$debit',
-                        credit  : '$credit',
+                        debit   : {$divide: ['$debit', 100]},
+                        credit  : {$divide: ['$credit', 100]},
                         journal : 1,
-                        employee: '$wTrack.employee',
-                        date    : 1
+                        date    : 1,
+                        employee: '$sourceDocument.employee'
                     }
                 }, {
                     $group: {
@@ -980,8 +980,8 @@ var PayRoll = function (models) {
                 var empIdsSecond = _.pluck(result[1], '_id');
 
                 callback(null, {
-                    resultByEmployee: result[0],
-                    resultByWTrack  : result[1],
+                    resultByEmployee: result[1],
+                    resultByWTrack  : result[0],
                     ids             : _.union(empIds, empIdsSecond),
                     empIds          : ids
                 });
@@ -1002,7 +1002,11 @@ var PayRoll = function (models) {
                 dataKey: dataKey,
                 paid   : 0
             };
-            var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({hour: 15, minute: 1, second: 0}));
+            var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({
+                hour  : 15,
+                minute: 1,
+                second: 0
+            }));
 
             function createForNotDev(pCb) {
                 async.each(empKeys, function (employee, asyncCb) {
@@ -1025,7 +1029,7 @@ var PayRoll = function (models) {
                         return asyncCb();
                     }
 
-                    if (startBody.calc){
+                    if (startBody.calc) {
                         newPayroll = new Payroll(startBody);
 
                         bodyAdminSalary.sourceDocument._id = employee;
@@ -1113,8 +1117,12 @@ var PayRoll = function (models) {
 
     }
 
+    this.recount = function (req, res, next) {
+        recount(req, res, next);
+    };
+
     this.generate = function (req, res, next) {
-        generate(req, res, next);
+        recount(req, res, next);
     };
 };
 
