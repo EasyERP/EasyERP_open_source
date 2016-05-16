@@ -817,7 +817,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   display: inline-block;
 }
 .list2 .enableTableOdd tr:nth-child(odd) {
-  background-color: #e7e7e7;
+  background-color: #ededed;
 }
 .list2 .enableTableOdd tr:hover {
   background-color: #d9d9d9;
@@ -907,7 +907,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   display: inline-block;
 }
 .list2 .enableTableOdd tr:nth-child(odd) {
-  background-color: #e7e7e7;
+  background-color: #ededed;
 }
 .list2 .enableTableOdd tr:hover {
   background-color: #d9d9d9;
@@ -2879,7 +2879,7 @@ dl dd span.ui-spinner {
   padding: 1px;
   margin: -1px;
   width: 20%;
-  max-width: 144px;
+  max-width: 132px;
   float: left;
   clear: both;
   line-height: 30px;
@@ -5852,7 +5852,7 @@ ul.dialog-tabs li.right button {
   display: inline-block;
 }
 .list .enableTableOdd tr:nth-child(odd) {
-  background-color: #e7e7e7;
+  background-color: #ededed;
 }
 .list .enableTableOdd tr:hover {
   background-color: #d9d9d9;
@@ -8193,7 +8193,7 @@ a.cancelled {
   padding: 1px;
   margin: -1px;
   width: 20%;
-  max-width: 144px;
+  max-width: 132px;
   float: left;
   clear: both;
   line-height: 30px;
@@ -8727,7 +8727,7 @@ textarea#editInput {
   text-align: left;
 }
 .grid tr:nth-child(2n+1) td {
-  background-color: #e7e7e7;
+  background-color: #ededed;
 }
 .grid.attendance {
   border-bottom: 1px solid #7f7f80;
@@ -8767,7 +8767,7 @@ textarea#editInput {
   border-bottom: none;
 }
 .grid.attendance tr:nth-child(even) {
-  background-color: #e7e7e7;
+  background-color: #ededed;
 }
 .grid.attendance tr td {
   border-left: 1px solid #7f7f80;
