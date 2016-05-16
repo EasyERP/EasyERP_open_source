@@ -1,5 +1,5 @@
 <% wTracks.forEach(function(wTrack, index){ %>
-<%var enable = wTrack.workflow && wTrack.workflow.name !== 'Closed' ? true : false;%>
+<%var enable =true;%>
 
 <tr data-id="<%=wTrack._id%>" class="<%= enable ? 'enableEdit' : ''%>  <%=(wTrack._type === 'overtime') ? 'overtime': ''%>">
         <td class="notForm"><input type="checkbox" value="<%=wTrack._id%>" class="checkbox listCB"/></td>

@@ -2504,7 +2504,7 @@ var Module = function (models, event) {
         getJobsToCreateExpenses = function (mainCb) {
             WTrack.aggregate([{
                 $match: {
-                    dateByMonth: {$lte: 201605}
+                    dateByMonth: { $gte: 201601, $lte: 201603}
                 }
             }, {
                 $group: {
@@ -2666,7 +2666,7 @@ var Module = function (models, event) {
                                 return mainCallback(err);
                             }
 
-                            //res.status(200).send({success: true});
+                            res.status(200).send({success: true});
                             mainCallback();
                         });
                     });
@@ -3014,7 +3014,9 @@ var Module = function (models, event) {
                         }
                         var date = moment(new Date(model.invoice.invoiceDate)).subtract(1, 'seconds');
                         var jobId = model._id;
-                        var callback = _.after(2, asyncCb);
+                        var callback = _.after(3, asyncCb);
+                        var startMonthDate;
+                        var endMonthDate;
 
                         Model.aggregate([{
                             $match: {
@@ -3055,6 +3057,21 @@ var Module = function (models, event) {
                             bodyFinishedJob.sourceDocument._id = jobId;
                             bodyClosedJob.sourceDocument._id = jobId;
 
+                            startMonthDate = moment(bodyClosedJob.date).startOf('month');
+                            endMonthDate = moment(bodyClosedJob.date).endOf('month');
+
+                            Model.update({
+                                "sourceDocument._id"  : jobId,
+                                "sourceDocument.model": 'wTrack',
+                                date                  : {$gte: new Date(startMonthDate), $lte: new Date(endMonthDate)}
+                            }, {$set: {date: new Date(bodyClosedJob.date)}}, {multi: true}, function (err, result) {
+                                if (err) {
+                                    return callback(err);
+                                }
+
+                                callback();
+                            });
+
                             createReconciled(bodyFinishedJob, req.session.lastDb, callback, req.session.uId);
                             createReconciled(bodyClosedJob, req.session.lastDb, callback, req.session.uId);
                         });
@@ -3073,17 +3090,18 @@ var Module = function (models, event) {
             });
         };
 
-        if (jobIds && jobIds.length) {
+      /*  if (jobIds && jobIds.length) {
             mainWaterfallTasks = [parallelFunction, reconcileJobs];
         } else if (month && year) {
             mainWaterfallTasks = [getJobsToCreateExpenses, parallelFunction, reconcileJobs];
-        }
+        }*/
 
+        mainWaterfallTasks = [getJobsToCreateExpenses, parallelFunction, reconcileJobs];
         async.waterfall(mainWaterfallTasks, function (err, resut) {
             if (err) {
                 return next(err);
             }
-            res.status(200).send({success: true});
+            //res.status(200).send({success: true});
             var db = models.connection(req.session.lastDb);
             var setObj = {date: date};
 

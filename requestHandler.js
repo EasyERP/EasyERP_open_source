@@ -403,7 +403,7 @@ var requestHandler = function (app, event, mainDb) {
                     console.log(err);
                 }
 
-                var groupedResult = _.group(result, 'jobs');
+                var groupedResult = _.groupBy(result, 'jobs');
                 var jobs = Object.keys(groupedResult);
 
                 jobsModel.update({_id: {$in: jobs}}, {$set: {reconcile: true}}, function (err, result) {
