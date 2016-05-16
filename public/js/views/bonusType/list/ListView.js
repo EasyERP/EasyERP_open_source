@@ -364,8 +364,8 @@ define([
                 this.collection.unbind('showmore');
 
                 if (!sortClass) {
-                    target$.addClass('sortDn');
-                    sortClass = "sortDn";
+                    target$.addClass('sortUp');
+                    sortClass = "sortUp";
                 }
 
                 switch (sortClass) {
