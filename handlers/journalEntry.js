@@ -1001,6 +1001,7 @@ var Module = function (models, event) {
                             'transfer.date': 1,
                             'transfer.salary': 1,
                             'transfer.department': 1,
+                            'transfer.status': 1,
                             hire: 1,
                             fire: 1
                         }
@@ -1008,7 +1009,7 @@ var Module = function (models, event) {
                         $group: {
                             _id: '$_id',
                             transfer: {$addToSet: '$transfer'},
-                            hire: {$addToSet: 'hire'},
+                            hire: {$addToSet: '$hire'},
                             fire: {$addToSet: '$fire'}
                         }
                     }, {
@@ -1022,8 +1023,8 @@ var Module = function (models, event) {
                         $project: {
                             vacations: 1,
                             transfer: 1,
-                            hire: 1,
-                            fire: 1
+                            hire: {$arrayElemAt: ['$hire', 0]},
+                            fire: {$arrayElemAt: ['$fire', 0]}
                         }
                     }], function (err, employees) {
                         if (err) {
@@ -1140,9 +1141,25 @@ var Module = function (models, event) {
                     var worked = employeeWorkedObject && employeeWorkedObject.worked ? employeeWorkedObject.worked : 0;
                     var idleHours;
                     var totalInMonth = 0;
-                    var hireKey = moment(new Date(hire[hire.length - 1])).year() * 100 + moment(new Date(hire[hire.length - 1])).month();
+                    var hireKey = moment(new Date(hire[hire.length - 1])).year() * 100 + moment(new Date(hire[hire.length - 1])).month() + 1;
                     var fireKey = fire[0] ? moment(new Date(fire[fire.length - 1])).year() * 100 + moment(new Date(fire[fire.length - 1])).month() + 1 : Infinity;
                     var localKey = moment(endDate).year() * 100 + moment(endDate).month() + 1;
+
+                    if (employeeId.toString() === '55b92ad221e4b7c40f000052') {
+                        console.log('ddd');
+                    }
+
+                    if (hireKey === localKey) {
+                        localStartKey = moment(new Date(hire[hire.length - 1])).date();
+                        startDate = moment(new Date(hire[hire.length - 1]));
+                    }
+
+                    if (fireKey === localKey) {
+                        localEndDate = moment(new Date(fire[fire.length - 1])).date();
+                        //localEndDate = moment(new Date(fire[fire.length - 1]));
+                    } else if (fireKey < localKey) {
+                        localEndDate = localStartKey - 1;
+                    }
 
                     for (var i = 0; i <= transferLength - 1; i++) {
                         var transferObj = transfer[i];
@@ -1176,15 +1193,6 @@ var Module = function (models, event) {
                         }
                     });
 
-                    if (hireKey === localKey) {
-                        localStartKey = moment(new Date(hire[hire.length - 1])).date();
-                    }
-
-                    if (fireKey === localKey) {
-                        localEndDate = moment(new Date(fire[fire.length - 1])).date();
-                    } else if (fireKey < localKey) {
-                        localEndDate = localStartKey - 1;
-                    }
 
                     for (var i = localEndDate; i >= localStartKey; i--) {
                         checkDate = moment(endDate).date(i).day();
@@ -2506,7 +2514,7 @@ var Module = function (models, event) {
             getJobsToCreateExpenses = function (mainCb) {
                 WTrack.aggregate([{
                     $match: {
-                        dateByMonth: {/*$gte: 201601, */$lte: 201602}
+                        dateByMonth: {$gte: 201601, $lte: 201602}
                     }
                 }, {
                     $group: {
@@ -2768,6 +2776,7 @@ var Module = function (models, event) {
                             'transfer.weeklyScheduler': {$arrayElemAt: ['$transfer.weeklyScheduler', 0]},
                             'transfer.date': 1,
                             'transfer.salary': 1,
+                            'transfer.status': 1,
                             employee: 1,
                             dateByMonth: 1,
                             hoursInMonth: 1,
@@ -2867,6 +2876,10 @@ var Module = function (models, event) {
                                 }
                             };
 
+
+                            if ((parseInt(year, 10) * 100 + parseInt(month, 10)) === (moment(transfer[transferLength - 1].date).year() * 100 + moment(transfer[transferLength - 1].date).month() + 1)) {
+                                startDate = moment(transfer[transferLength - 1].date);
+                            }
                             for (var i = 0; i <= transferLength - 1; i++) {
                                 var transferObj = transfer[i];
 
@@ -2884,6 +2897,7 @@ var Module = function (models, event) {
                                     }
                                 }
                             }
+
 
                             holidays.forEach(function (holiday) {
                                 if ((holiday.day !== 0) && (holiday.day !== 6)) {
