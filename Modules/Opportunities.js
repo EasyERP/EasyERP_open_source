@@ -1565,6 +1565,7 @@ var Opportunities = function (models, event) {
         ;
 
         function getCollectionLengthByWorkflows(req, res) {
+            console.log('-------------------------------------------------------------');
             var data = {};
             data['showMore'] = false;
             models.get(req.session.lastDb, "Department", departmentSchema).aggregate(
