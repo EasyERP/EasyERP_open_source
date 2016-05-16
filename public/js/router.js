@@ -23,13 +23,14 @@ define([
             "easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)"                            : "goToThumbnails",
             "easyErp/:contentType/form(/:modelId)"                                                          : "goToForm", //FixMe chenge to required Id after test
             "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
-            "easyErp/Revenue(/filter=:filter)"                                                                     : "revenue",
+            "easyErp/Revenue(/filter=:filter)"                                                              : "revenue",
             "easyErp/Efficiency"                                                                            : "hours",
             "easyErp/Attendance"                                                                            : "attendance",
             "easyErp/Profiles"                                                                              : "goToProfiles",
             "easyErp/productSettings"                                                                       : "productSettings",
             "easyErp/myProfile"                                                                             : "goToUserPages",
             "easyErp/Workflows"                                                                             : "goToWorkflows",
+            "easyErp/Accounts"                                                                              : "goToAccounts",
             "easyErp/Dashboard"                                                                             : "goToDashboard",
             "easyErp/DashBoardVacation(/filter=:filter)"                                                    : "dashBoardVacation",
             "easyErp/invoiceCharts(/filter=:filter)"                                                        : "invoiceCharts",
@@ -434,6 +435,38 @@ define([
                         context.changeTopBarView(topbarView);
                         Backbone.history.navigate(url, {replace: true});
                     }
+                });
+            }
+        },
+
+        goToAccounts: function () {
+            var self = this;
+            this.checkLogin(function (success) {
+                if (success) {
+                    goAccounts(self);
+                } else {
+                    self.redirectTo();
+                }
+            });
+
+            function goAccounts(context) {
+                var startTime = new Date();
+                var contentViewUrl = "views/Accounting/ContentView";
+                var topBarViewUrl = "views/Accounting/TopBarView";
+                var self = context;
+
+                if (context.mainView === null) {
+                    context.main("Accounts");
+                } else {
+                    context.mainView.updateMenu("Accounts");
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (contentView, topBarView) {
+
+                    var contentview = new contentView({startTime: startTime});
+                    var topbarView = new topBarView({actionType: "Content"});
+                    self.changeView(contentview);
+                    self.changeTopBarView(topbarView);
                 });
             }
         },
