@@ -1,5 +1,5 @@
 #forInfo {
-  overflow: hidden; //??
+  overflow: hidden;
   .forInfo-half-block {
     &.left {
       width: 65%;
@@ -84,6 +84,37 @@
       //disable footer border
       td {
         border-width: 0;
+      }
+    }
+  }
+
+  &.accounting {
+    .accounting-half-block {
+      width: 50%;
+    }
+    th {
+      .fa {
+        display: inline-block;
+        font-size:17px;
+        line-height: 23px;
+        height: 100%;
+        text-decoration: none;
+      }
+    }
+    td {
+
+      span{
+        display: inline-block;
+        width: 99%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 12px;
+      }
+      a {
+        &.fa {
+          margin-right: 10px;
+        }
       }
     }
   }
