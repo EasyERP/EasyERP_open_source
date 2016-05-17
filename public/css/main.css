@@ -6542,9 +6542,6 @@ ul.dialog-tabs li.right button {
   color: #000000;
 }
 .ui-dialog input:focus {
-  box-shadow: 0 0 5px #3e88b9;
-  -moz-box-shadow: 0 0 5px #3e88b9;
-  -webkit-box-shadow: 0 0 5px #3e88b9;
   outline: medium none;
   border: 1px solid #3e88b9;
 }
@@ -6748,9 +6745,6 @@ ul.dialog-tabs li.right button {
   color: #000000;
 }
 .form-holder form input:not([type=checkbox]):focus {
-  box-shadow: 0 0 5px #3e88b9;
-  -moz-box-shadow: 0 0 5px #3e88b9;
-  -webkit-box-shadow: 0 0 5px #3e88b9;
   outline: medium none;
   border: 1px solid #3e88b9;
 }
