@@ -259,8 +259,7 @@ define([
                 .attr("y", margin.left - 80)
                 .attr('class', 'axesName')
                 .text('Ammount')
-                .attr("transform", 'translate(0, 0) rotate(-90)')
-                .style('fill', 'white');
+                .attr("transform", 'translate(0, 0) rotate(-90)');
 
             return this;
         },

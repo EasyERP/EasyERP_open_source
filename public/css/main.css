@@ -664,6 +664,7 @@ th {
   display: block;
   width: 100%;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
   z-index: 9999;
 }
 /************* Main Colors *************/
@@ -739,6 +740,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Thumbnail ==============================*/
 /*== Dialog =============================*/
 /*== Birthday ===========================*/
+/*== Invoice Charts SVG*/
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
@@ -6292,13 +6294,13 @@ ul.dialog-tabs li.right button {
   height: 205px;
   margin-top: 8px !important;
   margin-left: 1px;
-  width: 260px;
+  width: 100%;
 }
 .ui-dialog textarea#description.taskDescriptionEdit {
   height: 188px;
   margin-top: 8px !important;
   margin-left: 1px;
-  width: 230px;
+  width: 100%;
 }
 .ui-dialog textarea#description.projectDescriptionCreate {
   height: 230px;
@@ -6659,7 +6661,6 @@ ul.dialog-tabs li.right button {
 .form-holder form label {
   font-weight: normal;
   border: none;
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
   display: inline;
   float: none;
@@ -7103,6 +7104,8 @@ ul.chart-tabs .withEndContract .arrow {
 }
 .axis text {
   font: 14px sans-serif;
+  color: #000000;
+  fill: #000000 !important;
 }
 .axis path,
 .axis line {
@@ -7315,7 +7318,7 @@ h3.dashboard {
 }
 #health a.health1,
 .health-wrapper a.health1 {
-  background-color: #3e88b9;
+  background-color: #008000;
 }
 #health a.health2,
 .health-wrapper a.health2 {
@@ -9025,12 +9028,15 @@ textarea#editInput {
   fill: #fda401;
 }
 .grid-conatiner.revenue .chartContainer .y.axis .tick line {
-  stroke-width: 0;
-  stroke: transparent;
+  stroke-width: 1;
+  stroke: #000 !important;
 }
 .grid-conatiner.revenue .chartContainer .y.axis .tick text {
   font-size: 11px;
-  fill: #fff;
+  fill: #000000;
+}
+.grid-conatiner.revenue .chartContainer .axesName {
+  fill: #000000;
 }
 .grid-conatiner.revenue .chartContainer .domain {
   fill: transparent;
@@ -9783,7 +9789,7 @@ textarea#editInput {
   color: #ffffff;
 }
 .invoiceChart-legend-box .chartContainer .domain {
-  stroke: #fff !important;
+  stroke: #000000 !important;
 }
 .invoiceChart-legend {
   position: absolute;
@@ -9811,7 +9817,7 @@ textarea#editInput {
   opacity: .4;
 }
 .invoiceChart-legend .choseDateItem {
-  border: 1px solid #d7d7d7;
+  border: 1px solid #7f7f80;
 }
 .invoiceChart-legend .choseDateItem button {
   background: #fff;
