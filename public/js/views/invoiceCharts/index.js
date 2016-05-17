@@ -186,7 +186,7 @@ define([
                     return height - y(datum.paid);
                 })
                 .attr("width", x.rangeBand())
-                .attr("fill", "#40C4FF")//blue  #40C4FF
+                .attr("fill", "#40C4FF")// blue  #40C4FF
                 .attr("opacity", 0.3);
 
             topChart.append("path")
