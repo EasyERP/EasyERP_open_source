@@ -3042,13 +3042,14 @@ dl {
   display: inline-block;
   height: 100%;
   vertical-align: top;
-  background-color: #777;
+  background-color: @transparent;
   color: #fff;
   font-size: 100%;
   line-height: 18px !important;
   width: 15px;
   text-align: center;
   margin-right: 3px;
+  border-right: 1px solid @border-color-main;
 }
 
 .filterValues {
@@ -3894,7 +3895,7 @@ table#workflows {
     }
   }
   .fa {
-    font-size: 1px;
+    font-size: 15px;
     text-decoration: none;
     text-align: center;
     &:before {
@@ -6608,6 +6609,9 @@ textarea#editInput {
     tbody {
       .boldInvoiced, .boldPaid {
         background-color: #565658;
+        td {
+          color: @whiteText;
+        }
       }
     }
   }

@@ -4236,13 +4236,14 @@ dl dd span.ui-spinner {
   display: inline-block;
   height: 100%;
   vertical-align: top;
-  background-color: #777;
+  background-color: transparent;
   color: #fff;
   font-size: 100%;
   line-height: 18px !important;
   width: 15px;
   text-align: center;
   margin-right: 3px;
+  border-right: 1px solid #7f7f80;
 }
 .filterValues {
   display: inline-block;
@@ -5364,7 +5365,7 @@ table#workflows tr td.edit-status {
 }
 .createBtnHolder .fa,
 #createBtnHolder .fa {
-  font-size: 1px;
+  font-size: 15px;
   text-decoration: none;
   text-align: center;
 }
@@ -9778,6 +9779,10 @@ textarea#editInput {
 .invoiceChart-legend-box .list tbody .boldInvoiced,
 .invoiceChart-legend-box .list tbody .boldPaid {
   background-color: #565658;
+}
+.invoiceChart-legend-box .list tbody .boldInvoiced td,
+.invoiceChart-legend-box .list tbody .boldPaid td {
+  color: #ffffff;
 }
 .invoiceChart-legend-box .chartContainer .domain {
   stroke: #fff !important;
