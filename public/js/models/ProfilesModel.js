@@ -1,4 +1,10 @@
-define(['Validation'], function (Validation) {
+define([
+    'Backbone',
+    'Validation',
+    'constants'
+], function (Backbone, Validation, CONSTANTS) {
+    'use strict';
+
     var ProfilesModel = Backbone.Model.extend({
         idAttribute: "_id",
         initialize : function () {
@@ -9,7 +15,7 @@ define(['Validation'], function (Validation) {
                     msg = errors.join('\n');
 
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: msg
                     });
                 }
@@ -24,7 +30,7 @@ define(['Validation'], function (Validation) {
             }
         },
         urlRoot    : function () {
-            return "/Profiles";
+            return CONSTANTS.URLS.PROFILES;
         }
     });
     return ProfilesModel;

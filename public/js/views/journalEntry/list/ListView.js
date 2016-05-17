@@ -30,15 +30,15 @@ define([
             exportToCsvUrl          : '/journal/journalEntry/exportToCsv',
 
             initialize: function (options) {
-                $(document).off("click");
+                var dateRange = custom.retriveFromCash('journalEntryDateRange');
 
+                $(document).off("click");
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
                 this.defaultItemsNumber = this.collection.namberToShow || 100;
                 this.newCollection = options.newCollection;
                 this.page = options.collection.page;
-                var dateRange = custom.retriveFromCash('journalEntryDateRange');
 
                 this.filter = options.filter || custom.retriveFromCash('journalEntry.filter');
 
@@ -211,6 +211,7 @@ define([
                 });
 
                 $curEl.find('#listFooter').find('#totalDebit').text(helpers.currencySplitter(total.toFixed(2)));
+                
                 return total;
             },
 

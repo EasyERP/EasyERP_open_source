@@ -1,4 +1,5 @@
 define([
+        'Backbone',
         "text!templates/Opportunities/CreateTemplate.html",
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
@@ -6,9 +7,10 @@ define([
         "common",
         "populate",
         "dataService",
-        'views/Notes/AttachView'
+        'views/Notes/AttachView',
+    'constants'
     ],
-    function (CreateTemplate, selectView, AssigneesView, OpportunityModel, common, populate, dataService, attachView) {
+    function (Backbone, CreateTemplate, selectView, AssigneesView, OpportunityModel, common, populate, dataService, attachView, CONSTANTS) {
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Opportunities",
@@ -105,7 +107,7 @@ define([
             },
 
             selectCustomer: function (id) {
-                dataService.getData('/Customer', {
+                dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
                     id: id
                 }, function (response, context) {
                     var customer = response.data[0];
@@ -133,7 +135,7 @@ define([
 
             },
 
-            switchTab: function (e) {
+            /*switchTab: function (e) {
                 e.preventDefault();
                 var link = this.$("#tabList a");
                 if (link.hasClass("selected")) {
@@ -141,7 +143,7 @@ define([
                 }
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
-            },
+            },*/
 
             hideDialog: function () {
                 $(".edit-dialog").remove();
@@ -237,16 +239,16 @@ define([
                 opportunityModel.save({
                         name           : name,
                         expectedRevenue: expectedRevenue,
-                        customer       : customerId,
+                        customer       : customerId || null,
                         email          : email,
-                        salesPerson    : salesPersonId,
+                        salesPerson    : salesPersonId || null,
                         salesTeam      : salesTeamId,
                         nextAction     : nextAction,
                         expectedClosing: expectedClosing,
                         priority       : priority,
                         workflow       : workflow,
                         internalNotes  : internalNotes,
-                        company        : company,
+                        company        : company || null,
                         address        : address,
                         contactName    : contactName,
                         func           : func,
@@ -322,13 +324,13 @@ define([
                 $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 populate.getPriority("#priorityDd", this, true);
-                populate.get2name("#customerDd", "/Customer", {}, this, true, true, (this.model) ? this.model._id : null);
-                populate.get2name("#salesPersonDd", "/getForDdByRelatedUser", {}, this, true, true);
-                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, true);
-                populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, true, true);
+                populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, true, true, (this.model) ? this.model._id : null);
+                populate.get2name("#salesPersonDd", CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
+                populate.getWorkflow("#workflowDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Opportunities"}, "name", this, true);
+                populate.get("#salesTeamDd",  CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this, true, true);
 
-                /*                common.populateCustomers("#customerDd", "/Customer",this.model);
-                 //common.populateEmployeesDd("#salesPerson"Dd, "/getSalesPerson");
+                /*                common.populateCustomers("#customerDd", "/Customers",this.model);
+                 //common.populateEmployeesDd("#salesPerson"Dd, "/employee/getPersonsForDd");
                  common.populateEmployeesDd("#salesPersonDd", "/getForDdByRelatedUser", this.model);
                  common.populateDepartments("#salesTeamDd", "/DepartmentsForDd");
                  common.populatePriority("#priorityDd", "/Priority");

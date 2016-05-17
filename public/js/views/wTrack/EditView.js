@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Quotation/EditTemplate.html",
         'views/Assignees/AssigneesView',
         'views/Product/InvoiceOrder/ProductItems',
@@ -8,7 +11,7 @@ define([
         "populate",
         'constants'
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS) {
+    function (Backbone, $, _, EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Quotation",
@@ -408,7 +411,7 @@ define([
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
 
                 this.$el.find('#orderDate').datepicker({
                     dateFormat : "d M, yy",

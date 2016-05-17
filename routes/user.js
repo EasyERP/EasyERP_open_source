@@ -1,12 +1,29 @@
 var express = require('express');
 var router = express.Router();
 var UserHandler = require('../handlers/user');
+var authStackMiddleware = require('../helpers/checkAuth');
+var MODULES = require('../constants/modules');
 
 module.exports = function (event, models) {
     'use strict';
+    var moduleId = MODULES.USERS;
     var handler = new UserHandler(event, models);
+    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
-    router.patch('/:id', handler.putchModel);
+    router.get('/', authStackMiddleware, accessStackMiddlware, handler.getAll);
+    router.get('/profiles/:id', authStackMiddleware, accessStackMiddlware, handler.getByProfile);
+    router.get('/forDd', authStackMiddleware, handler.getForDd);
+    router.get('/current', authStackMiddleware, handler.getById);
+    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
+    router.get('/:id', authStackMiddleware, handler.getById);
+
+    router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
+    router.post('/login', handler.login);
+    router.post('/current', authStackMiddleware, accessStackMiddlware, handler.putchModel);
+
+    router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.putchModel);
+    router.patch('/current/:id', authStackMiddleware, accessStackMiddlware, handler.putchModel);
+    router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
 
     return router;
 };

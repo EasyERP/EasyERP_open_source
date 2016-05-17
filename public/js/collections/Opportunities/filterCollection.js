@@ -1,18 +1,21 @@
 ﻿define([
+        'Backbone',
         'models/OpportunitiesModel',
-        'common'
+        'constants'
     ],
-    function (OpportunityModel, common) {
+    function (Backbone, OpportunityModel, CONSTANTS) {
+        'use strict';
+
         var OpportunitiesCollection = Backbone.Collection.extend({
             model       : OpportunityModel,
-            url         : "/Opportunities/",
+            url         : CONSTANTS.URLS.OPPORTUNITIES,
             page        : null,
             namberToShow: null,
             contentType : null,
             initialize  : function (options) {
                 this.startTime = new Date();
                 this.contentType = options.contentType;
-                this.parrentContentId = (options) ? options.parrentContentId : null;
+                this.parrentContentId = options ? options.parrentContentId : null;
                 if (options && options.count) {
                     this.namberToShow = options.count;
                     this.page = options.page || 1;
@@ -28,7 +31,7 @@
                         that.page++;
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }
@@ -62,7 +65,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }

@@ -16,6 +16,7 @@ define([
     'constants'// added view for employees dd list
 ], function (Backbone, _, $, mainTemplate, AttendanceModel, MonthView, /*StatisticsView, populate,*/ moment, dataService, SelectView, CONSTANTS) {
     'use strict';
+
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -54,7 +55,7 @@ define([
             //this.listenTo(this.model, 'change:currentStatus', this.changeStatus);
             //this.listenTo(this.model, 'change:currentTime', this.changeTime);
 
-            dataService.getData("/getPersonsForDd", {}, function (result) {
+            dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function (result) {
                 var yearToday = moment().year();
 
                 employees = result;
@@ -189,14 +190,14 @@ define([
             });
         },
 
-        changeStatus: function () {
+        /*changeStatus: function () {
             var self = this;
             self.currentStatus = this.$el.find("#currentStatus option:selected").attr('id');
 
-            //dataService.getData("/getPersonsForDd", {}, function (result) {
-            //
-            //});
-        },
+            dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function () {
+                //ToDo Hired and Not Hired
+            });
+        },*/
 
         changeTime: function () {
             var startTime = new Date();

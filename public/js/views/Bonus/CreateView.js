@@ -1,15 +1,19 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Bonus/CreateTemplate.html",
         'models/BonusModel'
     ],
-    function (CreateTemplate, currentModel) {
+    function (Backbone, $, _, CreateTemplate, CurrentModel) {
+        'use strict';
 
         var CreateView = Backbone.View.extend({
             el      : '#bonusTable',
             template: _.template(CreateTemplate),
 
             initialize: function (options) {
-                var model = new currentModel();
+                var model = new CurrentModel();
                 var data = options;
 
                 this.startDate = data.StartDate;

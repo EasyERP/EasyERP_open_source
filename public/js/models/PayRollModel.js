@@ -1,8 +1,12 @@
-define(['Validation', 'common'], function () {
+define([
+    'Backbone',
+    'constants'
+], function (Backbone, CONSTANTS) {
+    'use strict';
     var PayRollModel = Backbone.Model.extend({
         idAttribute: "_id",
         urlRoot    : function () {
-            return "/Payroll";
+            return CONSTANTS.URLS.PAYROLL;
         }
     });
     return PayRollModel;

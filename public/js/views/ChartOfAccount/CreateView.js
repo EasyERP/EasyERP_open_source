@@ -2,9 +2,12 @@
  * Created by lilya on 01/12/15.
  */
 define([
+        'Backbone',
+        'Underscore',
         "text!templates/ChartOfAccount/CreateTemplate.html"
     ],
-    function (CreateTemplate) {
+    function (Backbone, _, CreateTemplate) {
+        'use strict';
 
         var CreateView = Backbone.View.extend({
             el      : '#chartOfAccount',

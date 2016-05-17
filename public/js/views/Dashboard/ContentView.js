@@ -1,10 +1,16 @@
 define([
-        "text!templates/Dashboard/DashboardTemplate.html",
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        'text!templates/Dashboard/DashboardTemplate.html',
         "d3",
         "common",
-        "dataService"
+        "dataService",
+        'moment'
     ],
-    function (DashboardTemplate, d3, common, dataService) {
+    function (Backbone, $, _, DashboardTemplate, d3, common, dataService, moment) {
+        'use strict';
+        
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
             actionType : "Content",
@@ -55,7 +61,8 @@ define([
                 this.renderPopulate();
             },
             getDateFromDayOfYear: function (index) {
-                return dateFormat(new Date(this.numberToDate[index]).toString('MMMM ,yyyy'), "mmmm dd, yyyy");
+                //return dateFormat(new Date(this.numberToDate[index]).toString('MMMM ,yyyy'), "mmmm dd, yyyy");
+                return moment(new Date(this.numberToDate[index]).toString('MMMM ,yyyy')).format('MMMM DD, YYYY'); //todo changed after ui unit tests
             },
             getDay              : function (index) {
                 switch (index) {
@@ -112,7 +119,7 @@ define([
                 $(window).unbind("resize").resize(function () {
                     self.renderPopulate();
                     if (!self.source) {
-                        dataService.getData("/sources", null, function (response) {
+                        dataService.getData("/employees/sources", null, function (response) {
                             self.source = response;
                             self.renderPopulateSource(self);
                         });
@@ -128,6 +135,9 @@ define([
             },
             renderPopulateSource: function (that) {
                 var self = this;
+                var i;
+                var j;
+
                 if (that) {
                     self = that;
                 }
@@ -137,8 +147,8 @@ define([
                     self.source.data.forEach(function (item) {
                         var b = false;
 
-                        for (var i = 0; i < data.length; i++) {
-                            if (data[i].source == item.name) {
+                        for (i = 0; i < data.length; i++) {
+                            if (data[i].source === item.name) {
                                 b = true;
                                 break;
                             }
@@ -203,9 +213,9 @@ define([
                     var data2 = _.filter(data, function (item) {
                         return !item.isOpp;
                     });
-                    for (var i = 0; i < data1.length; i++) {
-                        for (var j = 0; j < data2.length; j++) {
-                            if (data1[i].source == data2[j].source) {
+                    for (i = 0; i < data1.length; i++) {
+                        for (j = 0; j < data2.length; j++) {
+                            if (data1[i].source === data2[j].source) {
                                 break;
                             }
                         }
@@ -215,7 +225,7 @@ define([
                         .data(data2)
                         .enter().append("rect")
                         .attr("class", "bar2")
-                        .attr("x", function (d) {
+                        .attr("x", function () {
                             return 0;
                         })
                         .attr("y", function (d) {
@@ -243,7 +253,7 @@ define([
 
                     chart.selectAll(".x .tick line")
                         .data(data)
-                        .attr("y2", function (d) {
+                        .attr("y2", function () {
                             return -height;
                         });
                     function type(d) {
@@ -256,6 +266,10 @@ define([
             },
             renderPopulate      : function () {
                 var self = this;
+                var i;
+                var dt;
+                var z;
+
                 $(".leadChart").empty();
                 common.getLeadsForChart(null, this.dateRange, this.dateItem, function (data) {
                     $("#timeBuildingDataFromServer").text("Server response in " + self.buildTime + " ms");
@@ -313,13 +327,14 @@ define([
                             return y2(d.count);
                         })
                         .interpolate("monotone");
-                    if (self.dateItem == "DW") {
-                        var dt = _.unique(_.map(data, function (item) {
+                    if (self.dateItem === "DW") {
+                        dt = _.unique(_.map(data, function (item) {
                             return item.source;
                         }));
-                        for (var i = 1; i < 8; i++) {
-                            if (dt.indexOf(i) === -1)
+                        for (i = 1; i < 8; i++) {
+                            if (dt.indexOf(i) === -1) {
                                 data.push({count: 0, date: [0], isOpp: true, source: i, year: 2014});
+                            }
                             data.push({count: 0, date: [0], source: i, isOpp: true, year: 2014});
                         }
                         data.sort(function (a, b) {
@@ -327,13 +342,14 @@ define([
                         });
 
                     }
-                    if (self.dateItem == "DM") {
-                        var dt = _.unique(_.map(data, function (item) {
+                    if (self.dateItem === "DM") {
+                        dt = _.unique(_.map(data, function (item) {
                             return item.source;
                         }));
-                        for (var i = 1; i < 32; i++) {
-                            if (dt.indexOf(i) === -1)
+                        for (i = 1; i < 32; i++) {
+                            if (dt.indexOf(i) === -1) {
                                 data.push({count: 0, date: [0], isOpp: true, source: i, year: 2014});
+                            }
                             data.push({count: 0, date: [0], source: i, isOpp: true, year: 2014});
                         }
                         data.sort(function (a, b) {
@@ -341,13 +357,14 @@ define([
                         });
 
                     }
-                    if (self.dateItem == "M" && self.dateRange == 365) {
-                        var dt = _.unique(_.map(data, function (item) {
+                    if (self.dateItem === "M" && self.dateRange === 365) {
+                        dt = _.unique(_.map(data, function (item) {
                             return item.source;
                         }));
-                        for (var i = 1; i < 13; i++) {
-                            if (dt.indexOf(i) === -1)
+                        for (i = 1; i < 13; i++) {
+                            if (dt.indexOf(i) === -1) {
                                 data.push({count: 0, date: [0], isOpp: true, source: i, year: 2014});
+                            }
                             data.push({count: 0, date: [0], source: i, isOpp: true, year: 2014});
                         }
                         data.sort(function (a, b) {
@@ -355,25 +372,26 @@ define([
                         });
 
                     }
-                    if (self.dateItem == "D") {
+                    if (self.dateItem === "D") {
 
-                        var dt = _.unique(_.map(data, function (item) {
+                        dt = _.unique(_.map(data, function (item) {
                             return item.source;
                         }));
-                        for (var i = 0; i < self.dateRange; i++) {
+                        for (i = 0; i < self.dateRange; i++) {
                             var now = new Date(new Date() - i * 24 * 60 * 60 * 1000);
                             var start = new Date(now.getFullYear(), 0, 0);
                             var diff = now - start;
                             var oneDay = 1000 * 60 * 60 * 24;
                             var dayofYera = Math.floor(diff / oneDay);
-                            if (dt.indexOf(dayofYera) === -1)
+                            if (dt.indexOf(dayofYera) === -1) {
                                 data.push({
-                                    count: 0,
-                                    date: [now],
-                                    isOpp: true,
+                                    count : 0,
+                                    date  : [now],
+                                    isOpp : true,
                                     source: dayofYera,
-                                    year: now.getFullYear()
+                                    year  : now.getFullYear()
                                 });
+                            }
                             data.push({count: 0, date: [now], source: dayofYera, isOpp: true, year: now.getFullYear()});
                         }
                         data = _.map(data, function (item) {
@@ -409,15 +427,15 @@ define([
                         return d3.ascending(a, b);
                     });
                     var dataAll = [];
-                    for (var z = 0; z < unicSource.length; z++) {
+                    for (z = 0; z < unicSource.length; z++) {
                         var d1 = 0;
-                        for (var i = 0; i < data1.length; i++) {
+                        for (i = 0; i < data1.length; i++) {
                             if (data1[i].source == unicSource[z]) {
                                 d1 = data1[i].count;
                             }
                         }
                         var d2 = 0;
-                        for (var i = 0; i < data2.length; i++) {
+                        for (i = 0; i < data2.length; i++) {
                             if (data2[i].source == unicSource[z]) {
                                 d2 = data2[i].count;
                             }
@@ -445,7 +463,9 @@ define([
                     var maxval2 = d3.max(percent, function (d) {
                         return d.count;
                     });
-                    if (maxval2 == 0)maxval2 = 1;
+                    if (maxval2 === 0) {
+                        maxval2 = 1;
+                    }
                     percent = _.map(percent, function (item) {
                         item.count = (item.count) / maxval2 * 100;
                         return item;
@@ -467,7 +487,7 @@ define([
                     x2.domain([0, d3.max(data, function (d) {
                         return d.count;
                     })]);
-                    if (self.dateItem != "D") {
+                    if (self.dateItem !== "D") {
                         chart.append("g")
                             .attr("class", "x axis")
                             .attr("transform", "translate(0," + height + ")")
@@ -475,14 +495,14 @@ define([
                             .selectAll("text");
 
                     } else {
-                        if (self.dateRange == "7") {
+                        if (self.dateRange === "7") {
                             chart.append("g")
                                 .attr("class", "x axis")
                                 .attr("transform", "translate(0," + height + ")")
                                 .call(xAxis)
                                 .selectAll("text");
                         }
-                        if (self.dateRange == "30") {
+                        if (self.dateRange === "30") {
                             chart.append("g")
                                 .attr("class", "x axis")
                                 .attr("transform", "translate(0," + height + ")")
@@ -493,7 +513,7 @@ define([
                                 .attr("y", "2")
                                 .attr("style", "text-anchor:end");
                         }
-                        if (self.dateRange == "90") {
+                        if (self.dateRange === "90") {
                             chart.append("g")
                                 .attr("class", "x axis")
                                 .attr("transform", "translate(0," + height + ")")
@@ -501,7 +521,7 @@ define([
                                 .selectAll("text")
                                 .attr("transform", "rotate(-60)")
                                 .attr("x", function (d, i) {
-                                    if (i % 2 != 0) {
+                                    if (i % 2 !== 0) {
                                         return 1000;
                                     }
                                     return -10;
@@ -512,7 +532,7 @@ define([
                                 .attr("style", "text-anchor:end;")
                                 .attr("y", "2");
                         }
-                        if (self.dateRange == "365") {
+                        if (self.dateRange === "365") {
                             if (width > 1350) {
                                 chart.append("g")
                                     .attr("class", "x axis")
@@ -521,7 +541,7 @@ define([
                                     .selectAll("text")
                                     .attr("transform", "rotate(-90)")
                                     .attr("x", function (d, i) {
-                                        if (i % 5 != 0) {
+                                        if (i % 5 !== 0) {
                                             return 1000;
                                         }
                                         return -10;
@@ -538,7 +558,7 @@ define([
                                     .selectAll("text")
                                     .attr("transform", "rotate(-60)")
                                     .attr("x", function (d, i) {
-                                        if (i % 7 != 0) {
+                                        if (i % 7 !== 0) {
                                             return 1000;
                                         }
                                         return -10;
@@ -555,7 +575,7 @@ define([
                                     .selectAll("text")
                                     .attr("transform", "rotate(-60)")
                                     .attr("x", function (d, i) {
-                                        if (i % 20 != 0) {
+                                        if (i % 20 !== 0) {
                                             return 1000;
                                         }
                                         return -10;
@@ -571,7 +591,7 @@ define([
                         .attr("class", "y axis")
                         .call(yAxis)
                         .selectAll(".tick line")
-                        .attr("x2", function (d) {
+                        .attr("x2", function () {
                             return width;
                         })
                         .style("fill", "#1EBBEA");
@@ -621,7 +641,7 @@ define([
                         .attr("y", function (d) {
                             return y(d.count);
                         })
-                        .attr("height", function (d) {
+                        .attr("height", function () {
                             return 2;
                         })
                         .attr("width", x.rangeBand());
@@ -641,7 +661,7 @@ define([
                         .attr("cy", function (d) {
                             return y2(d.count);
                         })
-                        .attr("r", function (d) {
+                        .attr("r", function () {
                             return 4;
                         })
                         .style("fill", "#1EBBEA")

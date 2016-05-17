@@ -1,53 +1,62 @@
 define([
-        "text!templates/Leads/EditTemplate.html",
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        'text!templates/Leads/EditTemplate.html',
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
-        "custom",
+        'custom',
         'common',
         'dataService',
-        "populate"
+        'populate',
+        'constants'
     ],
-    function (EditTemplate, selectView, AssigneesView, Custom, common, dataService, populate) {
+    function (Backbone, $, _, EditTemplate, selectView, AssigneesView, Custom, common, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
-            el         : "#content-holder",
-            contentType: "Leads",
+            el         : '#content-holder',
+            contentType: 'Leads',
             template   : _.template(EditTemplate),
+            
             initialize : function (options) {
-                _.bindAll(this, "render", "saveItem");
-                _.bindAll(this, "render", "deleteItem");
-                this.currentModel = (options.model) ? options.model : options.collection.getElement();
-                this.currentModel.urlRoot = "/Leads";
+                _.bindAll(this, 'render', 'saveItem');
+                _.bindAll(this, 'render', 'deleteItem');
+                this.currentModel = options.model || options.collection.getElement();
+                this.currentModel.urlRoot = '/Leads';
                 this.responseObj = {};
 
                 this.render();
             },
 
-            events    : {
-                "click #convertToOpportunity"                                     : "openDialog",
-                "click #tabList a"                                                : "switchTab",
-                "click .breadcrumb a, #cancelCase, #reset"                        : "changeWorkflow",
-                "change #customer"                                                : "selectCustomer",
-                "change #workflowNames"                                           : "changeWorkflows",
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect",
-                'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption"
+            events: {
+                'click #convertToOpportunity'                      : 'openDialog',
+                'click #tabList a'                                 : 'switchTab',
+                'click .breadcrumb a, #cancelCase, #reset'         : 'changeWorkflow',
+                'change #customer'                                 : 'selectCustomer',
+                'change #workflowNames'                            : 'changeWorkflows',
+                'click .current-selected'                          : 'showNewSelect',
+                click                                              : 'hideNewSelect',
+                keydown                                            : 'keydownHandler',
+                'click .dialog-tabs a'                             : 'changeTab',
+                'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
             },
 
             openDialog: function (e) {
                 e.preventDefault();
-                $("#convert-dialog-form").dialog("open");
+                $('#convert-dialog-form').dialog('open');
             },
 
-            changeTab : function (e) {
-                $(e.target).closest(".dialog-tabs").find("a.active").removeClass("active");
-                $(e.target).addClass("active");
-                var n = $(e.target).parents(".dialog-tabs").find("li").index($(e.target).parent());
-                var dialog_holder = $(".dialog-tabs-items");
-                dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
-                dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
+            changeTab: function (e) {
+                var $target = $(e.target);
+                var dialogHolder;
+                var n;
+                
+                $target.closest('.dialog-tabs').find('a.active').removeClass('active');
+                $target.addClass('active');
+                n = $target.parents('.dialog-tabs').find('li').index($(e.target).parent());
+                dialogHolder = $('.dialog-tabs-items');
+                dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+                dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
             },
 
             keydownHandler: function (e) {
@@ -61,24 +70,30 @@ define([
             },
 
             hideDialog: function () {
-                $(".edit-dialog").remove();
-                $(".add-group-dialog").remove();
-                $(".add-user-dialog").remove();
+                $('.edit-dialog').remove();
+                $('.add-group-dialog').remove();
+                $('.add-user-dialog').remove();
             },
 
             switchTab: function (e) {
+                var thisEl = this.$el;
+                var link = thisEl.find('#tabList a');
+                var index;
+                
                 e.preventDefault();
-                var link = this.$("#tabList a");
-                if (link.hasClass("selected")) {
-                    link.removeClass("selected");
+                
+                if (link.hasClass('selected')) {
+                    link.removeClass('selected');
                 }
-                var index = link.index($(e.target).addClass("selected"));
-                this.$(".tab").hide().eq(index).show();
+                index = link.index($(e.target).addClass('selected'));
+                thisEl.find('.tab').hide().eq(index).show();
             },
 
             getWorkflowValue: function (value) {
                 var workflows = [];
-                for (var i = 0; i < value.length; i++) {
+                var i;
+                
+                for (i = 0; i < value.length; i++) {
                     workflows.push({name: value[i].name, status: value[i].status});
                 }
                 return workflows;
@@ -87,16 +102,12 @@ define([
             saveItem: function () {
                 var mid = 39;
                 var self = this;
-                var name = $.trim(this.$el.find("#name").val());
-                var company = $.trim(this.$el.find("#company").val());
-                var idCustomer = $("#customerDd").data("id");
-                //idCustomer = idCustomer ? idCustomer : null;
+                var name = $.trim(this.$el.find('#name').val());
+                var company = $.trim(this.$el.find('#company').val());
+                var idCustomer = $('#customerDd').attr('data-id');
                 var currentCustomer = this.currentModel.get('customer');
                 var address = {};
-                $("dd").find(".address").each(function () {
-                    var el = $(this);
-                    address[el.attr("name")] = $.trim(el.val());
-                });
+                
                 var salesPersonId = this.$("#salesPerson").data("id");
                 var currentSalesPerson = this.currentModel.get('salesPerson');
                 //salesPersonId = salesPersonId ? salesPersonId : null;
@@ -121,26 +132,26 @@ define([
                 var currentWorkflow = this.currentModel.get('workflow');
                 var workflow = this.$("#workflowsDd").data('id');
                 var priority = this.$el.find("#priorityDd").attr("data-id");
-
                 var internalNotes = $.trim($("#internalNotes").val());
 
                 var active;
+
                 if ($("#active").is(":checked")) {
                     active = true;
                 } else {
                     active = false;
                 }
-
                 var optout;
+
                 if ($("#optout").is(":checked")) {
                     optout = true;
                 } else {
                     optout = false;
                 }
-
                 var reffered = $.trim($("#reffered").val());
 
                 var usersId = [];
+
                 var groupsId = [];
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -172,28 +183,29 @@ define([
                     },
                     whoCanRW     : whoCanRW
                 };
+                $("dd").find(".address").each(function () {
+                    var el = $(this);
+                    address[el.attr("name")] = $.trim(el.val());
+                });
+                
                 if (currentWorkflow && currentWorkflow._id && workflow && (currentWorkflow._id !== workflow)) {
                     data['workflow'] = workflow;
                 }
-                ;
                 if (currentCustomer && currentCustomer._id && idCustomer && (currentCustomer._id !== idCustomer)) {
                     data['customer'] = idCustomer;
                 } else if (!currentCustomer && idCustomer) {
                     data['customer'] = idCustomer;
                 }
-                ;
                 if (currentSalesPerson && currentSalesPerson._id && salesPersonId && (currentSalesPerson._id !== salesPersonId)) {
                     data['salesPerson'] = salesPersonId;
                 } else if (!currentSalesPerson && salesPersonId) {
                     data['salesPerson'] = salesPersonId;
                 }
-                ;
                 if (currentSalesTeam && currentSalesTeam._id && salesTeamId && (currentSalesTeam._id !== salesTeamId)) {
                     data['salesTeam'] = salesTeamId;
                 } else if (!currentSalesTeam && salesTeamId) {
                     data['salesTeam'] = salesTeamId;
                 }
-                ;
                 this.currentModel.set(data);
                 this.currentModel.save(this.currentModel.changed, {
                     headers: {
@@ -211,7 +223,7 @@ define([
                 });
             },
 
-            deleteItem   : function (event) {
+            deleteItem: function (event) {
                 var mid = 39;
                 event.preventDefault();
                 var self = this;
@@ -271,12 +283,12 @@ define([
             },
 
             selectCustomer: function (id) {
-                if (id != "") {
-                    dataService.getData('/Customer', {
+                if (id !== '') {
+                    dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
                         id: id
                     }, function (response, context) {
                         var customer = response.data[0];
-                        if (customer.type == 'Person') {
+                        if (customer.type === 'Person') {
                             context.$el.find('#first').val(customer.name.first);
                             context.$el.find('#last').val(customer.name.last);
 
@@ -349,8 +361,8 @@ define([
                 dataService.getData('/Priority/leads', {}, function (priorities) {
                     self.responseObj['#priorityDd'] = priorities;
                 });
-                populate.getWorkflow("#workflowsDd", "", "/WorkflowsForDd", {id: "Leads"}, "name", this);
-                populate.get2name("#customerDd", "/Customer", {}, this, null, true);
+                populate.getWorkflow("#workflowsDd", "", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Leads"}, "name", this);
+                populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, null, true);
                 dataService.getData('/employee/getForDD', {}, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
@@ -361,7 +373,7 @@ define([
                     self.responseObj['#salesPerson'] = employees;
                 });
                 populate.get("#campaignDd", "/Campaigns", {}, "name", this);
-                populate.get("#sourceDd", "/sources", {}, "name", this);
+                populate.get("#sourceDd", "/employees/sources", {}, "name", this);
 
                 this.delegateEvents(this.events);
 

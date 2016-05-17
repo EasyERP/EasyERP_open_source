@@ -1664,21 +1664,20 @@ var Opportunities = function (models, event) {
             });
         }
 
-        return {
-            getTotalCount                    : getTotalCount,
-            create                           : create,
-            get                              : get,
-            getCollectionLengthByWorkflows   : getCollectionLengthByWorkflows,
-            getById                          : getById,
-            getFilterOpportunitiesForKanban  : getFilterOpportunitiesForKanban,
-            getFilterOpportunitiesForMiniView: getFilterOpportunitiesForMiniView,
-            getFilter                        : getFilter,
-            getLeadsForChart                 : getLeadsForChart,
-            update                           : update,
-            updateLead                       : updateLead,
-            updateOnlySelectedFields         : updateOnlySelectedFields,
-            remove                           : remove
-        }
-    }
-    ;
+    return {
+        // getTotalCount                    : getTotalCount,
+        // create                           : create,
+        // get                              : get,
+        // getCollectionLengthByWorkflows   : getCollectionLengthByWorkflows,
+        // getById                          : getById,
+        // getFilterOpportunitiesForKanban  : getFilterOpportunitiesForKanban,
+        // getFilterOpportunitiesForMiniView: getFilterOpportunitiesForMiniView,
+        // getFilter                        : getFilter,
+        // getLeadsForChart                 : getLeadsForChart,
+        // update                           : update,
+        // updateLead                       : updateLead,
+        // updateOnlySelectedFields         : updateOnlySelectedFields,
+        // remove                           : remove
+    };
+    
 module.exports = Opportunities;

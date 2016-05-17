@@ -1,15 +1,13 @@
 ﻿define([
-        "text!templates/Employees/compactContentTemplate.html",
-        "common"
+        'Backbone',
+        'Underscore',
+        "text!templates/Employees/compactContentTemplate.html"
     ],
-    function (compactContentTemplate, common) {
+    function (Backbone, _, compactContentTemplate) {
+        'use strict';
         var compactContentView = Backbone.View.extend({
 
             className: "form",
-
-            initialize: function () {
-                //this.render();
-            },
 
             template: _.template(compactContentTemplate),
 

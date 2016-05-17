@@ -1,11 +1,17 @@
-﻿define(function () {
+﻿define([
+    'Backbone',
+    'constants'
+], function (Backbone, CONSTANTS) {
+    'use strict';
+
     var DegreeModel = Backbone.Model.extend({
-        idAttribute: "_id",
+
+    idAttribute: "_id",
         defaults   : {
             name: ''
         },
         urlRoot    : function () {
-            return "/Degrees";
+            return CONSTANTS.URLS.COMPANIES;
         }
     });
     return DegreeModel;

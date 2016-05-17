@@ -2,11 +2,16 @@
  * Created by liliya on 8/13/15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Filter/filterFavourites.html',
         'models/UsersModel',
         'custom'
     ],
-    function (ContentFilterTemplate, usersModel, custom) {
+    function (Backbone, $, _, ContentFilterTemplate, usersModel, custom) {
+        'use strict';
+
         var FilterView;
         FilterView = Backbone.View.extend({
             el          : '#favoritesContent',

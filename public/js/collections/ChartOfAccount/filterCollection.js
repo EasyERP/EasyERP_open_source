@@ -1,15 +1,17 @@
 /**
  * Created by lilya on 27/11/15.
  */
-/**
- * Created by liliya on 22.10.15.
- */
-define(['models/chartOfAccount'
-], function (JobsModel) {
+define([
+    'Backbone',
+    'models/chartOfAccount',
+    'constants'
+], function (Backbone, JobsModel, CONSTANTS) {
+    'use strict';
+
     var JobsCollection = Backbone.Collection.extend({
 
         model       : JobsModel,
-        url         : '/chartOfAccount/',
+        url         : CONSTANTS.URLS.CHARTOFACCOUNT,
         contentType : null,
         page        : null,
         numberToShow: null,

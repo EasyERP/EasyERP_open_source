@@ -1,11 +1,10 @@
 ﻿define([
-    'Backbone',
-    'text!templates/wTrack/list/ListTemplate.html'
-], function (Backbone, listTemplate) {
-    "use strict";
-
-    var QuotationListItemView = Backbone.View.extend({
-        el: '#listTable',
+        'Backbone',
+        'Underscore',
+        'text!templates/wTrack/list/ListTemplate.html'
+], function (Backbone, _, listTemplate) {
+        var QuotationListItemView = Backbone.View.extend({
+            el: '#listTable',
 
         initialize: function (options) {
             this.collection = options.collection;

@@ -1,11 +1,16 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'models/JobPositionsModel',
-        'common'
+        'common',
+        'constants'
     ],
-    function (JobPositionsModel, common) {
+    function (Backbone, _, JobPositionsModel, common, CONSTANTS) {
+        'use strict';
+
         var JobPositionsCollection = Backbone.Collection.extend({
             model       : JobPositionsModel,
-            url         : "/JobPositions/",
+            url         : CONSTANTS.URLS.JOBPOSITIONS,
             page        : null,
             namberToShow: null,
             viewType    : null,
@@ -29,7 +34,7 @@
                         that.page++;
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }
@@ -39,8 +44,8 @@
             showMore: function (options) {
                 var that = this;
                 var filterObject = options || {};
-                filterObject['page'] = (options && options.page) ? options.page : this.page;
-                filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
+                filterObject.page = (options && options.page) ? options.page : this.page;
+                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
                 this.fetch({
                     data   : filterObject,
                     waite  : true,
@@ -50,7 +55,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }

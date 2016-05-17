@@ -1,8 +1,12 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'text!templates/Invoice/list/ListTemplate.html'
     ],
 
-    function (listTemplate) {
+    function (Backbone, _, listTemplate) {
+        'use strict';
+
         var InvoiceListItemView = Backbone.View.extend({
             el: '#listTable',
 

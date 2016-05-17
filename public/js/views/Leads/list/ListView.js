@@ -9,19 +9,19 @@ define([
         'views/Leads/EditView',
         'models/LeadsModel',
         'collections/Leads/filterCollection',
-        'views/Filter/FilterView',
-        'common',
-        'dataService'
+        'common'
     ],
 
-    function ($, _, listViewBase, listTemplate, stagesTemplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService) {
+    function ($, _, listViewBase, listTemplate, stagesTamplate, createView, ListItemView, EditView, CurrentModel, contentCollection, common) {
+        'use strict';
+
         var LeadsListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentCollection       : contentCollection,
-            filterView              : filterView,
-            totalCollectionLengthUrl: '/totalCollectionLength/Leads',
+            filterView              : null,
+            totalCollectionLengthUrl: '/leads/totalCollectionLength',
             formUrl                 : "#easyErp/Leads/form/",
             contentType             : 'Leads',//needs in view.prototype.changeLocationHash
 
@@ -95,7 +95,7 @@ define([
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
 
-                itemView = new listItemView({
+                var itemView = new listItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
@@ -103,8 +103,10 @@ define([
 
                 itemView.bind('incomingStages', this.pushStages, this);
 
-                common.populateWorkflowsList("Leads", ".filter-check-list", "", "/Workflows", null, function (stages) {
-                    var stage = (self.filter) ? self.filter.workflow : null;
+                this.renderCheckboxes();
+
+                common.populateWorkflowsList("Leads", ".drop-down-filter", "", "/Workflows", null, function (stages) {
+                    self.stages = stages;
                     itemView.trigger('incomingStages', stages);
                 });
 
@@ -120,27 +122,29 @@ define([
             },
 
             hideNewSelect: function () {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
             },
 
             showNewSelect: function (e) {
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
                     return false;
-                }
-                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
+                } else {
+                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
                     return false;
+                }
+
             },
 
             goToEditDialog: function (e) {
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
-                var model = new currentModel({validate: false});
+                var model = new CurrentModel({validate: false});
                 model.urlRoot = '/Leads/form';
                 model.fetch({
                     data   : {id: id},
                     success: function (model) {
-                        new editView({model: model});
+                        new EditView({model: model});
                     },
                     error  : function () {
                         App.render({

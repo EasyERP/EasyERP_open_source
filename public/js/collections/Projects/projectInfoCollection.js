@@ -2,13 +2,17 @@
  * Created by liliya on 29.09.15.
  */
 define([
-        'models/ProjectsModel'
+        'Backbone',
+        'models/ProjectsModel',
+        'constants'
     ],
-    function (ProjectModel) {
+    function (Backbone, ProjectModel, CONSTANTS) {
+        'use strict';
+
         var ProjectsCollection = Backbone.Collection.extend({
             model     : ProjectModel,
             url       : function () {
-                return "project/getProjectPMForDashboard";
+                return CONSTANTS.URLS.PROJECT_DASHBOARD;
             },
             initialize: function (options) {
                 this.sort = (options && options.sort) ? options.sort : {};

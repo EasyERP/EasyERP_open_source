@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/salesOrder/EditTemplate.html',
         'text!templates/salesOrder/ViewTemplate.html',
         'views/Assignees/AssigneesView',
@@ -11,11 +14,10 @@ define([
         'populate',
         'constants',
         'helpers'
-    ],
-    function (EditTemplate, ViewTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS, helpers) {
-
+], function (Backbone, $, _, EditTemplate, ViewTemplate, AssigneesView, ProductItemView, InvoiceView, invoiceCollection, common, Custom, dataService, populate, CONSTANTS, helpers) {
+        'use strict';
         var EditView = Backbone.View.extend({
-            contentType: "Order",
+            contentType: 'Order',
             imageSrc   : '',
             template   : _.template(EditTemplate),
 
@@ -36,7 +38,7 @@ define([
                 this.eventChannel = options.eventChannel;
 
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
-                this.currentModel.urlRoot = "/order";
+                this.currentModel.urlRoot = '/order';
                 this.responseObj = {};
                 this.render(options);
             },
@@ -67,20 +69,21 @@ define([
             },
 
             hideNewSelect: function () {
-                $(".newSelectList").hide();
+                $('.newSelectList').hide();
             },
 
             chooseOption : function (e) {
-                //var currencyElement = $(e.target).parents('dd').find('.current-selected');
-                //var oldCurrency = currencyElement.attr('data-id');
-                //var newCurrency = $(e.target).attr('id');
-                //var oldCurrencyClass = helpers.currencyClass(oldCurrency);
-                //var newCurrencyClass = helpers.currencyClass(newCurrency);
+                var $targetEl = $(e.target);
+                // var currencyElement = $(e.target).parents('dd').find('.current-selected');
+                // var oldCurrency = currencyElement.attr('data-id');
+                // var newCurrency = $(e.target).attr('id');
+                // var oldCurrencyClass = helpers.currencyClass(oldCurrency);
+                // var newCurrencyClass = helpers.currencyClass(newCurrency);
                 //
-                //var array = this.$el.find('.' + oldCurrencyClass);
-                //array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+                // var array = this.$el.find('.' + oldCurrencyClass);
+                // array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
 
-                $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+                $targetEl.parents('dd').find('.current-selected').text($targetEl.text()).attr('data-id', $targetEl.attr('id'));
             },
 
             nextSelect   : function (e) {
@@ -111,14 +114,14 @@ define([
                 var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
                 var itemSelector = '.dialog-tabs-item.' + dataClass;
 
-                closestEl.find("a.active").removeClass("active");
-                holder.addClass("active");
+                closestEl.find('a.active').removeClass('active');
+                holder.addClass('active');
 
-                n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+                n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
                 dialog_holder = $(selector);
 
-                dialog_holder.find(itemActiveSelector).removeClass("active");
-                dialog_holder.find(itemSelector).eq(n).addClass("active");
+                dialog_holder.find(itemActiveSelector).removeClass('active');
+                dialog_holder.find(itemSelector).eq(n).addClass('active');
             },
 
             cancelOrder: function (e) {
@@ -381,15 +384,15 @@ define([
                 var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
                 var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
                 var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
+                var usersId = [];
+
+                var groupsId = [];
+                var jobs;
+                var currency;
+
                 total = parseFloat(total) * 100;
                 unTaxed = parseFloat(unTaxed) * 100;
                 totalTaxes = parseFloat(totalTaxes) * 100;
-
-                var usersId = [];
-                var groupsId = [];
-                var jobs;
-
-                var currency;
 
                 if (thisEl.find('#currencyDd').attr('data-id')) {
                     currency = {
@@ -455,7 +458,6 @@ define([
                     paymentTerm      : paymentTerm ? paymentTerm : null,
                     fiscalPosition   : fiscalPosition ? fiscalPosition : null,
                     project          : project,
-                    //
                     paymentInfo      : {
                         total  : total,
                         unTaxed: unTaxed,
@@ -605,14 +607,14 @@ define([
                     }).render().el
                 );
 
-                //populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this/*, true, true*/);
+                //populate.get("#currencyDd", CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this/*, true, true*/);
 
                 populate.get("#destination", "/destination", {}, 'name', this, false, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
 
                 this.delegateEvents(this.events);
                 model = this.currentModel.toJSON();

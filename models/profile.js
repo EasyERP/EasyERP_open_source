@@ -4,7 +4,7 @@
     var ProfileSchema = mongoose.Schema({
         ID                : Number,
         _id               : Number,
-        profileName       : {type: String, default: 'emptyProfile'},
+        profileName       : {type: String, default: 'emptyProfile', unique : true},
         profileDescription: {type: String, default: 'No description'},
         profileAccess     : [{
             module: {type: Number, ref: "modules"},
@@ -23,5 +23,5 @@
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Profile'] = ProfileSchema;
+    mongoose.Schemas.Profile = ProfileSchema;
 })();

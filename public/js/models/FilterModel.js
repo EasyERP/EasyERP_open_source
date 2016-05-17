@@ -1,7 +1,10 @@
 /**
  * Created by soundstorm on 12.08.15.
  */
-define([], function () {
+define([
+    'Backbone'
+], function (Backbone) {
+    'use strict';
     var FilterModel = Backbone.Model.extend({
         idAttribute: "_id",
 

@@ -1,16 +1,19 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Projects/CreateTemplate.html",
         "models/ProjectsModel",
-        "populate",
         'views/Notes/AttachView',
         'views/Assignees/AssigneesView',
         'views/Bonus/BonusView',
         'views/selectView/selectView',
+        "populate",
         'custom',
         'constants'
 
     ],
-    function (CreateTemplate, ProjectModel, populate, attachView, AssigneesView, BonusView, selectView, customFile, constants) {
+    function (Backbone, $, _, CreateTemplate, ProjectModel, AttachView, AssigneesView, BonusView, SelectView, populate, customFile) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -56,7 +59,7 @@ define([
                     this.selectView.remove();
                 }
 
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
@@ -268,7 +271,7 @@ define([
                     }
                 });
                 var notDiv = this.$el.find('.attach-container');
-                this.attachView = new attachView({
+                this.attachView = new AttachView({
                     model   : new ProjectModel(),
                     url     : "/uploadProjectsFiles",
                     isCreate: true
@@ -284,11 +287,11 @@ define([
                 new BonusView({
                     model: new ProjectModel()
                 });
-                populate.get("#projectTypeDD", "/projectType", {}, "name", this, true, true);
+                populate.get("#projectTypeDD", CONSTANTS.URLS.PROJECT_TYPE, {}, "name", this, true, true);
                 populate.get("#paymentTerms", "/paymentTerm", {}, 'name', this, true, true, constants.PAYMENT_TERMS);
                 populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true, true, constants.PAYMENT_METHOD);
-                populate.get2name("#customerDd", "/Customer", {}, this, true, true);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Projects"}, "name", this, true);
+                populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, true, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Projects"}, "name", this, true);
 
                 $('#StartDate').datepicker({
                     dateFormat : "d M, yy",

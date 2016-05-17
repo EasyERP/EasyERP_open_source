@@ -1,19 +1,23 @@
 define([
-        'models/WorkflowsModel',
+        'Backbone',
+        'models/WorkflowsModel'
     ],
-    function (WorkflowsModel) {
+    function (Backbone, WorkflowsModel) {
+        'use strict';
         var WorkflowsCollection = Backbone.Collection.extend({
             model     : WorkflowsModel,
             url       : function () {
-                var mid = 39,
-                    url = "/Workflows?mid=" + mid + "&id=" + this.type;
+                var mid = 39;
+                var url = "/Workflows?mid=" + mid + "&id=" + this.type;
                 return url;
             },
             initialize: function (options) {
-                if (!options) {
-                    this.type = "";
-                } else {
+                // change check options.id
+
+                if (options && options.id) {
                     this.type = options.id;
+                } else {
+                    this.type = "";
                 }
                 this.fetch({
                     type   : 'GET',
@@ -22,10 +26,9 @@ define([
                     error  : this.fetchError
                 });
             },
-            parse     : true,
             parse     : function (response) {
                 return response.data;
-            },
+            }
         });
         return WorkflowsCollection;
     });

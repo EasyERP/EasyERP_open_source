@@ -1,6 +1,9 @@
 define([
+    'Backbone',
     'models/PayRollModel'
-], function (PayRollModel) {
+], function (Backbone, PayRollModel) {
+    'use strict';
+
     var payRollCollection = Backbone.Collection.extend({
         model      : PayRollModel,
         viewType   : null,
@@ -23,11 +26,13 @@ define([
             if (nameA && nameB) {
                 if (nameA > nameB) {
                     return this.sortOrder;
-                } else if (nameA < nameB) {
-                    return this.sortOrder * (-1);
-                } else {
-                    return 0;
                 }
+                if (nameA < nameB) {
+                    return this.sortOrder * (-1);
+                }
+
+                return 0;
+
             }
         },
 

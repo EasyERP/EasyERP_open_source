@@ -3,6 +3,8 @@
  */
 
 define([
+    'jQuery',
+    'Underscore',
     'views/customerPayments/list/ListView',
     'text!templates/Projects/projectInfo/paymentTemplate.html',
     'views/customerPayments/list/ListItemView',
@@ -14,7 +16,7 @@ define([
     'common',
     "async"
 
-], function (ListView, paymentTemplate, listItemView, EditView, paymentCollection, editCollection, PaymentModel, helpers, common, async) {
+], function ($, _, ListView, paymentTemplate, listItemView, EditView, paymentCollection, editCollection, PaymentModel, helpers, common, async) {
     var paymentView = ListView.extend({
 
         el               : '#payments',
@@ -83,7 +85,7 @@ define([
                         cb();
                     },
                     error  : function (model, res) {
-                        if (res.status === 403 && index === 0) {
+                        if (res.status === 403 /*&& index === 0*/) {
                             App.render({
                                 type   : 'error',
                                 message: "You do not have permission to perform this action"

@@ -11,8 +11,7 @@ define([
         'views/jobsDashboard/list/ListItemView',
         'views/Projects/projectInfo/journalEntriesForJob/dialogView',
         "constants"
-    ],
-    function ($, _, listViewBase, DashboardHeader, JobsCollection, FilterView, ListItemView, ReportView, CONSTANTS) {
+], function ($, _, listViewBase, DashboardHeader, JobsCollection, FilterView, ListItemView, ReportView, CONSTANTS) {
         'use strict';
         var ContentView = listViewBase.extend({
             page                    : null,
@@ -27,7 +26,7 @@ define([
             exportToXlsxUrl         : '/jobs/exportToXlsx',
 
             events: {
-                'click .jobs': "showReport"
+                'click .jobs': 'showReport'
             },
 
             initialize: function (options) {
@@ -73,6 +72,7 @@ define([
                 return this;
             }
         });
+    
         return ContentView;
     }
 );

@@ -1,9 +1,11 @@
 define([
+        'Backbone',
+        'Underscore',
         'text!templates/PayrollPayments/list/ListTemplate.html',
         'helpers'
     ],
 
-    function (PaymentListTemplate, helpers) {
+    function (Backbone, _, PaymentListTemplate, helpers) {
         var PaymentListItemView = Backbone.View.extend({
             el: '#listTable',
 

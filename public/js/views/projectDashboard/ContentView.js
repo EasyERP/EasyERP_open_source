@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/projectDashboard/DashboardTemplate.html",
         "text!templates/projectDashboard/ProjectDashboard.html",
         'collections/Projects/projectInfoCollection',
@@ -6,7 +9,7 @@ define([
         "dataService",
         "helpers"
     ],
-    function (DashboardTemplate, projectTemplate, contentCollection, custom, dataService, helpers) {
+    function (Backbone, $, _, DashboardTemplate, projectTemplate, contentCollection, custom, dataService, helpers) {
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
             actionType : "Content",
@@ -125,7 +128,7 @@ define([
                 }
             },
 
-            renderProjectStatus: function () {
+            /*renderProjectStatus: function () {
                 var self = this;
                 this.populateProjectForDashboard("/getProjectStatusCountForDashboard", function (collection) {
                     var n = collection.workflow.length;
@@ -191,7 +194,7 @@ define([
                     }
 
                 });
-            },
+            },*/
 
             render: function () {
                 this.$el.html(this.template());

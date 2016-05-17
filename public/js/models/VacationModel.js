@@ -1,11 +1,16 @@
 /**
  * Created by soundstorm on 30.06.15.
  */
-define([], function () {
+define([
+    'Backbone',
+    'constants'
+], function (Backbone, CONSTANTS) {
+    'use strict';
+
     var VacationModel = Backbone.Model.extend({
         idAttribute: "_id",
         urlRoot    : function () {
-            return "/Vacation";
+            return CONSTANTS.URLS.VACATION;
         }
     });
 

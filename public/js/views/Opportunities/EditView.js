@@ -1,4 +1,7 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Opportunities/EditTemplate.html",
         "text!templates/Opportunities/editSelectTemplate.html",
         'views/selectView/selectView',
@@ -8,9 +11,10 @@
         "common",
         "custom",
         "populate",
-        "dataService"
+        "dataService",
+        'constants'
     ],
-    function (EditTemplate, editSelectTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService) {
+    function (Backbone, $, _, EditTemplate, editSelectTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService, CONSTANTS) {
         "use strict";
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
@@ -27,14 +31,14 @@
                 this.render();
             },
 
-            events       : {
-                "click .breadcrumb a, #lost, #won"                                : "changeWorkflow",
-                "click #tabList a"                                                : "switchTab",
-                'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect"
+            events: {
+                "click .breadcrumb a, #lost, #won"                 : "changeWorkflow",
+                "click #tabList a"                                 : "switchTab",
+                'keydown'                                          : 'keydownHandler',
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .current-selected"                          : "showNewSelect",
+                "click"                                            : "hideNewSelect"
             },
 
             hideNewSelect: function () {
@@ -67,7 +71,7 @@
                 return false;
             },
 
-            chooseOption : function (e) {
+            chooseOption: function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 if (holder.attr("id") === 'customerDd') {
@@ -109,7 +113,7 @@
             },
 
             selectCustomer: function (id) {
-                dataService.getData('/Customer', {
+                dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
                     id: id
                 }, function (response, context) {
                     var customer = response.data[0];
@@ -137,7 +141,7 @@
 
             },
 
-            switchTab: function (e) {
+            /*switchTab: function (e) {  ui tests
                 e.preventDefault();
                 var link = this.$("#tabList a");
                 if (link.hasClass("selected")) {
@@ -145,7 +149,7 @@
                 }
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
-            },
+            },*/
 
             saveItem: function () {
                 var self = this;
@@ -302,6 +306,8 @@
                                 break;
                             case 'kanban':
                             {
+
+                                console.log(JSON.stringify(result));
                                 var kanban_holder = $("#" + model._id);
                                 kanban_holder.find(".opportunity-header h4").text(name);
                                 kanban_holder.find(".opportunity-header h3").text("$" + parseInt(expectedRevenueValue));
@@ -454,10 +460,10 @@
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 var model = this.currentModel.toJSON();
                 populate.getPriority("#priorityDd", this);
-                populate.get2name("#customerDd", "/Customer", {}, this, false, true);
-                populate.get2name("#salesPersonDd", "/getForDdByRelatedUser", {}, this, false, true);
-                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this);
-                populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, false, true);
+                populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, false, true);
+                populate.get2name("#salesPersonDd", CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this, false, true);
+                populate.getWorkflow("#workflowDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Opportunities"}, "name", this);
+                populate.get("#salesTeamDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this, false, true);
                 if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
