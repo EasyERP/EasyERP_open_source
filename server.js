@@ -87,8 +87,7 @@ mainDb.once('open', function callback() {
             });
         });
     });
-
-
+    
     mainDb.mongoose = mongoose;
 
     app = require('./app')(mainDb, dbsNames);
