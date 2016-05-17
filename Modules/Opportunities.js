@@ -8,6 +8,10 @@ var Opportunities = function (models, event) {
         var workflowSchema = mongoose.Schemas.workflow;
         var fs = require('fs');
 
+        var Mailer = require('../helpers/mailer');
+        var mailer = new Mailer();
+        var EmployeeSchema = mongoose.Schemas.Employee;
+
         function getTotalCount(req, response) {
             var res = {};
             var filterObj = {};
@@ -407,6 +411,11 @@ var Opportunities = function (models, event) {
                                             id     : result._id
                                         }
                                     });
+
+                                    // send email to _opportunitie.salesPerson
+                                    if (_opportunitie.salesPerson) {
+                                        sendEmailToAssigned(req, _opportunitie);
+                                    }
                                 }
                             });
                         });
@@ -1020,7 +1029,10 @@ var Opportunities = function (models, event) {
 
                 event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
                     data.sequence = sequence;
-                    models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+
+                    models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findById(_id, function(err, oldOpportunity){
+
+                        models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                         if (err) {
                             console.log(err);
                             logWriter.log("Opportunities.js update opportunitie.update " + err);
@@ -1081,8 +1093,22 @@ var Opportunities = function (models, event) {
                                     createPersonCustomer({});
                                 }
                             }
+
+                            // send email to assigned when update Lead
+                            if (result.salesPerson) {
+                                if (oldOpportunity.salesPerson) {
+                                    if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                        sendEmailToAssigned(req, result);
+                                    }
+                                } else {
+                                    sendEmailToAssigned(req, result);
+                                }
+                            }
+
                             res.send(200, {success: 'Opportunities updated success', result: result});
+
                         }
+                        });
                     });
                 });
             };
@@ -1109,6 +1135,53 @@ var Opportunities = function (models, event) {
             }
         }
 
+        function sendEmailToAssigned(req, opportunity){
+
+            var mailOptions;
+            var Employee;
+
+            Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+            Employee.findById(opportunity.salesPerson, {}, function (err, modelEmployee) {
+
+                var workEmail;
+                var employee;
+                var opportunityName;
+                var opportunityDescription;
+                var isOpportunity;
+
+                if (err) {
+                    res.send(500, {error: 'email send to assigned error'});
+                }
+
+                workEmail = modelEmployee.get('workEmail');
+                employee = modelEmployee.get('name');
+
+                opportunityName = opportunity.name || '';
+                opportunityDescription = opportunity.internalNotes || '';
+                isOpportunity = opportunity.isOpportunitie ? 'Opportunity' : 'Lead';
+
+                if (workEmail) {
+                    mailOptions = {
+                        to                    : workEmail,
+                        isOpportunity         : isOpportunity,
+                        employee              : employee,
+                        opportunityName       : opportunityName,
+                        opportunityDescription: opportunityDescription
+                    };
+
+                    mailer.sendAssignedToLead(mailOptions, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        console.log('email was send to ' + workEmail);
+                    });
+                } else {
+                    console.log('employee have not work email');
+                }
+            });
+        }
+
         function updateOnlySelectedFields(req, _id, data, res) {
             var fileName = data.fileName;
             delete data.fileName;
@@ -1120,15 +1193,27 @@ var Opportunities = function (models, event) {
                             if (data.workflow == data.workflowStart) {
                                 data.sequence -= 1;
                             }
-                            models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                                if (!err) {
-                                    res.send(200, {success: 'Opportunities updated', sequence: result.sequence});
-                                } else {
-                                    res.send(500, {error: "Can't update Opportunitie"});
-                                }
+                            models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findById(_id, function(err, oldOpportunity){
+                                models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                                    if (!err) {
+                                        res.send(200, {success: 'Opportunities updated', sequence: result.sequence});
 
+                                        if (result.salesPerson) {
+                                            if (oldOpportunity.salesPerson) {
+                                                if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                                    sendEmailToAssigned(req, result);
+                                                }
+                                            } else {
+                                                sendEmailToAssigned(req, result);
+                                            }
+                                        }
+
+                                    } else {
+                                        res.send(500, {error: "Can't update Opportunitie"});
+                                    }
+
+                                });
                             });
-
                         });
                     });
                 } else {
@@ -1137,13 +1222,27 @@ var Opportunities = function (models, event) {
                         delete data.workflowStart;
                         data.info = {};
                         data.sequence = sequence;
-                        models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                            if (!err) {
-                                res.send(200, {success: 'Opportunities updated'});
-                            } else {
-                                res.send(500, {error: "Can't update Opportunitie"});
-                            }
 
+                        models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findById(_id, function(err, oldOpportunity) {
+                            models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                                if (!err) {
+                                    res.send(200, {success: 'Opportunities updated'});
+
+                                    if (result.salesPerson) {
+                                        if (oldOpportunity.salesPerson) {
+                                            if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                                sendEmailToAssigned(req, result);
+                                            }
+                                        } else {
+                                            sendEmailToAssigned(req, result);
+                                        }
+                                    }
+
+                                } else {
+                                    res.send(500, {error: "Can't update Opportunitie"});
+                                }
+
+                            });
                         });
                     });
                 }
@@ -1167,60 +1266,76 @@ var Opportunities = function (models, event) {
                         data.notes[data.notes.length - 1] = obj;
                     }
 
-                    models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                        if (!err) {
-                            if (fileName) {
-                                var os = require("os");
-                                var osType = (os.type().split('_')[0]);
-                                var path;
-                                var dir;
-                                switch (osType) {
-                                    case "Windows":
-                                    {
-                                        var newDirname = __dirname.replace("\\Modules", "");
-                                        while (newDirname.indexOf("\\") !== -1) {
-                                            newDirname = newDirname.replace("\\", "\/");
+
+                    models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findById(_id, function (err, oldOpportunity) {
+                        if (err) {
+                            console.log(err);
+                        }
+
+                        models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                            if (!err) {
+                                if (fileName) {
+                                    var os = require("os");
+                                    var osType = (os.type().split('_')[0]);
+                                    var path;
+                                    var dir;
+                                    switch (osType) {
+                                        case "Windows":
+                                        {
+                                            var newDirname = __dirname.replace("\\Modules", "");
+                                            while (newDirname.indexOf("\\") !== -1) {
+                                                newDirname = newDirname.replace("\\", "\/");
+                                            }
+                                            path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                            dir = newDirname + "\/uploads\/" + _id;
                                         }
-                                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                        dir = newDirname + "\/uploads\/" + _id;
+                                            break;
+                                        case "Linux":
+                                        {
+                                            var newDirname = __dirname.replace("/Modules", "");
+                                            while (newDirname.indexOf("\\") !== -1) {
+                                                newDirname = newDirname.replace("\\", "\/");
+                                            }
+                                            path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                            dir = newDirname + "\/uploads\/" + _id;
+                                        }
                                     }
-                                        break;
-                                    case "Linux":
-                                    {
-                                        var newDirname = __dirname.replace("/Modules", "");
-                                        while (newDirname.indexOf("\\") !== -1) {
-                                            newDirname = newDirname.replace("\\", "\/");
+
+                                    fs.unlink(path, function (err) {
+                                        console.log(err);
+                                        fs.readdir(dir, function (err, files) {
+                                            if (files && files.length === 0) {
+                                                fs.rmdir(dir, function () {
+                                                });
+                                            }
+                                        });
+                                    });
+
+                                }
+                                res.send(200, {
+                                    success : 'Opportunities updated',
+                                    notes   : result.notes,
+                                    sequence: result.sequence
+                                });
+
+                                if (result.salesPerson) {
+                                    if (oldOpportunity.salesPerson) {
+                                        if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                            sendEmailToAssigned(req, result);
                                         }
-                                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                        dir = newDirname + "\/uploads\/" + _id;
+                                    } else {
+                                        sendEmailToAssigned(req, result);
                                     }
                                 }
 
-                                fs.unlink(path, function (err) {
-                                    console.log(err);
-                                    fs.readdir(dir, function (err, files) {
-                                        if (files && files.length === 0) {
-                                            fs.rmdir(dir, function () {
-                                            });
-                                        }
-                                    });
-                                });
-
+                            } else {
+                                res.send(500, {error: "Can't update Opportunitie"});
                             }
-                            res.send(200, {
-                                success : 'Opportunities updated',
-                                notes   : result.notes,
-                                sequence: result.sequence
-                            });
-                        } else {
-                            res.send(500, {error: "Can't update Opportunitie"});
-                        }
 
+                        });
                     });
                 });
-
             }
-
         }
 
         function getFilterOpportunitiesForMiniView(req, data, response) {
@@ -1559,10 +1674,8 @@ var Opportunities = function (models, event) {
                         console.log(err);
                     }
                 }
-            )
-            ;
+            );
         }
-        ;
 
         function getCollectionLengthByWorkflows(req, res) {
             console.log('-------------------------------------------------------------');
@@ -1679,7 +1792,6 @@ var Opportunities = function (models, event) {
             updateLead                       : updateLead,
             updateOnlySelectedFields         : updateOnlySelectedFields,
             remove                           : remove
-        }
-    }
-    ;
+        };
+    };
 module.exports = Opportunities;
