@@ -32,7 +32,7 @@
     <span class="notApproved">Not Approved</span>
     <%}%>
     <% } else {%>
-    <span class="done"><%=invoice.workflow.name%></span>
+    <span class="<%=invoice.workflow.name === 'Invoiced'? 'invoiced' : 'done'%>"><%=invoice.workflow.name%></span>
     <%}%>
     <% } else {%>
     <span> </span>
