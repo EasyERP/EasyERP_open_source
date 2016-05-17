@@ -25,7 +25,7 @@ define([
             totalCollectionLengthUrl: '/totalCollectionLength/Companies',
             formUrl                 : "#easyErp/Companies/form/",
             exportToXlsxUrl         : '/Customers/exportToXlsx/?type=Companies',
-            exportToCsvUrl          : '/Customers/exportToCsv',
+            exportToCsvUrl          : '/Customers/exportToCsv/?type=Companies',
             events                  : {
                 "click .letter:not(.empty)": "alpabeticalRender"
             },

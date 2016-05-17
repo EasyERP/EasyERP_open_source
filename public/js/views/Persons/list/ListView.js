@@ -22,8 +22,8 @@ define([
             formUrl                 : "#easyErp/Persons/form/",
             contentType             : 'Persons',//needs in view.prototype.changeLocationHash
             viewType                : 'list',//needs in view.prototype.changeLocationHash
-            exportToXlsxUrl         : '/Customers/exportToXlsx/',
-            exportToCsvUrl          : '/Customers/exportToCsv',
+            exportToXlsxUrl         : '/Customers/exportToXlsx/?type=Persons',
+            exportToCsvUrl          : '/Customers/exportToCsv/?type=Persons',
             events                  : {
                 "click .letter:not(.empty)": "alpabeticalRender"
             },
@@ -54,7 +54,7 @@ define([
                 if (this.exportToXlsxUrl) {
                     tempExportToXlsxUrl = this.exportToXlsxUrl;
                     if (this.filter) {
-                        tempExportToXlsxUrl += '&' + encodeURIComponent(JSON.stringify(this.filter));
+                        tempExportToXlsxUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
                     }
                     window.location = tempExportToXlsxUrl;
                 }
