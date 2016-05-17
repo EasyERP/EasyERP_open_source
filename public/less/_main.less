@@ -1866,13 +1866,13 @@ input::-ms-clear {
         height: 205px;
         margin-top: 8px !important;
         margin-left: 1px;
-        width: 260px;
+        width: 100%;
       }
       &.taskDescriptionEdit {
         height: 188px;
         margin-top: 8px !important;
         margin-left: 1px;
-        width: 230px;
+        width: 100%;
       }
       &.projectDescriptionCreate {
         height: 230px;
@@ -2107,7 +2107,7 @@ input::-ms-clear {
   label {
     font-weight: normal;
     border: none;
-    font-family: Arial, Helvetica, sans-serif;
+    //font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
     display: inline;
     float: none;
@@ -4166,6 +4166,8 @@ ul.chart-tabs {
 .axis {
   text {
     font: 14px sans-serif;
+    color: @text-color-svg;
+    fill: @text-color-svg !important;
   }
 
   path, line {
@@ -5683,13 +5685,17 @@ textarea#editInput {
     }
 
     .y.axis .tick line {
-      stroke-width: 0;
-      stroke: transparent;
+      stroke-width: 1;
+      stroke: #000 !important;
     }
 
     .y.axis .tick text {
       font-size: 11px;
-      fill: #fff;
+      fill: @text-color-svg;
+    }
+
+    .axesName {
+      fill: @text-color-svg;
     }
 
     .domain {
@@ -6617,7 +6623,7 @@ textarea#editInput {
   }
   .chartContainer {
     .domain {
-      stroke: #fff !important;
+      stroke: @main-color-svg !important;
     }
   }
 }
@@ -6651,7 +6657,7 @@ textarea#editInput {
     }
   }
   .choseDateItem {
-    border: 1px solid @list-border-color;
+    border: 1px solid @border-color-main;
     button {
       background: #fff;
       color: #4d5a75;
