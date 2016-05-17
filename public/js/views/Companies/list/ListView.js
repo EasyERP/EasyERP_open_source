@@ -15,18 +15,18 @@ define([
 
         var CompaniesListView = listViewBase.extend({
 
-            createView       : createView,
-            listTemplate     : listTemplate,
-            listItemView     : listItemView,
-            contentCollection: contentCollection,
-            filterView       : filterView,
-            contentType      : "Companies",
-
+            createView              : createView,
+            listTemplate            : listTemplate,
+            listItemView            : listItemView,
+            contentCollection       : contentCollection,
+            filterView              : filterView,
+            contentType             : "Companies",
             totalCollectionLengthUrl: '/totalCollectionLength/Companies',
             formUrl                 : "#easyErp/Companies/form/",
             exportToXlsxUrl         : '/Customers/exportToXlsx/?type=Companies',
             exportToCsvUrl          : '/Customers/exportToCsv/?type=Companies',
-            events                  : {
+
+            events: {
                 "click .letter:not(.empty)": "alpabeticalRender"
             },
 
@@ -61,6 +61,18 @@ define([
                         tempExportToXlsxUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
                     }
                     window.location = tempExportToXlsxUrl;
+                }
+            },
+
+            exportToCsv: function () {
+                var tempExportToCsvUrl = '';
+
+                if (this.exportToCsvUrl) {
+                    tempExportToCsvUrl = this.exportToCsvUrl;
+                    if (this.filter) {
+                        tempExportToCsvUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = tempExportToCsvUrl;
                 }
             },
 

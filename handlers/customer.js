@@ -443,7 +443,7 @@ var Customers = function (models) {
         data.filter = filter;
 
         if (filter) {
-            filterObj.$and = caseFilter(data, type, matchObject);
+            filterObj = caseFilter(data, type, matchObject);
         }
 
         options = {
@@ -488,7 +488,62 @@ var Customers = function (models) {
     };
 
     this.exportToCsv = function (req, res, next) {
-        console.log('Customer exportToCsv method');
+        var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+
+        var filter = req.query.filter || JSON.stringify({});
+        var type  = req.query.type;
+        var filterObj = {};
+        var options;
+        var matchObject = {};
+        var data = {};
+
+        filter = JSON.parse(filter);
+
+        data.filter = filter;
+
+        if (filter) {
+            filterObj = caseFilter(data, type, matchObject);
+        }
+
+        options = {
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
+            returnResult: true,
+            fileName    : type || 'Customer'
+        };
+
+        function lookupForCustomers(cb) {
+            var query = [];
+
+            query.push({$match: matchObject});
+
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+            query.push({$project: projectCustomer});
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToCsv(options);
+        }
+
+        async.parallel([lookupForCustomers], function (err, result) {
+            var resultArray = result[0];
+
+            exporter.exportToCsv({
+                res        : res,
+                next       : next,
+                Model      : Model,
+                resultArray: resultArray,
+                map        : exportMap,
+                fileName   : type || 'Customer'
+            });
+        });
+
     };
 
 };

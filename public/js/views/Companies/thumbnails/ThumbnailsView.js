@@ -22,6 +22,8 @@
             page              : null,
             contentType       : 'Companies',
             viewType          : 'thumbnails',
+            exportToXlsxUrl   : '/Customers/exportToXlsx/?type=Companies',
+            exportToCsvUrl    : '/Customers/exportToCsv/?type=Companies',
 
             initialize: function (options) {
                 this.asyncLoadImgs(this.collection);
@@ -298,13 +300,27 @@
             },
 
             exportToCsv: function () {
-                //todo change after routes refactoring
-                window.location = '/Customers/exportToCsv?type=Company';
+                var tempExportToCsvUrl = '';
+
+                if (this.exportToCsvUrl) {
+                    tempExportToCsvUrl = this.exportToCsvUrl;
+                    if (this.filter) {
+                        tempExportToCsvUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = tempExportToCsvUrl;
+                }
             },
 
             exportToXlsx: function () {
-                //todo change after routes refactoring
-                window.location = '/Customers/exportToXlsx?type=Company';
+                var tempExportToXlsxUrl = '';
+
+                if (this.exportToXlsxUrl) {
+                    tempExportToXlsxUrl = this.exportToXlsxUrl;
+                    if (this.filter) {
+                        tempExportToXlsxUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = tempExportToXlsxUrl;
+                }
             }
         });
         return CompaniesThumbnalView;

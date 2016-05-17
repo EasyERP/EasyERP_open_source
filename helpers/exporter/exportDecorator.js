@@ -35,6 +35,7 @@ function exportToCsv(options) {
     var query = options.query ||[];
     var map = options.map;
     var fileName = options.fileName;
+    var resultArray = options.resultArray;
     var headersArray = [];
     var project = createProjection(map.aliases, {putHeadersTo: headersArray});
     var formatters = map.formatters;
@@ -71,38 +72,43 @@ function exportToCsv(options) {
 
     };
 
-    resultAggregate.exec(function (err, response) {
-        if (err) {
-            return next(err);
-        }
+    if (!resultArray){
+        resultAggregate.exec(function (err, response) {
 
-        if (returnResult){
-            return cb(null, response);
-        }
+            if (err) {
+                return next(err);
+            }
 
-        if (formatters) {
-            async.each(response, function (item, callback) {
+            if (returnResult){
+                return cb(null, response);
+            }
 
-                var keys = Object.keys(formatters);
+            if (formatters) {
+                async.each(response, function (item, callback) {
 
-                for (var i = keys.length - 1; i >= 0; i--) {
-                    var key = keys[i];
-                    item[key] = formatters[key](item[key]);
-                }
+                    var keys = Object.keys(formatters);
 
-                callback();
+                    for (var i = keys.length - 1; i >= 0; i--) {
+                        var key = keys[i];
+                        item[key] = formatters[key](item[key]);
+                    }
 
-            }, function (err) {
-                if (err) {
-                    return next(err);
-                }
+                    callback();
+
+                }, function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+                    writeCsv(response);
+                });
+            } else {
                 writeCsv(response);
-            });
-        } else {
-            writeCsv(response);
-        }
+            }
 
-    });
+        });
+    } else {
+        writeCsv(resultArray);
+    }
 };
 
 /**

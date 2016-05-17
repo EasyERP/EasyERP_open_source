@@ -60,6 +60,18 @@ define([
                 }
             },
 
+            exportToCsv: function () {
+                var tempExportToCsvUrl = '';
+
+                if (this.exportToCsvUrl) {
+                    tempExportToCsvUrl = this.exportToCsvUrl;
+                    if (this.filter) {
+                        tempExportToCsvUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = tempExportToCsvUrl;
+                }
+            },
+
             render: function () {
                 var self;
                 var $currentEl;

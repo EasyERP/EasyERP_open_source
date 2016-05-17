@@ -20,6 +20,8 @@
             newCollection     : null,
             contentType       : 'Persons',//needs in view.prototype.changeLocationHash
             viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
+            exportToXlsxUrl   : '/Customers/exportToXlsx/?type=Persons',
+            exportToCsvUrl    : '/Customers/exportToCsv/?type=Persons',
 
             initialize: function (options) {
                 this.asyncLoadImgs(this.collection);
@@ -69,7 +71,7 @@
                 }, this);
             },
 
-            asyncLoadImgs    : function (collection) {
+            asyncLoadImgs: function (collection) {
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
@@ -219,11 +221,11 @@
                 //};
             },
 
-            showMore        : function (event) {
+            showMore       : function (event) {
                 //event.preventDefault();
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
-            showMoreContent : function (newModels) {
+            showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var content = holder.find("#thumbnailContent");
                 var showMore = holder.find('#showMoreDiv');
@@ -305,48 +307,27 @@
                 });
             },
 
-/*            exportToCsv: function () {
-                //todo change after routes refactoring
-                window.location = '/Customers/exportToCsv'
-            },
-
-            exportToXlsx: function () {
-                //todo change after routes refactoring
-                window.location = '/Customers/exportToXlsx'
-            }*/
-
             exportToCsv: function () {
-                //todo change after routes refactoring
-                var filterString = '';
+                var tempExportToCsvUrl = '';
 
                 if (this.exportToCsvUrl) {
+                    tempExportToCsvUrl = this.exportToCsvUrl;
                     if (this.filter) {
-                        this.exportToCsvUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                        tempExportToCsvUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
                     }
-                    window.location = this.exportToCsvUrl;
-                } else {
-                    if (this.collection) {
-                        filterString += '/' + encodeURIComponent(JSON.stringify(this.filter));
-                    }
-                    window.location = '/Customers/exportToCsv' + filterString;
+                    window.location = tempExportToCsvUrl;
                 }
             },
 
             exportToXlsx: function () {
-                var filterString = '';
-                //todo change after routes refactoring
+                var tempExportToXlsxUrl = '';
+
                 if (this.exportToXlsxUrl) {
+                    tempExportToXlsxUrl = this.exportToXlsxUrl;
                     if (this.filter) {
-                        this.exportToXlsxUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                        tempExportToXlsxUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
                     }
-                    window.location = this.exportToXlsxUrl;
-                } else {
-                    if (this.collection) {
-                        if (this.filter) {
-                            filterString += '/' + encodeURIComponent(JSON.stringify(this.filter));
-                        }
-                        window.location = '/Customers/exportToXlsx';
-                    }
+                    window.location = tempExportToXlsxUrl;
                 }
             }
         });
