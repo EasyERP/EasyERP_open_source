@@ -1,11 +1,16 @@
 define([
-        'models/SourceOfApplicantsModel'
+        'Backbone',
+        'jQuery',
+        'models/SourceOfApplicantsModel',
+        'constants'
     ],
-    function (SourceOfApplicantsModel) {
+    function (Backbone, $, SourceOfApplicantsModel, CONSTANTS) {
+        'use strict';
+
         var SourceOfApplicantsCollection = Backbone.Collection.extend({
             model     : SourceOfApplicantsModel,
             url       : function () {
-                return "/SourcesOfApplicants";
+                return CONSTANTS.URLS.SOURCESOFAPPLICANTS;
             },
             initialize: function () {
                 var mid = 39;
@@ -19,10 +24,9 @@ define([
                     error  : this.fetchError
                 });
             },
-            parse     : true,
             parse     : function (response) {
                 return response.data;
-            },
+            }
         });
         return SourceOfApplicantsCollection;
     });

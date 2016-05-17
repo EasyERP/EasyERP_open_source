@@ -1,15 +1,13 @@
 define([
     'Backbone',
     'collections/Dashboard/employeeDashboardData'
-], function (Backbone, employeeDashboardData) {
+], function (Backbone, EmployeeDashboardData) {
+    'use strict';
     var VacationDashboard = Backbone.Model.extend({
         idAttribute: "department._id",
-        /*urlRoot: function () {
-         return "/Vacation";
-         }*/
         parse      : function (model) {
             if (model.employees) {
-                model.employees = new employeeDashboardData(model.employees);
+                model.employees = new EmployeeDashboardData(model.employees);
                 model.employees = model.employees.toJSON();
             }
 

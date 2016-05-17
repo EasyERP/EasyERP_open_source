@@ -1,9 +1,12 @@
 define([
-        "text!templates/PayrollPayments/CreateTemplate.html",
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        'text!templates/PayrollPayments/CreateTemplate.html',
         'moment',
-        "helpers"
+        'helpers'
     ],
-    function (CreateTemplate, moment, helpers) {
+    function (Backbone, $, _, CreateTemplate, moment, helpers) {
         "use strict";
 
         var CreateView = Backbone.View.extend({
@@ -390,10 +393,17 @@ define([
             },
 
             render: function (options) {
-                options.currencySplitter = helpers.currencySplitter;
-                var formString = this.template(options);
                 var self = this;
-
+                var date = new Date(moment(self.date).endOf('month').set({
+                    hours  : 18,
+                    minutes: 1,
+                    seconds: 0
+                }));
+                var formString;
+                
+                options.currencySplitter = helpers.currencySplitter;
+                formString = this.template(options);
+                
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
                     autoOpen     : true,
@@ -418,26 +428,15 @@ define([
                         }]
 
                 });
-
                 this.dateOfPayment = this.$el.find('#dateOfPayment');
-
                 this.dateOfPayment.datepicker({ //TODO
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
                     minDate    : self.date
                 });
-
-                var date = new Date(moment(self.date).endOf('month').set({
-                    hours  : 18,
-                    minutes: 1,
-                    seconds: 0
-                }));
-
                 this.dateOfPayment.datepicker("setDate", date.toString());
-
                 this.$el.find('#deleteBtn').hide();
-
                 this.delegateEvents(this.events);
 
                 return this;

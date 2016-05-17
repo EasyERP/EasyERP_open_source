@@ -1,10 +1,14 @@
 ﻿define([
-        'models/ProjectsModel'
+        'Backbone',
+        'models/ProjectsModel',
+        'constants'
     ],
-    function (ProjectModel) {
+    function (Backbone, ProjectModel, CONSTANTS) {
+        'use strict';
+
         var ProjectsCollection = Backbone.Collection.extend({
             model       : ProjectModel,
-            url         : "/Projects/",
+            url         : CONSTANTS.URLS.PROJECTS,
             page        : null,
             namberToShow: null,
             viewType    : null,
@@ -31,7 +35,7 @@
                         that.page++;
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }
@@ -66,7 +70,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }

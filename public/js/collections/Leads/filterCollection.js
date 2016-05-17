@@ -1,10 +1,14 @@
 ﻿define([
-        'models/LeadsModel'
+        'Backbone',
+        'models/LeadsModel',
+        'constants'
     ],
-    function (LeadsModel) {
+    function (Backbone, LeadsModel, CONSTANTS) {
+        'use strict';
+
         var LeadsCollection = Backbone.Collection.extend({
             model       : LeadsModel,
-            url         : "/Leads/",
+            url         : CONSTANTS.URLS.LEADS,
             page        : null,
             namberToShow: null,
             contentType : null,
@@ -63,7 +67,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }

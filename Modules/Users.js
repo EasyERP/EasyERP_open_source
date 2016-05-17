@@ -13,7 +13,7 @@ var Users = function (mainDb, models) {
     var RESPONSES = require('../constants/responses');
     var _ = require('lodash');
 
-    function getAllUserWithProfile(req, id, response) {
+    /*function getAllUserWithProfile(req, id, response) {
         var res = {};
         var query = models.get(req.session.lastDb, 'Users', userSchema).find({profile: id}, {_id: 0, login: 1});
         query.exec(function (err, result) {
@@ -29,7 +29,7 @@ var Users = function (mainDb, models) {
                 response.send(500, {error: "Can't find JobPositions"});
             }
         });
-    };
+    };*/
 
     function getTotalCount(req, response) {
         var res = {};
@@ -61,27 +61,7 @@ var Users = function (mainDb, models) {
     }
 
     function createUser(req, data, result) {
-        /**
-         * __Type__ `POST`
-         *
-         * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Users`
-         *
-         * This __method__ allows to create __User__
-         * @example  Object for request: {
-	     *    "pass" : "777777",
-	     *    "email" : "Alex@mail.com",
-		 *    "login" : "Alex",
-         *    "imageSrc" : ""
-         *   }
-         *
-         * @example Response example: {
-         *      "success":"A new User crate success",
-         *      "id":"55df03676774745332000005"
-         *     }
-         * @method Users
-         * @property {JSON} Object - Object with data to create User (like in example)
-         * @instance
-         */
+
         try {
             var shaSum = crypto.createHash('sha256');
 
@@ -145,18 +125,8 @@ var Users = function (mainDb, models) {
         }
     }
 
-    /**
-     * __Type__ `GET`
-     *
-     * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/logout`
-     *
-     * This __method__ allows to logout.
-     *
-     * @method logout
-     * @instance
-     */
-    function login(req, res, next) {
-        /**
+    /*function login(req, res, next) {
+        /!**
          * __Type__ `POST`
          *
          * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/login`
@@ -170,12 +140,12 @@ var Users = function (mainDb, models) {
          * @method login
          * @property {JSON} Object - Object with data for logining (like in example)
          * @instance
-         */
-        var data = req.body;
+         *!/
+
         try {
             if (data) {
                 if (data.login || data.email) {
-                    models.get(data.dbId, 'Users', userSchema).findOne({$or: [{login: { $regex: data.login , $options: 'i' }/*.toLowerCase()*/}, {email: { $regex: data.login , $options: 'i' }}]}, function (err, _user) {
+                    models.get(data.dbId, 'Users', userSchema).findOne({$or: [{login: { $regex: data.login , $options: 'i' }/!*.toLowerCase()*!/}, {email: { $regex: data.login , $options: 'i' }}]}, function (err, _user) {
 
                         var shaSum;
                         var lastAccess;
@@ -184,7 +154,7 @@ var Users = function (mainDb, models) {
                             if (_user && _user._id) {
                                 shaSum = crypto.createHash('sha256');
                                 shaSum.update(data.pass);
-                                if (/*((_user.login == data.login) || (_user.email == data.login)) && */_user.pass === shaSum.digest('hex')) {
+                                if (/!*((_user.login == data.login) || (_user.email == data.login)) && *!/_user.pass === shaSum.digest('hex')) {
                                     req.session.loggedIn = true;
                                     req.session.uId = _user._id;
                                     req.session.uName = _user.login;
@@ -226,10 +196,10 @@ var Users = function (mainDb, models) {
             logWriter.log("Users.js  login" + exception);
             res.send(500);
         }
-    }
+    }*/
 
-    function getUsers(req, response, data) {
-        /**
+    /*function getUsers(req, response, data) {
+        /!**
          * __Type__ `GET`
          *
          * Base ___url___ for build __requests__ is `http:/192.168.88.133:8089/Users`
@@ -238,7 +208,7 @@ var Users = function (mainDb, models) {
          *
          * @method Users
          * @instance
-         */
+         *!/
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'Users', userSchema).find({}, {__v: 0, upass: 0});
@@ -256,9 +226,9 @@ var Users = function (mainDb, models) {
                 response.send(res);
             }
         });
-    }
+    }*/
 
-    function getUsersForDd(req, response) {
+   /* function getUsersForDd(req, response) {
         var res = {};
         var data = {};
         for (var i in req.query) {
@@ -280,9 +250,9 @@ var Users = function (mainDb, models) {
                 response.send(res);
             }
         });
-    }
+    }*/
 
-    function getUserById(req, id, response) {
+   /* function getUserById(req, id, response) {
         var query = models.get(req.session.lastDb, 'Users', userSchema).findById(id);
         var key;
         var newUserResult = {};
@@ -304,7 +274,7 @@ var Users = function (mainDb, models) {
                 response.send({user: result, savedFilters: newUserResult});
             }
         });
-    }
+    }*/
 
     function getFilter(req, response) {
         var res = {};
@@ -501,7 +471,7 @@ var Users = function (mainDb, models) {
         }
     }
 
-    function removeUser(req, _id, res) {
+    /*function removeUser(req, _id, res) {
         if (req.session.uId == _id) {
             res.send(400, {error: 'You cannot delete current user'});
         }
@@ -516,28 +486,28 @@ var Users = function (mainDb, models) {
                 }
             });
         }
-    }
+    }*/
 
     return {
-        getAllUserWithProfile: getAllUserWithProfile,
+       /* getAllUserWithProfile: getAllUserWithProfile,*/
 
         getTotalCount: getTotalCount,
 
         createUser: createUser,
 
-        login: login,
+        /*login: login,*/
 
-        getUsers: getUsers,
+       /* getUsers: getUsers,*/
 
-        getUserById: getUserById,
+       /* getUserById: getUserById,*/
 
         getFilter: getFilter,
 
-        getUsersForDd: getUsersForDd,
+        /*getUsersForDd: getUsersForDd,*/
 
         updateUser: updateUser,
 
-        removeUser: removeUser
+        /*removeUser: removeUser*/
     };
 };
 

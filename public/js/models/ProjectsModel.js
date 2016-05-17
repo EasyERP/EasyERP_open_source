@@ -1,5 +1,11 @@
-define(['Validation', 'common'],
-    function (Validation, common) {
+define([
+        'Backbone',
+        'Validation',
+        'common',
+        'constants'
+    ],
+    function (Backbone, Validation, common, CONSTANTS) {
+        'use strict';
         var ProjectModel = Backbone.Model.extend({
             idAttribute: "_id",
             initialize : function () {
@@ -10,7 +16,7 @@ define(['Validation', 'common'],
                         msg = errors.join('\n');
 
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: msg
                         });
                     }
@@ -61,7 +67,6 @@ define(['Validation', 'common'],
                     projectTeam: []
                 }
             },
-            parse      : true,
             parse      : function (response) {
                 if (!response.data) {
                     if (response.createdBy) {
@@ -95,7 +100,7 @@ define(['Validation', 'common'],
                 }
             },
             urlRoot    : function () {
-                return "/Projects";
+                return CONSTANTS.URLS.PROJECTS;
             }
         });
         return ProjectModel;

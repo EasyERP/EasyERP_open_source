@@ -1,9 +1,13 @@
 define([
-    'models/Capacity'
-], function (CapacityModel) {
+    'Backbone',
+    'models/Capacity',
+    'constants'
+], function (Backbone, CapacityModel, CONSTANTS) {
+    'use strict';
+
     var CapacityCollection = Backbone.Collection.extend({
         model      : CapacityModel,
-        url        : "/capacity/",
+        url        : CONSTANTS.URLS.CAPACITY,
         viewType   : null,
         contentType: null,
 
@@ -24,11 +28,14 @@ define([
             if (nameA && nameB) {
                 if (nameA > nameB) {
                     return this.sortOrder;
-                } else if (nameA < nameB) {
-                    return this.sortOrder * (-1);
-                } else {
-                    return 0;
                 }
+
+                if (nameA < nameB) {
+                    return this.sortOrder * (-1);
+                }
+
+                return 0;
+
             }
         },
 

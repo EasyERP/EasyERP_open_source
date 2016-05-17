@@ -1,6 +1,3 @@
-/**
- * Created by liliya on 17.09.15.
- */
 define([
     'jQuery',
     'Underscore',
@@ -34,7 +31,7 @@ define([
              dataService,
              populate,
              async,
-             constants) {
+             CONSTANTS) {
     var wTrackView = listView.extend({
 
         el                      : '#timesheet',
@@ -62,7 +59,7 @@ define([
         initialize: function (options) {
             this.remove();
             this.collection = options.model;
-            this.defaultItemsNumber = options.defaultItemsNumber || constants.DEFAULT_ELEMENTS_PER_PAGE;
+            this.defaultItemsNumber = options.defaultItemsNumber || CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
             this.filter = options.filter ? options.filter : {};
             this.project = options.project ? options.project : {};
 
@@ -825,7 +822,7 @@ define([
                 self.responseObj['#project'] = projects;
             });
 
-            dataService.getData('/employee/getForDD', null, function (employees) {
+            dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -835,7 +832,7 @@ define([
                 self.responseObj['#employee'] = employees;
             });
 
-            dataService.getData('/department/getForDD', null, function (departments) {
+            dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, null, function (departments) {
                 departments = _.map(departments.data, function (department) {
                     department.name = department.departmentName;
 
@@ -845,9 +842,12 @@ define([
                 self.responseObj['#department'] = departments;
             });
 
+            self.bindingEventsToEditedCollection(self);
+            self.$listTable = $('#listTable');
+
             setTimeout(function () {
-                self.bindingEventsToEditedCollection(self);
-                self.$listTable = $('#listTable');
+                //self.bindingEventsToEditedCollection(self);
+                //self.$listTable = $('#listTable');
             }, 10);
 
             return this;

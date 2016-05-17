@@ -1,4 +1,7 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'common',
         'views/Persons/EditView',
         'views/Persons/CreateView',
@@ -6,10 +9,11 @@
         "text!templates/Persons/thumbnails/ThumbnailsItemTemplate.html",
         'dataService',
         'views/Filter/FilterView',
-        'custom'
+        'constants'
     ],
 
-    function (common, editView, createView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, custom) {
+    function (Backbone, $, _, common, EditView, CreateView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, FilterView, CONSTANTS) {
+        'use strict';
         var PersonsThumbnalView = Backbone.View.extend({
             el                : '#content-holder',
             countPerPage      : 0,
@@ -22,6 +26,7 @@
             viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
                 this.asyncLoadImgs(this.collection);
                 this.startTime = options.startTime;
                 this.collection = options.collection;
@@ -37,19 +42,17 @@
 
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 this.asyncLoadImgs(this.collection);
-
-                this.filterView;
             },
 
-            events        : {
+            events: {
                 "click #showMore"          : "showMore",
                 "click .letter:not(.empty)": "alpabeticalRender",
                 "click .gotoForm"          : "gotoForm",
                 "click .company"           : "gotoCompanyForm"
             },
-//modified for filter Vasya
-            getTotalLength: function (currentNumber, filter, newCollection) {
-                dataService.getData('/totalCollectionLength/Persons', {
+
+            getTotalLength: function (currentNumber) {
+                dataService.getData('/persons/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter       : this.filter,
                     newCollection: this.newCollection,
@@ -69,11 +72,11 @@
                 }, this);
             },
 
-            asyncLoadImgs    : function (collection) {
+            asyncLoadImgs: function (collection) {
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
-                common.getImages(ids, "/getCustomersImages");
+                common.getImages(ids, "/customers/getCustomersImages");
             },
 
             alpabeticalRender: function (e) {
@@ -178,17 +181,17 @@
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
-                            if (target.text() == currentLetter) {
+                            if (target.text() === currentLetter) {
                                 target.addClass("current");
                             }
                         });
                     }
                 });
 
-                self.filterView = new filterView({contentType: self.contentType});
+                self.filterView = new FilterView({contentType: self.contentType});
 
                 self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter, self);
                 });
                 self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({}, self);
@@ -205,22 +208,16 @@
             },
 
             hideItemsNumber: function (e) {
-                var el = e.target;
+                var el = $(e.target);  // change after ui tests
 
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                     this.$el.find('.search-options').addClass('hidden');
                 }
-
-                //this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                //if (!el.closest('.search-view')) {
-                //    $('.search-content').removeClass('fa-caret-up');
-                //};
             },
 
-            showMore        : function (event) {
-                //event.preventDefault();
+            showMore       : function () {
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
             showMoreContent : function (newModels) {
@@ -231,7 +228,7 @@
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
-                if (showMore.length != 0) {
+                if (showMore.length !== 0) {
                     showMore.before(this.template({collection: this.collection.toJSON()}));
                     $(".filter-check-list").eq(1).remove();
                     showMore.hide();
@@ -262,17 +259,15 @@
             },
 
             createItem: function () {
-                //create editView in dialog here
-                new createView();
+                new CreateView();
             },
 
             editItem: function () {
-                //create editView in dialog here
-                new editView({collection: this.collection});
+                new EditView({collection: this.collection});
             },
 
             deleteItems: function () {
-                var mid = 39;
+                var mid = this.mId;
                 var model;
                 var self = this;
 
@@ -290,14 +285,14 @@
                     self.alphabeticArray = arr;
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
-                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        selectedLetter    : (self.selectedLetter === "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
                     var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : null
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
-                            if (target.text() == currentLetter) {
+                            if (target.text() === currentLetter) {
                                 target.addClass("current");
                             }
                         });
@@ -307,12 +302,12 @@
 
             exportToCsv: function () {
                 //todo change after routes refactoring
-                window.location = '/Customers/exportToCsv?type=Person'
+                window.location = '/Customers/exportToCsv?type=Person';
             },
 
             exportToXlsx: function () {
                 //todo change after routes refactoring
-                window.location = '/Customers/exportToXlsx?type=Person'
+                window.location = '/Customers/exportToXlsx?type=Person';
             }
         });
 

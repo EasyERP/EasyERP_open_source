@@ -1,13 +1,16 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Departments/list/ListTemplate.html',
         'text!templates/Departments/form/FormTemplate.html',
-        'collections/Departments/DepartmentsCollection',
         'custom',
-        'common',
         'views/Departments/EditView',
         'views/Departments/CreateView'
     ],
-    function (ListTemplate, FormTemplate, DepartmentsCollection, Custom, common, EditView, CreateView) {
+    function (Backbone, $, _, ListTemplate, FormTemplate, Custom, EditView, CreateView) {
+        'use strict';
+
         var ContentView = Backbone.View.extend({
             el        : '#content-holder',
             initialize: function (options) {

@@ -1,16 +1,17 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Applications/kanban/KanbanItemTemplate.html",
         "common",
         'moment'
     ],
-    function (KanbanItemTemplate, common, moment) {
+    function (Backbone, $, _, KanbanItemTemplate, common, moment) {
+        'use strict';
         var ApplicationsItemView = Backbone.View.extend({
             className: "item",
             id       : function () {
                 return this.model.get("_id");
-            },
-
-            initialize: function () {
             },
 
             template: _.template(KanbanItemTemplate),

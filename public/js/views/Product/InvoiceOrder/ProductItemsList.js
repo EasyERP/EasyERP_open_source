@@ -2,12 +2,15 @@
  * Created by soundstorm on 14.05.15.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Product/ProductItemsList.html',
     'text!templates/Product/ProductInputContent.html',
     'collections/Product/products',
     'populate',
     'helpers'
-], function (productItemTemplate, ProductInputContent, productCollection, populate, helpers) {
+], function (Backbone, $, _, productItemTemplate, ProductInputContent, productCollection, populate, helpers) {
     var ProductItemTemplate = Backbone.View.extend({
         el: '#productItemsHolder',
 

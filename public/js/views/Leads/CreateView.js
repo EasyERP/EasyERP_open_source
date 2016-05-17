@@ -1,13 +1,17 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Leads/CreateTemplate.html",
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         "models/LeadsModel",
         "common",
         "populate",
-        "dataService"
+        "dataService",
+        'constants'
     ],
-    function (CreateTemplate, selectView, AssigneesView, LeadModel, common, populate, dataService) {
+    function (Backbone, $, _, CreateTemplate, selectView, AssigneesView, LeadModel, common, populate, dataService, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -23,18 +27,18 @@ define([
             },
 
             events: {
-                "click #tabList a"                                                : "switchTab",
-                "change #workflowNames"                                           : "changeWorkflows",
-                'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click"                                                           : "hideNewSelect",
-                "click .current-selected"                                         : "showNewSelect"
+                "click #tabList a"                                 : "switchTab",
+                "change #workflowNames"                            : "changeWorkflows",
+                'keydown'                                          : 'keydownHandler',
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click"                                            : "hideNewSelect",
+                "click .current-selected"                          : "showNewSelect"
             },
 
             selectCustomer: function (id) {
                 if (id != "") {
-                    dataService.getData('/Customer', {
+                    dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
                         id: id
                     }, function (response, context) {
                         var customer = response.data[0];
@@ -106,7 +110,7 @@ define([
                 return false;
             },
 
-            chooseOption : function (e) {
+            chooseOption: function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 if (holder.attr("id") == 'customerDd') {
@@ -140,7 +144,7 @@ define([
                 //$("#selectWorkflow").html(_.template(selectTemplate, { workflows: this.getWorkflowValue(value) }));
             },
 
-            switchTab: function (e) {
+            /*switchTab: function (e) {
                 e.preventDefault();
                 var link = this.$("#tabList a");
                 if (link.hasClass("selected")) {
@@ -148,7 +152,7 @@ define([
                 }
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
-            },
+            },*/
 
             saveItem: function () {
                 var afterPage = '';                                                                 //Masalovych bag 803
@@ -213,12 +217,12 @@ define([
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 this.model.save({
                         name         : name,
-                        company      : company,
+                        company      : company || null,
                         campaign     : $('#campaignDd').data("id"),
                         source       : $('#sourceDd').data("id"),
-                        customer     : idCustomer,
+                        customer     : idCustomer || null,
                         address      : address,
-                        salesPerson  : salesPersonId,
+                        salesPerson  : salesPersonId || null,
                         salesTeam    : salesTeamId,
                         contactName  : contactName,
                         email        : email,
@@ -246,7 +250,7 @@ define([
                             self.hideDialog();
                             Backbone.history.fragment = "";                                  //Masalovych bag 803
                             Backbone.history.navigate(location, {trigger: true});          //Masalovych bag 803
-                            // Backbone.history.navigate("easyErp/Users", { trigger: true });
+                            // Backbone.history.navigate("easyErp/users", { trigger: true });
                         },
                         error  : function (model, xhr) {
                             self.errorNotification(xhr);
@@ -306,9 +310,9 @@ define([
                     });
                     self.responseObj['#priorityDd'] = priorities;
                 });
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Leads"}, "name", this, true);
-                populate.get2name("#customerDd", "/Customer", {}, this, true, true);
-                populate.get("#sourceDd", "/sources", {}, "name", this, true, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Leads"}, "name", this, true);
+                populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, true, true);
+                populate.get("#sourceDd", "/employees/sources", {}, "name", this, true, true);
                 populate.get("#campaignDd", "/Campaigns", {}, "name", this, true, true);
                 dataService.getData('/employee/getForDD', {isEmployee : true}, function (employees) {
                     employees = _.map(employees.data, function (employee) {

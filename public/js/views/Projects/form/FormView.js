@@ -44,8 +44,8 @@ define([
         'custom',
         'dataService',
         'async',
-        'helpers'],
-    function (Backbone,
+        'helpers'
+], function (Backbone,
               $,
               _,
               ProjectsFormTemplate,
@@ -125,6 +125,7 @@ define([
 
             initialize: function (options) {
                 var eventChannel = {};
+                
                 _.extend(eventChannel, Backbone.Events);
 
                 App.projectInfo = App.projectInfo || {};
@@ -167,6 +168,7 @@ define([
                 var onlyView = false;
 
                 e.stopPropagation();
+                
                 if (type === 'Quoted') {
                     model = new quotationModel({validate: false});
 
@@ -545,6 +547,7 @@ define([
                 });
 
                 $target.append(this.selectView.render().el);
+                
                 return false;
             },
 
@@ -867,15 +870,14 @@ define([
 
                 function createView() {
                     var gridStart = $('#grid-start').text();
-                    callback();
-
                     var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
                     var itemsNumber = parseInt($('.selectedItemsNumber').text(), 10) || 'all';
                     var defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
+
                     if (self.wTrackView) {
                         self.wTrackView.undelegateEvents();
                     }
-
+                    
                     this.wTrackView = new wTrackView({
                         model             : self.wCollection,
                         defaultItemsNumber: defaultItemsNumber,
@@ -1542,10 +1544,10 @@ define([
                 App.projectInfo = App.projectInfo || {};
                 App.projectInfo.currentTab = App.projectInfo.currentTab ? App.projectInfo.currentTab : 'overview';
 
-                populate.get('#projectTypeDD', '/projectType', {}, 'name', this, false, true);
-                populate.get2name('#customerDd', '/Customer', {}, this, false, false);
-                populate.getWorkflow('#workflowsDd', '#workflowNamesDd', '/WorkflowsForDd', {id: 'Projects'}, 'name', this);
-                populate.getWorkflow('#workflow', '#workflowNames', '/WorkflowsForDd', {id: 'Jobs'}, 'name', this);
+                populate.get('#projectTypeDD', CONSTANTS.URLS.PROJECT_TYPE, {}, 'name', this, false, true);
+                populate.get2name('#customerDd', CONSTANTS.URLS.CUSTOMERS, {}, this, false, false);
+                populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Projects'}, 'name', this);
+                populate.getWorkflow('#workflow', '#workflowNames', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Jobs'}, 'name', this);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#payment_method", "/paymentMethod", {}, 'name', this, true, true);
 

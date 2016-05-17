@@ -1,4 +1,9 @@
-﻿define(['Validation'], function (Validation) {
+﻿define([
+    'Backbone',
+    'Validation',
+    'constants'
+], function (Backbone, Validation, CONSTANTS) {
+    'use strict';
     var DepartmentsModel = Backbone.Model.extend({
         idAttribute: "_id",
         initialize : function () {
@@ -9,7 +14,7 @@
                     msg = errors.join('\n');
 
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: msg
                     });
                 }
@@ -28,7 +33,7 @@
             departmentManager: ""
         },
         urlRoot    : function () {
-            return "/Departments";
+            return CONSTANTS.URLS.DEPARTMENTS;
         }
     });
     return DepartmentsModel;

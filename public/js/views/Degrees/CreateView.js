@@ -1,11 +1,12 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Degrees/CreateTemplate.html",
-        "collections/Degrees/DegreesCollection",
-        "models/DegreeModel",
-        "custom",
-        "common"
+        "models/DegreeModel"
     ],
-    function (CreateTemplate, DegreesCollection, DegreeModel, Custom, common) {
+    function (Backbone, $, _, CreateTemplate, DegreeModel) {
+        'use strict';
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",

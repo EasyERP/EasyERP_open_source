@@ -166,26 +166,26 @@ var Department = function (event, models) {
         });
     };
 
-    function get(req, response) {
-        var res = {};
-        res['data'] = [];
-
-        var query = models.get(req.session.lastDb, 'Department', DepartmentSchema).find({});
-
-        query.select('_id departmentName');
-        query.sort({departmentName: 1});
-        query.exec(function (err, departments) {
-            if (err) {
-                console.log(err);
-                logWriter.log("Department.js getDepartments Department.find " + err);
-                response.send(500, {error: "Can't find Department"});
-            } else {
-                res['data'] = departments;
-
-                response.send(res);
-            }
-        });
-    };
+    //function get(req, response) {
+    //    var res = {};
+    //    res['data'] = [];
+    //
+    //    var query = models.get(req.session.lastDb, 'Department', DepartmentSchema).find({});
+    //
+    //    query.select('_id departmentName');
+    //    query.sort({departmentName: 1});
+    //    query.exec(function (err, departments) {
+    //        if (err) {
+    //            console.log(err);
+    //            logWriter.log("Department.js getDepartments Department.find " + err);
+    //            response.send(500, {error: "Can't find Department"});
+    //        } else {
+    //            res['data'] = departments;
+    //
+    //            response.send(res);
+    //        }
+    //    });
+    //};
 
     function getCustomDepartment(req, data, response) {
         var res = {};
@@ -306,7 +306,7 @@ var Department = function (event, models) {
             }
             models.get(req.session.lastDb, 'Department', DepartmentSchema).find({departmentName: data.departmentName}, function (error, doc) {
 
-                if (error) {
+                    if (error) {
                     console.log(error);
                     logWriter.log("Department.js update Department.find ");
                     res.send(500, {error: 'Department.update find error'});
@@ -409,14 +409,14 @@ var Department = function (event, models) {
 
     return {
 
-        create             : create,
-        getDepartmentById  : getDepartmentById,
-        getForDd           : getForDd,
-        getForEditDd       : getForEditDd,
-        get                : get,
-        getCustomDepartment: getCustomDepartment,
-        update             : update,
-        remove             : remove
+        //create             : create,
+        //getDepartmentById  : getDepartmentById,
+        //getForDd           : getForDd,
+        //getForEditDd       : getForEditDd,
+        //get                : get,
+        //getCustomDepartment: getCustomDepartment,
+        //update             : update,
+        //remove             : remove
     };
 };
 

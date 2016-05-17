@@ -1,11 +1,16 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'models/QuotationModel',
-        'common'
+        'common',
+        'constants'
     ],
-    function (QuotationModel, common) {
+    function (Backbone, _, QuotationModel, common, CONSTANTS) {
+        'use strict';
+
         var QuotationCollection = Backbone.Collection.extend({
             model       : QuotationModel,
-            url         : "/quotation/",
+            url         : CONSTANTS.URLS.QUOTATION,
             page        : null,
             namberToShow: null,
             viewType    : null,
@@ -15,11 +20,12 @@
                 var that = this;
                 var regex = /^sales/;
                 var filterObject = options || {};
-                filterObject['page'] = (options && options.page) ? options.page : this.page;
-                filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-                filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject['filter'] = (options) ? options.filter : {};
+                
+                filterObject.page = (options && options.page) ? options.page : this.page;
+                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
+                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
+                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
+                filterObject.filter = (options) ? options.filter : {};
 
                 if (options && options.contentType) {
 
@@ -47,14 +53,15 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
-                            message: "Some Error."
+                            type   : 'error',
+                            message: 'Some Error.'
                         });
                     }
                 });
             },
 
             initialize: function (options) {
+
                 this.startTime = new Date();
 
                 var that = this;
@@ -98,7 +105,7 @@
                         that.page++;
                     },
                     error  : function (models, xhr) {
-                        if (xhr.status == 401) {
+                        if (xhr.status === 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }

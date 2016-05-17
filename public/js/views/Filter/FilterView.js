@@ -1,29 +1,30 @@
 define([
-        'jQuery',
-        'Underscore',
-        'Backbone',
-        'text!templates/Filter/FilterTemplate.html',
-        'text!templates/Filter/filterFavourites.html',
-        'text!templates/Filter/searchGroupLiTemplate.html',
-        'views/Filter/FilterValuesView',
-        'views/Filter/savedFiltersView',
-        'collections/Filter/filterCollection',
-        'custom',
-        'common',
-        'constants',
-        'models/UsersModel',
-        'dataService',
-        "async"
-    ],
-    function ($, _, Backbone, ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, custom, Common, CONSTANTS, usersModel, dataService, async) {
-        var FilterView;
-        FilterView = Backbone.View.extend({
-            el                 : '#searchContainer',
-            contentType        : "Filter",
-            savedFilters       : {},
-            filterIcons        : {},
-            template           : _.template(ContentFilterTemplate),
-            searchGroupTemplate: _.template(searchGroupLiTemplate),
+    'Backbone',
+    'Underscore',
+    'jQuery',
+    'text!templates/Filter/FilterTemplate.html',
+    'text!templates/Filter/filterFavourites.html',
+    'text!templates/Filter/searchGroupLiTemplate.html',
+    'views/Filter/FilterValuesView',
+    'views/Filter/savedFiltersView',
+    'collections/Filter/filterCollection',
+    'custom',
+    'common',
+    'constants',
+    'models/UsersModel',
+    'dataService',
+    'async'
+], function (Backbone, _, $, ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, custom, Common, CONSTANTS, UsersModel, dataService, async) {
+    "use strict";
+
+    var FilterView;
+    FilterView = Backbone.View.extend({
+        el: '#searchContainer',
+        contentType: "Filter",
+        savedFilters: {},
+        filterIcons: {},
+        template: _.template(ContentFilterTemplate),
+        searchGroupTemplate: _.template(searchGroupLiTemplate),
 
             events: {
                 //"mouseover .search-content"            : 'showSearchContent',
@@ -70,91 +71,97 @@ define([
                 this.$el.find('#searchInput').focus();
             },
 
-            initialize: function (options) {
-                this.parentContentType = options.contentType;
-                this.viewType = options.viewType;
-                this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
+        initialize: function (options) {
+            this.parentContentType = options.contentType;
+            this.viewType = options.viewType;
+            this.constantsObject = CONSTANTS.FILTERS[this.parentContentType];
 
-                this.enable = true;
+            this.enable = true;
+            //App.filter = {};
 
-                //App.filter = {};
+            this.currentCollection = {};
+            this.searchRessult = [];
 
-                this.currentCollection = {};
-                this.searchRessult = [];
+            if (App.savedFilters[this.parentContentType]) {
+                this.savedFilters = App.savedFilters[this.parentContentType];
+            }
 
-                if (App.savedFilters[this.parentContentType]) {
-                    this.savedFilters = App.savedFilters[this.parentContentType];
+            this.parseFilter();
+
+             this.setDbOnce = function(){
+             console.log('------------------->>>>');
+             this.trigger('filter', App.filter);
+             };
+          /*  this.setDbOnce = _.debounce(
+                function () {
+                    this.trigger('filter', App.filter);
+                }, 500);*/
+        },
+
+        useFilter: function (e) {
+            var target = $(e.target);
+            var savedFilters;
+            var self = this;
+            var length;
+            var targetId = target.attr('id');
+            var keys;
+            var i;
+
+            dataService.getData('/currentUser', null, function (response) {
+                if (response && !response.error) {
+                    App.currentUser = response.user;
+                    App.savedFilters = response.savedFilters;
+
+                    length = App.savedFilters[self.parentContentType].length;
+                    savedFilters = App.savedFilters[self.parentContentType];
+
+                    for (i = length - 1; i >= 0; i--) {
+                        if (savedFilters[i]._id._id === targetId) {
+                            keys = Object.keys(savedFilters[i]._id.filter);
+                            App.filter = savedFilters[i]._id.filter.keys[0];
+                        }
+                    }
+
+                    self.selectedFilter(targetId);
+
+                    self.trigger('filter', App.filter);
+                    self.renderFilterContent();
+                    self.showFilterName(keys[0]);
+                } else {
+                    console.log('can\'t get savedFilters');
                 }
+            });
 
-                this.parseFilter();
+        },
 
-                this.setDbOnce = _.debounce(
-                    function () {
-                        this.trigger('filter', App.filter);
-                    }, 500);
-            },
+        cloneFilter: function (filter) {
+            var newFilter = {};
+            var filterKeys = Object.keys(filter);
+            var filterKey;
+            var filterValue;
+            var newFilterValue = [];
+            var i;
 
-            useFilter: function (e) {
-                var target = $(e.target);
-                var savedFilters;
-                var self = this;
-                var length;
-                var targetId = target.attr('id');
-                var keys;
-
-                dataService.getData('/currentUser', null, function (response) {
-                    if (response && !response.error) {
-                        App.currentUser = response.user;
-                        App.savedFilters = response.savedFilters;
-
-                        length = App.savedFilters[self.parentContentType].length;
-                        savedFilters = App.savedFilters[self.parentContentType];
-                        for (var i = length - 1; i >= 0; i--) {
-                            if (savedFilters[i]['_id']['_id'] === targetId) {
-                                keys = Object.keys(savedFilters[i]['_id']['filter']);
-                                App.filter = savedFilters[i]['_id']['filter'][keys[0]];
-                            }
-                        }
-
-                        self.selectedFilter(targetId);
-
-                        self.trigger('filter', App.filter);
-                        self.renderFilterContent();
-                        self.showFilterName(keys[0]);
-                    } else {
-                        console.log('can\'t get savedFilters');
+            _.forEach(filterKeys, function (filterkey) {
+                filterKey = filter[filterkey].key;
+                newFilterValue = [];
+                if (filterKey) {
+                    filterValue = filter[filterkey].value;
+                    for (i = filterValue.length - 1; i >= 0; i--) {
+                        newFilterValue.push(filterValue[i]);
                     }
-                });
+                } else {
+                    filterKey = 'letter';
+                    newFilterValue = filter[filterkey];
+                }
+                newFilter[filterkey] = {
+                    key: filterKey,
+                    value: newFilterValue
+                };
+            });
 
-            },
-
-            cloneFilter: function (filter) {
-                var newFilter = {};
-                var filterKeys = Object.keys(filter);
-                var filterKey;
-                var filterValue;
-                var newFilterValue = [];
-
-                _.forEach(filterKeys, function (filterkey) {
-                    filterKey = filter[filterkey]['key'];
-                    newFilterValue = [];
-                    if (filterKey) {
-                        filterValue = filter[filterkey]['value'];
-                        for (var i = filterValue.length - 1; i >= 0; i--) {
-                            newFilterValue.push(filterValue[i]);
-                        }
-                    } else {
-                        filterKey = 'letter';
-                        newFilterValue = filter[filterkey];
-                    }
-                    newFilter[filterkey] = {
-                        key  : filterKey,
-                        value: newFilterValue
-                    };
-                });
-
-                return newFilter;
-            },
+            return newFilter;
+        },
 
             saveFilter: function () {
                 var currentUser = new usersModel(App.currentUser);
@@ -208,12 +215,12 @@ define([
                     return App.render({type: 'error', message: 'Please, use some filter!'});
                 }
 
-                filterObj['filter'] = {};
-                filterObj['filter'][filterName] = {};
-                filterObj['filter'][filterName] = App.filter;
-                filterObj['key'] = key;
-                filterObj['useByDefault'] = byDefault;
-                filterObj['viewType'] = viewType;
+                filterObj.filter = {};
+                filterObj.filter[filterName] = {};
+                filterObj.filter[filterName] = App.filter;
+                filterObj.key = key;
+                filterObj.useByDefault = byDefault;
+                filterObj.viewType = viewType;
 
                 currentUser.changed = filterObj;
 
@@ -258,46 +265,46 @@ define([
                 this.$el.find('#forFilterName').val('');
             },
 
-            removeFilterFromDB: function (e) {
-                var currentUser = new usersModel(App.currentUser);
-                var filterObj = {};
-                var mid = 39;
-                var savedFilters = App.savedFilters[this.parentContentType];
-                var filterID = $(e.target).attr('id'); //chosen current filter id
-                var i = 0;
+        removeFilterFromDB: function (e) {
+            var currentUser = new UsersModel(App.currentUser);
+            var filterObj = {};
+            var mid = 39;
+            var savedFilters = App.savedFilters[this.parentContentType];
+            var filterID = $(e.target).attr('id'); //chosen current filter id
+            var i = 0;
 
-                filterObj['deleteId'] = filterID;
-                filterObj['byDefault'] = this.parentContentType;
+            filterObj.deleteId = filterID;
+            filterObj.byDefault = this.parentContentType;
 
-                currentUser.changed = filterObj;
+            currentUser.changed = filterObj;
 
-                currentUser.save(
-                    filterObj,
-                    {
-                        headers : {
-                            mid: mid
-                        },
-                        wait    : true,
-                        patch   : true,
-                        validate: false,
-                        success : function (model) {
-                        },
-                        error   : function (model, xhr) {
-                            console.error(xhr);
-                        },
-                        editMode: false
-                    }
-                );
-
-                $.find('#' + filterID)[0].remove();
-                $.find('#' + filterID)[0].remove();
-
-                for (var i = savedFilters.length - 1; i >= 0; i--) {
-                    if (savedFilters[i]['_id']['_id'] === filterID) {
-                        App.savedFilters[this.parentContentType].splice(i, 1);
-                    }
+            currentUser.save(
+                filterObj,
+                {
+                    headers: {
+                        mid: mid
+                    },
+                    wait: true,
+                    patch: true,
+                    validate: false,
+                    success: function (model) {
+                    },
+                    error: function (model, xhr) {
+                        console.error(xhr);
+                    },
+                    editMode: false
                 }
-            },
+            );
+
+            $.find('#' + filterID)[0].remove();
+            $.find('#' + filterID)[0].remove();
+
+            for (i = savedFilters.length - 1; i >= 0; i--) {
+                if (savedFilters[i]['_id']['_id'] === filterID) {
+                    App.savedFilters[this.parentContentType].splice(i, 1);
+                }
+            }
+        },
 
             selectValue: function (e) {
                 var $currentElement = $(e.target);
@@ -314,15 +321,12 @@ define([
                 var index;
                 var self = this;
 
-                $currentElement.toggleClass('checkedValue');
+            $currentElement.toggleClass('checkedValue');
+            intVal = parseInt(currentValue, 10);
+            currentValue = (isNaN(intVal) || currentValue.length === 24) ? currentValue : intVal;
+            collectionElement = currentCollection.findWhere({_id: currentValue});
 
-                intVal = parseInt(currentValue);
-
-                currentValue = (isNaN(intVal) || currentValue.length === 24) ? currentValue : intVal;
-
-                collectionElement = currentCollection.findWhere({_id: currentValue});
-
-                if ($currentElement.hasClass('checkedValue')) {
+            if ($currentElement.hasClass('checkedValue')) {
 
                     if (!App.filter[filterObjectName]) {
                         App.filter[filterObjectName] = {
@@ -332,10 +336,10 @@ define([
                         };
                     }
 
-                    App.filter[filterObjectName]['value'].push(currentValue);
-                    collectionElement.set({status: true});
+                App.filter[filterObjectName].value.push(currentValue);
+                collectionElement.set({status: true});
 
-                    groupNameElement.addClass('checkedGroup');
+                groupNameElement.addClass('checkedGroup');
 
                     //var inputFilterValue = filterGroupElement.find('input').val();
                     (_.debounce(
@@ -348,9 +352,9 @@ define([
                 } else {
                     index = App.filter[filterObjectName]['value'].indexOf(currentValue);
 
-                    if (index >= 0) {
-                        App.filter[filterObjectName]['value'].splice(index, 1);
-                        collectionElement.set({status: false});
+                if (index >= 0) {
+                    App.filter[filterObjectName].value.splice(index, 1);
+                    collectionElement.set({status: false});
 
                         if (App.filter[filterObjectName]['value'].length === 0) {
                             delete App.filter[filterObjectName];
@@ -365,17 +369,17 @@ define([
 
                 }
 
-                //this.trigger('filter', App.filter);
-                this.setDbOnce();
-                this.showFilterIcons(App.filter);
-            },
+            //this.trigger('filter', App.filter);
+            this.setDbOnce();
+            this.showFilterIcons(App.filter);
+        },
 
-            showFilterIcons: function (filter) {
-                var filterIc = this.$el.find('.filter-icons');
-                var filterValues = this.$el.find('.search-field #searchFilterContainer');
-                var filter = Object.keys(filter);
-                var self = this;
-                var groupName;
+        showFilterIcons: function (filter) {
+            var filterIc = this.$el.find('.filter-icons');
+            var filterValues = this.$el.find('.search-field #searchFilterContainer');
+            var filter = Object.keys(filter);
+            var self = this;
+            var groupName;
 
                 filterValues.empty();
                 _.forEach(filter, function (key, value) {
@@ -383,7 +387,7 @@ define([
                         filterValues.append('<span class="showLast"> ...&nbsp </span>');
                     }
 
-                    groupName = $('#' + key).text();
+                groupName = $('#' + key).text();
 
                     if (groupName.length > 0) {
                         filterIc.addClass('active');
@@ -400,17 +404,17 @@ define([
                 });
             },
 
-            showFilterName: function (filterName) {
-                var filterValues = this.$el.find('.forFilterIcons');
-                filterValues.remove();
+        showFilterName: function (filterName) {
+            var filterValues = this.$el.find('.forFilterIcons');
+            filterValues.remove();
 
-                this.$el.find('#searchFilterContainer').html('<div class="forFilterIcons"></div>');
+            this.$el.find('#searchFilterContainer').html('<div class="forFilterIcons"></div>');
 
-                filterValues = this.$el.find('.forFilterIcons');
+            filterValues = this.$el.find('.forFilterIcons');
 
-                filterValues.html('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
+            filterValues.html('<span class="fa fa-star funnelIcon"></span><span class="filterValues">' + filterName + '</span><span class="removeValues">x</span>');
 
-            },
+        },
 
             removeFilter: function (e) {
                 var target = $(e.target);
@@ -418,10 +422,10 @@ define([
                 var filterView = target.prev().attr('data-value');
                 var alphabetHolder = $('#startLetter');
 
-                $('#searchInput').empty();
+            $('#searchInput').empty();
 
-                var valuesArray;
-                var collectionElement;
+            var valuesArray;
+            var collectionElement;
 
                 if (filterView) {
                     valuesArray = App.filter[filterView] || App.filter[filterView]['value'];
@@ -448,67 +452,67 @@ define([
                     }
                 }
 
-                $(e.target).closest('div').remove();
+            $(e.target).closest('div').remove();
 
-                this.renderFilterContent();
-                this.trigger('filter', App.filter);
-            },
+            this.renderFilterContent();
+            this.trigger('filter', App.filter);
+        },
 
-            showHideValues: function (e) {
+        showHideValues: function (e) {
 
-                var filterGroupContainer = $(e.target).closest('.filterGroup');
-                if (this.previousGroupContainer) {
-                    this.toggleGroup(this.previousGroupContainer)
-                }
-                this.previousGroupContainer = filterGroupContainer;
-                this.toggleGroup(filterGroupContainer);
+            var filterGroupContainer = $(e.target).closest('.filterGroup');
+            if (this.previousGroupContainer) {
+                this.toggleGroup(this.previousGroupContainer)
+            }
+            this.previousGroupContainer = filterGroupContainer;
+            this.toggleGroup(filterGroupContainer);
 
-            },
+        },
 
-            toggleGroup: function (filterGroupContainer) {
-                filterGroupContainer.find('.ulContent').toggleClass('hidden');
-                filterGroupContainer.toggleClass('activeGroup');
-            },
+        toggleGroup: function (filterGroupContainer) {
+            filterGroupContainer.find('.ulContent').toggleClass('hidden');
+            filterGroupContainer.toggleClass('activeGroup');
+        },
 
-            renderFilterContent: function (options) {
-                var filtersGroupContainer;
-                var self = this;
-                var keys = Object.keys(this.constantsObject);
-                var containerString;
-                var filterBackend;
-                var filterView;
-                var groupStatus;
-                var groupContainer;
-                var groupOptions;
+        renderFilterContent: function (options) {
+            var filtersGroupContainer;
+            var self = this;
+            var keys = Object.keys(this.constantsObject);
+            var containerString;
+            var filterBackend;
+            var filterView;
+            var groupStatus;
+            var groupContainer;
+            var groupOptions;
 
-                filtersGroupContainer = this.$el.find('#filtersContent');
+            filtersGroupContainer = this.$el.find('#filtersContent');
 
-                if (keys.length) {
-                    async.each(keys, function (key, cb) {
-                        filterView = self.constantsObject[key].view;
-                        filterBackend = self.constantsObject[key].backend;
+            if (keys.length) {
+                async.each(keys, function (key, cb) {
+                    filterView = self.constantsObject[key].view;
+                    filterBackend = self.constantsObject[key].backend;
 
-                        groupContainer = self.$el.find('#' + filterView + 'Container');
+                    groupContainer = self.$el.find('#' + filterView + 'Container');
 
-                        if (groupContainer.length) {
-                            groupStatus = groupContainer.hasClass('hidden');
-                        } else {
-                            groupStatus = true;
-                        }
+                    if (groupContainer.length) {
+                        groupStatus = groupContainer.hasClass('hidden');
+                    } else {
+                        groupStatus = true;
+                    }
 
-                        containerString = '<div id="' + filterView + 'FullContainer" data-value="' + filterBackend + '" class="filterGroup"></div>';
+                    containerString = '<div id="' + filterView + 'FullContainer" data-value="' + filterBackend + '" class="filterGroup"></div>';
 
-                        if (!self.$el.find('#' + filterView).length) {
-                            filtersGroupContainer.append(containerString);
-                        }
-                        groupOptions = options && options[filterView] ? options[filterView] : null;
+                    if (!self.$el.find('#' + filterView).length) {
+                        filtersGroupContainer.append(containerString);
+                    }
+                    groupOptions = options && options[filterView] ? options[filterView] : null;
 
-                        self.renderGroup(key, filterView, filterBackend, groupStatus, groupOptions, cb);
-                    }, function () {
-                        self.showFilterIcons(App.filter);
-                    });
-                }
-            },
+                    self.renderGroup(key, filterView, filterBackend, groupStatus, groupOptions, cb);
+                }, function () {
+                    self.showFilterIcons(App.filter);
+                });
+            }
+        },
 
             renderGroup: function (key, filterView, filterBackend, groupStatus, groupOptions, cb) {
                 var itemView;
@@ -596,152 +600,152 @@ define([
 
             },
 
-            clickSearchResult: function (e) {
-                var intVal;
-                var value;
-                var $currentElement = e.target ? $(e.target).closest("li") : e;
+        clickSearchResult: function (e) {
+            var intVal;
+            var value;
+            var $currentElement = e.target ? $(e.target).closest("li") : e;
 
-                var container = $currentElement.closest('.ui-autocomplete');
-                var checkOnGroup = $currentElement.hasClass('ui-autocomplete-category');
+            var container = $currentElement.closest('.ui-autocomplete');
+            var checkOnGroup = $currentElement.hasClass('ui-autocomplete-category');
 
-                var filterObjectName = $currentElement.attr('data-view');
-                var groupType = $currentElement.attr('data-back');
-                var elements = container.find('.' + filterObjectName);
+            var filterObjectName = $currentElement.attr('data-view');
+            var groupType = $currentElement.attr('data-back');
+            var elements = container.find('.' + filterObjectName);
 
-                var groupName = this.$el.find('#' + filterObjectName).text(); //  added groupname for finding constantsObject filter
-                var filterType = this.constantsObject[groupName].type; // filterType searches in types of constantsObject filters
+            var groupName = this.$el.find('#' + filterObjectName).text(); //  added groupname for finding constantsObject filter
+            var filterType = this.constantsObject[groupName].type; // filterType searches in types of constantsObject filters
 
-                if (!App.filter[filterObjectName]) {
-                    App.filter[filterObjectName] = {
-                        key  : groupType,
-                        value: [],
-                        type : filterType ? filterType : null // added type for filterMapper (bug of no searching in searchfield on wTrack)
-                    };
-                }
+            if (!App.filter[filterObjectName]) {
+                App.filter[filterObjectName] = {
+                    key: groupType,
+                    value: [],
+                    type: filterType ? filterType : null // added type for filterMapper (bug of no searching in searchfield on wTrack)
+                };
+            }
 
-                if (checkOnGroup) {
-                    $.each(elements, function (index, element) {
-                        value = $(element).attr('data-content');
-                        intVal = parseInt(value);
-                        value = (isNaN(intVal) || value.length === 24) ? value : intVal;
-
-                        App.filter[filterObjectName]['value'].push(value);
-                    });
-                } else {
-                    value = $currentElement.attr('data-content');
+            if (checkOnGroup) {
+                $.each(elements, function (index, element) {
+                    value = $(element).attr('data-content');
                     intVal = parseInt(value);
                     value = (isNaN(intVal) || value.length === 24) ? value : intVal;
+
                     App.filter[filterObjectName]['value'].push(value);
-                }
-
-                this.setDbOnce();
-                this.showFilterIcons(App.filter);
-
-            },
-
-            render: function (options) {
-                var self = this;
-                var $currentEl = this.$el;
-                var searchInput;
-                var filterName = this.parentContentType + '.filter';
-                var filters = custom.retriveFromCash(filterName) || App.filter;
-                var allResults;
-                App.filter = filters;
-                $currentEl.html(this.template({filterCollection: this.constantsObject}));
-
-                this.renderFilterContent(options);
-                //this.showFilterIcons(filters);
-                this.renderSavedFilters();
-
-                $.widget("custom.catcomplete", $.ui.autocomplete, {
-                    _create    : function () {
-                        this._super();
-                        this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
-                    },
-                    _renderMenu: function (ul, items) {
-                        var that = this;
-                        var currentCategory = "";
-
-                        that._renderItemData = function (ul, item) {
-                            ul.hide();
-                            return $("<li>")
-                                .data("item.autocomplete", item)
-                                .append(item.label)
-                                .appendTo(ul);
-                        };
-
-                        $.each(items, function (index, item) {
-                            var li;
-                            var categoryLi;
-
-                            item.text = that.element.text();
-
-                            categoryLi = $(self.searchGroupTemplate({item: item}));
-
-                            if (item.category != currentCategory) {
-                                ul.append(categoryLi);
-                                categoryLi.find('.searchGroupDropDown').click(function (e) {
-                                    self.toggleSearchResultGroup(e);
-                                });
-                                categoryLi.find('.searchGroupResult').click(function (e) {
-                                    self.clickSearchResult(e);
-                                });
-                                currentCategory = item.category;
-                            }
-                            li = that._renderItemData(ul.find('#' + item.categoryView + 'Ul'), item);
-                            if (item.category) {
-                                li.click(function (e) {
-                                    self.clickSearchResult(e);
-                                });
-                                li.attr('data-back', item.categoryBackend);
-                                li.attr('data-view', item.categoryView);
-                                li.attr("class", item.categoryView);
-                                li.attr("data-content", item.data);
-                            }
-                        });
-                    }
                 });
+            } else {
+                value = $currentElement.attr('data-content');
+                intVal = parseInt(value);
+                value = (isNaN(intVal) || value.length === 24) ? value : intVal;
+                App.filter[filterObjectName]['value'].push(value);
+            }
 
-                searchInput = $currentEl.find("#searchInput");
+            this.setDbOnce();
+            this.showFilterIcons(App.filter);
 
-                searchInput.keydown(function (e) {
-                    if (e.which === 13) {
-                        allResults = searchInput.next().find('.ui-autocomplete-category');
+        },
 
-                        allResults.each(function () {
-                            var element = $(this);
+        render: function (options) {
+            var self = this;
+            var $currentEl = this.$el;
+            var searchInput;
+            var filterName = this.parentContentType + '.filter';
+            var filters = custom.retriveFromCash(filterName) || App.filter;
+            var allResults;
+            App.filter = filters;
+            $currentEl.html(this.template({filterCollection: this.constantsObject}));
 
-                            self.clickSearchResult(element);
-                        });
+            this.renderFilterContent(options);
+            //this.showFilterIcons(filters);
+            this.renderSavedFilters();
 
-                        if (!allResults.length && searchInput.html()) {  // added message in case of search unsuccessful
-                            App.render({
-                                type   : 'error',
-                                message: 'No such result'
+            $.widget("custom.catcomplete", $.ui.autocomplete, {
+                _create: function () {
+                    this._super();
+                    this.widget().menu("option", "items", "> :not(.ui-autocomplete-category)");
+                },
+                _renderMenu: function (ul, items) {
+                    var that = this;
+                    var currentCategory = "";
+
+                    that._renderItemData = function (ul, item) {
+                        ul.hide();
+                        return $("<li>")
+                            .data("item.autocomplete", item)
+                            .append(item.label)
+                            .appendTo(ul);
+                    };
+
+                    $.each(items, function (index, item) {
+                        var li;
+                        var categoryLi;
+
+                        item.text = that.element.text();
+
+                        categoryLi = $(self.searchGroupTemplate({item: item}));
+
+                        if (item.category != currentCategory) {
+                            ul.append(categoryLi);
+                            categoryLi.find('.searchGroupDropDown').click(function (e) {
+                                self.toggleSearchResultGroup(e);
                             });
+                            categoryLi.find('.searchGroupResult').click(function (e) {
+                                self.clickSearchResult(e);
+                            });
+                            currentCategory = item.category;
                         }
+                        li = that._renderItemData(ul.find('#' + item.categoryView + 'Ul'), item);
+                        if (item.category) {
+                            li.click(function (e) {
+                                self.clickSearchResult(e);
+                            });
+                            li.attr('data-back', item.categoryBackend);
+                            li.attr('data-view', item.categoryView);
+                            li.attr("class", item.categoryView);
+                            li.attr("data-content", item.data);
+                        }
+                    });
+                }
+            });
 
-                        allResults.remove(); // to prevent appearing last filters after selecting new
-                        searchInput.html("");// to prevent appearing value in Search after selecting
-                        e.preventDefault();  // to prevent appearing previous values by pressing Backspace
+            searchInput = $currentEl.find("#searchInput");
+
+            searchInput.keydown(function (e) {
+                if (e.which === 13) {
+                    allResults = searchInput.next().find('.ui-autocomplete-category');
+
+                    allResults.each(function () {
+                        var element = $(this);
+
+                        self.clickSearchResult(element);
+                    });
+
+                    if (!allResults.length && searchInput.html()) {  // added message in case of search unsuccessful
+                        App.render({
+                            type: 'error',
+                            message: 'No such result'
+                        });
                     }
-                });
 
-                searchInput.catcomplete({
-                    source  : this.searchRessult,
-                    appendTo: searchInput.closest('#searchGlobalContainer')
-                    /*focus : function (event, ui) {
-                     $(this).closest("#mainSearch").text(ui.item.label);
-                     return false;
-                     },*/
-                    /*select: function (event, ui) {
-                     self.clickSearchResult(ui);
-                     return false;
-                     }*/
-                });
+                    allResults.remove(); // to prevent appearing last filters after selecting new
+                    searchInput.html("");// to prevent appearing value in Search after selecting
+                    e.preventDefault();  // to prevent appearing previous values by pressing Backspace
+                }
+            });
 
-                return this;
-            },
+            searchInput.catcomplete({
+                source: this.searchRessult,
+                appendTo: searchInput.closest('#searchGlobalContainer')
+                /*focus : function (event, ui) {
+                 $(this).closest("#mainSearch").text(ui.item.label);
+                 return false;
+                 },*/
+                /*select: function (event, ui) {
+                 self.clickSearchResult(ui);
+                 return false;
+                 }*/
+            });
+
+            return this;
+        },
 
             renderSavedFilters: function () {
                 var contentType = this.parentContentType;
@@ -753,123 +757,123 @@ define([
                 var savedID;
                 var filter;
 
-                this.$el.find('#favoritesContent').append(_.template(savedFilterTemplate));
+            this.$el.find('#favoritesContent').append(_.template(savedFilterTemplate));
 
-                var content = this.$el.find('#favoritesContent');
+            var content = this.$el.find('#favoritesContent');
 
-                if (App.savedFilters[contentType]) {
-                    this.savedFilters = App.savedFilters[contentType];
+            if (App.savedFilters[contentType]) {
+                this.savedFilters = App.savedFilters[contentType];
 
-                    for (var j = this.savedFilters.length - 1; j >= 0; j--) {
-                        if (this.savedFilters[j]) {
-                            if (this.savedFilters[j].byDefault === contentType) {
-                                keys = Object.keys(this.savedFilters[j]['_id']['filter']);
-
-                                filter = this.savedFilters[j]['_id']['filter'][keys[0]];
-
-                                App.filter = filter;
-
-                                if (this.savedFilters[j].viewType) {
-                                    viewType = this.savedFilters[j].viewType;
-                                }
-
-                                self.trigger('filter', App.filter, viewType);
-                                self.renderFilterContent();
-
-                                savedID = this.savedFilters[j]['_id']['_id'];
-
-                                if (typeof (savedID) === 'object') {
-                                    filterByDefault = savedID._id;
-                                }
-
-                                self.showFilterName(keys[0]);
-
-                                this.enable = false;
-
-                            }
-
-                            filterId = this.savedFilters[j]['_id']['_id'];
-
+                for (var j = this.savedFilters.length - 1; j >= 0; j--) {
+                    if (this.savedFilters[j]) {
+                        if (this.savedFilters[j].byDefault === contentType) {
                             keys = Object.keys(this.savedFilters[j]['_id']['filter']);
-                            for (var i = keys.length - 1; i >= 0; i--) {
-                                content.append('<li class="filters"  id ="' + filterId + '">' + keys[i] + '</li><button class="removeSavedFilter" id="' + filterId + '">' + 'x' + '</button>');
+
+                            filter = this.savedFilters[j]['_id']['filter'][keys[0]];
+
+                            App.filter = filter;
+
+                            if (this.savedFilters[j].viewType) {
+                                viewType = this.savedFilters[j].viewType;
                             }
+
+                            self.trigger('filter', App.filter, viewType);
+                            self.renderFilterContent();
+
+                            savedID = this.savedFilters[j]['_id']['_id'];
+
+                            if (typeof (savedID) === 'object') {
+                                filterByDefault = savedID._id;
+                            }
+
+                            self.showFilterName(keys[0]);
+
+                            this.enable = false;
+
+                        }
+
+                        filterId = this.savedFilters[j]['_id']['_id'];
+
+                        keys = Object.keys(this.savedFilters[j]['_id']['filter']);
+                        for (var i = keys.length - 1; i >= 0; i--) {
+                            content.append('<li class="filters"  id ="' + filterId + '">' + keys[i] + '</li><button class="removeSavedFilter" id="' + filterId + '">' + 'x' + '</button>');
                         }
                     }
                 }
+            }
 
-                this.$el.find('#favoritesContent').append(content);
-                self.selectedFilter(savedID);
-            },
+            this.$el.find('#favoritesContent').append(content);
+            self.selectedFilter(savedID);
+        },
 
-            selectedFilter: function (filterId) {
-                var filterName = this.$el.find('#' + filterId);
-                var filterNames = this.$el.find('.filters');
+        selectedFilter: function (filterId) {
+            var filterName = this.$el.find('#' + filterId);
+            var filterNames = this.$el.find('.filters');
 
-                if (filterId) {
-
-                    filterNames.removeClass('checkedValue');
-
-                    filterName.addClass('checkedValue');
-                }
-            },
-
-            removeSelectedFilter: function () {
-                var filterNames = this.$el.find('.filters');
+            if (filterId) {
 
                 filterNames.removeClass('checkedValue');
-            },
 
-            parseFilter: function () {
-                var browserString = window.location.hash;
-                var browserFilter = browserString.split('/filter=')[1];
-
-                App.filter = (browserFilter) ? JSON.parse(decodeURIComponent(browserFilter)) : {};
-            },
-
-            setStatus: function (filterKey) {
-                var valuesArray;
-                var collectionElement;
-
-                valuesArray = App.filter[filterKey]['value'];
-
-                if (this.currentCollection[filterKey].length === 0) {
-                    return;
-                }
-                for (var i = valuesArray.length - 1; i >= 0; i--) {
-                    collectionElement = this.currentCollection[filterKey].findWhere({_id: valuesArray[i]});
-
-                    if (collectionElement) {
-                        collectionElement.set({status: true});
-                    }
-                }
-            },
-
-            showSearchContent: function () {
-                var el = this.$el.find('.search-content');
-                var searchOpt = this.$el.find('.search-options');
-                var selector = 'fa-caret-up';
-
-                searchOpt.removeClass('hidden');
-
-                if (el.hasClass(selector)) {
-                    el.removeClass(selector);
-                    this.$el.find('.search-options').addClass('hidden');
-                } else {
-                    el.addClass(selector)
-                }
-            },
-
-            showFilterContent: function (e) {
-                var currentValue = $(e.target).attr('data-value');
-
-                this.$el.find(currentValue)
-                    .removeClass('hidden')
-                    .siblings()
-                    .addClass('hidden');
-
+                filterName.addClass('checkedValue');
             }
-        });
+        },
 
-        return FilterView;
+        removeSelectedFilter: function () {
+            var filterNames = this.$el.find('.filters');
+
+            filterNames.removeClass('checkedValue');
+        },
+
+        parseFilter: function () {
+            var browserString = window.location.hash;
+            var browserFilter = browserString.split('/filter=')[1];
+
+            App.filter = (browserFilter) ? JSON.parse(decodeURIComponent(browserFilter)) : {};
+        },
+
+        setStatus: function (filterKey) {
+            var valuesArray;
+            var collectionElement;
+
+            valuesArray = App.filter[filterKey]['value'];
+
+            if (this.currentCollection[filterKey].length === 0) {
+                return;
+            }
+            for (var i = valuesArray.length - 1; i >= 0; i--) {
+                collectionElement = this.currentCollection[filterKey].findWhere({_id: valuesArray[i]});
+
+                if (collectionElement) {
+                    collectionElement.set({status: true});
+                }
+            }
+        },
+
+        showSearchContent: function () {
+            var el = this.$el.find('.search-content');
+            var searchOpt = this.$el.find('.search-options');
+            var selector = 'fa-caret-up';
+
+            searchOpt.removeClass('hidden');
+
+            if (el.hasClass(selector)) {
+                el.removeClass(selector);
+                this.$el.find('.search-options').addClass('hidden');
+            } else {
+                el.addClass(selector)
+            }
+        },
+
+        showFilterContent: function (e) {
+            var currentValue = $(e.target).attr('data-value');
+
+            this.$el.find(currentValue)
+                .removeClass('hidden')
+                .siblings()
+                .addClass('hidden');
+
+        }
     });
+
+    return FilterView;
+});

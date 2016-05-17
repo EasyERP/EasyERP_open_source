@@ -1,11 +1,16 @@
-define(['./filterCollection'], function (ParentCollection) {
+define([
+    'Backbone',
+    './filterCollection'
+], function (Backbone, ParentCollection) {
+    'use strict';
+
     var EditableCollection = ParentCollection.extend({
 
         initialize: function () {
             this.on('change', this.change, this);
         },
 
-        save: function (changes) {
+        save: function () {
             var self = this;
             var model;
             var models = [];
@@ -39,7 +44,7 @@ define(['./filterCollection'], function (ParentCollection) {
             };
 
             updatedOptions = {
-                success: function (model, resp, xhr) {
+                success: function () {
                     self.trigger('updated');
                 }
             };

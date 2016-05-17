@@ -1,9 +1,12 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Leads/TopBarTemplate.html',
         'custom',
         'common'
     ],
-    function (ContentTopBarTemplate, Custom, common) {
+    function (Backbone, $, _, ContentTopBarTemplate, Custom, common) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: "Leads",

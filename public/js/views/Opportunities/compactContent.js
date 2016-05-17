@@ -1,9 +1,12 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Opportunities/compactContentTemplate.html",
         'views/Opportunities/EditView',
         'models/OpportunitiesModel'
     ],
-    function (compactContentTemplate, editView, currentModel) {
+    function (Backbone, $, _, compactContentTemplate, editView, currentModel) {
         var compactContentView = Backbone.View.extend({
             className: "form",
 
@@ -41,13 +44,13 @@
                 });
             },
 
-            gotoOpportunitieForm: function (e) {
+            /*gotoOpportunitieForm: function (e) {
                 var itemIndex = $(e.target).closest("a").attr("id");
 
                 e.preventDefault();
 
                 window.location.hash = "#easyErp/Opportunities/form/" + itemIndex;
-            },
+            },*/
 
             render: function (options) {
                 this.$el.html(this.template({

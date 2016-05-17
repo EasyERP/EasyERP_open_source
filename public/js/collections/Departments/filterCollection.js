@@ -1,11 +1,15 @@
 ﻿define([
+        'Backbone',
         'models/DepartmentsModel',
-        'common'
+        'common',
+        'constants'
     ],
-    function (DepartmentsModel, common) {
+    function (Backbone, DepartmentsModel, common, CONSTANTS) {
+        'use strict';
+
         var departmentsCollection = Backbone.Collection.extend({
             model     : DepartmentsModel,
-            url       : "/Departments/",
+            url       : CONSTANTS.URLS.DEPARTMENTS,
             page      : 1,
             initialize: function (options) {
                 this.startTime = new Date();
@@ -18,7 +22,7 @@
                 for (var i in options) {
                     filterObject[i] = options[i];
                 }
-                ;
+
                 this.fetch({
                     data   : null,
                     reset  : true,
@@ -49,7 +53,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }

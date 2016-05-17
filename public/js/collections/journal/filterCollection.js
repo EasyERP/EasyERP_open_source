@@ -1,10 +1,14 @@
 define([
-        'models/JournalModel'
+        'Backbone',
+        'models/JournalModel',
+        'constants'
     ],
-    function (JournalModel) {
+    function (Backbone, JournalModel, CONSTANTS) {
+        'use strict';
+
         var JournalCollection = Backbone.Collection.extend({
             model: JournalModel,
-            url  : "/journal/",
+            url  : CONSTANTS.URLS.JOURNAL,
 
             showMore: function (options) {
                 var that = this;

@@ -20,8 +20,8 @@ define([
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            filterView              : filterView,
-            totalCollectionLengthUrl: '/totalCollectionLength/Opportunities',
+            filterView              : null,
+            totalCollectionLengthUrl: '/opportunities/totalCollectionLength',
             formUrl                 : "#easyErp/Opportunities/form/",
             contentType             : 'Opportunities',//needs in view.prototype.changeLocationHash
 

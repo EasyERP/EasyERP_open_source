@@ -695,7 +695,7 @@ define([
             });
 
             function getBaseSalary(callback) {
-                dataService.getData('/employee/getByMonth',
+                dataService.getData('/employees/getByMonth',
                     {
                         month: month,
                         year : year,
@@ -1124,13 +1124,13 @@ define([
                 this.showSaveCancelBtns();
                 this.editCollection.add(model);
 
-                new createView(startData);
-            } else {
-                App.render({
-                    type   : 'notify',
-                    message: 'Please confirm or discard changes befor create a new item'
-                });
-            }
+                    new this.createView(startData);
+                } else {
+                    App.render({
+                        type: 'notify',
+                        message: 'Please confirm or discard changes befor create a new item'
+                    });
+                }
 
             this.createdCopied = true;
             this.changed = true;
@@ -1508,9 +1508,9 @@ define([
                 self.responseObj['#project'] = projects;
             });
 
-            dataService.getData('/employee/getForDD', {devDepartments: true}, function (employees) {
-                employees = _.map(employees.data, function (employee) {
-                    employee.name = employee.name.first + ' ' + employee.name.last;
+                dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, {devDepartments: true}, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
 
                     return employee;
                 });
@@ -1518,9 +1518,9 @@ define([
                 self.responseObj['#employee'] = employees;
             });
 
-            dataService.getData('/department/getForDD', {devDepartments: true}, function (departments) {
-                departments = _.map(departments.data, function (department) {
-                    department.name = department.departmentName;
+                dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, {devDepartments: true}, function (departments) {
+                    departments = _.map(departments.data, function (department) {
+                        department.name = department.departmentName;
 
                     return department;
                 });
@@ -1530,20 +1530,21 @@ define([
 
             this.renderFilter(self);
 
-            setTimeout(function () {
-                /*self.editCollection = new EditCollection(self.collection.toJSON());
-                 self.editCollection.on('saved', self.savedNewModel, self);
-                 self.editCollection.on('updated', self.updatedOptions, self);*/
-                self.bindingEventsToEditedCollection(self);
-                self.$listTable = $('#listTable');
-            }, 10);
+
+                setTimeout(function () {
+                    /*self.editCollection = new EditCollection(self.collection.toJSON());
+                     self.editCollection.on('saved', self.savedNewModel, self);
+                     self.editCollection.on('updated', self.updatedOptions, self);*/
+                    self.bindingEventsToEditedCollection(self);
+                    self.$listTable = $('#listTable');
+                }, 10);
 
             this.copyEl = $('#top-bar-copyBtn');
             this.$saveBtn = $('#top-bar-saveBtn');
 
-            return this;
-        }
-    });
+                return this;
+            }
+        });
 
     return wTrackListView;
 });

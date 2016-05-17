@@ -1,9 +1,12 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/PayrollPayments/list/ListTotal.html',
         'helpers'
     ],
 
-    function (listTemplate, helpers) {
+    function (Backbone, $, _, listTemplate, helpers) {
         var ListTotalView = Backbone.View.extend({
             el: '#listTotal',
 

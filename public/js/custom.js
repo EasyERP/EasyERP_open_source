@@ -2,12 +2,11 @@ define([
     'Backbone',
     'Underscore',
     'jQuery',
-    'libs/date.format',
     'common',
     'constants',
     'dataService',
     'moment'
-], function (Backbone, _, $, dateformat, common, CONTENT_TYPES, dataService, moment) {
+], function (Backbone, _, $, common, CONTENT_TYPES, dataService, moment) {
     'use strict';
 
     var Store = function () {
@@ -349,7 +348,7 @@ define([
         var keys;
         var savedFilters;
 
-        dataService.getData('/currentUser', null, function (response) {
+        dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response) {
             if (response && !response.error) {
                 App.currentUser = response.user;
                 App.savedFilters = response.savedFilters;

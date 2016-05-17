@@ -1,7 +1,13 @@
 /**
  * Created by Liliya_Pikiner on 7/1/2015.
  */
-define(['text!templates/bonusType/list/listTemplate.html'], function (listTemplate) {
+define([
+    'Backbone',
+    'Underscore',
+    'text!templates/bonusType/list/listTemplate.html'
+], function (Backbone, _, listTemplate) {
+    'use strict';
+
     var bonusTypeListItemView = Backbone.View.extend({
 
         el           : '#listTable',

@@ -1705,7 +1705,6 @@ var Invoice = function (models, event) {
     };
 
     this.totalCollectionLength = function (req, res, next) {
-
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;

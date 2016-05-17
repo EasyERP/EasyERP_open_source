@@ -1,4 +1,9 @@
-﻿define(function () {
+﻿define([
+    'Backbone',
+    'constants'
+], function (Backbone, CONSTANTS) {
+    'use strict';
+
     var taskPriority = Backbone.Model.extend({
         idAttribute: "_id",
         defaults   : {
@@ -6,7 +11,7 @@
             priority: ""
         },
         urlRoot    : function () {
-            return "/Priority";
+            return CONSTANTS.URLS.PRIORITY;
         }
     });
     return taskPriority;

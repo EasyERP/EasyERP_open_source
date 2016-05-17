@@ -2,7 +2,13 @@
  * Created by ANDREY on 29.04.2015.
  */
 
-define(['Validation', 'common'], function (Validation, common) {
+define([
+    'Backbone',
+    'common',
+    'constants'
+], function (Backbone, common, CONSTANTS) {
+    'use strict';
+
     var InvoiceModel = Backbone.Model.extend({
         idAttribute: "_id",
         initialize : function () {
@@ -13,7 +19,7 @@ define(['Validation', 'common'], function (Validation, common) {
                     msg = errors.join('\n');
 
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: msg
                     });
                 }
@@ -92,24 +98,9 @@ define(['Validation', 'common'], function (Validation, common) {
                 return response;
             }
         },
-        validate   : function (attrs) {
+        validate   : function () {
             var errors = [];
-            //Validation.checkGroupsNameField(errors, true, attrs.dateBirth, "Date of Birth");
-            //Validation.checkNameField(errors, true, attrs.name.first, "First name");
-            //Validation.checkNameField(errors, true, attrs.name.last, "Last name");
-            //Validation.checkPhoneField(errors, false, attrs.workPhones.phone, "Phone");
-            //Validation.checkPhoneField(errors, false, attrs.workPhones.mobile, "Mobile");
-            //Validation.checkEmailField(errors, false, attrs.workEmail,"Work Email");
-            //Validation.checkEmailField(errors, false, attrs.personalEmail,"Personal Email");
-            //Validation.checkCountryCityStateField(errors, false, attrs.workAddress.country, "Country");
-            //Validation.checkCountryCityStateField(errors, false, attrs.workAddress.state, "State");
-            //Validation.checkCountryCityStateField(errors, false, attrs.workAddress.city, "City");
-            //Validation.checkZipField(errors, false, attrs.workAddress.zip, "Zip");
-            //Validation.checkStreetField(errors, false, attrs.workAddress.street, "Street");
-            //Validation.checkCountryCityStateField(errors, false, attrs.homeAddress.country, "Country");
-            //Validation.checkCountryCityStateField(errors, false, attrs.homeAddress.state, "State");
-            //Validation.checkZipField(errors, false, attrs.homeAddress.zip, "Zip");
-            //Validation.checkStreetField(errors, false, attrs.homeAddress.street, "Street");
+
             if (errors.length > 0) {
                 return errors;
             }
@@ -143,7 +134,7 @@ define(['Validation', 'common'], function (Validation, common) {
 
         },
         urlRoot    : function () {
-            return "/Invoice";
+            return CONSTANTS.URLS.INVOICE;
         }
     });
     return InvoiceModel;

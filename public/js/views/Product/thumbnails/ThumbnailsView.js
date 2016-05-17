@@ -1,4 +1,7 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Product/thumbnails/ThumbnailsItemTemplate.html",
         'views/Product/EditView',
         'views/Product/CreateView',
@@ -9,7 +12,7 @@
         'text!templates/Alpabet/AphabeticTemplate.html'
     ],
 
-    function (thumbnailsItemTemplate, editView, createView, dataService, currentModel, filterView, common, AphabeticTemplate) {
+    function (Backbone, $, _, thumbnailsItemTemplate, editView, createView, dataService, currentModel, filterView, common, AphabeticTemplate) {
         var ProductThumbnalView = Backbone.View.extend({
             el                : '#content-holder',
             countPerPage      : 0,
@@ -56,6 +59,7 @@
                     contentType  : this.contentType
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
+
                     if (response.showMore) {
                         if (showMore.length === 0) {
                             var created = context.$el.find('#timeRecivingDataFromServer');
@@ -122,7 +126,7 @@
             },
 
             hideItemsNumber: function (e) {
-                var el = e.target;
+                var el = $(e.target);
 
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
@@ -194,12 +198,12 @@
                 context.getTotalLength(this.defaultItemsNumber, filter);
             },
 
-            gotoForm: function (e) {
+            /*gotoForm: function (e) {
                 e.preventDefault();
                 App.ownContentType = true;
                 var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
                 window.location.hash = "#easyErp/Product/form/" + id;
-            },
+            },*/
 
             gotoEditForm: function (e) {
                 this.$el.delegate('a', 'click', function (e) {

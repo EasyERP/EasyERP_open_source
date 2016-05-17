@@ -12,10 +12,6 @@ define([
                 return CONSTANTS.URLS.APPLICATIONS;
             },
 
-            initialize: function () {
-            },
-
-            //parse: true,
             parse: function (response) {
                 if (response.data) {
                     _.map(response.data, function (application) {
@@ -34,7 +30,7 @@ define([
                     });
                 }
                 return response.data;
-            },
+            }
         });
         return ApplicationsCollection;
     });

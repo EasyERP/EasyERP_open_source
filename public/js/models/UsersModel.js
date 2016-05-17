@@ -1,7 +1,9 @@
 define([
     'Backbone',
-    'Validation'
-], function (Backbone, Validation) {
+    'Validation',
+    'constants'
+], function (Backbone, Validation, CONSTANTS) {
+    'use strict';
     var UserModel = Backbone.Model.extend({
         idAttribute: "_id",
         defaults   : {
@@ -20,7 +22,7 @@ define([
                     msg = errors.join('\n');
 
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: msg
                     });
                 }
@@ -28,6 +30,7 @@ define([
         },
         validate   : function (attrs, options) {
             var errors = [];
+
             if (options.editMode === false) {
                 Validation.checkLoginField(errors, true, attrs.login, "Login");
                 Validation.checkEmailField(errors, false, attrs.email, "Email");
@@ -35,12 +38,10 @@ define([
                 Validation.checkPasswordField(errors, true, options.confirmPass, "Confirm password");
                 Validation.checkPasswordField(errors, true, attrs.oldpass, "Old password");
                 Validation.comparePasswords(errors, attrs.pass, options.confirmPass);
-            }
-            else if (options.editMode === true) {
+            } else if (options.editMode === true) {
                 Validation.checkLoginField(errors, true, attrs.login, "Login");
                 Validation.checkEmailField(errors, false, attrs.email, "Email");
-            }
-            else {
+            } else {
                 Validation.checkLoginField(errors, true, attrs.login, "Login");
                 Validation.checkEmailField(errors, false, attrs.email, "Email");
                 Validation.checkPasswordField(errors, true, attrs.pass, "Password");
@@ -53,7 +54,7 @@ define([
             }
         },
         urlRoot    : function () {
-            return "/Users";
+            return CONSTANTS.URLS.USERS;
         }
     });
     return UserModel;

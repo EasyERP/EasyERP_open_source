@@ -12,16 +12,16 @@ module.exports = {
 
     WTRACK_DB_NAME: 'weTrack',
 
-    PRODUCRSERVICE: "5540d528dacb551c24000003",
+    PRODUCRSERVICE: '5540d528dacb551c24000003',
 
-    EXPENSESCAREGORY: "56459202624e48551dfe3b24",
+    EXPENSESCAREGORY: '56459202624e48551dfe3b24',
 
-    ORDERNEW         : "55647b932e4aa3804a765ec5",
-    ORDERDONE        : "55647b962e4aa3804a765ec6",
-    PROJECTINPROGRESS: "528ce7f2f3f67bc40b000023",
-    JOBSFINISHED     : "56337c675d49d8d6537832ea",
-    JOBSINPROGRESS   : "56337c705d49d8d6537832eb",
-    PROJECTCLOSED    : "528ce82df3f67bc40b000025",
+    ORDERNEW         : '55647b932e4aa3804a765ec5',
+    ORDERDONE        : '55647b962e4aa3804a765ec6',
+    PROJECTINPROGRESS: '528ce7f2f3f67bc40b000023',
+    JOBSFINISHED     : '56337c675d49d8d6537832ea',
+    JOBSINPROGRESS   : '56337c705d49d8d6537832eb',
+    PROJECTCLOSED    : '528ce82df3f67bc40b000025',
 
     CURRENCY_USD: '565eab29aeb95fa9c0f9df2d',
     OVERHEAD    : '56cc734b541812c071973572',
@@ -56,7 +56,7 @@ module.exports = {
     INCOME_SUMMARY_ACCOUNT: '56f538149c85020807b4001f',
 
     BANK_AND_CASH: [
-        '565eb53a6aa50532e5df0bd6', //bank and Cash
+        '565eb53a6aa50532e5df0bd6', // bank and Cash
         '565eb53a6aa50532e5df0bd3',
         '565eb53a6aa50532e5df0bd2',
         '565eb53a6aa50532e5df0bd1',
@@ -73,12 +73,12 @@ module.exports = {
     WORK_IN_PROCESS: '565eb53a6aa50532e5df0bda',
 
     LIABILITIES: [
-        '565eb53a6aa50532e5df0bde', //Reserve and Profit/Loss Account
-        '565eb53a6aa50532e5df0bdd', //tax received
-        '565eb53a6aa50532e5df0bdb',//current Liabilities
-        '56c4444eb81fd51e19207f3e', //salary Payable
-        '56c9d555c3b88f6d64490fb5',//overtime Payable
-        '572346da8ba4fd1330062723' //dividends
+        '565eb53a6aa50532e5df0bde', // Reserve and Profit/Loss Account
+        '565eb53a6aa50532e5df0bdd', // tax received
+        '565eb53a6aa50532e5df0bdb', // current Liabilities
+        '56c4444eb81fd51e19207f3e', // salary Payable
+        '56c9d555c3b88f6d64490fb5', // overtime Payable
+        '572346da8ba4fd1330062723' // dividends
     ],
 
     CURRENT_LIABILITIES: '565eb53a6aa50532e5df0bdb',
@@ -86,10 +86,10 @@ module.exports = {
     ACCOUNT_PAYABLE: '565eb53a6aa50532e5df0bdc',
 
     EQUITY: [
-        '565eb53a6aa50532e5df0bf3' //retained Earnings
-        //'565eb53a6aa50532e5df0bf2', //capital
-        // '565eb53a6aa50532e5df0be0', //productSales
-        //'565eb53a6aa50532e5df0be2'//COGS
+        '565eb53a6aa50532e5df0bf3' // retained Earnings
+        // '565eb53a6aa50532e5df0bf2', // capital
+        // '565eb53a6aa50532e5df0be0', // productSales
+        // '565eb53a6aa50532e5df0be2'// COGS
     ],
 
     SALARY_PAYABLE_ACCOUNT : '56c4444eb81fd51e19207f3e',
@@ -120,10 +120,10 @@ module.exports = {
     HR_VAC_YEAR_AFTER : 1,
 
     NOT_DEV_ARRAY: [ // HR, Marketing, Business, Finance, PM
-        "560c0b83a5d4a2e20ba5068c",
-        "55b92ace21e4b7c40f000013",
-        "55b92ace21e4b7c40f000014",
-        "55b92ace21e4b7c40f000015",
+        '560c0b83a5d4a2e20ba5068c',
+        '55b92ace21e4b7c40f000013',
+        '55b92ace21e4b7c40f000014',
+        '55b92ace21e4b7c40f000015',
         '55bb1f40cb76ca630b000007'
     ],
 
@@ -166,5 +166,8 @@ module.exports = {
     SALESMANAGER    : '570e9a75785753b3f1d9c86e',
     PROJECTSMANAGER : '570e9a75785753b3f1d9c86f',
     QADEPARTMENT    : '55b92ace21e4b7c40f000011',
-    DESDEPARTMENT   : '55bb1f14cb76ca630b000006'
+    DESDEPARTMENT   : '55bb1f14cb76ca630b000006',
+    COUNT_PER_PAGE  : 100,
+
+    BANED_PROFILE: '1387275504000'
 };

@@ -1,7 +1,8 @@
 define([
+    'Underscore',
+    'jQuery',
     'text!templates/Projects/projectInfo/quotations/quotationTemplate.html',
     'text!templates/Projects/projectInfo/quotations/ListTemplate.html',
-    'text!templates/stages.html',
     'views/salesQuotation/EditView',
     'views/salesQuotation/list/ListView',
     'views/Projects/projectInfo/quotations/CreateView',
@@ -9,9 +10,12 @@ define([
     'models/QuotationModel',
     'common',
     'helpers',
-    'dataService'
+    'dataService',
+    'constants'
 
-], function (quotationTopBar, ListTemplate, stagesTemplate, editView, listView, quotationCreateView, quotationCollection, currentModel, common, helpers, dataService) {
+], function (_, $, quotationTopBar, ListTemplate, EditView, listView, QuotationCreateView, quotationCollection, CurrentModel, common, helpers, dataService, CONSTANTS) {
+    'use strict';
+
     var quotationView = listView.extend({
 
         el                      : '#quotations',
@@ -38,14 +42,13 @@ define([
             this.projectID = options.projectId;
             this.customerId = options.customerId;
             this.salesManager = options.salesManager;
-            this.filter = options.filter ? options.filter : {};
+            this.filter = options.filter || {};
             this.defaultItemsNumber = 50;
-            this.page = options.page ? options.page : 1;
+            this.page = options.page || 1;
             this.eventChannel = options.eventChannel;
         },
 
         chooseOption: function (e) {
-            var self = this;
             var target$ = $(e.target);
             var targetElement = target$.closest("tr");
             var parentTd = target$.closest("td");
@@ -65,7 +68,7 @@ define([
                 patch   : true,
                 validate: false,
                 success : function () {
-                    a.text(target$.text())
+                    a.text(target$.text());
                 }
             });
 
@@ -171,9 +174,8 @@ define([
         goToEditDialog: function (e) {
             e.preventDefault();
             var self = this;
-
             var id = $(e.target).closest("tr").attr("data-id");
-            var model = new currentModel({validate: false});
+            var model = new CurrentModel({validate: false});
             var modelQuot = this.collection.get(id);
 
             self.collection.bind('remove', renderProformRevenue);
@@ -188,7 +190,7 @@ define([
             model.urlRoot = '/quotation/form/' + id;
             model.fetch({
                 success: function (model) {
-                    new editView({
+                    new EditView({
                         model        : model,
                         redirect     : true,
                         pId          : self.projectID,
@@ -197,11 +199,8 @@ define([
                         hidePrAndCust: true,
                         eventChannel : self.eventChannel
                     });
-
-                    //self.collection.remove(id);
-
                 },
-                error  : function (xhr) {
+                error  : function () {
                     App.render({
                         type   : 'error',
                         message: "Please refresh browser"
@@ -255,7 +254,7 @@ define([
             count = listTableCheckedInput.length;
             this.collectionLength = this.collection.length;
 
-            if (answer == true) {
+            if (answer === true) {
                 $.each(listTableCheckedInput, function (index, checkbox) {
                     model = that.collection.get(checkbox.value);
                     model.destroy({
@@ -330,7 +329,7 @@ define([
 
         createQuotation: function (e) {
             e.preventDefault();
-            new quotationCreateView({
+            new QuotationCreateView({
                 projectId       : this.projectID,
                 customerId      : this.customerId,
                 collection      : this.collection,
@@ -368,7 +367,7 @@ define([
                 }
             });
 
-            dataService.getData("/workflow/fetch", {
+            dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                 wId         : 'Sales Order',
                 source      : 'purchase',
                 targetSource: 'quotation'

@@ -1,10 +1,14 @@
 ﻿define([
-        'models/InvoiceModel'
+        'Backbone',
+        'models/InvoiceModel',
+        'constants'
     ],
-    function (InvoiceModel) {
+    function (Backbone, InvoiceModel, CONSTANTS) {
+        'use strict';
+
         var InvoiceCollection = Backbone.Collection.extend({
             model       : InvoiceModel,
-            url         : "/Invoice/",
+            url         : CONSTANTS.URLS.INVOICE,
             page        : null,
             namberToShow: null,
             viewType    : null,
@@ -23,7 +27,7 @@
                 this.filter = options.filter;
 
                 if (regex.test(this.contentType)) {
-                    options['forSales'] = true;
+                    options.forSales = true;
                 }
 
                 if (options && options.contentType && !(options.filter)) {
@@ -34,14 +38,14 @@
                                 key  : 'forSales',
                                 value: ['true']
                             }
-                        }
+                        };
                     } else {
                         options.filter = {
                             'forSales': {
                                 key  : 'forSales',
                                 value: ['false']
                             }
-                        }
+                        };
                     }
                 }
 
@@ -77,14 +81,14 @@
                 var regex = /^sales/;
                 var filterObject = options || {};
 
-                filterObject['page'] = (options && options.page) ? options.page : this.page;
-                filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-                filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject['filter'] = (options) ? options.filter : {};
+                filterObject.page = (options && options.page) ? options.page : this.page;
+                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
+                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
+                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
+                filterObject.filter = options ? options.filter : {};
 
                 if (regex.test(this.contentType)) {
-                    filterObject['forSales'] = true;
+                    filterObject.forSales = true;
                 }
 
                 if (options && options.contentType && !(options.filter)) {
@@ -104,7 +108,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }

@@ -3,6 +3,8 @@
  */
 
 define([
+    'Underscore',
+    'jQuery',
     'views/salesInvoice/list/ListView',
     'text!templates/Projects/projectInfo/invoiceTemplate.html',
     'views/salesInvoice/EditView',
@@ -12,9 +14,12 @@ define([
     'common',
     'helpers',
     "dataService",
-    "async"
+    "async",
+    'constants'
 
-], function (ListView, invoiceTemplate, editView, listItemView, invoiceCollection, invoiceModel, common, helpers, dataService, async) {
+], function (_, $, ListView, invoiceTemplate, editView, listItemView, invoiceCollection, InvoiceModel, common, helpers, dataService, async, CONSTANTS) {
+    'use strict';
+
     var invoiceView = ListView.extend({
 
         el               : '#invoices',
@@ -25,7 +30,7 @@ define([
         initialize: function (options) {
             this.remove();
             this.collection = options.model;
-            this.filter = options.filter ? options.filter : {};
+            this.filter = options.filter || {};
 
             this.eventChannel = options.eventChannel;
 
@@ -53,11 +58,11 @@ define([
 
         saveItems: function (e) {
             e.preventDefault();
-
+            var id;
             var model;
             var self = this;
 
-            for (var id in this.changedModels) {
+            for (id in this.changedModels) {
                 model = this.collection.get(id);
 
                 model.save({
@@ -74,39 +79,12 @@ define([
                 });
             }
 
-            for (var id in this.changedModels) {
+            for (id in this.changedModels) {
                 delete this.changedModels[id];
             }
         },
 
         chooseOption: function (e) {
-            //var self = this;
-            //var target$ = $(e.target);
-            //var targetElement = target$.parents("td");
-            //var wId = target$.attr("id");
-            //var status = _.find(this.stages, function (stage) {
-            //    return wId === stage._id;
-            //});
-            //var name = target$.text();
-            //var id = targetElement.attr("id");
-            //var model = this.collection.get(id);
-            //
-            //model.save({
-            //    'workflow._id'   : wId,
-            //    'workflow.status': status.status,
-            //    'workflow.name'  : name
-            //}, {
-            //    headers : {
-            //        mid: 55
-            //    },
-            //    patch   : true,
-            //    validate: false,
-            //    success : function () {
-            //        self.render();
-            //    }
-            //});
-
-            var self = this;
             var target$ = $(e.target);
             var targetElement = target$.parents("td");
             var targetTr = target$.parents("tr");
@@ -129,7 +107,7 @@ define([
             return false;
         },
 
-        hideNewSelect: function (e) {
+        hideNewSelect: function () {
             $(".newSelectList").hide();
         },
 
@@ -174,7 +152,7 @@ define([
                         cb();
                     },
                     error  : function (model, res) {
-                        if (res.status === 403 && index === 0) {
+                        if (res.status === 403 /*&& index === 0*/) {
                             App.render({
                                 type   : 'error',
                                 message: "You do not have permission to perform this action"
@@ -220,7 +198,7 @@ define([
                 return (el.sourceDocument ? el.sourceDocument._id.toString() === orderId.toString() : null)
             });
 
-            var model = new invoiceModel({validate: false});
+            var model = new InvoiceModel({validate: false});
 
             model.urlRoot = '/Invoice/form';
             model.fetch({
@@ -239,7 +217,7 @@ define([
                 },
                 error  : function () {
                     App.render({
-                        type   : 'error',
+                        type: 'error',
                         message: 'Please refresh browser'
                     });
                 }
@@ -250,7 +228,7 @@ define([
         goToEditDialog: function (e) {
             var self = this;
             var id = $(e.target).closest('tr').data("id");
-            var model = new invoiceModel({validate: false});
+            var model = new InvoiceModel({validate: false});
 
             e.preventDefault();
 
@@ -261,8 +239,6 @@ define([
                     currentDb: App.currentDb
                 },
                 success: function (model) {
-                    // var isWtrack = App.weTrack;
-
                     new editView({
                         model       : model,
                         redirect    : true,
@@ -373,7 +349,7 @@ define([
                     checkAll$.prop('checked', false);
                     removeBtnEl.show();
 
-                    if (checkLength == this.collection.length) {
+                    if (checkLength === this.collection.length) {
 
                         checkAll$.prop('checked', true);
                     }
@@ -428,7 +404,7 @@ define([
                 currencyClass      : helpers.currencyClass
             }));
 
-            dataService.getData("/workflow/fetch", {
+            dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                 wId         : 'Sales Invoice',
                 source      : 'purchase',
                 targetSource: 'invoice'

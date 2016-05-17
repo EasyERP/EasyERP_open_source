@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/Projects/list/ListHeader.html',
         'text!templates/stages.html',
@@ -14,7 +16,7 @@ define([
         'custom'
     ],
 
-    function (listViewBase, listTemplate, stagesTamplate, CreateView, listItemView, editView, formView, currentModel, contentCollection, filterView, common, dataService, custom) {
+    function ($, _, listViewBase, listTemplate, stagesTamplate, CreateView, listItemView, editView, formView, currentModel, contentCollection, filterView, common, dataService, custom) {
         var ProjectsListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
@@ -114,7 +116,7 @@ define([
                 return false;
             },
 
-            checked: function (e) {
+            /*checked: function (e) {
                 var $targetEl = $(e.target);
 
                 if ($targetEl.hasClass('notRemovable')) {
@@ -139,7 +141,7 @@ define([
                         $('#check_all').prop('checked', false);
                     }
                 }
-            },
+            },*/
 
             renderCheckboxes: function () {
                 this.$el.find('#check_all').click(function () {

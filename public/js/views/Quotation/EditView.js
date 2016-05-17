@@ -16,11 +16,12 @@ define([
     "populate",
     'constants',
     'helpers/keyValidator',
-    'helpers'], function (Backbone, $, _, EditTemplate, ProformaView, SelectView, AssigneesView, ProductItemView, OrdersView, QuotationCollection, ProformaCollection, common, Custom, dataService, populate, CONSTANTS, keyValidator, helpers) {
+    'helpers'
+], function (Backbone, $, _, EditTemplate, ProformaView, SelectView, AssigneesView, ProductItemView, OrdersView, QuotationCollection, ProformaCollection, common, Custom, dataService, populate, CONSTANTS, keyValidator, helpers) {
     'use strict';
 
     var EditView = Backbone.View.extend({
-        contentType: "Quotation",
+        contentType: 'Quotation',
         imageSrc   : '',
         template   : _.template(EditTemplate),
 
@@ -30,8 +31,8 @@ define([
                 this.eventChannel = options.eventChannel;
             }
 
-            _.bindAll(this, "render", "saveItem");
-            _.bindAll(this, "render", "deleteItem");
+            _.bindAll(this, 'render', 'saveItem');
+            _.bindAll(this, 'render', 'deleteItem');
 
             if (options.model) {
                 this.currentModel = options.model;
@@ -39,7 +40,7 @@ define([
                 this.currentModel = options.collection.getElement();
             }
 
-            this.currentModel.urlRoot = "/quotation";
+            this.currentModel.urlRoot = '/quotation';
             this.responseObj = {};
             this.forSales = false;
 
@@ -104,6 +105,7 @@ define([
             var newCurrencyClass = helpers.currencyClass(newCurrency);
 
             var array = this.$el.find('.' + oldCurrencyClass);
+            
             array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
 
             currencyElement.text($(e.target).text()).attr('data-id', newCurrency);
@@ -126,10 +128,10 @@ define([
             var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
             var itemSelector = '.dialog-tabs-item.' + dataClass;
 
-            closestEl.find("a.active").removeClass("active");
-            holder.addClass("active");
+            closestEl.find('a.active').removeClass('active');
+            holder.addClass('active');
 
-            n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
             dialog_holder = $(selector);
 
             dialog_holder.find(itemActiveSelector).removeClass("active");
@@ -148,7 +150,7 @@ define([
             if (this.forSales) {
                 wId = 'Sales Order';
                 mid = 63;
-                status = "New";
+                status = 'New';
             } else {
                 wId = 'Purchase Order';
                 mid = 57;
@@ -262,8 +264,8 @@ define([
         uploadAttachment: function (event) {
             var self = this;
             var currentModel = this.model;
-            var currentModelId = currentModel ? currentModel["id"] : null;
-            var addFrmAttach = $("#proformaAttachmentForm");
+            var currentModelId = currentModel ? currentModel.id : null;
+            var addFrmAttach = $('#proformaAttachmentForm');
             var addInptAttach;
 
             addInptAttach = self.$el.find("#proformaAttachment")[0].files[0];
@@ -617,10 +619,10 @@ define([
         },
 
         hideDialog: function () {
-            $(".edit-dialog").remove();
-            $(".add-group-dialog").remove();
-            $(".add-user-dialog").remove();
-            $(".crop-images-dialog").remove();
+            $('.edit-dialog').remove();
+            $('.add-group-dialog').remove();
+            $('.add-user-dialog').remove();
+            $('.crop-images-dialog').remove();
         },
 
         deleteItem: function (event) {
@@ -712,7 +714,7 @@ define([
                 }).render().el
             );
 
-            populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+            populate.get("#currencyDd", CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
             populate.get("#destination", "/destination", {}, 'name', this, false, true);
             populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
@@ -721,12 +723,12 @@ define([
             populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, false, true);
 
             if (this.forSales) {
-                populate.get("#supplierDd", "/Customer", {}, "fullName", this, false, false);
+                populate.get("#supplierDd", CONSTANTS.URLS.CUSTOMERS, {}, "fullName", this, false, false);
 
                 populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
 
             } else {
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
             }
 
             this.$el.find('#orderDate').datepicker({
@@ -745,7 +747,7 @@ define([
                 new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
             );
 
-            dataService.getData("/project/getForWtrack", null, function (projects) {
+            dataService.getData('/project/getForWtrack', null, function (projects) {
                 projects = _.map(projects.data, function (project) {
                     project.name = project.projectName;
 
@@ -757,7 +759,7 @@ define([
 
             if (model.groups) {
                 if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $(".groupsAndUser").show();
+                    $('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
                         $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.departmentName + "</td><td class='text-right'></td></tr>");
                         $("#targetGroups").append("<li id='" + item._id + "'>" + item.departmentName + "</li>");

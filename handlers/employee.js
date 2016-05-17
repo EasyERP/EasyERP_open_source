@@ -2,16 +2,28 @@ var mongoose = require('mongoose');
 var async = require('async');
 var objectId = mongoose.Types.ObjectId;
 
-var Employee = function (models) {
+var Employee = function (event, models) {
     'use strict';
     /**
      * @module Employee
      */
-    //var access = require("../Modules/additions/access.js")(models);
+    var accessRoll = require("../helpers/accessRollHelper.js")(models);
+    var uploadFileArray = require("../helpers/uploadFileArray.js")();
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
+    var DepartmentSchema = mongoose.Schemas.Department;
+    var jobPositionSchema = mongoose.Schemas.JobPosition;
+    var nationalitySchema = mongoose.Schemas.nationality;
+    var LanguageSchema = mongoose.Schemas.language;
+    var SourceSchema = mongoose.Schemas.source;
+    var birthdaysSchema = mongoose.Schemas.birthday;
     var _ = require('underscore');
+    var fs = require('fs');
     var moment = require('../public/js/libs/moment/moment');
+    var validatorEmployee = require('../helpers/validator');
+    var Payroll = require('../handlers/payroll');
+    var payrollHandler = new Payroll(models);
+    var ids = ['52203e707d4dba8813000003', '563f673270bbc2b740ce89ae', '55b8cb7d0ce4affc2a0015cb', '55ba2ef1d79a3a343900001c', '560255d1638625cf32000005'];
     var CONSTANTS = require('../constants/mainConstants.js');
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
@@ -28,11 +40,11 @@ var Employee = function (models) {
         var options;
         var query = [];
 
-        //filter = JSON.parse(filter); //ToDo uncomment when Modules move to handler
+        // filter = JSON.parse(filter); //ToDo uncomment when Modules move to handler
         //
-        //if (filter) {
+        // if (filter) {
         //    filterObj.$and = caseFilter(filter);
-        //}
+        // }
 
         options = {
             res     : res,
@@ -255,11 +267,11 @@ var Employee = function (models) {
     };
 
     this.getForProjectDetails = function (req, res, next) {
-        var ids = req.query.data;
+        var idsArray = req.query.data || [];
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
         Employee
-            .find({_id: {$in: ids}})
+            .find({_id: {$in: idsArray}})
             .populate('jobPosition', '_id name')
             .populate('department', '_id departmentName')
             .exec(function (err, result) {
@@ -272,6 +284,1505 @@ var Employee = function (models) {
 
     };
 
+    function getDate(date) {
+        var _date = new Date(date);
+        var currentTimeZoneOffsetInMiliseconds = -_date.getTimezoneOffset() * 60 * 1000;
+        var valaueOf_date = _date.valueOf();
+
+        valaueOf_date += currentTimeZoneOffsetInMiliseconds;
+
+        return new Date(valaueOf_date);
+    }
+
+    function getAge(birthday) {
+        var today = new Date();
+        var years;
+
+        birthday = new Date(birthday);
+        years = today.getFullYear() - birthday.getFullYear();
+
+        birthday.setFullYear(today.getFullYear());
+
+        if (today < birthday) {
+            years--;
+        }
+        return (years < 0) ? 0 : years;
+    }
+
+    this.create = function (req, res, next) {
+        var employee;
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var body = req.body;
+        var err;
+
+        if (body.dateBirth) {
+            body.dateBirth = getDate(body.dateBirth);
+            body.age = getAge(body.dateBirth);
+        }
+
+        if (!validatorEmployee.validEmployeeBody(body)) {
+            err = new Error();
+            err.status = 404;
+
+            return next(err);
+        }
+
+        employee = new Employee(body);
+
+        employee.createdBy.user = req.session.uId;
+        employee.editedBy.user = req.session.uId;
+        employee.createdBy.date = new Date();
+        employee.editedBy.date = new Date();
+
+        event.emit('updateSequence', Employee, "sequence", 0, 0, employee.workflow, employee.workflow, true, false, function (sequence) {
+            employee.sequence = sequence;
+
+            employee.save(function (err, employee) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.send(201, {success: 'A new Employees create success', result: employee, id: employee._id});
+
+                if (employee.isEmployee) {
+                    event.emit('recalculate', req, res, next);
+                }
+
+                event.emit('dropHoursCashes', req);
+                event.emit('recollectVacationDash');
+
+            });
+        });
+    };
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+        var filterName;
+
+        for (filterName in filter) {
+            condition = filter[filterName].value;
+            key = filter[filterName].key;
+
+            switch (filterName) {
+                case 'name':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'letter':
+                    filtrElement['name.last'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
+                    resArray.push(filtrElement);
+                    break;
+                case 'department':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'manager':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'jobPosition':
+                    filtrElement[key] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        }
+
+        return resArray;
+    }
+
+    function getById(req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var id = req.params.id;
+        var query = Employee.findById(id);
+
+        query.populate('coach', 'name _id')
+            .populate('relatedUser', 'login _id')
+            .populate('workflow')
+            .populate('createdBy.user')
+            .populate('editedBy.user')
+            .populate('groups.users')
+            .populate('manager', '_id name')
+            .populate('jobPosition', '_id name fullName')
+            .populate('department', '_id departmentName')
+            .populate('groups.group')
+            .populate('hire.department', '_id departmentName')
+            .populate('hire.jobPosition', '_id name')
+            .populate('hire.manager', '_id name')
+            .populate('fire.department', '_id departmentName')
+            .populate('fire.jobPosition', '_id name')
+            .populate('fire.manager', '_id name')
+            .populate('groups.owner', '_id login');
+
+        query.exec(function (err, employee) {
+            if (err) {
+                return next(err);
+            }
+
+            if (ids.indexOf(req.session.uId) !== -1) {
+                employee._doc.enableView = true;
+            }
+
+            res.status(200).send(employee);
+        });
+    }
+
+    this.totalCollectionLength = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var data = req.query;
+        var contentType = data.contentType;
+        var optionsObject = {};
+        var filter = data.filter || {};
+        var waterfallTasks;
+        var accessRollSearcher;
+        var contentSearcher;
+        var project;
+        var projectSecond;
+        var response = {};
+
+        response.showMore = false;
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                optionsObject.$or = caseFilter(filter);
+            } else {
+                optionsObject.$and = caseFilter(filter);
+            }
+        }
+
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Employee, cb);
+        };
+
+        contentSearcher = function (ids, cb) {
+            var queryObject = {};
+
+            queryObject.$and = [];
+
+            if (optionsObject.$and.length) {
+                queryObject.$and.push(optionsObject);
+            }
+
+            if (contentType === 'Employees') {
+                queryObject.$and.push({isEmployee: true});
+            } else if (contentType === 'Applications') {
+                queryObject.$and.push({isEmployee: false});
+            }
+
+            queryObject.$and.push({_id: {$in: ids}});
+
+            switch (contentType) {
+                case ('Employees'):
+
+                    project = {
+                        manager         : {$arrayElemAt: ["$manager", 0]},
+                        jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+                        department      : {$arrayElemAt: ["$department", 0]},
+                        'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                        'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                        name            : 1,
+                        'editedBy.date' : 1,
+                        'createdBy.date': 1,
+                        dateBirth       : 1,
+                        skype           : 1,
+                        workEmail       : 1,
+                        workPhones      : 1,
+                        jobType         : 1,
+                        isEmployee      : 1
+                    };
+
+                    projectSecond = {
+                        manager         : 1,
+                        jobPosition     : 1,
+                        department      : 1,
+                        'createdBy.user': 1,
+                        'editedBy.user' : 1,
+                        'editedBy.date' : 1,
+                        'createdBy.date': 1,
+                        name            : 1,
+                        dateBirth       : 1,
+                        skype           : 1,
+                        workEmail       : 1,
+                        workPhones      : 1,
+                        jobType         : 1,
+                        isEmployee      : 1
+                    };
+                    break;
+                case ('Applications'):
+
+                    if (data && data.filter && data.filter.workflow) {
+                        data.filter.workflow = data.filter.workflow.map(function (item) {
+                            return item === "null" ? null : item;
+                        });
+                    }
+
+                    project = {
+                        manager         : {$arrayElemAt: ["$manager", 0]},
+                        jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+                        department      : {$arrayElemAt: ["$department", 0]},
+                        'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                        'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                        name            : 1,
+                        'editedBy.date' : 1,
+                        'createdBy.date': 1,
+                        dateBirth       : 1,
+                        skype           : 1,
+                        workEmail       : 1,
+                        workPhones      : 1,
+                        jobType         : 1,
+                        isEmployee      : 1,
+                        creationDate    : 1,
+                        workflow        : {$arrayElemAt: ["$workflow", 0]},
+                        personalEmail   : 1,
+                        sequence        : 1,
+                        hire            : 1,
+                        fire            : 1
+                    };
+
+                    projectSecond = {
+                        manager         : 1,
+                        jobPosition     : 1,
+                        department      : 1,
+                        'createdBy.user': 1,
+                        'editedBy.user' : 1,
+                        'editedBy.date' : 1,
+                        'createdBy.date': 1,
+                        name            : 1,
+                        dateBirth       : 1,
+                        skype           : 1,
+                        workEmail       : 1,
+                        workPhones      : 1,
+                        jobType         : 1,
+                        isEmployee      : 1,
+                        creationDate    : 1,
+                        workflow        : 1,
+                        personalEmail   : 1,
+                        sequence        : 1,
+                        hire            : 1,
+                        fire            : 1
+                    };
+                    break;
+            }
+
+            Employee.aggregate([{
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "manager",
+                    foreignField: "_id", as: "manager"
+                }
+            }, {
+                $lookup: {
+                    from        : "JobPosition",
+                    localField  : "jobPosition",
+                    foreignField: "_id", as: "jobPosition"
+                }
+            }, {
+                $lookup: {
+                    from        : "Department",
+                    localField  : "department",
+                    foreignField: "_id", as: "department"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "relatedUser",
+                    foreignField: "_id", as: "relatedUser"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "createdBy.user",
+                    foreignField: "_id", as: "createdBy.user"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "editedBy.user",
+                    foreignField: "_id", as: "editedBy.user"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $project: project
+            }, {
+                $project: projectSecond
+            }, {
+                $match: queryObject
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        waterfallTasks = [accessRollSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            if (data.currentNumber && data.currentNumber < result.length) {
+                response.showMore = true;
+            }
+            response.count = result.length;
+            res.status(200).send(response);
+        });
+    };
+
+    function getFilter(req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var data = req.query;
+        var contentType = data.contentType;
+        var viewType = data.viewType;
+        var optionsObject = {};
+        var filter = data.filter || {};
+        var waterfallTasks;
+        var accessRollSearcher;
+        var contentSearcher;
+        var keySort;
+        var sort;
+        var project;
+        var projectSecond;
+
+        var skip = ((parseInt(data.page || 1, 10) - 1) * parseInt(data.count || 100, 10));
+        var limit = parseInt(data.count, 10) || 100;
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                optionsObject.$or = caseFilter(filter);
+            } else {
+                optionsObject.$and = caseFilter(filter);
+            }
+        }
+
+        if (data.sort) {
+            keySort = Object.keys(data.sort)[0];
+            data.sort[keySort] = parseInt(data.sort[keySort], 10);
+            sort = data.sort;
+        } else {
+            sort = {"editedBy.date": -1};
+        }
+
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Employee, cb);
+        };
+
+        contentSearcher = function (ids, cb) {
+            var queryObject = {};
+
+            queryObject.$and = [];
+
+            if (optionsObject.$and.length) {
+                queryObject.$and.push(optionsObject);
+            }
+
+            if (contentType === 'Employees') {
+                queryObject.$and.push({isEmployee: true});
+            } else if (contentType === 'Applications') {
+                queryObject.$and.push({isEmployee: false});
+            }
+
+            queryObject.$and.push({_id: {$in: ids}});
+
+            switch (contentType) {
+                case ('Employees'):
+                    switch (viewType) {
+                        case ('list'):
+                        {
+                            project = {
+                                manager         : {$arrayElemAt: ["$manager", 0]},
+                                jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+                                department      : {$arrayElemAt: ["$department", 0]},
+                                'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                                'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                name            : 1,
+                                'editedBy.date' : 1,
+                                'createdBy.date': 1,
+                                dateBirth       : 1,
+                                skype           : 1,
+                                workEmail       : 1,
+                                workPhones      : 1,
+                                jobType         : 1,
+                                isEmployee      : 1
+                            };
+
+                            projectSecond = {
+                                manager         : 1,
+                                jobPosition     : 1,
+                                department      : 1,
+                                'createdBy.user': 1,
+                                'editedBy.user' : 1,
+                                'editedBy.date' : 1,
+                                'createdBy.date': 1,
+                                name            : 1,
+                                dateBirth       : 1,
+                                skype           : 1,
+                                workEmail       : 1,
+                                workPhones      : 1,
+                                jobType         : 1,
+                                isEmployee      : 1
+                            };
+                        }
+                            break;
+                        case ('thumbnails'):
+                        {
+                            project = {
+                                jobPosition        : {$arrayElemAt: ["$jobPosition", 0]},
+                                department         : {$arrayElemAt: ["$department", 0]},
+                                manager            : {$arrayElemAt: ["$manager", 0]},
+                                age                : 1,
+                                relatedUser        : {$arrayElemAt: ["$relatedUser", 0]},
+                                'workPhones.mobile': 1,
+                                name               : 1,
+                                dateBirth          : 1,
+                                isEmployee         : 1
+                            };
+
+                            projectSecond = {
+                                jobPosition        : 1,
+                                department         : 1,
+                                manager            : 1,
+                                age                : 1,
+                                'relatedUser.login': 1,
+                                'workPhones.mobile': 1,
+                                name               : 1,
+                                dateBirth          : 1,
+                                isEmployee         : 1
+                            };
+                        }
+                            break;
+
+                    }
+                    break;
+                case ('Applications'):
+                    switch (viewType) {
+                        case ('list'):
+                        {
+                            if (data && data.filter && data.filter.workflow) {
+                                data.filter.workflow = data.filter.workflow.map(function (item) {
+                                    return item === "null" ? null : item;
+                                });
+                            }
+
+                            project = {
+                                manager         : {$arrayElemAt: ["$manager", 0]},
+                                jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+                                department      : {$arrayElemAt: ["$department", 0]},
+                                'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                                'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                name            : 1,
+                                'editedBy.date' : 1,
+                                'createdBy.date': 1,
+                                dateBirth       : 1,
+                                skype           : 1,
+                                workEmail       : 1,
+                                workPhones      : 1,
+                                jobType         : 1,
+                                isEmployee      : 1,
+                                creationDate    : 1,
+                                workflow        : {$arrayElemAt: ["$workflow", 0]},
+                                personalEmail   : 1,
+                                sequence        : 1,
+                                hire            : 1,
+                                fire            : 1
+                            };
+
+                            projectSecond = {
+                                manager         : 1,
+                                jobPosition     : 1,
+                                department      : 1,
+                                'createdBy.user': 1,
+                                'editedBy.user' : 1,
+                                'editedBy.date' : 1,
+                                'createdBy.date': 1,
+                                name            : 1,
+                                dateBirth       : 1,
+                                skype           : 1,
+                                workEmail       : 1,
+                                workPhones      : 1,
+                                jobType         : 1,
+                                isEmployee      : 1,
+                                creationDate    : 1,
+                                workflow        : 1,
+                                personalEmail   : 1,
+                                sequence        : 1,
+                                hire            : 1,
+                                fire            : 1
+                            };
+                        }
+                            break;
+                    }
+                    break;
+            }
+
+            Employee.aggregate([{
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "manager",
+                    foreignField: "_id", as: "manager"
+                }
+            }, {
+                $lookup: {
+                    from        : "JobPosition",
+                    localField  : "jobPosition",
+                    foreignField: "_id", as: "jobPosition"
+                }
+            }, {
+                $lookup: {
+                    from        : "Department",
+                    localField  : "department",
+                    foreignField: "_id", as: "department"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "relatedUser",
+                    foreignField: "_id", as: "relatedUser"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "createdBy.user",
+                    foreignField: "_id", as: "createdBy.user"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "editedBy.user",
+                    foreignField: "_id", as: "editedBy.user"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $project: project
+            }, {
+                $project: projectSecond
+            }, {
+                $match: queryObject
+            }, {
+                $sort: sort
+            }, {
+                $skip: skip
+            }, {
+                $limit: limit
+            }
+            ], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        waterfallTasks = [accessRollSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
+        });
+
+    }
+
+    this.updateOnlySelectedFields = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var _id = req.params.id;
+        var dbName = req.session.lastDb;
+        var UsersSchema = mongoose.Schemas.User;
+        var UsersModel = models.get(dbName, 'Users', UsersSchema);
+        var Department = models.get(dbName, 'Department', DepartmentSchema);
+        var JobPosition = models.get(dbName, 'jobPosition', jobPositionSchema);
+        var data = req.body;
+        var fileName = data.fileName;
+        var updateObject = data;
+        var dataObj = {};
+        var query = {};
+
+        updateObject.editedBy = {
+            user: req.session.uId,
+            date: new Date().toISOString()
+        };
+
+        if (data.workflow && data.sequenceStart && data.workflowStart) {
+            if (data.sequence === -1) {
+                event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function () {
+                    event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
+                        data.sequence = sequence;
+                        if (data.workflow === data.workflowStart) {
+                            data.sequence -= 1;
+                        }
+
+                        if (data.fired) {
+                            dataObj = {
+                                'fire': data.fired
+                            };
+                        } else if (data.hired) {
+                            dataObj = {
+                                'hire': data.hired
+                            };
+                        }
+
+                        if (dataObj.hire || dataObj.fire) {
+                            query = {$set: updateObject, $push: dataObj};
+                        } else {
+                            query = {$set: updateObject};
+                        }
+
+                        Employee.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            res.status(200).send({success: 'Employees updated', sequence: result.sequence});
+                        });
+                    });
+                });
+            } else {
+                event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
+                    delete data.sequenceStart;
+                    delete data.workflowStart;
+                    data.sequence = sequence;
+
+                    Employee.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        res.status(200).send({success: 'Employees updated'});
+                    });
+                });
+            }
+        } else {
+            if (updateObject.dateBirth) {
+                updateObject.age = getAge(updateObject.dateBirth);
+            }
+
+            if (data.fired) {
+                dataObj = {
+                    'fire': data.fired
+                };
+
+            } else if (data.hired) {
+                dataObj = {
+                    'hire': data.hired
+                };
+            }
+
+            if (dataObj.hire || dataObj.fire) {
+                query = {$set: updateObject, $push: dataObj};
+            } else if (data.relatedUser) {
+                query = {$set: updateObject};
+                event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee', _id);
+            } else if (data.currentUser) {
+                event.emit('updateName', data.currentUser, UsersModel, '_id', 'RelatedEmployee', null);
+                delete data.currentUser;
+                query = {$set: updateObject};
+            } else {
+                query = {$set: updateObject};
+            }
+
+            Employee.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                if (updateObject.dateBirth || updateObject.contractEnd || updateObject.hired) {
+                    event.emit('recalculate', req, res, next);
+                }
+                if (fileName) {
+                    var os = require("os");
+                    var osType = (os.type().split('_')[0]);
+                    var path;
+                    var dir;
+                    var newDirname;
+
+                    switch (osType) {
+                        case "Windows":
+                        {
+                            newDirname = __dirname.replace("\\Modules", "");
+                            while (newDirname.indexOf("\\") !== -1) {
+                                newDirname = newDirname.replace("\\", "\/");
+                            }
+                            path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                            dir = newDirname + "\/uploads\/" + _id;
+                        }
+                            break;
+                        case "Linux":
+                        {
+                            newDirname = __dirname.replace("/Modules", "");
+                            while (newDirname.indexOf("\\") !== -1) {
+                                newDirname = newDirname.replace("\\", "\/");
+                            }
+                            path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                            dir = newDirname + "\/uploads\/" + _id;
+                        }
+                            break;
+                    }
+
+                    fs.unlink(path, function (err) {
+                        console.log(err);
+                        fs.readdir(dir, function (err, files) {
+                            if (files && files.length === 0) {
+                                fs.rmdir(dir, function () {
+                                });
+                            }
+                        });
+                    });
+
+                }
+                event.emit('dropHoursCashes', req);
+                event.emit('recollectVacationDash');
+
+                function populateEmployee(cb) {
+                    Employee.populate(result, {
+                        'path'  : 'manager',
+                        'select': 'name _id'
+                    }, cb);
+                }
+
+                function populateGroupsUsers(cb) {
+                    UsersModel.populate(result, {
+                        'path'  : 'groups.users',
+                        'select': 'login _id'
+                    }, cb);
+                }
+
+                function populateGroupsOwner(cb) {
+                    UsersModel.populate(result, {
+                        'path'  : 'groups.owner',
+                        'select': 'login _id'
+                    }, cb);
+                }
+
+                function populateGroups(cb) {
+                    Department.populate(result, {
+                        'path'  : 'groups.group',
+                        'select': 'departmentName _id'
+                    }, cb);
+                }
+
+                function populateEmployeeHire(cb) {
+                    Employee.populate(result, {
+                        'path'  : 'hire.manager',
+                        'select': 'name _id'
+                    }, cb);
+                }
+
+                function populateEmployeeFire(cb) {
+                    Employee.populate(result, {
+                        'path'  : 'fire.manager',
+                        'select': 'name _id'
+                    }, cb);
+                }
+
+                function populateDepartment(cb) {
+                    Department.populate(result, {
+                        'path'  : 'department',
+                        'select': 'departmentName _id'
+                    }, cb);
+                }
+
+                function populateDepartmentFire(cb) {
+                    Department.populate(result, {
+                        'path'  : 'fire.department',
+                        'select': 'departmentName _id'
+                    }, cb);
+                }
+
+                function populateDepartmentHire(cb) {
+                    Department.populate(result, {
+                        'path'  : 'hire.department',
+                        'select': 'departmentName _id'
+                    }, cb);
+                }
+
+                function populateJobPosition(cb) {
+                    JobPosition.populate(result, {
+                        'path'  : 'jobPosition',
+                        'select': 'name _id'
+                    }, cb);
+                }
+
+                function populateJobPositionFire(cb) {
+                    JobPosition.populate(result, {
+                        'path'  : 'fire.jobPosition',
+                        'select': 'name _id'
+                    }, cb);
+                }
+
+                function populateJobPositionHire(cb) {
+                    JobPosition.populate(result, {
+                        'path'  : 'hire.jobPosition',
+                        'select': 'name _id'
+                    }, cb);
+                }
+
+                function populateRelatedUser(cb) {
+                    UsersModel.populate(result, {
+                        'path'  : 'relatedUser',
+                        'select': 'login _id'
+                    }, cb);
+                }
+
+                async.parallel([populateRelatedUser, populateGroupsUsers, populateGroupsOwner, populateGroups, populateEmployee, populateEmployeeFire, populateDepartment, populateJobPosition, populateEmployeeHire, populateDepartmentHire, populateJobPositionHire, populateDepartmentFire, populateJobPositionFire], function () {
+                    res.status(200).send(result);
+                });
+
+                payrollHandler.composeSalaryReport(req);
+
+            });
+        }
+    };
+
+    this.remove = function (req, res, next) {
+        var _id = req.params.id;
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+        Employee.findByIdAndRemove(_id, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            if (result && !result.isEmployee) {
+                event.emit('updateSequence', Employee, "sequence", result.sequence, 0, result.workflow, result.workflow, false, true);
+            }
+
+            event.emit('recalculate', req, res, next);
+            event.emit('dropHoursCashes', req);
+            event.emit('recollectVacationDash', req);
+
+            res.status(200).send({success: 'Employees removed'});
+        });
+    };
+
+    function getApplicationsForKanban(req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var response = {};
+        var startTime = new Date();
+        var filterObj = {};
+        var condition;
+        var data = req.query;
+
+        response.data = [];
+        response.workflowId = data.workflowId;
+        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+            {
+                $match: {
+                    users: objectId(req.session.uId)
+                }
+            }, {
+                $project: {
+                    _id: 1
+                }
+            },
+            function (err, deps) {
+                if (err) {
+                    return next(err);
+                }
+
+                var arrOfObjectId = deps.objectID();
+                filterObj.$and = [];
+                filterObj.$and.push({isEmployee: false});
+                filterObj.$and.push({workflow: objectId(data.workflowId)});
+                /*filterObj['$and'].push({$or: []});
+                 or = filterObj['$and'][2]['$or'];*/
+
+                if (data && data.filter) {
+                    if (data.filter.condition === 'or') {
+                        filterObj.$and.push({$or: []});
+                        condition = filterObj.$and[2].$or;
+                    } else {
+                        filterObj.$and.push({$and: []});
+                        condition = filterObj.$and[2].$and;
+                    }
+
+                    if (data.filter && data.filter.Name) {
+                        condition.push({'name.last': {$in: data.filter.Name}});
+                    }
+                    if (data.filter && data.filter.Email) {
+                        condition.push({'workEmail': {$in: data.filter.Email}});
+                    }
+                    if (!condition.length) {
+                        filterObj.$and.pop();
+                    }
+                }
+                Employee.aggregate(
+                    {
+                        $match: {
+                            $and: [
+                                filterObj,
+                                {
+                                    $or: [
+                                        {
+                                            $or: [
+                                                {
+                                                    $and: [
+                                                        {whoCanRW: 'group'},
+                                                        {'groups.users': objectId(req.session.uId)}
+                                                    ]
+                                                },
+                                                {
+                                                    $and: [
+                                                        {whoCanRW: 'group'},
+                                                        {'groups.group': {$in: arrOfObjectId}}
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {whoCanRW: 'owner'},
+                                                {'groups.owner': objectId(req.session.uId)}
+                                            ]
+                                        },
+                                        {whoCanRW: "everyOne"}
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 1
+                        }
+                    },
+                    function (err, responseApplications) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        Employee
+                            .where('_id').in(responseApplications)
+                            .select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired")
+                            .populate('workflow', '_id')
+                            .populate('jobPosition', '_id name')
+                            .sort({lastFire: -1, 'sequence': -1})
+                            .limit(req.session.kanbanSettings.applications.countPerPage)
+                            .exec(function (err, result) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                response.data = result;
+                                response.time = (new Date() - startTime);
+                                response.workflowId = data.workflowId;
+                                response.fold = (req.session.kanbanSettings.applications.foldWorkflows && req.session.kanbanSettings.applications.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
+
+                                res.status(200).send(response);
+                            });
+                    });
+            });
+    }
+
+    this.getForDdByRelatedUser = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var result = {};
+        var uId = req.session.uId;
+
+        var query = Employee.find({relatedUser: uId, isEmployee: true}, {name: 1}).sort({'name.first': 1});
+
+        query.exec(function (err, user) {
+            if (err) {
+                return next(err);
+            }
+
+            result.data = user;
+            res.status(200).send(result);
+
+        });
+    };
+
+    this.getByViewTpe = function (req, res, next) {
+        var query = req.query;
+        var viewType = query.viewType;
+        var id = req.params.id;
+
+        if (viewType === id) {
+            viewType = id;
+        }
+
+        if (id && id.length >= 24) {
+            getById(req, res, next);
+            return false;
+        }
+
+        switch (viewType) {
+            case "form":
+                getById(req, res, next);
+                break;
+            case "kanban":
+                getApplicationsForKanban(req, res, next);
+                break;
+            case "thumbnails":
+                getFilter(req, res, next);
+                break;
+            case "list":
+                getFilter(req, res, next);
+                break;
+        }
+    };
+
+    this.getSalesPerson = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var result = {};
+        var query = Employee.find(/*{'isEmployee': true}*/{}, {name: 1}).sort({'name.first': 1});
+
+        query.exec(function (err, employees) {
+            if (err) {
+                return next(err);
+            }
+
+            result.data = employees;
+            res.status(200).send(result);
+        });
+
+    };
+
+    this.getEmployeesAlphabet = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var response = {};
+        var query = Employee
+            .aggregate([{
+                $match: {
+                    isEmployee: true
+                }
+            }, {
+                $project: {
+                    later: {$substr: ["$name.last", 0, 1]}
+                }
+            }, {
+                $group: {
+                    _id: "$later"
+                }
+            }]);
+
+        query.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            response.data = result;
+            res.status(200).send(response);
+        });
+    };
+
+    this.getEmployeesImages = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var data = req.params;
+        var ids = data.ids || [];
+
+        if (!ids.length) {
+            ids = req.query.ids || [];
+        }
+
+        var query = Employee.find({isEmployee: true, _id: {$in: ids}}, {imageSrc: 1, name: 1});
+
+        query.exec(function (err, response) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: response});
+
+        });
+    };
+
+    this.getCollectionLengthByWorkflows = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var accessRollSearcher;
+        var contentSearcher;
+        var waterfallTasks;
+        var data = {};
+        data.showMore = false;
+
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Employee, cb);
+        };
+
+        contentSearcher = function (deps, cb) {
+            Employee
+                .aggregate([{
+                    $match: {
+                        _id: {$in: deps}
+                    }
+                }, {
+                    $project: {
+                        _id     : 1,
+                        workflow: 1
+                    }
+                },
+                    {
+                        $group: {
+                            _id  : "$workflow",
+                            count: {$sum: 1}
+                        }
+                    }
+                ], function (err, result) {
+                    if (err) {
+                        cb(err);
+                    }
+
+                    cb(null, result);
+                });
+        };
+
+        waterfallTasks = [accessRollSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            result.forEach(function (object) {
+                if (object.count > req.session.kanbanSettings.applications.countPerPage) {
+                    data.showMore = true;
+                }
+            });
+            data.arrayOfObjects = result;
+            res.send(data);
+        });
+
+    };
+
+    this.getNationality = function (req, res, next) {
+        var Nationality = models.get(req.session.lastDb, 'nationality', nationalitySchema);
+
+        Nationality.find({}).exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
+        });
+    };
+
+    this.getLanguages = function (req, res, next) {
+        var Languages = models.get(req.session.lastDb, 'languages', LanguageSchema);
+
+        Languages.find({}).exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
+        });
+    };
+
+    this.getSources = function (req, res, next) {
+        var Sources = models.get(req.session.lastDb, 'sources', SourceSchema);
+
+        Sources.find({}).exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
+        });
+    };
+
+    this.getSalaryByMonth = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var query = req.query;
+        var _id = query._id;
+        var month = query.month;
+        var year = query.year;
+        var date = moment().year(year).month(month - 1).date(1);
+
+        Employee.findById(_id, {hire: 1, fire: 1}, function (err, result) {
+            if (err){
+                return next(err);
+            }
+            var hire = result.hire;
+            var salary = 0;
+            var i;
+            var length = hire.length;
+
+            for (i = length - 1; i >= 0; i--){
+                if (date >= hire[i].date){
+                    salary = hire[i].salary;
+                    break;
+                }
+            }
+
+            return res.status(200).send({data: salary});
+        });
+    };
+
+    this.uploadEmployeesFiles = function (req, res, next) {
+        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+        uploadFileArray(req, res, next, Employee);
+    };
+
+    var check = function (req, callback) {
+        var now = new Date();
+        var dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        var Birthdays = models.get(req.session.lastDb, "birthdays", birthdaysSchema);
+
+        Birthdays.find({}, function (err, birth) {
+            if (err) {
+                callback(-1);
+            } else {
+                if (birth.length === 0) {
+                    callback(0);
+                } else {
+                    if (birth[0].date < dateOnly) {
+                        callback(0);
+                    } else {
+                        callback(1, birth[0].currentEmployees);
+                    }
+                }
+            }
+        });
+    };
+
+    var getEmployeesInDateRange = function (req, res, next, callback) {
+        var now = new Date();
+        var day = 0;
+        var _month = now.getMonth() + 1;
+        var NUMBER_OF_MONTH = 1;
+        var tempMonthLength = _month + NUMBER_OF_MONTH;
+        var realPart;
+        var query;
+        var Employee = models.get(req.session.lastDb, "Employees", EmployeeSchema);
+
+        /*function getAge(birthday) {
+         birthday = new Date(birthday);
+         var today = new Date();
+         var years = today.getFullYear() - birthday.getFullYear();
+
+         birthday.setFullYear(today.getFullYear());
+
+         if (today < birthday) {
+         years--;
+         }
+         return (years < 0) ? 0 : years;
+         }*/
+
+        var separateWeklyAndMonthly = function (arrayOfEmployees) {
+            var dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            var dayNumber = dateOnly.getDay();
+            var LeftOffset = dayNumber - 1;
+            var RightOffset = 7 - dayNumber;
+            var FirstDateWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() - LeftOffset).valueOf();
+            var LastDateWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + RightOffset).valueOf();
+            var FirstDateNxtWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + RightOffset + 1).valueOf();
+            var LastDateNxtWeek = new Date(now.getFullYear(), now.getMonth(), now.getDate() + RightOffset * 2 + 1).valueOf();
+
+            var currentEmployees = {};
+
+            function getDaysToBirthday(birthday) {
+                var today = new Date();
+                var days;
+                var firstDayOfYear = new Date(today.getFullYear() + 1, 0, 1);
+                var lastDayOfYear = new Date(today.getFullYear(), 11, 31);
+                if (birthday.getMonth() >= today.getMonth()) {
+                    birthday.setFullYear(today.getFullYear());
+                    days = Math.round((birthday - today) / 1000 / 60 / 60 / 24);
+                } else {
+                    days = Math.round((lastDayOfYear - today) / 1000 / 60 / 60 / 24);
+                    days += Math.round((birthday.setFullYear(today.getFullYear() + 1) - firstDayOfYear) / 1000 / 60 / 60 / 24);
+                }
+                return days;
+            }
+
+            currentEmployees.monthly = arrayOfEmployees.map(function (employee) {
+                if (employee.dateBirth) {
+                    employee.daysForBirth = getDaysToBirthday(employee.dateBirth);
+                }
+                return employee;
+            });
+
+            currentEmployees.nextweek = currentEmployees.monthly.filter(function (employee) {
+                if (employee.dateBirth) {
+                    var birthday = new Date(employee.dateBirth);
+                    birthday.setHours(0);
+                    var valueOfBirthday = birthday.valueOf();
+                    if (valueOfBirthday >= FirstDateNxtWeek) {
+                        if ((valueOfBirthday <= LastDateNxtWeek)) {
+                            return true;
+                        }
+                    }
+                }
+            });
+
+            currentEmployees.weekly = currentEmployees.monthly.filter(function (employee) {
+                if (employee.dateBirth) {
+                    var birthday = new Date(employee.dateBirth);
+                    birthday.setHours(0);
+                    var valueOfBirthday = birthday.valueOf();
+                    if (valueOfBirthday >= FirstDateWeek) {
+                        if ((valueOfBirthday <= LastDateWeek)) {
+                            return true;
+                        }
+                    }
+
+                }
+            });
+            currentEmployees.monthly.sort(function (a, b) {
+                if (a.daysForBirth > b.daysForBirth) {
+                    return 1;
+                }
+                if (a.daysForBirth < b.daysForBirth) {
+                    return -1;
+                }
+                return 0;
+            });
+            currentEmployees.weekly.sort(function (a, b) {
+                if (a.daysForBirth > b.daysForBirth) {
+                    return 1;
+                }
+                if (a.daysForBirth < b.daysForBirth) {
+                    return -1;
+                }
+                return 0;
+            });
+
+            currentEmployees.nextweek.sort(function (a, b) {
+                if (a.daysForBirth > b.daysForBirth) {
+                    return 1;
+                }
+                if (a.daysForBirth < b.daysForBirth) {
+                    return -1;
+                }
+                return 0;
+            });
+            return currentEmployees;
+        };
+
+        if (tempMonthLength / 12 < 1) {
+
+            query = {
+                $or: [
+                    {$and: [{month: _month}, {days: {$gte: day}}, {days: {$lte: 31}}]},
+                    {$and: [{month: {$gt: _month}}, {month: {$lt: tempMonthLength}}]},
+                    {$and: [{month: tempMonthLength}, {days: {$lte: day}}]}
+                ]
+            };
+        } else {
+            realPart = tempMonthLength % 12;
+            query = {
+                $or: [
+                    {$and: [{month: _month}, {days: {$gte: day}}, {days: {$lte: 31}}]},
+                    {$and: [{month: {$gte: 1}}, {month: {$lt: realPart}}]},
+                    {$and: [{month: realPart}, {days: {$lt: day}}]}
+                ]
+            };
+        }
+
+        Employee.aggregate(
+            {
+                $match: {
+                    $and: [
+                        {dateBirth: {$ne: null}},
+                        {isEmployee: true}
+                    ]
+                }
+            },
+            {
+                $project: {
+                    _id  : 1,
+                    month: {$month: '$dateBirth'},
+                    days : {$dayOfMonth: '$dateBirth'}
+                }
+            },
+            {
+                $match: query
+            },
+            function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                Employee.find().where('_id').in(result)
+                    .select('_id name dateBirth age jobPosition workPhones.mobile department')
+                    .populate('jobPosition', '_id name')
+                    .populate('department', ' _id departmentName')
+                    .lean()
+                    .exec(function (err, resArray) {
+                        if (err) {
+                            return callback(req, res, next, separateWeklyAndMonthly([]));
+                        }
+                        resArray.map(function (employee) {
+                            employee.age = getAge(employee.dateBirth);
+                            return employee;
+                        });
+                        callback(req, res, next, separateWeklyAndMonthly(resArray));
+                    });
+            });
+    };
+
+    var set = function (req, res, next, currentEmployees) {
+        var result = {};
+        var data = {};
+        var now = new Date();
+        var Birthdays = models.get(req.session.lastDb, "birthdays", birthdaysSchema);
+
+        data.date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+        data.currentEmployees = currentEmployees;
+
+        Birthdays.findByIdAndUpdate({_id: 1}, data, {new: true, upsert: true}, function (err, birth) {
+            if (err) {
+                if (res) {
+                    return next(err);
+                }
+            }
+            result.data = birth.currentEmployees;
+            if (res) {
+                res.send(result);
+            }
+        });
+    };
+
+    this.getBirthdays = function (req, res, next) {
+
+        var err = new Error();
+        var result = {};
+        result.data = [];
+
+        check(req, function (status, employees) {
+            switch (status) {
+                case -1:
+                {
+                    err.status = 500;
+                    next(err);
+                }
+                    break;
+                case 0:
+                {
+                    getEmployeesInDateRange(req, res, next, set);
+                }
+                    break;
+                case 1:
+                {
+                    result.data = employees;
+                    res.status(200).send(result);
+                }
+                    break;
+            }
+        });
+    };
+
+    var recalculate = function (req, res, next) {
+        getEmployeesInDateRange(req, res, next, set);
+    };
+
+    event.on('recalculate', recalculate);
 };
 /**
  * __Type__ `GET`

@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Product/EditTemplate.html",
         'views/Assignees/AssigneesView',
         "common",
@@ -8,7 +11,7 @@ define([
         'views/Notes/AttachView',
         "constants"
     ],
-    function (EditTemplate, AssigneesView, common, Custom, dataService, populate, attachView, CONSTANTS) {
+    function (Backbone, $, _, EditTemplate, AssigneesView, common, Custom, dataService, populate, attachView, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Product",
@@ -213,7 +216,8 @@ define([
                                 mid: mid
                             },
                             success: function () {
-                                $('.edit-product-dialog').remove();
+                                //$('.edit-product-dialog').remove();
+                                self.hideDialog();
                                 Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                             },
                             error  : function (model, err) {

@@ -2,14 +2,18 @@
  * Created by Roman on 27.04.2015.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Invoice/InvoiceProductItems.html',
     'text!templates/Invoice/InvoiceProductInputContent.html',
     'text!templates/Invoice/EditInvoiceProductInputContent.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
-    'populate',
-    'helpers'
-], function (productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, productCollection, populate, helpers) {
+    'populate'
+], function (Backbone, $, _, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, ProductCollection, populate) {
+    'use strict';
+
     var ProductItemTemplate = Backbone.View.extend({
         el: '#invoiceItemsHolder',
 
@@ -38,13 +42,12 @@ define([
                 this.isPaid = !!options.isPaid;
                 this.notAddItem = !!options.notAddItem;
             }
-            ;
 
             this.forSales = options.forSales;
 
             this.render();
 
-            products = new productCollection(options);
+            products = new ProductCollection(options);
             products.bind('reset', function () {
                 this.products = products;
                 this.filterProductsForDD();
@@ -99,7 +102,7 @@ define([
             }
         },
 
-        removeEdit: function (e) {
+        removeEdit: function () {
             $('#editSpan').remove();
             $("td .no-long").css({width: "auto"});
         },
@@ -107,7 +110,6 @@ define([
         editClick: function (e) {
             var parent = $(e.target).closest('td');
             var maxlength = parent.find(".no-long").attr("data-maxlength") || 20;
-            var datePicker = parent.find('.datepicker');
 
             e.preventDefault();
 
@@ -117,7 +119,7 @@ define([
 
             if (this.prevQuickEdit) {
                 if ($(this.prevQuickEdit).hasClass('quickEdit')) {
-                    $('.quickEdit').text(this.text ? this.text : "").removeClass('quickEdit');
+                    $('.quickEdit').text(this.text || "").removeClass('quickEdit');
                 }
             }
 
@@ -165,7 +167,7 @@ define([
 
         cancelClick: function (e) {
             e.preventDefault();
-            var text = this.text ? this.text : '';
+            var text = this.text || '';
 
             if (this.prevQuickEdit) {
                 if ($(this.prevQuickEdit).hasClass('quickEdit')) {
@@ -241,15 +243,17 @@ define([
             var totalContainer = thisEl.find('#totalAmount');
             var balanceContainer = thisEl.find('#balance');
             var resultForCalculate = thisEl.find('tr.productItem');
-
+            var i;
+            var taxes;
             var totalUntax = 0;
             var totalEls = resultForCalculate.length;
             var $currentEl;
             var quantity;
             var cost;
+            var total;
 
             if (totalEls) {
-                for (var i = totalEls - 1; i >= 0; i--) {
+                for (i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
                     quantity = $currentEl.find('[data-name="quantity"]').text();
                     cost = $currentEl.find('[data-name="price"]').text();

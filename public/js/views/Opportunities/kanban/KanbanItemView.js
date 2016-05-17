@@ -1,9 +1,12 @@
 define([
-        "text!templates/Opportunities/kanban/KanbanItemTemplate.html",
+        'Backbone',
+        'Underscore',
+        'text!templates/Opportunities/kanban/KanbanItemTemplate.html',
         'moment',
         'helpers'
     ],
-    function (KanbanItemTemplate, moment, helpers) {
+    function (Backbone, _, KanbanItemTemplate, helpers) {
+        'use strict';
         var OpportunitiesItemView = Backbone.View.extend({
             className: "item",
 
