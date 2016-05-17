@@ -24462,8 +24462,6 @@ define([
                     topBarView.bind('changeDateRange', listView.changeDateRange, listView);
 
                     opportunitiesCollection.bind('showmore', listView.showMoreContent, listView);
-
-                    listView.itemView
                 });
 
                 it('Try to delete item', function () {

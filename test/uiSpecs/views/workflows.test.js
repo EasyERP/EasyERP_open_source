@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'collections/Workflows/WorkflowsCollection',
@@ -1425,7 +1424,7 @@ define([
                     server.respond();
                 });
 
-                /!*it('Try to edit item with error response', function(done){
+                /*it('Try to edit item with error response', function(done){
                     var alertSpy = sinon.spy(window, 'alert');
                     var $firstAccEl = $('.row:nth-child(1)');
                     var $needAEl = $firstAccEl.find('.edit');
@@ -1445,7 +1444,7 @@ define([
                     server.respond();
 
                     expect(alertSpy.called).to.be.true;
-                });*!/
+                });*/
 
                 it('Try to cancel edit', function(){
                     var $cancelBtn;
@@ -1535,4 +1534,3 @@ define([
 
 
 });
-*/

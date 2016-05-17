@@ -15,7 +15,7 @@
     'collections/Opportunities/filterCollection',
     'constants',
     'helpers'
-], function (Backbone, _, $, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, OpportunitiesCollection, CurrentModel, dataService, filterView, CONSTANTS, contentCollection, helpers) {
+], function (Backbone, _, $, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, OpportunitiesCollection, CurrentModel, dataService, filterView, contentCollection, CONSTANTS, helpers) {
     var collection = new OpportunitiesCollection();
     var OpportunitiesKanbanView = Backbone.View.extend({
         el                      : '#content-holder',

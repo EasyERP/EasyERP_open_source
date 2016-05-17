@@ -7,12 +7,13 @@ define([
         'views/Leads/CreateView',
         'views/Leads/list/ListItemView',
         'views/Leads/EditView',
+        'views/Filter/FilterView',
         'models/LeadsModel',
         'collections/Leads/filterCollection',
         'common'
     ],
 
-    function ($, _, listViewBase, listTemplate, stagesTamplate, createView, ListItemView, EditView, CurrentModel, contentCollection, common) {
+    function ($, _, listViewBase, listTemplate, stagesTamplate, createView, ListItemView, EditView, FilterView, CurrentModel, contentCollection, common) {
         'use strict';
 
         var LeadsListView = listViewBase.extend({
@@ -20,7 +21,7 @@ define([
             listTemplate            : listTemplate,
             listItemView            : ListItemView,
             contentCollection       : contentCollection,
-            filterView              : null,
+            filterView              : FilterView,
             totalCollectionLengthUrl: '/leads/totalCollectionLength',
             formUrl                 : "#easyErp/Leads/form/",
             contentType             : 'Leads',//needs in view.prototype.changeLocationHash
@@ -95,7 +96,7 @@ define([
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
 
-                var itemView = new listItemView({
+                var itemView = new this.listItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow

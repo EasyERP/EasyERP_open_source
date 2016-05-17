@@ -16,8 +16,8 @@ module.exports = function (config) {
 
             {pattern: 'test/uiSpecs/jqueryPrivate.js', included: false, watching: false},
             /*{pattern: 'public/js/populate.js', included: false, watching: false},
-            {pattern: 'public/js/dataService.js', included: false, watching: false},
-            {pattern: 'public/js/router.js', included: false, watching: false},*/
+             {pattern: 'public/js/dataService.js', included: false, watching: false},
+             {pattern: 'public/js/router.js', included: false, watching: false},*/
 
             {pattern: 'node_modules/chai/chai.js', included: false, watching: false},
             {pattern: 'node_modules/chai-jquery/chai-jquery.js', included: false, watching: false},
@@ -35,7 +35,7 @@ module.exports = function (config) {
 
             //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
 
-            {pattern: 'test/uiSpecs/**/vacation.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/**/opportunities.test.js', included: false, watching: true},
             {pattern: 'test/uiSpecs/**/login.test.js', included: false, watching: true},
 
             {pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},

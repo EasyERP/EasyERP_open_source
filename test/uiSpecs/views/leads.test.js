@@ -32239,23 +32239,12 @@ define([
 
                 $createBtnHolderEl = topBarView.$el.find('#createBtnHolder');
                 $addLeadsBtnEl = $createBtnHolderEl.find('a[href="#home/action-Leads/Create"]');
-                $templateSwitcherEl = topBarView.$el.find('#template-switcher');
 
                 expect($createBtnHolderEl).to.exist;
                 expect($addLeadsBtnEl).to.exist;
-                expect($templateSwitcherEl).to.exist;
                 expect($addLeadsBtnEl).to.have.id('top-bar-createBtn');
 
             });
-
-            it('Try to switch content type', function(){
-                var $listBtn = topBarView.$el.find('#listBtn');
-
-                $listBtn.click();
-
-                expect(window.location.hash).to.be.equals('#easyErp/Leads/list');
-            });
-
         });
 
         describe('Leads list view', function () {
@@ -32554,9 +32543,7 @@ define([
                 var spyResponse;
 
                 $(saveBtn).click();
-
                 spyResponse = mainSpy.args[1][0];
-
                 expect(spyResponse).to.have.property('type', 'error');
             });
 
@@ -32566,11 +32553,8 @@ define([
                 var leadUrl = new RegExp('\/leads\/', 'i');
 
                 server.respondWith('PATCH', leadUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: "A new Opportunities create success"})]);
-
                 $form.find('#name').val('Test');
-
                 $(saveBtn).click();
-
                 server.respond();
 
                 expect(window.location.hash).to.be.equals('#easyErp/Leads');

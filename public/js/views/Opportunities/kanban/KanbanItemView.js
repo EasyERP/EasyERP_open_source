@@ -5,7 +5,7 @@ define([
         'moment',
         'helpers'
     ],
-    function (Backbone, _, KanbanItemTemplate, helpers) {
+    function (Backbone, _, KanbanItemTemplate, moment, helpers) {
         'use strict';
         var OpportunitiesItemView = Backbone.View.extend({
             className: "item",

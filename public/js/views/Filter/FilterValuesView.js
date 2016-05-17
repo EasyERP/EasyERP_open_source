@@ -186,7 +186,7 @@ define([
 
                 searchInput.keyup(function (e) {
                     self.inputEvent(e);
-                });.
+                });
 
                 searchInput.change(function (e) {
                     self.inputEvent(e);
