@@ -22,10 +22,10 @@ define([
             formUrl                 : "#easyErp/Persons/form/",
             contentType             : 'Persons',//needs in view.prototype.changeLocationHash
             viewType                : 'list',//needs in view.prototype.changeLocationHash
-            exportToXlsxUrl         : '/Customers/exportToXlsx/?type=Person',
-            exportToCsvUrl          : '/Customers/exportToCsv/?type=Person',
+            exportToXlsxUrl         : '/Customers/exportToXlsx/',
+            exportToCsvUrl          : '/Customers/exportToCsv',
             events                  : {
-                "click .letter:not(.empty)": "alpabeticalRender",
+                "click .letter:not(.empty)": "alpabeticalRender"
             },
 
             initialize: function (options) {
@@ -46,6 +46,18 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
 
                 this.filterView;
+            },
+
+            exportToXlsx: function () {
+                var tempExportToXlsxUrl = '';
+
+                if (this.exportToXlsxUrl) {
+                    tempExportToXlsxUrl = this.exportToXlsxUrl;
+                    if (this.filter) {
+                        tempExportToXlsxUrl += '&' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = tempExportToXlsxUrl;
+                }
             },
 
             render: function () {

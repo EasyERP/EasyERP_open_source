@@ -24,10 +24,10 @@ define([
 
             totalCollectionLengthUrl: '/totalCollectionLength/Companies',
             formUrl                 : "#easyErp/Companies/form/",
-            exportToXlsxUrl         : '/Customers/exportToXlsx?type=Company',
-            exportToCsvUrl          : '/Customers/exportToCsv?type=Company',
+            exportToXlsxUrl         : '/Customers/exportToXlsx/?type=Companies',
+            exportToCsvUrl          : '/Customers/exportToCsv',
             events                  : {
-                "click .letter:not(.empty)": "alpabeticalRender",
+                "click .letter:not(.empty)": "alpabeticalRender"
             },
 
             initialize: function (options) {
@@ -50,6 +50,18 @@ define([
                 this.contentCollection = contentCollection;
 
                 this.filterView;
+            },
+
+            exportToXlsx: function () {
+                var tempExportToXlsxUrl = '';
+
+                if (this.exportToXlsxUrl) {
+                    tempExportToXlsxUrl = this.exportToXlsxUrl;
+                    if (this.filter) {
+                        tempExportToXlsxUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = tempExportToXlsxUrl;
+                }
             },
 
             render: function () {

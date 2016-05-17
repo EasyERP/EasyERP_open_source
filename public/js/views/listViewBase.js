@@ -692,12 +692,14 @@ define([
 
             exportToXlsx: function () {
                 var filterString = '';
+                var tempExportToXlsxUrl = '';
                 //todo change after routes refactoring
                 if (this.exportToXlsxUrl) {
+                    tempExportToXlsxUrl = this.exportToXlsxUrl;
                     if (this.filter) {
-                        this.exportToXlsxUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                        tempExportToXlsxUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
                     }
-                    window.location = this.exportToXlsxUrl;
+                    window.location = tempExportToXlsxUrl;
                 } else {
                     if (this.collection) {
                         if (this.filter) {
