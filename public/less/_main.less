@@ -1429,6 +1429,7 @@ input::-ms-clear {
         }
         .text {
           color: @bg-main-menu-selected;
+          font-size: 13px;
         }
       }
 
@@ -2135,7 +2136,7 @@ input::-ms-clear {
     margin-top: 0;
   }
   input:not([type=checkbox]) {
-    border: @thin-border @list-border-color;
+    border: @thin-border @border-color-main;
     max-width: 280px;
     //line-height: 16px;
     background-color: transparent;
@@ -2996,7 +2997,7 @@ dl {
 }
 
 .half-block {
-  width: 45%;
+  width: 42%;
   margin-right: 5%; // for job position
   &.withPaddingRightProject {
     .inner {
@@ -3032,7 +3033,9 @@ dl {
       width: 100%;
     }
   }
-
+  +.half-block {
+    margin-right: 0;
+  }
 }
 
 .funnelIcon {
@@ -6307,6 +6310,11 @@ textarea#editInput {
       & .groupName:hover {
         color: @grey;
         background-color: @bg-hover-drop-down-color;
+        & > span {
+          &:after {
+            border-color: @grey;
+          }
+        }
       }
       .groupName {
         cursor: pointer;
@@ -6323,7 +6331,7 @@ textarea#editInput {
             content: '';
             border-style: solid;
             border-width: 1px 1px 0 0;
-            border-color: #cdcdcd;
+            border-color: @mainText-color;
             display: block;
             height: 5px;
             right: 10%;
