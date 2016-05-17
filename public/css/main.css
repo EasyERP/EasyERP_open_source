@@ -524,7 +524,7 @@ th {
   text-decoration: none;
 }
 .pagination #currentShowPage {
-  border: 1px solid #7f7f80;
+  border: 1px solid #d7d7d7;
   margin: 0 2px 0 5px;
   width: 30px;
   height: 20px;
@@ -769,10 +769,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: right;
 }
 .list2 tbody tr {
-  border-top: 1px solid #7f7f80;
+  border-top: 1px solid #d7d7d7;
 }
 .list2 tbody td {
-  border: 1px solid #7f7f80;
+  border: 1px solid #d7d7d7;
   text-align: right;
 }
 .list2 tbody td.changeContent {
@@ -817,7 +817,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   display: inline-block;
 }
 .list2 .enableTableOdd tr:nth-child(odd) {
-  background-color: #e7e7e7;
+  background-color: #ededed;
 }
 .list2 .enableTableOdd tr:hover {
   background-color: #d9d9d9;
@@ -859,10 +859,10 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   text-align: right;
 }
 .list2 tbody tr {
-  border-top: 1px solid #7f7f80;
+  border-top: 1px solid #d7d7d7;
 }
 .list2 tbody td {
-  border: 1px solid #7f7f80;
+  border: 1px solid #d7d7d7;
   text-align: right;
 }
 .list2 tbody td.changeContent {
@@ -907,7 +907,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   display: inline-block;
 }
 .list2 .enableTableOdd tr:nth-child(odd) {
-  background-color: #e7e7e7;
+  background-color: #ededed;
 }
 .list2 .enableTableOdd tr:hover {
   background-color: #d9d9d9;
@@ -1797,6 +1797,7 @@ input::-ms-clear {
 }
 .kanban .column .columnNameDiv .columnName .text {
   color: #3e88b9;
+  font-size: 13px;
 }
 .kanban .column .columnNameDiv.cancelled .columnName {
   border-bottom: 2px solid #FF5454 !important;
@@ -2879,7 +2880,7 @@ dl dd span.ui-spinner {
   padding: 1px;
   margin: -1px;
   width: 20%;
-  max-width: 144px;
+  max-width: 132px;
   float: left;
   clear: both;
   line-height: 30px;
@@ -4197,7 +4198,7 @@ dl dd span.ui-spinner {
   max-width: 190px !important;
 }
 .half-block {
-  width: 45%;
+  width: 42%;
   margin-right: 5%;
 }
 .half-block.withPaddingRightProject .inner {
@@ -4227,6 +4228,9 @@ dl dd span.ui-spinner {
 }
 .half-block.taskNote #noteArea {
   width: 100%;
+}
+.half-block + .half-block {
+  margin-right: 0;
 }
 .funnelIcon {
   display: inline-block;
@@ -5804,10 +5808,10 @@ ul.dialog-tabs li.right button {
   text-align: right;
 }
 .list tbody tr {
-  border-top: 1px solid #7f7f80;
+  border-top: 1px solid #d7d7d7;
 }
 .list tbody td {
-  border: 1px solid #7f7f80;
+  border: 1px solid #d7d7d7;
   text-align: right;
 }
 .list tbody td.changeContent {
@@ -5852,7 +5856,7 @@ ul.dialog-tabs li.right button {
   display: inline-block;
 }
 .list .enableTableOdd tr:nth-child(odd) {
-  background-color: #e7e7e7;
+  background-color: #ededed;
 }
 .list .enableTableOdd tr:hover {
   background-color: #d9d9d9;
@@ -6228,7 +6232,7 @@ ul.dialog-tabs li.right button {
   display: none;
 }
 .ui-dialog .app-block {
-  width: 45%;
+  width: 42%;
   margin-right: 5%;
 }
 .ui-dialog .app-block.withPaddingRightProject .inner {
@@ -6258,6 +6262,9 @@ ul.dialog-tabs li.right button {
 }
 .ui-dialog .app-block.taskNote #noteArea {
   width: 100%;
+}
+.ui-dialog .app-block + .half-block {
+  margin-right: 0;
 }
 .ui-dialog textarea {
   padding: 0;
@@ -6524,7 +6531,7 @@ ul.dialog-tabs li.right button {
   height: 20px;
   font-family: Arial, Helvetica, sans-serif;
   font-size: 12px;
-  border: 1px solid #7f7f80;
+  border: 1px solid #d7d7d7;
   line-height: 20px;
   background-color: transparent;
   padding: 0 2px;
@@ -8193,7 +8200,7 @@ a.cancelled {
   padding: 1px;
   margin: -1px;
   width: 20%;
-  max-width: 144px;
+  max-width: 132px;
   float: left;
   clear: both;
   line-height: 30px;
@@ -8727,7 +8734,7 @@ textarea#editInput {
   text-align: left;
 }
 .grid tr:nth-child(2n+1) td {
-  background-color: #e7e7e7;
+  background-color: #ededed;
 }
 .grid.attendance {
   border-bottom: 1px solid #7f7f80;
@@ -8767,7 +8774,7 @@ textarea#editInput {
   border-bottom: none;
 }
 .grid.attendance tr:nth-child(even) {
-  background-color: #e7e7e7;
+  background-color: #ededed;
 }
 .grid.attendance tr td {
   border-left: 1px solid #7f7f80;
@@ -9536,6 +9543,10 @@ textarea#editInput {
   color: #4d5a75;
   background-color: #ffffff;
 }
+.drop-down-filter #filtersContent .filterGroup.activeGroup .groupName > span:after,
+.drop-down-filter #filtersContent .filterGroup .groupName:hover > span:after {
+  border-color: #4d5a75;
+}
 .drop-down-filter #filtersContent .filterGroup .groupName {
   cursor: pointer;
   font-size: 13px;
@@ -9552,7 +9563,7 @@ textarea#editInput {
   content: '';
   border-style: solid;
   border-width: 1px 1px 0 0;
-  border-color: #cdcdcd;
+  border-color: #000000;
   display: block;
   height: 5px;
   right: 10%;
@@ -9797,7 +9808,7 @@ textarea#editInput {
   opacity: .4;
 }
 .invoiceChart-legend .choseDateItem {
-  border: 1px solid #7f7f80;
+  border: 1px solid #d7d7d7;
 }
 .invoiceChart-legend .choseDateItem button {
   background: #fff;
@@ -9849,6 +9860,15 @@ textarea#editInput {
 }
 .alertSuccess:before {
   content: '\f05d';
+}
+.invoiced {
+  color: #3c86e0 !important;
+}
+.paid {
+  color: #2d5d30 !important;
+}
+.unpaid {
+  color: #a22a2d !important;
 }
 .textUnderlineHover:hover {
   text-decoration: underline !important;
