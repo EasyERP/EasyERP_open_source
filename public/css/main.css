@@ -1610,6 +1610,7 @@ input::-ms-clear {
   display: block;
   line-height: 18px;
   clear: left;
+  color: #000000;
 }
 .kanban tr:last-child {
   border-right: 10px solid #d9d9d9;
@@ -4464,7 +4465,7 @@ a.red:hover {
 }
 .birthday-item .info {
   color: #ffffff;
-  background: #000000;
+  background: #4d5a75;
   margin-left: 160px;
   margin-right: 40px;
   position: relative;
@@ -4476,16 +4477,16 @@ a.red:hover {
   margin-left: 10px;
 }
 .birthday-item .info:after {
-  right: 100%;
-  border: solid #4d5a75;
   content: " ";
+  position: absolute;
+  right: 100%;
+  top: 19px;
   height: 0;
   width: 0;
-  position: absolute;
   pointer-events: none;
-  border-right-color: #000000;
-  border-width: 10px;
-  top: 19px;
+  border-top: 10px solid transparent;
+  border-right: 20px solid #4d5a75;
+  border-bottom: 10px solid transparent;
 }
 .birthday-item .info .top {
   height: 40px;
@@ -8594,7 +8595,7 @@ textarea#editInput {
   color: #ffffff;
 }
 .grid tr td.dashboardWeek.red {
-  background-color: #a22a2d;
+  background-color: #e55253;
   color: #ffffff;
   border-bottom: 1px solid #7f7f80;
   border-left: 1px solid #7f7f80;
@@ -8774,9 +8775,6 @@ textarea#editInput {
 .grid.attendance tr {
   border-bottom: none;
 }
-.grid.attendance tr:nth-child(even) {
-  background-color: #ededed;
-}
 .grid.attendance tr td {
   border-left: 1px solid #7f7f80;
 }
@@ -8901,7 +8899,7 @@ textarea#editInput {
   background-color: #3e7f42;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.free {
-  background-color: #a22a2d;
+  background-color: #e55253;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.almostFree {
   background-color: #cc5457;
@@ -9863,6 +9861,9 @@ textarea#editInput {
 .alertDanger:before {
   content: '\f071';
 }
+.redText {
+  color: #e55253 !important;
+}
 .alertSuccess:before {
   content: '\f05d';
 }
@@ -9873,7 +9874,7 @@ textarea#editInput {
   color: #2d5d30 !important;
 }
 .unpaid {
-  color: #a22a2d !important;
+  color: #e55253 !important;
 }
 .textUnderlineHover:hover {
   text-decoration: underline !important;
