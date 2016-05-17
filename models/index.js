@@ -58,4 +58,5 @@ module.exports = (function () {
     require('./currency.js');
     require('./projectPosition.js');
     require('./projectMember.js');
+    require('./weeklyScheduler.js');
 })();

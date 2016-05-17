@@ -24,6 +24,7 @@ define([
             "easyErp/:contentType/form(/:modelId)"                                                          : "goToForm", //FixMe chenge to required Id after test
             "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
             "easyErp/Revenue(/filter=:filter)"                                                              : "revenue",
+            "easyErp/settingsEmployee(/filter=:filter)"                                                     : "settingsEmployee",
             "easyErp/Efficiency"                                                                            : "hours",
             "easyErp/Attendance"                                                                            : "attendance",
             "easyErp/Profiles"                                                                              : "goToProfiles",
@@ -316,6 +317,58 @@ define([
                     topbarView.render();
 
                     custom.setCurrentVT('list');
+                });
+            }
+        },
+
+        settingsEmployee: function (filter) {
+            var self = this;
+
+            if (filter) {
+                filter = decodeURIComponent(filter);
+                filter = JSON.parse(filter);
+            }
+
+            if (!this.isAuth) {
+                this.checkLogin(function (success) {
+                    if (success) {
+                        self.isAuth = true;
+                        renderSettingsEmployee();
+                    } else {
+                        self.redirectTo();
+                    }
+                });
+            } else {
+                renderSettingsEmployee();
+            }
+
+            function renderSettingsEmployee() {
+                var startTime = new Date();
+                var topBarViewUrl = 'views/settingsEmployee/TopBarView';
+                var contentViewUrl = 'views/settingsEmployee/index';
+
+                if (self.mainView === null) {
+                    self.main('settingsEmployee');
+                } else {
+                    self.mainView.updateMenu('settingsEmployee');
+                }
+
+                require([contentViewUrl, topBarViewUrl], function (ContentView, TopBarView) {
+                    var topbarView = new TopBarView({
+                        startTime: startTime,
+                        filter   : filter
+                        // collection: collection
+                    });
+                    var contentview;
+
+                    topbarView.render();
+
+                    contentview = new ContentView({
+                        startTime: startTime,
+                        filter   : filter
+                        // collection: collection
+                    });
+
                 });
             }
         },
