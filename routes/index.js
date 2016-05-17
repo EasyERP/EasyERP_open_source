@@ -81,7 +81,7 @@ module.exports = function (app, mainDb) {
 
     app.set('logger', logger);
 
-    requestHandler = require("../requestHandler.js")(app, event, mainDb);
+    requestHandler = require('../requestHandler.js')(app, event, mainDb);
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');

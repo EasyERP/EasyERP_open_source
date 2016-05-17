@@ -14,8 +14,8 @@ module.exports = function (models, event) {
     router.get('/getCustomersImages', authStackMiddleware, handler.getCustomersImages);
     router.get('/getCompaniesForDd', authStackMiddleware, handler.getCompaniesForDd);
     router.get('/getCompaniesAlphabet', authStackMiddleware, handler.getCompaniesAlphabet);
-    router.get('/exportToXlsx', authStackMiddleware, handler.exportToXlsx);
-    router.get('/exportToCsv', authStackMiddleware, handler.exportToCsv);
+    // router.get('/exportToXlsx', authStackMiddleware, handler.exportToXlsx);
+    // router.get('/exportToCsv', authStackMiddleware, handler.exportToCsv);
     router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.getTotalCount);
     router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getByViewType);
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);

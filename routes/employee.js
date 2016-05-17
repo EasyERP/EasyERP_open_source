@@ -18,8 +18,8 @@ module.exports = function (event, models) {
     router.get('/bySales', authStackMiddleware, handler.getBySales);
     router.get('/byDepartment', authStackMiddleware, handler.byDepartment);
     router.get('/exportToXlsx', authStackMiddleware, handler.exportToXlsx);
-    router.get('/exportToCsv', authStackMiddleware, handler.exportToCsv);
-    router.get('/getMinHireDate', authStackMiddleware, handler.getMinHireDate);
+    // router.get('/exportToCsv', authStackMiddleware, handler.exportToCsv);
+    // router.get('/getMinHireDate', authStackMiddleware, handler.getMinHireDate);
     router.get('/getForDdByRelatedUser', authStackMiddleware, handler.getForDdByRelatedUser);
     router.get('/getPersonsForDd', authStackMiddleware, handler.getSalesPerson);
     router.get('/getEmployeesAlphabet', authStackMiddleware, handler.getEmployeesAlphabet);
