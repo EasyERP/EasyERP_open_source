@@ -8,9 +8,10 @@
         "common",
         "custom",
         "populate",
-        "dataService"
+        "dataService",
+        'helpers'
     ],
-    function (EditTemplate, editSelectTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService) {
+    function (EditTemplate, editSelectTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService, helpers) {
         "use strict";
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
@@ -27,14 +28,14 @@
                 this.render();
             },
 
-            events       : {
-                "click .breadcrumb a, #lost, #won"                                : "changeWorkflow",
-                "click #tabList a"                                                : "switchTab",
-                'keydown'                                                         : 'keydownHandler',
-                'click .dialog-tabs a'                                            : 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "click .current-selected"                                         : "showNewSelect",
-                "click"                                                           : "hideNewSelect"
+            events: {
+                "click .breadcrumb a, #lost, #won"                 : "changeWorkflow",
+                "click #tabList a"                                 : "switchTab",
+                'keydown'                                          : 'keydownHandler',
+                'click .dialog-tabs a'                             : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "click .current-selected"                          : "showNewSelect",
+                "click"                                            : "hideNewSelect"
             },
 
             hideNewSelect: function () {
@@ -67,7 +68,7 @@
                 return false;
             },
 
-            chooseOption : function (e) {
+            chooseOption: function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
                 if (holder.attr("id") === 'customerDd') {
@@ -266,6 +267,8 @@
                     data['workflowStart'] = currentWorkflow._id;
                 }
                 ;
+
+                var oldWorkFlow = this.currentModel.get('workflow')._id;
                 this.currentModel.save(data, {
                     headers: {
                         mid: mid
@@ -303,8 +306,15 @@
                             case 'kanban':
                             {
                                 var kanban_holder = $("#" + model._id);
+                                var expectedRevenueHolder = kanban_holder.find('.opportunity-header h3');
                                 kanban_holder.find(".opportunity-header h4").text(name);
-                                kanban_holder.find(".opportunity-header h3").text("$" + parseInt(expectedRevenueValue));
+                                if (parseFloat(expectedRevenueValue) !== 0) {
+                                    expectedRevenueHolder.text(helpers.currencySplitter(expectedRevenueValue));
+                                    expectedRevenueHolder.addClass('dollar');
+                                } else {
+                                    expectedRevenueHolder.text('');
+                                    expectedRevenueHolder.removeClass('dollar');
+                                }
                                 kanban_holder.find(".opportunity-content p.right").text(nextAction.date);
                                 if (customerId) {
                                     kanban_holder.find(".opportunity-content p.left").eq(0).text(self.$("#customerDd").text());
@@ -327,12 +337,16 @@
                                     kanban_holder.find(".inner").attr("data-sequence", result.sequence);
                                 }
                                 if (data.workflow) {
-                                    $(".column[data-id='" + data.workflow + "']").find(".columnNameDiv").after(kanban_holder);
+                                    $(".column[data-id='" + data.workflow + "']").find("#forContent").append(kanban_holder);
                                     var counter = $(".column[data-id='" + data.workflow + "']").closest(".column").find(".totalCount");
                                     counter.html(parseInt(counter.html()) + 1);
                                     counter = $(".column[data-id='" + data.workflowStart + "']").closest(".column").find(".totalCount");
                                     counter.html(parseInt(counter.html()) - 1);
 
+                                    self.countTotalAmountForWorkflow(data.workflowStart);
+                                    self.countTotalAmountForWorkflow(data.workflow);
+                                } else {
+                                    self.countTotalAmountForWorkflow(currentWorkflow._id);
                                 }
                             }
                                 break;
@@ -351,6 +365,18 @@
                         self.errorNotification(xhr);
                     }
                 });
+            },
+
+            countTotalAmountForWorkflow: function(workflowId){
+                var column = $('td[data-id="' + workflowId + '"]');
+                var oldColumnContainer = $('td[data-id="' + workflowId + '"] #forContent h3');
+
+                var sum = 0;
+                oldColumnContainer.each(function(item){
+                    var value = $(this).text().replace(/\s/g, '');
+                    sum += parseFloat(value) || 0;
+                });
+                column.find('.totalAmount').text(helpers.currencySplitter(sum.toString()));
             },
 
             hideDialog: function () {
@@ -394,6 +420,8 @@
                                     var wId = model.workflow._id;
                                     var newTotal = ($("td[data-id='" + wId + "'] .totalCount").html() - 1);
                                     $("td[data-id='" + wId + "'] .totalCount").html(newTotal);
+
+                                    self.countTotalAmountForWorkflow(wId);
                                 }
                             }
                             self.hideDialog();
@@ -465,7 +493,7 @@
                     self.responseObj['#priorityDd'] = priorities;
                 });
                 populate.get2name("#customerDd", "/Customer", {}, this, false, true);
-                dataService.getData('/employee/getForDD', {isEmployee : true}, function (employees) {
+                dataService.getData('/employee/getForDD', {isEmployee: true}, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 

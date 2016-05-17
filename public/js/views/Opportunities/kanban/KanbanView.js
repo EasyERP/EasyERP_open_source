@@ -10,17 +10,18 @@
         'models/OpportunitiesModel',
         'dataService',
         'views/Filter/FilterView',
-        'collections/Opportunities/filterCollection'
+        'collections/Opportunities/filterCollection',
+        'helpers'
     ],
-    function (Backbone, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, OpportunitiesCollection, CurrentModel, dataService, filterView, contentCollection) {
+    function (Backbone, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, OpportunitiesCollection, CurrentModel, dataService, filterView, contentCollection, helpers) {
         var collection = new OpportunitiesCollection();
         var OpportunitiesKanbanView = Backbone.View.extend({
-            el                      : '#content-holder',
-            filterView              : filterView,
-            contentCollection       : contentCollection,
-            contentType             : 'Opportunities',
-            viewType                : 'kanban',
-            events: {
+            el               : '#content-holder',
+            filterView       : filterView,
+            contentCollection: contentCollection,
+            contentType      : 'Opportunities',
+            viewType         : 'kanban',
+            events           : {
                 "dblclick .item"    : "gotoEditForm",
                 "click .item"       : "selectItem",
                 "click .column.fold": "foldUnfoldKanban",
@@ -186,7 +187,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Please refresh browser"
                         });
                     }
@@ -227,13 +228,20 @@
                     context.foldUnfoldKanban(null, response.workflowId);
                 }
                 column.find(".totalCount").html(contentCollection.models.length);
+
+                var workflowAmount = 0;
                 _.each(contentCollection.models, function (wfModel) {
                     var curEl;
 
                     kanbanItemView = new KanbanItemView({model: wfModel});
                     curEl = kanbanItemView.render().el;
                     forContent.append(curEl);
+                    var expectedRevenue = wfModel.get('expectedRevenue');
+                    if (expectedRevenue && expectedRevenue.value) {
+                        workflowAmount += expectedRevenue.value || 0;
+                    }
                 }, this);
+                column.find('.totalAmount').html(helpers.currencySplitter(workflowAmount.toString()));
             },
 
             editItem: function () {
@@ -245,6 +253,18 @@
             createItem: function () {
                 //create editView in dialog here
                 new CreateView();
+            },
+
+            countTotalAmountForWorkflow: function (workflowId) {
+                var column = $('td[data-id="' + workflowId + '"]');
+                var oldColumnContainer = $('td[data-id="' + workflowId + '"] #forContent h3');
+
+                var sum = 0;
+                oldColumnContainer.each(function (item) {
+                    var value = $(this).text().replace(/\s/g, '');
+                    sum += parseFloat(value) || 0;
+                });
+                column.find('.totalAmount').text(helpers.currencySplitter(sum.toString()));
             },
 
             updateSequence: function (item, workflow, sequence, workflowStart, sequenceStart) {
@@ -281,6 +301,8 @@
                     });
                     item.find(".inner").attr("data-sequence", sequence);
 
+                    this.countTotalAmountForWorkflow(workflow);
+                    this.countTotalAmountForWorkflow(workflowStart);
                 }
             },
 
@@ -410,7 +432,7 @@
 
             renderFilter: function () {
                 var self = this;
-                
+
                 self.filterView = new this.filterView({
                     contentType: self.contentType
                 });
@@ -432,7 +454,7 @@
 
                 if (filter.workflow) {
                     workflows = [];
-                    filter.workflow.value.forEach(function(wId) {
+                    filter.workflow.value.forEach(function (wId) {
                         workflows.push({
                             _id: wId
                         });
@@ -456,16 +478,22 @@
                 var showList;
                 var el;
                 var workflows = this.workflowsCollection.toJSON();
-
-                this.$el.html(_.template(WorkflowsTemplate, {workflowsCollection: workflows}));
-                $(".column").last().addClass("lastColumn");
                 var itemCount;
+                this.$el.html(_.template(WorkflowsTemplate,
+                    {
+                        workflowsCollection: workflows,
+                        currencySplitter   : helpers.currencySplitter
+                    }));
+                $(".column").last().addClass("lastColumn");
+
                 _.each(workflows, function (workflow, i) {
                     itemCount = 0;
                     var column = this.$(".column").eq(i);
                     //var count = " <span>(<span class='counter'>" + itemCount + "</span> / </span>";
-                    var total = " <span><span class='totalCount'>" + itemCount + "</span></span>";
-                    column.find(".columnNameDiv h2").append(total);
+                    var total = "<span><span class='totalCount'>" + itemCount + '</span></span>';
+                    var amountOpportunity = "<span class='dollar'><span class='totalAmount'>0</span></span>";
+                    column.find('.columnNameDiv h2').append(total);
+                    column.find('.text').append(amountOpportunity);
                 }, this);
 
                 this.$(".column").sortable({

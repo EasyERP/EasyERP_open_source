@@ -1,8 +1,9 @@
 define([
         "text!templates/Opportunities/kanban/KanbanItemTemplate.html",
-        'moment'
+        'moment',
+        'helpers'
     ],
-    function (KanbanItemTemplate, moment) {
+    function (KanbanItemTemplate, moment, helpers) {
         var OpportunitiesItemView = Backbone.View.extend({
             className: "item",
 
@@ -20,9 +21,13 @@ define([
 
             render: function () {
 
-                this.$el.html(this.template({model: this.model.toJSON()}));
+                this.$el.html(this.template(
+                    {
+                        model           : this.model.toJSON(),
+                        currencySplitter: helpers.currencySplitter
+                    }));
 
-                if ((this.model.toJSON().workflow.status !== 'Done') && (this.model.toJSON().workflow.status !==  'Cancelled')){
+                if ((this.model.toJSON().workflow.status !== 'Done') && (this.model.toJSON().workflow.status !== 'Cancelled')) {
                     if (this.model.toJSON().nextAction.date && moment(new Date(this.model.toJSON().nextAction.date)).isBefore(this.date)) {
                         this.$el.addClass("errorContent");
                     }
