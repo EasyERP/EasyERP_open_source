@@ -1,0 +1,25 @@
+<div id="createBtnHolder">
+    <a href="javascript;" class="fa fa-plus" title="Create" id="top-bar-createBtn"></a>
+    <h3><%= header %></h3>
+</div>
+
+<div id="searchContainer"></div>
+<div>
+    <table class="list task-list">
+        <col width="5%">
+        <col width="25%">
+        <col width="70%">
+        <thead>
+        <tr>
+            <th class="centerCell">N</th>
+            <th data-sort="name">
+                Name
+            </th>
+            <th data-sort="comment">
+                Comment
+            </th>
+        </tr>
+        </thead>
+        <tbody id="listTable<%= type %>" class="enableTableOdd"></tbody>
+    </table>
+</div>
