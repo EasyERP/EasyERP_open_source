@@ -1267,7 +1267,7 @@ input::-ms-clear {
       display: block;
       line-height: 18px;
       clear: left;
-
+      color: @black;
     }
   }
 
@@ -3243,7 +3243,7 @@ button.red, a.red {
 
   .info {
     color: @birth-text;
-    background: @fontColor-2;
+    background: @birth-bg;
     margin-left: 160px;
     margin-right: 40px;
     position: relative;
@@ -3256,16 +3256,16 @@ button.red, a.red {
     }
 
     &:after {
-      right: 100%;
-      border: solid @birth-bg;
       content: " ";
+      position: absolute;
+      right: 100%;
+      top: 19px;
       height: 0;
       width: 0;
-      position: absolute;
       pointer-events: none;
-      border-right-color: @fontColor-2;
-      border-width: 10px;
-      top: 19px;
+      border-top: 10px solid transparent;
+      border-right: 20px solid @birth-bg;
+      border-bottom: 10px solid transparent;
     }
 
     .top {
@@ -5349,7 +5349,7 @@ textarea#editInput {
       border-bottom: none;
 
       &:nth-child(even) {
-        background-color: @dashBoard-bg-color;
+        //background-color: @dashBoard-bg-color;
       }
 
       td {
