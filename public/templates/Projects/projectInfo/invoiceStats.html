@@ -27,18 +27,18 @@
     <tr>
         <td><%=stat.name%></td>
         <td><%=stat.status%></td>
-        <td class="<%=currencyClassVal%>"><%=stat.paymentInfo.ammount.toFixed(2)%></td>
-        <td class="<%=currencyClassVal%>"><%=stat.paymentInfo.paid.toFixed(2)%></td>
-        <td class="<%=currencyClassVal%>"><%=stat.paymentInfo.balance.toFixed(2)%></td>
+        <td class="<%=currencyClassVal%>"><%=currencySplitter(stat.paymentInfo.ammount.toFixed(2))%></td>
+        <td class="<%=currencyClassVal%>"><%=currencySplitter(stat.paymentInfo.paid.toFixed(2))%></td>
+        <td class="<%=currencyClassVal%>"><%=currencySplitter(stat.paymentInfo.balance.toFixed(2))%></td>
     </tr>
     <%})%>
     </tbody>
     <tfoot>
     <tr>
         <td colspan="2">Total:</td>
-        <td class="dollar"><%=invoceStat.ammount.toFixed(2)%></td>
-        <td class="dollar"><%=invoceStat.paid.toFixed(2)%></td>
-        <td class="dollar"><%=invoceStat.balance.toFixed(2)%></td>
+        <td class="dollar"><%=currencySplitter(invoceStat.ammount.toFixed(2))%></td>
+        <td class="dollar"><%=currencySplitter(invoceStat.paid.toFixed(2))%></td>
+        <td class="dollar"><%=currencySplitter(invoceStat.balance.toFixed(2))%></td>
     </tr>
 
     </tfoot>

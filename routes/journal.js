@@ -22,7 +22,7 @@ module.exports = function (models, event) {
     router.get('/journalEntry/getCashFlow', _journalEntryHandler.getCashFlow);
     router.get('/journalEntry/getPayrollForReport', _journalEntryHandler.getPayrollForReport);
     router.get('/journalEntry/getInventoryReport', _journalEntryHandler.getInventoryReport);
-    router.get('/journalEntry/getAdminExpenses', _journalEntryHandler.getAdminExpenses);
+    router.get('/journalEntry/getExpenses', _journalEntryHandler.getExpenses);
     router.get('/journalEntry/exportToXlsx/:filter', _journalEntryHandler.exportToXlsx);
     router.get('/journalEntry/exportToCsv/:filter', _journalEntryHandler.exportToCsv);
     router.get('/journalEntry/:viewType', _journalEntryHandler.getForView);
