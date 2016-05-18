@@ -1604,6 +1604,10 @@ input::-ms-clear {
 .kanban .opportunity-header h3 {
   text-align: right;
 }
+.kanban .opportunity-header h4 {
+  color: #2c3e50;
+  font-weight: bold;
+}
 .kanban .opportunity-content {
   margin-top: -7px;
   margin-bottom: -3px;
@@ -1780,7 +1784,7 @@ input::-ms-clear {
   position: absolute;
   top: 4px;
   right: 28px;
-  color: #a9a9a9;
+  color: #2c3e50;
 }
 .kanban .column .columnNameDiv .columnName .fold-unfold {
   display: block;
@@ -1796,11 +1800,14 @@ input::-ms-clear {
   line-height: 19px;
   margin: 0 2px 0 4px;
   cursor: pointer;
-  color: #a9a9a9;
+  color: #2c3e50;
 }
 .kanban .column .columnNameDiv .columnName .text {
   color: #3e88b9;
   font-size: 13px;
+}
+.kanban .column .columnNameDiv .columnName .text .dollar {
+  margin-left: 5px;
 }
 .kanban .column .columnNameDiv.cancelled .columnName {
   border-bottom: 2px solid #FF5454 !important;
@@ -5669,31 +5676,16 @@ ul.dialog-tabs li.right button {
 .thumbnailwithavatar .info p a {
   color: #000000;
 }
-.thumbnailwithavatar h4 {
-  color: #3e88b9;
-  font-size: 12px;
-  line-height: 18px;
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  white-space: normal;
-}
-.thumbnailwithavatar h4 span {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  white-space: normal;
-  width: 182px;
-}
-.thumbnailwithavatar h4:hover {
-  text-decoration: underline;
-  cursor: pointer;
-}
+.thumbnailwithavatar h4,
 .thumbnailwithavatar .title {
   color: #3e88b9;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 600;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
 }
+.thumbnailwithavatar h4 span,
 .thumbnailwithavatar .title span {
   overflow: hidden;
   white-space: nowrap;
@@ -9777,6 +9769,11 @@ textarea#editInput {
 }
 .invoiceChart-legend-box .list tbody .boldInvoiced td,
 .invoiceChart-legend-box .list tbody .boldPaid td {
+  color: #ffffff;
+}
+.invoiceChart-legend-box .list tbody .revenueBySales td,
+.invoiceChart-legend-box .list tbody .totalBySales td,
+.invoiceChart-legend-box .list tbody .paidBySales td {
   color: #ffffff;
 }
 .invoiceChart-legend-box .chartContainer .domain {
