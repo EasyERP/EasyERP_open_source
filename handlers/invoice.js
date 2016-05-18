@@ -853,44 +853,84 @@ var Invoice = function (models, event) {
 
                         products = resp.products;
 
-                        if (resp._type !== 'Proforma'){
-                            if (products) {
-                                async.each(products, function (result, cb) {
-                                    var jobs = result.jobs;
-                                    var editedBy = {
-                                        user: req.session.uId,
-                                        date: new Date()
-                                    };
-                                    JobsModel.findByIdAndUpdate(jobs, {
-                                        $set: {
-                                            invoice : resp._id,
-                                            type    : "Invoiced",
-                                            workflow: CONSTANTS.JOBSFINISHED,
-                                            editedBy: editedBy
-                                        }
-                                    }, {new: true}, function (err, job) {
-                                        if (err) {
-                                            return cb(err);
-                                        }
-                                        project = job.project || null;
+                        if (resp._type !== 'Proforma') {
+                            var parallelTask;
 
-                                        _journalEntryHandler.checkAndCreateForJob({
-                                            req     : req,
-                                            jobId   : jobs,
-                                            workflow: CONSTANTS.JOBSFINISHED,
-                                            wTracks : job.wTracks,
-                                            date    : resp.invoiceDate
+                            var setWorkflow = function (callback) {
+                                var request = {
+                                    query  : {
+                                        wId   : 'Proforma',
+                                        status: 'Cancelled'
+                                    },
+                                    session: req.session
+                                };
+
+                                workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                                    Invoice.update(
+                                        {
+                                            sourceDocument: objectId(resp.sourceDocument),
+                                            payments      : []
+                                        },
+                                        {
+                                            $set: {
+                                                workflow: workflow._id,
+                                                invoiced: true
+                                            }
+                                        },
+                                        {
+                                            multi: true
+                                        }, callback);
+                                });
+                            };
+
+                            var updateJobs = function (callback) {
+                                if (products) {
+                                    async.each(products, function (result, cb) {
+                                        var jobs = result.jobs;
+                                        var editedBy = {
+                                            user: req.session.uId,
+                                            date: new Date()
+                                        };
+                                        JobsModel.findByIdAndUpdate(jobs, {
+                                            $set: {
+                                                invoice : resp._id,
+                                                type    : "Invoiced",
+                                                workflow: CONSTANTS.JOBSFINISHED,
+                                                editedBy: editedBy
+                                            }
+                                        }, {new: true}, function (err, job) {
+                                            if (err) {
+                                                return cb(err);
+                                            }
+                                            project = job.project || null;
+
+                                            _journalEntryHandler.checkAndCreateForJob({
+                                                req     : req,
+                                                jobId   : jobs,
+                                                workflow: CONSTANTS.JOBSFINISHED,
+                                                wTracks : job.wTracks,
+                                                date    : resp.invoiceDate
+                                            });
+
+                                            cb();
                                         });
 
-                                        cb();
+                                    }, function () {
+                                        if (project) {
+                                            event.emit('fetchJobsCollection', {project: project});
+                                        }
+                                        callback();
                                     });
+                                }
+                            };
 
-                                }, function () {
-                                    if (project) {
-                                        event.emit('fetchJobsCollection', {project: project});
-                                    }
-                                });
-                            }
+                            parallelTask = [updateJobs, setWorkflow];
+                            async.parallel(parallelTask, function (err, response) {
+                                if (err) {
+                                    return next(err);
+                                }
+                                res.status(200).send(response);
+                            });
                         }
 
                         res.status(200).send(resp);
@@ -1486,10 +1526,10 @@ var Invoice = function (models, event) {
 
                         Order.findByIdAndUpdate(objectId(orderId), orderUpdateQuery,
                             {new: true}, function (err, result) {
-                            if (err) {
-                                return next(err);
-                            }
-                        });
+                                if (err) {
+                                    return next(err);
+                                }
+                            });
 
                         async.each(invoiceDeleted.products, function (product) {
                             jobs.push(product.jobs);
@@ -1649,11 +1689,11 @@ var Invoice = function (models, event) {
                             });
                         }
 
-                       if (result && result._type !== 'expensesInvoice'){
-                           parallelTasks = [proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove];
-                       } else {
-                           parallelTasks = [proformaUpdate, paymentsRemove, journalEntryRemove, folderRemove]
-                       }
+                        if (result && result._type !== 'expensesInvoice') {
+                            parallelTasks = [proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove];
+                        } else {
+                            parallelTasks = [proformaUpdate, paymentsRemove, journalEntryRemove, folderRemove]
+                        }
 
                         async.parallel(parallelTasks, function (err, result) {
                             if (err) {
@@ -2077,7 +2117,7 @@ var Invoice = function (models, event) {
                     $gt: 0
                 }
             }
-        },{
+        }, {
             $lookup: {
                 from        : "projectMembers",
                 localField  : "project",
@@ -2113,7 +2153,7 @@ var Invoice = function (models, event) {
             }
         }, {
             $project: {
-                salesmanagers        :  {$arrayElemAt: ["$salesmanagers", 0]},
+                salesmanagers        : {$arrayElemAt: ["$salesmanagers", 0]},
                 dueDate              : 1,
                 'project.projectName': 1,
                 invoiceDate          : 1,
