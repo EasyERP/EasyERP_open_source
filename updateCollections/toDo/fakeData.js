@@ -58,7 +58,12 @@ mainCb = _.after(2, function () {
             }
 
             crmDoc = result[0] || {};
-            forbiddenIds.push(crmDoc._id);
+
+            if (forbiddenIds.indexOf(crmDoc._id.toString()) !== -1) {
+                return crmSearcher(type, cb);
+            }
+
+            forbiddenIds.push(crmDoc._id.toString());
             cb(null, crmDoc);
         });
     }
