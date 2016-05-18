@@ -1,0 +1,57 @@
+<div class="clearfix"></div>
+
+<div class="half-block left">
+    <!--<div class="h2">
+        <span>
+            Sale
+        </span>
+    </div>-->
+    <dl class="person-info">
+        <dt><label for="isCustomer">Is Customer</label></dt>
+        <dd>
+            <input id="isCustomer" type="checkbox" class="checkbox" <%=(model && model.salesPurchases &&
+            model.salesPurchases.isCustomer) ? 'checked' : ''%>>
+        </dd>
+        <dt><label for="departmentDd">Sales Team</label></dt>
+        <dd>
+            <a id="departmentDd" class="current-selected" href="javascript:;"><%=(model && model.salesPurchases &&
+                model.salesPurchases.salesTeam) ? model.salesPurchases.salesTeam.departmentName : 'Select'%></a>
+        </dd>
+        <dt><label for="employeesDd">Sales Person</label></dt>
+        <dd>
+            <a id="employeesDd" class="current-selected" href="javascript:;"><%=(model && model.salesPurchases &&
+                model.salesPurchases.salesPerson) ? model.salesPurchases.salesPerson.fullName : 'Select'%></a>
+        </dd>
+        <dt><label for="implementedBy">Implemented By</label></dt>
+        <dd>
+            <a id="implementedBy" class="current-selected" href="javascript:;"><%=(model && model.salesPurchases &&
+                model.salesPurchases.implementedBy) ? model.salesPurchases.implementedBy.fullName : 'Select'%></a>
+        </dd>
+
+    </dl>
+</div>
+<div class="half-block left">
+    <!--<div class="h2">
+        <span>
+            Purchase
+        </span>
+    </div>-->
+    <dt><label for="isSupplier">Is Supplier</label></dt>
+    <dd>
+        <input id="isSupplier" type="checkbox" class="checkbox" <%=(model && model.salesPurchases &&
+        model.salesPurchases.isSupplier) ? 'checked' : ''%>>
+    </dd>
+    <dt><label for="reference">Reference</label></dt>
+    <dd>
+        <input type="text" id="reference" placeholder="Reference" maxlength="32"
+               value="<%=model.salesPurchases.reference%>"/>
+    </dd>
+    <dt><label for="language">Language</label></dt>
+    <dd>
+        <a id="language" class="current-selected" href="javascript:;"><%=model.salesPurchases.language%></a>
+    </dd>
+    <!--<dt><label for="salesPriceList">Sale Pricelist</label></dt>
+    <dd>
+        <a id="salesPriceList" class="current-selected" href="javascript:;">Select</a>
+    </dd>-->
+</div>

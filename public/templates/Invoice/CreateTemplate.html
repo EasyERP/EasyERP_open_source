@@ -2,7 +2,7 @@
     <form method="post" action="" class="form" id="invoiceForm">
         <fieldset>
             <div class="inner">
-                <ul class="dialog-tabs" data-class="mainTabs" >
+                <ul class="dialog-tabs" data-class="mainTabs">
                     <li><a class="active" href="javascript:;">Main</a></li>
                     <li><a href="javascript:;">Assignees</a></li>
                     <!--<li class="right">
@@ -21,22 +21,23 @@
                             <dl class="opp-info">
                                 <dt><label for="supplier">Supplier</label></dt>
                                 <dd>
-                                    <a id="supplier" class="current-selected" href="javascript:;">Select</a>
+                                    <a id="supplier" href="javascript:;">Select</a>
                                 </dd>
 
                                 <dt><label for="fiscal_pos">Fiscal Position</label></dt>
                                 <dd>
-                                    <a id="fiscal_pos"  href="javascript:;">Select</a>
+                                    <a id="fiscal_pos" href="javascript:;">Select</a>
                                 </dd>
 
-                                <dt><label for="source_document">Source Document</label></dt>
-                                <dd>
-                                    <input type="text"  id="source_document" name="source_document" placeholder="" maxlength="32"/>
-                                </dd>
+                                <!--<dt><label for="source_document">Source Document</label></dt>-->
+                                <!--<dd>-->
+                                <!--<input type="text"  id="source_document" name="source_document" placeholder="" maxlength="32"/>-->
+                                <!--</dd>-->
 
                                 <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
                                 <dd>
-                                    <input type="text"  id="supplier_invoice_num" name="supplier_invoice_num" placeholder="" maxlength="32"/>
+                                    <input type="text" id="supplier_invoice_num" name="supplier_invoice_num"
+                                           placeholder="" maxlength="32"/>
                                 </dd>
 
                                 <dt><label for="payment_reference">Payment Reference</label></dt>
@@ -46,7 +47,8 @@
 
                                 <dt></dt>
                                 <dd>
-                                    <input type="text" id="payment_reference" name="payment_reference" placeholder="" maxlength="32"/>
+                                    <input type="text" id="payment_reference" name="payment_reference" placeholder=""
+                                           maxlength="32"/>
                                 </dd>
 
                             </dl>
@@ -71,15 +73,20 @@
                                     <a id="account" href="javascript:;">Select</a>
                                 </dd>
 
-                                <dt><label for="journal">Journal</label></dt>
+                                <!--<dt><label for="journal">Journal</label></dt>-->
+                                <!--<dd>-->
+                                    <!--<a id="journal" href="javascript:;">Select</a>-->
+                                <!--</dd>-->
+
+                                <dt><label for="currencyDd">Currency</label></dt>
                                 <dd>
-                                    <a id="journal" href="javascript:;">Select</a>
+                                    <a id="currencyDd" class="current-selected" href="javascript:;">Select</a>
                                 </dd>
 
                             </dl>
                         </div>
                         <div class="clearfix"></div>
-                        <ul class="dialog-tabs" data-class="childTabs" >
+                        <ul class="dialog-tabs" data-class="childTabs">
                             <li><a class="active" href="javascript:;">Invoice</a></li>
                             <li><a href="javascript:;">Other Info</a></li>
                             <li><a href="javascript:;">Payments</a></li>
@@ -103,7 +110,8 @@
 
                                             <dt><label for="salesPerson">Responsible</label></dt>
                                             <dd>
-                                                <a id="salesPerson" class="current-selected" href="javascript:;">Select</a>
+                                                <a id="salesPerson" class="current-selected"
+                                                   href="javascript:;">Select</a>
                                             </dd>
 
                                             <dt><label for="payment_terms">Payment Terms</label></dt>
@@ -114,8 +122,8 @@
                                     </div>
                                     <div class="half-block left">
                                         <dl class="opp-info">
-                                            <dt><label >Journal Entry</label></dt>
-                                            <dd></dd>
+                                            <!--<dt><label >Journal Entry</label></dt>-->
+                                            <!--<dd></dd>-->
 
                                             <dt><label for="force_period">Force Period</label></dt>
                                             <dd>

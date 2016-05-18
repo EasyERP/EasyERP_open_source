@@ -1,0 +1,20 @@
+<% collection.forEach(function(journalEntry, index){ %>
+<tr data-index="<%= index %>" data-id="<%=journalEntry._id%>">
+    <!--<td class="notForm centerCell"><input type="checkbox" value="<%=journalEntry._id%>" class="checkbox"/></td>-->
+    <td class="centerCell"><%=index + 1 %></td>
+    <td><%=(journalEntry.journal && journalEntry.journal.name) ? journalEntry.journal.name : ''%></td>
+    <td><%=journalEntry.date%></td>
+    <td><%=journalEntry.sourceDocument.subject && journalEntry.sourceDocument.subject.name ? journalEntry.sourceDocument.subject.name.first + ' ' + (journalEntry.sourceDocument.subject.name.last ? journalEntry.sourceDocument.subject.name.last : '') : journalEntry.sourceDocument.subject && journalEntry.sourceDocument.subject.projectName ? journalEntry.sourceDocument.subject.projectName : ''%></td>
+    <td><a class="<%=journalEntry.sourceDocument.model%>" data-id="<%=journalEntry.sourceDocument._id ? journalEntry.sourceDocument._id._id : ''%>"><%=journalEntry.sourceDocument.name%></a></td>
+    <td><%=journalEntry.journal.debitAccount.name%></td>
+    <td><%=journalEntry.journal.creditAccount.name%></td>
+
+    <%if (journalEntry.debit) {%>
+    <td class="value" data-amount="<%= journalEntry.debit%>"><%=currencySplitter(journalEntry.debit.toFixed(2))%></td>
+    <%}%>
+
+    <%if (journalEntry.credit) {%>
+    <td class="value" data-amount="<%=journalEntry.credit%>"><%=currencySplitter(journalEntry.credit.toFixed(2))%></td>
+    <%}%>
+</tr>
+<% }) %>

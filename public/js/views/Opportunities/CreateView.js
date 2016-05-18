@@ -1,63 +1,77 @@
 define([
-    "text!templates/Opportunities/CreateTemplate.html",
-    'views/Assignees/AssigneesView',
-    "models/OpportunitiesModel",
-    "common",
-	"populate",
-    "dataService",
-    'views/Notes/AttachView'
-],
-    function (CreateTemplate, AssigneesView, OpportunityModel, common, populate, dataService, attachView) {
+        "text!templates/Opportunities/CreateTemplate.html",
+        'views/selectView/selectView',
+        'views/Assignees/AssigneesView',
+        "models/OpportunitiesModel",
+        "common",
+        "populate",
+        "dataService",
+        'views/Notes/AttachView'
+    ],
+    function (CreateTemplate, selectView, AssigneesView, OpportunityModel, common, populate, dataService, attachView) {
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Opportunities",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem");
-                var model = (options && options.model) ? options.model : null;
-				this.responseObj = {};
+                this.responseObj = {};
+                this.elementId = options ? options.elementId : null;
+
                 this.render();
             },
 
             events: {
-                "click #tabList a": "switchTab",
-                "change #workflowNames": "changeWorkflows",
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect"
+                "click #tabList a"                                                : "switchTab",
+                "change #workflowNames"                                           : "changeWorkflows",
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect"
             },
-			notHide: function () {
-				return false;
-            },
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
-			nextSelect:function(e){
-				this.showNewSelect(e,false,true);
-			},
-			prevSelect:function(e){
-				this.showNewSelect(e,true,false);
-			},
-            showNewSelect:function(e,prev,next){
-                populate.showSelect(e,prev,next,this);
+
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
+
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
-			chooseOption:function(e){
+
+            chooseOption : function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-                if (holder.attr("id") == 'customerDd')
+                if (holder.attr("id") == 'customerDd') {
                     this.selectCustomer($(e.target).attr("id"));
-			},
-            
+                }
+            },
 
-            keydownHandler: function(e){
-                switch (e.which){
+            keydownHandler: function (e) {
+                switch (e.which) {
                     case 27:
                         this.hideDialog();
                         break;
@@ -66,7 +80,7 @@ define([
                 }
             },
 
-            changeTab:function(e){
+            changeTab: function (e) {
                 var holder = $(e.target);
                 holder.closest(".dialog-tabs").find("a.active").removeClass("active");
                 holder.addClass("active");
@@ -79,15 +93,15 @@ define([
             getWorkflowValue: function (value) {
                 var workflows = [];
                 for (var i = 0; i < value.length; i++) {
-                    workflows.push({ name: value[i].name, status: value[i].status });
+                    workflows.push({name: value[i].name, status: value[i].status});
                 }
                 return workflows;
             },
 
             changeWorkflows: function () {
                 var name = this.$("#workflowNames option:selected").val();
-                var value = this.workflowsCollection.findWhere({ name: name }).toJSON().value;
-                $("#selectWorkflow").html(_.template(selectTemplate, { workflows: this.getWorkflowValue(value) }));
+                var value = this.workflowsCollection.findWhere({name: name}).toJSON().value;
+                $("#selectWorkflow").html(_.template(selectTemplate, {workflows: this.getWorkflowValue(value)}));
             },
 
             selectCustomer: function (id) {
@@ -128,13 +142,13 @@ define([
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
             },
-            
+
             hideDialog: function () {
                 $(".edit-dialog").remove();
                 $(".add-group-dialog").remove();
                 $(".add-user-dialog").remove();
             },
-           
+
             saveItem: function () {
                 var mid = 39;
 
@@ -142,12 +156,12 @@ define([
 
                 var name = $.trim($("#name").val());
 
-                var expectedRevenueValue = $.trim($("#expectedRevenueValue").val())||"0";
+                var expectedRevenueValue = $.trim($("#expectedRevenueValue").val()) || "0";
                 var expectedRevenueProgress = $.trim($("#expectedRevenueProgress").val());
                 var expectedRevenue;
                 if (expectedRevenueValue || expectedRevenueProgress) {
                     expectedRevenue = {
-                        value: expectedRevenueValue,
+                        value   : expectedRevenueValue,
                         currency: '$',
                         progress: expectedRevenueProgress
                     };
@@ -156,11 +170,10 @@ define([
                 var customerId = this.$("#customerDd").data("id");
                 var email = $.trim($("#email").val());
 
-
                 var salesPersonId = this.$("#salesPersonDd").data("id");
-                
+
                 var salesTeamId = this.$("#salesTeamDd").data("id");
-                
+
                 var nextAct = $.trim(this.$el.find("#nextActionDate").val());
                 var nextActionDesc = $.trim(this.$el.find("#nextActionDescription").val());
                 var nextAction = {
@@ -169,7 +182,7 @@ define([
                 };
 
                 var expectedClosing = $.trim($("#expectedClosing").val());
-                
+
                 var priority = $("#priorityDd").text();
 
                 var company = $.trim($("#company").val());
@@ -186,7 +199,7 @@ define([
                 var last = $.trim($("#last").val());
                 var contactName = {
                     first: first,
-                    last: last
+                    last : last
                 };
 
                 var func = $.trim($("#func").val());
@@ -195,9 +208,9 @@ define([
                 var mobile = $.trim($("#mobile").val());
                 var fax = $.trim($("#fax").val());
                 var phones = {
-                    phone: phone,
+                    phone : phone,
                     mobile: mobile,
-                    fax: fax
+                    fax   : fax
                 };
 
                 var workflow = this.$("#workflowDd").data('id');
@@ -209,76 +222,78 @@ define([
                 var reffered = $.trim($("#reffered").val());
                 var self = this;
 
-                var usersId=[];
-                var groupsId=[];
-                $(".groupsAndUser tr").each(function(){
-                    if ($(this).data("type")=="targetUsers"){
+                var usersId = [];
+                var groupsId = [];
+                $(".groupsAndUser tr").each(function () {
+                    if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
-                    if ($(this).data("type")=="targetGroups"){
+                    if ($(this).data("type") == "targetGroups") {
                         groupsId.push($(this).data("id"));
                     }
 
                 });
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 opportunityModel.save({
-                    name: name,
-                    expectedRevenue: expectedRevenue,
-                    customer: customerId,
-                    email: email,
-                    salesPerson: salesPersonId,
-                    salesTeam: salesTeamId,
-                    nextAction: nextAction,
-                    expectedClosing: expectedClosing,
-                    priority: priority,
-                    workflow: workflow,
-                    internalNotes: internalNotes,
-                    company: company,
-                    address: address,
-                    contactName: contactName,
-                    func: func,
-                    phones: phones,
-                    active: active,
-                    optout: optout,
-                    reffered: reffered,
-                    groups: {
-						owner: $("#allUsersSelect").data("id"),
-                        users: usersId,
-                        group: groupsId
+                        name           : name,
+                        expectedRevenue: expectedRevenue,
+                        customer       : customerId,
+                        email          : email,
+                        salesPerson    : salesPersonId,
+                        salesTeam      : salesTeamId,
+                        nextAction     : nextAction,
+                        expectedClosing: expectedClosing,
+                        priority       : priority,
+                        workflow       : workflow,
+                        internalNotes  : internalNotes,
+                        company        : company,
+                        address        : address,
+                        contactName    : contactName,
+                        func           : func,
+                        phones         : phones,
+                        active         : active,
+                        optout         : optout,
+                        reffered       : reffered,
+                        groups         : {
+                            owner: $("#allUsersSelect").data("id"),
+                            users: usersId,
+                            group: groupsId
+                        },
+                        whoCanRW       : whoCanRW
                     },
-                    whoCanRW: whoCanRW
-                },
-                {
-                    headers: {
-                        mid: mid
-                    },
-                    wait: true,
-                    success: function (model) {
-                        var currentModel = model.changed.success;
-						self.attachView.sendToServer(null,currentModel);
-                    },
-                    error: function (model, xhr) {
-    					self.errorNotification(xhr);
-                    }
-                });
+                    {
+                        headers: {
+                            mid: mid
+                        },
+                        wait   : true,
+                        success: function (model) {
+                            var currentModel = model.changed.success;
+                            self.attachView.sendToServer(null, currentModel);
+                        },
+                        error  : function (model, xhr) {
+                            self.errorNotification(xhr);
+                        }
+                    });
             },
 
             render: function () {
                 var formString = this.template();
                 var self = this;
+                var notDiv;
+
                 this.$el = $(formString).dialog({
-					closeOnEscape: false,
-                    dialogClass: "edit-dialog",
-                    width: "900",
-                    title: "Create Opportunity",
-                    buttons: {
-                        save: {
-                            text: "Create",
+                    closeOnEscape: false,
+                    dialogClass  : "edit-dialog",
+                    width        : "900",
+                    title        : "Create Opportunity",
+                    buttons      : {
+                        save  : {
+                            text : "Create",
                             class: "btn",
                             click: self.saveItem
                         },
                         cancel: {
-                            text: "Cancel",
+                            text : "Cancel",
                             class: "btn",
                             click: function () {
                                 self.hideDialog();
@@ -286,37 +301,54 @@ define([
                         }
                     }
                 });
-				var notDiv = this.$el.find('.attach-container');
-				this.attachView = new attachView({
-                        model: new OpportunityModel(),
-						url:"/uploadOpportunitiesFiles",
-						isCreate:true
-                    });
+
+                notDiv = this.$el.find('.attach-container');
+
+                this.attachView = new attachView({
+                    model    : new OpportunityModel(),
+                    url      : "/uploadOpportunitiesFiles",
+                    isCreate : true,
+                    elementId: this.elementId
+                });
 
                 notDiv.append(this.attachView.render().el);
- 				notDiv = this.$el.find('.assignees-container');
+                notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel,
                     }).render().el
                 );
 
+                $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
+                $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
+                dataService.getData('/Priority/leads', {}, function (priorities) {
+                    priorities = _.map(priorities.data, function (priority) {
+                        priority.name = priority.priority;
 
-                $('#nextActionDate').datepicker({ dateFormat: "d M, yy", minDate: new Date() });
-                $('#expectedClosing').datepicker({ dateFormat: "d M, yy", minDate: new Date() });
-				populate.getPriority("#priorityDd",this,true);
-				populate.get2name("#customerDd", "/Customer",{},this,true,true, (this.model)?this.model._id:null);
-				populate.get2name("#salesPersonDd", "/getForDdByRelatedUser",{},this,true,true);
-				populate.getWorkflow("#workflowDd","#workflowNamesDd","/WorkflowsForDd",{id:"Opportunities"},"name",this,true);
-				populate.get("#salesTeamDd", "/DepartmentsForDd",{},"departmentName",this,true,true);
-			
-/*                common.populateCustomers("#customerDd", "/Customer",this.model);
-                //common.populateEmployeesDd("#salesPerson"Dd, "/getSalesPerson");
-                common.populateEmployeesDd("#salesPersonDd", "/getForDdByRelatedUser", this.model);
-                common.populateDepartments("#salesTeamDd", "/DepartmentsForDd");
-                common.populatePriority("#priorityDd", "/Priority");
-                common.populateWorkflows('Opportunities', '#workflowDd', "#workflowNamesDd", '/WorkflowsForDd');*/
-				
+                        return priority;
+                    });
+                    self.responseObj['#priorityDd'] = priorities;
+                });
+                populate.get2name("#customerDd", "/Customer", {}, this, true, true, (this.model) ? this.model._id : null);
+                dataService.getData('/employee/getForDD', {isEmployee : true}, function (employees) {
+                    employees = _.map(employees.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+
+                        return employee;
+                    });
+
+                    self.responseObj['#salesPersonDd'] = employees;
+                });
+                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, true);
+                populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, true, true);
+
+                /*                common.populateCustomers("#customerDd", "/Customer",this.model);
+                 //common.populateEmployeesDd("#salesPerson"Dd, "/getSalesPerson");
+                 common.populateEmployeesDd("#salesPersonDd", "/getForDdByRelatedUser", this.model);
+                 common.populateDepartments("#salesTeamDd", "/DepartmentsForDd");
+                 common.populatePriority("#priorityDd", "/Priority");
+                 common.populateWorkflows('Opportunities', '#workflowDd', "#workflowNamesDd", '/WorkflowsForDd');*/
+
                 this.delegateEvents(this.events);
                 return this;
             }

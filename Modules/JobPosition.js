@@ -1,17 +1,54 @@
-var JobPosition = function (models) {
+var JobPosition = function (event, models) {
     var mongoose = require('mongoose');
     var objectId = mongoose.Types.ObjectId;
     var logWriter = require('../helpers/logWriter');
     var employee = mongoose.Schemas['Employee'];
     var department = mongoose.Schemas['Department'];
+    var async = require('async');
+    var CONSTANTS = require('../constants/mainConstants');
 
     var jobPositionSchema = mongoose.Schemas['JobPosition'];
 
-    function getTotalCount (req, response) {
+    function getTotalCount(req, response) {
         var res = {};
         var data = {};
+        var condition;
         for (var i in req.query) {
             data[i] = req.query[i];
+        }
+        var filter = data.filter;
+
+        var optionObj = {};
+
+        if (data && filter) {
+
+            if (data.filter.condition === 'or') {
+                optionObj['$or'] = [];
+                condition = optionObj['$or'];
+            } else {
+                optionObj['$and'] = [];
+                condition = optionObj['$and'];
+            }
+            for (var key in filter) {
+                switch (key) {
+                    case 'workflow':
+                        condition.push({'workflow': {'$in': filter.workflow.objectID()}});
+                        break;
+                    case 'Job name':
+                        condition.push({'name': {'$in': filter['Job name']}});
+                        break;
+                    case 'Total forecasted employees':
+                        condition.push({'totalForecastedEmployees': {'$in': filter['Total forecasted employees']}});
+                        break;
+                    case 'Current number of employees':
+                        condition.push({'numberOfEmployees': {'$in': filter['Current number of employees']}});
+                        break;
+                    case 'Expected in recruitment':
+                        condition.push({'expectedRecruitment': {'$in': filter['Expected in recruitment']}});
+                        break;
+
+                }
+            }
         }
 
         models.get(req.session.lastDb, "Department", department).aggregate(
@@ -31,7 +68,7 @@ var JobPosition = function (models) {
                         {
                             $match: {
                                 $and: [
-                                    {},
+                                    optionObj,
                                     {
                                         $or: [
                                             {
@@ -82,7 +119,7 @@ var JobPosition = function (models) {
             });
     };
 
-    function create (req, data, res) {
+    function create(req, data, res) {
         try {
             if (!data) {
                 logWriter.log('JobPosition.create Incorrect Incoming Data');
@@ -105,7 +142,7 @@ var JobPosition = function (models) {
                     }
                 });
             }
-            function savetoDb (data) {
+            function savetoDb(data) {
                 try {
                     _job = new models.get(req.session.lastDb, 'JobPosition', jobPositionSchema)();
                     if (data.uId) {
@@ -169,7 +206,7 @@ var JobPosition = function (models) {
         }
     };//End create
 
-    function getJobPositionById (req, id, res) {
+    function getJobPositionById(req, id, res) {
         var query = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).findById(id);
         query.populate("department", "departmentName _id");
         query.populate("workflow", "name _id").
@@ -188,7 +225,7 @@ var JobPosition = function (models) {
                 var aggregate = models.get(req.session.lastDb, 'Employees', employee).aggregate(
                     {
                         $match: {
-                            jobPosition: objectId(id)
+                            "jobPosition._id": objectId(id)
                         }
                     },
                     function (err, result) {
@@ -206,11 +243,12 @@ var JobPosition = function (models) {
         });
     }
 
-    function getJobPositionForDd (req, response) {
+    function getJobPositionForDd(req, response) {
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).find({});
         query.select('_id name');
+        query.sort({'name': 1});
         query.exec(function (err, result) {
             if (err) {
                 console.log(err);
@@ -223,31 +261,91 @@ var JobPosition = function (models) {
         });
     };
 
-    function get (req, response) {
+    function get(req, response) {
         var res = {};
+        var sort = req.query.sort;
+        var data = req.query;
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).find({});
-        query.populate('department').
-            populate('createdBy.user').
-            populate('editedBy.user').
-            populate('workflow', 'name _id');
-        query.sort({name: 1});
-        query.exec(function (err, result) {
-            if (err) {
-                console.log(err);
-                logWriter.log('JobPosition.js get job.find' + err);
-                response.send(500, {error: "Can't find JobPosition"});
-            } else {
-                res['data'] = result;
-                response.send(res);
+        query
+            .populate('createdBy.user')
+            .populate('editedBy.user')
+            .populate('department', '_id departmentName')
+            .populate('workflow', 'name _id status')
+            .sort(sort)
+            .skip((data.page - 1) * data.count)
+            .limit(data.count)
+            .lean()
+            .exec(function (err, result) {
+                if (err) {
+                    console.log(err);
+                    logWriter.log('JobPosition.js get job.find' + err);
+                    response.send(500, {error: "Can't find JobPosition"});
+                } else {
+                    async.each(result, function (jp, cb) {
+                        models.get(req.session.lastDb, 'Employees', employee).find({"jobPosition._id": jp._id}).count(function (err, count) {
+                            if (err) {
+                                return cb(err);
+                            } else {
+                                jp.numberOfEmployees = count;
+                                jp.totalForecastedEmployees = count + jp.expectedRecruitment;
+                                cb();
+                            }
+                        });
+                    }, function (err) {
+                        if (err) {
+                            return response.send(500, {error: "Can't find JobPosition"});
+                        }
+                        for (var i in sort) {
+                            if (typeof result[0][i] == 'number') {
+                                function compareSort(personA, personB) {
+                                    if (sort[i] == 1) {
+                                        return personA[i] - personB[i];
+                                    } else {
+                                        return personB[i] - personA[i];
+                                    }
+                                }
+
+                                result.sort(compareSort);
+                            }
+                        }
+
+                        res['data'] = result;
+                        response.send(res);
+                    });
+                }
+            });
+    } //end get
+
+    function caseFilter(queryObj, filter) {
+        for (var key in filter) {
+            switch (key) {
+                /*case 'workflow':
+                 queryObj.where('workflow').in(filter.workflow);
+                 break;*/
+                case 'Job name':
+                    queryObj.push({'name': {$in: filter['Job name']}});
+                    break;
+                case 'Total forecasted employees':
+                    queryObj.push({'Total forecasted employees': {$in: filter['Total forecasted employees']}});
+                    break;
+                case 'Current number of employees':
+                    queryObj.push({'numberOfEmployees': {$in: filter['Current number of employees']}});
+
+                    break;
+                case 'Expected in recruitment':
+                    queryObj.push({'expectedRecruitment': {$in: filter['Expected in recruitment']}});
+                    break;
+
             }
-        });
-    }; //end get
+        }
+    };
 
-
-    function getFilter (req, response) {
+    function getFilter(req, response) {
         var res = {};
         res['data'] = [];
+        var filterObj;
+        var condition;
 
         var data = {};
         for (var i in req.query) {
@@ -304,26 +402,44 @@ var JobPosition = function (models) {
                         },
                         function (err, result) {
                             if (!err) {
-                                var query = models.get(req.session.lastDb, "JobPosition", jobPositionSchema).find().where('_id').in(result);
+                                filterObj = {$and: [{_id: {$in: result}}]};
+
+                                if (data && data.filter) {
+                                    if (data.filter.condition === 'or') {
+                                        filterObj['$and'].push({$or: []});
+                                        condition = filterObj['$and'][1]['$or'];
+                                        caseFilter(condition, data.filter);
+                                    } else {
+
+                                        condition = filterObj['$and'];
+                                        caseFilter(condition, data.filter);
+                                    }
+
+                                }
+
+                                var query = models.get(req.session.lastDb, "JobPosition", jobPositionSchema).find();
                                 if (data.sort && (!data.sort.totalForecastedEmployees && !data.sort.numberOfEmployees)) {
                                     query.sort(data.sort);
                                 } else {
                                     query.sort({"editedBy.date": -1});
+                                }
+                                if (data && (!data.newCollection || data.newCollection === 'false')) {
+                                    query.where('workflow').in([]);
                                 }
                                 query.select("_id createdBy editedBy name department totalForecastedEmployees numberOfEmployees expectedRecruitment workflow").
                                     populate('createdBy.user', 'login').
                                     populate('editedBy.user', 'login').
                                     populate('department', 'departmentName').
                                     populate('workflow', 'name _id status').
-                                    skip((data.page - 1) * data.count).
-                                    limit(data.count).
+                                    //skip((data.page - 1) * data.count).
+                                    //limit(data.count).
                                     exec(function (error, _res) {
 
                                         if (!error) {
                                             res['data'] = _res;
                                             if (_res.length !== 0) {
                                                 _res.forEach(function (ellement, index) {
-                                                    models.get(req.session.lastDb, 'Employees', employee).find({jobPosition: ellement._id}).count(function (err, count) {
+                                                    models.get(req.session.lastDb, 'Employees', employee).find({"jobPosition._id": ellement._id}).count(function (err, count) {
                                                         if (count) {
                                                             ellement.numberOfEmployees = count;
                                                             ellement.totalForecastedEmployees = ellement.numberOfEmployees + ellement.expectedRecruitment;
@@ -333,7 +449,6 @@ var JobPosition = function (models) {
                                                         }
                                                         if (index == data.count - 1 || ((_res.length < data.count) && (index == _res.length - 1))) {
 
-
                                                             if (data.sort && (data.sort.totalForecastedEmployees || data.sort.numberOfEmployees)) {
                                                                 for (var i in data.sort) {
                                                                     switch (i) {
@@ -341,16 +456,20 @@ var JobPosition = function (models) {
                                                                         {
                                                                             res['data'].sort(function (a, b) {
                                                                                 if (+data.sort[i] === 1) {
-                                                                                    if (a.totalForecastedEmployees > b.totalForecastedEmployees)
+                                                                                    if (a.totalForecastedEmployees > b.totalForecastedEmployees) {
                                                                                         return 1;
-                                                                                    if (a.totalForecastedEmployees < b.totalForecastedEmployees)
+                                                                                    }
+                                                                                    if (a.totalForecastedEmployees < b.totalForecastedEmployees) {
                                                                                         return -1;
+                                                                                    }
                                                                                     return 0;
                                                                                 } else {
-                                                                                    if (a.totalForecastedEmployees < b.totalForecastedEmployees)
+                                                                                    if (a.totalForecastedEmployees < b.totalForecastedEmployees) {
                                                                                         return 1;
-                                                                                    if (a.totalForecastedEmployees > b.totalForecastedEmployees)
+                                                                                    }
+                                                                                    if (a.totalForecastedEmployees > b.totalForecastedEmployees) {
                                                                                         return -1;
+                                                                                    }
                                                                                     return 0;
                                                                                 }
                                                                             });
@@ -361,16 +480,20 @@ var JobPosition = function (models) {
                                                                         {
                                                                             res['data'].sort(function (a, b) {
                                                                                 if (+data.sort[i] === 1) {
-                                                                                    if (a.numberOfEmployees > b.numberOfEmployees)
+                                                                                    if (a.numberOfEmployees > b.numberOfEmployees) {
                                                                                         return 1;
-                                                                                    if (a.numberOfEmployees < b.numberOfEmployees)
+                                                                                    }
+                                                                                    if (a.numberOfEmployees < b.numberOfEmployees) {
                                                                                         return -1;
+                                                                                    }
                                                                                     return 0;
                                                                                 } else {
-                                                                                    if (a.numberOfEmployees < b.numberOfEmployees)
+                                                                                    if (a.numberOfEmployees < b.numberOfEmployees) {
                                                                                         return 1;
-                                                                                    if (a.numberOfEmployees > b.numberOfEmployees)
+                                                                                    }
+                                                                                    if (a.numberOfEmployees > b.numberOfEmployees) {
                                                                                         return -1;
+                                                                                    }
                                                                                     return 0;
                                                                                 }
                                                                             });
@@ -406,15 +529,30 @@ var JobPosition = function (models) {
             });
     }
 
-    function update (req, _id, data, res) {
+    function updateRefs(result, dbName, _id) {
+        var EmployeeSchema;
+        var EmployeeModel;
+
+        if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
+            EmployeeSchema = mongoose.Schemas['Employee'];
+            EmployeeModel = models.get(dbName, 'Employee', EmployeeSchema);
+
+            /*event.emit('updateName', _id, EmployeeModel, 'jobPosition._id', 'jobPosition.name', result.name);*/
+        }
+    };
+
+    function update(req, _id, data, res) {
+        var dbName = req.session.lastDb;
+
         try {
             delete data._id;
             delete data.createdBy;
             if (data.workflow === '528ce71ef3f67bc40b00001d') {
                 ++data.expectedRecruitment;
             } else {
-                if (data.workflow && data.expectedRecruitment !== 0)
+                if (data.workflow && data.expectedRecruitment !== 0) {
                     --data.expectedRecruitment;
+                }
             }
             data.numberOfEmployees = data.numberOfEmployees || 0;
             data.totalForecastedEmployees = data.expectedRecruitment + data.numberOfEmployees;
@@ -424,13 +562,15 @@ var JobPosition = function (models) {
             if (data.workflow && data.workflow._id) {
                 data.workflow = data.workflow._id;
             }
-            models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).update({_id: _id}, data, function (err, result) {
+            models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).findOneAndUpdate({_id: _id}, data, {new: true}, function (err, result) {
                 if (err) {
                     console.log(err);
                     logWriter.log("JobPosition.js update job.update " + err);
                     res.send(500, {error: "Can't update JobPosition"});
                 } else {
                     res.send(200, {success: 'JobPosition updated success'});
+
+                    //updateRefs(result, dbName, _id);
                 }
             });
         }
@@ -441,7 +581,7 @@ var JobPosition = function (models) {
         }
     };// end update
 
-    function remove (req, _id, res) {
+    function remove(req, _id, res) {
         models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).remove({_id: _id}, function (err, result) {
             if (err) {
                 console.log(err);
@@ -457,7 +597,6 @@ var JobPosition = function (models) {
         getTotalCount: getTotalCount,
 
         getJobPositionById: getJobPositionById,
-
 
         create: create,
 

@@ -1,6 +1,4 @@
-/**
- * Created by Roman on 04.05.2015.
- */
+
 
 var express = require('express');
 var router = express.Router();
@@ -10,6 +8,7 @@ module.exports = function (models) {
     var handler = new CustomerHandler(models);
 
     router.get('/', handler.getSuppliersForDD);
+    router.get('/getFilterValues', handler.getFilterValues);
 
     return router;
 };

@@ -1,0 +1,27 @@
+<div class="headRow">
+    <div class="divCell left-cell th-green">
+        <span>Hours Sold</span>
+    </div>
+    <div class="revenueBySales">
+
+    </div>
+
+    <div class="divCell th-green"><span>YTD</span></div>
+    <div class="divCell th-green th-trend"><span>Trend</span></div>
+</div>
+<% departments.forEach(function(department){ %>
+<div id="<%= department %>" class="divRow">
+    <div class="divCell left-cell">
+        <span><%= department%></span>
+    </div>
+    <div data-id="<%= department%>">
+
+    </div>
+
+    <div class="divCell chart_mini trend">
+    </div>
+</div>
+<% }) %>
+<div data-content="totalHoursByDep" class="divRow totalHoursByDep">
+
+</div>

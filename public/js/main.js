@@ -1,40 +1,53 @@
 var App = App ||
-{
-    File: {
-        MAXSIZE: 10485760,  //size in kilobytes  = 3 MB
-        MaxFileSizeDisplay: "10 MB"
-    },
-    requestedURL: null,
-    Calendar: {
-        currentCalendarId: ""
-    }
-};
+    {
+        File        : {
+            MAXSIZE           : 10485760,  //size in kilobytes  = 3 MB
+            MaxFileSizeDisplay: "10 MB"
+        },
+        requestedURL: null,
+        Calendar    : {
+            currentCalendarId: ""
+        },
+        savedFilters: {}
+    };
 
 require.config({
     paths: {
-        jQuery: './libs/jquery-2.1.0.min.map',
-        ajaxForm: './libs/jquery.form',
-        imageCrop: './libs/jquery.Jcrop.min',
-        jqueryui: './libs/jquery-ui.min',
-        Underscore: './libs/underscore-min.map.1.6.0',
-        Backbone: './libs/backbone-min.map.1.1.2',
-        less: './libs/less.min',
-        templates: '../templates',
-        text: './libs/text',
-        common: 'common',
-        helpers: 'helpers',
-        constants: 'constants',
-        dateFormat: './libs/date.format',
-        d3: './libs/d3.v3.min',
-        jqueryBarcode: './libs/jquery-barcode.min'
+        async        : './libs/async/lib/async',
+        jQuery       : './libs/jquery-2.1.0.min.map',
+        ajaxForm     : './libs/jquery.form',
+        imageCrop    : './libs/jquery.Jcrop.min',
+        jqueryui     : './libs/jquery-ui.min',
+        spinJs       : './libs/spin.js/spin.min',
+        ladda        : './libs/spin.min',
+        Underscore   : './libs/underscore-min.map.1.6.0',
+        Backbone     : './libs/backbone-min.map.1.1.2',
+        less         : './libs/less.min',
+        templates    : '../templates',
+        text         : './libs/text',
+        common       : 'common',
+        helpers      : 'helpers',
+        constants    : 'constants',
+        dateFormat   : './libs/date.format',
+        d3           : './libs/d3.v3.min',
+        jqueryBarcode: './libs/jquery-barcode.min',
+        moment       : './libs/moment/moment',
+        socketio     : '/socket.io/socket.io.js'
     },
-    shim: {
-        'jqueryui': ['jQuery'],
-        'ajaxForm': ['jQuery'],
-        'imageCrop': ['jQuery'],
-        'Backbone': ['Underscore', 'jQuery'],
-        'app': ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop'],
-        'd3': {
+    shim : {
+        'Underscore': {
+            exports: '_'
+        },
+        'jQuery'    : {
+            exports: '$'
+        },
+        'jqueryui'  : ['jQuery'],
+        'ajaxForm'  : ['jQuery'],
+        'imageCrop' : ['jQuery'],
+        'spinJs'    : ['jQuery'],
+        'Backbone'  : ['Underscore', 'jQuery'],
+        'app'       : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3'],
+        'd3'        : {
             exports: 'd3'
         },
         'dateFormat': {
@@ -44,9 +57,34 @@ require.config({
 });
 
 require(['app'], function (app) {
+
+    App.render = function (data) {
+        var container = this.errorContainer || $('#errorHandler');
+        var messageClass = data.type || 'error';
+        var text = data.message || 'Something went wrong';
+        var renderEl = '<div class="animate ' + messageClass + '">' + text + '</div>';
+
+        container.append(renderEl);
+
+        container.find('div.animate').delay(10).animate({
+            left   : "84%",
+            opacity: 1
+        }, 500, function () {
+            var self = $(this);
+
+            self.removeClass('animate').delay(5000).animate({
+                left   : "100%",
+                opacity: 0
+            }, 1000, function () {
+                self.remove();
+            });
+        });
+    };
+
     Backbone.Collection.prototype.getElement = function (id) {
         return (id) ? this.get(id) : ((this.currentElement) ? this.currentElement : this.at(0));
     };
+
     Backbone.Collection.prototype.setElement = function (id, model) {
         if (arguments.length === 0) {
             this.currentElement = this.at(0);
@@ -69,22 +107,31 @@ require(['app'], function (app) {
         if (xhr) {
             if (xhr.status === 401 || xhr.status === 403) {
                 if (xhr.status === 401) {
-                    Backbone.history.navigate("login", { trigger: true });
+                    Backbone.history.navigate("login", {trigger: true});
                 } else {
-                    alert("You do not have permission to perform this action");
+                    App.render({
+                        type   : 'error',
+                        message: "You do not have permission to perform this action."
+                    });
                 }
             } else {
                 if (xhr.responseJSON) {
                     alert(xhr.responseJSON.error);
                 } else {
-                    Backbone.history.navigate("home", { trigger: true });
+                    Backbone.history.navigate("home", {trigger: true});
                 }
             }
         }
     };
     Backbone.View.prototype.pageElementRender = function (totalCount, itemsNumber, currentPage) {
         var itemsNumber = this.defaultItemsNumber;
-        $("#itemsNumber").text(itemsNumber);
+
+        if (itemsNumber === 'all') {
+            itemsNumber = totalCount;
+        }
+
+        //     $("#itemsNumber").text(itemsNumber); // element deleted
+
         var start = $("#grid-start");
         var end = $("#grid-end");
 
@@ -101,6 +148,7 @@ require(['app'], function (app) {
             $("#lastPage").text(0);
         } else {
             currentPage = currentPage || 1;
+
             start.text(currentPage * itemsNumber - itemsNumber + 1);
             if (totalCount <= itemsNumber || totalCount <= currentPage * itemsNumber) {
                 end.text(totalCount);
@@ -108,7 +156,6 @@ require(['app'], function (app) {
                 end.text(currentPage * itemsNumber);
             }
             $("#grid-count").text(totalCount);
-
             $("#pageList").empty();
             var pageNumber = Math.ceil(totalCount / itemsNumber);
             //number page show (Vasya)
@@ -150,27 +197,107 @@ require(['app'], function (app) {
         }
     };
 
+    Backbone.View.prototype.pageElementRenderProject = function (totalCount, itemsNumber, currentPage, context) {
+        var itemsNumber = this.defaultItemsNumber;
+        var el = context.$el;
+
+        if (itemsNumber === 'all') {
+            itemsNumber = totalCount;
+        }
+
+        //     $("#itemsNumber").text(itemsNumber); // element deleted
+
+        var start = el.find("#grid-start");
+        var end = el.find("#grid-end");
+
+        if (totalCount == 0 || totalCount == undefined) {
+            start.text(0);
+            end.text(0);
+            el.find("#grid-count").text(0);
+            el.find("#previousPage").prop("disabled", true);
+            el.find("#nextPage").prop("disabled", true);
+            el.find("#firstShowPage").prop("disabled", true);
+            el.find("#lastShowPage").prop("disabled", true);
+            el.find("#pageList").empty();
+            el.find("#currentShowPage").val(0);
+            el.find("#lastPage").text(0);
+        } else {
+            currentPage = currentPage || 1;
+
+            start.text(currentPage * itemsNumber - itemsNumber + 1);
+            if (totalCount <= itemsNumber || totalCount <= currentPage * itemsNumber) {
+                end.text(totalCount);
+            } else {
+                end.text(currentPage * itemsNumber);
+            }
+            el.find("#grid-count").text(totalCount);
+            el.find("#pageList").empty();
+            var pageNumber = Math.ceil(totalCount / itemsNumber);
+            //number page show (Vasya)
+            var itemsOnPage = 7;
+            if (pageNumber <= itemsOnPage) {
+                for (var i = 1; i <= pageNumber; i++) {
+                    el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+                }
+            }
+            else if (pageNumber >= itemsOnPage && currentPage <= itemsOnPage) {
+                for (var i = 1; i <= itemsOnPage; i++) {
+                    el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+                }
+            }
+
+            else if (pageNumber >= itemsOnPage && currentPage > 3 && currentPage <= pageNumber - 3) {
+                for (var i = currentPage - 3; i <= currentPage + 3; i++) {
+                    el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+                }
+            }
+
+            else if (currentPage >= pageNumber - 3) {
+                for (var i = pageNumber - 6; i <= pageNumber; i++) {
+                    el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+                }
+            }
+            //end number page show
+            el.find("#lastPage").text(pageNumber);
+            el.find("#currentShowPage").val(currentPage);
+            el.find("#previousPage").prop("disabled", parseInt(start.text()) <= parseInt(currentPage));
+            el.find("#firstShowPage").prop("disabled", parseInt(start.text()) <= parseInt(currentPage));
+            if (pageNumber <= 1) {
+                el.find("#nextPage").prop("disabled", true);
+                el.find("#lastShowPage").prop("disabled", true);
+            } else {
+                el.find("#nextPage").prop("disabled", parseInt(end.text()) === parseInt(totalCount));
+                el.find("#lastShowPage").prop("disabled", parseInt(end.text()) === parseInt(totalCount));
+            }
+        }
+    };
+
     Backbone.View.prototype.changeLocationHash = function (page, count, filter) {
         var location = window.location.hash;
+
         var mainLocation = '#easyErp/' + this.contentType + '/' + this.viewType;
         var pId = (location.split('/pId=')[1]) ? location.split('/pId=')[1].split('/')[0] : '';
         if (!page && this.viewType == 'list') {
             page = (location.split('/p=')[1]) ? location.split('/p=')[1].split('/')[0] : 1;
         }
 
-        if (!count) {
+        if (!count && page) {
             var thumbnails = location.split('thumbnails')[0];
-            count = (location.split('/c=')[1]) ? location.split('/c=')[1].split('/')[0] : 50;
-            if (thumbnails && count < 50)
-                count = 50;
+            count = (location.split('/c=')[1]) ? location.split('/c=')[1].split('/')[0] : 100;
+            if (thumbnails && count < 100) {
+                count = 100;
+            }
         }
         var url = mainLocation;
-        if (pId)
+        if (pId) {
             url += '/pId=' + pId;
-        if (page)
+        }
+        if (page) {
             url += '/p=' + page;
-        if (count)
+        }
+        if (count) {
             url += '/c=' + count;
+        }
         if (!filter) {
             var locatioFilter = location.split('/filter=')[1];
             filter = (locatioFilter) ? JSON.parse(decodeURIComponent(locatioFilter)) : null;
@@ -184,15 +311,85 @@ require(['app'], function (app) {
             }
             if (notEmptyFilter) {
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
-            } else url += '/filter=empty';
+            } else {
+                url += '';
+            }
         }
 
-        Backbone.history.navigate(url);
+        Backbone.history.navigate(url, {replace: true});
+
     };
 
-    Backbone.View.prototype.prevP = function (dataObject) {
+    Backbone.View.prototype.prevPProject = function (dataObject, disableChangeHash, context) {
+        var el = context.$el;
+
         this.startTime = new Date();
-        var itemsNumber = $("#itemsNumber").text();
+        var itemsNumber = context.defaultItemsNumber;
+        var currentShowPage = el.find("#currentShowPage");
+        var page = parseInt(currentShowPage.val()) - 1;
+        this.startTime = new Date();
+
+        currentShowPage.val(page);
+        if (page === 1) {
+            el.find("#previousPage").prop("disabled", true);
+            el.find("#firstShowPage").prop("disabled", true);
+        }
+
+        var pageNumber = el.find("#lastPage").text();
+        var itemsOnPage = 7;
+        el.find("#pageList").empty();
+        //number page show (Vasya)
+        if (pageNumber <= itemsOnPage) {
+            for (var i = 1; i <= pageNumber; i++) {
+                el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+            }
+        }
+        else if (pageNumber >= itemsOnPage && page <= itemsOnPage) {
+            for (var i = 1; i <= itemsOnPage; i++) {
+                el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+            }
+        }
+        else if (pageNumber >= itemsOnPage && page > 3 && page <= pageNumber - 3) {
+            for (var i = page - 3; i <= page + 3; i++) {
+                el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+            }
+        }
+        else if (page >= page - 3) {
+            for (var i = pageNumber - 6; i <= pageNumber; i++) {
+                el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+            }
+        }
+        //end number page show (Vasya)
+        el.find("#grid-start").text((page - 1) * itemsNumber + 1);
+        if (this.listLength <= page * itemsNumber) {
+            el.find("#grid-end").text(this.listLength);
+        } else {
+            el.find("#grid-end").text(page * itemsNumber);
+        }
+        el.find("#nextPage").prop("disabled", false);
+        el.find("#lastShowPage").prop("disabled", false);
+        var serchObject = {
+            count : itemsNumber,
+            page  : page,
+            letter: this.selectedLetter
+        };
+        if (dataObject) {
+            _.extend(serchObject, dataObject);
+        }
+
+        if (!disableChangeHash) {
+            this.changeLocationHash(page, itemsNumber);
+        }
+
+        context.collection.bind('reset', context.renderContent, context);
+        context.collection.bind('showmore', context.showMoreContent, context);
+
+        context.collection.showMore(serchObject);
+    };
+
+    Backbone.View.prototype.prevP = function (dataObject, disableChangeHash) {
+        this.startTime = new Date();
+        var itemsNumber = this.defaultItemsNumber;
         var currentShowPage = $("#currentShowPage");
         var page = parseInt(currentShowPage.val()) - 1;
         this.startTime = new Date();
@@ -237,18 +434,24 @@ require(['app'], function (app) {
         $("#nextPage").prop("disabled", false);
         $("#lastShowPage").prop("disabled", false);
         var serchObject = {
-            count: itemsNumber,
-            page: page,
+            count : itemsNumber,
+            page  : page,
             letter: this.selectedLetter
         };
-        if (dataObject) _.extend(serchObject, dataObject);
+        if (dataObject) {
+            _.extend(serchObject, dataObject);
+        }
+
+        if (!disableChangeHash) {
+            this.changeLocationHash(page, itemsNumber);
+        }
+
         this.collection.showMore(serchObject);
-        this.changeLocationHash(page, itemsNumber);
     };
 
-    Backbone.View.prototype.nextP = function (dataObject) {
+    Backbone.View.prototype.nextP = function (dataObject, disableChangeHash) {
         this.startTime = new Date();
-        var itemsNumber = $("#itemsNumber").text();
+        var itemsNumber = this.defaultItemsNumber;
         var page = parseInt($("#currentShowPage").val()) + 1;
 
         this.startTime = new Date();
@@ -280,6 +483,7 @@ require(['app'], function (app) {
         //end number page show (Vasya)
         $("#currentShowPage").val(page);
         $("#grid-start").text((page - 1) * itemsNumber + 1);
+
         if (this.listLength <= page * itemsNumber) {
             $("#grid-end").text(this.listLength);
             $("#nextPage").prop("disabled", true);
@@ -287,21 +491,99 @@ require(['app'], function (app) {
         } else {
             $("#grid-end").text(page * itemsNumber);
         }
+
         $("#previousPage").prop("disabled", false);
         $("#firstShowPage").prop("disabled", false);
+
         var serchObject = {
-            count: itemsNumber,
-            page: page,
+            count : itemsNumber,
+            page  : page,
             letter: this.selectedLetter
         };
-        if (dataObject) _.extend(serchObject, dataObject);
+
+        if (dataObject) {
+            _.extend(serchObject, dataObject);
+        }
+
+        if (!disableChangeHash) {
+            this.changeLocationHash(page, itemsNumber);
+        }
+
         this.collection.showMore(serchObject);
-        this.changeLocationHash(page, itemsNumber);
     };
-    //first page pagination (Vasya)
-    Backbone.View.prototype.firstP = function (dataObject) {
+
+    Backbone.View.prototype.nextPProject = function (dataObject, disableChangeHash, context) {
+        var el = context.$el;
+
         this.startTime = new Date();
-        var itemsNumber = $("#itemsNumber").text();
+        var itemsNumber = context.defaultItemsNumber;
+        var page = parseInt(el.find("#currentShowPage").val()) + 1;
+
+        context.startTime = new Date();
+        var pageNumber = el.find("#lastPage").text();
+        var itemsOnPage = 7;
+        //number page show (Vasya)
+        el.find("#pageList").empty();
+        if (pageNumber <= itemsOnPage) {
+            for (var i = 1; i <= pageNumber; i++) {
+                el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+            }
+        }
+        else if (pageNumber >= itemsOnPage && page > 3 && page < pageNumber - 3) {
+            for (var i = page - 3; i <= page + 3; i++) {
+                el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+            }
+        }
+        else if (pageNumber >= itemsOnPage && page <= itemsOnPage) {
+            for (var i = 1; i <= itemsOnPage; i++) {
+                el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+            }
+        }
+
+        else if (page >= pageNumber - 3) {
+            for (var i = pageNumber - 6; i <= pageNumber; i++) {
+                el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+            }
+        }
+        //end number page show (Vasya)
+        el.find("#currentShowPage").val(page);
+        el.find("#grid-start").text((page - 1) * itemsNumber + 1);
+
+        if (context.listLength <= page * itemsNumber) {
+            el.find("#grid-end").text(context.listLength);
+            el.find("#nextPage").prop("disabled", true);
+            el.find("#lastShowPage").prop("disabled", true);
+        } else {
+            el.find("#grid-end").text(page * itemsNumber);
+        }
+
+        el.find("#previousPage").prop("disabled", false);
+        el.find("#firstShowPage").prop("disabled", false);
+
+        var serchObject = {
+            count : itemsNumber,
+            page  : page,
+            letter: this.selectedLetter
+        };
+
+        if (dataObject) {
+            _.extend(serchObject, dataObject);
+        }
+
+        if (!disableChangeHash) {
+            this.changeLocationHash(page, itemsNumber);
+        }
+
+        context.collection.unbind();
+        context.collection.bind('reset', context.renderContent, context);
+        context.collection.bind('showmore', context.showMoreContent, context);
+
+        context.collection.showMore(serchObject);
+    };
+
+    Backbone.View.prototype.firstP = function (dataObject, disableChangeHash) {
+        this.startTime = new Date();
+        var itemsNumber = this.defaultItemsNumber;
         var currentShowPage = $("#currentShowPage");
         var page = 1;
 
@@ -333,18 +615,78 @@ require(['app'], function (app) {
         $("#nextPage").prop("disabled", false);
         $("#lastShowPage").prop("disabled", false);
         var serchObject = {
-            count: itemsNumber,
-            page: page,
+            count : itemsNumber,
+            page  : page,
             letter: this.selectedLetter
         };
-        if (dataObject) _.extend(serchObject, dataObject);
+        if (dataObject) {
+            _.extend(serchObject, dataObject);
+        }
+
+        if (!disableChangeHash) {
+            this.changeLocationHash(page, itemsNumber);
+        }
+
         this.collection.showMore(serchObject);
-        this.changeLocationHash(page, itemsNumber);
     };
-    //last page pagination (Vasya)
-    Backbone.View.prototype.lastP = function (dataObject) {
+
+    Backbone.View.prototype.firstPProject = function (dataObject, disableChangeHash, context) {
+        var el = context.$el;
+
         this.startTime = new Date();
-        var itemsNumber = $("#itemsNumber").text();
+        var itemsNumber = context.defaultItemsNumber;
+        var currentShowPage = el.find("#currentShowPage");
+        var page = 1;
+
+        this.startTime = new Date();
+
+        currentShowPage.val(page);
+        var lastPage = el.find("#lastPage").text();
+        if (page === 1) {
+            el.find("#firstShowPage").prop("disabled", true);
+        }
+        //number page show
+        $("#pageList").empty();
+        if (lastPage >= 7) {
+            for (var i = 1; i <= 7; i++) {
+                el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+            }
+        } else {
+            for (var i = 1; i <= lastPage; i++) {
+                el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+            }
+        }
+        el.find("#grid-start").text((page - 1) * itemsNumber + 1);
+        if (this.listLength <= page * itemsNumber) {
+            el.find("#grid-end").text(this.listLength);
+        } else {
+            el.find("#grid-end").text(page * itemsNumber);
+        }
+        el.find("#previousPage").prop("disabled", true);
+        el.find("#nextPage").prop("disabled", false);
+        el.find("#lastShowPage").prop("disabled", false);
+        var serchObject = {
+            count : itemsNumber,
+            page  : page,
+            letter: this.selectedLetter
+        };
+        if (dataObject) {
+            _.extend(serchObject, dataObject);
+        }
+
+        if (!disableChangeHash) {
+            this.changeLocationHash(page, itemsNumber);
+        }
+
+        context.collection.bind('reset', context.renderContent, context);
+        context.collection.bind('showmore', context.showMoreContent, context);
+
+        context.collection.showMore(serchObject);
+    };
+
+    Backbone.View.prototype.lastP = function (dataObject, disableChangeHash) {
+        this.startTime = new Date();
+        var itemsNumber = this.defaultItemsNumber;
         var page = $("#lastPage").text();
         $("#firstShowPage").prop("disabled", true);
         this.startTime = new Date();
@@ -374,28 +716,187 @@ require(['app'], function (app) {
         $("#previousPage").prop("disabled", false);
         $("#firstShowPage").prop("disabled", false);
         var serchObject = {
-            count: itemsNumber,
-            page: page,
+            count : itemsNumber,
+            page  : page,
             letter: this.selectedLetter
         };
-        if (dataObject) _.extend(serchObject, dataObject);
+        if (dataObject) {
+            _.extend(serchObject, dataObject);
+        }
+
+        if (!disableChangeHash) {
+            this.changeLocationHash(page, itemsNumber);
+        }
+
         this.collection.showMore(serchObject);
-        this.changeLocationHash(page, itemsNumber);
     };
 
-    Backbone.View.prototype.showP = function (event, dataObject) {
+    Backbone.View.prototype.lastPProject = function (dataObject, disableChangeHash, context) {
+        var el = context.$el;
+
+        this.startTime = new Date();
+        var itemsNumber = context.defaultItemsNumber;
+        var page = el.find("#lastPage").text();
+        el.find("#firstShowPage").prop("disabled", true);
+        this.startTime = new Date();
+        el.find("#pageList").empty();
+        //number page show
+        if (page >= 7) {
+            for (var i = page - 6; i <= page; i++) {
+                el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+            }
+        }
+        else {
+            for (var i = 1; i <= page; i++) {
+                el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+            }
+        }
+        //end number page show (Vasya)
+        el.find("#currentShowPage").val(page);
+        el.find("#grid-start").text((page - 1) * itemsNumber + 1);
+        if (this.listLength <= page * itemsNumber) {
+            el.find("#grid-end").text(this.listLength);
+            el.find("#nextPage").prop("disabled", true);
+        } else {
+            el.find("#grid-end").text(page * itemsNumber);
+        }
+        el.find("#nextPage").prop("disabled", true);
+        el.find("#lastShowPage").prop("disabled", true);
+        el.find("#previousPage").prop("disabled", false);
+        el.find("#firstShowPage").prop("disabled", false);
+        var serchObject = {
+            count : itemsNumber,
+            page  : page,
+            letter: this.selectedLetter
+        };
+        if (dataObject) {
+            _.extend(serchObject, dataObject);
+        }
+
+        if (!disableChangeHash) {
+            this.changeLocationHash(page, itemsNumber);
+        }
+
+        context.collection.bind('reset', context.renderContent, context);
+        context.collection.bind('showmore', context.showMoreContent, context);
+
+        context.collection.showMore(serchObject);
+    };
+
+    Backbone.View.prototype.showPProject = function (event, dataObject, disableChangeHash, context) {
+        var el = context.$el;
+
+        this.startTime = new Date();
+        if (context.listLength == 0) {
+            el.find("#currentShowPage").val(0);
+        } else {
+            var itemsNumber = context.defaultItemsNumber;
+            var page = parseInt(event.target.textContent);
+            if (!page) {
+                page = el.find(event.target).val();
+            }
+            var adr = /^\d+$/;
+            var lastPage = parseInt(el.find('#lastPage').text());
+
+            if (!adr.test(page) || (parseInt(page) <= 0) || (parseInt(page) > parseInt(lastPage))) {
+                page = 1;
+            }
+            //number page show (Vasya)
+            var itemsOnPage = 7;
+            el.find("#pageList").empty();
+            if (parseInt(lastPage) <= itemsOnPage) {
+                for (var i = 1; i <= parseInt(lastPage); i++) {
+                    el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+                }
+            }
+            else if (page >= 5 && page <= itemsOnPage) {
+                for (var i = parseInt(page) - 3; i <= parseInt(page) + 3; i++) {
+                    el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+                }
+            }
+            else if (lastPage >= itemsOnPage && page <= itemsOnPage) {
+                for (var i = 1; i <= itemsOnPage; i++) {
+                    el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+                }
+            }
+            else if (lastPage >= itemsOnPage && page > 3 && page <= parseInt(lastPage) - 3) {
+                for (var i = parseInt(page) - 3; i <= parseInt(page) + 3; i++) {
+                    el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+                }
+            }
+
+            else if (page >= parseInt(lastPage) - 3) {
+                for (var i = lastPage - 6; i <= parseInt(lastPage); i++) {
+                    el.find("#pageList").append('<li class="showPage">' + i + '</li>');
+                }
+            }
+            //number page show
+            el.find("#currentShowPage").val(page);
+            el.find("#grid-start").text((page - 1) * itemsNumber + 1);
+            if (this.listLength <= page * itemsNumber) {
+                el.find("#grid-end").text(this.listLength);
+            } else {
+                el.find("#grid-end").text(page * itemsNumber);
+            }
+            if (page <= 1) {
+                el.find("#previousPage").prop("disabled", true);
+                el.find("#nextPage").prop("disabled", false);
+                el.find("#firstShowPage").prop("disabled", true);
+                el.find("#lastShowPage").prop("disabled", false);
+            }
+            if (page >= lastPage) {
+                el.find("#nextPage").prop("disabled", true);
+                el.find("#previousPage").prop("disabled", false);
+                el.find("#lastShowPage").prop("disabled", true);
+                el.find("#firstShowPage").prop("disabled", false);
+            }
+            if ((1 < page) && (page < lastPage)) {
+                el.find("#nextPage").prop("disabled", false);
+                el.find("#previousPage").prop("disabled", false);
+                el.find("#lastShowPage").prop("disabled", false);
+                el.find("#firstShowPage").prop("disabled", false);
+            }
+            if ((page == lastPage) && (lastPage == 1)) {
+                el.find("#previousPage").prop("disabled", true);
+                el.find("#nextPage").prop("disabled", true);
+                el.find("#firstShowPage").prop("disabled", true);
+                el.find("#lastShowPage").prop("disabled", true);
+            }
+            var serchObject = {
+                count : itemsNumber,
+                page  : page,
+                letter: this.selectedLetter
+            };
+            if (dataObject) {
+                _.extend(serchObject, dataObject);
+            }
+
+            if (!disableChangeHash) {
+                this.collection.unbind();
+                this.changeLocationHash(page, itemsNumber);
+            }
+
+            context.collection.bind('reset', context.renderContent, context);
+            context.collection.bind('showmore', context.showMoreContent, context);
+
+            context.collection.showMore(serchObject);
+
+        }
+    };
+
+    Backbone.View.prototype.showP = function (event, dataObject, disableChangeHash) {
         this.startTime = new Date();
         if (this.listLength == 0) {
             $("#currentShowPage").val(0);
         } else {
-            var itemsNumber = $("#itemsNumber").text();
+            var itemsNumber = this.defaultItemsNumber;
             var page = parseInt(event.target.textContent);
             if (!page) {
                 page = $(event.target).val();
             }
             var adr = /^\d+$/;
             var lastPage = parseInt($('#lastPage').text());
-            var itemsNumber = $("#itemsNumber").text();
+
             if (!adr.test(page) || (parseInt(page) <= 0) || (parseInt(page) > parseInt(lastPage))) {
                 page = 1;
             }
@@ -403,7 +904,7 @@ require(['app'], function (app) {
             var itemsOnPage = 7;
             $("#pageList").empty();
             if (parseInt(lastPage) <= itemsOnPage) {
-                for (var i = 1; i <= parseInt(lastPage) ; i++) {
+                for (var i = 1; i <= parseInt(lastPage); i++) {
                     $("#pageList").append('<li class="showPage">' + i + '</li>');
                 }
             }
@@ -424,7 +925,7 @@ require(['app'], function (app) {
             }
 
             else if (page >= parseInt(lastPage) - 3) {
-                for (var i = lastPage - 6; i <= parseInt(lastPage) ; i++) {
+                for (var i = lastPage - 6; i <= parseInt(lastPage); i++) {
                     $("#pageList").append('<li class="showPage">' + i + '</li>');
                 }
             }
@@ -461,21 +962,35 @@ require(['app'], function (app) {
                 $("#lastShowPage").prop("disabled", true);
             }
             var serchObject = {
-                count: itemsNumber,
-                page: page,
+                count : itemsNumber,
+                page  : page,
                 letter: this.selectedLetter
             };
-            if (dataObject) _.extend(serchObject, dataObject);
+            if (dataObject) {
+                _.extend(serchObject, dataObject);
+            }
+
+            if (!disableChangeHash) {
+                //this.collection.unbind();
+                this.changeLocationHash(page, itemsNumber);
+            }
+
             this.collection.showMore(serchObject);
-            this.changeLocationHash(page, itemsNumber);
+
         }
     };
 
     Backbone.View.prototype.deleteRender = function (deleteCounter, deletePage, dataObject) {
         this.startTime = new Date();
-        $("#top-bar-deleteBtn").hide();
-        var itemsNumber = parseInt($("#itemsNumber").text());
+        var itemsNumber = this.defaultItemsNumber;
         var pageNumber;
+
+        $("#top-bar-deleteBtn").hide();
+
+        if (itemsNumber === 'all') {
+            throw('not implemented');
+        }
+
         if (deleteCounter === this.collectionLength) {
             pageNumber = Math.ceil(this.listLength / itemsNumber);
             if (deletePage > 1) {
@@ -544,35 +1059,38 @@ require(['app'], function (app) {
                 }
                 var serchObject = {
                     count: itemsNumber,
-                    page: deletePage
+                    page : deletePage
                 };
-                if (dataObject) _.extend(serchObject, dataObject);
+                if (dataObject) {
+                    _.extend(serchObject, dataObject);
+                }
                 this.collection.showMore(serchObject);
                 this.changeLocationHash(deletePage, itemsNumber);
             }
             $('#check_all').prop('checked', false);
         } else {
             var newFetchModels = new this.contentCollection({
-                viewType: 'list',
-                sort: this.sort,
-                page: deletePage,
-                count: this.defaultItemsNumber,
-                filter: this.filter,
+                viewType        : 'list',
+                sort            : this.sort,
+                page            : deletePage,
+                count           : this.defaultItemsNumber,
+                filter          : this.filter,
                 parrentContentId: this.parrentContentId,
-                contentType: this.contentType,
-                newCollection: this.newCollection
+                contentType     : this.contentType,
+                newCollection   : this.newCollection
             });
             var that = this;
             newFetchModels.bind('reset', function () {
-                that.collection.add(newFetchModels.models, { merge: true });
+                that.collection.add(newFetchModels.models, {merge: true});
                 that.showMoreContent(that.collection);//added two parameters page and items number
             });
-            
+
             $("#grid-start").text((deletePage - 1) * itemsNumber + 1);
-            if (itemsNumber === this.collectionLength && (deletePage * this.collectionLength <= this.listLength))
+            if (itemsNumber === this.collectionLength && (deletePage * this.collectionLength <= this.listLength)) {
                 $("#grid-end").text(deletePage * itemsNumber);
-            else
+            } else {
                 $("#grid-end").text((deletePage - 1) * itemsNumber + this.collectionLength - deleteCounter);
+            }
             $("#grid-count").text(this.listLength);
             $("#currentShowPage").val(deletePage);
 
@@ -631,10 +1149,39 @@ require(['app'], function (app) {
                 $("#firstShowPage").prop("disabled", true);
                 $("#lastShowPage").prop("disabled", true);
             }
-            
+
             //$('#timeRecivingDataFromServer').remove();
             //this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
         }
+    };
+
+    Date.prototype.getWeek = function () {
+        // Create a copy of this date object
+        var target = new Date(this.valueOf());
+
+        // ISO week date weeks start on monday
+        // so correct the day number
+        var dayNr = (this.getDay() + 6) % 7;
+
+        // ISO 8601 states that week 1 is the week
+        // with the first thursday of that year.
+        // Set the target date to the thursday in the target week
+        target.setDate(target.getDate() - dayNr + 3);
+
+        // Store the millisecond value of the target date
+        var firstThursday = target.valueOf();
+
+        // Set the target to the first thursday of the year
+        // First set the target to january first
+        target.setMonth(0, 1);
+        // Not a thursday? Correct the date to the next thursday
+        if (target.getDay() != 4) {
+            target.setMonth(0, 1 + ((4 - target.getDay()) + 7) % 7);
+        }
+
+        // The weeknumber is the number of weeks between the
+        // first thursday of the year and the thursday in the target week
+        return 1 + Math.ceil((firstThursday - target) / 604800000); // 604800000 = 7 * 24 * 3600 * 1000
     };
 
     app.initialize();

@@ -18,6 +18,7 @@
             console.log(years);
             return (years < 0) ? 0 : years;
         };
+
         var separateWeklyAndMonthly = function (arrayOfEmployees) {
             var dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
             var dayNumber = dateOnly.getDay();
@@ -153,11 +154,12 @@
                     console.log(err);
                 } else {
                     var query = models.get(req.session.lastDb, "Employees", employeeSchema).find();
-                    query.where('_id').in(res).
-	                    select('_id name dateBirth age jobPosition workPhones.mobile department').
-	                	populate('jobPosition', 'name').
-						populate('department', 'departmentName').
-                        exec(function (error, ress) {
+                    query.where('_id').in(res)
+                        .select('_id name dateBirth age jobPosition workPhones.mobile department')
+                        .populate('jobPosition', '_id name')
+                        .populate('department', ' _id departmentName')
+                        .lean()
+                        .exec(function (error, ress) {
                             if (error) {
                                 console.log(error);
                                 callback(req, separateWeklyAndMonthly([]), response);
@@ -179,13 +181,17 @@
         var res = {};
         var data = {};
         var now = new Date();
+
         data['date'] = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         data['currentEmployees'] = currentEmployees,
-        models.get(req.session.lastDb, "birthdays", birthdaysSchema).findByIdAndUpdate({ _id: 1 }, data, { upsert: true }, function (error, birth) {
+
+        models.get(req.session.lastDb, "birthdays", birthdaysSchema).findByIdAndUpdate({ _id: 1 }, data, {new: true, upsert: true }, function (error, birth) {
             if (error) {
                 logWriter.log('Employees.create Incorrect Incoming Data');
                 console.log(error);
-                if (response) response.send(400, { error: 'Employees.create Incorrect Incoming Data' });
+                if (response) {
+                    response.send(400, { error: 'Employees.create Incorrect Incoming Data' });
+                }
                 return;
             } else {
                 res['data'] = birth.currentEmployees;
@@ -199,6 +205,7 @@
 
         var res = {};
         res['data'] = [];
+
         check(req, function (status, emloyees) {
             switch (status) {
                 case -1:
@@ -224,13 +231,14 @@
     var check = function (req, calback) {
         var now = new Date();
         var dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
         models.get(req.session.lastDb, "birthdays", birthdaysSchema).find({}, function (err, birth) {
             if (err) {
                 logWriter.log('Find Birthdays Error');
                 console.log(err);
                 calback(-1);
             } else {
-                if (birth.length == 0) {
+                if (birth.length === 0) {
                     calback(0);
                 } else {
                     if (birth[0].date < dateOnly) {

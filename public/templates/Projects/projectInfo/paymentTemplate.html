@@ -1,0 +1,68 @@
+<div id="top-bar-payments">
+    <div id="createBtnHolder">
+        <a href="javascript;" class="fa fa-times" title="Remove" id="removePayment"></a>
+        <a href="javascript;" class="fa fa-check" title="Save" id="savePayment"></a>
+    </div>
+</div>
+<div id="paymentsTable">
+    <table class="list payment-list">
+
+        <thead>
+        <tr>
+            <th class="centerCell"><input type="checkbox" id="check_all_payments" class="check_all"/></th>
+            <th class="centerCell">N</th>
+            <th class="oe_sortable" data-sort="assigned.name.first">Assigned<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="supplier.name.first">Company<span class="arrow down">7</span><span
+                    class="arrow up">v</span>
+            </th>
+            <th class="oe_sortable" data-sort="invoice.name">Invoice<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+
+            <th class="oe_sortable" data-sort="paymentMethod.name">Bank account<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paidAmount">Paid<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <!--<th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span-->
+            <!--class="arrow up">v</span></th>-->
+            <th class="oe_sortable sortDn" data-sort="date">Payment Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+        </tr>
+        </thead>
+        <tbody id="listTable">
+        <%var total = 0;%>
+        <%var totalPaidAmount = 0;%>
+        <% paymentCollection.forEach(function(payment, index) {%>
+        <tr data-id="<%=payment._id%>">
+            <td class="notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox <%=payment.removable ? '' : 'notRemovable'%>"/></td>
+            <td class="centerCell"><%=startNumber + index + 1%></td>
+            <td><%=(payment && payment.assigned) ? payment.assigned.name.first + ' ' + payment.assigned.name.last:
+                ''%>
+            </td>
+            <td><%=payment.supplier && payment.supplier.name ? payment.supplier.name.first + ' ' +
+                payment.supplier.name.last : ''%>
+            </td>
+            <td data-id="<%=payment.invoice._id%>"><%=payment.invoice ? payment.invoice.name : ''%></td>
+            <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
+            <td class="totalPaidAmount <%=currencyClass(payment.currency._id)%> <%= payment.paidAmount != payment.invoiced ? 'red' :''%>">
+                <%=currencySplitter(parseFloat(payment.paidAmount).toFixed(2))%>
+            </td>
+            <!--<td data-content="workflow" class=""><a href="javascript:;" class="<%= payment.workflow === 'Paid' ? 'done' : 'new'%>"><%=payment.workflow%></a></td>-->
+            <td class="date" data-content="date">
+                <%=utcDateToLocaleDate(payment.date)%>
+            </td>
+            <%totalPaidAmount += parseFloat(payment.paidAmount)/payment.currency.rate %>
+        </tr>
+        <%})%>
+        <% if (paymentCollection.length) {%>
+        <tfoot id="listTotal">
+        <tr>
+            <td colspan="6"></td>
+            <td><span id="totalPaidAmount" class="dollar"><%=currencySplitter(totalPaidAmount.toFixed(2))%></span></td>
+            <td></td>
+        </tr>
+        </tfoot>
+        <%}%>
+        </tbody>
+    </table>
+</div>

@@ -9,8 +9,9 @@ define([
         initialize: function (options) {
             this.url = options.url;
             this.isCreate = options.isCreate;
+            this.elementId = options.elementId;
         },
-        events: {
+        events    : {
             "change .inputAttach": "addAttach",
             "click .deleteAttach": "deleteAttach"
         },
@@ -19,7 +20,6 @@ define([
 
         addAttach: function (event) {
             if (this.isCreate) {
-
                 var s = this.$el.find(".inputAttach:last").val().split("\\")[this.$el.find(".inputAttach:last").val().split('\\').length - 1];
                 this.$el.find(".attachContainer").append('<li class="attachFile">' +
                     '<span class="blue">' + s + '</span>' +
@@ -31,6 +31,7 @@ define([
                 this.sendToServer(event, null, this);
             }
         },
+
         hideDialog: function () {
             $(".edit-dialog").remove();
             $(".add-group-dialog").remove();
@@ -39,37 +40,48 @@ define([
 
         sendToServer: function (event, model, self) {
             var currentModel = this.model;
-            var currentModelId = currentModel["id"];
-            var addFrmAttach = this.$el.find("#addAttachments");
-            if (!self)self = this;
-            var that = this;
+            var elementId = this.elementId || 'addAttachments';
+            var currentModelId = currentModel ? currentModel["id"] : null;
+            var addFrmAttach = this.$el.find("#" + elementId);
+            var fileArr = [];
+            var addInptAttach;
+
+            if (!self) {
+                self = this;
+            }
+
             if (this.isCreate) {
                 currentModel = model;
                 currentModelId = currentModel["id"];
-                var fileArr = [];
-                var addInptAttach = '';
+
                 this.$el.find("li .inputAttach").each(function () {
                     addInptAttach = $(this)[0].files[0];
                     fileArr.push(addInptAttach);
+
                     if (!self.fileSizeIsAcceptable(addInptAttach)) {
-                        alert('File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay);
-                        return;
+                        return App.render({
+                            type   : 'error',
+                            message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
+                        });
                     }
                 });
                 if (this.$el.find("li .inputAttach").length == 0) {
                     Backbone.history.fragment = '';
                     Backbone.history.navigate(window.location.hash, {trigger: true});
+
                     return;
                 }
                 addInptAttach = fileArr;
             } else {
-                event.preventDefault();
+                // event.preventDefault();
+                addInptAttach = addFrmAttach.find("#inputAttach")[0].files[0];
 
-                var addInptAttach = this.$el.find("#inputAttach")[0].files[0];
                 if (!this.fileSizeIsAcceptable(addInptAttach)) {
                     this.$el.find('#inputAttach').val('');
-                    alert('File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay);
-                    return;
+                    return App.render({
+                        type   : 'error',
+                        message: 'File you are trying to attach is too big. MaxFileSize: ' + App.File.MaxFileSizeDisplay
+                    });
                 }
             }
 
@@ -77,18 +89,25 @@ define([
                 $(".input-file-button").off("click");
                 var bar = self.$el.find('.bar');
                 var status = self.$el.find('.status');
+                var formURL;
 
-                var formURL = "http://" + window.location.host + ((self.url) ? that.url : "/uploadFiles");
+                if (self.import) {
+                    formURL = "http://" + window.location.host + "/importFile";
+                } else {
+                    formURL = "http://" + window.location.host + ((self.url) ? self.url : "/uploadFiles");
+                }
+
                 e.preventDefault();
                 addFrmAttach.ajaxSubmit({
-                    url: formURL,
-                    type: "POST",
+                    url        : formURL,
+                    type       : "POST",
                     processData: false,
                     contentType: false,
-                    data: [addInptAttach],
+                    data       : [addInptAttach],
 
                     beforeSend: function (xhr) {
                         xhr.setRequestHeader("id", currentModelId);
+                        xhr.setRequestHeader("modelname", self.contentType);
                         status.show();
                         var statusVal = '0%';
                         bar.width(statusVal);
@@ -107,7 +126,9 @@ define([
                             self.hideDialog();
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(window.location.hash, {trigger: true});
-
+                        } else if (self.import) {
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(window.location.hash, {trigger: true});
                         } else {
                             var attachments = currentModel.get('attachments');
                             attachments.length = 0;
@@ -132,8 +153,9 @@ define([
                     error: function (xhr) {
                         $('.attachContainer').empty();
                         $('.bar .status').empty();
-                        if (self)
+                        if (self) {
                             self.errorNotification(xhr);
+                        }
                     }
                 });
             });
@@ -169,7 +191,7 @@ define([
                             headers: {
                                 mid: 39
                             },
-                            patch: true,//Send only changed attr(add Roma)
+                            patch  : true,//Send only changed attr(add Roma)
                             success: function () {
                                 self.$el.find('.attachFile_' + id).remove();
                             }
@@ -180,11 +202,14 @@ define([
 
         render: function () {
             var attachments = null;
-            if (this.model.toJSON() && this.model.toJSON().attachments) {
+            if (this.model && this.model.toJSON() && this.model.toJSON().attachments) {
                 attachments = this.model.toJSON().attachments;
             }
 
-            this.$el.html(this.template({attachments: attachments}));
+            this.$el.html(this.template({
+                attachments: attachments,
+                elementId  : this.elementId || 'addAttachments'
+            }));
             return this;
         }
     });

@@ -1,3 +1,11 @@
+/gitflow
+/EasyErp-Desctop.njsproj
+/public/js/libs
+/.ntvs_analysis.dat.tmp
+/EasyErp.sln
+/EasyErp.njsproj
+/doc
+/Test Results - Unnamed.html
 # Created by .ignore support plugin (hsz.mobi)
 ### Node template
 # Logs
@@ -24,11 +32,21 @@ coverage
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
+/api
 # Dependency directory
 # https://www.npmjs.org/doc/misc/npm-faq.html#should-i-check-my-node_modules-folder-into-git
 node_modules
 
-
-
 .idea
 log.txt
+add_menus.js
+menu_Sales_\[quotation|order|Invoice|Product\].js
+public/js/libs/async
+public/js/libs/backbone.memento
+public/js/libs/moment
+EasyErp-Desktop.njsproj
+.ntvs_analysis.dat
+EasyErp-Desktop.sln
+.vs
+EasyErp-Desktop.iml
+helpers\redisClient.js

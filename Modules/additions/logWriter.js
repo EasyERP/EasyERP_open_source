@@ -1,4 +1,6 @@
-var logWriter = function (fs) {
+var logWriter = function () {
+    var fs = require('fs');
+
     function erfunc(destination, errorString) {
         var _dest = 'log.txt';
         var _error = errorString;
@@ -24,6 +26,7 @@ var logWriter = function (fs) {
     return {
         log: erfunc,
         fs: fs
-    }
+    };
 }
+
 module.exports = logWriter;

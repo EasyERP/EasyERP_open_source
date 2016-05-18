@@ -5,7 +5,7 @@ define(function () {
 
     var AccountsDdCollection = Backbone.Collection.extend({
         model: AccountModel,
-        url: function () {
+        url  : function () {
             var url = "/getPersonsForDd";
             return url;
         },
@@ -14,13 +14,13 @@ define(function () {
             var mid = 39;
 
             this.fetch({
-                data: $.param({
+                data   : $.param({
                     mid: mid
                 }),
-                type: 'GET',
-                reset: true,
+                type   : 'GET',
+                reset  : true,
                 success: this.fetchSuccess,
-                error: this.fetchError
+                error  : this.fetchError
             });
         },
 

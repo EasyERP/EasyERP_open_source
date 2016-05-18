@@ -1,0 +1,122 @@
+#forInfo {
+  overflow: hidden;
+  .forInfo-half-block {
+    &.left {
+      width: 65%;
+      margin-right: 1%;
+    }
+    &.right {
+      width: 34%;
+    }
+  }
+
+  .tableProjects {
+    width: 99%;
+    margin-bottom: 10px;
+
+    .forCaption {
+      color: @forCaption-text-color;
+      background-color: @forCaption-color;
+      line-height: 28px;
+      &:last-child {
+        padding: 0 10px 0 0;
+      }
+      &:first-child {
+        text-align: left;
+        padding: 0 0 0 10px;
+      }
+    }
+
+    .remove {
+      min-width: 10px;
+      border-left: 1px solid @border-color-main;
+      border-right-width: 0;
+      cursor: pointer;
+    }
+
+    .report {
+      min-width: 10px;
+      border-left: 1px solid @border-color-main;
+      border-right-width: 0;
+      cursor: pointer;
+    }
+    .expand {
+      border-left-width: 0;
+      text-align: center;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .procent {
+      //add procent
+      position: relative;
+      padding-right: 20px;
+      &::before {
+        content: '%';
+        display: block;
+        width: 5px;
+        height: 5px;
+        position: absolute;
+        right: 13px;
+      }
+    }
+
+    .subRow {
+      background: none;
+      &:hover {
+        background: none;
+      }
+
+      td {
+        &:first-child {
+          border-left: 1px solid transparent;
+        }
+        &:last-child {
+          border-right: 1px solid transparent;
+        }
+      }
+    }
+  }
+
+  .innerTableProject {
+    padding: 5px 0 5px 20px;
+    .innerTableProject-footer {
+      //disable footer border
+      td {
+        border-width: 0;
+      }
+    }
+  }
+
+  &.accounting {
+    .accounting-half-block {
+      width: 50%;
+    }
+    th {
+      .fa {
+        display: inline-block;
+        font-size:17px;
+        line-height: 23px;
+        height: 100%;
+        text-decoration: none;
+      }
+    }
+    td {
+
+      span{
+        display: inline-block;
+        width: 99%;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        line-height: 12px;
+      }
+      a {
+        &.fa {
+          margin-right: 10px;
+        }
+      }
+    }
+  }
+}
+

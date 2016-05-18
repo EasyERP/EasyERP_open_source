@@ -1,6 +1,6 @@
 define(function ($, _, Backbone) {
     var CustomerModel = Backbone.Model().extend({
-        url: function () {
+        url       : function () {
             if (this.get('isCompany')) {
                 return "/createAccount";
             } else {

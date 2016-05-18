@@ -1,16 +1,20 @@
 <div class="form-holder">
     <form class="form" data-id="<%=_id%>">
         <div class="half-block left">
-        	<div class="half-block left">
-	        	<p><label for="departmentName">Department Name</label></p>
-	        	<p><label for="parentDepartment">Parent Department</label></p>
-	        	<p><label for="departmentManager">Manager</label></p>
-	        </div>
-        	<div class="half-block left">
-	        	<p><%=departmentName%></p>
-		        <p><%= (parentDepartment) ? parentDepartment.departmentName : '' %></p>
-		        <p><%= (departmentManager) ? departmentManager.name.first + ' ' + departmentManager.name.last : ''%></p>
-			</div>
-     	</div>
+            <div class="half-block left">
+                <p><label for="departmentName">Department Name</label></p>
+
+                <p><label for="parentDepartment">Parent Department</label></p>
+
+                <p><label for="departmentManager">Manager</label></p>
+            </div>
+            <div class="half-block left">
+                <p><%=departmentName%></p>
+
+                <p><%= (parentDepartment) ? parentDepartment.departmentName : '' %></p>
+
+                <p><%= (departmentManager) ? departmentManager.name.first + ' ' + departmentManager.name.last : ''%></p>
+            </div>
+        </div>
     </form>
 </div>

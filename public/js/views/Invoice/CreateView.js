@@ -1,4 +1,5 @@
 define([
+        'Backbone',
         "text!templates/Invoice/CreateTemplate.html",
         "models/InvoiceModel",
         "common",
@@ -9,12 +10,12 @@ define([
         "dataService",
         'constants'
     ],
-    function (CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
+    function (Backbone, CreateTemplate, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHederInvoice, dataService, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Invoice",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function (options) {
                 _.bindAll(this, "saveItem", "render");
@@ -23,14 +24,14 @@ define([
                 this.render();
             },
 
-            events: {
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click .details": "showDetailsBox",
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+            events       : {
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .details"                                                  : "showDetailsBox",
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
             },
@@ -39,21 +40,21 @@ define([
                 return false;
 
             },
-            notHide: function () {
+            notHide      : function () {
                 return false;
             },
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
-            chooseOption: function (e) {
+            chooseOption : function (e) {
                 var holder = $(e.target).parents("dd").find(".current-selected");
                 holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-            nextSelect: function (e) {
+            nextSelect    : function (e) {
                 this.showNewSelect(e, false, true);
             },
-            prevSelect: function (e) {
+            prevSelect    : function (e) {
                 this.showNewSelect(e, true, false);
             },
             showDetailsBox: function (e) {
@@ -93,8 +94,9 @@ define([
             saveItem: function () {
                 var self = this;
                 var mid = 56;
+                var $currentEl = this.$el;
 
-                var selectedProducts = this.$el.find('.productItem');
+                var selectedProducts = $currentEl.find('.productItem');
                 var products = [];
                 var selectedLength = selectedProducts.length;
                 var targetEl;
@@ -105,20 +107,29 @@ define([
                 var amount;
                 var description;
 
-                var supplier = this.$("#supplier").data("id");
-                var salesPersonId = this.$("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
-                var paymentTermId = this.$("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
-                var invoiceDate = this.$("#invoice_date").val();
-                var dueDate = this.$("#due_date").val();
+                var forSales = (this.forSales) ? true : false;
 
-                var total = parseFloat(this.$("#totalAmount").text());
-                var unTaxed = parseFloat(this.$("#totalUntaxes").text());
-                var balance = parseFloat(this.$("#balance").text());
+                var supplier = $currentEl.find("#supplier").data("id");
+                var supplierName = $currentEl.find("#supplier").text();
+                var salesPersonId = $currentEl.find("#salesPerson").data("id") ? this.$("#salesPerson").data("id") : null;
+                var salesPersonName = $currentEl.find("#salesPerson").text() ? this.$("#salesPerson").text() : null;
+                var paymentTermId = $currentEl.find("#payment_terms").data("id") ? this.$("#payment_terms").data("id") : null;
+                var invoiceDate = $currentEl.find("#invoice_date").val();
+                var dueDate = $currentEl.find("#due_date").val();
+
+                var total = parseFloat($currentEl.find("#totalAmount").text());
+                var unTaxed = parseFloat($currentEl.find("#totalUntaxes").text());
+                var balance = parseFloat($currentEl.find("#balance").text());
 
                 var payments = {
-                    total: total,
+                    total  : total,
                     unTaxed: unTaxed,
                     balance: balance
+                };
+
+                var currency = {
+                    _id : $currentEl.find('#currencyDd').attr('data-id'),
+                    name: $.trim($currentEl.find('#currencyDd').text())
                 };
 
                 if (selectedLength) {
@@ -133,12 +144,12 @@ define([
                             amount = targetEl.find('.amount').text();
 
                             products.push({
-                                product: productId,
+                                product    : productId,
                                 description: description,
-                                unitPrice: price,
-                                quantity: quantity,
-                                taxes: taxes,
-                                subTotal: amount
+                                unitPrice  : price,
+                                quantity   : quantity,
+                                taxes      : taxes,
+                                subTotal   : amount
                             });
                         }
                     }
@@ -158,24 +169,26 @@ define([
 
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
+                    forSales: forSales,
 
-                    supplier: supplier,
-                    fiscalPosition: null,
-                    sourceDocument: $.trim($('#source_document').val()),
+                    supplier             : supplier,
+                    fiscalPosition       : null,
+                    sourceDocument       : null,//$.trim($('#source_document').val()),
                     supplierInvoiceNumber: $.trim($('#supplier_invoice_num').val()),
-                    paymentReference: $.trim($('#payment_reference').val()),
-                    invoiceDate: invoiceDate,
-                    dueDate: dueDate,
-                    account: null,
-                    journal: null,
+                    paymentReference     : $.trim($('#payment_reference').val()),
+                    invoiceDate          : invoiceDate,
+                    dueDate              : dueDate,
+                    account              : null,
+                    journal              : null,
 
-                    salesPerson: salesPersonId,
+                    salesPerson : salesPersonId,
                     paymentTerms: paymentTermId,
 
-                    products: products,
+                    products   : products,
                     paymentInfo: payments,
+                    currency   : currency,
 
-                    groups: {
+                    groups  : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
@@ -191,18 +204,23 @@ define([
                         headers: {
                             mid: mid
                         },
-                        wait: true,
-                        success: function () {
+                        wait   : true,
+                        success: function (res) {
+                            var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+
                             self.hideDialog();
-                            Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    App.render({
+                        type   : 'error',
+                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    });
                 }
 
             },
@@ -218,26 +236,28 @@ define([
                 var formString = this.template();
                 var self = this;
                 var invoiceItemContainer;
+                var paymentContainer;
+                var notDiv;
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Create Invoice",
-                    width: "900px",
-                    position: {within: $("#wrapper")},
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Create Invoice",
+                    width        : "900px",
+                    position     : {within: $("#wrapper")},
+                    buttons      : [
                         {
-                            id: "create-invoice-dialog",
-                            text: "Create",
+                            id   : "create-invoice-dialog",
+                            text : "Create",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
@@ -245,7 +265,7 @@ define([
 
                 });
 
-                var notDiv = this.$el.find('.assignees-container');
+                notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
                         model: this.currentModel
@@ -254,36 +274,36 @@ define([
 
                 invoiceItemContainer = this.$el.find('#invoiceItemsHolder');
                 invoiceItemContainer.append(
-                    new InvoiceItemView({balanceVisible: true}).render().el
+                    new InvoiceItemView({balanceVisible: true, canBeSold: this.forSales}).render().el
                 );
 
-                var paymentContainer = this.$el.find('#payments-container');
+                paymentContainer = this.$el.find('#payments-container');
                 paymentContainer.append(
                     new listHederInvoice().render().el
                 );
 
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
 
                 populate.get2name("#supplier", "/supplier", {}, this, false, true);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
-                populate.fetchWorkflow({wId: 'Invoice'}, function (response) {
+                populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {
                     if (!response.error) {
                         self.defaultWorkflow = response._id;
                     }
                 });
 
                 this.$el.find('#invoice_date').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 }).datepicker('setDate', new Date());
 
                 this.$el.find('#due_date').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true,
                 });
-
 
                 this.delegateEvents(this.events);
 

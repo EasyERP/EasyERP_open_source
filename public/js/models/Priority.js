@@ -1,11 +1,11 @@
 ﻿define(function () {
     var taskPriority = Backbone.Model.extend({
         idAttribute: "_id",
-        defaults: {
-            _id: null,
+        defaults   : {
+            _id     : null,
             priority: ""
         },
-        urlRoot: function () {
+        urlRoot    : function () {
             return "/Priority";
         }
     });

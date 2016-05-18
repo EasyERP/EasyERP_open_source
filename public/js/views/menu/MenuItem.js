@@ -1,21 +1,21 @@
 define([
-    'text!templates/menu/MenuItemTemplate.html'
-],
-    function(MenuItemTemplate){
+        'text!templates/menu/MenuItemTemplate.html'
+    ],
+    function (MenuItemTemplate) {
 
         var MenuItem = Backbone.View.extend({
-            tagName: 'li',
+            tagName : 'li',
             template: _.template(MenuItemTemplate),
 
-            initialize: function(options){
+            initialize: function (options) {
                 //_.bindAll(this, 'render');
                 //this.model.bind('change', this.render);
             },
-            close: function(){
+            close     : function () {
                 this.unbind();
                 this.model.unbind();
             },
-            render: function() {
+            render    : function () {
                 var model = this.model.toJSON();
                 var template = this.template(model);
                 $(this.el).html(template);

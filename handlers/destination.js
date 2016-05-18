@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 13.05.2015.
- */
 var mongoose = require('mongoose');
 var Destination = function (models) {
     var access = require("../Modules/additions/access.js")(models);
@@ -11,7 +8,7 @@ var Destination = function (models) {
 
         Destination.find(function (err, destinations) {
             if (err) {
-               return next(err);
+                return next(err);
             }
             res.status(200).send({data: destinations})
         });

@@ -1,6 +1,6 @@
 define(function () {
     var MenuItems = Backbone.Collection.extend({
-        url: function () {
+        url       : function () {
             return "/getModules"
         },
         initialize: function () {
@@ -8,8 +8,8 @@ define(function () {
                 reset: true
             });
         },
-        parse: true,
-        parse: function (response) {
+        parse     : true,
+        parse     : function (response) {
             return response.data;
         }
     });

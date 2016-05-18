@@ -1,21 +1,28 @@
 <div class="form-holder">
-  <div class="formLeftColumn full-width">
-    <form class="form" data-id="<%=_id%>">
-      <div class="formTitle">
-        <h3 class="left"><%=name%></h3>
-		<div class="clearfix"></div>
-      </div>
-        <div class="inner">
-			<dl class="job-info">
-			  <dt>Current Number of Employees</dt><dd><%=numberOfEmployees%></dd>
-			  <dt>Expected in Recruitment</dt><dd><%=expectedRecruitment%></dd>
-			  <dt>Total Forecasted Employees</dt><dd><%=totalForecastedEmployees%></dd>
-			  <!--<dt>Interview Form</dt><dd>interviewForm</dd>-->
-			  <dt>Job Description</dt><dd><p><%=description%></p></dd>
-			  <dt>Requirements</dt><dd><p><%=requirements%></p></dd>
-			  <dt>Department</dt><dd><%= (department) ? department.departmentName : ''%></dd>
-			</dl>
+    <div class="formLeftColumn full-width">
+        <form class="form" data-id="<%=_id%>">
+            <div class="formTitle">
+                <h3 class="left"><%=name%></h3>
+
+                <div class="clearfix"></div>
             </div>
-    </form>
-  </div>
+            <div class="inner">
+                <dl class="job-info">
+                    <dt>Current Number of Employees</dt>
+                    <dd><%=numberOfEmployees%></dd>
+                    <dt>Expected in Recruitment</dt>
+                    <dd><%=expectedRecruitment%></dd>
+                    <dt>Total Forecasted Employees</dt>
+                    <dd><%=totalForecastedEmployees%></dd>
+                    <!--<dt>Interview Form</dt><dd>interviewForm</dd>-->
+                    <dt>Job Description</dt>
+                    <dd><p><%=description%></p></dd>
+                    <dt>Requirements</dt>
+                    <dd><p><%=requirements%></p></dd>
+                    <dt>Department</dt>
+                    <dd><%= (department) ? department.departmentName : ''%></dd>
+                </dl>
+            </div>
+        </form>
+    </div>
 </div>

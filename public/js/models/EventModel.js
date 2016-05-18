@@ -1,15 +1,15 @@
 define(function () {
     var EventModel = Backbone.Model.extend({
         idAttribute: "id",
-        initialize: function(){
+        initialize : function () {
         },
-        defaults: {
-            color: "",
-            assignedTo: "Nobody",
+        defaults   : {
+            color      : "",
+            assignedTo : "Nobody",
             description: '',
-            eventType: "call"
+            eventType  : "call"
         },
-        urlRoot: "/Events"
+        urlRoot    : "/Events"
     });
     return EventModel;
 });

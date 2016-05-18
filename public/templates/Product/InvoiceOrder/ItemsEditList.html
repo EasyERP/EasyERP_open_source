@@ -1,41 +1,52 @@
 <% products.forEach(function(product){ %>
 <tr class="productItem" data-id="<%=product.product._id%>">
-    <td data-name="productName">
+    <td></td>
+    <td data-name="productName" class="width20">
         <%if(editable) {%>
-        <a class="current-selected productsDd" href="javascript:;"><%=product.product.name%></a>
+        <a class="current-selected productsDd" href="javascript:; " data-id="<%= product ? product.product._id : null%>"><%=product.product.name%></a>
         <%} else {%>
         <a href="#easyErp/Product/form/<%=product.product._id%>"><%=product.product.name%></a>
         <%}%>
     </td>
-    <td data-name="productDescr">
-        <span>
-            <%=product.description%>
-        </span>
+    <% if (forSales) {%>
+    <td data-name="jobs" data-content="<%=product.jobs._id%>" class="text-overflow jobs">
+        <a class="<%=editable ? 'current-selected jobs' : ''%>" id="jobs" data-id="jobs" href="javascript:;"><%=product.jobs.name%></a>
     </td>
-    <td data-name="scheduledDate">
+    <% } else {%>
+    <td data-name="productDescr" class="<%=editable  ? 'editable' : ''%>">
+          <span>
+            <%=product.description%>
+          </span>
+    </td>
+    <% } %>
+    <!--<td data-name="scheduledDate" class="<%=editable && !forSales ? 'editable' : ''%>">
         <span class="datepicker">
             <%=product.scheduledDate%>
         </span>
-        <input type="text" class="datepicker notVisible">
-    </td>
-    <td data-name="quantity">
+        <input type="text" class="datepicker notVisible" readonly>
+    </td>--> <!--commented on 14 Mar, in quotationEdit commit -->
+    <td data-name="quantity" class="<%=editable && !forSales ? 'editable' : ''%>">
         <span>
-            <%=product.quantity%>
+            1
         </span>
     </td>
-    <td data-name="price">
+    <%var currencyClassVal;%>
+    <%currencyClassVal = currencyClass(currency._id._id)%>
+    <td data-name="price" class="<%=editable  ? 'editable' : ''%> forNum <%=currencyClassVal%>">
+        <% if(editable) { %>
+        <input id="editInput" class="statusInfo" maxlength="9" size=7 type="text" value="<%=product.unitPrice%>" />
+        <% } else { %>
+        <span><%=product.unitPrice.toString()%></span>
+        <% } %>
+    </td>
+    <td class="<%=editable  ? 'editable' : ''%> <%=currencyClassVal%>">
         <span>
-            <%=product.unitPrice%>
+            <%= product.taxes ?  currencySplitter(product.taxes.toString()) : ''%>
         </span>
     </td>
-    <td class="taxes">
+    <td class="subtotal <%=currencyClassVal%>">
         <span>
-            <%=product.taxes%>
-        </span>
-    </td>
-    <td class="subtotal">
-        <span>
-            <%=product.subTotal%>
+            <%= product.subTotal ? currencySplitter(product.subTotal.toString()) : ''%>
         </span>
     </td>
 </tr>
@@ -48,8 +59,8 @@
 </tr>
 <%}%>
 <tr>
-    <td colspan="7">&nbsp;</td>
+    <td colspan="6" class="invisible_border">&nbsp;</td>
 </tr>
 <tr>
-    <td colspan="7">&nbsp;</td>
+    <td colspan="6" class="invisible_border">&nbsp;</td>
 </tr>

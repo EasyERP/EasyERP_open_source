@@ -1,25 +1,25 @@
 define([
-    'models/DegreeModel'
-],
+        'models/DegreeModel'
+    ],
     function (DegreeModel) {
         var DegreesCollection = Backbone.Collection.extend({
-            model: DegreeModel,
-            url: function () {
+            model     : DegreeModel,
+            url       : function () {
                 return "/Degrees";
             },
             initialize: function () {
                 var mid = 39;
                 this.fetch({
-                    data: $.param({
+                    data   : $.param({
                         mid: mid
                     }),
-                    type: 'GET',
-                    reset: true,
+                    type   : 'GET',
+                    reset  : true,
                     success: this.fetchSuccess,
-                    error: this.fetchError
+                    error  : this.fetchError
                 });
             },
-            parse: true,
+            parse     : true,
 
             parse: function (response) {
                 return response.data;

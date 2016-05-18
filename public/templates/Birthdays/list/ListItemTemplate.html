@@ -1,8 +1,9 @@
-<% collection.forEach(function(model, index){ %>  
+<% collection.forEach(function(model, index){ %>
 <div class="birthday-item" data-index="<%=index%>">
     <div class="date">
         <div class="inner">
             <h3><%=model.dateBirth%></h3>
+
             <h2><%=model.age%></h2>
         </div>
     </div>
@@ -11,11 +12,11 @@
             <div class="top">
                 <a data-id="<%=model._id%>"><%=model.name.first%> <%=model.name.last%></a>
             </div>
-            
-	            <div id="<%=model._id%>">
-	            		<img class="ava" alt="" width="100" src="<%=model.imageSrc%>" />
-	            </div>
-            
+
+            <div id="<%=model._id%>">
+                <img class="ava" alt="" width="100" src="<%=model.imageSrc%>"/>
+            </div>
+
             <div class=" text">
                 <div class="half-block left">
                     <dl class="person-info">
@@ -28,7 +29,7 @@
                     </dl>
                 </div>
             </div>
-            <br />
+            <br/>
             <a href="javascript;" class="readMore" data-id="<%=model._id%>">
                 Read more <i></i>
             </a>
@@ -37,4 +38,4 @@
     </div>
 </div>
 <div class="clearfix"></div>
- <% }) %>
+<% }) %>

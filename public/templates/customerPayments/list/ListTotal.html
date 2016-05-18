@@ -1,0 +1,9 @@
+<tr>
+    <td colspan="<%=cellSpan%>"></td>
+   <%if (parseInt(total)) { %>
+    <td><span id="total" class="money"><%= currencySplitter(total)%></span></td>
+    <%} else {%>
+    <td><span id="total"></span></td>
+    <% } %>
+    <td></td>
+</tr>

@@ -1,0 +1,34 @@
+<% invoiceCollection.forEach(function(invoice, index){ %>
+<tr data-id="<%=invoice._id%>">
+    <td class="notForm centerCell"><input type="checkbox" value="<%=invoice._id%>" class="checkbox <%=invoice.removable ? '' : 'notRemovable'%>"/>
+<td class="centerCell"><%=startNumber + index + 1%></td>
+<td><%=(invoice.supplier && invoice.supplier.name) ? invoice.supplier.name.first + ' ' + invoice.supplier.name.last:
+    ''%>
+</td>
+<td><%=invoice.name%></td>
+<td><%=invoice.paymentDate%></td>
+<td><%=invoice.dueDate%></td>
+<td class="balance money"><%=currencySplitter(invoice.paymentInfo.balance)%></td>
+<td class="paid money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.paid) : '0.00'%></td>
+<td class="total money"><%=(invoice.paymentInfo) ? currencySplitter(invoice.paymentInfo.total) : '0.00'%></td>
+<td id='<%=invoice._id%>'>
+    <%if(invoice.workflow){%>
+    <%if(invoice.workflow.status !== 'Done'){%>
+    <span class="<%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></span>
+    <% } else {%>
+    <span class="done"><%=invoice.workflow.name%></span>
+    <%}%>
+    <% } else {%>
+    <span> </span>
+    <%}%>
+</td>
+<td><%=invoice.invoiceDate%></td>
+<!--<td class="validated"><a href="javascript:;" class="selectList <%=invoice.validated%>"><%=invoice.validated%></a>-->
+<!--<ul class="newSelectList" style="display: none;">-->
+<!--<li>Draft</li>-->
+<!--<li>Done</li>-->
+<!--</ul>-->
+<!--</td>-->
+
+</tr>
+<% }) %>

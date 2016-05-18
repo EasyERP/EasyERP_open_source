@@ -2,44 +2,45 @@
     <ul class="compactList">
         <% _.each(collection, function(model, index){ %>
         <li class="inner">
-           
-             
-                    <div class="half-block left">
-                        <p>
-                            <a id="<%=model._id%>" href="javascript;">
-                                <%=model.name.first%> <%=model.name.last%>
-                            </a>
-                        </p>
-                        <p>
-                            <%=model.email%>
-                        </p>
-                    </div>
-                    <div class="half-block left">
-                        <p>
-                            <%=model.phones.mobile%>
-                        </p>
-                    </div>
-                
-                <div class="clearfix"></div>
+
+
+            <div class="half-block left">
+                <p>
+                    <a id="<%=model._id%>" href="javascript;">
+                        <%=model.name.first%> <%=model.name.last%>
+                    </a>
+                </p>
+
+                <p>
+                    <%=model.email%>
+                </p>
+            </div>
+            <div class="half-block left">
+                <p>
+                    <%=model.phones.mobile%>
+                </p>
+            </div>
+
+            <div class="clearfix"></div>
         </li>
         <% });%>
     </ul>
     <div class="clearfix"></div>
-	<%if (options&&options.all>1){%>
-	<div class="miniPaginationPersons">
-    <div class="firstPersons<%if (options&&options.first){%> not-active<%}%>">
-	  &lt;&lt;
+    <%if (options&&options.all>1){%>
+    <div class="miniPaginationPersons">
+        <div class="firstPersons<%if (options&&options.first){%> not-active<%}%>">
+            &lt;&lt;
+        </div>
+        <div class="prevPersons<%if (options&&options.first){%> not-active<%}%>">
+            &lt;
+        </div>
+        <div class="nextPersons<%if (options&&options.last){%> not-active<%}%>">
+            &gt;
+        </div>
+        <div class="lastPersons<%if (options&&options.last){%> not-active<%}%>">
+            &gt;&gt;
+        </div>
     </div>
-    <div class="prevPersons<%if (options&&options.first){%> not-active<%}%>">
-	  &lt;
-    </div>
-    <div class="nextPersons<%if (options&&options.last){%> not-active<%}%>">
-	  &gt;
-    </div>
-    <div class="lastPersons<%if (options&&options.last){%> not-active<%}%>">
-	  &gt;&gt;
-    </div>
-	</div>
-<%}%>
+    <%}%>
 
 </div>

@@ -5,14 +5,15 @@ define([
         "common",
         "custom",
         "dataService",
-        "populate"
+        "populate",
+        "constants"
     ],
-    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate) {
+    function (EditTemplate, AssigneesView, ProductItemView, common, Custom, dataService, populate, CONSTANTS) {
 
         var EditView = Backbone.View.extend({
             contentType: "Order",
-            imageSrc: '',
-            template: _.template(EditTemplate),
+            imageSrc   : '',
+            template   : _.template(EditTemplate),
 
             initialize: function (options) {
                 if (options) {
@@ -25,40 +26,46 @@ define([
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
                 this.responseObj = {};
+                this.forSales = false;
                 this.render(options);
             },
 
             events: {
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
+                'keydown'                                                         : 'keydownHandler',
+                'click .dialog-tabs a'                                            : 'changeTab',
+                "click .current-selected"                                         : "showNewSelect",
+                "click"                                                           : "hideNewSelect",
+                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+                "click .newSelectList li.miniStylePagination"                     : "notHide",
                 "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
                 "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-                "click .receiveInvoice": "receiveInvoice",
-                "click .cancelOrder": "cancelOrder"
+                "click .receiveInvoice"                                           : "receiveInvoice",
+                "click .cancelOrder"                                              : "cancelOrder",
+                "click .setDraft"                                                 : "setDraft"
             },
-
 
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
                 return false;
 
             },
+
             notHide: function () {
                 return false;
             },
+
             hideNewSelect: function () {
                 $(".newSelectList").hide();
             },
+
             chooseOption: function (e) {
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
+
             nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
+
             prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
             },
@@ -99,12 +106,17 @@ define([
                 var self = this;
 
                 populate.fetchWorkflow({
-                    wId: 'Order',
+                    wId   : 'Purchase Order',
                     status: 'Cancelled',
-                    order: 1
+                    order : 1
                 }, function (workflow) {
+                    var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
+
                     if (workflow && workflow.error) {
-                        return alert(workflow.error.statusText);
+                        return App.render({
+                            type   : 'error',
+                            message: workflow.error.statusText
+                        });
                     }
 
                     self.currentModel.save({
@@ -113,9 +125,9 @@ define([
                         headers: {
                             mid: 57
                         },
-                        patch: true,
+                        patch  : true,
                         success: function () {
-                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
                         }
                     });
                 });
@@ -124,22 +136,64 @@ define([
             receiveInvoice: function (e) {
                 e.preventDefault();
 
+                var self = this;
                 var url = '/invoice/receive';
                 var data = {
-                    orderId: this.currentModel.id
+                    forSales: this.forSales,
+                    orderId : this.currentModel.id,
+                    currency: this.currentModel.currency
                 };
 
-                dataService.postData(url, data, function (err, response) {
-                    if (err) {
-                        alert('Can\'t receive invoice');
-                    } else {
-                        Backbone.history.navigate("easyErp/Invoice", {trigger: true});
+                this.saveItem(function (err) {
+                    if (!err) {
+                        dataService.postData(url, data, function (err, response) {
+                            var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+
+                            if (err) {
+                                App.render({
+                                    type   : 'error',
+                                    message: 'Can\'t receive invoice'
+                                });
+                            } else {
+                                Backbone.history.navigate(redirectUrl, {trigger: true});
+                            }
+                        });
                     }
                 });
             },
 
-            saveItem: function () {
+            setDraft: function (e) {
+                e.preventDefault();
 
+                var self = this;
+
+                populate.fetchWorkflow({
+                    wId: 'Quotation'
+                }, function (workflow) {
+                    var redirectUrl = self.forSales ? "easyErp/salesOrder" : "easyErp/Order";
+
+                    if (workflow && workflow.error) {
+                        return App.render({
+                            type   : 'error',
+                            message: workflow.error.statusText
+                        });
+                    }
+
+                    self.currentModel.save({
+                        workflow: workflow._id
+                    }, {
+                        headers: {
+                            mid: 57
+                        },
+                        patch  : true,
+                        success: function () {
+                            Backbone.history.navigate(redirectUrl, {trigger: true});
+                        }
+                    });
+                });
+            },
+
+            saveItem: function (invoiceCb) {
                 var self = this;
                 var mid = 55;
                 var thisEl = this.$el;
@@ -151,8 +205,13 @@ define([
                 var productId;
                 var quantity;
                 var price;
-
+                var description;
+                var subTotal;
+                var jobs;
+                var scheduledDate;
+                var taxes;
                 var supplier = thisEl.find('#supplierDd').data('id');
+
                 var destination = $.trim(thisEl.find('#destination').data('id'));
                 var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
                 var invoiceControl = $.trim(thisEl.find('#invoicingControl').data('id'));
@@ -167,6 +226,20 @@ define([
 
                 var usersId = [];
                 var groupsId = [];
+
+                var currency;
+
+                if (thisEl.find('#currencyDd').attr('data-id')) {
+                    currency = {
+                        _id : thisEl.find('#currencyDd').attr('data-id'),
+                        name: thisEl.find('#currencyDd').text()
+                    }
+                } else {
+                    currency = {
+                        _id : null,
+                        name: ''
+                    }
+                }
 
                 $(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
@@ -184,39 +257,51 @@ define([
                     for (var i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
-                        quantity = targetEl.find('[data-name="quantity"]').text();
-                        price = targetEl.find('[data-name="price"]').text();
+                        if (productId) {  // added more info for save
+                            quantity = targetEl.find('[data-name="quantity"]').text();
+                            price = targetEl.find('[data-name="price"]').text();
+                            scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
+                            taxes = targetEl.find('.taxes').text();
+                            description = targetEl.find('[data-name="productDescr"]').text();
+                            jobs = targetEl.find('[data-name="jobs"]').attr("data-content");
+                            subTotal = targetEl.find('.subtotal').text();
 
-                        products.push({
-                            product: productId,
-                            unitPrice: price,
-                            quantity: quantity
-                        });
+                            products.push({
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
+                                scheduledDate: scheduledDate,
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal,
+                                jobs         : jobs
+                            });
+                        }
                     }
                 }
 
-
                 data = {
-                    supplier: supplier,
+                    currency         : currency,
+                    supplier         : supplier,
                     supplierReference: supplierReference,
-                    products: products,
-                    orderDate: orderDate,
-                    expectedDate: expectedDate,
-                    destination: destination ? destination : null,
-                    incoterm: incoterm ? incoterm : null,
-                    invoiceControl: invoiceControl ? invoiceControl : null,
-                    paymentTerm: paymentTerm ? paymentTerm : null,
-                    fiscalPosition: fiscalPosition ? fiscalPosition : null,
-                    paymentInfo: {
-                        total: total,
+                    products         : products,
+                    orderDate        : orderDate,
+                    expectedDate     : expectedDate,
+                    destination      : destination ? destination : null,
+                    incoterm         : incoterm ? incoterm : null,
+                    invoiceControl   : invoiceControl ? invoiceControl : null,
+                    paymentTerm      : paymentTerm ? paymentTerm : null,
+                    fiscalPosition   : fiscalPosition ? fiscalPosition : null,
+                    paymentInfo      : {
+                        total  : total,
                         unTaxed: unTaxed
                     },
-                    groups: {
+                    groups           : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW
+                    whoCanRW         : whoCanRW
                 };
 
                 if (supplier) {
@@ -224,19 +309,30 @@ define([
                         headers: {
                             mid: mid
                         },
-                        patch: true,
+                        patch  : true,
                         success: function (model) {
                             Backbone.history.fragment = "";
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                             self.hideDialog();
+
+                            if (invoiceCb && typeof invoiceCb === 'function') {
+                                return invoiceCb(null);
+                            }
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
+
+                            if (invoiceCb && typeof invoiceCb === 'function') {
+                                return invoiceCb(xhr.text);
+                            }
                         }
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    App.render({
+                        type   : 'error',
+                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    });
                 }
             },
 
@@ -248,9 +344,11 @@ define([
             },
             deleteItem: function (event) {
                 var mid = 55;
+
                 event.preventDefault();
+
                 var self = this;
-                var answer = confirm("Realy DELETE items ?!");
+                var answer = confirm("Really DELETE items ?!");
                 if (answer == true) {
                     this.currentModel.destroy({
                         headers: {
@@ -260,9 +358,12 @@ define([
                             $('.edit-product-dialog').remove();
                             Backbone.history.navigate("easyErp/" + self.contentType, {trigger: true});
                         },
-                        error: function (model, err) {
+                        error  : function (model, err) {
                             if (err.status === 403) {
-                                alert("You do not have permission to perform this action");
+                                App.render({
+                                    type   : 'error',
+                                    message: "You do not have permission to perform this action"
+                                });
                             }
                         }
                     });
@@ -273,7 +374,7 @@ define([
             render: function () {
                 var self = this;
                 var formString = this.template({
-                    model: this.currentModel.toJSON(),
+                    model  : this.currentModel.toJSON(),
                     visible: this.visible
                 });
                 var notDiv;
@@ -282,27 +383,27 @@ define([
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Edit Order",
-                    width: "900px",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Edit Order",
+                    width        : "900px",
+                    buttons      : [
                         {
-                            text: "Save",
+                            text : "Save",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
                         },
                         {
-                            text: "Delete",
+                            text : "Delete",
                             click: self.deleteItem
                         }
                     ]
@@ -316,6 +417,8 @@ define([
                     }).render().el
                 );
 
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+
                 populate.get("#destination", "/destination", {}, 'name', this, false, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, false, true);
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, false, true);
@@ -327,9 +430,10 @@ define([
                 model = this.currentModel.toJSON();
 
                 this.$el.find('#expectedDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true,
+                    maxDate    : "+0D"
                 })/*.datepicker('setDate', model.expectedDate)*/;
 
                 productItemContainer = this.$el.find('#productItemsHolder');
@@ -338,8 +442,7 @@ define([
                     new ProductItemView({editable: false, balanceVissible: false}).render({model: model}).el
                 );
 
-
-                if (model.groups)
+                if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
                         $(".groupsAndUser").show();
                         model.groups.group.forEach(function (item) {
@@ -352,6 +455,7 @@ define([
                         });
 
                     }
+                }
                 return this;
             }
 

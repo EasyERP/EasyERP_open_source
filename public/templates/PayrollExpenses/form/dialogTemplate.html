@@ -1,0 +1,73 @@
+<div>
+    <table id="wagesPayable" class="list report-list tableFixed">
+        <colgroup class="borders" span="7">
+            <col span="1" width="3%">
+            <col span="1" width="15%">
+            <col span="1" width="22%">
+            <col span="1" width="18%">
+            <col span="1" width="22%">
+            <col span="1" width="15%">
+            <col span="1" width="5%">
+        </colgroup>
+        <thead>
+        <th>#</th>
+        <th>Employee</th>
+        <th>Date</th>
+        <th>Journal</th>
+        <th>Debit Account</th>
+        <th>Credit Account</th>
+        <th>Sum</th>
+        </thead>
+
+        <tr>
+            <td id="report-Table" colspan="7">
+                <div class="scrollit">
+                    <table class="list enable_hover tableFixed" id="report-listTable">
+                        <colgroup class="borders" span="7">
+                            <col span="1" width="3%">
+                            <col span="1" width="15%">
+                            <col span="1" width="22%">
+                            <col span="1" width="18%">
+                            <col span="1" width="22%">
+                            <col span="1" width="15%">
+                            <col span="1" width="5%">
+                        </colgroup>
+
+                        <tbody id="report-TableBody">
+                        <%var total = 0;%>
+                        <%wagesPayable.forEach(function (journalEntry, index) {%>
+                        <% if (journalEntry.debit){ %>
+                        <tr data-id="<%=journalEntry._id%>" class="mainTr">
+                            <td><%=index + 1%></td>
+                            <td><%=journalEntry.employee%></td>
+                            <td><%=dateFormat(journalEntry.date)%></td>
+                            <td><%=journalEntry.journalName%></td>
+                            <td><%=journalEntry.journal.debitAccount.name%></td>
+                            <td><%=journalEntry.journal.creditAccount.name%></td>
+                            <td><%=currencySplitter(journalEntry.debit.toFixed(2))%></td>
+                            <%total += journalEntry.debit%>
+                        </tr>
+                        <%} else {%>
+                        <tr data-id="<%=journalEntry._id%>" class="mainTr">
+                            <td><%=index + 1%></td>
+                            <td><%=journalEntry.employee%></td>
+                            <td><%=dateFormat(journalEntry.date)%></td>
+                            <td><%=journalEntry.journalName%></td>
+                            <td><%=journalEntry.journal.debitAccount.name%></td>
+                            <td><%=journalEntry.journal.creditAccount.name%></td>
+                            <td><%=currencySplitter(journalEntry.credit.toFixed(2))%></td>
+                            <%total += journalEntry.credit%>
+                        </tr>
+                        <%}%>
+                        <%})%>
+                        </tbody>
+                    </table>
+                </div>
+            </td>
+        </tr>
+        <tfoor>
+            <td colspan="6"></td>
+            <td><%=currencySplitter(total.toFixed(2))%></td>
+        </tfoor>
+    </table>
+</div>

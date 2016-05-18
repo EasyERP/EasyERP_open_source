@@ -1,17 +1,21 @@
 <div class="form-holder">
-  <form method="post" action="" id="createProfileForm" class="form">
-    <fielset>
-		<dl class="profile-create">
-		  <dt><label for="profileName">Profile Name </label></dt><dd><input type="text" id="profileName" required maxlength="12" placeholder="Profile Name"/></dd>
-		  <dt><label for="profileDescription">Description </label></dt><dd><input type="text" id="profileDescription" maxlength="32" placeholder="Description"/></dd>
-		  <dt><label for="baseProfile">Use base profile and edit privileges</label></dt><dd><input type="radio" name="group" value="base" checked id="baseProfile"/></dd>
-		  <dt><label>Base Profile:</label></dt>
-		  <dd>
-			<a id="profilesDd" class="current-selected" href="javascript:;"></a>
-		  </dd>
-		  <dt><label for="newProfile">Create new profile from scratch</label></dt><dd><input type="radio" name="group" value="new" id="newProfile"/></dd>
-		</dl>
-        <div class="clearfix"></div>
-	</fielset>
-  </form>
+    <form method="post" action="" id="createProfileForm" class="form">
+        <fielset>
+            <dl class="profile-create">
+                <dt><label for="profileName">Profile Name </label></dt>
+                <dd><input type="text" id="profileName" required maxlength="12" placeholder="Profile Name"/></dd>
+                <dt><label for="profileDescription">Description </label></dt>
+                <dd><input type="text" id="profileDescription" maxlength="32" placeholder="Description"/></dd>
+                <dt><label for="baseProfile">Use base profile and edit privileges</label></dt>
+                <dd><input type="radio" name="group" value="base" checked id="baseProfile"/></dd>
+                <dt><label>Base Profile:</label></dt>
+                <dd>
+                    <a id="profilesDd" class="current-selected" href="javascript:;"></a>
+                </dd>
+                <dt><label for="newProfile">Create new profile from scratch</label></dt>
+                <dd><input type="radio" name="group" value="new" id="newProfile"/></dd>
+            </dl>
+            <div class="clearfix"></div>
+        </fielset>
+    </form>
 </div>

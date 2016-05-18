@@ -1,10 +1,10 @@
 ﻿define(function () {
     var SourceOfApplicantsModel = Backbone.Model.extend({
         idAttribute: "_id",
-        defaults: {
-            name:'New'
+        defaults   : {
+            name: 'New'
         },
-        urlRoot: function () {
+        urlRoot    : function () {
             return "/SourcesOfApplicants";
         }
     });

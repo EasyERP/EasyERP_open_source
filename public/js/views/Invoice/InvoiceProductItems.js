@@ -4,7 +4,7 @@
 define([
     'text!templates/Invoice/InvoiceProductItems.html',
     'text!templates/Invoice/InvoiceProductInputContent.html',
-    'text!templates/Invoice/EditInvoiceProductInputContent.html',//   <-------
+    'text!templates/Invoice/EditInvoiceProductInputContent.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
     'populate',
@@ -14,32 +14,37 @@ define([
         el: '#invoiceItemsHolder',
 
         events: {
-            'click .addProductItem': 'getProducts',
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "click .newSelectList li.miniStylePagination": "notHide",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click .current-selected": "showProductsSelect",
+            'click .addProductItem'                                                   : 'getProducts',
+            "click .newSelectList li:not(.miniStylePagination)"                       : "chooseOption",
+            "click .newSelectList li.miniStylePagination"                             : "notHide",
+            "click .newSelectList li.miniStylePagination .next:not(.disabled)"        : "nextSelect",
+            "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
+            "click .current-selected"                                                 : "showProductsSelect",
             "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
-            "mouseleave .editable": "removeEdit",
-            "click #cancelSpan": "cancelClick",
-            "click #saveSpan": "saveClick",
-            "click #editSpan": "editClick"
+            "mouseleave .editable"                                                    : "removeEdit",
+            "click #cancelSpan"                                                       : "cancelClick",
+            "click #saveSpan"                                                         : "saveClick",
+            "click #editSpan"                                                         : "editClick"
         },
 
         initialize: function (options) {
             var products;
 
             this.responseObj = {};
+            this.taxesRate = 0;
+
+            if (options) {
+                this.visible = !!options.balanceVisible;
+                this.isPaid = !!options.isPaid;
+                this.notAddItem = !!options.notAddItem;
+            }
+            ;
+
+            this.forSales = options.forSales;
+
             this.render();
 
-            this.taxesRate = 0.15;
-
-            if (options && options.balanceVisible) {
-                this.visible = options.balanceVisible;
-            };
-
-            products = new productCollection();
+            products = new productCollection(options);
             products.bind('reset', function () {
                 this.products = products;
                 this.filterProductsForDD();
@@ -57,7 +62,6 @@ define([
             var parrentRow = parrent.find('.productItem').last();
             var rowId = parrentRow.attr("data-id");
             var trEll = parrent.find('tr.productItem');
-
 
             if (rowId === undefined || rowId !== 'false') {
                 if (!trEll.length) {
@@ -117,7 +121,6 @@ define([
                 }
             }
 
-
             parent.addClass('quickEdit');
 
             $('#editSpan').remove();
@@ -138,8 +141,8 @@ define([
 
             this.prevQuickEdit = parent;
 
-            parent.append('<span id="saveSpan" class="productEdit"><a href="javascript:;">c</a></span>');
-            parent.append('<span id="cancelSpan" class="productEdit"><a href="javascript:;">x</a></span>');
+            parent.append('<span id="saveSpan" class="productEdit"><i class="fa fa-check"></i></span>');
+            parent.append('<span id="cancelSpan" class="productEdit"><i class="fa fa-times"></i></span>');
             parent.find("#editInput").width(parent.find("#editInput").width() - 50);
         },
 
@@ -188,7 +191,6 @@ define([
             var taxes;
             var price;
             var amount;
-
 
             trEl.attr('data-id', model.id);
             //trEl.find('.datepicker').removeClass('notVisible');
@@ -242,15 +244,15 @@ define([
 
             var totalUntax = 0;
             var totalEls = resultForCalculate.length;
-            var currentEl;
+            var $currentEl;
             var quantity;
             var cost;
 
             if (totalEls) {
                 for (var i = totalEls - 1; i >= 0; i--) {
-                    currentEl = $(resultForCalculate[i]);
-                    quantity = currentEl.find('[data-name="quantity"]').text();
-                    cost = currentEl.find('[data-name="price"]').text();
+                    $currentEl = $(resultForCalculate[i]);
+                    quantity = $currentEl.find('[data-name="quantity"]').text();
+                    cost = $currentEl.find('[data-name="price"]').text();
                     totalUntax += (quantity * cost);
                 }
             }
@@ -281,27 +283,51 @@ define([
         },
 
         render: function (options) {
+            var self = this;
             var productsContainer;
             var totalAmountContainer;
             var thisEl = this.$el;
             var products;
+            var currency;
 
-            if(options && options.model){
+            if (options && options.model) {
                 products = options.model.products;
+                currency = options.model.currency;
 
-                thisEl.html(_.template(productItemTemplate, {model: options.model}));
+                thisEl.html(_.template(productItemTemplate, {
+                    model     : options.model,
+                    forSales  : self.forSales,
+                    isPaid    : self.isPaid,
+                    notAddItem: this.notAddItem
+                }));
 
-                if(products) {
+                if (products) {
                     productsContainer = thisEl.find('#productList');
-                    productsContainer.prepend(_.template(ProductItemsEditList, {products: products}));
-                    this.recalculateTaxes(this.$el.find('.listTable'))
+                    productsContainer.prepend(_.template(ProductItemsEditList, {
+                        products        : products,
+                        forSales        : self.forSales,
+                        isPaid          : self.isPaid,
+                        notAddItem      : this.notAddItem,
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass,
+                        currency        : currency
+                    }));
+                    this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
-                    totalAmountContainer.append(_.template(totalAmount, {model: options.model, balanceVisible: this.visible}));
+                    totalAmountContainer.append(_.template(totalAmount, {
+                        model           : options.model,
+                        balanceVisible  : this.visible,
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass
+                    }));
                 }
             } else {
                 this.$el.html(this.template({
+                    forSales  : self.forSales,
                     /*collection: this.collection,
                      options: options*/
+                    isPaid    : self.isPaid,
+                    notAddItem: this.notAddItem
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
                 totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));

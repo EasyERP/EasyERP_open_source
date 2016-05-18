@@ -1,16 +1,16 @@
 define([
-    'text!templates/menu/TopMenuItemTemplate.html'
-],
-    function(ItemTpl){
+        'text!templates/menu/TopMenuItemTemplate.html'
+    ],
+    function (ItemTpl) {
 
         var TopMenuItemView = Backbone.View.extend({
-            tagName:'li',
+            tagName : 'li',
             template: _.template(ItemTpl),
 
-            initialize: function(options){
+            initialize: function (options) {
 
             },
-            render: function(){
+            render    : function () {
                 this.$el.html(this.template(this.model.toJSON()));
                 return this;
             }

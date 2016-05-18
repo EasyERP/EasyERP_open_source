@@ -1,31 +1,39 @@
 <% products.forEach(function(product){ %>
 <tr class="productItem" data-id="<%=product.product ? product.product._id : 'err'%>">
     <td data-name="productName">
-        <a class="current-selected productsDd"  href="javascript:;"><%=product.product ? product.product.name : '- - -' %></a>
+        <a class="productsDd" href="javascript:;"><%=product.product ? product.product.name : '- - -' %></a>
     </td>
+    <% if (forSales) {%>
+    <td data-name="jobs" class="jobs">
+        <a class="" id="jobs" href="javascript:;"> <%=product.jobs ? product.jobs.name : ' --- '%></a>
+    </td>
+    <% } else { %>
     <td data-name="productDescr">
-        <span class="editable">
+        <span class="">
             <%=product.description ? product.description : ' '%>
         </span>
     </td>
-    <td data-name="quantity" class="editable">
+    <% } %>
+    <td data-name="quantity" class="">
         <span>
-            <%=product.quantity%>
+            1
         </span>
     </td>
-    <td data-name="price" class="editable">
+    <%var currencyClassVal;%>
+    <%currencyClassVal = currencyClass(currency._id._id)%>
+    <td data-name="price" class="<%=currencyClassVal%>">
         <span>
-            <%=product.unitPrice%>
+            <%=product.unitPrice ? currencySplitter(product.unitPrice.toString()): ''%>
         </span>
     </td>
-    <td class="taxes">
+    <td class="taxes <%=currencyClassVal%>">
         <span>
-            <%=product.taxes%>
+            <%=product.taxes ? currencySplitter(product.taxes.toString()): ''%>
         </span>
     </td>
-    <td class="amount">
+    <td class="amount <%=currencyClassVal%>">
         <span>
-            <%=product.subTotal%>
+            <%=product.subTotal ? currencySplitter(product.subTotal.toString()): ''%>
         </span>
     </td>
 </tr>

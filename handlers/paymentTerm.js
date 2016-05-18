@@ -1,9 +1,7 @@
-/**
- * Created by Roman on 13.05.2015.
- */
 var mongoose = require('mongoose');
 var PaymentTerm = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
+    'use strict';
+
     var PaymentTermSchema = mongoose.Schemas['PaymentTerm'];
 
     this.getForDd = function (req, res, next) {
@@ -12,6 +10,7 @@ var PaymentTerm = function (models) {
         PaymentTerm
             .find()
             .sort({name: 1})
+            .lean()
             .exec(function (err, terms) {
                 if (err) {
                     return next(err);

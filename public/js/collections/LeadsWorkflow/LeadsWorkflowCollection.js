@@ -4,8 +4,8 @@ define(function () {
     });
 
     var WorkflowsCollection = Backbone.Collection.extend({
-        model: WorkflowModel,
-        url: function () {
+        model     : WorkflowModel,
+        url       : function () {
             var mid = 39,
                 url = "/Workflows";
             return url;
@@ -14,14 +14,14 @@ define(function () {
             var mid = 39;
 
             this.fetch({
-                data: $.param({
+                data   : $.param({
                     mid: mid,
-                    id: 'lead'
+                    id : 'lead'
                 }),
-                type: 'GET',
-                reset: true,
+                type   : 'GET',
+                reset  : true,
                 success: this.fetchSuccess,
-                error: this.fetchError
+                error  : this.fetchError
             });
         },
 

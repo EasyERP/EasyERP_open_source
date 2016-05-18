@@ -1,0 +1,67 @@
+<div class="grid-conatiner">
+    <div class="attendanceTop">
+        <div class="pull-left">
+            <span>
+                Select an Employee:
+            </span>
+
+            <div class="editable" data-content="employee" data-id="<%= employees[0]._id%>"><span><%=
+                employees[0].name%></span>
+            </div>
+
+        </div>
+        <div class="pull-left">
+            <span>
+                Select status:
+            </span>
+            <select id="currentStatus">
+                <% status.forEach(function(stat){ %>
+                <%statId = stat.replace(' ', '')%>
+                <option id="status<%= statId %>">
+                    <%= stat %>
+                </option>
+                <% }) %>
+            </select>
+        </div>
+        <div class="pull-right">
+            <span>Select a Year:</span>
+            <select id="currentTime">
+                <% years.forEach(function(year){ %>
+                <option id="<%= year %>">
+                    <%= year %>
+                </option>
+                <% }) %>
+            </select>
+        </div>
+    </div>
+
+    <table class="grid attendance" cellspacing="0" cellpadding="0">
+        <thead>
+        <tr>
+            <th>
+                <span></span>
+            </th>
+
+            <% for (var i = 1; i <= 6; i++) { %>
+            <% weekDays.forEach(function(day){ %>
+            <th>
+                <%= day %>
+            </th>
+            <% }) %>
+            <% } %>
+
+        </tr>
+        </thead>
+        <tbody id="attendanceMonth">
+        </tbody>
+    </table>
+
+    <div class="statisticsAtten">
+        <table>
+            <tbody id="statictics">
+
+            </tbody>
+        </table>
+    </div>
+    <div id='timeRecivingDataFromServer'></div>
+</div>

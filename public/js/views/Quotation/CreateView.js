@@ -2,19 +2,23 @@ define([
         "text!templates/Quotation/CreateTemplate.html",
         "collections/Persons/PersonsCollection",
         "collections/Departments/DepartmentsCollection",
+        'views/selectView/selectView',
         'views/Product/InvoiceOrder/ProductItems',
         "models/QuotationModel",
         "common",
         "populate",
         'constants',
-        'views/Assignees/AssigneesView'
+        'views/Assignees/AssigneesView',
+        'dataService',
+        'helpers/keyValidator',
+        'helpers'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView) {
+    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, keyValidator, helpers) {
 
         var CreateView = Backbone.View.extend({
-            el: "#content-holder",
+            el         : "#content-holder",
             contentType: "Quotation",
-            template: _.template(CreateTemplate),
+            template   : _.template(CreateTemplate),
 
             initialize: function (options) {
                 if (options) {
@@ -23,49 +27,104 @@ define([
                 _.bindAll(this, "saveItem", "render");
                 this.model = new QuotationModel();
                 this.responseObj = {};
+                this.forSales = false;
+
                 this.render();
             },
 
             events: {
-                'keydown': 'keydownHandler',
-                'click .dialog-tabs a': 'changeTab',
-                "click .current-selected": "showNewSelect",
-                "click": "hideNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click .newSelectList li.miniStylePagination": "notHide",
-                "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-                "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect"
+                'keypress .forNum'                                               : 'keydownHandler',
+                'click .dialog-tabs a'                                           : 'changeTab',
+                "click a.current-selected:not(.jobs)"                            : "showNewSelect",
+                "click .newSelectList li:not(.miniStylePagination,#generateJobs)": "chooseOption",
+                "click"                                                          : "hideNewSelect"
             },
 
-            showNewSelect: function (e, prev, next) {
-                populate.showSelect(e, prev, next, this);
-                return false;
+            showNewSelect: function (e) {
+                var $target = $(e.target);
+                e.stopPropagation();
 
-            },
-            notHide: function () {
+                if ($target.attr('id') === 'selectInput') {
+                    return false;
+                }
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
+
+                this.selectView = new selectView({
+                    e          : e,
+                    responseObj: this.responseObj
+                });
+
+                $target.append(this.selectView.render().el);
+
                 return false;
             },
+
             hideNewSelect: function () {
-                $(".newSelectList").hide();
+                $(".newSelectList").remove();
+
+                if (this.selectView) {
+                    this.selectView.remove();
+                }
             },
+
             chooseOption: function (e) {
+                var target = $(e.target);
+                var id = target.attr("id");
+                var type = target.attr('data-level');
+                var aEl;
+
+                var element = _.find(this.responseObj['#project'], function (el) {
+                    return el._id === id;
+                });
+
+                var currencyElement = $(e.target).parents('dd').find('.current-selected');
+                var oldCurrency = currencyElement.attr('data-id');
+                var newCurrency = $(e.target).attr('id');
+                var oldCurrencyClass = helpers.currencyClass(oldCurrency);
+                var newCurrencyClass = helpers.currencyClass(newCurrency);
+
+                var array = this.$el.find('.' + oldCurrencyClass);
+                array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
+
+                if (type ) {    // added condition for project with no data-level empty
+                    this.salesManager = element.salesmanager;
+
+                    this.$el.find('#supplierDd').text(element.customer.name.first + element.customer.name.last);
+                    this.$el.find('#supplierDd').attr('data-id', element.customer._id);
+
+                    aEl = $('.current-selected.jobs');
+                    aEl.text("Select");
+                    aEl.attr('data-id', 'jobs');
+                }
+
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
-            },
-            nextSelect: function (e) {
-                this.showNewSelect(e, false, true);
-            },
-            prevSelect: function (e) {
-                this.showNewSelect(e, true, false);
+
+                this.hideNewSelect();
+
+                return false;
             },
 
             keydownHandler: function (e) {
-                switch (e.which) {
+                var charCode = e.which;
+                var symbol = String.fromCharCode(charCode);
+
+                switch (charCode) {
                     case 27:
                         this.hideDialog();
                         break;
-                    default:
+                    case 13:
+                        this.validateForm(e);
                         break;
+                    default:
+                        return keyValidator(e, true);
                 }
+            },
+
+            validateForm: function(e){
+
             },
 
             changeTab: function (e) {
@@ -89,7 +148,6 @@ define([
             },
 
             saveItem: function () {
-
                 var self = this;
                 var mid = 55;
                 var thisEl = this.$el;
@@ -102,25 +160,25 @@ define([
                 var quantity;
                 var price;
                 var scheduledDate;
-
-                var supplier = thisEl.find('#supplierDd').data('id');
-                var destination = $.trim(thisEl.find('#destination').data('id'));
-                var deliverTo = $.trim(thisEl.find('#deliveryDd').data('id'));
-                var incoterm = $.trim(thisEl.find('#incoterm').data('id'));
-                var invoiceControl = $.trim(thisEl.find('#invoicingControl').data('id'));
-                var paymentTerm = $.trim(thisEl.find('#paymentTerm').data('id'));
-                var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').data('id'));
-                var supplierReference = thisEl.find('#supplierReference').val();
+                var forSales = (this.forSales) ? true : false;
+                var supplier = thisEl.find('#supplierDd').attr('data-id');
+                var project = thisEl.find('#projectDd').attr('data-id');
+                var destination = $.trim(thisEl.find('#destination').attr('data-id'));
+                var deliverTo = $.trim(thisEl.find('#deliveryDd').attr('data-id'));
+                var incoterm = $.trim(thisEl.find('#incoterm').attr('data-id'));
+                var invoiceControl = $.trim(thisEl.find('#invoicingControl').attr('data-id'));
+                var paymentTerm = $.trim(thisEl.find('#paymentTerm').attr('data-id'));
+                var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').attr('data-id'));
                 var orderDate = thisEl.find('#orderDate').val();
-                var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#minScheduleDate').text();
-
-                var total = $.trim(thisEl.find('#totalAmount').text());
-                var totalTaxes = $.trim(thisEl.find('#taxes').text());
+                var expectedDate = thisEl.find('#expectedDate').val() || orderDate;
+                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+                var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
+                var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
                 var taxes;
                 var description;
-                var unTaxed = $.trim(thisEl.find('#totalUntaxes').text());
+                var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
                 var subTotal;
-
+                var jobs;
                 var usersId = [];
                 var groupsId = [];
 
@@ -134,78 +192,108 @@ define([
 
                 });
 
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
-
                 if (selectedLength) {
-                    for (var i = selectedLength - 1; i >= 0; i--) {
+                    for (var i = selectedLength - 1;
+                         i >= 0;
+                         i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
-                            price = targetEl.find('[data-name="price"]').text();
-                            scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
-                            taxes = targetEl.find('.taxes').text();
+                            price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
+                            /*scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();*/
+                            taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
                             description = targetEl.find('[data-name="productDescr"]').text();
-                            subTotal = targetEl.find('.subtotal').text();
+                            subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                            jobs = targetEl.find('.current-selected.jobs').attr('data-id');
+
+                            if (jobs === "jobs" && this.forSales) {
+                                return App.render({
+                                    type   : 'notify',
+                                    message: "Job field can't be empty. Please, choose or create one."
+                                });
+                            }
 
                             products.push({
-                                product: productId,
-                                unitPrice: price,
-                                quantity: quantity,
-                                scheduledDate: scheduledDate,
-                                taxes: taxes,
-                                description: description,
-                                subTotal: subTotal
+                                product      : productId,
+                                unitPrice    : price,
+                                quantity     : quantity,
+                               /* scheduledDate: scheduledDate,*/
+                                taxes        : taxes,
+                                description  : description,
+                                subTotal     : subTotal,
+                                jobs         : jobs
+                            });
+                        } else {
+                            return App.render({
+                                type   : 'notify',
+                                message: "Products can't be empty."
                             });
                         }
                     }
+                } else { // added in case of no rows
+                    return App.render({
+                        type   : 'notify',
+                        message: "Products can't be empty."
+                    });
                 }
 
-
                 data = {
-                    supplier: supplier,
-                    supplierReference: supplierReference,
-                    deliverTo: deliverTo,
-                    products: products,
-                    orderDate: orderDate,
-                    expectedDate: expectedDate,
-                    destination: destination,
-                    incoterm: incoterm,
+                    forSales      : forSales,
+                    supplier      : supplier,
+                    project       : project,
+                    deliverTo     : deliverTo,
+                    products      : products,
+                    orderDate     : orderDate,
+                    expectedDate  : expectedDate,
+                    destination   : destination,
+                    incoterm      : incoterm,
                     invoiceControl: invoiceControl,
-                    paymentTerm: paymentTerm,
+                    paymentTerm   : paymentTerm,
                     fiscalPosition: fiscalPosition,
-                    paymentInfo: {
-                        total: total,
+                    populate      : true,
+                    paymentInfo   : {
+                        total  : total,
                         unTaxed: unTaxed,
-                        taxes: totalTaxes
+                        taxes  : totalTaxes
                     },
-                    groups: {
+                    groups        : {
                         owner: $("#allUsersSelect").data("id"),
                         users: usersId,
                         group: groupsId
                     },
-                    whoCanRW: whoCanRW,
-                    workflow: this.defaultWorkflow
+                    whoCanRW      : whoCanRW,
+                    workflow      : this.defaultWorkflow
                 };
 
-                if (supplier) {
+                if (supplier && selectedLength) {
                     this.model.save(data, {
                         headers: {
                             mid: mid
                         },
-                        wait: true,
-                        success: function () {
-                            self.hideDialog();
-                            Backbone.history.navigate("easyErp/Quotation", {trigger: true});
+                        wait   : true,
+                        success: function (model) {
+                            self.redirectAfterSave(self, model);
                         },
-                        error: function (model, xhr) {
+                        error  : function (model, xhr) {
                             self.errorNotification(xhr);
                         }
                     });
 
                 } else {
-                    alert(CONSTANTS.RESPONSES.CREATE_QUOTATION);
+                    return App.render({
+                        type   : 'notify',
+                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                    });
+
                 }
+            },
+
+            redirectAfterSave: function (content, model) {
+                var redirectUrl = content.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
+
+                content.hideDialog();
+                Backbone.history.navigate(redirectUrl, {trigger: true});
             },
 
             hideDialog: function () {
@@ -215,29 +303,44 @@ define([
                 $(".crop-images-dialog").remove();
             },
 
-            render: function () {
-                var formString = this.template({visible: this.visible});
-                var self = this;
+            createProductView: function () {
                 var productItemContainer;
+
+                productItemContainer = this.$el.find('#productItemsHolder');
+                if (this.forSales) {
+                    productItemContainer.append(
+                        new ProductItemView({canBeSold: true, service: true}).render().el
+                    );
+                } else {
+                    productItemContainer.append(
+                        new ProductItemView({canBeSold: this.forSales}).render().el
+                    );
+                }
+            },
+
+            render: function () {
+                var formString = this.template({visible: this.visible, forSales: this.forSales});
+                var self = this;
+                var curDate = new Date();
 
                 this.$el = $(formString).dialog({
                     closeOnEscape: false,
-                    autoOpen: true,
-                    resizable: true,
-                    dialogClass: "edit-dialog",
-                    title: "Create Quotation",
-                    width: "900px",
-                    buttons: [
+                    autoOpen     : true,
+                    resizable    : true,
+                    dialogClass  : "edit-dialog",
+                    title        : "Create Quotation",
+                    width        : "900px",
+                    buttons      : [
                         {
-                            id: "create-person-dialog",
-                            text: "Create",
+                            id   : "create-person-dialog",
+                            text : "Create",
                             click: function () {
                                 self.saveItem();
                             }
                         },
 
                         {
-                            text: "Cancel",
+                            text : "Cancel",
                             click: function () {
                                 self.hideDialog();
                             }
@@ -252,21 +355,37 @@ define([
                     }).render().el
                 );
 
-                productItemContainer = this.$el.find('#productItemsHolder');
-                productItemContainer.append(
-                    new ProductItemView().render().el
-                );
+                this.createProductView();
 
                 populate.get("#destination", "/destination", {}, 'name', this, true, true);
                 populate.get("#incoterm", "/incoterm", {}, 'name', this, true, true);
                 populate.get("#invoicingControl", "/invoicingControl", {}, 'name', this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
-                populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+
+                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+
+                if (this.forSales) {
+                    this.$el.find('#supplierDd').removeClass('current-selected');
+                    populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
+                    //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                } else {
+                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                }
+
+                dataService.getData("/project/getForWtrack", null, function (projects) {
+                    projects = _.map(projects.data, function (project) {
+                        project.name = project.projectName;
+
+                        return project
+                    });
+
+                    self.responseObj['#project'] = projects;
+                });
 
                 populate.fetchWorkflow({
-                    wId: 'Order',
-                    source: 'purchase',
+                    wId         : 'Purchase Order',
+                    source      : 'purchase',
                     targetSource: 'quotation'
                 }, function (response) {
                     if (!response.error) {
@@ -275,21 +394,16 @@ define([
                 });
 
                 this.$el.find('#orderDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
-                }).datepicker('setDate', new Date());
-
-                /*this.$el.find('#bidValidUntill').datepicker({
-                 dateFormat: "d M, yy",
-                 changeMonth: true,
-                 changeYear: true
-                 });*/
+                    changeYear : true,
+                    maxDate    : "+0D"
+                }).datepicker('setDate', curDate);
 
                 this.$el.find('#expectedDate').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 });
 
                 this.delegateEvents(this.events);

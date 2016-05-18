@@ -1,7 +1,7 @@
 ﻿define([
-    "text!templates/Birthdays/list/ListItemTemplate.html",
-    "common"
-],
+        "text!templates/Birthdays/list/ListItemTemplate.html",
+        "common"
+    ],
     function (ListItemTemplate, common) {
         var ListItemView = Backbone.View.extend({
             initialize: function (options) {
@@ -22,7 +22,7 @@
             template: _.template(ListItemTemplate),
 
             render: function () {
-                this.$el.html(this.template({ collection: this.collection }));
+                this.$el.html(this.template({collection: this.collection}));
                 return this;
             }
         });

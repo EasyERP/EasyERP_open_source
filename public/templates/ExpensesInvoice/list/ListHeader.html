@@ -1,0 +1,41 @@
+﻿<div id="searchContainer"></div>
+<div>
+    <table class="list task-list">
+        <thead>
+        <tr>
+            <th class="centerCell"><input type="checkbox" id="check_all"/></th>
+            <th class="centerCell">N</th>
+            <th class="oe_sortable" data-sort="supplier.name.first">Supplier<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="name">Invoice Number<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paymentDate">Payment Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="dueDate">Due Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.balance">Balance<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.unTaxed"><%= currentDb ? 'Paid' : 'Untaxed'%><span
+                    class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paymentInfo.total">Total<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="workflow.name">Status<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="invoiceDate">Invoice Date<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <!--<th class="oe_sortable" data-sort="validated">Validated<span class="arrow down">7</span><span-->
+            <!--class="arrow up">v</span></th>-->
+        </tr>
+        </thead>
+        <tbody id="listTable" class="enableTableOdd"></tbody>
+        <tfoot id="listTotal">
+        <tr>
+            <td colspan="6"></td>
+            <td class="money"> <span id="balance"></span></td>
+            <td class="money"><span id="paid"></span></td>
+            <td class="money"><span id="total"></span></td>
+        </tr>
+        </tfoot>
+    </table>
+</div>

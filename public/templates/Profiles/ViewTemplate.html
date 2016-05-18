@@ -1,20 +1,20 @@
 <h2>Define Privileges for < <%= profileName %> Profile ></h2>
-        <span><%= profileDescription %> </span>
+<span><%= profileDescription %> </span>
 
 <table class="list" id="modulesAccessTable">
     <thead>
-        <tr>
-            <td>Module Name</td>
-            <td>View </td>
-            <td>Write/Edit </td>
-            <td>Delete </td>
-        </tr>
+    <tr>
+        <td>Module Name</td>
+        <td>View</td>
+        <td>Write/Edit</td>
+        <td>Delete</td>
+    </tr>
     </thead>
     <tbody>
     <% if(profile){ %>
     <% profile.profileAccess.forEach(function(item){ %>
     <tr>
-        <td class="mname"> <%=item.module.mname %> </td>
+        <td class="mname"> <%=item.module.mname %></td>
         <td><input type="checkbox" class="read" <% if(item.access[0]) { %> checked="checked" <% } %> disabled /></td>
         <td><input type="checkbox" class="write" <% if(item.access[1]) { %> checked="checked" <% } %> disabled/></td>
         <td><input type="checkbox" class="delete" <% if(item.access[2]) { %> checked="checked" <% } %> disabled/></td>

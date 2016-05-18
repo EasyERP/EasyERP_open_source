@@ -1,38 +1,38 @@
 define([
-    'text!templates/Degrees/list/ListTemplate.html',
-    'text!templates/Degrees/form/FormTemplate.html',
-    'collections/Degrees/DegreesCollection',
-    'custom',
-    'common'
-],
-function (ListTemplate, FormTemplate, DegreesCollection, Custom, common) {
-    var ContentView = Backbone.View.extend({
-        el: '#content-holder',
-        initialize: function (options) {
-            console.log('Init Degrees View');
-            this.collection = options.collection;
-            this.collection.bind('reset', _.bind(this.render, this));
-            this.render();
-        },
+        'text!templates/Degrees/list/ListTemplate.html',
+        'text!templates/Degrees/form/FormTemplate.html',
+        'collections/Degrees/DegreesCollection',
+        'custom',
+        'common'
+    ],
+    function (ListTemplate, FormTemplate, DegreesCollection, Custom, common) {
+        var ContentView = Backbone.View.extend({
+            el        : '#content-holder',
+            initialize: function (options) {
+                console.log('Init Degrees View');
+                this.collection = options.collection;
+                this.collection.bind('reset', _.bind(this.render, this));
+                this.render();
+            },
 
-        events: {
-            "click .checkbox": "checked",
-            "click td:not(:has('input[type='checkbox']'))": "gotoForm"
-        },
-        gotoForm: function (e) {
-            App.ownContentType = true;
-            var itemIndex = $(e.target).closest("tr").data("index") + 1;
-            window.location.hash = "#home/content-Degrees/form/" + itemIndex;
-        },
+            events  : {
+                "click .checkbox"                             : "checked",
+                "click td:not(:has('input[type='checkbox']'))": "gotoForm"
+            },
+            gotoForm: function (e) {
+                App.ownContentType = true;
+                var itemIndex = $(e.target).closest("tr").data("index") + 1;
+                window.location.hash = "#home/content-Degrees/form/" + itemIndex;
+            },
 
-        render: function () {
-            Custom.setCurrentCL(this.collection.models.length);
-            console.log('Render Degrees View');
-            var viewType = Custom.getCurrentVT();
-            switch (viewType) {
-                case "list":
+            render: function () {
+                Custom.setCurrentCL(this.collection.models.length);
+                console.log('Render Degrees View');
+                var viewType = Custom.getCurrentVT();
+                switch (viewType) {
+                    case "list":
                     {
-                        this.$el.html(_.template(ListTemplate, {degreesCollection:this.collection.toJSON()}));
+                        this.$el.html(_.template(ListTemplate, {degreesCollection: this.collection.toJSON()}));
 
                         $('#check_all').click(function () {
                             var c = this.checked;
@@ -40,7 +40,7 @@ function (ListTemplate, FormTemplate, DegreesCollection, Custom, common) {
                         });
                         break;
                     }
-                case "form":
+                    case "form":
                     {
                         var itemIndex = Custom.getCurrentII() - 1;
                         if (itemIndex > this.collection.models.length - 1) {
@@ -57,27 +57,28 @@ function (ListTemplate, FormTemplate, DegreesCollection, Custom, common) {
 
                         break;
                     }
-            }
-            return this;
+                }
+                return this;
 
-        },
+            },
 
-        checked: function () {
-            if(this.collection.length > 0){
-                if ($("input:checked").length > 0)
-                    $("#top-bar-deleteBtn").show();
-                else
-                    $("#top-bar-deleteBtn").hide();
-            }
-        },
+            checked: function () {
+                if (this.collection.length > 0) {
+                    if ($("input:checked").length > 0) {
+                        $("#top-bar-deleteBtn").show();
+                    } else {
+                        $("#top-bar-deleteBtn").hide();
+                    }
+                }
+            },
 
-        deleteItems: function () {
-            var self = this,
-                mid = 39,
-                model,
-                viewType = Custom.getCurrentVT();
-            switch (viewType) {
-                case "list":
+            deleteItems: function () {
+                var self = this,
+                    mid = 39,
+                    model,
+                    viewType = Custom.getCurrentVT();
+                switch (viewType) {
+                    case "list":
                     {
                         $.each($("tbody input:checked"), function (index, checkbox) {
                             model = self.collection.get(checkbox.value);
@@ -91,7 +92,7 @@ function (ListTemplate, FormTemplate, DegreesCollection, Custom, common) {
                         this.collection.trigger('reset');
                         break;
                     }
-                case "form":
+                    case "form":
                     {
                         model = this.collection.get($("#wrap").data("id"));
                         model.on('change', this.render, this);
@@ -100,14 +101,14 @@ function (ListTemplate, FormTemplate, DegreesCollection, Custom, common) {
                                 mid: mid
                             },
                             success: function () {
-                                Backbone.history.navigate("#home/content-Degrees", { trigger: true });
+                                Backbone.history.navigate("#home/content-Degrees", {trigger: true});
                             }
                         });
                         break;
                     }
+                }
             }
-        }
-    });
+        });
 
-    return ContentView;
-});
+        return ContentView;
+    });

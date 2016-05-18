@@ -12,17 +12,17 @@ define([
         el: '#productItemsHolder',
 
         events: {
-            'click .addProductItem': 'getProducts',
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "click .newSelectList li.miniStylePagination": "notHide",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click .current-selected": "showProductsSelect",
+            'click .addProductItem'                                                   : 'getProducts',
+            "click .newSelectList li:not(.miniStylePagination)"                       : "chooseOption",
+            "click .newSelectList li.miniStylePagination"                             : "notHide",
+            "click .newSelectList li.miniStylePagination .next:not(.disabled)"        : "nextSelect",
+            "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
+            "click .current-selected"                                                 : "showProductsSelect",
             "mouseenter .editable:not(.quickEdit), .editable .no-long:not(.quickEdit)": "quickEdit",
-            "mouseleave .editable": "removeEdit",
-            "click #cancelSpan": "cancelClick",
-            "click #saveSpan": "saveClick",
-            "click #editSpan": "editClick"
+            "mouseleave .editable"                                                    : "removeEdit",
+            "click #cancelSpan"                                                       : "cancelClick",
+            "click #saveSpan"                                                         : "saveClick",
+            "click #editSpan"                                                         : "editClick"
         },
 
         initialize: function (options) {
@@ -31,7 +31,7 @@ define([
             this.responseObj = {};
             this.render();
 
-            this.taxesRate = 0.15;
+            this.taxesRate = 0;
 
             products = new productCollection();
             products.bind('reset', function () {
@@ -48,7 +48,6 @@ define([
             var parrentRow = parrent.find('.productItem').last();
             var rowId = parrentRow.attr("data-id");
             var trEll = parrent.find('tr.productItem');
-
 
             if (rowId === undefined || rowId !== 'false') {
                 if (!trEll.length) {
@@ -106,7 +105,6 @@ define([
                 }
             }
 
-
             parent.addClass('quickEdit');
 
             $('#editSpan').remove();
@@ -119,16 +117,16 @@ define([
 
             if (datePicker.length) {
                 $('#editInput').datepicker({
-                    dateFormat: "d M, yy",
+                    dateFormat : "d M, yy",
                     changeMonth: true,
-                    changeYear: true
+                    changeYear : true
                 }).addClass('datepicker');
             }
 
             this.prevQuickEdit = parent;
 
-            parent.append('<span id="saveSpan" class="productEdit"><a href="javascript:;">c</a></span>');
-            parent.append('<span id="cancelSpan" class="productEdit"><a href="javascript:;">x</a></span>');
+            parent.append('<span id="saveSpan" class="productEdit"><i class="fa fa-check"></i></span>');
+            parent.append('<span id="cancelSpan" class="productEdit"><i class="fa fa-times"></i></span>');
             parent.find("#editInput").width(parent.find("#editInput").width() - 50);
         },
 
@@ -139,6 +137,10 @@ define([
             var parent = targetEl.closest('td');
             var inputEl = parent.find('input');
             var val = inputEl.val();
+
+            if (!val.length) {
+                val = 0;
+            }
 
             parent.removeClass('quickEdit').html('<span>' + val + '</span>');
 
@@ -180,7 +182,6 @@ define([
             var total;
             var subtotal;
 
-
             trEl.attr('data-id', model.id);
             //trEl.find('.datepicker').removeClass('notVisible');
 
@@ -188,9 +189,9 @@ define([
 
             $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
             $(parrents[2]).find('.datepicker').datepicker({
-                dateFormat: "d M, yy",
+                dateFormat : "d M, yy",
                 changeMonth: true,
-                changeYear: true
+                changeYear : true
             }).datepicker('setDate', new Date());
             $(parrents[2]).attr('class', 'editable');
             $(parrents[3]).attr('class', 'editable').find("span").text(1);
@@ -247,7 +248,7 @@ define([
 
             var totalUntax = 0;
             var totalEls = resultForCalculate.length;
-            var currentEl;
+            var $currentEl;
             var quantity;
             var cost;
             var dates = [];
@@ -255,11 +256,11 @@ define([
 
             if (totalEls) {
                 for (var i = totalEls - 1; i >= 0; i--) {
-                    currentEl = $(resultForCalculate[i]);
-                    quantity = currentEl.find('[data-name="quantity"]').text();
-                    cost = currentEl.find('[data-name="price"]').text();
+                    $currentEl = $(resultForCalculate[i]);
+                    quantity = $currentEl.find('[data-name="quantity"]').text();
+                    cost = $currentEl.find('[data-name="price"]').text();
                     totalUntax += (quantity * cost);
-                    date = currentEl.find('.datepicker').text();
+                    date = $currentEl.find('.datepicker').text();
                     dates.push(date);
                 }
             }
@@ -291,9 +292,9 @@ define([
 
         render: function (options) {
             this.$el.html(this.template({
-                model: this.model,
+                model     : this.model,
                 collection: this.collection,
-                options: options
+                options   : options
             }));
 
             return this;

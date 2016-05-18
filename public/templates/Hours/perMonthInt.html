@@ -1,0 +1,17 @@
+<div class="divCell left-cell">
+    <span>
+        <%= totalName %>
+    </span>
+</div>
+<% monthArr.forEach(function(monthObject){ %>
+<div class="divCell">
+    <span>
+        <%= bySalesByDepPerWeek[monthObject.month] ? currencySplitter(bySalesByDepPerWeek[monthObject.month].toFixed()) : '&nbsp'%>
+    </span>
+</div>
+<% }) %>
+<div class="divCell">
+    <span>
+        <%= globalTotal ? currencySplitter(globalTotal.toFixed()) : '&nbsp'%>
+    </span>
+</div>

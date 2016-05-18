@@ -4,6 +4,8 @@ var Workflow = function (models, event) {
     var relatedStatusSchema = mongoose.Schemas['relatedStatus'];
     var workflowSchema = mongoose.Schemas['workflow'];
 
+    var CONSTANTS = require('../constants/mainConstants');
+
     function updateSequence(model, sequenceField, start, end, wId, isCreate, isDelete, callback) {
         var query;
         var objFind = {};
@@ -94,7 +96,21 @@ var Workflow = function (models, event) {
             }
         },
 
+        updateRefs: function (result, dbName, _id) {
+            var ProjectSchema;
+            var ProjectModel;
+
+            if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
+                ProjectSchema = mongoose.Schemas['Project'];
+                ProjectModel = models.get(dbName, 'Project', ProjectSchema);
+
+                /*event.emit('updateName', _id, ProjectModel, 'workflow._id', 'workflow.name', result.name);*/
+            }
+        },
+
         update: function (req, _id, data, result) {
+            var dbName = req.session.lastDb;
+            var self = this;
 
             try {
                 if (data) {
@@ -107,7 +123,7 @@ var Workflow = function (models, event) {
                                 }
                             }
                             else {
-                                models.get(req.session.lastDb, "workflows", workflowSchema).update({_id: _id}, data, function (err, res) {
+                                models.get(req.session.lastDb, "workflows", workflowSchema).findOneAndUpdate({_id: _id}, data, function (err, res) {
                                     if (err) {
                                         console.log(err);
                                         logWriter.log('WorkFlow.js update workflow.update ' + err);
@@ -115,6 +131,8 @@ var Workflow = function (models, event) {
                                         return;
                                     } else {
                                         result.send(200, {success: 'WorkFlow update success'});
+
+                                        self.updateRefs(res, dbName, _id);
                                     }
                                 });
                             }
@@ -131,7 +149,7 @@ var Workflow = function (models, event) {
                 if (data) {
                     updateSequence(models.get(req.session.lastDb, "workflows", workflowSchema), "sequence", data.sequenceStart, data.sequence, data.wId, false, false, function (sequence) {
                         data.sequence = sequence;
-                        models.get(req.session.lastDb, "workflows", workflowSchema).findByIdAndUpdate(_id, {$set: data}, function (err, res) {
+                        models.get(req.session.lastDb, "workflows", workflowSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, res) {
                             if (err) {
                                 console.log(err);
                                 logWriter.log('WorkFlow.js update workflow.update ' + err);
@@ -151,7 +169,7 @@ var Workflow = function (models, event) {
         getWorkflowsForDd: function (req, data, response) {
             var res = {};
             res['data'] = [];
-            var query = models.get(req.session.lastDb, "workflows", workflowSchema).find({wId: data.type.id});
+            var query = models.get(req.session.lastDb, "workflows", workflowSchema).find({wId: data.type.id, visible: true});
             query.select('name wName');
             query.sort({'sequence': -1, "editedBy.date": -1});
             query.exec(function (err, result) {
@@ -171,8 +189,8 @@ var Workflow = function (models, event) {
                 var res = {};
                 res['data'] = [];
                 if (data) {
-                    var query = (data.id) ? {wId: data.id} : {};
-                    if (data.name) query['name'] = data.name
+                    var query = (data.id) ? {wId: data.id, visible: true} : {visible: true};
+                    if (data.name) query['name'] = data.name;
                     var query2 = models.get(req.session.lastDb, "workflows", workflowSchema).find(query);
                     query2.sort({'sequence': -1, "editedBy.date": -1});
                     query2.exec(query, function (err, result) {
@@ -199,7 +217,7 @@ var Workflow = function (models, event) {
                 var res = {};
                 res['data'] = [];
                 if (data) {
-                    var query = (data.id) ? {wId: data.id} : {};
+                    var query = (data.id) ? {wId: data.id, visible: true} : {visible: true};
                     if (data.name) query['name'] = data.name
                     var query2 = models.get(req.session.lastDb, "workflows", workflowSchema).find(query);
                     query2.sort({'sequence': 1});

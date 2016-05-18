@@ -1,23 +1,23 @@
 define([
-    'models/ProjectsModel'
-],
-function (ProjectModel) {
+        'models/ProjectsModel'
+    ],
+    function (ProjectModel) {
         var ProjectsCollection = Backbone.Collection.extend({
-            model: ProjectModel,
-            url: function () {
+            model     : ProjectModel,
+            url       : function () {
                 return "/Projects";
             },
             initialize: function () {
                 var mid = 39;
 
                 this.fetch({
-                    data: $.param({
+                    data   : $.param({
                         mid: mid
                     }),
-                    type: 'GET',
-                    reset: true,
+                    type   : 'GET',
+                    reset  : true,
                     success: this.fetchSuccess,
-                    error: this.fetchError
+                    error  : this.fetchError
                 });
             },
 
@@ -27,4 +27,4 @@ function (ProjectModel) {
             }
         });
         return ProjectsCollection;
-});
+    });

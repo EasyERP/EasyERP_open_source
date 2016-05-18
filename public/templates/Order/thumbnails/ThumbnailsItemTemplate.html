@@ -1,15 +1,20 @@
 <% collection.forEach(function(person){ %>
 <div class="inner thumbnailwithavatar" id="<%=person._id%>">
     <div class="avatar" style="line-height: 140px">
-        <a class="gotoForm" href="#easyErp/Persons/form/<%=person._id%>" title="<%=person.name.first%> <%=person.name.last%>" data-id="<%=person._id%>">
-            <img src="" /></a>
+        <a class="gotoForm" href="#easyErp/Persons/form/<%=person._id%>"
+           title="<%=person.name.first%> <%=person.name.last%>" data-id="<%=person._id%>">
+            <img src=""/></a>
     </div>
     <div class="info">
         <div>
-            <a class="gotoForm title" href="#easyErp/Persons/form/<%=person._id%>" title="<%=person.name.first%> <%=person.name.last%>" data-id="<%=person._id%>"><span><%=person.name.first%> <%=person.name.last%></span></a>
+            <a class="gotoForm title" href="#easyErp/Persons/form/<%=person._id%>"
+               title="<%=person.name.first%> <%=person.name.last%>" data-id="<%=person._id%>"><span><%=person.name.first%> <%=person.name.last%></span></a>
         </div>
 
-        <% if (person.company){%><div><a class="company" title="<%=person.company.name.first%>" data-id="<%=person.company._id%>" href="javascript;"><%=person.company.name.first%></a></div><%}%>
+        <% if (person.company){%>
+        <div><a class="company" title="<%=person.company.name.first%>" data-id="<%=person.company._id%>"
+                href="javascript;"><%=person.company.name.first%></a></div>
+        <%}%>
         <div><a href="mailto:<%=person.email%>" target="_blank" title="<%=person.email%>"><%=person.email%></a></div>
     </div>
 </div>

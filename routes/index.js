@@ -1,8 +1,9 @@
-/**
- * Created by Roman on 02.04.2015.
- */
+require('pmx').init();
 
 module.exports = function (app, mainDb) {
+    'use strict';
+
+    //var newrelic = require('newrelic');
     var events = require('events');
     var event = new events.EventEmitter();
     var logWriter = require('../helpers/logWriter');
@@ -15,61 +16,214 @@ module.exports = function (app, mainDb) {
     var dbsObject = mainDb.dbsObject;
     var models = require("../models.js")(dbsObject);
     var productRouter = require('./product')(models);
-    var orderRouter = require('./order')(models);
-    var invoiceRouter = require('./invoice')(models);
+    var orderRouter = require('./order')(models, event);
+    var invoiceRouter = require('./invoice')(models, event);
+    var proformaRouter = require('./proforma')(models, event);
     var supplierRouter = require('./supplier')(models);
-    var quotationRouter = require('./quotation')(models);
+    var quotationRouter = require('./quotation')(models, event);
     var destinationRouter = require('./destination')(models);
     var incotermRouter = require('./incoterm')(models);
+    var weeklySchedulerRouter = require('./weeklyScheduler')(models);
+    var payrollComponentTypesRouter = require('./payrollComponentTypes')(models);
     var invoicingControlRouter = require('./invoicingControl')(models);
     var paymentTermRouter = require('./paymentTerm')(models);
     var deliverToTermRouter = require('./deliverTo')(models);
     var workflowRouter = require('./workflow')(models);
-    var paymentRouter = require('./payment')(models);
+    var paymentRouter = require('./payment')(models, event);
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
+    //var importDataRouter = require('./importData')(models);
+    var projectRouter = require('./project')(models);
+    var employeeRouter = require('./employee')(models);
+    var projectMemberRouter = require('./projectMember')(models, event);
+    var departmentRouter = require('./department')(models);
+    var revenueRouter = require('./revenue')(models);
+    var wTrackRouter = require('./wTrack')(event, models);
+    var salaryRouter = require('./salary')(event, models);
+    var opportunityRouter = require('./opportunity')(models);
+    var taskRouter = require('./task')(models);
+    var jobPositionRouter = require('./jobPosition')(models);
+    var holidayRouter = require('./holiday')(event, models);
+    var monthHoursRouter = require('./monthHours')(event, models);
+    var vacationRouter = require('./vacation')(event, models);
+    var bonusTypeRouter = require('./bonusType')(models);
+    var dashboardRouter = require('./dashboard')(models);
+    var expensesInvoiceRouter = require('./expensesInvoice')(models, event);
+    var dividendInvoiceRouter = require('./dividendInvoice')(models, event);
+    var filterRouter = require('./filter')(models);
+    var productCategoriesRouter = require('./productCategories')(models, event);
+    var customersRouter = require('./customers')(models, event);
+    var capacityRouter = require('./capacity')(models);
+    var payRollRouter = require('./payroll')(models);
+    var importFileRouter = require('./importFile')(models);
+    var paymentTypeRouter = require('./paymentType')(models);
+    var payrollExprnsesRouter = require('./payrollExprnses')(models);
+    var jobsRouter = require('./jobs')(models, event);
+    var chartOfAccountRouter = require('./chartOfAccount')(models);
+    var currencyRouter = require('./currency')(models);
+    var prPositionRouter = require('./projectPosition')(models);
+    var journalRouter = require('./journal')(models, event);
+    var salaryReportRouter = require('./salaryReport')(models);
+    var userRouter = require('./user')(event, models);
 
+    var async = require('async');
+
+    var requestHandler;
+
+    var winston = require('winston');
+    var logger = new (winston.Logger)({
+        transports       : [
+            new (winston.transports.Console)({
+                json     : false,
+                timestamp: true
+            }),
+            new (winston.transports.File)({
+                name: 'infoFile',
+                filename: 'info.log',
+                level: 'info',
+                json     : false,
+                maxsize: 1024 * 1024 * 10
+            }),
+            new (winston.transports.File)({
+                name: 'errorFile',
+                filename: 'error.log',
+                json     : false,
+                level: 'error',
+                maxsize: 1024 * 1024 * 10
+            })
+        ],
+        exceptionHandlers: [
+            new (winston.transports.Console)({
+                json     : false,
+                timestamp: true
+            }),
+            new winston.transports.File({
+                filename: 'exceptions.log',
+                json    : false
+            })
+        ],
+        exitOnError      : false
+    });
+
+    app.set('logger', logger);
+
+    requestHandler = require("../requestHandler.js")(app, event, mainDb);
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        for (var filterName in filter) {
+            condition = filter[filterName]['value'];
+            key = filter[filterName]['key'];
+
+            switch (filterName) {
+                case 'project':
+                    if (condition) {
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                    }
+                    break;
+                case 'salesPerson':
+                    if (condition) {
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                    }
+                    break;
+                case 'supplier':
+                    if (condition) {
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                    }
+                    break;
+                case 'workflow':
+                    if (condition) {
+                        filtrElement[key] = {$in: condition.objectID()};
+                        resArray.push(filtrElement);
+                    }
+                    break;
+                case 'forSales':
+                    if (condition) {
+                        condition = ConvertType(condition[0], 'boolean');
+                        filtrElement[key] = condition;
+                        resArray.push(filtrElement);
+                    }
+                    break;
+            }
+        }
+
+        return resArray;
+    };
 
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
     });
+/*
+    app.get('/kill', function (req, res, next) {
+        res.status(200).send('skjdgfjsdgfj');
+        process.exit(1);
+    });*/
 
-    var requestHandler = require("../requestHandler.js")(event, mainDb);
-
-    app.get('/', function (req, res) {
-        res.sendfile('index.html');
-    });
-
+    app.use('/filter', filterRouter);
     app.use('/product', productRouter);
-
     app.use('/order', orderRouter);
-
     app.use('/invoice', invoiceRouter);
-
+    app.use('/proforma', proformaRouter);
+    app.use('/expensesInvoice', expensesInvoiceRouter);
+    app.use('/dividendInvoice', dividendInvoiceRouter);
     app.use('/supplier', supplierRouter);
-
     app.use('/quotation', quotationRouter);
-
     app.use('/destination', destinationRouter);
-
     app.use('/incoterm', incotermRouter);
-
     app.use('/invoicingControl', invoicingControlRouter);
-
     app.use('/paymentTerm', paymentTermRouter);
-
     app.use('/deliverTo', deliverToTermRouter);
-
+    app.use('/weeklyScheduler', weeklySchedulerRouter);
+    app.use('/payrollComponentTypes', payrollComponentTypesRouter);
     app.use('/workflow', workflowRouter);
-
-    app.use('/supplierPayments', paymentRouter);
-
+    app.use('/payment', paymentRouter);
     app.use('/period', periodRouter);
-
     app.use('/paymentMethod', paymentMethodRouter);
-
+    //app.use('/importData', importDataRouter);
+    app.use('/importFile', importFileRouter);
+    app.use('/wTrack', wTrackRouter);
+    app.use('/project', projectRouter);
+    app.use('/employee', employeeRouter);
+    app.use('/department', departmentRouter);
+    app.use('/revenue', revenueRouter);
+    app.use('/salaryReport', salaryReportRouter);
+    app.use('/opportunity', opportunityRouter);
+    app.use('/task', taskRouter);
+    app.use('/jobPosition', jobPositionRouter);
+    app.use('/holiday', holidayRouter);
+    app.use('/vacation', vacationRouter);
+    app.use('/monthHours', monthHoursRouter);
+    app.use('/bonusType', bonusTypeRouter);
+    app.use('/dashboard', dashboardRouter);
+    app.use('/category', productCategoriesRouter);
+    app.use('/customers', customersRouter);
+    app.use('/capacity', capacityRouter);
+    app.use('/payroll', payRollRouter);
+    app.use('/jobs', jobsRouter);
+    app.use('/paymentType', paymentTypeRouter);
+    app.use('/payrollExprnses', payrollExprnsesRouter);
+    app.use('/chartOfAccount', chartOfAccountRouter);
+    app.use('/currency', currencyRouter);
+    app.use('/projectPosition', prPositionRouter);
+    app.use('/projectMember', projectMemberRouter);
+    app.use('/journal', journalRouter);
     app.get('/getDBS', function (req, res) {
         res.send(200, {dbsNames: dbsNames});
+    });
+
+    app.get('/currentDb', function (req, res, next) {
+        if (req.session && req.session.lastDb) {
+            res.status(200).send(req.session.lastDb);
+        } else {
+            res.status(401).send();
+        }
     });
 
     app.get('/account/authenticated', function (req, res, next) {
@@ -102,13 +256,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadFile(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -116,10 +272,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadFile(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -136,14 +293,15 @@ module.exports = function (app, mainDb) {
         res.download(__dirname + path);
     });
 
-    function uploadFileArray (req, res, callback) {
+    function uploadFileArray(req, res, callback) {
         var files = [];
-        if (req.files && !req.files.attachfile.length) {
+        if (req.files && req.files.attachfile && !req.files.attachfile.length) {
             req.files.attachfile = [req.files.attachfile];
         }
         var path;
         var os = require("os");
         var osType = (os.type().split('_')[0]);
+
         req.files.attachfile.forEach(function (item) {
             var localPath;
             switch (osType) {
@@ -253,13 +411,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadApplicationFile(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -267,10 +427,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadApplicationFile(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -300,13 +461,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadEmployeesFile(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -314,10 +477,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadEmployeesFile(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -347,13 +511,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadProjectsFiles(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -361,14 +527,65 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadProjectsFiles(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
                             requestHandler.uploadProjectsFiles(req, res, req.headers.id, files);
+                        });
+                    }
+                });
+            }
+        });
+    });
+
+    app.post('/uploadInvoiceFiles', multipartMiddleware, function (req, res, next) {
+        var os = require("os");
+        var osType = (os.type().split('_')[0]);
+        var dir;
+        switch (osType) {
+            case "Windows":
+            {
+                dir = __dirname + "\\uploads\\";
+            }
+                break;
+            case "Linux":
+            {
+                dir = __dirname + "\/uploads\/";
+            }
+        }
+        fs.readdir(dir, function (err, files) {
+            if (err) {
+                fs.mkdir(dir, function (errr) {
+                    if (!errr) {
+                        dir += req.headers.id;
+                    }
+                    fs.mkdir(dir, function (errr) {
+                        if (!errr) {
+                            uploadFileArray(req, res, function (files) {
+                                requestHandler.uploadInvoiceFiles(req, res, req.headers.id, files);
+                            });
+                        }
+                    });
+                });
+            } else {
+                dir += req.headers.id;
+                fs.readdir(dir, function (err, files) {
+                    if (err) {
+                        fs.mkdir(dir, function (errr) {
+                            if (!errr) {
+                                uploadFileArray(req, res, function (files) {
+                                    requestHandler.uploadInvoiceFiles(req, res, req.headers.id, files);
+                                });
+                            }
+                        });
+                    } else {
+                        uploadFileArray(req, res, function (files) {
+                            requestHandler.uploadInvoiceFiles(req, res, req.headers.id, files);
                         });
                     }
                 });
@@ -394,13 +611,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadTasksFiles(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -408,10 +627,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadTasksFiles(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -442,13 +662,15 @@ module.exports = function (app, mainDb) {
         fs.readdir(dir, function (err, files) {
             if (err) {
                 fs.mkdir(dir, function (errr) {
-                    if (!errr)
+                    if (!errr) {
                         dir += req.headers.id;
+                    }
                     fs.mkdir(dir, function (errr) {
-                        if (!errr)
+                        if (!errr) {
                             uploadFileArray(req, res, function (files) {
                                 requestHandler.uploadOpportunitiesFiles(req, res, req.headers.id, files);
                             });
+                        }
                     });
                 });
             } else {
@@ -456,10 +678,11 @@ module.exports = function (app, mainDb) {
                 fs.readdir(dir, function (err, files) {
                     if (err) {
                         fs.mkdir(dir, function (errr) {
-                            if (!errr)
+                            if (!errr) {
                                 uploadFileArray(req, res, function (files) {
                                     requestHandler.uploadOpportunitiesFiles(req, res, req.headers.id, files);
                                 });
+                            }
                         });
                     } else {
                         uploadFileArray(req, res, function (files) {
@@ -516,13 +739,24 @@ module.exports = function (app, mainDb) {
         requestHandler.updateCurrentUser(req, res, data);
     });
 
-    app.patch('/currentUser/:_id', function (req, res) {
+    app.patch('/currentUser', function (req, res) {
+        var data = {};
+        if (req.body) {
+            data.savedFilters = req.body;
+        }
+
+        requestHandler.updateCurrentUser(req, res, data);
+    });
+
+    app.use('/currentUser', userRouter);
+
+   /* app.patch('/currentUser/:_id', function (req, res) {
         var data = {};
         if (req.body.oldpass && req.body.pass) {
             data.changePass = true;
         }
         requestHandler.updateCurrentUser(req, res, data);
-    });
+    });*/
 
     app.get('/UsersForDd', function (req, res) {
         requestHandler.getUsersForDd(req, res);
@@ -583,7 +817,6 @@ module.exports = function (app, mainDb) {
     });
 
 //-----------------END----Users--and Profiles-----------------------------------------------
-
 
 //-----------------------------getTotalLength---------------------------------------------
     app.get('/totalCollectionLength/:contentType', function (req, res, next) {
@@ -687,14 +920,16 @@ module.exports = function (app, mainDb) {
 
     app.put('/Persons/:_id', function (req, res) {
         var data = {};
-        var id = req.param('_id');
+        var id = req.params._id;
         var remove = req.headers.remove;
+
         data.person = req.body;
         requestHandler.updatePerson(req, res, id, data, remove);
     });
 
     app.patch('/Persons/:_id', function (req, res) {
-        var id = req.param('_id');
+        var id = req.params._id;
+
         requestHandler.personUpdateOnlySelectedFields(req, res, id, req.body);
     });
 
@@ -709,19 +944,17 @@ module.exports = function (app, mainDb) {
         requestHandler.getProjectType(req, res);
     });
 
-
     app.get('/Projects/form/:_id', function (req, res) {
         var data = {};
         data.id = req.params._id;
         requestHandler.getProjectsById(req, res, data);
     });
 
-    app.get('/getProjectsForDd', function (req, res) {
-        requestHandler.getProjectsForDd(req, res);
-    });
-    app.get('/getProjectPMForDashboard', function (req, res) {
-        requestHandler.getProjectPMForDashboard(req, res);
-    });
+    app.get('/getProjectsForDd', requestHandler.getProjectsForDd);
+
+    //app.get('/getProjectPMForDashboard', function (req, res) {
+    //    requestHandler.getProjectPMForDashboard(req, res);
+    //});
     app.get('/getProjectStatusCountForDashboard', function (req, res) {
         requestHandler.getProjectStatusCountForDashboard(req, res);
     });
@@ -772,7 +1005,6 @@ module.exports = function (app, mainDb) {
         }
     });
 
-
 //--------------Tasks----------------------------------------------------------
     app.get('/getTasksLengthByWorkflows', function (req, res) {
         var options = {};
@@ -806,6 +1038,9 @@ module.exports = function (app, mainDb) {
 
     app.get('/Priority', function (req, res) {
         requestHandler.getTasksPriority(req, res);
+    });
+    app.get('/Priority/leads', function (req, res) {
+        requestHandler.getLeadsPriority(req, res);
     });
 
     app.put('/Tasks/:_id', function (req, res) {
@@ -909,6 +1144,7 @@ module.exports = function (app, mainDb) {
 
     app.post('/Companies', function (req, res) {
         var data = {};
+
         data.company = req.body;
         requestHandler.createCompany(req, res, data);
     });
@@ -938,15 +1174,18 @@ module.exports = function (app, mainDb) {
             data[i] = req.query[i];
         }
         var id = req.param('_id');
+        var remove = req.headers.remove;
+
         data.mid = req.headers.mid;
         data.company = req.body;
-        var remove = req.headers.remove;
+
         if (data.company.salesPurchases.salesPerson && (typeof (data.company.salesPurchases.salesPerson) == 'object')) {
             data.company.salesPurchases.salesPerson = data.company.salesPurchases.salesPerson._id;
         }
         if (data.company.salesPurchases.salesTeam && (typeof (data.company.salesPurchases.salesTeam) == 'object')) {
             data.company.salesPurchases.salesTeam = data.company.salesPurchases.salesTeam._id;
         }
+
         requestHandler.updateCompany(req, res, id, data, remove);
     });
 
@@ -1019,7 +1258,6 @@ module.exports = function (app, mainDb) {
         requestHandler.removeJobPosition(req, res, id);
     });
 
-
 //------------------Departments---------------------------------------------------
     app.get('/Departments', function (req, res) {
         requestHandler.getDepartment(req, res);
@@ -1067,7 +1305,6 @@ module.exports = function (app, mainDb) {
         var id = req.param('id');
         requestHandler.getDepartmentForEditDd(req, res, id);
     });
-
 
 //------------------Employee---------------------------------------------------
 
@@ -1163,7 +1400,6 @@ module.exports = function (app, mainDb) {
                 requestHandler.getApplicationsForKanban(req, res, data);
                 break;
         }
-
 
     });
 
@@ -1279,7 +1515,6 @@ module.exports = function (app, mainDb) {
         data.opportunitie = req.body;
         requestHandler.createOpportunitie(req, res, data);
     });
-
     app.get('/Opportunities/:viewType', function (req, res) {
         var data = {};
         for (var i in req.query) {
@@ -1306,6 +1541,7 @@ module.exports = function (app, mainDb) {
         requestHandler.getFilterOpportunitiesForMiniView(req, res, data);
 
     });
+
     app.get('/getLengthByWorkflows', function (req, res) {
         requestHandler.getOpportunitiesLengthByWorkflows(req, res);
     });
@@ -1338,9 +1574,163 @@ module.exports = function (app, mainDb) {
         }
     });
 
-    function notFound (req, res, next) {
-       res.status(404);
+    //ToDo remove it after test
+   /* app.get('/unlinkWtracks', function (req, res, next) {
+        require('..//models/index.js');
 
+        var mongoose = require('mongoose');
+        var ObjectId = mongoose.Schema.Types.ObjectId;
+        var async = require('async');
+        var _ = require('lodash');
+
+        var WtrackSchema = mongoose.Schemas['wTrack'];
+        var QuotationSchema = mongoose.Schemas['Quotation'];
+        var JobSchema = mongoose.Schemas['jobs'];
+
+        var dbObject = mongoose.createConnection('localhost', 'production');
+        dbObject.on('error', console.error.bind(console, 'connection error:'));
+        dbObject.once('open', function callback() {
+            console.log("Connection to weTrack is success");
+        });
+
+        var Wtrack = dbObject.model("wTrack", WtrackSchema);
+        var Quotation = dbObject.model("Quotation", QuotationSchema);
+        var Job = dbObject.model("jobs", JobSchema);
+
+        var query = Job
+            .aggregate([{
+                $lookup: {
+                    from        : 'Quotation',
+                    localField  : 'quotation',
+                    foreignField: '_id',
+                    as          : 'quotation'
+                }
+            }, {
+                $project: {
+                    payments : 1,
+                    quotation: {$arrayElemAt: ["$quotation", 0]},
+                    wTracks  : 1
+                }
+            }, {
+                $unwind: {
+                    path                      : '$wTracks',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $lookup: {
+                    from        : 'wTrack',
+                    localField  : 'wTracks',
+                    foreignField: '_id',
+                    as          : 'wTracks'
+                }
+            }, {
+                $project: {
+                    payments : 1,
+                    quotation: 1,
+                    wTracks  : {$arrayElemAt: ["$wTracks", 0]}
+                }
+            }, {
+                $group: {
+                    _id       : '$_id',
+                    totalHours: {$sum: '$wTracks.worked'},
+                    root      : {
+                        $push: {
+                            wTracks  : '$wTracks',
+                            quotation: '$quotation'
+                        }
+                    }
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    totalHours: 1,
+                    _id       : '$root.wTracks._id',
+                    oldRevenue: '$root.wTracks.revenue',
+                    revenue   : {
+                        $multiply: [{$divide: ['$root.wTracks.worked', '$totalHours']}, '$root.quotation.paymentInfo.total', 100]
+                    }
+
+                }
+            }/!*, {
+             $match: {
+             revenue: null
+             }
+             }*!/]);
+
+        query.exec(function (error, response) {
+            if (error) {
+                return console.dir(error);
+            }
+
+            async.each(response, function (foundObject, cb) {
+                var revenue = foundObject.revenue || 0;
+                var oldRevenue = foundObject.oldRevenue || 0;
+
+                console.log(revenue);
+
+                Wtrack.update({_id: foundObject._id}, {
+                    $set: {
+                        revenue   : revenue,
+                        oldRevenue: oldRevenue
+                    }
+                }, function (err, updated) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb();
+                });
+            }, function (err) {
+                if (err) {
+                    return next(err);
+                }
+
+                async.each(response, function (foundObject, cb) {
+                    Wtrack.update({_id: foundObject._id}, {$unset: {rate: ''}}, function (err, updated) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb();
+                    });
+                }, function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send({success: 'All updated'});
+                });
+            });
+        });
+    });*/
+
+    app.get('/clean', function(req, res, next){
+        var dbId = req.session.lastDb;
+        var db = dbsObject[dbId];
+        var collections = ['Project', 'wTrack', 'Invoice', 'Quotation', 'Payment', 'jobs', 'savedFilters', 'payOut'];
+        var collection;
+
+        async.each(collections, function (colName, cb) {
+            collection = db.collection(colName);
+            collection.drop(function (err, reply) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb();
+            });
+        }, function (err) {
+            if(err){
+                return next(err);
+            }
+
+            res.status(200).send('droped');
+        });
+    });
+
+    function notFound(req, res, next) {
+        res.status(404);
 
         if (req.accepts('html')) {
             return res.send(RESPONSES.PAGE_NOT_FOUND);
@@ -1355,21 +1745,22 @@ module.exports = function (app, mainDb) {
 
     };
 
-    function errorHandler (err, req, res, next) {
+    function errorHandler(err, req, res, next) {
         var status = err.status || 500;
 
         if (process.env.NODE_ENV === 'production') {
             if (status === 401) {
-                logWriter.log('', err.message + '\n' + err.stack);
+                logWriter.log('', err.message + '\n' + err.message)
             }
             res.status(status).send({error: err.message});
         } else {
-            if (status !== 401) {
-                logWriter.log('', err.message + '\n' + err.stack);
-            }
             res.status(status).send({error: err.message + '\n' + err.stack});
         }
+
+        logger.error(err.message + '\n' + err.stack);
     };
+
+    requestHandler.initScheduler();
 
     app.use(notFound);
     app.use(errorHandler);

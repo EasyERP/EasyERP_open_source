@@ -9,23 +9,24 @@
                     <dl class="opp-info">
                         <dt><label for="supplierDD">Supplier</label></dt>
                         <dd>
-                            <%if(invoice && invoice.supplier){%>
-                            <a id="supplierDd" class="current-selected" href="javascript:;"
-                               data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.fullName%></a>
+                            <%if(invoice && invoice.supplier && invoice.supplier._id){%>
+                            <a id="supplierDd" class="" href="javascript:;"
+                               data-id="<%=invoice.supplier._id%>"><%=invoice.supplier.name.first + ' ' +
+                                invoice.supplier.name.last%></a>
                             <%} else {%>
-                            <a id="supplierDd" class="current-selected" href="javascript:;">Select</a>
+                            <a id="supplierDd" class="" href="javascript:;">Select</a>
                             <%}%>
                         </dd>
                         <dt>
                             <label for="paidAmount">Paid Amount</label>
                         </dt>
-                        <dd>
+                        <dd id="paidAmountDd" class="<%=currencyClass(currency._id)%>">
                             <input type="text" name="paidAmount" id="paidAmount" maxlength="10"
                                    value="<%=invoice.paymentInfo ? invoice.paymentInfo.balance : 0%>">
-                            <span>€</span>
+                            <span></span>
                         </dd>
                         <dt>
-                            <label for="paymentMethod">Payment Method
+                            <label for="paymentMethod">Bank account
                             </label>
                         </dt>
                         <dd>
@@ -37,22 +38,30 @@
                     <dl class="opp-info">
                         <dt><label for="paymentDate">Date</label></dt>
                         <dd><input id="paymentDate" class="extrainfo" type="text" name="paymentDate"></dd>
-                        <dt><label for="period">Period</label></dt>
+                        <!--<dt><label for="period">Period</label></dt>
                         <dd>
                             <a id="period" class="current-selected" href="javascript:;">Select</a>
-                        </dd>
-                        <dt><label for="paymentRef">Payment Ref</label></dt>
+                        </dd>-->
+                        <dt><label for="paymentRef">Invoice</label></dt>
                         <dd>
-                            <input type="text" name="paymentRef" id="paymentRef" maxlength="20"
-                                   value="<%=invoice.sourceDocument%>">
+                            <a id="paymentRef" data-id="<%=invoice._id%>" href="javascript:;"><%=invoice.name%></a>
+                            <!--<input type="text" name="paymentRef" id="paymentRef" maxlength="20"-->
+                                   <!--value="<%=invoice.name%>" readonly />-->
                         </dd>
                         <!--                        <dt><label for="memo">Memo</label></dt>
                                                 <dd><input type="text" name="memo" id="memo" maxlength="20"></dd>-->
+                        <dt><label for="currencyDd">Currency</label></dt>
+                        <dd>
+                            <a id="currencyDd" class="current-selected"
+                               data-id="<%= currency && currency._id ? invoice.currency._id : null%>"
+                               href="javascript:;"><%= currency && currency.name ?
+                                currency.name : ''%></a>
+                        </dd>
                     </dl>
                 </div>
                 <div id="differenceAmountContainer" class="half-block left hidden">
                     <dt><label>Difference Amount</label></dt>
-                    <dd><span id="differenceAmount"></span></dd>
+                    <dd class="dollar"> <span id="differenceAmount"></span></dd>
                     <!--<dt><label for="paymentDifference">Payment Difference</label></dt>
                     <dd>
                         <a id="paymentDifference" class="current-selected" href="javascript:;">Select</a>

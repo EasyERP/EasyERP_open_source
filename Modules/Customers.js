@@ -1,10 +1,14 @@
-﻿var Customers = function (models) {
+﻿require('pmx').init();
+
+var Customers = function (event, models) {
     var mongoose = require('mongoose');
     var logWriter = require('../helpers/logWriter.js');
     var objectId = mongoose.Types.ObjectId;
     var customerSchema = mongoose.Schemas['Customer'];
     var department = mongoose.Schemas['Department'];
     var fs = require('fs');
+
+    var CONSTANTS = require('../constants/mainConstants');
 
     return {
 
@@ -19,33 +23,7 @@
             var contentType = req.params.contentType;
             var optionsObject = {};
 
-            switch (contentType) {
-                case ('Persons'):
-                {
-                    optionsObject['type'] = 'Person';
-
-                    if (data.filter && data.filter.letter) {
-                        optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-                    }
-                }
-                    break;
-                case ('Companies'):
-                {
-                    optionsObject['type'] = 'Company';
-                    if (data.filter && data.filter.letter)
-                        optionsObject['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
-                }
-                    break;
-                case ('ownCompanies'):
-                {
-                    optionsObject['type'] = 'Company';
-                    optionsObject['isOwn'] = true;
-                    if (data.letter)
-                        optionsObject['name.first'] = new RegExp('^[' + data.letter.toLowerCase() + data.letter.toUpperCase() + '].*');
-                }
-                    break;
-            }
-
+            this.caseFilter(contentType, optionsObject, data);
 
             models.get(req.session.lastDb, "Department", department).aggregate(
                 {
@@ -60,6 +38,7 @@
                 function (err, deps) {
                     if (!err) {
                         var arrOfObjectId = deps.objectID();
+
                         models.get(req.session.lastDb, "Customers", customerSchema).aggregate(
                             {
                                 $match: {
@@ -131,6 +110,8 @@
                     savetoBd(data);
                 }
                 function savetoBd(data) {
+                    var _customer;
+
                     try {
                         _customer = new models.get(req.session.lastDb, "Customers", customerSchema)();
                         if (data.uId) {
@@ -213,6 +194,14 @@
                                 _customer.phones.fax = data.phones.fax;
                             }
                         }
+                        if (data.social) {
+                            if (data.social.LI) {
+                                _customer.social.LI = data.social.LI;
+                            }
+                            if (data.social.FB) {
+                                _customer.social.FB = data.social.FB;
+                            }
+                        }
                         if (data.contacts) {
                             _customer.contacts = data.contacts;
                         }
@@ -223,35 +212,36 @@
                             _customer.title = data.title;
                         }
                         if (data.salesPurchases) {
-                            if (data.salesPurchases.active) {
-                                _customer.salesPurchases.active = data.salesPurchases.active;
-                            }
-                            if (data.salesPurchases.language) {
+                            _customer.salesPurchases.active = !!data.salesPurchases.active;
+
+                            if (data.salesPurchases.language !== '') {
                                 _customer.salesPurchases.language = data.salesPurchases.language;
                             }
-                            if (data.salesPurchases.isCustomer) {
-                                _customer.salesPurchases.isCustomer = data.salesPurchases.isCustomer;
-                            }
-                            if (data.salesPurchases.isSupplier) {
-                                _customer.salesPurchases.isSupplier = data.salesPurchases.isSupplier;
-                            }
-                            if (data.salesPurchases.salesPerson) {
+
+                            _customer.salesPurchases.isCustomer = !!data.salesPurchases.isCustomer;
+                            _customer.salesPurchases.isSupplier = !!data.salesPurchases.isSupplier;
+
+                            if (data.salesPurchases.salesPerson !== '') {
                                 _customer.salesPurchases.salesPerson = data.salesPurchases.salesPerson;
                             }
-                            if (data.salesPurchases.salesTeam) {
+                            if (data.salesPurchases.salesTeam !== '') {
                                 _customer.salesPurchases.salesTeam = data.salesPurchases.salesTeam;
                             }
-                            if (data.salesPurchases.reference) {
+                            if (data.salesPurchases.implementedBy !== '') {
+                                _customer.salesPurchases.implementedBy = data.salesPurchases.implementedBy;
+                            }
+                            if (data.salesPurchases.reference !== '') {
                                 _customer.salesPurchases.reference = data.salesPurchases.reference;
                             }
                             if (data.salesPurchases.receiveMessages) {
-                                _customer.salesPurchases.receiveMessages = data.usalesPurchases.receiveMessages;
+                                _customer.salesPurchases.receiveMessages = data.salesPurchases.receiveMessages;
                             }
+
                             if (data.imageSrc) {
                                 _customer.imageSrc = data.imageSrc;
                             }
                         }
-                        if (data.relatedUser) {
+                        if (data.relatedUser !== '') {
                             _customer.relatedUser = data.relatedUser;
                         }
                         if (data.history) {
@@ -311,7 +301,7 @@
             res['data'] = [];
             if (data.letter) {
                 optionsObject['type'] = 'Person';
-                optionsObject['name.last'] = new RegExp('^[' + data.letter.toLowerCase() + data.letter.toUpperCase() + '].*');
+                optionsObject['name.last'] = new RegExp('^[' + data.letter.value.toLowerCase() + data.letter.value.toUpperCase() + '].*');
             } else {
                 optionsObject['type'] = 'Person';
             }
@@ -417,6 +407,9 @@
         getPersonById: function (req, id, response) {
             var query = models.get(req.session.lastDb, "Customers", customerSchema).findById(id);
             query.populate('company', '_id name').
+                populate('salesPurchases.salesPerson', '_id name fullName').
+                populate('salesPurchases.salesTeam', '_id departmentName').
+                populate('salesPurchases.implementedBy', '_id name fullName').
                 populate('department', '_id departmentName').
                 populate('createdBy.user').
                 populate('editedBy.user').
@@ -437,8 +430,9 @@
         getCompanyById: function (req, id, response) {
             var query = models.get(req.session.lastDb, "Customers", customerSchema).findById(id);
             query.populate('department', '_id departmentName').
-                populate('salesPurchases.salesPerson', '_id name').
+                populate('salesPurchases.salesPerson', '_id name fullName').
                 populate('salesPurchases.salesTeam', '_id departmentName').
+                populate('salesPurchases.implementedBy', '_id name fullName').
                 populate('createdBy.user').
                 populate('editedBy.user').
                 populate('groups.users').
@@ -619,29 +613,100 @@
 
         },
 
-        getFilterCustomers: function (req, response) {
-            var data = {};
-            for (var i in req.query) {
-                data[i] = req.query[i];
-            }
-            var viewType = data.viewType;
-            var contentType = data.contentType;
-            var res = {};
-            res['data'] = [];
-            var optionsObject = {};
+        caseFilter: function (contentType, optionsObject, data) {
+            var condition;
+            var resArray = [];
+            var filtrElement = {};
+            var key;
+
             switch (contentType) {
                 case ('Persons'):
                 {
-                    optionsObject['type'] = 'Person';
-                    if (data && data.filter && data.filter.letter)
-                        optionsObject['name.last'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+                    for (var filterName in data.filter) {
+                        condition = data.filter[filterName]['value'];
+                        key = data.filter[filterName]['key'];
+
+                        switch (filterName) {
+                            case 'country':
+                                filtrElement[key] = {$in: condition};
+                                resArray.push(filtrElement);
+                                break;
+                            case 'name':
+                                filtrElement[key] = {$in: condition.objectID()};
+                                resArray.push(filtrElement);
+                                break;
+                            case 'letter':
+                                filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
+                                resArray.push(filtrElement);
+                                break;
+                            case 'services':
+                                if (condition.indexOf('isCustomer') !== -1) {
+                                    filtrElement['salesPurchases.isCustomer'] = true;
+                                    resArray.push(filtrElement);
+                                }
+                                if (condition.indexOf('isSupplier') !== -1) {
+                                    filtrElement['salesPurchases.isSupplier'] = true;
+                                    resArray.push(filtrElement);
+                                }
+                                break;
+                        }
+                    };
+
+                    resArray.push({'type': 'Person'});
+
+                    if (resArray.length) {
+
+                        if (data && data.filter && data.filter.condition === 'or') {
+                            optionsObject['$or'] = resArray;
+                        } else {
+                            optionsObject['$and'] = resArray;
+                        }
+                    }
                 }
                     break;
                 case ('Companies'):
                 {
-                    optionsObject['type'] = 'Company';
-                    if (data && data.filter && data.filter.letter)
-                        optionsObject['name.first'] = new RegExp('^[' + data.filter.letter.toLowerCase() + data.filter.letter.toUpperCase() + '].*');
+
+                    for (var filterName in data.filter) {
+                        condition = data.filter[filterName]['value'];
+                        key = data.filter[filterName]['key'];
+
+                        switch (filterName) {
+                            case 'country':
+                                filtrElement[key] = {$in: condition};
+                                resArray.push(filtrElement);
+                                break;
+                            case 'name':
+                                filtrElement[key] = {$in: condition.objectID()};
+                                resArray.push(filtrElement);
+                                break;
+                            case 'letter':
+                                filtrElement['name.first'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
+                                resArray.push(filtrElement);
+                                break;
+                            case 'services':
+                                if (condition.indexOf('isCustomer') !== -1) {
+                                    filtrElement['salesPurchases.isCustomer'] = true;
+                                    resArray.push(filtrElement);
+                                }
+                                if (condition.indexOf('isSupplier') !== -1) {
+                                    filtrElement['salesPurchases.isSupplier'] = true;
+                                    resArray.push(filtrElement);
+                                }
+                                break;
+                        }
+                    };
+
+                    resArray.push({'type': 'Company'});
+
+                    if (resArray.length) {
+
+                        if (data && data.filter && data.filter.condition === 'or') {
+                            optionsObject['$or'] = resArray;
+                        } else {
+                            optionsObject['$and'] = resArray;
+                        }
+                    }
                 }
                     break;
                 case ('ownCompanies'):
@@ -649,10 +714,25 @@
                     optionsObject['type'] = 'Company';
                     optionsObject['isOwn'] = true;
                     if (data.letter)
-                        optionsObject['name.first'] = new RegExp('^[' + data.letter.toLowerCase() + data.letter.toUpperCase() + '].*');
+                        optionsObject['name.first'] = new RegExp('^[' + data.letter.value.toLowerCase() + data.letter.value.toUpperCase() + '].*');
                 }
                     break;
             }
+        },
+
+        getFilterCustomers: function (req, response) {
+
+
+            var data = req.query;
+            var viewType = data.viewType;
+            var contentType = data.contentType;
+            var res = {
+                data: []
+            };
+            var optionsObject = {};
+
+
+            this.caseFilter(contentType, optionsObject, data);
 
             models.get(req.session.lastDb, "Department", department).aggregate(
                 {
@@ -667,39 +747,40 @@
                 function (err, deps) {
                     if (!err) {
                         var arrOfObjectId = deps.objectID();
+                        var queryObject = {
+                            $or: [
+                                {
+                                    $or: [
+                                        {
+                                            $and: [
+                                                {whoCanRW: 'group'},
+                                                {'groups.users': objectId(req.session.uId)}
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {whoCanRW: 'group'},
+                                                {'groups.group': {$in: arrOfObjectId}}
+                                            ]
+                                        }
+                                    ]
+                                },
+                                {
+                                    $and: [
+                                        {whoCanRW: 'owner'},
+                                        {'groups.owner': objectId(req.session.uId)}
+                                    ]
+                                },
+                                {whoCanRW: "everyOne"}
+                            ]
+                        };
 
                         models.get(req.session.lastDb, "Customers", customerSchema).aggregate(
                             {
                                 $match: {
                                     $and: [
                                         optionsObject,
-                                        {
-                                            $or: [
-                                                {
-                                                    $or: [
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.users': objectId(req.session.uId)}
-                                                            ]
-                                                        },
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.group': {$in: arrOfObjectId}}
-                                                            ]
-                                                        }
-                                                    ]
-                                                },
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'owner'},
-                                                        {'groups.owner': objectId(req.session.uId)}
-                                                    ]
-                                                },
-                                                {whoCanRW: "everyOne"}
-                                            ]
-                                        }
+                                        queryObject
                                     ]
                                 }
                             },
@@ -829,12 +910,57 @@
             });
         },
 
+        updateRefs: function (result, dbName, _id) {
+            var InvoiceSchema;
+            var Invoice;
+            var PaymentSchema;
+            var Payment;
+            var ProjectSchema;
+            var Project;
+            var QuotationSchema;
+            var Quotation;
+            var wTrackSchema;
+            var wTrack;
+
+            var fullName;
+
+            if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
+
+                InvoiceSchema = mongoose.Schemas['wTrackInvoice'];
+                Invoice = models.get(dbName, 'wTrackInvoice', InvoiceSchema);
+
+                PaymentSchema = mongoose.Schemas['Payment'];
+                Payment = models.get(dbName, 'Payment', PaymentSchema);
+
+                ProjectSchema = mongoose.Schemas['Project'];
+                Project = models.get(dbName, 'Project', ProjectSchema);
+
+                QuotationSchema = mongoose.Schemas['Quotation'];
+                Quotation = models.get(dbName, 'Quotation', QuotationSchema);
+
+                wTrackSchema = mongoose.Schemas['wTrack'];
+                wTrack = models.get(dbName, 'wTrack', wTrackSchema);
+
+                fullName = result.name.last ? (result.name.first + ' ' + result.name.last) : result.name.first;
+
+                /*event.emit('updateName', _id, Invoice, 'supplier._id', 'supplier.name', fullName);
+                event.emit('updateName', _id, Payment, 'supplier._id', 'supplier.fullName', fullName);
+                event.emit('updateName', _id, Project, 'customer._id', 'customer.name', fullName);
+                event.emit('updateName', _id, Quotation, 'supplier._id', 'supplier.name', fullName);
+                event.emit('updateName', _id, wTrack, 'customer._id', 'customer.name', fullName);*/
+            }
+        },
+
         update: function (req, _id, remove, data, res) {
+            var dbName = req.session.lastDb;
+            var self = this;
+            var obj;
+
             try {
                 delete data._id;
                 delete data.createdBy;
-                if (data.notes && data.notes.length != 0 && !remove) {
-                    var obj = data.notes[data.notes.length - 1];
+                if (data.notes && data.notes.length !== 0 && !remove) {
+                    obj = data.notes[data.notes.length - 1];
                     obj._id = mongoose.Types.ObjectId();
                     obj.date = new Date();
                     data.notes[data.notes.length - 1] = obj;
@@ -851,12 +977,14 @@
                 if (data.salesPurchases && data.salesPurchases.salesTeam && data.salesPurchases.salesTeam._id) {
                     data.salesPurchases.salesTeam = data.salesPurchases.salesTeam._id;
                 }
-                models.get(req.session.lastDb, "Customers", customerSchema).findByIdAndUpdate({_id: _id}, data, function (err, customers) {
+                models.get(req.session.lastDb, "Customers", customerSchema).findByIdAndUpdate({_id: _id}, data, {new: true}, function (err, customers) {
                     if (err) {
                         logWriter.log("Customer.js update customer.update " + err);
                         res.send(500, {error: "Can't update customer"});
                     } else {
                         res.send(200, customers);
+
+                        self.updateRefs(customers, dbName, _id);
                     }
                 });
             }
@@ -867,6 +995,9 @@
         },
 
         updateOnlySelectedFields: function (req, _id, data, res) {
+            var dbName = req.session.lastDb;
+            var self = this;
+
             delete data._id;
             var fileName = data.fileName;
             delete data.fileName;
@@ -880,7 +1011,7 @@
                 data.notes[data.notes.length - 1] = obj;
             }
 
-            models.get(req.session.lastDb, 'Customers', customerSchema).findByIdAndUpdate({_id: _id}, {$set: data}, function (err, result) {
+            models.get(req.session.lastDb, 'Customers', customerSchema).findByIdAndUpdate({_id: _id}, {$set: data}, {new: true}, function (err, result) {
                 if (err) {
                     logWriter.log("Customer.js update customer.update " + err);
                     res.send(500, {error: "Can't update Customer"});
@@ -914,7 +1045,7 @@
 
                         fs.unlink(path, function (err) {
                             fs.readdir(dir, function (err, files) {
-                                if (files.length === 0) {
+                                if (files && files.length === 0) {
                                     fs.rmdir(dir, function () {
                                     });
                                 }
@@ -922,7 +1053,9 @@
                         });
 
                     }
-                    res.send(200, {success: 'Customer update', notes: result.notes});
+                    res.send(200, {success: 'Customer updated', notes: result.notes});
+
+                    self.updateRefs(result, dbName, _id);
                 }
             });
         },

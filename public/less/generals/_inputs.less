@@ -1,0 +1,72 @@
+/*== Begin Input type number =============*/
+.ui-spinner {
+  position: relative;
+  padding: 0;
+  display: block;
+  overflow: hidden;
+  .ui-spinner-input {
+    float: left;
+    border: none;
+  }
+  span {
+    display: block;
+    width: 8px;
+    height: 8px;
+    text-align: center;
+    padding: 0;
+  }
+  .ui-spinner-up {
+    position: absolute;
+    right: 8px;
+    top: 2px;
+    padding: 0;
+    cursor: pointer;
+    font-size: 8px;
+    line-height: 8px;
+    &:hover {
+      text-decoration: none;
+      color: @mainText-color-selected + #333;
+    }
+  }
+  .ui-spinner-down {
+    position: absolute;
+    padding: 0;
+    right: 8px;
+    bottom: 0;
+    cursor: pointer;
+    font-size: 8px;
+    line-height: 8px;
+    &:hover {
+      text-decoration: none;
+      color: @mainText-color-selected + #333;
+    }
+  }
+}
+
+.disable_input_style {
+  //disable all visual effects for input (add to parent input)
+  //box-sizing: border-box;//bad for projects -> Bonus
+  //height: 26px !important;
+  //line-height: 26px;
+  //padding: 2px 4px !important;
+  cursor: pointer;
+  text-align: right;
+
+  input {
+    //display: none;
+    height: 19px;
+    margin: 0;
+    border: none !important;
+    width: 100%;
+    min-width: 100%;
+
+    &:focus {
+      // must be working on ui-dialog
+      outline: none !important;
+      box-shadow: none !important;
+      border: none !important;
+    }
+  }
+}
+
+/*== End Input type number =============*/

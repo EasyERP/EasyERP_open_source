@@ -25,15 +25,13 @@
                     $match: {
                         'profileAccess.module': mid
                     }
-                },
-
-                function (err, result) {
-                    return callback({ error: err, result: result })
+                }, function (err, result) {
+                    return callback({ error: err, result: result });
                 }
             );
             } else {
-                logWriter.log('access.js users.findById error' + err);
-                res.send(500, { error: 'access.js users.findById error' });
+                //logWriter.log('access.js users.findById error' + err);
+                callback({ error: 'access.js users.findById error' });
             }
         });
     };
@@ -67,10 +65,22 @@
         });
     };
 
+    var getApproveAccess = function (req, uId, mid, callback) {
+        getAccess(req, uId, mid, function (res) {
+            if (res.error) {
+                console.log(res.error);
+            } else {
+                //todo - refactor
+                callback(true);
+            }
+        });
+    };
+
     return {
         getReadAccess: getReadAccess,
         getEditWritAccess: getEditWritAccess,
-        getDeleteAccess: getDeleteAccess
+        getDeleteAccess: getDeleteAccess,
+        getApproveAccess: getApproveAccess
     }
 };
 module.exports = access;

@@ -1,11 +1,11 @@
-/**
- * Created by Roman on 15.05.2015.
- */
 var mongoose = require('mongoose');
 var workflows = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
+    'use strict';
+
     var WorkflowSchema = mongoose.Schemas['workflow'];
     var RESPONSES = require('../constants/responses.js');
+
+    var _ = require('lodash');
 
     this.getFirstForConvert = function (req, res, next) {
         var callback;
@@ -37,7 +37,7 @@ var workflows = function (models) {
         }
 
         query = {
-            wId: wId,
+            wId   : wId,
             status: status
         };
 
@@ -58,12 +58,10 @@ var workflows = function (models) {
                     }
                     return next(err);
                 }
-                ;
                 if (callback) {
                     return callback(null, workflow);
                 }
-                ;
-                res.status(200).send(workflow)
+                res.status(200).send(workflow);
             });
     };
 
@@ -87,7 +85,8 @@ var workflows = function (models) {
         }
 
         query = {
-            wId: wId
+            wId    : wId,
+            visible: true
         };
 
         if (source) {
@@ -104,10 +103,9 @@ var workflows = function (models) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send(workflows)
+                res.status(200).send(workflows);
             });
     };
-
 };
 
 module.exports = workflows;

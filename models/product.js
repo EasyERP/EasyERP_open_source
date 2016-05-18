@@ -6,6 +6,7 @@ module.exports = (function () {
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var productSchema = new mongoose.Schema({
+        wTrack: { type: String, ref: 'wTrack', default: null },
         canBeSold: { type: Boolean, default: true },
         canBeExpensed: { type: Boolean, default: true },
         eventSubscription: { type: Boolean, default: true },
@@ -18,6 +19,12 @@ module.exports = (function () {
             isActive: {type: Boolean, default: true},
             barcode: {type: String, default: ''},
             description: {type: String, default: ''}
+        },
+        accounting: {
+            category: {
+                _id: { type: ObjectId, ref: 'ProductCategory', default: null },
+                name: {type: String, default: ''}
+            }
         },
         workflow: { type: ObjectId, ref: 'workflows', default: null },
         whoCanRW: { type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne' },
@@ -34,7 +41,8 @@ module.exports = (function () {
         editedBy: {
             user: { type: ObjectId, ref: 'Users', default: null },
             date: { type: Date, default: Date.now }
-        }
+        },
+        ID: Number
     }, { collection: 'Products' });
 
     mongoose.model('Product', productSchema);

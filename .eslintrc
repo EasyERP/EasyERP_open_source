@@ -1,0 +1,32 @@
+{
+  "extends": "thinkmobiles",
+  "globals": {
+    "App": true
+  },
+  "rules": {
+    "no-trailing-spaces": [
+      "error",
+      {
+        "skipBlankLines": true
+      }
+    ],
+    "key-spacing": [
+      "error",
+      {
+        "align": "colon"
+      }
+    ],
+    "no-shadow": [
+      2,
+      {
+        "hoist": "never"
+      }
+    ],
+    "no-param-reassign": [
+      "error",
+      {
+        "props": false
+      }
+    ]
+  }
+}

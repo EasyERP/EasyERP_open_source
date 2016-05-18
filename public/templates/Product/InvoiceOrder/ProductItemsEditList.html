@@ -1,32 +1,55 @@
 <table class="list2">
+    <colgroup>
+        <col width="2%">
+        <col width="15%">
+        <col width="25%">
+        <col width="17%">
+        <col width="13%">
+        <col width="10%">
+        <col width="10%">
+    </colgroup>
     <thead>
     <tr class="productListItemsColumns">
-        <th class="width20" data-sort="Product">
+        <th>
+        </th>
+        <th data-sort="Product">
             Product
         </th>
-        <th class="width20" data-sort="description">
+        <% if (forSales) {%>
+        <th data-sort="jobs">
+            Job
+        </th>
+        <% } else { %>
+        <th data-sort="description">
             Description
         </th>
-        <th class="width20" data-sort="scheduledDate">
+        <% } %>
+        <!--<th data-sort="scheduledDate">
             Scheduled Date
+        </th>-->  <!--commented on 14 Mar, in quotationEdit commit -->
+<!--        <% if (forSales) {%>
+        <th  data-sort="hours">
+            Hours
         </th>
-        <th class="width20" data-sort="quantity">
+        <% } else {%>
+        <th  data-sort="quantity">
             Quantity
         </th>
-        <th class="width20" data-sort="unitPrice">
+        <% } %>-->
+        <th  data-sort="quantity">
+            Quantity
+        </th>
+        <th data-sort="unitPrice">
             Unit Price
         </th>
-        <th class="width20" data-sort="taxes">
+        <th data-sort="taxes">
             Taxes
         </th>
-        <th class="width20" data-sort="subtotal">
+        <th data-sort="subtotal">
             Subtotal
         </th>
     </tr>
     </thead>
-    <tfoot>
-    <tr></tr>
-    </tfoot>
     <tbody id="productList">
 
     </tbody>

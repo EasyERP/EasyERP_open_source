@@ -1,26 +1,26 @@
 define([
-    'models/LeadsModel',
-    'common'
-],
+        'models/LeadsModel',
+        'common'
+    ],
     function (LeadModel, common) {
         var LeadsCollection = Backbone.Collection.extend({
-            model: LeadModel,
-            url: function () {
+            model     : LeadModel,
+            url       : function () {
                 return "/Leads";
             },
             initialize: function () {
                 var mid = 39;
                 this.fetch({
-                    data: $.param({
+                    data   : $.param({
                         mid: mid
                     }),
-                    type: 'GET',
-                    reset: true,
+                    type   : 'GET',
+                    reset  : true,
                     success: this.fetchSuccess,
-                    error: this.fetchError
+                    error  : this.fetchError
                 });
             },
-            parse: true,
+            parse     : true,
 
             parse: function (response) {
                 return response.data;

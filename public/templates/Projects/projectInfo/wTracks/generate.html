@@ -1,0 +1,114 @@
+<div class="form-holder">
+    <div class="inner">
+        <div class="clearfix"></div>
+        <div class="topInputHolder">
+            <div class="thirdPartBlock left">
+                <dl class="person-info">
+                    <dt><label for="project">Project</label></dt>
+                    <dd>
+                        <span id="project"><%= project.projectName %></span>
+                    </dd>
+                </dl>
+                <dl class="person-info">
+                    <dt><label for="jobName">Job Name</label></dt>
+                    <dd>
+                        <% if (jobs && jobs._id) {%>
+                        <input id="jobName" value="<%=jobs.name%>" readonly/>
+                        <% } else {%>
+                        <input id="jobName" maxlength="36"/>
+                        <% } %>
+                    </dd>
+                </dl>
+            </div>
+            <div class="thirdPartBlock left">
+                <dl class="person-info">
+                    <div class="miniAvatarCustomer miniAvatar"
+                         data-id="<%=(project.customer && project.customer._id) ? project.customer._id: ''%>">
+                        <img alt="" src="" class="avatar"/>
+                    </div>
+                    <div class="miniAvatarInfo">
+                        <dt><label for="customer">Customer</label></dt>
+                        <dd>
+                            <span id="customer"><%= project.customer &&  project.customer.name ? project.customer.name.first + ' ' + project.customer.name.last : '' %></span>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+            <div class="thirdPartBlock left">
+                <dl class="person-info">
+                    <div class="miniAvatarPM miniAvatar"
+                         data-id="<%=( project.salesmanager &&  project.salesmanager._id) ?  project.salesmanager._id: ''%>">
+                        <img alt="" src="" class="avatar"/>
+                    </div>
+                    <div class="miniAvatarInfo">
+                        <dt><label for="salesManager">SM</label></dt>
+                        <dd>
+                            <span id="salesManager"><%= project.salesmanager && project.salesmanager.name ?  project.salesmanager.name.first + ' ' +  project.salesmanager.name.last : ''%></span>
+                        </dd>
+                    </div>
+                </dl>
+
+            </div>
+            <div class="clearfix"></div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="topContentHolder">
+            <div id="wTrackItemsHolder">
+                <table id="rawTable" class="list2">
+                    <colgroup>
+                        <col width="2%">
+                        <col width="13%">
+                        <col width="10%">
+                        <col width="7%">
+                        <col width="7%">
+                        <col width="7%">
+                        <col width="5%">
+                        <col width="5%">
+                        <col width="5%">
+                        <col width="5%">
+                        <col width="5%">
+                        <col width="5%">
+                        <col width="5%">
+                        <col width="5%">
+                    </colgroup>
+                    <thead>
+                    <tr>
+                        <th></th>
+                        <th>Employee</th>
+                        <th>Department</th>
+                        <th>Generate&nbspBy</th>
+                        <th>Start&nbspDate</th>
+                        <th>End&nbspDate / Hours</th>
+                        <th>Mo</th>
+                        <th>Tu</th>
+                        <th>We</th>
+                        <th>Th</th>
+                        <th>Fr</th>
+                        <th>Sa</th>
+                        <th>Su</th>
+                        <th>Approx Hours</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr id="addNewItem">
+                        <td colspan="14">
+                            <a href="javascript:;" id="addNewEmployeeRow">Add an Item</a>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <td colspan="14" class="invisible_border">&nbsp;</td>
+                    </tr>
+                    <tr>
+                        <td colspan="14" class="invisible_border">&nbsp;</td>
+                    </tr>
+
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        <div class="clearfix"></div>
+    </div>
+    <div class="clearfix"></div>
+</div>

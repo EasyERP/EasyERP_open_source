@@ -1,34 +1,44 @@
-<tr class="productItem" data-id="false">
+<tr class="productItem deleteRow" data-id="<%= products[0] ? products[0]._id : 'false'%>" data-error="true">
+    <td>
+        <span title="Delete" class="fa fa-trash-o"></span>
+    </td>
     <td data-name="productName">
-        <a class="current-selected productsDd" href="javascript:;">select</a>
+        <a class="current-selected productsDd" href="javascript:;" data-id="<%= products[0] ? products[0]._id : null%>"><%=
+            products[0] ? products[0].name : 'Select'%></a>
     </td>
+    <% if (forSales) {%>
+    <td data-name="jobs" class="jobs text-overflow trash">
+        <a class="current-selected jobs" data-id="jobs" href="javascript:;">Select</a>
+    </td>
+    <% } else { %>
     <td data-name="productDescr">
-        <span>
+        <!--<span class="textarea">-->
 
-        </span>
+        <!--</span>-->
     </td>
-    <td data-name="scheduledDate">
+    <% } %>
+    <!--<td data-name="scheduledDate">
         <span class="datepicker">
 
         </span>
-        <input type="text" class="datepicker notVisible">
-    </td>
+        <input type="text" class="datepicker notVisible" readonly>
+    </td>--> <!--commented on 14 Mar, in quotationEdit commit -->
     <td data-name="quantity">
         <span>
 
         </span>
     </td>
-    <td data-name="price">
+    <%var currencyClassVal;%>
+    <%currencyClassVal = currencyClass(currency._id)%>
+    <td data-name="price" class="<%=currencyClassVal%>">
+        <input id="editInput" class="statusInfo" maxlength="9" size=10 type="text"/>
+    </td>
+    <td class="taxes <%=currencyClassVal%> ">
         <span>
 
         </span>
     </td>
-    <td class="taxes">
-        <span>
-
-        </span>
-    </td>
-    <td class="subtotal">
+    <td class="subtotal <%=currencyClassVal%>">
         <span>
 
         </span>

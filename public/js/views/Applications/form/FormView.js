@@ -1,34 +1,34 @@
 define([
-    'text!templates/Applications/form/FormTemplate.html',
-    'views/Applications/EditView',
-    'collections/Workflows/WorkflowsCollection'
-],
+        'text!templates/Applications/form/FormTemplate.html',
+        'views/Applications/EditView',
+        'collections/Workflows/WorkflowsCollection'
+    ],
 
     function (ApplicationsFormTemplate, EditView, WorkflowsCollection) {
         var FormApplicationsView = Backbone.View.extend({
-            el: '#content-holder',
+            el        : '#content-holder',
             initialize: function (options) {
-                this.workflowsCollection = new WorkflowsCollection({id:'Applications'});
+                this.workflowsCollection = new WorkflowsCollection({id: 'Applications'});
                 this.formModel = options.model;
             },
-            events:{
+            events    : {
                 "click .breadcrumb a, .refuseEmployee": "changeWorkflow",
-                "click .hireEmployee": "isEmployee"
+                "click .hireEmployee"                 : "isEmployee"
             },
-            render: function () {
+            render    : function () {
                 var formModel = this.formModel.toJSON();
                 this.$el.html(_.template(ApplicationsFormTemplate, formModel));
                 return this;
             },
 
-            editItem: function () {
-                new EditView({ model: this.formModel });
+            editItem      : function () {
+                new EditView({model: this.formModel});
             },
             changeWorkflow: function (e) {
                 var mid = 39;
                 var model;
                 var name = '', status = '';
-				var id;
+                var id;
                 if ($(e.target).hasClass("applicationWorkflowLabel")) {
                     var breadcrumb = $(e.target).closest('li');
                     var a = breadcrumb.siblings().find("a");
@@ -41,42 +41,41 @@ define([
                 }
                 else {
                     var workflow = this.workflowsCollection.findWhere({name: "Refused"});
-                    if(!workflow)
-                    {
+                    if (!workflow) {
                         throw new Error('Workflow "Refused" not found');
                         return;
                     }
                     id = workflow.get('_id');
                 }
                 this.formModel.save({
-                    workflow:id
+                    workflow: id
                 }, {
                     headers: {
                         mid: mid
                     },
-                    wait: true,
+                    wait   : true,
                     success: function (model) {
-                        Backbone.history.navigate("easyErp/Applications", { trigger: true });
+                        Backbone.history.navigate("easyErp/Applications", {trigger: true});
                     },
-                    error: function (model, xhr, options) {
-                        Backbone.history.navigate("easyErp", { trigger: true });
+                    error  : function (model, xhr, options) {
+                        Backbone.history.navigate("easyErp", {trigger: true});
                     }
                 });
 
             },
-            isEmployee: function (e) {
-				this.model.save({
+            isEmployee    : function (e) {
+                this.model.save({
                     isEmployee: true
-                },{
+                }, {
                     headers: {
                         mid: 39
                     },
                     success: function (model) {
-                        Backbone.history.navigate("easyErp/Employees", { trigger: true });
+                        Backbone.history.navigate("easyErp/Employees", {trigger: true});
                     }
                 });
             },
-            deleteItems: function () {
+            deleteItems   : function () {
                 var mid = 39;
 
                 this.formModel.destroy({
@@ -84,7 +83,7 @@ define([
                         mid: mid
                     },
                     success: function () {
-                        Backbone.history.navigate("#easyErp/Applications/list", { trigger: true });
+                        Backbone.history.navigate("#easyErp/Applications/list", {trigger: true});
                     }
                 });
 

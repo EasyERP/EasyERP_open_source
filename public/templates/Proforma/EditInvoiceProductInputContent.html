@@ -1,0 +1,23 @@
+<% products.forEach(function(product){ %>
+<tr class="productItem" data-id="<%=product.product ? product.product._id : 'err'%>">
+    <td data-name="productName"><a class="productsDd" href="javascript:;"><%=product.product ? product.product.name : '- - -' %></a></td>
+    <% if (forSales) {%>
+    <td data-name="jobs" data-content="<%=product.jobs._id%>">
+        <a id="jobs" href="javascript:;"><%=product.jobs.name%></a>
+    </td>
+    <% } else {%>
+    <td data-name="productDescr" class="<%=editable  ? 'editable' : ''%>"><span><%=product.description%></span></td>
+    <% } %>
+    <td data-name="quantity" class=""><span>1</span></td>
+    <% var editable = !approved %>
+    <td data-name="price" class="<%= editable ? 'editable' : ''%> forNum <%=currencyClass(currency._id._id)%>">
+        <% if(editable) { %>
+        <input id="editInput" maxlength="9" class="statusInfo" size=7 type="text" value="<%=product.unitPrice%>" />
+        <% } else { %>
+        <span><%=product.unitPrice%></span>
+        <% } %>
+    </td>
+    <td class="taxes <%=currencyClass(currency._id._id)%>"><span><%=product.taxes%></span></td>
+    <td class="amount <%=currencyClass(currency._id._id)%>"><span><%=currencySplitter(product.subTotal.toString())%></span></td>
+</tr>
+<% }); %>

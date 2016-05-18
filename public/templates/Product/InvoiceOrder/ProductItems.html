@@ -1,15 +1,41 @@
 <table class="list2">
+    <colgroup>
+        <col width="2%">
+        <col width="15%">
+        <col width="25%">
+        <col width="17%">
+        <!--<col width="10%">-->
+        <col width="13%">
+        <col width="10%">
+        <col width="10%">
+    </colgroup>
     <thead>
     <tr class="productListItemsColumns">
+        <th></th>
         <th class="width20" data-sort="Product">
             Product
         </th>
-        <th class="width20" data-sort="description">
-            Description
-        </th>
-        <th class="width20" data-sort="scheduledDate">
+        <% if (forSales) {%>
+            <th class="width25" data-sort="jobs">
+                Job
+            </th>
+        <% } else {%>
+            <th class="width20" data-sort="description">
+                Description
+            </th>
+        <% } %>
+        <!--<th class="width25" data-sort="scheduledDate">
             Scheduled Date
-        </th>
+        </th>--> <!--commented on 14 Mar, in quotationEdit commit -->
+        <!--<% if (forSales) {%>
+            <th class="width20" data-sort="hours">
+                Hours
+            </th>
+        <% } else {%>
+            <th class="width20" data-sort="quantity">
+                Quantity
+            </th>
+        <% } %>-->
         <th class="width20" data-sort="quantity">
             Quantity
         </th>
@@ -24,20 +50,18 @@
         </th>
     </tr>
     </thead>
-    <tfoot>
-    <tr></tr>
-    </tfoot>
     <tbody>
+    <tr></tr>
     <tr>
         <td colspan="7" class="addProductItem">
             <a href="javascript:;">Add an item</a>
         </td>
     </tr>
     <tr>
-        <td colspan="7">&nbsp;</td>
+        <td colspan="6" class="invisible_border">&nbsp;</td>
     </tr>
     <tr>
-        <td colspan="7">&nbsp;</td>
+        <td colspan="6" class="invisible_border">&nbsp;</td>
     </tr>
     </tbody>
 </table>

@@ -1,22 +1,37 @@
 <table class="list2">
+    <colgroup>
+        <col width="15%">
+        <col width="30%">
+        <col width="17%">
+        <col width="10%">
+        <col width="13%">
+        <col width="10%">
+
+    </colgroup>
     <thead>
     <tr class="productListItemsColumns">
-        <th class="width20" data-sort="Product">
+        <th data-sort="Product">
             Product
         </th>
-        <th class="width20" data-sort="description">
+        <% if (forSales) {%>
+        <th data-sort="jobs">
+            Job
+        </th>
+        <% } else {%>
+        <th data-sort="description">
             Description
         </th>
-        <th class="width20" data-sort="quantity">
+        <% } %>
+        <th data-sort="quantity">
             Quantity
         </th>
-        <th class="width20" data-sort="unitPrice">
+        <th data-sort="unitPrice">
             Unit Price
         </th>
-        <th class="width20" data-sort="taxes">
+        <th data-sort="taxes">
             Taxes
         </th>
-        <th class="width20" data-sort="amount">
+        <th data-sort="amount">
             Amount
         </th>
     </tr>
@@ -24,17 +39,19 @@
     <tfoot>
     <tr></tr>
     </tfoot>
-    <tbody id ="productList">
+    <tbody id="productList">
+    <%if(!notAddItem){%>
     <tr>
         <td colspan="6" class="addProductItem">
             <a href="javascript:;">Add an item</a>
         </td>
     </tr>
+    <%}%>
     <tr>
-        <td colspan="6">&nbsp;</td>
+        <td colspan="6" class="invisible_border">&nbsp;</td>
     </tr>
     <tr>
-        <td colspan="6">&nbsp;</td>
+        <td colspan="6" class="invisible_border">&nbsp;</td>
     </tr>
     </tbody>
 </table>

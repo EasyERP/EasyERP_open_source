@@ -1,0 +1,44 @@
+.btn {
+  border: @thin-border @border-color-main;
+  margin: 0;
+  padding: .4em 1em;
+  line-height: normal;
+  font-size: 13px;
+  text-align: center;
+  text-decoration: none;
+  -webkit-font-smoothing: antialiased;
+  outline: none;
+  background: @bg-main;
+  span, a {
+    padding: 0 !important;
+    color: @mainText-color;
+  }
+  &:hover {
+    cursor: pointer;
+    background-position: 0;
+    background: @btn-main-color;
+    span, a {
+      color: @btn-color-hover;
+    }
+  }
+}
+
+.btnAttention {
+  border-color: @btnAttentionColor;
+  &:hover {
+    background: @btnAttentionColor;
+    span, a {
+      color: @mainText-color;
+    }
+  }
+}
+
+.btnSuccess {
+  border-color: @btnSuccessColor;
+  &:hover {
+    background: @btnSuccessColor;
+    span, a {
+      color: @mainText-color;
+    }
+  }
+}

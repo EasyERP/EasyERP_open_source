@@ -1,6 +1,4 @@
-/**
- * Created by Roman on 04.04.2015.
- */
+
 module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
@@ -33,7 +31,8 @@ module.exports = (function () {
         editedBy: {
             user: { type: ObjectId, ref: 'Users', default: null },
             date: { type: Date }
-        }
+        },
+        ID: Number
     }, { collection: 'Tasks' });
 
     mongoose.model('Tasks', tasksSchema);
