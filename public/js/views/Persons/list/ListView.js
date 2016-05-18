@@ -22,10 +22,10 @@ define([
             formUrl                 : "#easyErp/Persons/form/",
             contentType             : 'Persons',//needs in view.prototype.changeLocationHash
             viewType                : 'list',//needs in view.prototype.changeLocationHash
-            exportToXlsxUrl         : '/Customers/exportToXlsx/?type=Person',
-            exportToCsvUrl          : '/Customers/exportToCsv/?type=Person',
+            exportToXlsxUrl         : '/Customers/exportToXlsx/?type=Persons',
+            exportToCsvUrl          : '/Customers/exportToCsv/?type=Persons',
             events                  : {
-                "click .letter:not(.empty)": "alpabeticalRender",
+                "click .letter:not(.empty)": "alpabeticalRender"
             },
 
             initialize: function (options) {
@@ -46,6 +46,30 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
 
                 this.filterView;
+            },
+
+            exportToXlsx: function () {
+                var tempExportToXlsxUrl = '';
+
+                if (this.exportToXlsxUrl) {
+                    tempExportToXlsxUrl = this.exportToXlsxUrl;
+                    if (this.filter) {
+                        tempExportToXlsxUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = tempExportToXlsxUrl;
+                }
+            },
+
+            exportToCsv: function () {
+                var tempExportToCsvUrl = '';
+
+                if (this.exportToCsvUrl) {
+                    tempExportToCsvUrl = this.exportToCsvUrl;
+                    if (this.filter) {
+                        tempExportToCsvUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = tempExportToCsvUrl;
+                }
             },
 
             render: function () {

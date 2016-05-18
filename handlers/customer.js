@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var async = require('async');
 
 var Customers = function (models) {
     'use strict';
@@ -270,6 +271,279 @@ var Customers = function (models) {
                 res.send(403);
             }
         });
+    };
+
+    var exporter = require('../helpers/exporter/exportDecorator');
+    var exportMap = require('../helpers/csvMap').Customers;
+
+    function caseFilter(data, contentType, optionsObject) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+
+        switch (contentType) {
+            case ('Persons'):
+            {
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
+
+                    switch (filterName) {
+                        case 'country':
+                            filtrElement[key] = {$in: condition};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'services':
+                            if (condition.indexOf('isCustomer') !== -1) {
+                                filtrElement['salesPurchases.isCustomer'] = true;
+                                resArray.push(filtrElement);
+                            }
+                            if (condition.indexOf('isSupplier') !== -1) {
+                                filtrElement['salesPurchases.isSupplier'] = true;
+                                resArray.push(filtrElement);
+                            }
+                            break;
+                    }
+                }
+
+                resArray.push({'type': 'Person'});
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
+                    } else {
+                        optionsObject['$and'] = resArray;
+                    }
+                }
+            }
+                break;
+            case ('Companies'):
+            {
+                for (var filterName in data.filter) {
+                    condition = data.filter[filterName]['value'];
+                    key = data.filter[filterName]['key'];
+
+                    switch (filterName) {
+                        case 'country':
+                            filtrElement[key] = {$in: condition};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'name':
+                            filtrElement[key] = {$in: condition.objectID()};
+                            resArray.push(filtrElement);
+                            break;
+                        case 'letter':
+                            filtrElement['name.first'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
+                            resArray.push(filtrElement);
+                            break;
+                        case 'services':
+                            if (condition.indexOf('isCustomer') !== -1) {
+                                filtrElement['salesPurchases.isCustomer'] = true;
+                                resArray.push(filtrElement);
+                            }
+                            if (condition.indexOf('isSupplier') !== -1) {
+                                filtrElement['salesPurchases.isSupplier'] = true;
+                                resArray.push(filtrElement);
+                            }
+                            break;
+                    }
+                }
+
+                resArray.push({'type': 'Company'});
+
+                if (resArray.length) {
+
+                    if (data && data.filter && data.filter.condition === 'or') {
+                        optionsObject['$or'] = resArray;
+                    } else {
+                        optionsObject['$and'] = resArray;
+                    }
+                }
+            }
+                break;
+        }
+        return optionsObject;
+    }
+
+    var projectCustomer = {
+        type                            : 1,
+        isOwn                           : 1,
+        'name.first'                    : 1,
+        'name.last'                     : 1,
+        dateBirth                       : 1,
+        email                           : 1,
+        company                         : 1,
+        department                      : 1,
+        timezone                        : 1,
+        'address.street'                : 1,
+        'address.city'                  : 1,
+        'address.state'                 : 1,
+        'address.zip'                   : 1,
+        'address.country'               : 1,
+        website                         : 1,
+        jobPosition                     : 1,
+        skype                           : 1,
+        'phones.phone'                  : 1,
+        'phones.mobile'                 : 1,
+        'phones.fax'                    : 1,
+        contacts                        : 1,
+        internalNotes                   : 1,
+        title                           : 1,
+        'salesPurchases.isCustomer'     : 1,
+        'salesPurchases.isSupplier'     : 1,
+        'salesPurchases.salesPerson'    : 1,
+        'salesPurchases.salesTeam'      : 1,
+        'salesPurchases.implementedBy'  : 1,
+        'salesPurchases.active'         : 1,
+        'salesPurchases.reference'      : 1,
+        'salesPurchases.language'       : 1,
+        'salesPurchases.receiveMessages': 1,
+        relatedUser                     : 1,
+        'social.FB'                     : 1,
+        'social.LI'                     : 1,
+        whoCanRW                        : 1,
+        'groups.owner'                  : 1,
+        'groups.users'                  : 1,
+        'groups.group'                  : 1,
+        notes                           : 1,
+        attachments                     : 1,
+        history                         : 1,
+        'createdBy.user'                : 1,
+        'createdBy.date'                : 1,
+        'editedBy.user'                 : 1,
+        'editedBy.date'                 : 1,
+        'companyInfo.info'              : 1,
+        'companyInfo.industry'          : 1,
+        ID                              : 1
+
+    };
+
+    this.exportToXlsx = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+
+        var filter = req.query.filter || JSON.stringify({});
+        var type  = req.query.type;
+        var filterObj = {};
+        var options;
+        var matchObject = {};
+        var data = {};
+
+        filter = JSON.parse(filter);
+
+        data.filter = filter;
+
+        if (filter) {
+            filterObj = caseFilter(data, type, matchObject);
+        }
+
+        options = {
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
+            returnResult: true,
+            fileName    : type || 'Customer'
+        };
+
+        function lookupForCustomers(cb) {
+            var query = [];
+
+            query.push({$match: matchObject});
+
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+            query.push({$project: projectCustomer});
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        async.parallel([lookupForCustomers], function (err, result) {
+            var resultArray = result[0];
+
+            exporter.exportToXlsx({
+                res        : res,
+                next       : next,
+                Model      : Model,
+                resultArray: resultArray,
+                map        : exportMap,
+                fileName   : type || 'Customer'
+            });
+        });
+
+    };
+
+    this.exportToCsv = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+
+        var filter = req.query.filter || JSON.stringify({});
+        var type  = req.query.type;
+        var filterObj = {};
+        var options;
+        var matchObject = {};
+        var data = {};
+
+        filter = JSON.parse(filter);
+
+        data.filter = filter;
+
+        if (filter) {
+            filterObj = caseFilter(data, type, matchObject);
+        }
+
+        options = {
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
+            returnResult: true,
+            fileName    : type || 'Customer'
+        };
+
+        function lookupForCustomers(cb) {
+            var query = [];
+
+            query.push({$match: matchObject});
+
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+            query.push({$project: projectCustomer});
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToCsv(options);
+        }
+
+        async.parallel([lookupForCustomers], function (err, result) {
+            var resultArray = result[0];
+
+            exporter.exportToCsv({
+                res        : res,
+                next       : next,
+                Model      : Model,
+                resultArray: resultArray,
+                map        : exportMap,
+                fileName   : type || 'Customer'
+            });
+        });
+
     };
 
 };
