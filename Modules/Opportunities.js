@@ -1,7 +1,7 @@
 var Opportunities = function (models, event) {
         var mongoose = require('mongoose');
         var logWriter = require('../helpers/logWriter.js');
-        var historyWriter = require('../helpers/historyWriter.js');
+        var HistoryWriter = require('../helpers/historyWriter.js');
         var objectId = mongoose.Types.ObjectId;
         var opportunitiesSchema = mongoose.Schemas.Opportunitie;
         var departmentSchema = mongoose.Schemas.Department;
@@ -12,7 +12,7 @@ var Opportunities = function (models, event) {
         var Mailer = require('../helpers/mailer');
         var mailer = new Mailer();
         var EmployeeSchema = mongoose.Schemas.Employee;
-        var HistoryWriter = new historyWriter(models);
+        var historyWriter = new HistoryWriter(models);
 
         function getTotalCount(req, response) {
             var res = {};
@@ -981,6 +981,15 @@ var Opportunities = function (models, event) {
 
         function updateLead(req, _id, data, res) {
 
+            var historyOptions = {
+                contentType: 'lead',
+                data: data,
+                req: req,
+                trackedObj: _id
+            };
+
+            historyWriter.addEntry(historyOptions);
+
             function updateOpp() {
                 var createPersonCustomer = function (company) {
                     if (data.contactName && (data.contactName.first || data.contactName.last)) {
@@ -1201,7 +1210,16 @@ var Opportunities = function (models, event) {
         }
 
         function updateOnlySelectedFields(req, _id, data, res) {
+            var historyOptions = {
+                contentType: 'opportunitie',
+                data: data,
+                req: req,
+                trackedObj: _id
+            };
             var fileName = data.fileName;
+
+            historyWriter.addEntry(historyOptions);
+
             delete data.fileName;
             if (data.workflow && data.sequenceStart && data.workflowStart) {
                 if (data.sequence == -1) {

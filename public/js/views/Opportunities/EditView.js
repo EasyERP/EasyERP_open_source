@@ -157,7 +157,7 @@
                 var viewType = custom.getCurrentVT();
                 var expectedRevenueValue = $.trim($("#expectedRevenueValue").val());
                 var expectedRevenueProgress = $.trim($("#expectedRevenueProgress").val());
-                if (expectedRevenueValue || expectedRevenueProgress) {
+                if (expectedRevenueValue !== (this.currentModel.get('expectedRevenue')).value.toString()) {
                     var expectedRevenue = {
                         value   : expectedRevenueValue,
                         currency: '$',
@@ -172,6 +172,8 @@
 
                 var salesPersonId = this.$("#salesPersonDd").data("id");
                 salesPersonId = salesPersonId ? salesPersonId : null;
+
+                var currentSalesPerson = this.currentModel.get('salesPerson');
 
                 var salesTeamId = this.$("#salesTeamDd").data("id");
                 salesTeamId = salesTeamId ? salesTeamId : null;
@@ -236,10 +238,8 @@
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
                     name           : name,
-                    expectedRevenue: expectedRevenue,
                     customer       : customerId,
                     email          : email,
-                    salesPerson    : salesPersonId,
                     salesTeam      : salesTeamId,
                     nextAction     : nextAction,
                     expectedClosing: expectedClosing,
@@ -260,16 +260,29 @@
                     whoCanRW       : whoCanRW
                 };
                 var currentWorkflow = this.currentModel.get('workflow');
+
+                if (expectedRevenue) {
+                    data.expectedRevenue = expectedRevenue;
+                }
+
                 if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id != workflow)) {
                     data['workflow'] = workflow;
                     data['sequence'] = -1;
                     data['sequenceStart'] = this.currentModel.toJSON().sequence;
                     data['workflowStart'] = currentWorkflow._id;
                 }
-                ;
+
+                if (currentSalesPerson && currentSalesPerson._id && salesPersonId && (currentSalesPerson._id !== salesPersonId)) {
+                    data['salesPerson'] = salesPersonId;
+                } else if (!currentSalesPerson && salesPersonId) {
+                    data['salesPerson'] = salesPersonId;
+                }
+
+
 
                 var oldWorkFlow = this.currentModel.get('workflow')._id;
-                this.currentModel.save(data, {
+                this.currentModel.set(data);
+                this.currentModel.save(this.currentModel.changed, {
                     headers: {
                         mid: mid
                     },

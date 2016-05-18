@@ -6,35 +6,76 @@ var History = function (models) {
 
     var HistoryEntrySchema = mongoose.Schemas.History;
 
-    this.addEntry = function (options, callback) {
-        var trackedObj = options.trackedObj;
-        var contetntType = options.contentType;
-        var data = options.data;
-        var dbIndex = options.req.session.lastDb;
+    function generateHistoryEntry(contetntType, keyValue) {
+        var mapSchema = historyMapper[contetntType.toUpperCase()];
+        var historyEntry;
 
-        var date = Date.now();
+        Object.keys(mapSchema.map).forEach(function(keyPath) {
+            var keys = keyPath.split('.');
 
-        var HistoryEntry = models.get(dbIndex, 'History', HistoryEntrySchema);
+            if (keys[0] === keyValue.key) {
+                var val = keyValue.value;
 
-        data.forEach(function (field) {
-            var query = generateQuery(contetntType, field);
-            query.editedBy = req.session.uId;
-            query.date = date;
-        });
-
-        var query = generateQuery(contetntType, data);
-
-        query.editedBy = options.req.session.uId;
-
-        HistoryEntry.findOneAndUpdate({trackedObj: trackedObj}, query, {upsert: true}, function (err, res) {
-            if (err) {
-                console.log(err)
-            } else if (typeof callback === 'function') {
-                callback();
+                if (keys.length > 1) {
+                    keys.shift();
+                    keys.forEach(function(key) {
+                        if (val.hasOwnProperty(key)) {
+                            val = val[key];
+                        } else {
+                            return null;
+                        }
+                    });
+                }
+                historyEntry = {
+                    collectionName: mapSchema.collectionName,
+                    contetntType: contetntType,
+                    newValue: val,
+                    changedField: mapSchema.map[keyPath]
+                };
+            } else {
+                return null;
             }
         });
-    };
 
+        return historyEntry;
+    }
+
+    this.addEntry = function (options, callback) {
+        var contetntType = options.contentType;
+        var data = options.data;
+        var historyRecords = [];
+        var date = Date.now();
+        var HistoryEntry = models.get(options.req.session.lastDb, 'History', HistoryEntrySchema);
+
+        Object.keys(data).forEach(function (key) {
+            var keyValue = {
+                key: key,
+                value: data[key]
+            };
+            var historyEntry = generateHistoryEntry(contetntType, keyValue);
+
+            if (historyEntry) {
+
+                historyEntry.editedBy = options.req.session.uId;
+                historyEntry.trackedObj = options.trackedObj;
+                historyEntry.date = date;
+
+                historyRecords.push(historyEntry);
+            }
+        });
+
+        if (historyRecords.length) {
+            HistoryEntry.collection.insert(historyRecords, function (err, res) {
+                if (err) {
+                    console.log(err);
+                } else if (typeof callback === 'function') {
+                    callback();
+                }
+            });
+        } else if (typeof callback === 'function') {
+            callback();
+        }
+    };
 };
 
 module.exports = History;

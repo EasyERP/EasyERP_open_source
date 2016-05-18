@@ -6,6 +6,7 @@ module.exports = (function () {
         date: {type: Date, default: Date.now},
         trackedObj: {type: ObjectId, default: null},
         collectionName: {type: String, default: ''},
+        contetntType: {type: String, default: ''},
         changedField: {type: String, default: ''},
         newValue: {type: Object, default: null},
         editedBy: {type: ObjectId, ref: 'Users', default: null}
