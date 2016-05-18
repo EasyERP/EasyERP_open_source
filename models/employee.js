@@ -190,8 +190,7 @@ module.exports = (function () {
             weeklyScheduler: {type: ObjectId, ref: 'weeklyScheduler', default: null},
             jobType: {type: String, default: ''},
             salary: {type: Number, default: 0},
-            info: {type: String, default: ''},
-            weeklyScheduler: {type: ObjectId, ref: 'weeklyScheduler', default: null}
+            info: {type: String, default: ''}
         }],
         lastFire: {type: Number, default: null}
     }, {collection: 'Employees'});

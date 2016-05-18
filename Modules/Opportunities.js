@@ -1,6 +1,7 @@
 var Opportunities = function (models, event) {
         var mongoose = require('mongoose');
         var logWriter = require('../helpers/logWriter.js');
+        var historyWriter = require('../helpers/historyWriter.js');
         var objectId = mongoose.Types.ObjectId;
         var opportunitiesSchema = mongoose.Schemas.Opportunitie;
         var departmentSchema = mongoose.Schemas.Department;
@@ -11,6 +12,7 @@ var Opportunities = function (models, event) {
         var Mailer = require('../helpers/mailer');
         var mailer = new Mailer();
         var EmployeeSchema = mongoose.Schemas.Employee;
+        var HistoryWriter = new historyWriter(models);
 
         function getTotalCount(req, response) {
             var res = {};
@@ -401,10 +403,26 @@ var Opportunities = function (models, event) {
                         event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
                             _opportunitie.sequence = sequence;
                             _opportunitie.save(function (err, result) {
+                                var logOptions;
                                 if (err) {
                                     console.log("Opportunities.js create savetoDB _opportunitie.save " + err);
                                     res.send(500, {error: 'Opportunities.save BD error'});
                                 } else {
+
+                                    logOptions = {
+                                        trackedObj: result._id,
+                                        contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                                        req: req,
+                                        data: {
+                                            editedBy: req.session.uId,
+                                            sum: 0,
+                                            workflow: result.workflow,
+                                            salesPerson: result.salesPerson
+                                        }
+                                    };
+
+                                    HistoryWriter.addEntry(logOptions, null);
+
                                     res.send(201, {
                                         success: {
                                             massage: 'A new Opportunities create success',
