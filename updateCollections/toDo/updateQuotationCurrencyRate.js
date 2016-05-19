@@ -10,7 +10,7 @@ var Currency = mongoose.Schemas.currency;
 var Quotation = mongoose.Schemas.Quotation;
 
 var connectOptions = {
-    user: 'easyerp',
+    user: 'easyErp',
     pass: '1q2w3e!@#',
     w   : 1,
     j   : true
