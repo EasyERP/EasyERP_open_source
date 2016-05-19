@@ -1,4 +1,4 @@
-<div class="accounting-half-block left">
+<div class="accounting-half-block right">
     <table class="list tableProjects tableFixed">
         <colgroup>
             <col width="35%"/>
@@ -9,7 +9,7 @@
         </colgroup>
         <thead>
         <tr>
-            <th colspan="4" class="forCaption">Bank Accounts</th>
+            <th colspan="4" class="forCaption">Payment Terms</th>
             <th class="forCaption">
                 <a href="javascript:;" class="fa fa-angle-down"></a>
                 <a href="javascript:;" class="btnAdd" title="Create" id="top-bar-createBtn">Add</a>
@@ -17,9 +17,6 @@
         </tr>
         <tr class="forToggle">
             <th>Name</th>
-            <th>Bank</th>
-            <th>Account</th>
-            <th>Currency</th>
             <th></th>
         </tr>
         </thead>
@@ -28,9 +25,6 @@
 
         <tr data-id="<%= elem._id%>">
             <td><span><%=elem.name %></span></td>
-            <td><span><%=elem.bank %></span></td>
-            <td><span><%=elem.account %></span></td>
-            <td><span><%=elem.currency %></span></td>
             <td class="centerCell">
                 <a href="javascript:;" class="fa fa-pencil-square-o" aria-hidden="true"></a>
                 <a href="javascript:;" class="fa fa-trash-o" aria-hidden="true"></a>
@@ -43,7 +37,6 @@
         </tbody>
     </table>
 </div>
-
 
 
 
