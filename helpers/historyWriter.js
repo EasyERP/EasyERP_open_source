@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var historyMapper = require('../constants/historyMapper');
+var async = require('async');
 
 var History = function (models) {
     'use strict';
@@ -10,7 +11,7 @@ var History = function (models) {
         var mapSchema = historyMapper[contetntType.toUpperCase()];
         var historyEntry;
 
-        Object.keys(mapSchema.map).forEach(function(keyPath) {
+        Object.keys(mapSchema.map).forEach(function (keyPath) {
             var keys = keyPath.split('.');
 
             if (keys[0] === keyValue.key) {
@@ -18,7 +19,7 @@ var History = function (models) {
 
                 if (keys.length > 1) {
                     keys.shift();
-                    keys.forEach(function(key) {
+                    keys.forEach(function (key) {
                         if (val.hasOwnProperty(key)) {
                             val = val[key];
                         } else {
@@ -28,9 +29,9 @@ var History = function (models) {
                 }
                 historyEntry = {
                     collectionName: mapSchema.collectionName,
-                    contetntType: contetntType,
-                    newValue: val,
-                    changedField: mapSchema.map[keyPath]
+                    contetntType  : contetntType,
+                    newValue      : val,
+                    changedField  : mapSchema.map[keyPath]
                 };
             } else {
                 return null;
@@ -49,7 +50,7 @@ var History = function (models) {
 
         Object.keys(data).forEach(function (key) {
             var keyValue = {
-                key: key,
+                key  : key,
                 value: data[key]
             };
             var historyEntry = generateHistoryEntry(contetntType, keyValue);
@@ -65,16 +66,60 @@ var History = function (models) {
         });
 
         if (historyRecords.length) {
-            HistoryEntry.collection.insert(historyRecords, function (err, res) {
-                if (err) {
-                    console.log(err);
-                } else if (typeof callback === 'function') {
+
+            async.each(historyRecords, function (historyRecord, cb) {
+                HistoryEntry.aggregate([{
+                    $match: {
+                        changedField: historyRecord.changedField,
+                        trackedObj  : historyRecord.trackedObj
+                    }
+                }, {
+                    $sort: {
+                        date: -1
+                    }
+                }, {
+                    $limit: 1
+                }], function (err, result) {
+                        if (err) {
+                            console.log(err);
+                            cb();
+                        } else {
+                            if (result.length) {
+                                historyRecord.prevValue = result[0].newValue;
+                            } else {
+                                historyRecord.prevValue = null;
+                            }
+
+                            HistoryEntry.collection.insert(historyRecord, function (err, res) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                                cb();
+                            });
+                        }
+                    });
+            }, function () {
+                if (typeof callback === 'function') {
                     callback();
                 }
             });
+
         } else if (typeof callback === 'function') {
             callback();
         }
+    };
+
+    this.getHistoryForTrackedObject = function (options, callback) {
+        var id = options.id;
+        var HistoryEntry = models.get(options.req.session.lastDb, 'History', HistoryEntrySchema);
+
+        HistoryEntry.aggregate([], function (err, result) {
+            if (typeof callback === 'function') {
+                callback(err, result);
+            }
+        });
+
+
     };
 };
 

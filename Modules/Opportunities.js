@@ -403,25 +403,20 @@ var Opportunities = function (models, event) {
                         event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
                             _opportunitie.sequence = sequence;
                             _opportunitie.save(function (err, result) {
-                                var logOptions;
+                                var historyOptions;
                                 if (err) {
                                     console.log("Opportunities.js create savetoDB _opportunitie.save " + err);
                                     res.send(500, {error: 'Opportunities.save BD error'});
                                 } else {
 
-                                    logOptions = {
-                                        trackedObj: result._id,
+                                    historyOptions = {
                                         contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                                        data: data,
                                         req: req,
-                                        data: {
-                                            editedBy: req.session.uId,
-                                            sum: 0,
-                                            workflow: result.workflow,
-                                            salesPerson: result.salesPerson
-                                        }
+                                        trackedObj: result._id
                                     };
 
-                                    HistoryWriter.addEntry(logOptions, null);
+                                    historyWriter.addEntry(historyOptions);
 
                                     res.send(201, {
                                         success: {
