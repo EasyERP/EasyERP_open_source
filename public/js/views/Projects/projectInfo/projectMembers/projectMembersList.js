@@ -48,12 +48,24 @@ define([
             var row = target.parent('tr');
             var rowId = row.attr('data-id');
             var isNewRow = row.hasClass('false');
+            var endDate = target.hasClass('endDateManager');
             var text;
-            var startDate = this.prevEndDate(row);;
-            var nextDay = new Date(2014, 8, 2);
+            var startDate = this.prevEndDate(row);
+            var minDate = new Date(2014, 8, 2);
+            var maxDate = new Date();
+            var startDateValue = row.find('.startDateManager').text();
+            var endDateValue = row.find('.endDateManager').text();
 
             if (startDate) {
-                nextDay = moment(startDate).add(1, 'd').toDate();
+                minDate = moment(startDate).add(1, 'd').toDate();
+            }
+
+            if (endDate && Date.parse(startDateValue)) {
+                minDate = moment(new Date(startDateValue)).add(1, 'd').toDate();
+            }
+            
+            if (!endDate && Date.parse(endDateValue)) {
+                maxDate = moment(new Date(endDateValue)).subtract(1, 'd').toDate();
             }
 
             if (target.prop('tagName') !== 'INPUT') {
@@ -68,8 +80,8 @@ define([
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
-                minDate    : nextDay,
-                maxDate    : new Date(),
+                minDate    : minDate,
+                maxDate    : maxDate,
                 onSelect   : function (dateText) {
                     var $editedCol = target.closest('td');
 
@@ -77,7 +89,7 @@ define([
                         self.changedModels[rowId] = {};
                     }
                     
-                    if (target.hasClass('endDateManager')) {
+                    if (endDate) {
                         self.changedModels[rowId].endDate = moment(new Date(dateText)).endOf('day').toDate();
                     } else {
                         self.changedModels[rowId].startDate = dateText;
@@ -186,10 +198,9 @@ define([
                     return cb('Empty id');
                 } else if (id.length < 24) {
                     tr.remove();
-                    model = self.changedModels;
 
-                    if (model) {
-                        delete model[id];
+                    if (self.changedModels) {
+                        delete self.changedModels[id];
                     }
 
                     return cb();
@@ -200,6 +211,10 @@ define([
                     elem               : model.toJSON(),
                     utcDateToLocaleDate: common.utcDateToLocaleDate
                 }));
+
+                if (self.changedModels) {
+                    delete self.changedModels[id];
+                }
                 cb();
             }, function (err) {
                 if (!err) {
