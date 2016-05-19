@@ -147,8 +147,8 @@ var Filters = function (models) {
                 jobsDashboard   : getDashJobsFiltersValues,
                 salaryReport    : getsalaryReportFiltersValues,
                 Leads           : getLeadsFiltersValues,
-                Opportunities   : getOpportunitiesFiltersValues,
-                journalEntry    : getJournalEntryFiltersValues
+                Opportunities   : getOpportunitiesFiltersValues
+               /* journalEntry    : getJournalEntryFiltersValues*/
             },
             function (err, result) {
                 if (err) {

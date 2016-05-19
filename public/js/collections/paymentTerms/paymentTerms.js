@@ -1,10 +1,10 @@
 define(['Backbone',
-        'models/paymentMethod'
+        'models/paymentTerm'
     ],
     function (Backbone, PaymentModel) {
         var PaymentCollection = Backbone.Collection.extend({
             model: PaymentModel,
-            url  : "/paymentMethod/getForList",
+            url  : "/paymentTerm/getForList",
 
             initialize: function () {
 
@@ -20,5 +20,6 @@ define(['Backbone',
                 });
             }
         });
+
         return PaymentCollection;
     });
