@@ -1967,9 +1967,9 @@ var TCard = function (event, models) {
 
     this.getForProject = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-
+        var projectId = req.params.id;
         var query = req.query;
-        var filter = query.filter;
+        // var filter = query.filter;
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
@@ -1991,14 +1991,19 @@ var TCard = function (event, models) {
         };
 
         var sort = {};
-        var filterObj = filter ? filterMapper.mapFilter(filter) : null;
+        // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
         var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = parseInt(query.page, 10);
         var skip;
+        var queryObject = {};
 
         count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
         skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        projectId = projectId ? objectId(projectId) : null;
 
+        if (projectId) {
+            queryObject.project = projectId;
+        }
         if (query.sort) {
             key = Object.keys(query.sort)[0].toString();
             keyForDay = sortObj[key];
@@ -2048,8 +2053,7 @@ var TCard = function (event, models) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    // queryObject,
-                    {
+                    queryObject, {
                         $or: whoCanRw
                     }
                 ]
@@ -2101,23 +2105,24 @@ var TCard = function (event, models) {
             queryObject.$and = [];
             queryObject.$and.push({_id: {$in: _.pluck(wtrackIds, '_id')}});
 
-            if (filterObj) {
-                queryObject.$and.push(filterObj);
-            }
+            /*if (filterObj) {
+             queryObject.$and.push(filterObj);
+             }*/
 
             aggregation = WTrack.aggregate([{
+                $match: queryObject
+            }, {
+                $sort: sort
+            }, {
+                $skip: skip
+            }, {
+                $limit: count
+            }, {
                 $lookup: {
                     from        : 'projectMembers',
                     localField  : 'project',
                     foreignField: 'projectId',
                     as          : 'projectMembers'
-                }
-            }, {
-                $lookup: {
-                    from        : 'Project',
-                    localField  : 'project',
-                    foreignField: '_id',
-                    as          : 'project'
                 }
             }, {
                 $lookup: {
@@ -2142,7 +2147,6 @@ var TCard = function (event, models) {
                 }
             }, {
                 $project: {
-                    project      : {$arrayElemAt: ['$project', 0]},
                     jobs         : {$arrayElemAt: ['$jobs', 0]},
                     employee     : {$arrayElemAt: ['$employee', 0]},
                     department   : {$arrayElemAt: ['$department', 0]},
@@ -2175,28 +2179,12 @@ var TCard = function (event, models) {
                     }
                 }
             }, {
-                $lookup: {
-                    from        : 'Customers',
-                    localField  : 'project.customer',
-                    foreignField: '_id',
-                    as          : 'customer'
-                }
-            }, {
-                $lookup: {
-                    from        : 'workflows',
-                    localField  : 'project.workflow',
-                    foreignField: '_id',
-                    as          : 'workflow'
-                }
-            }, {
                 $unwind: {
                     path                      : '$salesmanagers',
                     preserveNullAndEmptyArrays: true
                 }
             }, {
                 $project: {
-                    customer     : {$arrayElemAt: ['$customer', 0]},
-                    workflow     : {$arrayElemAt: ['$workflow', 0]},
                     dateByWeek   : 1,
                     salesmanagers: 1,
                     createdBy    : 1,
@@ -2242,8 +2230,6 @@ var TCard = function (event, models) {
             }, {
                 $project: {
                     isValid      : salesManagerMatch,
-                    customer     : 1,
-                    workflow     : 1,
                     dateByWeek   : 1,
                     salesmanagers: 1,
                     createdBy    : 1,
@@ -2293,41 +2279,58 @@ var TCard = function (event, models) {
             }, {
                 $project: {
                     salesmanager: {$arrayElemAt: ['$salesmanager', 0]},
-                    customer    : '$doc.customer',
-                    workflow    : '$doc.workflow',
-                    dateByWeek  : '$doc.dateByWeek',
-                    createdBy   : '$doc.createdBy',
-                    project     : '$doc.project',
-                    jobs        : '$doc.jobs',
-                    employee    : '$doc.employee',
-                    department  : '$doc.department',
-                    month       : '$doc.month',
-                    year        : '$doc.year',
-                    week        : '$doc.week',
-                    revenue     : '$doc.revenue',
-                    amount      : '$doc.amount',
-                    rate        : '$doc.rate',
-                    hours       : '$doc.hours',
-                    cost        : '$doc.cost',
-                    worked      : '$doc.worked',
-                    isPaid      : '$doc.isPaid',
-                    _type       : '$doc._type',
-                    1           : '$doc.1',
-                    2           : '$doc.2',
-                    3           : '$doc.3',
-                    4           : '$doc.4',
-                    5           : '$doc.5',
-                    6           : '$doc.6',
-                    7           : '$doc.7'
+                    jobs        : {
+                        _id : '$doc.jobs._id',
+                        name: '$doc.jobs.name'
+                    },
+
+                    employee: {
+                        name: '$doc.employee.name'
+                    },
+
+                    department: {
+                        departmentName: '$doc.department.departmentName'
+                    },
+
+                    month : '$doc.month',
+                    year  : '$doc.year',
+                    week  : '$doc.week',
+                    hours : '$doc.hours',
+                    worked: '$doc.worked',
+                    isPaid: '$doc.isPaid',
+                    _type : '$doc._type',
+                    1     : '$doc.1',
+                    2     : '$doc.2',
+                    3     : '$doc.3',
+                    4     : '$doc.4',
+                    5     : '$doc.5',
+                    6     : '$doc.6',
+                    7     : '$doc.7'
                 }
             }, {
-                $match: queryObject
-            }, {
-                $sort: sort
-            }, {
-                $skip: skip
-            }, {
-                $limit: count
+                $project: {
+                    salesmanager: {
+                        name: '$salesmanager.name'
+                    },
+
+                    jobs      : 1,
+                    employee  : 1,
+                    department: 1,
+                    month     : 1,
+                    year      : 1,
+                    week      : 1,
+                    hours     : 1,
+                    worked    : 1,
+                    isPaid    : 1,
+                    _type     : 1,
+                    1         : 1,
+                    2         : 1,
+                    3         : 1,
+                    4         : 1,
+                    5         : 1,
+                    6         : 1,
+                    7         : 1
+                }
             }]);
 
             aggregation.options = {allowDiskUse: true};

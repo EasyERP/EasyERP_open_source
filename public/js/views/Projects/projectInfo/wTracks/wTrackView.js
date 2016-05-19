@@ -82,16 +82,16 @@ define([
             var year = now.getFullYear();
             var month = now.getMonth() + 1;
             var week = now.getWeek();
-            // var rate = 3;
-            this.projectModel = projectModel;
             var startData = {
-                year        : year,
-                month       : month,
-                week        : week,
-                // rate        : rate,
-                project     : projectModel._id,
-                projectModel: projectModel
+                year          : year,
+                month         : month,
+                week          : week,
+                project       : projectModel._id,
+                projectModel  : projectModel,
+                mainWtrackView: this
             };
+
+            this.projectModel = projectModel;
 
             e.preventDefault();
 
@@ -186,13 +186,15 @@ define([
                 sortClass = 'sortUp';
             }
             switch (sortClass) {
-                case 'sortDn': {
+                case 'sortDn':
+                {
                     target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
                     target$.removeClass('sortDn').addClass('sortUp');
                     sortConst = 1;
                 }
                     break;
-                case 'sortUp': {
+                case 'sortUp':
+                {
                     target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
                     target$.removeClass('sortUp').addClass('sortDn');
                     sortConst = -1;
@@ -319,24 +321,24 @@ define([
             }, this);
         },
 
-/*        showNewSelect: function (e, prev, next) {
-            populate.showSelect(e, prev, next, this);
+        /*        showNewSelect: function (e, prev, next) {
+         populate.showSelect(e, prev, next, this);
 
-            return false;
-        },
+         return false;
+         },
 
-        nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
+         nextSelect: function (e) {
+         this.showNewSelect(e, false, true);
+         },
 
-        prevSelect: function (e) {
-            this.showNewSelect(e, true, false);
-        },
+         prevSelect: function (e) {
+         this.showNewSelect(e, true, false);
+         },
 
-        showPagesPopup: function (e) {
-            $(e.target).closest("button").next("ul").toggle();
-            return false;
-        },*/
+         showPagesPopup: function (e) {
+         $(e.target).closest("button").next("ul").toggle();
+         return false;
+         },*/
 
         bindingEventsToEditedCollection: function (context) {
             if (context.editCollection) {
@@ -711,9 +713,9 @@ define([
                 row = target.closest('tr');
                 model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
 
-/*                 var hours = model.get('worked');
-                var rate = model.get('rate');
-                var revenue = parseInt(hours) * parseFloat(rate);*/
+                /*                 var hours = model.get('worked');
+                 var rate = model.get('rate');
+                 var revenue = parseInt(hours) * parseFloat(rate);*/
 
                 $(selectedWtrack).attr('checked', false);
 
@@ -756,6 +758,7 @@ define([
             }
 
             $currentEl.find('#listTable').html(this.template({
+                project    : this.project.toJSON(),
                 wTracks    : wTracks,
                 startNumber: self.startNumber - 1
             }));
@@ -813,36 +816,6 @@ define([
 
                 self.setAllTotalVals();
 
-            });
-
-            dataService.getData('/project/getForWtrack', null, function (projects) {
-                projects = _.map(projects.data, function (project) {
-                    project.name = project.projectName;
-
-                    return project;
-                });
-
-                self.responseObj['#project'] = projects;
-            });
-
-            dataService.getData('/employee/getForDD', null, function (employees) {
-                employees = _.map(employees.data, function (employee) {
-                    employee.name = employee.name.first + ' ' + employee.name.last;
-
-                    return employee;
-                });
-
-                self.responseObj['#employee'] = employees;
-            });
-
-            dataService.getData('/department/getForDD', null, function (departments) {
-                departments = _.map(departments.data, function (department) {
-                    department.name = department.departmentName;
-
-                    return department;
-                });
-
-                self.responseObj['#department'] = departments;
             });
 
             setTimeout(function () {

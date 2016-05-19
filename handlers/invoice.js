@@ -2417,9 +2417,7 @@ var Invoice = function (models, event) {
         if (req.session && req.session.loggedIn && db) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
                 var query = req.query;
-
-                var queryObject = {project: projectId};
-                var filter = query.filter;
+                var queryObject = {};
                 var optionsObject = {};
                 var sort = {};
                 var Invoice;
@@ -2432,6 +2430,10 @@ var Invoice = function (models, event) {
                 var contentIdsSearcher;
                 var contentSearcher;
                 var waterfallTasks;
+
+                if (projectId) {
+                    queryObject.project = projectId;
+                }
 
                 if (access) {
 
@@ -2560,9 +2562,7 @@ var Invoice = function (models, event) {
 
                         Invoice
                             .aggregate([{
-                                $match: {
-                                    project: projectId
-                                }
+                                $match: queryObject
                             }, {
                                 $lookup: {
                                     from        : 'projectMembers',
