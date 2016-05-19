@@ -1,10 +1,11 @@
 ﻿define([
         'text!templates/invoiceAging/list/ListTemplate.html',
         'helpers',
-        'async'
+        'async',
+        'common'
     ],
 
-    function (listTemplate, helpers, async) {
+    function (listTemplate, helpers, async, common) {
         "use strict";
 
         var ListItemView = Backbone.View.extend({
@@ -149,6 +150,7 @@
                 this.$el.append(_.template(listTemplate, {
                     currencySplitter: helpers.currencySplitter,
                     collection      : this.collection.toJSON(),
+                    dateToLocaleDate: common.utcDateToLocaleDate,
                     startNumber     : this.startNumber
                 }));
 

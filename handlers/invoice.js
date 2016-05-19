@@ -2175,6 +2175,7 @@ var Invoice = function (models, event) {
             $project: {
                 salesPerson          : {$arrayElemAt: ['$salesmanagers', 0]},
                 dueDate              : 1,
+                invoiceDate          : 1,
                 'project.projectName': 1,
                 'supplier.name'      : 1,
                 name                 : 1,
@@ -2187,6 +2188,7 @@ var Invoice = function (models, event) {
                     $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
                 },
                 dueDate              : 1,
+                invoiceDate          : 1,
                 'project.projectName': 1,
                 'supplier.name'      : 1,
                 name                 : 1,
