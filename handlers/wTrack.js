@@ -1965,6 +1965,398 @@ var TCard = function (event, models) {
         });
     };
 
+    this.getForProject = function (req, res, next) {
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var projectId = req.params.id;
+        var query = req.query;
+        // var filter = query.filter;
+        var departmentSearcher;
+        var contentIdsSearcher;
+        var contentSearcher;
+        var waterfallTasks;
+        var key;
+        var keyForDay;
+        var sortArray;
+        var sortLength;
+        var dynamicKey = '';
+        var i;
+        var sortObj = {
+            Mo: 1,
+            Tu: 2,
+            We: 3,
+            Th: 4,
+            Fr: 5,
+            Sa: 6,
+            Su: 7
+        };
+
+        var sort = {};
+        // var filterObj = filter ? filterMapper.mapFilter(filter) : null;
+        var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
+        var page = parseInt(query.page, 10);
+        var skip;
+        var queryObject = {};
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        projectId = projectId ? objectId(projectId) : null;
+
+        if (projectId) {
+            queryObject.project = projectId;
+        }
+        if (query.sort) {
+            key = Object.keys(query.sort)[0].toString();
+            keyForDay = sortObj[key];
+
+            if (key.indexOf('.name.first') !== -1) {
+                sortArray = key.split('.');
+                sortLength = sortArray.length;
+
+                for (i = 0; i < sortLength - 1; i++) {
+                    dynamicKey += sortArray[i] + '.';
+                }
+
+                dynamicKey += 'last';
+                query.sort[dynamicKey] = parseInt(query.sort[key], 10);
+                sort = query.sort;
+            }
+
+            if (sortObj.hasOwnProperty(key)) {
+                sort[keyForDay] = parseInt(query.sort[key], 10);
+            } else {
+                query.sort[key] = parseInt(query.sort[key], 10);
+                sort = query.sort;
+            }
+        } else {
+            sort = {'createdBy.date': -1};
+        }
+
+        departmentSearcher = function (waterfallCallback) {
+            models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(
+                {
+                    $match: {
+                        users: objectId(req.session.uId)
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                },
+
+                waterfallCallback);
+        };
+
+        contentIdsSearcher = function (deps, waterfallCallback) {
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $and: [
+                    queryObject, {
+                        $or: whoCanRw
+                    }
+                ]
+            };
+            WTrack.aggregate(
+                {
+                    $match: matchQuery
+                },
+                {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                waterfallCallback
+            );
+        };
+
+        contentSearcher = function (wtrackIds, waterfallCallback) {
+            var queryObject = {};
+            var aggregation;
+            var salesManagerMatch = {
+                $or: [{
+                    $and: [{
+                        $eq: ['$startDateWeek', null]
+                    }, {
+                        $eq: ['$endDateWeek', null]
+                    }]
+                }, {
+                    $and: [{
+                        $eq: ['$startDateWeek', null]
+                    }, {
+                        $gte: ['$endDateWeek', '$dateByWeek']
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$startDateWeek', '$dateByWeek']
+                    }, {
+                        $eq: ['$endDateWeek', null]
+                    }]
+                }, {
+                    $and: [{
+                        $lte: ['$startDateWeek', '$dateByWeek']
+                    }, {
+                        $gte: ['$endDateWeek', '$dateByWeek']
+                    }]
+                }]
+            };
+
+            queryObject.$and = [];
+            queryObject.$and.push({_id: {$in: _.pluck(wtrackIds, '_id')}});
+
+            /*if (filterObj) {
+             queryObject.$and.push(filterObj);
+             }*/
+
+            aggregation = WTrack.aggregate([{
+                $match: queryObject
+            }, {
+                $sort: sort
+            }, {
+                $skip: skip
+            }, {
+                $limit: count
+            }, {
+                $lookup: {
+                    from        : 'projectMembers',
+                    localField  : 'project',
+                    foreignField: 'projectId',
+                    as          : 'projectMembers'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'employee',
+                    foreignField: '_id',
+                    as          : 'employee'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id',
+                    as          : 'department'
+                }
+            }, {
+                $lookup: {
+                    from        : 'jobs',
+                    localField  : 'jobs',
+                    foreignField: '_id',
+                    as          : 'jobs'
+                }
+            }, {
+                $project: {
+                    jobs         : {$arrayElemAt: ['$jobs', 0]},
+                    employee     : {$arrayElemAt: ['$employee', 0]},
+                    department   : {$arrayElemAt: ['$department', 0]},
+                    dateByWeek   : 1,
+                    createdBy    : 1,
+                    month        : 1,
+                    year         : 1,
+                    week         : 1,
+                    revenue      : 1,
+                    amount       : 1,
+                    rate         : 1,
+                    hours        : 1,
+                    cost         : 1,
+                    worked       : 1,
+                    isPaid       : 1,
+                    _type        : 1,
+                    1            : 1,
+                    2            : 1,
+                    3            : 1,
+                    4            : 1,
+                    5            : 1,
+                    6            : 1,
+                    7            : 1,
+                    salesmanagers: {
+                        $filter: {
+                            input: '$projectMembers',
+                            as   : 'projectMember',
+                            cond : {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]}
+                        }
+                    }
+                }
+            }, {
+                $unwind: {
+                    path                      : '$salesmanagers',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $project: {
+                    dateByWeek   : 1,
+                    salesmanagers: 1,
+                    createdBy    : 1,
+                    project      : 1,
+                    jobs         : 1,
+                    employee     : 1,
+                    department   : 1,
+                    month        : 1,
+                    year         : 1,
+                    week         : 1,
+                    revenue      : 1,
+                    amount       : 1,
+                    rate         : 1,
+                    hours        : 1,
+                    cost         : 1,
+                    worked       : 1,
+                    isPaid       : 1,
+                    _type        : 1,
+                    1            : 1,
+                    2            : 1,
+                    3            : 1,
+                    4            : 1,
+                    5            : 1,
+                    6            : 1,
+                    7            : 1,
+                    startDateWeek: {
+                        $let: {
+                            vars: {
+                                startDate: {$ifNull: ['$salesmanagers.startDate', null]}
+                            },
+                            in  : {$cond: [{$eq: ['$$startDate', null]}, null, {$add: [{$multiply: [{$year: '$$startDate'}, 100]}, {$week: '$$startDate'}]}]}
+                        }
+                    },
+                    endDateWeek  : {
+                        $let: {
+                            vars: {
+                                endDate: {$ifNull: ['$salesmanagers.endDate', null]}
+                            },
+                            in  : {$cond: [{$eq: ['$$endDate', null]}, null, {$add: [{$multiply: [{$year: '$$endDate'}, 100]}, {$week: '$$endDate'}]}]}
+                        }
+                    }
+                }
+            }, {
+                $project: {
+                    isValid      : salesManagerMatch,
+                    dateByWeek   : 1,
+                    salesmanagers: 1,
+                    createdBy    : 1,
+                    project      : 1,
+                    jobs         : 1,
+                    employee     : 1,
+                    department   : 1,
+                    month        : 1,
+                    year         : 1,
+                    week         : 1,
+                    revenue      : 1,
+                    amount       : 1,
+                    rate         : 1,
+                    hours        : 1,
+                    cost         : 1,
+                    worked       : 1,
+                    isPaid       : 1,
+                    _type        : 1,
+                    1            : 1,
+                    2            : 1,
+                    3            : 1,
+                    4            : 1,
+                    5            : 1,
+                    6            : 1,
+                    7            : 1
+                }
+            }, {
+                $match: {
+                    isValid: true
+                }
+            }, {
+                $sort: {
+                    'salesmanagers.startDate': -1
+                }
+            }, {
+                $group: {
+                    _id: '$_id',
+                    doc: {$first: '$$ROOT'}
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'doc.salesmanagers.employeeId',
+                    foreignField: '_id',
+                    as          : 'salesmanager'
+                }
+            }, {
+                $project: {
+                    salesmanager: {$arrayElemAt: ['$salesmanager', 0]},
+                    jobs        : {
+                        _id : '$doc.jobs._id',
+                        name: '$doc.jobs.name'
+                    },
+
+                    employee: {
+                        name: '$doc.employee.name'
+                    },
+
+                    department: {
+                        departmentName: '$doc.department.departmentName'
+                    },
+
+                    month : '$doc.month',
+                    year  : '$doc.year',
+                    week  : '$doc.week',
+                    hours : '$doc.hours',
+                    worked: '$doc.worked',
+                    isPaid: '$doc.isPaid',
+                    _type : '$doc._type',
+                    1     : '$doc.1',
+                    2     : '$doc.2',
+                    3     : '$doc.3',
+                    4     : '$doc.4',
+                    5     : '$doc.5',
+                    6     : '$doc.6',
+                    7     : '$doc.7'
+                }
+            }, {
+                $project: {
+                    salesmanager: {
+                        name: '$salesmanager.name'
+                    },
+
+                    jobs      : 1,
+                    employee  : 1,
+                    department: 1,
+                    month     : 1,
+                    year      : 1,
+                    week      : 1,
+                    hours     : 1,
+                    worked    : 1,
+                    isPaid    : 1,
+                    _type     : 1,
+                    1         : 1,
+                    2         : 1,
+                    3         : 1,
+                    4         : 1,
+                    5         : 1,
+                    6         : 1,
+                    7         : 1
+                }
+            }]);
+
+            aggregation.options = {allowDiskUse: true};
+            aggregation.exec(function (err, result) {
+                waterfallCallback(err, result);
+            });
+
+        };
+
+        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+        access.getReadAccess(req, req.session.uId, 75, function (success) {
+            if (!success) {
+                return res.status(403).send();
+            }
+
+            async.waterfall(waterfallTasks, function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(result);
+            });
+        });
+    };
+
 };
 
 module.exports = TCard;

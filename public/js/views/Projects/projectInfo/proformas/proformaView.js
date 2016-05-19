@@ -348,7 +348,7 @@ define([
             sortObject[sortBy] = sortConst;
 
             this.fetchSortCollection(sortObject);
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+            // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
         },
 
         checked: function (e) {

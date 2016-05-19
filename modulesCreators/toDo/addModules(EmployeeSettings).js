@@ -17,7 +17,7 @@ MongoClient.connect(url, function (err, db) {
             _id : 103,
             href : "settingsEmployee",
             link : true,
-            mname : "Employee",
+            mname : "Settings Employee",
             parrent : 1,
             sequence : 103,
             visible : true

@@ -664,6 +664,7 @@ th {
   display: block;
   width: 100%;
   height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
   z-index: 9999;
 }
 /************* Main Colors *************/
@@ -739,6 +740,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Thumbnail ==============================*/
 /*== Dialog =============================*/
 /*== Birthday ===========================*/
+/*== Invoice Charts SVG*/
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
@@ -1610,6 +1612,7 @@ input::-ms-clear {
   display: block;
   line-height: 18px;
   clear: left;
+  color: #000000;
 }
 .kanban tr:last-child {
   border-right: 10px solid #d9d9d9;
@@ -4464,7 +4467,7 @@ a.red:hover {
 }
 .birthday-item .info {
   color: #ffffff;
-  background: #000000;
+  background: #4d5a75;
   margin-left: 160px;
   margin-right: 40px;
   position: relative;
@@ -4476,16 +4479,16 @@ a.red:hover {
   margin-left: 10px;
 }
 .birthday-item .info:after {
-  right: 100%;
-  border: solid #4d5a75;
   content: " ";
+  position: absolute;
+  right: 100%;
+  top: 19px;
   height: 0;
   width: 0;
-  position: absolute;
   pointer-events: none;
-  border-right-color: #000000;
-  border-width: 10px;
-  top: 19px;
+  border-top: 10px solid transparent;
+  border-right: 20px solid #4d5a75;
+  border-bottom: 10px solid transparent;
 }
 .birthday-item .info .top {
   height: 40px;
@@ -6291,13 +6294,13 @@ ul.dialog-tabs li.right button {
   height: 205px;
   margin-top: 8px !important;
   margin-left: 1px;
-  width: 260px;
+  width: 100%;
 }
 .ui-dialog textarea#description.taskDescriptionEdit {
   height: 188px;
   margin-top: 8px !important;
   margin-left: 1px;
-  width: 230px;
+  width: 100%;
 }
 .ui-dialog textarea#description.projectDescriptionCreate {
   height: 230px;
@@ -6539,9 +6542,6 @@ ul.dialog-tabs li.right button {
   color: #000000;
 }
 .ui-dialog input:focus {
-  box-shadow: 0 0 5px #3e88b9;
-  -moz-box-shadow: 0 0 5px #3e88b9;
-  -webkit-box-shadow: 0 0 5px #3e88b9;
   outline: medium none;
   border: 1px solid #3e88b9;
 }
@@ -6658,7 +6658,6 @@ ul.dialog-tabs li.right button {
 .form-holder form label {
   font-weight: normal;
   border: none;
-  font-family: Arial, Helvetica, sans-serif;
   font-size: 14px;
   display: inline;
   float: none;
@@ -6746,9 +6745,6 @@ ul.dialog-tabs li.right button {
   color: #000000;
 }
 .form-holder form input:not([type=checkbox]):focus {
-  box-shadow: 0 0 5px #3e88b9;
-  -moz-box-shadow: 0 0 5px #3e88b9;
-  -webkit-box-shadow: 0 0 5px #3e88b9;
   outline: medium none;
   border: 1px solid #3e88b9;
 }
@@ -7102,6 +7098,8 @@ ul.chart-tabs .withEndContract .arrow {
 }
 .axis text {
   font: 14px sans-serif;
+  color: #000000;
+  fill: #000000 !important;
 }
 .axis path,
 .axis line {
@@ -7314,7 +7312,7 @@ h3.dashboard {
 }
 #health a.health1,
 .health-wrapper a.health1 {
-  background-color: #3e88b9;
+  background-color: #008000;
 }
 #health a.health2,
 .health-wrapper a.health2 {
@@ -8594,7 +8592,7 @@ textarea#editInput {
   color: #ffffff;
 }
 .grid tr td.dashboardWeek.red {
-  background-color: #a22a2d;
+  background-color: #e55253;
   color: #ffffff;
   border-bottom: 1px solid #7f7f80;
   border-left: 1px solid #7f7f80;
@@ -8774,9 +8772,6 @@ textarea#editInput {
 .grid.attendance tr {
   border-bottom: none;
 }
-.grid.attendance tr:nth-child(even) {
-  background-color: #ededed;
-}
 .grid.attendance tr td {
   border-left: 1px solid #7f7f80;
 }
@@ -8901,7 +8896,7 @@ textarea#editInput {
   background-color: #3e7f42;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.free {
-  background-color: #a22a2d;
+  background-color: #e55253;
 }
 .grid-conatiner .statisticsAtten table tr td .item .countDays.almostFree {
   background-color: #cc5457;
@@ -9027,12 +9022,15 @@ textarea#editInput {
   fill: #fda401;
 }
 .grid-conatiner.revenue .chartContainer .y.axis .tick line {
-  stroke-width: 0;
-  stroke: transparent;
+  stroke-width: 1;
+  stroke: #000 !important;
 }
 .grid-conatiner.revenue .chartContainer .y.axis .tick text {
   font-size: 11px;
-  fill: #fff;
+  fill: #000000;
+}
+.grid-conatiner.revenue .chartContainer .axesName {
+  fill: #000000;
 }
 .grid-conatiner.revenue .chartContainer .domain {
   fill: transparent;
@@ -9567,7 +9565,7 @@ textarea#editInput {
   border-color: #000000;
   display: block;
   height: 5px;
-  right: 10%;
+  right: 5%;
   top: 5px;
   position: absolute;
   width: 5px;
@@ -9785,7 +9783,7 @@ textarea#editInput {
   color: #ffffff;
 }
 .invoiceChart-legend-box .chartContainer .domain {
-  stroke: #fff !important;
+  stroke: #000000 !important;
 }
 .invoiceChart-legend {
   position: absolute;
@@ -9813,7 +9811,7 @@ textarea#editInput {
   opacity: .4;
 }
 .invoiceChart-legend .choseDateItem {
-  border: 1px solid #d7d7d7;
+  border: 1px solid #7f7f80;
 }
 .invoiceChart-legend .choseDateItem button {
   background: #fff;
@@ -9863,6 +9861,9 @@ textarea#editInput {
 .alertDanger:before {
   content: '\f071';
 }
+.redText {
+  color: #e55253 !important;
+}
 .alertSuccess:before {
   content: '\f05d';
 }
@@ -9873,7 +9874,7 @@ textarea#editInput {
   color: #2d5d30 !important;
 }
 .unpaid {
-  color: #a22a2d !important;
+  color: #e55253 !important;
 }
 .textUnderlineHover:hover {
   text-decoration: underline !important;

@@ -24,6 +24,8 @@
             newCollection     : null,
             contentType       : 'Persons',//needs in view.prototype.changeLocationHash
             viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
+            exportToXlsxUrl   : '/Customers/exportToXlsx/?type=Persons',
+            exportToCsvUrl    : '/Customers/exportToCsv/?type=Persons',
 
             initialize: function (options) {
                 this.mId = CONSTANTS.MID[this.contentType];
@@ -218,9 +220,11 @@
             },
 
             showMore       : function () {
+            showMore       : function (event) {
+                //event.preventDefault();
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
-            showMoreContent : function (newModels) {
+            showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var content = holder.find("#thumbnailContent");
                 var showMore = holder.find('#showMoreDiv');
@@ -301,13 +305,27 @@
             },
 
             exportToCsv: function () {
-                //todo change after routes refactoring
-                window.location = '/Customers/exportToCsv?type=Person';
+                var tempExportToCsvUrl = '';
+
+                if (this.exportToCsvUrl) {
+                    tempExportToCsvUrl = this.exportToCsvUrl;
+                    if (this.filter) {
+                        tempExportToCsvUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = tempExportToCsvUrl;
+                }
             },
 
             exportToXlsx: function () {
-                //todo change after routes refactoring
-                window.location = '/Customers/exportToXlsx?type=Person';
+                var tempExportToXlsxUrl = '';
+
+                if (this.exportToXlsxUrl) {
+                    tempExportToXlsxUrl = this.exportToXlsxUrl;
+                    if (this.filter) {
+                        tempExportToXlsxUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = tempExportToXlsxUrl;
+                }
             }
         });
 

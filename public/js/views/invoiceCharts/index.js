@@ -187,7 +187,7 @@ define([
                     return height - y(datum.paid);
                 })
                 .attr("width", x.rangeBand())
-                .attr("fill", "#40C4FF")//blue  #40C4FF
+                .attr("fill", "#40C4FF")// blue  #40C4FF
                 .attr("opacity", 0.3);
 
             topChart.append("path")
@@ -260,8 +260,7 @@ define([
                 .attr("y", margin.left - 80)
                 .attr('class', 'axesName')
                 .text('Ammount')
-                .attr("transform", 'translate(0, 0) rotate(-90)')
-                .style('fill', 'white');
+                .attr("transform", 'translate(0, 0) rotate(-90)');
 
             return this;
         },

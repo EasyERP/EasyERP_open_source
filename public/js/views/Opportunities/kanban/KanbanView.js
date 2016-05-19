@@ -490,7 +490,7 @@
                     var column = this.$(".column").eq(i);
                     //var count = " <span>(<span class='counter'>" + itemCount + "</span> / </span>";
                     var total = "<span><span class='totalCount'>" + itemCount + '</span></span>';
-                    var amountOpportunity = "<span class='dollar'><span class='totalAmount'>0</span></span>";
+                    var amountOpportunity = " <span class='dollar'><span class='totalAmount'>0</span></span>";
                     column.find('.columnNameDiv h2').append(total);
                     column.find('.text').append(amountOpportunity);
                 }, this);
