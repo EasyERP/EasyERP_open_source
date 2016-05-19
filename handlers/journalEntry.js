@@ -4349,16 +4349,13 @@ var Module = function (models, event) {
 
                     result.forEach(function (el) {
                         jobs.push(el._id);
-                        wTracks.push(el.wTracks);
                     });
 
-                    wTracks = _.flatten(wTracks);
-
-                    wfCb(null, wTracks, jobs);
+                    wfCb(null, jobs);
                 });
             };
 
-            composeReport = function (wTracks, jobs, wfCb) {
+            composeReport = function (jobs, wfCb) {
                 var parallelTasks;
 
                 var getOpening = function (pCb) {
@@ -4366,7 +4363,7 @@ var Module = function (models, event) {
                         $match: {
                             date: {$lt: startDate},
                             debit: {$gt: 0},
-                            "sourceDocument._id": {$in: wTracks}
+                            "sourceDocument._id": {$in: jobs}
                         }
                     }, {
                         $project: {
@@ -4442,7 +4439,7 @@ var Module = function (models, event) {
                         $match: {
                             date: {$lte: endDate, $gte: startDate},
                             debit: {$gt: 0},
-                            "sourceDocument._id": {$in: wTracks}
+                            "sourceDocument._id": {$in: jobs}
                         }
                     }, {
                         $project: {
