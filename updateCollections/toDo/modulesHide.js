@@ -11,7 +11,7 @@ var connectOptions = {
     j   : true
 };
 
-var dbObject = mongoose.createConnection('testdemo.easyerp.com', 'production', 28017, connectOptions);
+var dbObject = mongoose.createConnection('testdemo.easyerp.com', 'sergey', 28017, connectOptions);
 
 //var dbObject = mongoose.createConnection('localhost', 'production');
 
