@@ -1,19 +1,18 @@
-define([
-        "text!templates/Accounting/PaymentMethodList.html",
-        "async",
-        "views/Accounting/paymentMethodView",
+define(['Backbone',
+        'text!templates/Accounting/PaymentTermsList.html',
+        'async',
         'models/paymentMethod',
-        'views/Accounting/paymentMethodEdit',
-        'views/Accounting/paymentMethodCreate'
+        'views/Accounting/paymentTerms/paymentTermsEdit',
+        'views/Accounting/paymentTerms/paymentTermsCreate'
 
     ],
-    function (PaymentMethodList, async, paymentMethodView, currentModel, editView, createView) {
+    function (Backbone, PaymentMethodList, async, currentModel, editView, createView) {
         var ContentView = Backbone.View.extend({
-            template   : _.template(PaymentMethodList),
-            el         : '#paymentmethods-holder',
-            initialize : function (options) {
+            template  : _.template(PaymentMethodList),
+            el        : '#paymentterms-holder',
+            initialize: function (options) {
                 this.startTime = options.startTime;
-                this.collection  = options.collection;
+                this.collection = options.collection;
                 this.render();
             },
 
@@ -39,7 +38,6 @@ define([
 
                 if (answer === true && model) {
 
-                    model.urlRoot = "/paymentMethod";
                     model.destroy({
                         success: function (model) {
                             self.$el.find('tr[data-id="' + model.id + '"]').remove();
@@ -57,7 +55,7 @@ define([
 
             },
 
-            toggleList : function (e) {
+            toggleList: function (e) {
                 e.preventDefault();
                 this.$el.find(".forToggle").toggle();
             },
@@ -73,16 +71,14 @@ define([
                 }
             },
 
-            createPaymentMethod : function (e) {
+            createPaymentMethod: function (e) {
                 e.preventDefault();
 
                 new createView();
             },
 
             render: function () {
-                var self = this;
-
-                this.$el.html(this.template({collection : this.collection.toJSON()}));
+                this.$el.html(this.template({collection: this.collection.toJSON()}));
             }
 
         });
