@@ -1,6 +1,7 @@
 ﻿define([
         "text!templates/Opportunities/EditTemplate.html",
         "text!templates/Opportunities/editSelectTemplate.html",
+        "text!templates/history.html",
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         'views/Notes/NoteView',
@@ -11,12 +12,13 @@
         "dataService",
         'helpers'
     ],
-    function (EditTemplate, editSelectTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService, helpers) {
+    function (EditTemplate, editSelectTemplate, historyTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService, helpers) {
         "use strict";
         var EditView = Backbone.View.extend({
-            el         : "#content-holder",
-            contentType: "Opportunities",
-            template   : _.template(EditTemplate),
+            el             : "#content-holder",
+            contentType    : "Opportunities",
+            template       : _.template(EditTemplate),
+            historyTemplate: _.template(historyTemplate),
 
             initialize: function (options) {
                 _.bindAll(this, "render", "saveItem", "deleteItem");
@@ -24,6 +26,9 @@
                 this.currentModel.urlRoot = "/Opportunities";
                 this.responseObj = {};
                 this.elementId = options ? options.elementId : null;
+
+                this.renderHistory = _.after(2, this.renderHistory);
+                this.composeEnteties = _.once(this.composeEnteties);
 
                 this.render();
             },
@@ -279,7 +284,6 @@
                 }
 
 
-
                 var oldWorkFlow = this.currentModel.get('workflow')._id;
                 this.currentModel.set(data);
                 this.currentModel.save(this.currentModel.changed, {
@@ -380,12 +384,12 @@
                 });
             },
 
-            countTotalAmountForWorkflow: function(workflowId){
+            countTotalAmountForWorkflow: function (workflowId) {
                 var column = $('td[data-id="' + workflowId + '"]');
                 var oldColumnContainer = $('td[data-id="' + workflowId + '"] #forContent h3');
 
                 var sum = 0;
-                oldColumnContainer.each(function(item){
+                oldColumnContainer.each(function (item) {
                     var value = $(this).text().replace(/\s/g, '');
                     sum += parseFloat(value) || 0;
                 });
@@ -445,7 +449,57 @@
                     });
                 }
             },
-            render    : function () {
+
+            composeEnteties: function (mapping) {
+                var self = this;
+                var responseObj = self.responseObj;
+                var composedEnteties = {};
+
+                Object.keys(responseObj).forEach(function (entetiesKey) {
+                    if (mapping[entetiesKey]) {
+                        composedEnteties[mapping[entetiesKey]] = _.indexBy(responseObj[entetiesKey], '_id');
+                    }
+                });
+
+                self.composedEnteties = composedEnteties;
+            },
+
+            composeHistory: function () {
+                var self = this;
+                var composedEnteties = self.composedEnteties;
+                var history = self.model.get('history');
+
+                Object.keys(history).forEach(function (key) {
+                    history[key].events.map(function (eventElement) {
+                        var entities = composedEnteties[eventElement.field];
+                        if (entities) {
+                            eventElement.newVal = entities[eventElement.newVal].name;
+                            eventElement.prevVal = eventElement.prevVal && entities[eventElement.prevVal].name || '';
+                        }
+                        return eventElement;
+                    });
+                });
+
+                self.history = history;
+
+            },
+
+            renderHistory: function () {
+                var self = this;
+                var historyString;
+                var mapping = {
+                    '#workflowDd'   : 'workflow',
+                    '#salesPersonDd': 'salesPerson'
+                };
+
+                self.composeEnteties(mapping);
+                self.composeHistory();
+
+                historyString = self.historyTemplate({history: self.history});
+                self.$el.find('.history-container').html(historyString);
+            },
+
+            render: function () {
                 var formString = this.template({
                     model: this.currentModel.toJSON()
                 });
@@ -514,9 +568,11 @@
                     });
 
                     self.responseObj['#salesPersonDd'] = employees;
+                    self.renderHistory();
                 });
-                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this);
+                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, null, self.renderHistory);
                 populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, false, true);
+
 
                 if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {

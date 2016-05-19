@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var ObjectId = mongoose.Types.ObjectId;
 var historyMapper = require('../constants/historyMapper');
 var async = require('async');
 
@@ -57,8 +58,8 @@ var History = function (models) {
 
             if (historyEntry) {
 
-                historyEntry.editedBy = options.req.session.uId;
-                historyEntry.trackedObj = options.trackedObj;
+                historyEntry.editedBy = ObjectId(options.req.session.uId);
+                historyEntry.trackedObj = ObjectId(options.trackedObj);
                 historyEntry.date = date;
 
                 historyRecords.push(historyEntry);
@@ -80,24 +81,24 @@ var History = function (models) {
                 }, {
                     $limit: 1
                 }], function (err, result) {
-                        if (err) {
-                            console.log(err);
-                            cb();
+                    if (err) {
+                        console.log(err);
+                        cb();
+                    } else {
+                        if (result.length) {
+                            historyRecord.prevValue = result[0].newValue;
                         } else {
-                            if (result.length) {
-                                historyRecord.prevValue = result[0].newValue;
-                            } else {
-                                historyRecord.prevValue = null;
-                            }
-
-                            HistoryEntry.collection.insert(historyRecord, function (err, res) {
-                                if (err) {
-                                    console.log(err);
-                                }
-                                cb();
-                            });
+                            historyRecord.prevValue = null;
                         }
-                    });
+
+                        HistoryEntry.collection.insert(historyRecord, function (err, res) {
+                            if (err) {
+                                console.log(err);
+                            }
+                            cb();
+                        });
+                    }
+                });
             }, function () {
                 if (typeof callback === 'function') {
                     callback();
@@ -113,7 +114,39 @@ var History = function (models) {
         var id = options.id;
         var HistoryEntry = models.get(options.req.session.lastDb, 'History', HistoryEntrySchema);
 
-        HistoryEntry.aggregate([], function (err, result) {
+        HistoryEntry.aggregate([{
+            $match: {
+                trackedObj: id
+            }
+        }, {
+            $lookup: {
+                from        : 'Users',
+                localField  : 'editedBy',
+                foreignField: '_id',
+                as          : 'editedBy'
+            }
+        }, {
+            $project: {
+                editedBy    : {$arrayElemAt: ["$editedBy", 0]},
+                date        : 1,
+                changedField: 1,
+                prevValue   : 1,
+                newValue    : 1
+            }
+        }, {
+            $group: {
+                _id   : '$date',
+                editedBy: {$first: '$editedBy.login'},
+                events: {
+                    $push: {
+                        field   : '$changedField',
+                        prevVal : '$prevValue',
+                        newVal  : '$newValue'
+                    }
+                }
+
+            }
+        }], function (err, result) {
             if (typeof callback === 'function') {
                 callback(err, result);
             }

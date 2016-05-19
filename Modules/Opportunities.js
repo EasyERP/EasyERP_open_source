@@ -590,12 +590,25 @@ var Opportunities = function (models, event) {
             query.populate('company customer salesPerson salesTeam workflow').populate('groups.users').populate('groups.group').populate('createdBy.user').populate('editedBy.user').populate('groups.owner', '_id login');
 
             query.exec(function (err, result) {
+                var historyOptions = {
+                    req: req,
+                    id: result._id
+                };
+
                 if (err) {
                     console.log(err);
                     logWriter.log('Opportunities.js get job.find' + err);
                     response.send(500, {error: "Can't find Opportunities"});
                 } else {
-                    response.send(result);
+                    historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                        if (err) {
+                            return next(err);
+                        } else {
+                            result = result.toJSON();
+                            result.history = history;
+                            response.send(result);
+                        }
+                    });
                 }
             });
         }
