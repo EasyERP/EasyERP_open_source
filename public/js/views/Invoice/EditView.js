@@ -568,6 +568,7 @@ define([
                 isWtrack          : self.isWtrack,
                 isPaid            : this.isPaid,
                 paidAndNotApproved: paidAndNotApproved,
+                forSales          : this.forSales,
                 notAddItem        : this.notAddItem,
                 wTracks           : wTracks,
                 project           : project,
