@@ -606,6 +606,8 @@ define([
                 var countNumber;
                 var pagenation;
 
+                self = self || this;
+
                 $currentEl.append(_.template(paginationTemplate));
 
                 pagenation = self.$el.find('.pagination');
@@ -615,7 +617,7 @@ define([
                 } else {
                     pagenation.show();
                     // This is for counterPages at start
-                    countNumber = ([100, 200, 500].indexOf(this.defaultItemsNumber) !== -1) ? this.defaultItemsNumber : "all"; // changed in case of bad view after refreshing with not default counter
+                    countNumber = ([100, 200, 500].indexOf(self.defaultItemsNumber) !== -1) ? this.defaultItemsNumber : "all"; // changed in case of bad view after refreshing with not default counter
 
                     this.previouslySelected = $('.itemsNumber:contains(' + countNumber + ')');
                     this.previouslySelected.addClass('selectedItemsNumber');

@@ -5,9 +5,9 @@
     <td data-content="number" class="centerCell"><%=startNumber + index + 1%></td>
     <td data-content="type" class="editable centerCell textUnderlineHover"><%=(wTrack._type === 'overtime') ? 'OT': 'OR'%></td>
     <td data-content="jobs" class="editable <%= enable ? 'textUnderlineHover' : ''%>" data-id="<%=wTrack.jobs._id%>"><%=wTrack.jobs.name%></td>
-    <td data-content="assigned"><%=wTrack.salesmanager ? wTrack.salesmanager.name.first + ' ' +
+    <!--<td data-content="assigned"><%=wTrack.salesmanager ? wTrack.salesmanager.name.first + ' ' +
         wTrack.salesmanager.name.last : ''%>
-    </td>
+    </td>-->
     <td data-content="project" data-id="<%= project ? project._id: null%>"><%=project ? project.projectName : ''%>
     </td>
     <td data-content="workflow" data-id="<%=project.workflow ? project.workflow._id : ''%>"><%=project.workflow?

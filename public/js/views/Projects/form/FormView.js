@@ -852,13 +852,13 @@ define([
                 // var _id = window.location.hash.split('form/')[1];
                 var _id = this.id;
 
-                /*var filter = {
+                var filter = {
                     projectName: {
                         key  : 'project._id',
                         value: [_id],
                         type : 'ObjectId'
                     }
-                };*/
+                };
 
                 this.wCollection = new wTrackCollection({
                     viewType: 'list',
@@ -882,7 +882,7 @@ define([
                     this.wTrackView = new wTrackView({
                         model             : self.wCollection,
                         defaultItemsNumber: defaultItemsNumber,
-                        /*filter            : filter,*/
+                        filter            : filter,
                         startNumber       : startNumber,
                         project           : self.formModel
                     });
@@ -904,13 +904,13 @@ define([
 
                 var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
 
-               /* var filter = {
+                var filter = {
                     projectName: {
                         key  : 'project._id',
                         value: [_id],
                         type : 'ObjectId'
                     }
-                };*/
+                };
 
                 if (self.wTrackView) {
                     self.wTrackView.undelegateEvents();
@@ -918,7 +918,7 @@ define([
 
                 this.wTrackView = new wTrackView({
                     model      : self.wCollection,
-                    /*filter     : filter,*/
+                    filter     : filter,
                     startNumber: startNumber,
                     project    : self.formModel,
                     url: 'project/' + _id + '/weTracks'
