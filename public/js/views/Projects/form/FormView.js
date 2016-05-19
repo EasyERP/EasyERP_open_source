@@ -98,29 +98,29 @@ define([
             proformaStatsTmpl: _.template(proformaStats),
 
             events: {
-                'click .chart-tabs'                                                                                       : 'changeTab',
-                'click .deleteAttach'                                                                                     : 'deleteAttach',
-                'click #health a:not(.disabled)'                                                                          : 'showHealthDd',
-                'click #health ul li div:not(.disabled)'                                                                  : 'chooseHealthDd',
-                'click .newSelectList li:not(.miniStylePagination):not(.disabled)'                                        : 'chooseOption',
-                'click .current-selected:not(.disabled)'                                                                  : 'showNewSelect',
-                'click #createItem'                                                                                       : 'createDialog',
-                'click #createJob'                                                                                        : 'createJob',
+                'click .chart-tabs'                                                                     : 'changeTab',
+                'click .deleteAttach'                                                                   : 'deleteAttach',
+                'click #health a:not(.disabled)'                                                        : 'showHealthDd',
+                'click #health ul li div:not(.disabled)'                                                : 'chooseHealthDd',
+                'click .newSelectList li:not(.miniStylePagination):not(.disabled)'                      : 'chooseOption',
+                'click .current-selected:not(.disabled)'                                                : 'showNewSelect',
+                'click #createItem'                                                                     : 'createDialog',
+                'click #createJob'                                                                      : 'createJob',
                 'change input:not(.checkbox, .check_all, .statusCheckbox, #inputAttach, #noteTitleArea)': 'showSaveButton',  // added id for noteView
-                'change #description'                                                                                     : 'showSaveButton',
-                'click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)'                                       : 'renderJobWTracks',
-                'mouseover #jobsItem'                                                                                     : 'showRemoveButton',
-                'mouseleave #jobsItem'                                                                                    : 'hideRemoveButton',
-                'click .fa.fa-trash'                                                                                      : 'removeJobAndWTracks',
-                'dblclick td.editableJobs'                                                                                : 'editRow',
-                'click #saveName'                                                                                         : 'saveNewJobName',
-                'keydown input.editing '                                                                                  : 'keyDown',
-                click                                                                                                     : 'hideSelect',
-                keydown                                                                                                   : 'keydownHandler',
-                'click a.quotation'                                                                                       : 'viewQuotation',
-                'click a.invoice'                                                                                         : 'viewInvoice',
-                'click a.proforma'                                                                                        : 'viewProforma',
-                "click .report"                                                                                           : "showReport",
+                'change #description'                                                                   : 'showSaveButton',
+                'click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)'                     : 'renderJobWTracks',
+                'mouseover #jobsItem'                                                                   : 'showRemoveButton',
+                'mouseleave #jobsItem'                                                                  : 'hideRemoveButton',
+                'click .fa.fa-trash'                                                                    : 'removeJobAndWTracks',
+                'dblclick td.editableJobs'                                                              : 'editRow',
+                'click #saveName'                                                                       : 'saveNewJobName',
+                'keydown input.editing '                                                                : 'keyDown',
+                click                                                                                   : 'hideSelect',
+                keydown                                                                                 : 'keydownHandler',
+                'click a.quotation'                                                                     : 'viewQuotation',
+                'click a.invoice'                                                                       : 'viewInvoice',
+                'click a.proforma'                                                                      : 'viewProforma',
+                "click .report"                                                                         : "showReport",
             },
 
             initialize: function (options) {
@@ -849,29 +849,32 @@ define([
                 var self = this;
                 var callback = _.once(cb);
 
-                var _id = window.location.hash.split('form/')[1];
+                // var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
 
-                var filter = {
+                /*var filter = {
                     projectName: {
                         key  : 'project._id',
                         value: [_id],
                         type : 'ObjectId'
                     }
-                };
+                };*/
 
                 this.wCollection = new wTrackCollection({
                     viewType: 'list',
-                    filter  : filter,
-                    count   : 100
+                    /*filter  : filter,*/
+                    count   : 100,
+                    url: 'project/' + _id + '/weTracks'
                 });
 
                 function createView() {
                     var gridStart = $('#grid-start').text();
-                    callback();
-
                     var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
                     var itemsNumber = parseInt($('.selectedItemsNumber').text(), 10) || 'all';
                     var defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
+                    
+                    callback();
+                    
                     if (self.wTrackView) {
                         self.wTrackView.undelegateEvents();
                     }
@@ -879,7 +882,7 @@ define([
                     this.wTrackView = new wTrackView({
                         model             : self.wCollection,
                         defaultItemsNumber: defaultItemsNumber,
-                        filter            : filter,
+                        /*filter            : filter,*/
                         startNumber       : startNumber,
                         project           : self.formModel
                     });
@@ -895,18 +898,19 @@ define([
 
             showMoreContent: function (newModels) {
                 var self = this;
-                var _id = window.location.hash.split('form/')[1];
+                // var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
                 var gridStart = $('#grid-start').text();
 
                 var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
 
-                var filter = {
+               /* var filter = {
                     projectName: {
                         key  : 'project._id',
                         value: [_id],
                         type : 'ObjectId'
                     }
-                };
+                };*/
 
                 if (self.wTrackView) {
                     self.wTrackView.undelegateEvents();
@@ -914,9 +918,10 @@ define([
 
                 this.wTrackView = new wTrackView({
                     model      : self.wCollection,
-                    filter     : filter,
+                    /*filter     : filter,*/
                     startNumber: startNumber,
-                    project    : self.formModel
+                    project    : self.formModel,
+                    url: 'project/' + _id + '/weTracks'
                 });
 
                 this.wCollection.bind('reset', this.createView);
@@ -977,7 +982,7 @@ define([
                         invoceStats     : data.invoices,
                         invoceStat      : data,
                         currencySplitter: helpers.currencySplitter,
-                        currencyClass: helpers.currencyClass
+                        currencyClass   : helpers.currencyClass
                     })
                 );
             },
@@ -989,7 +994,7 @@ define([
                         invoceStats     : data.invoices,
                         invoceStat      : data,
                         currencySplitter: helpers.currencySplitter,
-                        currencyClass: helpers.currencyClass
+                        currencyClass   : helpers.currencyClass
                     })
                 );
             },
@@ -1004,27 +1009,29 @@ define([
 
                 this.wTrackView = new wTrackView({
                     model      : this.wCollection,
-                    filter     : filter,
+                    /*filter     : filter,*/
                     startNumber: startNumber
                 }).render();
             },
 
             getInvoice: function (cb) {
                 var self = this;
-                var _id = window.location.hash.split('form/')[1];
-                var filter = {
-                    project: {
-                        key  : 'project._id',
-                        value: [_id]
-                    }
-                };
+                // var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
+                /*var filter = {
+                 project: {
+                 key  : 'project._id',
+                 value: [_id]
+                 }
+                 };*/
                 var callback;
 
                 self.iCollection = new invoiceCollection({
                     count      : 50,
                     viewType   : 'list',
                     contentType: 'salesInvoice',
-                    filter     : filter
+                    /*filter     : filter,*/
+                    url        : 'project/' + _id + '/invoices'
                 });
 
                 function createView() {
@@ -1034,7 +1041,7 @@ define([
 
                     new InvoiceView({
                         model       : self.iCollection,
-                        filter      : filter,
+                        /* filter      : filter,*/
                         eventChannel: self.eventChannel
                     });
 
@@ -1065,20 +1072,22 @@ define([
 
             getProforma: function (cb, quotationId) {
                 var self = this;
-                var _id = window.location.hash.split('form/')[1];
-                var filter = {
-                    project: {
-                        key  : 'project._id',
-                        value: [_id]
-                    }
-                };
+                // var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
+                /* var filter = {
+                 project: {
+                 key  : 'project._id',
+                 value: [_id]
+                 }
+                 };*/
                 var callback;
 
                 self.pCollection = new proformaCollection({
                     count      : 50,
                     viewType   : 'list',
                     contentType: 'proforma',
-                    filter     : filter
+                    url        : 'project/' + _id + '/invoices'
+                    // filter     : filter
                 });
 
                 function createView() {
@@ -1090,7 +1099,7 @@ define([
                     proformaView = new ProformaView({
                         el          : '#proforma',
                         model       : self.pCollection,
-                        filter      : filter,
+                        /*filter      : filter,*/
                         eventChannel: self.eventChannel
                     });
 
@@ -1320,7 +1329,7 @@ define([
                     if (element.type === 'Not Quoted') {
                         if (element.budget.budgetTotal && (element.budget.budgetTotal.revenueSum !== 0)) {
                             jobSum += parseFloat(element.budget.budgetTotal.revenueSum);
-                            jobSum /=100;
+                            jobSum /= 100;
                             jobsCount++;
                         }
                     }
@@ -1344,7 +1353,7 @@ define([
                 proformContainer.html(this.proformRevenue({
                         proformValues   : self.proformValues,
                         currencySplitter: helpers.currencySplitter,
-                        currencyClass: helpers.currencyClass
+                        currencyClass   : helpers.currencyClass
                     })
                 );
 
@@ -1566,7 +1575,7 @@ define([
 
                 paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
 
-                accessData.forEach(function(accessElement) {
+                accessData.forEach(function (accessElement) {
                     //todo move dom elems removal to template
                     if (accessElement.module === 64) {
                         if (accessElement.access.read) {
@@ -1581,9 +1590,12 @@ define([
                             thisEl.find('div#payments').parent().remove();
 
 
-                            self.getPayments = function() {};
-                            self.getInvoiceStats = function() {};
-                            self.getProformaStats = function() {};
+                            self.getPayments = function () {
+                            };
+                            self.getInvoiceStats = function () {
+                            };
+                            self.getProformaStats = function () {
+                            };
                         }
                     }
 
