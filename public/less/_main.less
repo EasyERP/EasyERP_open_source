@@ -1253,9 +1253,13 @@ input::-ms-clear {
 
   .opportunity-header {
     margin-bottom: 7px;
-
     h3 {
       text-align: right;
+
+    }
+    h4 {
+      color: @name-color;
+      font-weight: bold;
     }
   }
 
@@ -1408,7 +1412,7 @@ input::-ms-clear {
           position: absolute;
           top: 4px;
           right: 28px;
-          color: @kanab-text-color;
+          color: @fold-color;
         }
         .fold-unfold {
           display: block;
@@ -1425,11 +1429,14 @@ input::-ms-clear {
           //
           margin: 0 2px 0 4px;
           cursor: pointer;
-          color: @kanab-text-color;
+          color: @fold-color;
         }
         .text {
           color: @bg-main-menu-selected;
           font-size: 13px;
+          .dollar {
+            margin-left: 5px;
+          }
         }
       }
 
@@ -1622,27 +1629,27 @@ input::-ms-clear {
       }
     }
   }
-  h4 {
+  //h4 {
+  //  color: @tilte-color;
+  //  font-size: @font-size;
+  //  line-height: 18px;
+  //  font-family: @lucida-font;
+  //  white-space: normal;
+  //  span {
+  //    .text-overflow;
+  //    white-space: normal;
+  //    width: 182px;
+  //  }
+  //  &:hover {
+  //    text-decoration: underline;
+  //    cursor: pointer;
+  //  }
+  //
+  //}
+  h4, .title {
     color: @tilte-color;
-    font-size: @font-size;
-    line-height: 18px;
-    font-family: @lucida-font;
-    white-space: normal;
-    span {
-      .text-overflow;
-      white-space: normal;
-      width: 182px;
-    }
-    &:hover {
-      text-decoration: underline;
-      cursor: pointer;
-    }
-
-  }
-  .title {
-    color: @tilte-color;
-    font-size: @font-size;
-    .bold;
+    font-size: 13px;
+    font-weight: 600;
     line-height: 18px;
     font-family: @lucida-font;
     white-space: normal;
@@ -2534,7 +2541,7 @@ input, textarea, select {
   text-decoration: none;
   display: block;
   line-height: 28px;
-  .fullsize;
+  //.fullsize;
 
   &:hover {
     text-decoration: none;
@@ -2604,6 +2611,7 @@ a {
 h3 {
   color: @tilte-color;
   font-size: 18px;
+  line-height: 24px;
   .text-overflow;
 }
 
@@ -6614,6 +6622,12 @@ textarea#editInput {
     tbody {
       .boldInvoiced, .boldPaid {
         background-color: #565658;
+        td {
+          color: @whiteText;
+        }
+      }
+      .revenueBySales, .totalBySales,
+      .paidBySales {
         td {
           color: @whiteText;
         }
