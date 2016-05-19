@@ -27,7 +27,7 @@
                 this.responseObj = {};
                 this.elementId = options ? options.elementId : null;
 
-                this.renderHistory = _.after(2, this.renderHistory);
+                this.renderHistory = _.after(3, this.renderHistory);
                 this.composeEnteties = _.once(this.composeEnteties);
 
                 this.render();
@@ -456,8 +456,12 @@
                 var composedEnteties = {};
 
                 Object.keys(responseObj).forEach(function (entetiesKey) {
+                    var arr = responseObj[entetiesKey];
                     if (mapping[entetiesKey]) {
-                        composedEnteties[mapping[entetiesKey]] = _.indexBy(responseObj[entetiesKey], '_id');
+                        if (entetiesKey === '#workflowDd') {
+                            arr = arr.concat(responseObj['#workflowsLeadsDd']);
+                        }
+                        composedEnteties[mapping[entetiesKey]] = _.indexBy(arr, '_id');
                     }
                 });
 
@@ -571,6 +575,7 @@
                     self.renderHistory();
                 });
                 populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, null, self.renderHistory);
+                populate.getWorkflow("#workflowsLeadsDd", "", "/WorkflowsForDd", {id: "Leads"}, "name", this, null, self.renderHistory);
                 populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, false, true);
 
 
