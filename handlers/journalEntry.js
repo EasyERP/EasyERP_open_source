@@ -4433,7 +4433,7 @@ var Module = function (models, event) {
                             return pCb(err);
                         }
 
-                        pCb(null, result);
+                        pCb(null, result || []);
                     });
                 };
 
