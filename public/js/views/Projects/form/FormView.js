@@ -98,29 +98,29 @@ define([
             proformaStatsTmpl: _.template(proformaStats),
 
             events: {
-                'click .chart-tabs'                                                                                       : 'changeTab',
-                'click .deleteAttach'                                                                                     : 'deleteAttach',
-                'click #health a:not(.disabled)'                                                                          : 'showHealthDd',
-                'click #health ul li div:not(.disabled)'                                                                  : 'chooseHealthDd',
-                'click .newSelectList li:not(.miniStylePagination):not(.disabled)'                                        : 'chooseOption',
-                'click .current-selected:not(.disabled)'                                                                  : 'showNewSelect',
-                'click #createItem'                                                                                       : 'createDialog',
-                'click #createJob'                                                                                        : 'createJob',
+                'click .chart-tabs'                                                                     : 'changeTab',
+                'click .deleteAttach'                                                                   : 'deleteAttach',
+                'click #health a:not(.disabled)'                                                        : 'showHealthDd',
+                'click #health ul li div:not(.disabled)'                                                : 'chooseHealthDd',
+                'click .newSelectList li:not(.miniStylePagination):not(.disabled)'                      : 'chooseOption',
+                'click .current-selected:not(.disabled)'                                                : 'showNewSelect',
+                'click #createItem'                                                                     : 'createDialog',
+                'click #createJob'                                                                      : 'createJob',
                 'change input:not(.checkbox, .check_all, .statusCheckbox, #inputAttach, #noteTitleArea)': 'showSaveButton',  // added id for noteView
-                'change #description'                                                                                     : 'showSaveButton',
-                'click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)'                                       : 'renderJobWTracks',
-                'mouseover #jobsItem'                                                                                     : 'showRemoveButton',
-                'mouseleave #jobsItem'                                                                                    : 'hideRemoveButton',
-                'click .fa.fa-trash'                                                                                      : 'removeJobAndWTracks',
-                'dblclick td.editableJobs'                                                                                : 'editRow',
-                'click #saveName'                                                                                         : 'saveNewJobName',
-                'keydown input.editing '                                                                                  : 'keyDown',
-                click                                                                                                     : 'hideSelect',
-                keydown                                                                                                   : 'keydownHandler',
-                'click a.quotation'                                                                                       : 'viewQuotation',
-                'click a.invoice'                                                                                         : 'viewInvoice',
-                'click a.proforma'                                                                                        : 'viewProforma',
-                "click .report"                                                                                           : "showReport",
+                'change #description'                                                                   : 'showSaveButton',
+                'click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)'                     : 'renderJobWTracks',
+                'mouseover #jobsItem'                                                                   : 'showRemoveButton',
+                'mouseleave #jobsItem'                                                                  : 'hideRemoveButton',
+                'click .fa.fa-trash'                                                                    : 'removeJobAndWTracks',
+                'dblclick td.editableJobs'                                                              : 'editRow',
+                'click #saveName'                                                                       : 'saveNewJobName',
+                'keydown input.editing '                                                                : 'keyDown',
+                click                                                                                   : 'hideSelect',
+                keydown                                                                                 : 'keydownHandler',
+                'click a.quotation'                                                                     : 'viewQuotation',
+                'click a.invoice'                                                                       : 'viewInvoice',
+                'click a.proforma'                                                                      : 'viewProforma',
+                "click .report"                                                                         : "showReport",
             },
 
             initialize: function (options) {
@@ -977,7 +977,7 @@ define([
                         invoceStats     : data.invoices,
                         invoceStat      : data,
                         currencySplitter: helpers.currencySplitter,
-                        currencyClass: helpers.currencyClass
+                        currencyClass   : helpers.currencyClass
                     })
                 );
             },
@@ -989,7 +989,7 @@ define([
                         invoceStats     : data.invoices,
                         invoceStat      : data,
                         currencySplitter: helpers.currencySplitter,
-                        currencyClass: helpers.currencyClass
+                        currencyClass   : helpers.currencyClass
                     })
                 );
             },
@@ -1121,11 +1121,16 @@ define([
 
             },
 
-            getPayments: function (activate) {
+            getPayments: function (activate, context, cb) {
                 var self = this;
                 var payFromInvoice;
                 var payFromProforma;
                 var payments;
+                var callback;
+
+                if (context) {
+                    self = context;
+                }
 
                 self.payments = self.payments || {};
                 payFromInvoice = self.payments.fromInvoces || [];
@@ -1161,7 +1166,14 @@ define([
                     new PaymentView(data);
 
                     self.renderTabCounter();
+
+                    if (typeof(cb) === 'function') {
+                        callback();
+                    }
+
                 }
+
+                callback = _.once(cb);
             },
 
             getProjectMembers: function (cb) {
@@ -1320,7 +1332,7 @@ define([
                     if (element.type === 'Not Quoted') {
                         if (element.budget.budgetTotal && (element.budget.budgetTotal.revenueSum !== 0)) {
                             jobSum += parseFloat(element.budget.budgetTotal.revenueSum);
-                            jobSum /=100;
+                            jobSum /= 100;
                             jobsCount++;
                         }
                     }
@@ -1344,7 +1356,7 @@ define([
                 proformContainer.html(this.proformRevenue({
                         proformValues   : self.proformValues,
                         currencySplitter: helpers.currencySplitter,
-                        currencyClass: helpers.currencyClass
+                        currencyClass   : helpers.currencyClass
                     })
                 );
 
@@ -1476,9 +1488,14 @@ define([
                 var self = this;
                 var paralellTasks;
 
+                function getPaymentsWithContext(cb) {
+                    self.getPayments(false, self, cb);
+                }
+
                 paralellTasks = [
                     self.getInvoice,
-                    self.getProforma
+                    self.getProforma,
+                    getPaymentsWithContext
                 ];
 
                 App.startPreload();
@@ -1583,7 +1600,7 @@ define([
 
                 paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
 
-                accessData.forEach(function(accessElement) {
+                accessData.forEach(function (accessElement) {
                     //todo move dom elems removal to template
                     if (accessElement.module === 64) {
                         if (accessElement.access.read) {
@@ -1598,9 +1615,12 @@ define([
                             thisEl.find('div#payments').parent().remove();
 
 
-                            self.getPayments = function() {};
-                            self.getInvoiceStats = function() {};
-                            self.getProformaStats = function() {};
+                            self.getPayments = function () {
+                            };
+                            self.getInvoiceStats = function () {
+                            };
+                            self.getProformaStats = function () {
+                            };
                         }
                     }
 

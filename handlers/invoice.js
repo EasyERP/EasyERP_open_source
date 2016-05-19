@@ -931,9 +931,9 @@ var Invoice = function (models, event) {
                                 }
                                 res.status(200).send(response);
                             });
+                        } else {
+                            res.status(200).send(resp);
                         }
-
-                        res.status(200).send(resp);
                     });
 
                 } else {
@@ -1510,6 +1510,10 @@ var Invoice = function (models, event) {
                 if (access) {
 
                     models.get(db, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
+
+                        var proformaBalance;
+                        var isProformaPaid;
+
                         if (err) {
                             return next(err);
                         }
@@ -1538,6 +1542,9 @@ var Invoice = function (models, event) {
                             paymentIds.push(payment);
                         });
 
+                        proformaBalance = result.get('paymentInfo').balance;
+                        isProformaPaid = (proformaBalance === 0);
+
                         function proformaUpdate(parallelCb) {
                             var request = {
                                 query  : {
@@ -1551,7 +1558,51 @@ var Invoice = function (models, event) {
                                 Proforma.update(
                                     {
                                         sourceDocument: orderId,
-                                        _type         : 'Proforma'
+                                        _type         : 'Proforma',
+                                        payments      : []
+                                    },
+                                    {
+                                        $set: {
+                                            workflow: workflow._id,
+                                            invoiced: false
+                                        }
+                                    },
+                                    {
+                                        multi: true
+                                    },
+                                    parallelCb);
+                            });
+                        }
+
+                        function proformaCancelledUpdate(parallelCb) {
+                            var request;
+
+                            if (isProformaPaid) {
+                                request = {
+                                    query  : {
+                                        wId   : 'Proforma',
+                                        status: 'Done',
+                                        name  : 'Paid'
+                                    },
+                                    session: req.session
+                                };
+
+                            } else {
+                                request = {
+                                    query  : {
+                                        wId   : 'Proforma',
+                                        status: 'In Progress'
+                                    },
+                                    session: req.session
+                                };
+                            }
+
+                            workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                                Proforma.update(
+                                    {
+                                        sourceDocument: orderId,
+                                        _type         : 'Proforma',
+                                        payments      : {$ne: []}
                                     },
                                     {
                                         $set: {
@@ -1690,9 +1741,9 @@ var Invoice = function (models, event) {
                         }
 
                         if (result && result._type !== 'expensesInvoice') {
-                            parallelTasks = [proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove];
+                            parallelTasks = [proformaUpdate, proformaCancelledUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove];
                         } else {
-                            parallelTasks = [proformaUpdate, paymentsRemove, journalEntryRemove, folderRemove]
+                            parallelTasks = [proformaUpdate, proformaCancelledUpdate, paymentsRemove, journalEntryRemove, folderRemove]
                         }
 
                         async.parallel(parallelTasks, function (err, result) {

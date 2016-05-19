@@ -1597,7 +1597,7 @@ var Payment = function (models, event) {
                                                     request.query.status = 'New';
                                                     request.query.order = 1;
 
-                                                    if ((invoiceType === 'Proforma') && !payments.length) {
+                                                    if ((invoiceType === 'Proforma') && !payments.length && invoice.get('invoiced')) {
                                                         request.query.status = 'Cancelled';
                                                     }
                                                 }
