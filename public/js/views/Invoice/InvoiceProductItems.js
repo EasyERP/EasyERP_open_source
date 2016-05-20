@@ -330,7 +330,11 @@ define([
                     notAddItem: this.notAddItem
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
-                totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));
+                totalAmountContainer.append(_.template(totalAmount, {
+                    model: null,
+                    balanceVisible: this.visible,
+                    currencySplitter: helpers.currencySplitter
+                }));
             }
 
             return this;

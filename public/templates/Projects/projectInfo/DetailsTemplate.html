@@ -85,9 +85,9 @@
             <td>0</td>
             <%}%>
             <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
-            <td class="dollar"> <%= budgetTotal.costSum ? currencySplitter((budgetTotal.costSum/100).toFixed()) : 0%></td>
-            <td class="dollar"> <%= budgetTotal ? currencySplitter((budgetTotal.revenueSum/100).toFixed()) : 0%></td>
-            <td class="dollar"> <%= currencySplitter(((budgetTotal.revenueSum - budgetTotal.costSum)/100).toFixed())%></td>
+            <td class="dollar"><%= budgetTotal.costSum ? currencySplitter((budgetTotal.costSum/100).toFixed()) : 0%></td>
+            <td class="dollar"><%= budgetTotal ? currencySplitter((budgetTotal.revenueSum/100).toFixed()) : 0%></td>
+            <td class="dollar"><%= currencySplitter(((budgetTotal.revenueSum - budgetTotal.costSum)/100).toFixed())%></td>
 
         </tr>
         <% count++ %>
@@ -112,9 +112,9 @@
             <td>&nbsp</td>
             <td>&nbsp</td>
             <td id="totalHours" data-value="<%=totalHours%>"><%= currencySplitter(totalHours.toFixed())%></td>
-            <td id="totalCost" class="dollar" data-value="<%=totalCost%>"> <%= currencySplitter((totalCost/100).toFixed())%></td>
-            <td id="totalRevenue" class="dollar" data-value="<%=totalRevenue%>"> <%= currencySplitter((totalRevenue/100).toFixed())%></td>
-            <td id="totalProfit" class="dollar" data-value="<%=totalProfit%>"> <%= currencySplitter(totalProfit.toFixed())%></td>
+            <td id="totalCost" class="dollar" data-value="<%=totalCost%>"><%= currencySplitter((totalCost/100).toFixed())%></td>
+            <td id="totalRevenue" class="dollar" data-value="<%=totalRevenue%>"><%= currencySplitter((totalRevenue/100).toFixed())%></td>
+            <td id="totalProfit" class="dollar" data-value="<%=totalProfit%>"><%= currencySplitter(totalProfit.toFixed())%></td>
         </tr>
 
         </tfoot>
@@ -175,8 +175,8 @@
             <tbody id="project">
             <%if (projectValues) {%>
             <tr>
-                <td class="dollar"> <%=currencySplitter((projectValues.revenue/100).toFixed())%></td>
-                <td class="dollar"> <%=currencySplitter((projectValues.profit/100).toFixed())%></td>
+                <td class="dollar"><%=currencySplitter((projectValues.revenue/100).toFixed())%></td>
+                <td class="dollar"><%=currencySplitter((projectValues.profit/100).toFixed())%></td>
                 <td class="procent"><%=(projectValues.markUp).toFixed() %></td>
                 <td class="procent"><%=(projectValues.radio).toFixed()%></td>
             </tr>
