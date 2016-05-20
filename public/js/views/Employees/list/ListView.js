@@ -3,15 +3,16 @@ define([
 
         'text!templates/Employees/list/ListHeader.html',
         'views/Employees/CreateView',
+        'views/Employees/EditView',
         'views/Employees/list/ListItemView',
         'views/Filter/FilterView',
-
+        'models/EmployeesModel',
         'collections/Employees/filterCollection',
         'common'
 
     ],
 
-    function (listViewBase, listTemplate, createView, listItemView, filterView, contentCollection, common) {
+    function (listViewBase, listTemplate, createView, EditView, listItemView, filterView, currentModel, contentCollection, common) {
         var EmployeesListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -24,8 +25,9 @@ define([
             exportToXlsxUrl         : '/employee/exportToXlsx',
             exportToCsvUrl          : '/employee/exportToCsv',
             events                  : {
-                "click"                    : "hideItemsNumber",
-                "click .letter:not(.empty)": "alpabeticalRender"
+                "click"                              : "hideItemsNumber",
+                "click .letter:not(.empty)"          : "alpabeticalRender",
+                "click .list td:not(.notForm)"       : "gotoEditForm"
             },
 
             initialize: function (options) {
@@ -44,6 +46,27 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
+            },
+
+            gotoEditForm: function (e) {
+                var id = $(e.target).closest("tr").data("id");
+                var model = new currentModel({validate: false});
+
+                e.preventDefault();
+
+                model.urlRoot = '/Employees/form';
+                model.fetch({
+                    data   : {id: id},
+                    success: function (model) {
+                        new EditView({model: model});
+                    },
+                    error  : function () {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please refresh browser'
+                        });
+                    }
+                });
             },
 
             render: function () {

@@ -469,7 +469,7 @@
                     weeklyScheduler: weeklyScheduler
                 });
 
-                if (!salary && self.isSalary) {
+                if ((salary === null) && self.isSalary) {
                     App.render({
                         type: 'error',
                         message: 'Salary can`t be empty'
