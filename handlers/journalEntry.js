@@ -996,7 +996,7 @@ var Module = function (models, event) {
                     $unwind: '$transfer'
                 }, {
                     $lookup: {
-                        from: 'weeklyScheduler',
+                        from: 'weeklySchedulers',
                         localField: 'transfer.weeklyScheduler',
                         foreignField: '_id',
                         as: 'transfer.weeklyScheduler'
@@ -2788,7 +2788,7 @@ var Module = function (models, event) {
                     $unwind: '$transfer'
                 }, {
                     $lookup: {
-                        from: 'weeklyScheduler',
+                        from: 'weeklySchedulers',
                         localField: 'transfer.weeklyScheduler',
                         foreignField: '_id',
                         as: 'transfer.weeklyScheduler'
