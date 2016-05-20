@@ -494,6 +494,49 @@ var Opportunities = function (models, event) {
                     }
 
                 });
+            } else if (data.sales) {
+                var c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
+                var a = new Date(c);
+                models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate({
+                    $match: {
+                        $and: [{
+                            createdBy: {$ne: null},
+                            $or      : [{isConverted: true}, {isOpportunitie: false}]
+                        }, {'createdBy.date': {$gte: a}}]
+                    }
+                }, {
+                    $group: {
+                        _id  : {createdBy: "$createdBy.user", isOpportunitie: "$isOpportunitie"},
+                        count: {$sum: 1}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Users',
+                        localField  : '_id.createdBy',
+                        foreignField: '_id',
+                        as          : 'createdBy'
+                    }
+                }, {
+                    $project: {
+                        createdBy: {$arrayElemAt: ["$createdBy", 0]},
+                        count   : 1
+                    }
+                }, {
+                    $project: {
+                        source: '$createdBy.login',
+                        count   : 1,
+                        isOpp : "$_id.isOpportunitie",
+                        _id     : 0
+                    }
+                }).exec(function (err, result) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        res['data'] = result;
+                        response.send(res);
+                    }
+
+                });
             } else {
                 var item = data.dataItem;
                 var myItem = {};

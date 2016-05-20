@@ -1464,6 +1464,7 @@ module.exports = function (app, mainDb) {
     app.get('/LeadsForChart', function (req, res) {
         var data = {};
         data.source = req.param('source');
+        data.sales = req.param('sales');
         data.dataRange = req.param('dataRange');
         data.dataItem = req.param('dataItem');
         requestHandler.getLeadsForChart(req, res, data);

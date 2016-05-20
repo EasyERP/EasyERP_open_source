@@ -41,11 +41,15 @@ define([
                 this.dateRange = $(e.target).data("day");
                 this.renderPopulate();
             },
+
             newRangeSource: function (e) {
+                var $parent = $(e.target).closest('.choseDateRangeSource');
+                var type = $parent.attr('data-type');
+
                 $(e.target).parent().find(".active").removeClass("active");
                 $(e.target).addClass("active");
                 this.dateRangeSource = $(e.target).data("day");
-                this.renderPopulateSource();
+                this.renderPopulateSource(this, !!type);
             },
 
             newItem             : function (e) {
@@ -114,10 +118,12 @@ define([
                     if (!self.source) {
                         dataService.getData("/sources", null, function (response) {
                             self.source = response;
-                            self.renderPopulateSource(self);
+                            self.renderPopulateSource(self, null);
+                            self.renderPopulateSource(self, true);
                         });
                     } else {
-                        self.renderPopulateSource();
+                        self.renderPopulateSource(self, null);
+                        self.renderPopulateSource(self, true)
                     }
                     if ($(window).width() < 1370) {
                         $(".legend-box").css("margin-top", "10px");
@@ -126,30 +132,40 @@ define([
                     }
                 });
             },
-            renderPopulateSource: function (that) {
+            renderPopulateSource: function (that, sales) {
                 var self = this;
+                var sources = sales ? null : true
+                var chartClass = sales ? '.salesChart' : '.sourcesChart';
                 if (that) {
                     self = that;
                 }
-                $(".chart").empty();
-                common.getLeadsForChart(true, self.dateRangeSource, self.dateItem, function (data) {
+                $(chartClass).empty();
+                common.getLeadsForChart(sources, sales, self.dateRangeSource, self.dateItem, function (data) {
                     $("#timeBuildingDataFromServer").text("Server response in " + self.buildTime + " ms");
-                    self.source.data.forEach(function (item) {
-                        var b = false;
 
-                        for (var i = 0; i < data.length; i++) {
-                            if (data[i].source == item.name) {
-                                b = true;
-                                break;
+                    if (!sales) {
+                        self.source.data.forEach(function (item) {
+                            var b = false;
+
+                            for (var i = 0; i < data.length; i++) {
+                                if (data[i].source == item.name) {
+                                    b = true;
+                                    break;
+                                }
                             }
-                        }
 
-                        if (!b) {
+                            if (!b) {
 
-                            data.push({source: item.name, count: 0, isOpp: true});
-                            data.push({source: item.name, count: 0, isOpp: false});
-                        }
-                    });
+                                data.push({source: item.name, count: 0, isOpp: true});
+                                data.push({source: item.name, count: 0, isOpp: false});
+                            }
+                        });
+                    } else {
+                        data.map(function (el) {
+                            el.source = el.source || 'No User';
+                            return el;
+                        });
+                    }
 
                     var margin = {top: 20, right: 160, bottom: 30, left: 160},
                         width = $("#wrapper").width() - margin.left - margin.right,
@@ -172,7 +188,7 @@ define([
                         .scale(y)
                         .orient("left");
 
-                    var chart = d3.select(".chart")
+                    var chart = d3.select(chartClass)
                         .attr("width", width + margin.left + margin.right)
                         .attr("height", height + margin.top + margin.bottom)
                         .append("g")
@@ -257,7 +273,7 @@ define([
             renderPopulate      : function () {
                 var self = this;
                 $(".leadChart").empty();
-                common.getLeadsForChart(null, this.dateRange, this.dateItem, function (data) {
+                common.getLeadsForChart(null, null, this.dateRange, this.dateItem, function (data) {
                     var maxval = d3.max(data, function (d) {
                         return d.count;
                     });
