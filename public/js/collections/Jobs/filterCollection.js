@@ -5,7 +5,7 @@ define([
     var JobsCollection = Backbone.Collection.extend({
 
         model       : JobsModel,
-        url         : '/jobs/',
+        url         : '/jobs/getForOverview',
         contentType : null,
         page        : null,
         numberToShow: null,

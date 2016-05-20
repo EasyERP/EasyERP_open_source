@@ -95,19 +95,19 @@ define([
 
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
 
-                    estimatedHours = this.changedModels[editedElementRowId].estimatedHours || editModel.get('estimatedHours');
-                    adminBudget = this.changedModels[editedElementRowId].adminBudget || editModel.get('adminBudget');
-                    adminSalaryBudget = this.changedModels[editedElementRowId].adminSalaryBudget || editModel.get('adminSalaryBudget');
-                    vacationBudget = this.changedModels[editedElementRowId].vacationBudget || editModel.get('vacationBudget');
-                    idleBudget = this.changedModels[editedElementRowId].idleBudget || editModel.get('idleBudget');
-                    actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
-                    hours = actualHours || estimatedHours;
-                    sumBudget = parseFloat(adminBudget) + parseFloat(adminSalaryBudget) + parseFloat(vacationBudget) + parseFloat(idleBudget);
+                    /*  estimatedHours = this.changedModels[editedElementRowId].estimatedHours || editModel.get('estimatedHours');
+                     adminBudget = this.changedModels[editedElementRowId].adminBudget || editModel.get('adminBudget');
+                     adminSalaryBudget = this.changedModels[editedElementRowId].adminSalaryBudget || editModel.get('adminSalaryBudget');
+                     vacationBudget = this.changedModels[editedElementRowId].vacationBudget || editModel.get('vacationBudget');
+                     idleBudget = this.changedModels[editedElementRowId].idleBudget || editModel.get('idleBudget');
+                     actualHours = this.changedModels[editedElementRowId].actualHours || editModel.get('actualHours');
+                     hours = actualHours || estimatedHours;
+                     sumBudget = parseFloat(adminBudget) + parseFloat(adminSalaryBudget) + parseFloat(vacationBudget) + parseFloat(idleBudget);
 
-                    if (isFinite(sumBudget / hours)) {
-                        this.changedModels[editedElementRowId].overheadRate = sumBudget / hours;
-                        editedElement.closest('tr').find('[data-content="overheadRate"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].overheadRate.toFixed(2)));
-                    }
+                     if (isFinite(sumBudget / hours)) {
+                     this.changedModels[editedElementRowId].overheadRate = sumBudget / hours;
+                     editedElement.closest('tr').find('[data-content="overheadRate"]').text(helpers.currencySplitter(this.changedModels[editedElementRowId].overheadRate.toFixed(2)));
+                     }*/
 
                     if (editedElementContent !== 'year') {
                         editedCol.text(helpers.currencySplitter(editedElementValue));
@@ -180,23 +180,45 @@ define([
                 if (isSelect) {
                     populate.showSelect(e, prev, next, this);
                 } else if (year && month) {
-                    dataService.getData('journal/journalEntry/getAdminExpenses', {
+                    dataService.getData('journal/journalEntry/getExpenses', {
                         month: month,
-                        year: year
+                        year : year
                     }, function (result) {
                         if (result.error) {
                             return alert('error');
                         }
 
-                        var sum = result.sum;
+                        var adminExpenses = result.adminExpenses;
+                        var vacationExpenses = result.vacationExpenses;
+                        var idleExpenses = result.idleExpenses;
+                        var adminSalary = result.adminSalary;
+                        var actualHours = result.actualHours;
 
-                        if (tr.find('[data-content="adminBudget"]').find('.editing').length){
-                            tr.find('[data-content="adminBudget"]').find('.editing').val(helpers.currencySplitter((sum / 100).toFixed(2)));
+                        if (tr.find('.editing').length) {
+                            tr.find('[data-content="adminBudget"]').find('.editing').val(helpers.currencySplitter((adminExpenses / 100).toFixed(2)));
+                            tr.find('[data-content="vacationBudget"]').find('.editing').val(helpers.currencySplitter((vacationExpenses / 100).toFixed(2)));
+                            tr.find('[data-content="idleBudget"]').find('.editing').val(helpers.currencySplitter((idleExpenses / 100).toFixed(2)));
+                            tr.find('[data-content="adminSalaryBudget"]').find('.editing').val(helpers.currencySplitter((adminSalary / 100).toFixed(2)));
+                            tr.find('[data-content="actualHours"]').find('.editing').val(helpers.currencySplitter(actualHours.toFixed()));
                         } else {
-                            tr.find('[data-content="adminBudget"]').text(helpers.currencySplitter((sum / 100).toFixed(2)));
+                            tr.find('[data-content="adminBudget"]').text(helpers.currencySplitter((adminExpenses / 100).toFixed(2)));
+                            tr.find('[data-content="vacationBudget"]').text(helpers.currencySplitter((vacationExpenses / 100).toFixed(2)));
+                            tr.find('[data-content="idleBudget"]').text(helpers.currencySplitter((idleExpenses / 100).toFixed(2)));
+                            tr.find('[data-content="adminSalaryBudget"]').text(helpers.currencySplitter((adminSalary / 100).toFixed(2)));
+                            tr.find('[data-content="actualHours"]').text(helpers.currencySplitter(actualHours.toFixed()));
                         }
-                        
+
                         changedModels = self.changedModels[mothHoursId] || {};
+
+                        if (!self.changedModels[mothHoursId]) {
+                            self.changedModels[mothHoursId] = {};
+                        }
+
+                        self.changedModels[mothHoursId].adminBudget = parseFloat((adminExpenses / 100).toFixed(2));
+                        self.changedModels[mothHoursId].vacationBudget = parseFloat((vacationExpenses / 100).toFixed(2));
+                        self.changedModels[mothHoursId].idleBudget = parseFloat((idleExpenses / 100).toFixed(2));
+                        self.changedModels[mothHoursId].adminSalaryBudget = parseFloat((adminSalary / 100).toFixed(2));
+                        self.changedModels[mothHoursId].actualHours = actualHours;
 
                         editModel = self.editCollection.get(mothHoursId);
 
@@ -207,13 +229,13 @@ define([
                         idleBudget = changedModels.idleBudget || editModel.get('idleBudget');
                         actualHours = changedModels.actualHours || editModel.get('actualHours');
                         hours = actualHours || estimatedHours;
-                        sumBudget = parseFloat(adminBudget) + parseFloat(adminSalaryBudget) + parseFloat(vacationBudget) + parseFloat(idleBudget);
+                        sumBudget = parseFloat(adminExpenses) + parseFloat(vacationExpenses) + parseFloat(idleExpenses) + parseFloat(adminSalary);
 
-                        if (isFinite(sumBudget / hours)) {
-                            changedModels.overheadRate = sumBudget / hours;
-                            tr.find('[data-content="overheadRate"]').text(helpers.currencySplitter(changedModels.overheadRate.toFixed(2)));
+                        if (isFinite(sumBudget / 100 / actualHours)) {
+                            self.changedModels[mothHoursId].overheadRate = sumBudget / 100 / actualHours;
+                            tr.find('[data-content="overheadRate"]').text(helpers.currencySplitter(self.changedModels[mothHoursId].overheadRate.toFixed(2)));
                         } else {
-                            changedModels.overheadRate = 0;
+                            self.changedModels[mothHoursId].overheadRate = 0;
                             tr.find('[data-content="overheadRate"]').text(0);
                         }
 
@@ -592,8 +614,6 @@ define([
             }
 
         })
-        ;
 
     return monthHoursListView;
 })
-;
