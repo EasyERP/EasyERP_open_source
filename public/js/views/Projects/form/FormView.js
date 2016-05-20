@@ -847,6 +847,7 @@ define([
                 this.renderProformRevenue();
                 this.getInvoiceStats();
                 this.getProformaStats();
+                this.showProjectCharts();
             },
 
             getWTrack: function (cb) {
@@ -1525,8 +1526,11 @@ define([
             },
 
             showProjectCharts: function () {
-                var _id = window.location.hash.split('form/')[1];
-                this.projectChartsView = new ProjectChartsView({id: _id});
+                var data = {
+                    data: this.projectValues
+                };
+
+                new ProjectChartsView(data);
             },
 
             render: function () {
@@ -1677,8 +1681,6 @@ define([
                     changeYear : true,
                     minDate    : (self.formModel.StartDate) ? self.formModel.StartDate : 0
                 });
-
-                this.showProjectCharts();
 
                 return this;
 
