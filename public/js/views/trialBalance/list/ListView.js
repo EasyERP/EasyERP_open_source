@@ -94,9 +94,10 @@ define([
 
                 async.each(asyncKeys, function (asyncId) {
                     dataService.getData('/journal/journalEntry/getAsyncDataForGL', {
-                        startDate: self.startDate,
-                        endDate  : self.endDate,
-                        _id      : asyncId
+                        startDate  : self.startDate,
+                        endDate    : self.endDate,
+                        contentType: 'trialBalance',
+                        _id        : asyncId
                     }, function (result) {
                         var journalEntries = result.journalEntries;
                         var mainTr = body.find("[data-id='" + asyncId + "']");

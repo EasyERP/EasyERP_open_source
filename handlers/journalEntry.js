@@ -27,6 +27,11 @@ var Module = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
     var CONSTANTS = require("../constants/mainConstants.js");
 
+    var matchObject = {};
+
+    matchObject[CONSTANTS.PRODUCT_SALES] = 'credit';
+    matchObject[CONSTANTS.COGS] = 'debit';
+
     var notDevArray = CONSTANTS.NOT_DEV_ARRAY;
 
     var lookupWTrackArray = [
@@ -1312,7 +1317,7 @@ var Module = function (models, event) {
         var year = parseInt(query.year, 10);
         var startDate = moment().year(year).month(month - 1).startOf('month');
         var localDate = moment().year(year).month(month - 1).endOf('month');
-        //var endDate = moment(localDate).add(3, 'hours');
+        var jeDate = moment(localDate).subtract(3, 'hours');
         var waterlallTasks;
         var productSales;
         var COGS;
@@ -1349,7 +1354,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CREDIT_IS,
-                        date          : new Date(localDate),
+                        date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth',
                             _id  : null
@@ -1390,7 +1395,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_COGS,
-                        date          : new Date(localDate),
+                        date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth',
                             _id  : null
@@ -1429,7 +1434,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_VAC_EXP,
-                        date          : new Date(localDate),
+                        date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1467,7 +1472,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_IDLE_EXP,
-                        date          : new Date(localDate),
+                        date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1505,7 +1510,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_ADMIN_EXP,
-                        date          : new Date(localDate),
+                        date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1548,7 +1553,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_ADMIN_BUD,
-                        date          : new Date(localDate),
+                        date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -3910,12 +3915,23 @@ var Module = function (models, event) {
         });
     };
 
+    function matchEditor(account, match) {
+        var accountName = matchObject[account];
+
+        if (accountName){
+            match[accountName] = {$gt: 0};
+        }
+
+        return match;
+    }
+
     this.getAsyncDataForGL = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var query = req.query;
         var account = query._id;
         var startDate = query.startDate;
         var endDate = query.endDate;
+        var contentType = query.contentType;
 
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
@@ -3927,6 +3943,10 @@ var Module = function (models, event) {
             },
             account: objectId(account)
         };
+
+        if (!contentType){
+            match = matchEditor(account, match);
+        }
 
         if (!account) {
             return res.status(200).send({journalEntries: []});
