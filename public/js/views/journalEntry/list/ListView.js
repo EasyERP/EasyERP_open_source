@@ -198,7 +198,7 @@ define([
             calcTotal: function () {
                 var $curEl = this.$el;
                 var $rows = $curEl.find('#listTable tr').not('#listFooter');
-
+                var $totalEl = $curEl.find('#listFooter').find('#totalDebit');
                 var total = 0;
 
                 $rows.each(function (index, element) {
@@ -210,7 +210,8 @@ define([
                     total += debitVal;
                 });
 
-                $curEl.find('#listFooter').find('#totalDebit').text(helpers.currencySplitter(total.toFixed(2)));
+                $totalEl.addClass('money');
+                $totalEl.text(helpers.currencySplitter(total.toFixed(2)));
                 return total;
             },
 

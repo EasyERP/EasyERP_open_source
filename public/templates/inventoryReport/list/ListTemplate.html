@@ -4,9 +4,9 @@
     <td ><a href='#easyErp/Projects/form/<%=element.project || null%>'><%=element.projectName || '-----'%></a></td>
     <td ><%=element.salesmanager%></td>
     <td ><%=element.name%></td>
-    <td class="openingBalance" data-amount="<%=element.openingBalance%>"><%=currencySplitter(element.openingBalance.toFixed(2))%></td>
-    <td class="inwards" data-amount="<%=element.inwards%>"><%=currencySplitter(element.inwards.toFixed(2))%></td>
-    <td class="outwards" data-amount="<%=element.outwards%>"><%=currencySplitter(element.outwards.toFixed(2))%></td>
-    <td class="closingBalance" data-amount="<%=element.closingBalance%>"><%=currencySplitter(element.closingBalance.toFixed(2))%></td>
+    <td class="openingBalance money" data-amount="<%=element.openingBalance%>"><%=currencySplitter(element.openingBalance.toFixed(2))%></td>
+    <td class="inwards money" data-amount="<%=element.inwards%>"><%=currencySplitter(element.inwards.toFixed(2))%></td>
+    <td class="outwards money" data-amount="<%=element.outwards%>"><%=currencySplitter(element.outwards.toFixed(2))%></td>
+    <td class="closingBalance money" data-amount="<%=element.closingBalance%>"><%=currencySplitter(element.closingBalance.toFixed(2))%></td>
 </tr>
 <% }) %>

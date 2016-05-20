@@ -1,22 +1,23 @@
 define([
-    'Backbone',
-    'jQuery',
-    'Underscore',
-    'text!templates/Employees/EditTemplate.html',
-    'views/Notes/AttachView',
-    'views/selectView/selectView',
-    'collections/Employees/EmployeesCollection',
-    'collections/JobPositions/JobPositionsCollection',
-    'collections/Departments/DepartmentsCollection',
-    'collections/Customers/AccountsDdCollection',
-    'collections/Users/UsersCollection',
-    'views/Assignees/AssigneesView',
-    'common',
-    'populate',
-    'moment',
-    'helpers/keyCodeHelper',
-    'constants'
-],
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        'text!templates/Employees/EditTemplate.html',
+        'views/Notes/AttachView',
+        'views/selectView/selectView',
+        'collections/Employees/EmployeesCollection',
+        'collections/JobPositions/JobPositionsCollection',
+        'collections/Departments/DepartmentsCollection',
+        'collections/Customers/AccountsDdCollection',
+        'collections/Users/UsersCollection',
+        'views/Assignees/AssigneesView',
+        'common',
+        'populate',
+        'moment',
+        'helpers/keyCodeHelper',
+        'constants',
+        'helpers'
+    ],
     function (Backbone,
               $,
               _,
@@ -33,7 +34,8 @@ define([
               populate,
               moment,
               keyCodes,
-              constants) {
+              constants,
+              helpers) {
         'use strict';
         var EditView = Backbone.View.extend({
             el         : '#content-holder',
@@ -182,7 +184,7 @@ define([
 
                 this.renderRemoveBtn();
             },
-          
+
             renderRemoveBtn: function () {
                 var table = this.$el.find('#hireFireTable');
                 var trs = table.find('tr');
@@ -493,14 +495,14 @@ define([
                         $previousTr = $($jobTrs[index - 1]);
 
                         transferArray.push({
-                            status     : 'transfer',
-                            date       : moment(date).subtract(1, 'day'),
-                            department : previousDep,
-                            jobPosition: $previousTr.find('#jobPositionDd').attr('data-id') || null,
-                            manager    : $previousTr.find('#projectManagerDD').attr('data-id') || null,
-                            jobType    : $.trim($previousTr.find('#jobTypeDd').text()),
-                            salary     : salary,
-                            info       : $previousTr.find('#statusInfoDd').val(),
+                            status         : 'transfer',
+                            date           : moment(date).subtract(1, 'day'),
+                            department     : previousDep,
+                            jobPosition    : $previousTr.find('#jobPositionDd').attr('data-id') || null,
+                            manager        : $previousTr.find('#projectManagerDD').attr('data-id') || null,
+                            jobType        : $.trim($previousTr.find('#jobTypeDd').text()),
+                            salary         : salary,
+                            info           : $previousTr.find('#statusInfoDd').val(),
                             weeklyScheduler: $previousTr.find('#weeklySchedulerDd').attr('data-id')
                         });
 
@@ -508,20 +510,20 @@ define([
                     }
 
                     transferArray.push({
-                        status     : event,
-                        date       : date,
-                        department : department,
-                        jobPosition: jobPosition,
-                        manager    : manager,
-                        jobType    : jobType,
-                        salary     : salary,
-                        info       : info,
+                        status         : event,
+                        date           : date,
+                        department     : department,
+                        jobPosition    : jobPosition,
+                        manager        : manager,
+                        jobType        : jobType,
+                        salary         : salary,
+                        info           : info,
                         weeklyScheduler: weeklyScheduler
                     });
 
                     if (!salary && self.isSalary) {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Salary can`t be empty'
                         });
                         quit = true;
@@ -563,50 +565,50 @@ define([
                 });
 
                 data = {
-                    name          : {
+                    name           : {
                         first: $.trim(this.$el.find('#first').val()),
                         last : $.trim(this.$el.find('#last').val())
                     },
-                    gender        : gender,
-                    jobType       : jobType,
-                    marital       : marital,
-                    workAddress   : {
+                    gender         : gender,
+                    jobType        : jobType,
+                    marital        : marital,
+                    workAddress    : {
                         street : $.trim(this.$el.find('#street').val()),
                         city   : $.trim(this.$el.find('#city').val()),
                         state  : $.trim(this.$el.find('#state').val()),
                         zip    : $.trim(this.$el.find('#zip').val()),
                         country: $.trim(this.$el.find('#country').val())
                     },
-                    social        : {
+                    social         : {
                         LI: $.trim(this.$el.find('#LI').val()),
                         FB: $.trim(this.$el.find('#FB').val())
                     },
-                    tags          : $.trim(this.$el.find('#tags').val()).split(','),
-                    workEmail     : $.trim(this.$el.find('#workEmail').val()),
-                    personalEmail : $.trim(this.$el.find('#personalEmail').val()),
-                    skype         : $.trim(this.$el.find('#skype').val()),
-                    workPhones    : {
+                    tags           : $.trim(this.$el.find('#tags').val()).split(','),
+                    workEmail      : $.trim(this.$el.find('#workEmail').val()),
+                    personalEmail  : $.trim(this.$el.find('#personalEmail').val()),
+                    skype          : $.trim(this.$el.find('#skype').val()),
+                    workPhones     : {
                         phone : $.trim(this.$el.find('#phone').val()),
                         mobile: $.trim(this.$el.find('#mobile').val())
                     },
-                    officeLocation: $.trim(this.$el.find('#officeLocation').val()),
-                    bankAccountNo : $.trim($('#bankAccountNo').val()),
-                    relatedUser   : relatedUser,
-                    department    : department,
-                    jobPosition   : jobPosition,
+                    officeLocation : $.trim(this.$el.find('#officeLocation').val()),
+                    bankAccountNo  : $.trim($('#bankAccountNo').val()),
+                    relatedUser    : relatedUser,
+                    department     : department,
+                    jobPosition    : jobPosition,
                     weeklyScheduler: weeklyScheduler,
-                    manager       : manager,
-                    coach         : coach,
-                    identNo       : $.trim($('#identNo').val()),
-                    passportNo    : $.trim(this.$el.find('#passportNo').val()),
-                    otherId       : $.trim(this.$el.find('#otherId').val()),
-                    homeAddress   : homeAddress,
-                    dateBirth     : dateBirthSt,
-                    source        : sourceId,
-                    imageSrc      : self.imageSrc,
-                    nationality   : nationality,
-                    isEmployee    : isEmployee,
-                    lastFire      : lastFire,
+                    manager        : manager,
+                    coach          : coach,
+                    identNo        : $.trim($('#identNo').val()),
+                    passportNo     : $.trim(this.$el.find('#passportNo').val()),
+                    otherId        : $.trim(this.$el.find('#otherId').val()),
+                    homeAddress    : homeAddress,
+                    dateBirth      : dateBirthSt,
+                    source         : sourceId,
+                    imageSrc       : self.imageSrc,
+                    nationality    : nationality,
+                    isEmployee     : isEmployee,
+                    lastFire       : lastFire,
 
                     groups  : {
                         owner: $('#allUsersSelect').data('id'),
@@ -714,7 +716,8 @@ define([
 
 
                 var formString = this.template({
-                    model: this.currentModel.toJSON()
+                    model           : this.currentModel.toJSON(),
+                    currencySplitter: helpers.currencySplitter
                 });
                 var self = this;
                 this.$el = $(formString).dialog({

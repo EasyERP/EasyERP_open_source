@@ -53,6 +53,7 @@ define([
 
                 if (rowTdVal) {
                     totalTd.text(helpers.currencySplitter(rowTdVal.toFixed()));
+                    totalTd.addClass('money');
                 }
             },
 
@@ -61,10 +62,11 @@ define([
                 this.endKey = moment(this.endDate).year() * 100 + moment(this.endDate).month();
 
                 this.$el.append(_.template(listTemplate, {
-                    collection: this.collection,
-                    startKey  : this.startKey,
-                    endKey    : this.endKey,
-                    moment    : moment
+                    collection      : this.collection,
+                    startKey        : this.startKey,
+                    endKey          : this.endKey,
+                    moment          : moment,
+                    currencySplitter: helpers.currencySplitter
                 }));
 
                 this.setAllTotalVals();

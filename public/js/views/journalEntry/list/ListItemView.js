@@ -21,6 +21,7 @@
 
                 this.$el.append(_.template(listTemplate, {
                     currencySplitter: helpers.currencySplitter,
+                    currencyClass: helpers.currencyClass,
                     collection      : this.collection.toJSON(),
                     startNumber     : this.startNumber
                 }));
