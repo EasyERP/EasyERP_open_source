@@ -1,34 +1,27 @@
 <% collection.forEach(function(model, index){ %>
-<div class="thumbnailwithavatar" data-index="<%=index%>">
-    <div class="inner">
-        <div id="<%=model._id%>">
+<li class="thumbnailwithavatar" data-index="<%=index%>">
+    <div class="avatar">
+        <div class="avatar_img" id="<%=model._id%>">
             <img class="ava" alt="" width="100" src="<%=model.imageSrc%>"/>
-        </div>
     </div>
-
-    <div class="info" data-id="<%=model._id%>">
-        <div>
-            <a class="fullName" data-id="<%=model._id%>"><%=model.name.first%> <%=model.name.last%></a>
-            <div class=" text">
-
-                    <dt>Department:</dt>
-                    <dd><%=(model.department) ? model.department.departmentName : ''%></dd>
-                    <dt>Job Positon:</dt>
-                    <dd><%= (model.jobPosition) ? model.jobPosition.name : ''%></dd>
-                    <dt>Phone:</dt>
-                    <dd> <%=model.workPhones.mobile%></dd>
-            </div>
-            <br/>
-
-            <div class="date">
-                <p><span class="age"><%= model.dateBirth %></span>
-                    <span class="empDateBirth">(<%=model.age%>)</span>
-                </p>
-            </div>
-            <a href="javascript;" class="readMore" data-id="<%=model._id%>">
-                Read more <i></i>
-            </a>
-        </div>
     </div>
-</div>
+        <ul class="birthday_info">
+            <li>
+                <span class="user_name"><%=model.name.first%> <%=model.name.last%></span>
+            </li>
+            <li>
+                <span class="birthday_day"><%= model.dateBirth %></span>
+            </li>
+            <li>
+                <span class="birthday_day"><%=model.age%></span>
+            </li>
+            <li>
+                <a href="javascript:;" class="readMore" data-id="<%=model._id%>">
+                    <i class="fa fa-arrow-circle-o-right" aria-hidden="true"></i>
+                    Read More</a>
+            </li>
+        </ul>
+</li>
+
+
     <% }) %>
