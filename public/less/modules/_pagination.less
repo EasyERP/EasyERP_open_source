@@ -5,13 +5,14 @@
 
   & > div {
     float: left;
-    color: @mainText-color;
+    //color: @mainText-color;
     padding: 0 5px;
-    box-sizing: border-box;
+    //box-sizing: border-box;
   }
 
   .countOnPage {
-    text-align: left;
+    .clearfix;
+    //text-align: left;
     & > div {
       float: left;
     }
@@ -24,8 +25,9 @@
         display: block;
         float: left;
       }
-    }
+    }//cant find in templates
   }
+
   .pageList {
     position: relative;
     .itemsNumber {
@@ -54,10 +56,12 @@
         background-color: #F7F8F9;
       }
     }
-  }
+  }//cant find in templates
+
+
   .nextPrev {
     float: right;
-    text-align: right;
+    //text-align: right;
     div, button {
       float: left;
       line-height: 20px;
@@ -65,10 +69,10 @@
     span {
       padding: 0 3px;
     }
-    button.fa {
-      border: 1px solid @border-color-main;
+    #firstShowPage, #lastShowPage,
+    #previousPage, #nextPage, .currentPageList, #currentShowPage {
+      border: @thin-border @pagination-border;
       background: transparent;
-      color: @mainText-color;
       line-height: 14px;
       font-size: 15px;
       width: 20px;
@@ -76,45 +80,95 @@
       display: block;
       text-align: center;
       padding: 2px;
-      border-radius: 0;
-
       &:hover {
-        background: transparent !important;
         color: lighten(@mainText-color, 50%);
-        border-color: lighten(@mainText-color, 50%);
       }
       &[disabled] {
-        color: darken(@mainText-color, 35%);
-        border-color: darken(@mainText-color, 35%);
+        color: lighten(@mainText-color, 50%);
+        border-color: @pagination-border-disabled;
         cursor: default;
-        background: transparent !important;
-        &:hover {
-          color: darken(@mainText-color, 35%);
-          border-color: darken(@mainText-color, 35%);
-          cursor: default;
-          background: transparent !important;
-        }
       }
     }
+
+    #currentShowPage {
+      width: 30px;
+      margin: 0 -2px 0 5px;
+      font-size: 12px;
+      color: @mainText-color !important;
+      &:focus {
+        .box-shadow(0, 0, 5px, @border-color-selected);
+        outline: medium none;
+        //border: @thin-border @pagination-border !important;
+      }
+    }
+
+    //#currentShowPage {
+    //  margin: 0 2px 0 5px;
+    //  width: 30px;
+    //
+    //
+    //  font-size: 12px !important;
+    //  text-align: center;
+    //
+    //
+    //
+    //  font-family: Arial, Helvetica, sans-serif;
+    //  padding: 0 2px;
+    //  color: @mainText-color;
+    //  &:focus {
+    //    .box-shadow(0, 0, 5px, @border-color-selected);
+    //    outline: medium none;
+    //    border: @thin-border @pagination-border !important;
+    //  }
+    //}
+
+    //button.fa {
+    //  //border: 1px solid @pagination-border;
+    //  //background: transparent;
+    //  //color: @mainText-color;
+    //  //line-height: 14px;
+    //  //font-size: 15px;
+    //  //width: 20px;
+    //  //height: 20px;
+    //  //display: block;
+    //  //text-align: center;
+    //  //padding: 2px;
+    //  //border-radius: 0;
+    //
+    //  //&:hover {
+    //  //
+    //  //  color: lighten(@mainText-color, 50%);
+    //  //  border-color: lighten(@mainText-color, 50%);
+    //  //}
+    //  //&[disabled] {
+    //  //  color: darken(@mainText-color, 35%);
+    //  //  border-color: @pagination-border-disabled;
+    //  //  cursor: default;
+    //  //  background: transparent !important;
+    //  //  &:hover {
+    //  //    //color: darken(@mainText-color, 35%);
+    //  //    //border-color: darken(@mainText-color, 35%);
+    //  //    cursor: default;
+    //  //    background: transparent !important;
+    //  //  }
+    //  //}
+    //}
     #firstShowPage, #lastShowPage {
       width: 30px;
-      display: block;
     }
-    #previousPage {
-      margin: 0 3px;
-    }
-    #nextPage {
+    #previousPage, #nextPage {
       margin: 0 3px;
     }
     .currentPageList {
       margin: 0 5px;
     }
+
     .allPage {
       position: relative;
     }
     ul {
       background-color: @bg-main-menu;
-      border: @thin-border @border-color-main;
+      border: @thin-border @pagination-border;
       position: absolute;
       bottom: 23px;
       left: 5px;
@@ -135,9 +189,10 @@
         }
       }
     }
+
     #pageList {
-      background-color: @bg-main-menu;
-      border: @thin-border @border-color-main;
+      background-color: @pagination-bg;
+      border: @thin-border @pagination-border;
       border-bottom-color: transparent;
       position: absolute;
       bottom: 100%;
@@ -159,24 +214,5 @@
       }
     }
   }
-  #currentShowPage {
-    border: @thin-border @list-border-color;
-    margin: 0 2px 0 5px;
-    width: 30px;
-    height: 20px;
-    float: left;
-    font-size: 12px !important;
-    text-align: center;
-    max-width: 30px;
-    line-height: 20px;
-    background-color: transparent;
-    font-family: Arial, Helvetica, sans-serif;
-    padding: 0 2px;
-    color: @mainText-color;
-    &:focus {
-      .box-shadow(0, 0, 5px, @border-color-selected);
-      outline: medium none;
-      border: @thin-border @border-color-selected !important;
-    }
-  }
+
 }

@@ -371,12 +371,24 @@ th {
 }
 .pagination > div {
   float: left;
-  color: #000000;
   padding: 0 5px;
-  box-sizing: border-box;
 }
 .pagination .countOnPage {
-  text-align: left;
+  zoom: 1;
+  clear: both;
+}
+.pagination .countOnPage:before {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.pagination .countOnPage:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
 }
 .pagination .countOnPage > div {
   float: left;
@@ -422,7 +434,6 @@ th {
 }
 .pagination .nextPrev {
   float: right;
-  text-align: right;
 }
 .pagination .nextPrev div,
 .pagination .nextPrev button {
@@ -432,10 +443,14 @@ th {
 .pagination .nextPrev span {
   padding: 0 3px;
 }
-.pagination .nextPrev button.fa {
+.pagination .nextPrev #firstShowPage,
+.pagination .nextPrev #lastShowPage,
+.pagination .nextPrev #previousPage,
+.pagination .nextPrev #nextPage,
+.pagination .nextPrev .currentPageList,
+.pagination .nextPrev #currentShowPage {
   border: 1px solid #7f7f80;
   background: transparent;
-  color: #000000;
   line-height: 14px;
   font-size: 15px;
   width: 20px;
@@ -443,33 +458,42 @@ th {
   display: block;
   text-align: center;
   padding: 2px;
-  border-radius: 0;
 }
-.pagination .nextPrev button.fa:hover {
-  background: transparent !important;
+.pagination .nextPrev #firstShowPage:hover,
+.pagination .nextPrev #lastShowPage:hover,
+.pagination .nextPrev #previousPage:hover,
+.pagination .nextPrev #nextPage:hover,
+.pagination .nextPrev .currentPageList:hover,
+.pagination .nextPrev #currentShowPage:hover {
   color: #808080;
-  border-color: #808080;
 }
-.pagination .nextPrev button.fa[disabled] {
-  color: #000000;
-  border-color: #000000;
+.pagination .nextPrev #firstShowPage[disabled],
+.pagination .nextPrev #lastShowPage[disabled],
+.pagination .nextPrev #previousPage[disabled],
+.pagination .nextPrev #nextPage[disabled],
+.pagination .nextPrev .currentPageList[disabled],
+.pagination .nextPrev #currentShowPage[disabled] {
+  color: #808080;
+  border-color: #d7d7d7;
   cursor: default;
-  background: transparent !important;
 }
-.pagination .nextPrev button.fa[disabled]:hover {
-  color: #000000;
-  border-color: #000000;
-  cursor: default;
-  background: transparent !important;
+.pagination .nextPrev #currentShowPage {
+  width: 30px;
+  margin: 0 -2px 0 5px;
+  font-size: 12px;
+  color: #000000 !important;
+}
+.pagination .nextPrev #currentShowPage:focus {
+  box-shadow: 0 0 5px #3e88b9;
+  -moz-box-shadow: 0 0 5px #3e88b9;
+  -webkit-box-shadow: 0 0 5px #3e88b9;
+  outline: medium none;
 }
 .pagination .nextPrev #firstShowPage,
 .pagination .nextPrev #lastShowPage {
   width: 30px;
-  display: block;
 }
-.pagination .nextPrev #previousPage {
-  margin: 0 3px;
-}
+.pagination .nextPrev #previousPage,
 .pagination .nextPrev #nextPage {
   margin: 0 3px;
 }
@@ -501,7 +525,7 @@ th {
   text-decoration: none;
 }
 .pagination .nextPrev #pageList {
-  background-color: #4d5a75;
+  background-color: #ffffff;
   border: 1px solid #7f7f80;
   border-bottom-color: transparent;
   position: absolute;
@@ -522,28 +546,6 @@ th {
   background-color: #3e88b9;
   color: white;
   text-decoration: none;
-}
-.pagination #currentShowPage {
-  border: 1px solid #d7d7d7;
-  margin: 0 2px 0 5px;
-  width: 30px;
-  height: 20px;
-  float: left;
-  font-size: 12px !important;
-  text-align: center;
-  max-width: 30px;
-  line-height: 20px;
-  background-color: transparent;
-  font-family: Arial, Helvetica, sans-serif;
-  padding: 0 2px;
-  color: #000000;
-}
-.pagination #currentShowPage:focus {
-  box-shadow: 0 0 5px #3e88b9;
-  -moz-box-shadow: 0 0 5px #3e88b9;
-  -webkit-box-shadow: 0 0 5px #3e88b9;
-  outline: medium none;
-  border: 1px solid #3e88b9 !important;
 }
 .btn {
   border: 1px solid #7f7f80;
@@ -741,6 +743,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Dialog =============================*/
 /*== Birthday ===========================*/
 /*== Invoice Charts SVG*/
+/*== Pagination ======================*/
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
