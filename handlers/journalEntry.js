@@ -1601,7 +1601,7 @@ var Module = function (models, event) {
                 var body = {
                     currency      : CONSTANTS.CURRENCY_USD,
                     journal       : CONSTANTS.RETAINED_EARNINGS,
-                    date          : new Date(localDate),
+                    date          : new Date(jeDate),
                     sourceDocument: {
                         model: 'closeMonth'
                     },
