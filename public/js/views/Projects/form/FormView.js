@@ -813,7 +813,7 @@ define([
                     if (projectTeam && projectTeam.budget && projectTeam.budget.budgetTotal) {
                         budgetTotal = projectTeam.budget.budgetTotal;
                         self.projectValues.revenue += budgetTotal.revenueSum || 0;
-                        self.projectValues.cost += budgetTotal.costSum || 0;
+                        self.projectValues.cost += projectTeam.cost || 0;
                         self.projectValues.profit = self.projectValues.revenue - self.projectValues.cost;
                         /*self.projectValues.profit += budgetTotal ? (budgetTotal.revenueSum - budgetTotal.costSum) : 0;*/
                     }

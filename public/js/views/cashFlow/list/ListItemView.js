@@ -17,9 +17,9 @@ define([
             initialize: function (options) {
                 this.collection = options.collection && options.collection[0] ? options.collection[0] : {};
 
-                this.operating  = this.collection.operating  || [];
-                this.investing  = this.collection.investing  || [];
-                this.financing  = this.collection.financing  || [];
+                this.operating = this.collection.operating || [];
+                this.investing = this.collection.investing || [];
+                this.financing = this.collection.financing || [];
 
                 this.startDate = options.startDate;
                 this.endDate = options.endDate;
@@ -49,6 +49,7 @@ define([
                 var operatingFooter = this.$el.find('#operatingFooter');
                 var investingFooter = this.$el.find('#investingFooter');
                 var financingFooter = this.$el.find('#financingFooter');
+                var totalCashFlow = this.$el.find('#totalCashFlow');
 
                 $(trsOperating).each(function (index, element) {
                     row = $(element).closest('tr');
@@ -74,10 +75,12 @@ define([
                 operatingFooter.text('');
                 investingFooter.text('');
                 financingFooter.text('');
+                totalCashFlow.text('');
 
                 operatingFooter.text(helpers.currencySplitter((operatings / 100).toFixed(2)));
                 investingFooter.text(helpers.currencySplitter((investings / 100).toFixed(2)));
                 financingFooter.text(helpers.currencySplitter((financing / 100).toFixed(2)));
+                totalCashFlow.text(helpers.currencySplitter(((operatings + investings + financing) / 100).toFixed(2)));
             },
 
             render: function () {

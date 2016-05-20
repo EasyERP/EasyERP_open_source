@@ -1077,21 +1077,21 @@ var Jobs = function (models, event) {
                             "sourceDocument._id"  : {$in: job.cost}
                         }
                     }, {
-                            $group: {
-                                _id  : null,
-                                elements : {$addToSet : {
-                                    _id : '$_id',
-                                    sourceDocument : '$sourceDocument._id' ,
-                                    debit : '$debit'
-                                }}
-                            }
+                        $group: {
+                            _id  : null,
+                            elements : {$addToSet : {
+                                _id : '$_id',
+                                sourceDocument : '$sourceDocument._id' ,
+                                debit : '$debit'
+                            }}
+                        }
                     }, {$project : {
 
                     }},{
                         $project: {}
                     }];
                     ArrayTasks.forEach(function (el) {
-                       aggregateArr[2].$project[el] = {
+                        aggregateArr[2].$project[el] = {
                             $filter: {
                                 input: '$elements',
                                 as   : 'element',
@@ -1142,6 +1142,127 @@ var Jobs = function (models, event) {
                     });
                 });
 
+            });
+    };
+
+    this.getForOverview = function (req, res, next) {
+        var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', jobsInvoiceSchema);
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
+
+        var queryObject = {};
+
+        var data = req.query;
+        var filter = data ? data.filter : {};
+
+        /*if (data && data.project) {
+         filter['project'] = {};
+         filter['project']['key'] = 'project._id';
+         filter['project']['value'] = objectId(data.project);
+         }
+
+         if (filter && typeof filter === 'object') {
+         if (filter.condition === 'or') {
+         queryObject['$or'] = caseFilter(filter);
+         } else {
+         queryObject['$and'] = caseFilter(filter);
+         }
+         }*/
+
+        JobsModel
+            .aggregate([{
+                $match: {
+                    project: objectId(data.projectId)
+                }
+            }, {
+                $lookup: {
+                    from        : "journalentries",
+                    localField  : "_id",
+                    foreignField: "sourceDocument._id",
+                    as          : "journalentries"
+                }
+            }, {
+                $lookup: {
+                    from        : "Invoice",
+                    localField  : "invoice",
+                    foreignField: "_id",
+                    as          : "invoice"
+                }
+            }, {
+                $lookup: {
+                    from        : "Project",
+                    localField  : "project",
+                    foreignField: "_id",
+                    as          : "project"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id",
+                    as          : "workflow"
+                }
+            }, {
+                $lookup: {
+                    from        : "Quotation",
+                    localField  : "quotation",
+                    foreignField: "_id",
+                    as          : "quotation"
+                }
+            }, {
+                $project: {
+                    journalentries: {
+                        $filter: {
+                            input: '$journalentries',
+                            as   : 'je',
+                            cond : {$eq: ['$$je.sourceDocument.model', 'wTrack']}
+                        }
+                    },
+                    type: 1,
+                    name: 1,
+                    project: {$arrayElemAt: ['$project', 0]},
+                    invoice: {$arrayElemAt: ['$invoice', 0]},
+                    quotation: {$arrayElemAt: ['$quotation', 0]},
+                    workflow: {$arrayElemAt: ['$workflow', 0]},
+                    budget: 1
+                }
+            }, {
+                $unwind: {
+                    path                      : '$journalentries',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $group: {
+                    _id: '$_id',
+                    name: {$addToSet: '$name'},
+                    invoice: {$addToSet: '$invoice'},
+                    project: {$addToSet: '$project'},
+                    type: {$addToSet: '$type'},
+                    quotation: {$addToSet: '$quotation'},
+                    workflow: {$addToSet: '$workflow'},
+                    budget: {$addToSet: '$budget'},
+                    cost: {$sum: '$journalentries.debit'}
+                }
+            }, {
+                $project: {
+                    _id: 1,
+                    cost: 1,
+                    name: 1,
+                    type: {$arrayElemAt: ['$type', 0]},
+                    project: {$arrayElemAt: ['$project', 0]},
+                    budget: {$arrayElemAt: ['$budget', 0]},
+                    invoice: {$arrayElemAt: ['$invoice', 0]},
+                    quotation: {$arrayElemAt: ['$quotation', 0]},
+                    workflow: {$arrayElemAt: ['$workflow', 0]}
+                }
+            }], function (err, jobs) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(jobs)
             });
     };
 
