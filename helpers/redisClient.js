@@ -43,6 +43,7 @@
     }
 
     function removeAllFromStorage(name) {
+        console.log('---------- Remove from Redish ---------');
         client.del(name, redis.print);
     }
 

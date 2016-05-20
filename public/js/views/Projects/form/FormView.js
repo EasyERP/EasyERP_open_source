@@ -773,7 +773,7 @@ define([
                     }
                 };
 
-                this.jobsCollection = new jobsCollection({
+               this.jobsCollection = new jobsCollection({
                     viewType : 'list',
                     filter   : filter,
                     projectId: _id,
@@ -1238,8 +1238,7 @@ define([
                 };
 
                 this.qCollection.bind('reset', createView);
-                this.qCollection.bind('add', self.renderProformRevenue);
-                this.qCollection.bind('remove', self.renderProformRevenue);
+                this.qCollection.bind('add remove', self.renderProformRevenue);
             },
 
             getOrders: function (cb) {
@@ -1446,7 +1445,7 @@ define([
                 var tabId;
                 var dialogsDiv = $('#dialogContainer').is(':empty');
 
-                if (dialogsDiv && App.projectInfo && App.projectInfo.currentTab && App.projectInfo.currentTab !== 'overview') {
+                /*if (dialogsDiv && App.projectInfo && App.projectInfo.currentTab && App.projectInfo.currentTab !== 'overview') {
                     tabId = App.projectInfo.currentTab;
                     tabs = $('.chart-tabs');
                     activeTab = tabs.find('.active');
@@ -1457,7 +1456,7 @@ define([
                     dialogHolder = $('.dialog-tabs-items');
                     dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
                     dialogHolder.find('div#' + tabId).closest('.dialog-tabs-item').addClass('active'); // added selector div in case finding bad element
-                }
+                }*/
             },
 
             newPayment: function () {
@@ -1573,7 +1572,7 @@ define([
 
                 _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
 
-                paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
+                paralellTasks = [this.renderProjectInfo/*, this.getQuotations, this.getOrders*/];
 
                 accessData.forEach(function (accessElement) {
                     //todo move dom elems removal to template
