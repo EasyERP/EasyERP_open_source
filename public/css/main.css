@@ -1397,6 +1397,9 @@ tr.redBorder {
 #forInfo.accounting .accounting-half-block {
   width: 50%;
 }
+#forInfo.accounting .accounting-fourth-block {
+  width: 25%;
+}
 #forInfo.accounting th .fa {
   display: inline-block;
   font-size: 17px;
