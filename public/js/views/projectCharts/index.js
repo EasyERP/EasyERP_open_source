@@ -51,7 +51,7 @@ define([
                 .rangeRoundBands([0, height], 0.3);
 
             var x = d3.scale.linear()
-                .range([width, 0]);
+                .range([0, width]);
 
             var xAxis = d3.svg.axis()
                 .scale(x)
@@ -76,11 +76,12 @@ define([
 
             topChart.append("g")
                 .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
+                .attr("transform", "translate(" + margin.left + ", " + height + ")")
                 .call(xAxis);
 
             topChart.append("g")
                 .attr("class", "y axis")
+                .attr("transform", "translate(" + margin.left + ", 0)")
                 .call(yAxis);
 
             topChart.selectAll(".bar")
@@ -88,14 +89,14 @@ define([
                 .enter().append("rect")
                 .attr("class", "bar")
                 .attr("x", function (d) {
-                    return 0;
+                    return margin.left;
                 })
                 .attr("y", function (d) {
                     return y(d.field);
                 })
                 .attr("height", y.rangeBand())
                 .attr("width", function (d) {
-                    return width - x(d.value);
+                    return x(d.value);
                 });
 
             /*var x = d3.scale.ordinal().rangeRoundBands([margin.left, width], 0.1);
@@ -141,7 +142,7 @@ define([
             var self = this;
             var $currentEl = this.$el;
 
-            this.collection.fetch({
+            /*this.collection.fetch({
                 reset: true,
                 success: function (data) {
                     $currentEl.html(self.template());
@@ -149,7 +150,10 @@ define([
                 },
                 error: function (collection, response, options) {
                 }
-            });
+            });*/
+
+            $currentEl.html(self.template());
+            self.buildChart();
 
 
             return this;
