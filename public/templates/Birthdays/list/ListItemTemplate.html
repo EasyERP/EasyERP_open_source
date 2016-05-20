@@ -1,5 +1,7 @@
+<ul class="thumbnail_birthday_list">
+
 <% collection.forEach(function(model, index){ %>
-<li class="thumbnailwithavatar" data-index="<%=index%>">
+<li data-index="<%=index%>">
     <div class="avatar">
         <div class="avatar_img" id="<%=model._id%>">
             <img class="ava" alt="" width="100" src="<%=model.imageSrc%>"/>
@@ -25,3 +27,4 @@
 
 
     <% }) %>
+</ul>
