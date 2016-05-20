@@ -6,9 +6,6 @@
             <th>Job Position</th>
             <th>Department</th>
             <th>Hours</th>
-            <th>Cost</th>
-            <th>Revenue</th>
-            <th>Profit</th>
         </tr>
         </thead>
 
@@ -24,12 +21,8 @@
             <td><%=element.employee.jobPosition.name%></td>
             <td><%=element.department.departmentName%></td>
             <td><%=currencySplitter(budget.hoursSum.toFixed())%></td>
-            <td class="dollar"> <%=currencySplitter(budget.costSum ? (budget.costSum/100).toFixed() : '0')%></td>
-            <td class="dollar"> <%=currencySplitter((budget.revenueSum/100).toFixed())%></td>
-            <td class="dollar"> <%=currencySplitter(((budget.revenueSum - budget.costSum)/100).toFixed())%></td>
         </tr>
         <%}%>
-        <% count++ %>
         <% })%>
         </tbody>
 
@@ -39,7 +32,7 @@
             <td>
                 <a href="javascript:;" data-id="<%=jobItem._id%>" data-value="<%=jobItem.name%>"
                    id="createItem">
-                    Generate tCard
+                    Generate more tCards
                 </a>
             </td>
         </tr>

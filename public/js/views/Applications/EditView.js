@@ -469,7 +469,7 @@
                     weeklyScheduler: weeklyScheduler
                 });
 
-                if (!salary && self.isSalary) {
+                if ((salary == null) && self.isSalary) {
                     App.render({
                         type: 'error',
                         message: 'Salary can`t be empty'
@@ -868,7 +868,7 @@
             });
 
             populate.get("#departmentsDd", "/DepartmentsForDd", {}, "departmentName", this);
-            populate.get("#weeklySchedulerDd", "/weeklyScheduler/forDd", {}, "name", this);
+            populate.get("#weeklySchedulerDd", "/weeklyScheduler/forDd", {}, "name", this, true);
             populate.get("#departmentManagers", "/DepartmentsForDd", {}, "departmentManager", this);
             populate.get("#jobPositionDd", "/JobPositionForDd", {}, "name", this);
             populate.get("#jobTypeDd", "/jobType", {}, "_id", this);
