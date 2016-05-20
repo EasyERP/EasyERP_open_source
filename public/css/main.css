@@ -5173,40 +5173,43 @@ table#workflows tr td.edit-status {
   height: 30px;
   width: auto;
 }
-#submenu-holder nav {
-  height: 30px;
-}
 #submenu-holder nav ul {
-  height: 30px;
+  zoom: 1;
+  clear: both;
+}
+#submenu-holder nav ul:before {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+#submenu-holder nav ul:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
 }
 #submenu-holder nav ul li {
   list-style: none;
-  font-size: 14px;
   color: #000000;
   line-height: 30px;
   float: left;
   display: block;
   width: 120px;
-  height: 30px;
   text-align: center;
   background: #ffffff;
 }
-#submenu-holder nav ul li.hover {
-  height: 30px;
-  line-height: 30px;
-}
-#submenu-holder nav ul li.hover a {
-  color: #000000;
-  text-decoration: underline;
-}
 #submenu-holder nav ul li a {
-  font-family: 'Lato', Helvetica, Arial, sans-serif;
   color: #000000;
-  font-size: 12px;
+  font-size: 13px;
   line-height: 30px;
   display: block;
   width: 100%;
   height: 100%;
+}
+#submenu-holder nav ul li a:hover {
+  text-decoration: underline;
 }
 #submenu-holder nav ul li.selected {
   position: relative;
@@ -5214,8 +5217,6 @@ table#workflows tr td.edit-status {
   line-height: 30px;
 }
 #submenu-holder nav ul li.selected a {
-  line-height: 30px;
-  height: 30px;
   text-decoration: underline;
 }
 /*----------------------------- Top Bar --------------------------------*/

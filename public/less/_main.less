@@ -836,63 +836,7 @@ input::-ms-clear {
   }
 }
 
-.submenu(@defaultColor: @bg-submenu ,@activeColor: #FFF, @height: 30px, @bg: @submenu-text-color) {
-  display: block;
-  height: @height;
-  width: auto;
 
-  nav {
-    height: @height;
-
-    ul {
-      height: @height;
-
-      li {
-        list-style: none;
-        font-size: 14px;
-        color: @bg;
-        line-height: @height;
-        float: left;
-        display: block;
-        width: 120px;
-        height: @height;
-        text-align: center;
-        background: @defaultColor;
-
-        &.hover {
-          height: @height;
-          line-height: @height;
-
-          a {
-            color: @bg;
-            text-decoration: underline;
-          }
-        }
-
-        a {
-          font-family: 'Lato', Helvetica, Arial, sans-serif;
-          color: @bg;
-          font-size: 12px;
-          line-height: @height;
-          display: block;
-          .fullsize;
-        }
-
-        &.selected {
-          position: relative;
-          height: @height;
-          line-height: @height;
-
-          a {
-            line-height: @height;
-            height: @height;
-            text-decoration: underline;
-          }
-        }
-      }
-    }
-  }
-}
 
 .loginForm(@defaultWidth: 360px, @defaultMargin: 130px auto, @defaultMinHeight: 150px, @defaultBgColor: #fff, @defaultPadding: 20px 0 13px, @font-size: 24px) {
   display: block;
