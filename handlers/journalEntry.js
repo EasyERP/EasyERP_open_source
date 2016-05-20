@@ -3182,7 +3182,7 @@ var Module = function (models, event) {
                         date: new Date(date)
                     };
 
-                    if (debitObject.currency && debitObject.currency.rate){
+                    if (debitObject.currency && debitObject.currency.rate) {
                         debitObject.debit *= debitObject.currency.rate;
                     }
 
@@ -3210,7 +3210,7 @@ var Module = function (models, event) {
                         date: new Date(date)
                     };
 
-                    if (creditObject.currency && creditObject.currency.rate){
+                    if (creditObject.currency && creditObject.currency.rate) {
                         creditObject.credit *= creditObject.currency.rate;
                     }
 
@@ -3347,7 +3347,7 @@ var Module = function (models, event) {
                             date: new Date()
                         };
 
-                        if (debitObject.currency && debitObject.currency.rate){
+                        if (debitObject.currency && debitObject.currency.rate) {
                             debitObject.debit *= debitObject.currency.rate;
                         }
 
@@ -3375,7 +3375,7 @@ var Module = function (models, event) {
                             date: new Date()
                         };
 
-                        if (creditObject.currency && creditObject.currency.rate){
+                        if (creditObject.currency && creditObject.currency.rate) {
                             creditObject.credit *= creditObject.currency.rate;
                         }
 
@@ -4608,9 +4608,10 @@ var Module = function (models, event) {
             var getOpening = function (pCb) {
                 Model.aggregate([{
                     $match: {
-                        date                : {$lt: startDate},
-                        debit               : {$gt: 0},
-                        "sourceDocument._id": {$in: jobs}
+                        date                  : {$lt: startDate},
+                        debit                 : {$gt: 0},
+                        "sourceDocument._id"  : {$in: jobs},
+                        "sourceDocument.model": 'wTrack'
                     }
                 }, {
                     $project: {
@@ -4684,9 +4685,10 @@ var Module = function (models, event) {
             var getInwards = function (pCb) {
                 Model.aggregate([{
                     $match: {
-                        date                : {$lte: endDate, $gte: startDate},
-                        debit               : {$gt: 0},
-                        "sourceDocument._id": {$in: jobs}
+                        date                  : {$lte: endDate, $gte: startDate},
+                        debit                 : {$gt: 0},
+                        "sourceDocument._id"  : {$in: jobs},
+                        "sourceDocument.model": 'wTrack'
                     }
                 }, {
                     $project: {
