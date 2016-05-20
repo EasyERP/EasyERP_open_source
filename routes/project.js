@@ -21,7 +21,7 @@ module.exports = function (models) {
     router.get('/emails/:id', handler.getEmails);
     router.get('/:id/invoices', invoiceHandler.getForProject);
     router.get('/:id/weTracks', wTrackHandler.getForProject);
-    router.get('/:id/info', jobsHandler.getForProjectInfo);
+    router.get('/:id/info', jobsHandler.getForOverview);
 
     return router;
 };

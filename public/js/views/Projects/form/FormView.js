@@ -765,7 +765,8 @@ define([
 
             renderProjectInfo: function (cb) {
                 var self = this;
-                var _id = window.location.hash.split('form/')[1];
+                // var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
                 var filter = {
                     project: {
                         key  : 'project._id',
@@ -773,11 +774,12 @@ define([
                     }
                 };
 
-               this.jobsCollection = new jobsCollection({
+                this.jobsCollection = new jobsCollection({
                     viewType : 'list',
                     filter   : filter,
                     projectId: _id,
-                    count    : 50
+                    count    : 50,
+                    url      : 'project/' + _id + '/info'
                 });
 
                 this.jobsCollection.bind('reset add remove', self.renderJobs, self);
@@ -864,7 +866,7 @@ define([
                     viewType: 'list',
                     /*filter  : filter,*/
                     count   : 100,
-                    url: 'project/' + _id + '/weTracks'
+                    url     : 'project/' + _id + '/weTracks'
                 });
 
                 function createView() {
@@ -872,9 +874,9 @@ define([
                     var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
                     var itemsNumber = parseInt($('.selectedItemsNumber').text(), 10) || 'all';
                     var defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
-                    
+
                     callback();
-                    
+
                     if (self.wTrackView) {
                         self.wTrackView.undelegateEvents();
                     }
@@ -921,7 +923,7 @@ define([
                     filter     : filter,
                     startNumber: startNumber,
                     project    : self.formModel,
-                    url: 'project/' + _id + '/weTracks'
+                    url        : 'project/' + _id + '/weTracks'
                 });
 
                 this.wCollection.bind('reset', this.createView);
@@ -1446,17 +1448,17 @@ define([
                 var dialogsDiv = $('#dialogContainer').is(':empty');
 
                 /*if (dialogsDiv && App.projectInfo && App.projectInfo.currentTab && App.projectInfo.currentTab !== 'overview') {
-                    tabId = App.projectInfo.currentTab;
-                    tabs = $('.chart-tabs');
-                    activeTab = tabs.find('.active');
+                 tabId = App.projectInfo.currentTab;
+                 tabs = $('.chart-tabs');
+                 activeTab = tabs.find('.active');
 
-                    activeTab.removeClass('active');
-                    tabs.find('#' + tabId + 'Tab').addClass('active');
+                 activeTab.removeClass('active');
+                 tabs.find('#' + tabId + 'Tab').addClass('active');
 
-                    dialogHolder = $('.dialog-tabs-items');
-                    dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-                    dialogHolder.find('div#' + tabId).closest('.dialog-tabs-item').addClass('active'); // added selector div in case finding bad element
-                }*/
+                 dialogHolder = $('.dialog-tabs-items');
+                 dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+                 dialogHolder.find('div#' + tabId).closest('.dialog-tabs-item').addClass('active'); // added selector div in case finding bad element
+                 }*/
             },
 
             newPayment: function () {
@@ -1572,7 +1574,7 @@ define([
 
                 _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
 
-                paralellTasks = [this.renderProjectInfo/*, this.getQuotations, this.getOrders*/];
+                paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
 
                 accessData.forEach(function (accessElement) {
                     //todo move dom elems removal to template
