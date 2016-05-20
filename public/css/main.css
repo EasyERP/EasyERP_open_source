@@ -8627,6 +8627,7 @@ textarea#editInput {
   padding: 0;
   text-align: center;
   float: left;
+  height: 21px;
   background-color: #bdd7ee;
   color: white;
 }
