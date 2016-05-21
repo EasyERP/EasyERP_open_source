@@ -19,6 +19,10 @@ define([
                 this.dateItem = "D";
                 this.numberToDate = {};
                 this.source = null;
+
+                this.resizeHandler = _.debounce(this.resizeHandler, 500);
+                this.resizeHandler = this.resizeHandler.bind(this);
+
                 this.render();
             },
             events     : {
@@ -109,28 +113,32 @@ define([
                 }
             },
 
+            resizeHandler: function () {
+                var self = this;
+
+                self.renderPopulate();
+                if (!self.source) {
+                    dataService.getData("/sources", null, function (response) {
+                        self.source = response;
+                        self.renderPopulateSource(self, null);
+                        self.renderPopulateSource(self, true);
+                    });
+                } else {
+                    self.renderPopulateSource(self, null);
+                    self.renderPopulateSource(self, true)
+                }
+                if ($(window).width() < 1370) {
+                    $(".legend-box").css("margin-top", "10px");
+                } else {
+                    $(".legend-box").css("margin-top", "-39px");
+                }
+            },
+
             render              : function () {
                 var self = this;
                 this.$el.html(this.template());
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-                $(window).unbind("resize").resize(function () {
-                    self.renderPopulate();
-                    if (!self.source) {
-                        dataService.getData("/sources", null, function (response) {
-                            self.source = response;
-                            self.renderPopulateSource(self, null);
-                            self.renderPopulateSource(self, true);
-                        });
-                    } else {
-                        self.renderPopulateSource(self, null);
-                        self.renderPopulateSource(self, true)
-                    }
-                    if ($(window).width() < 1370) {
-                        $(".legend-box").css("margin-top", "10px");
-                    } else {
-                        $(".legend-box").css("margin-top", "-39px");
-                    }
-                });
+                $(window).unbind("resize").resize(self.resizeHandler);
             },
             renderPopulateSource: function (that, sales) {
                 var self = this;
