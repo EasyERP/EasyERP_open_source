@@ -402,7 +402,7 @@ define([
                                     source: dayofYera,
                                     year: now.getFullYear()
                                 });
-                            data.push({count: 0, date: [now], source: dayofYera, isOpp: true, year: now.getFullYear()});
+                            // data.push({count: 0, date: [now], source: dayofYera, isOpp: true, year: now.getFullYear()});
                         }
                         data = _.map(data, function (item) {
                             item.source = item.source + item.year * 10000;
