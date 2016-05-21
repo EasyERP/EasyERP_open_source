@@ -15,7 +15,7 @@ var connectOptions = {
     j   : true
 };
 
-var dbObject = mongoose.createConnection('localhost', 'alex');
+var dbObject = mongoose.createConnection('144.76.56.111', 'alex', 28017);
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
