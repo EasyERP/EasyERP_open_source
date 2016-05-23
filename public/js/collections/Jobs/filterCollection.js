@@ -19,6 +19,7 @@ define([
 
             if (options && options.url) {
                 this.url = options.url;
+                delete options.url;
             }
 
             this.filter = options ? options.filter : {};

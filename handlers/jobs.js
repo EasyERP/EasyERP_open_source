@@ -403,14 +403,14 @@ var Jobs = function (models, event) {
                             cond : {$eq: ['$$wTrack.department', objectId(CONSTANTS.QADEPARTMENT)]}
                         }
                     },
-                    wTracksDesign    : {
+                    wTracksDesign : {
                         $filter: {
                             input: '$wTracksDocs',
                             as   : 'wTrack',
                             cond : {$eq: ['$$wTrack.department', objectId(CONSTANTS.DESDEPARTMENT)]}
                         }
                     },
-                    wTracksIOS     : {
+                    wTracksIOS    : {
                         $filter: {
                             input: '$wTracksDocs',
                             as   : 'wTrack',
@@ -438,7 +438,7 @@ var Jobs = function (models, event) {
                             cond : {$eq: ['$$wTrack.department', objectId("55b92ace21e4b7c40f000012")]}
                         }
                     },
-                    wTracksWeb : {
+                    wTracksWeb    : {
                         $filter: {
                             input: '$wTracksDocs',
                             as   : 'wTrack',
@@ -452,7 +452,7 @@ var Jobs = function (models, event) {
                             cond : {$and: [{$ne: ['$$wTrack.department', objectId(CONSTANTS.DESDEPARTMENT)]}, {$ne: ['$$wTrack.department', objectId(CONSTANTS.QADEPARTMENT)]}]}
                         }
                     },
-                    wTracksROR : {
+                    wTracksROR    : {
                         $filter: {
                             input: '$wTracksDocs',
                             as   : 'wTrack',
@@ -469,13 +469,13 @@ var Jobs = function (models, event) {
                 }
             }, {
                 $lookup: {
-                    from                       : "Payment",
-                    localField                 : "invoice._id",
+                    from        : "Payment",
+                    localField  : "invoice._id",
                     foreignField: "invoice", as: "payments"
                 }
             }, {
                 $project: {
-                    order         : {
+                    order        : {
                         $cond: {
                             if  : {
                                 $eq: ['$type', 'Not Quoted']
@@ -492,40 +492,40 @@ var Jobs = function (models, event) {
                             }
                         }
                     },
-                    cost          : '$wTracks',
-                    costQA        : '$wTracksQa._id',
-                    costDesign    : '$wTracksDesign._id',
-                    costIOS       : '$wTracksIOS._id',
-                    costAndroid   : '$wTracksAndroid._id',
-                    costUnity     : '$wTracksUnity._id',
-                    costDotNet    : '$wTracksDotNet._id',
-                    costWeb       : '$wTracksWeb._id',
-                    costROR       : '$wTracksROR._id',
-                    costDev       : '$wTracksDev._id',
-                    hoursQA       : {$sum: '$wTracksQa.worked'},
-                    hoursDesign   : {$sum: '$wTracksDesign.worked'},
-                    hoursIOS      : {$sum: '$wTracksIOS.worked'},
-                    hoursAndroid  : {$sum: '$wTracksAndroid.worked'},
-                    hoursUnity    : {$sum: '$wTracksUnity.worked'},
-                    hoursDotNet   : {$sum: '$wTracksDotNet.worked'},
-                    hoursWeb      : {$sum: '$wTracksWeb.worked'},
-                    hoursROR      : {$sum: '$wTracksROR.worked'},
-                    hoursDev      : {$sum: '$wTracksDev.worked'},
-                    name          : 1,
-                    workflow      : 1,
-                    type          : 1,
-                    project       : 1,
-                    budget        : 1,
-                    quotation     : 1,
-                    invoice       : 1,
-                    salesmanagers : {
+                    cost         : '$wTracks',
+                    costQA       : '$wTracksQa._id',
+                    costDesign   : '$wTracksDesign._id',
+                    costIOS      : '$wTracksIOS._id',
+                    costAndroid  : '$wTracksAndroid._id',
+                    costUnity    : '$wTracksUnity._id',
+                    costDotNet   : '$wTracksDotNet._id',
+                    costWeb      : '$wTracksWeb._id',
+                    costROR      : '$wTracksROR._id',
+                    costDev      : '$wTracksDev._id',
+                    hoursQA      : {$sum: '$wTracksQa.worked'},
+                    hoursDesign  : {$sum: '$wTracksDesign.worked'},
+                    hoursIOS     : {$sum: '$wTracksIOS.worked'},
+                    hoursAndroid : {$sum: '$wTracksAndroid.worked'},
+                    hoursUnity   : {$sum: '$wTracksUnity.worked'},
+                    hoursDotNet  : {$sum: '$wTracksDotNet.worked'},
+                    hoursWeb     : {$sum: '$wTracksWeb.worked'},
+                    hoursROR     : {$sum: '$wTracksROR.worked'},
+                    hoursDev     : {$sum: '$wTracksDev.worked'},
+                    name         : 1,
+                    workflow     : 1,
+                    type         : 1,
+                    project      : 1,
+                    budget       : 1,
+                    quotation    : 1,
+                    invoice      : 1,
+                    salesmanagers: {
                         $filter: {
                             input: '$projectMembers',
                             as   : 'projectMember',
                             cond : salesManagerMatch
                         }
                     },
-                    payment       : {
+                    payment      : {
                         paid : {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
                     }
@@ -564,8 +564,8 @@ var Jobs = function (models, event) {
                 }
             }, {
                 $lookup: {
-                    from                   : 'Employees',
-                    localField             : 'salesmanager.employeeId',
+                    from        : 'Employees',
+                    localField  : 'salesmanager.employeeId',
                     foreignField: '_id', as: 'salesmanager'
                 }
             }, {
@@ -617,7 +617,7 @@ var Jobs = function (models, event) {
 
                 async.each(jobs, function (job, cb) {
 
-                    ArrayTasks = ['cost', 'costQA', 'costDesign', 'costIOS', 'costAndroid', 'costUnity', 'costDotNet', 'costWeb', 'costROR','costDev'];
+                    ArrayTasks = ['cost', 'costQA', 'costDesign', 'costIOS', 'costAndroid', 'costUnity', 'costDotNet', 'costWeb', 'costROR', 'costDev'];
 
                     var aggregateArr = [{
                         $match: {
@@ -626,16 +626,18 @@ var Jobs = function (models, event) {
                         }
                     }, {
                         $group: {
-                            _id  : null,
-                            elements : {$addToSet : {
-                                _id : '$_id',
-                                sourceDocument : '$sourceDocument._id' ,
-                                debit : '$debit'
-                            }}
+                            _id     : null,
+                            elements: {
+                                $addToSet: {
+                                    _id           : '$_id',
+                                    sourceDocument: '$sourceDocument._id',
+                                    debit         : '$debit'
+                                }
+                            }
                         }
-                    }, {$project : {
-
-                    }},{
+                    }, {
+                        $project: {}
+                    }, {
                         $project: {}
                     }];
                     ArrayTasks.forEach(function (el) {
@@ -650,7 +652,7 @@ var Jobs = function (models, event) {
                     });
                     ArrayTasks.forEach(function (el) {
                         var name = '$' + el + '.debit';
-                        aggregateArr[3].$project[el] = { $sum : name}
+                        aggregateArr[3].$project[el] = {$sum: name}
                     });
 
                     JournalEntryModel.aggregate(aggregateArr, function (err, result) {
@@ -658,7 +660,7 @@ var Jobs = function (models, event) {
                             cb(err);
                         }
 
-                        ArrayTasks.forEach(function (el){
+                        ArrayTasks.forEach(function (el) {
                             job[el] = result[0] ? result[0][el] : 0;
                         });
 
@@ -672,7 +674,7 @@ var Jobs = function (models, event) {
 
                 }, function (err, result) {
                     var sortField = Object.keys(sort)[0];
-                    var sortingFields = ['profit', 'margin', 'devMargin', 'avDevRate', 'cost', 'costQA', 'costDesign', 'costIOS', 'costAndroid', 'costUnity', 'costDotNet', 'costWeb', 'costROR','costDev'];
+                    var sortingFields = ['profit', 'margin', 'devMargin', 'avDevRate', 'cost', 'costQA', 'costDesign', 'costIOS', 'costAndroid', 'costUnity', 'costDotNet', 'costWeb', 'costROR', 'costDev'];
 
                     if (err) {
                         return next(err);
@@ -773,7 +775,6 @@ var Jobs = function (models, event) {
         }
 
 
-
         JobsModel
             .aggregate([{
                 $lookup: {
@@ -828,14 +829,14 @@ var Jobs = function (models, event) {
                             cond : {$eq: ['$$wTrack.department', objectId(CONSTANTS.QADEPARTMENT)]}
                         }
                     },
-                    wTracksDesign    : {
+                    wTracksDesign : {
                         $filter: {
                             input: '$wTracksDocs',
                             as   : 'wTrack',
                             cond : {$eq: ['$$wTrack.department', objectId(CONSTANTS.DESDEPARTMENT)]}
                         }
                     },
-                    wTracksIOS     : {
+                    wTracksIOS    : {
                         $filter: {
                             input: '$wTracksDocs',
                             as   : 'wTrack',
@@ -863,7 +864,7 @@ var Jobs = function (models, event) {
                             cond : {$eq: ['$$wTrack.department', objectId("55b92ace21e4b7c40f000012")]}
                         }
                     },
-                    wTracksWeb : {
+                    wTracksWeb    : {
                         $filter: {
                             input: '$wTracksDocs',
                             as   : 'wTrack',
@@ -877,7 +878,7 @@ var Jobs = function (models, event) {
                             cond : {$and: [{$ne: ['$$wTrack.department', objectId(CONSTANTS.DESDEPARTMENT)]}, {$ne: ['$$wTrack.department', objectId(CONSTANTS.QADEPARTMENT)]}]}
                         }
                     },
-                    wTracksROR : {
+                    wTracksROR    : {
                         $filter: {
                             input: '$wTracksDocs',
                             as   : 'wTrack',
@@ -894,13 +895,13 @@ var Jobs = function (models, event) {
                 }
             }, {
                 $lookup: {
-                    from                       : "Payment",
-                    localField                 : "invoice._id",
+                    from        : "Payment",
+                    localField  : "invoice._id",
                     foreignField: "invoice", as: "payments"
                 }
             }, {
                 $project: {
-                    order         : {
+                    order        : {
                         $cond: {
                             if  : {
                                 $eq: ['$type', 'Not Quoted']
@@ -917,40 +918,40 @@ var Jobs = function (models, event) {
                             }
                         }
                     },
-                    cost          : '$wTracks',
-                    costQA        : '$wTracksQa._id',
-                    costDesign    : '$wTracksDesign._id',
-                    costIOS       : '$wTracksIOS._id',
-                    costAndroid   : '$wTracksAndroid._id',
-                    costUnity     : '$wTracksUnity._id',
-                    costDotNet    : '$wTracksDotNet._id',
-                    costWeb       : '$wTracksWeb._id',
-                    costROR       : '$wTracksROR._id',
-                    costDev       : '$wTracksDev._id',
-                    hoursQA       : {$sum: '$wTracksQa.worked'},
-                    hoursDesign   : {$sum: '$wTracksDesign.worked'},
-                    hoursIOS      : {$sum: '$wTracksIOS.worked'},
-                    hoursAndroid  : {$sum: '$wTracksAndroid.worked'},
-                    hoursUnity    : {$sum: '$wTracksUnity.worked'},
-                    hoursDotNet   : {$sum: '$wTracksDotNet.worked'},
-                    hoursWeb      : {$sum: '$wTracksWeb.worked'},
-                    hoursROR      : {$sum: '$wTracksROR.worked'},
-                    hoursDev      : {$sum: '$wTracksDev.worked'},
-                    name          : 1,
-                    workflow      : 1,
-                    type          : 1,
-                    project       : 1,
-                    budget        : 1,
-                    quotation     : 1,
-                    invoice       : 1,
-                    salesmanagers : {
+                    cost         : '$wTracks',
+                    costQA       : '$wTracksQa._id',
+                    costDesign   : '$wTracksDesign._id',
+                    costIOS      : '$wTracksIOS._id',
+                    costAndroid  : '$wTracksAndroid._id',
+                    costUnity    : '$wTracksUnity._id',
+                    costDotNet   : '$wTracksDotNet._id',
+                    costWeb      : '$wTracksWeb._id',
+                    costROR      : '$wTracksROR._id',
+                    costDev      : '$wTracksDev._id',
+                    hoursQA      : {$sum: '$wTracksQa.worked'},
+                    hoursDesign  : {$sum: '$wTracksDesign.worked'},
+                    hoursIOS     : {$sum: '$wTracksIOS.worked'},
+                    hoursAndroid : {$sum: '$wTracksAndroid.worked'},
+                    hoursUnity   : {$sum: '$wTracksUnity.worked'},
+                    hoursDotNet  : {$sum: '$wTracksDotNet.worked'},
+                    hoursWeb     : {$sum: '$wTracksWeb.worked'},
+                    hoursROR     : {$sum: '$wTracksROR.worked'},
+                    hoursDev     : {$sum: '$wTracksDev.worked'},
+                    name         : 1,
+                    workflow     : 1,
+                    type         : 1,
+                    project      : 1,
+                    budget       : 1,
+                    quotation    : 1,
+                    invoice      : 1,
+                    salesmanagers: {
                         $filter: {
                             input: '$projectMembers',
                             as   : 'projectMember',
                             cond : salesManagerMatch
                         }
                     },
-                    payment       : {
+                    payment      : {
                         paid : {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
                     }
@@ -989,8 +990,8 @@ var Jobs = function (models, event) {
                 }
             }, {
                 $lookup: {
-                    from                   : 'Employees',
-                    localField             : 'salesmanager.employeeId',
+                    from        : 'Employees',
+                    localField  : 'salesmanager.employeeId',
                     foreignField: '_id', as: 'salesmanager'
                 }
             }, {
@@ -1061,7 +1062,7 @@ var Jobs = function (models, event) {
                     hoursWeb    : 1,
                     hoursROR    : 1,
                     hoursDev    : 1,
-                    salesmanager: {$concat : ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
+                    salesmanager: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
                 }
             }], function (err, jobs) {
                 if (err) {
@@ -1069,7 +1070,7 @@ var Jobs = function (models, event) {
                 }
 
                 async.each(jobs, function (job, cb) {
-                    ArrayTasks = ['cost', 'costQA', 'costDesign', 'costIOS', 'costAndroid', 'costUnity', 'costDotNet', 'costWeb', 'costROR','costDev'];
+                    ArrayTasks = ['cost', 'costQA', 'costDesign', 'costIOS', 'costAndroid', 'costUnity', 'costDotNet', 'costWeb', 'costROR', 'costDev'];
 
                     var aggregateArr = [{
                         $match: {
@@ -1078,16 +1079,18 @@ var Jobs = function (models, event) {
                         }
                     }, {
                         $group: {
-                            _id  : null,
-                            elements : {$addToSet : {
-                                _id : '$_id',
-                                sourceDocument : '$sourceDocument._id' ,
-                                debit : '$debit'
-                            }}
+                            _id     : null,
+                            elements: {
+                                $addToSet: {
+                                    _id           : '$_id',
+                                    sourceDocument: '$sourceDocument._id',
+                                    debit         : '$debit'
+                                }
+                            }
                         }
-                    }, {$project : {
-
-                    }},{
+                    }, {
+                        $project: {}
+                    }, {
                         $project: {}
                     }];
                     ArrayTasks.forEach(function (el) {
@@ -1102,13 +1105,13 @@ var Jobs = function (models, event) {
                     });
                     ArrayTasks.forEach(function (el) {
                         var name = '$' + el + '.debit';
-                        aggregateArr[3].$project[el] = { $sum : name}
+                        aggregateArr[3].$project[el] = {$sum: name}
                     });
                     JournalEntryModel.aggregate(aggregateArr, function (err, result) {
                         if (err) {
                             cb(err);
                         }
-                        ArrayTasks.forEach(function (el){
+                        ArrayTasks.forEach(function (el) {
                             job[el] = result[0] ? result[0][el] : 0;
                         });
                         job.margin = job.quotation ? ((1 - job.cost / job.quotation.paymentInfo.total) * 100) : 0;
@@ -1146,12 +1149,13 @@ var Jobs = function (models, event) {
     };
 
     this.getForOverview = function (req, res, next) {
+        // Project Overview
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', jobsInvoiceSchema);
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var Payment = models.get(req.session.lastDb, 'Payment', PaymentSchema);
-
+        var projectId = req.params.id;
         var queryObject = {};
 
         var data = req.query;
@@ -1174,42 +1178,14 @@ var Jobs = function (models, event) {
         JobsModel
             .aggregate([{
                 $match: {
-                    project: objectId(data.projectId)
+                    project: objectId(projectId)
                 }
             }, {
                 $lookup: {
-                    from        : "journalentries",
-                    localField  : "_id",
-                    foreignField: "sourceDocument._id",
-                    as          : "journalentries"
-                }
-            }, {
-                $lookup: {
-                    from        : "Invoice",
-                    localField  : "invoice",
-                    foreignField: "_id",
-                    as          : "invoice"
-                }
-            }, {
-                $lookup: {
-                    from        : "Project",
-                    localField  : "project",
-                    foreignField: "_id",
-                    as          : "project"
-                }
-            }, {
-                $lookup: {
-                    from        : "workflows",
-                    localField  : "workflow",
-                    foreignField: "_id",
-                    as          : "workflow"
-                }
-            }, {
-                $lookup: {
-                    from        : "Quotation",
-                    localField  : "quotation",
-                    foreignField: "_id",
-                    as          : "quotation"
+                    from        : 'journalentries',
+                    localField  : '_id',
+                    foreignField: 'sourceDocument._id',
+                    as          : 'journalentries'
                 }
             }, {
                 $project: {
@@ -1217,16 +1193,90 @@ var Jobs = function (models, event) {
                         $filter: {
                             input: '$journalentries',
                             as   : 'je',
-                            cond : {$eq: ['$$je.sourceDocument.model', 'wTrack']}
+                            cond : {
+                                $or: [{
+                                    $eq: ['$$je.journal', objectId('56cc727e541812c07197356c')]
+                                }, {
+                                    $eq: ['$$je.journal', objectId('56cc734b541812c071973572')]
+                                }, {
+                                    $eq: ['$$je.journal', objectId('56cc7383541812c071973574')]
+                                }]
+                            }
                         }
                     },
-                    type: 1,
-                    name: 1,
-                    project: {$arrayElemAt: ['$project', 0]},
-                    invoice: {$arrayElemAt: ['$invoice', 0]},
-                    quotation: {$arrayElemAt: ['$quotation', 0]},
-                    workflow: {$arrayElemAt: ['$workflow', 0]},
-                    budget: 1
+                    type          : 1,
+                    name          : 1,
+                    project       : 1,
+                    invoice       : 1,
+                    quotation     : 1,
+                    workflow      : 1
+                }
+            }, {
+                $lookup: {
+                    from        : 'Invoice',
+                    localField  : 'invoice',
+                    foreignField: '_id',
+                    as          : 'invoice'
+                }
+            }, {
+                $lookup: {
+                    from        : 'workflows',
+                    localField  : 'workflow',
+                    foreignField: '_id',
+                    as          : 'workflow'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Quotation',
+                    localField  : 'quotation',
+                    foreignField: '_id',
+                    as          : 'quotation'
+                }
+            }, {
+                $project: {
+                    journalentries: 1,
+                    type          : 1,
+                    name          : 1,
+                    invoice       : {$arrayElemAt: ['$invoice', 0]},
+                    quotation     : {$arrayElemAt: ['$quotation', 0]},
+                    workflow      : {$arrayElemAt: ['$workflow', 0]}
+                }
+            }, {
+                $project: {
+                    journalentries: 1,
+                    type          : 1,
+                    name          : 1,
+                    invoice       : {
+                        _id : '$invoice._id',
+                        name: '$invoice.name'
+                    },
+                    quotation     : {
+                        _id : '$quotation._id',
+                        name: '$quotation.name'
+                    },
+                    jobPrice      : {
+                        $filter: {
+                            input: '$quotation.products',
+                            as   : 'products',
+                            cond : {
+                                $eq: ['$$products.jobs', '$_id']
+                            }
+                        }
+                    },
+                    workflow      : {
+                        _id : '$workflow._id',
+                        name: '$workflow.name'
+                    }
+                }
+            }, {
+                $project: {
+                    journalentries: 1,
+                    type          : 1,
+                    name          : 1,
+                    invoice       : 1,
+                    quotation     : 1,
+                    workflow      : 1,
+                    jobPrice      : {$arrayElemAt: ['$jobPrice', 0]}
                 }
             }, {
                 $unwind: {
@@ -1235,34 +1285,255 @@ var Jobs = function (models, event) {
                 }
             }, {
                 $group: {
-                    _id: '$_id',
-                    name: {$addToSet: '$name'},
-                    invoice: {$addToSet: '$invoice'},
-                    project: {$addToSet: '$project'},
-                    type: {$addToSet: '$type'},
-                    quotation: {$addToSet: '$quotation'},
-                    workflow: {$addToSet: '$workflow'},
-                    budget: {$addToSet: '$budget'},
-                    cost: {$sum: '$journalentries.debit'}
+                    _id      : '$_id',
+                    name     : {$first: '$name'},
+                    invoice  : {$first: '$invoice'},
+                    type     : {$first: '$type'},
+                    quotation: {$first: '$quotation'},
+                    workflow : {$first: '$workflow'},
+                    cost     : {$sum: '$journalentries.debit'},
+                    jobPrice : {$first: '$jobPrice.unitPrice'}
+                }
+            }, {
+                $lookup: {
+                    from        : 'wTrack',
+                    localField  : '_id',
+                    foreignField: 'jobs',
+                    as          : 'tCards'
+                }
+            }, {
+                $unwind: {
+                    path                      : '$tCards',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $group: {
+                    _id        : '$_id',
+                    name       : {$first: '$name'},
+                    invoice    : {$first: '$invoice'},
+                    type       : {$first: '$type'},
+                    quotation  : {$first: '$quotation'},
+                    workflow   : {$first: '$workflow'},
+                    cost       : {$first: '$cost'},
+                    jobPrice   : {$first: '$jobPrice'},
+                    totalWorked: {$sum: '$tCards.worked'},
+                    tCards     : {$push: '$tCards'}
+                }
+            }, {
+                $unwind: {
+                    path                      : '$tCards',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $group: {
+                    _id            : {
+                        _id       : '$_id',
+                        employee  : '$tCards.employee',
+                        department: '$tCards.department'
+                    },
+                    tCardDateByWeek: {$last: '$tCards.dateByWeek'},
+                    name           : {$first: '$name'},
+                    invoice        : {$first: '$invoice'},
+                    type           : {$first: '$type'},
+                    quotation      : {$first: '$quotation'},
+                    workflow       : {$first: '$workflow'},
+                    cost           : {$first: '$cost'},
+                    jobPrice       : {$first: '$jobPrice'},
+                    worked         : {$sum: '$tCards.worked'},
+                    totalWorked    : {$first: '$totalWorked'}
                 }
             }, {
                 $project: {
-                    _id: 1,
-                    cost: 1,
-                    name: 1,
-                    type: {$arrayElemAt: ['$type', 0]},
-                    project: {$arrayElemAt: ['$project', 0]},
-                    budget: {$arrayElemAt: ['$budget', 0]},
-                    invoice: {$arrayElemAt: ['$invoice', 0]},
-                    quotation: {$arrayElemAt: ['$quotation', 0]},
-                    workflow: {$arrayElemAt: ['$workflow', 0]}
+                    name           : 1,
+                    invoice        : 1,
+                    type           : 1,
+                    quotation      : 1,
+                    workflow       : 1,
+                    cost           : 1,
+                    jobPrice       : 1,
+                    totalWorked    : 1,
+                    worked         : 1,
+                    tCardDateByWeek: 1,
+                    revenue        : {$multiply: [{$divide: ['$worked', '$totalWorked']}, '$jobPrice']}
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : '_id.employee',
+                    foreignField: '_id',
+                    as          : 'employee'
+                }
+            }, {
+                $lookup: {
+                    from        : 'Department',
+                    localField  : '_id.department',
+                    foreignField: '_id',
+                    as          : 'department'
+                }
+            }, {
+                $project: {
+                    name           : 1,
+                    invoice        : 1,
+                    type           : 1,
+                    quotation      : 1,
+                    workflow       : 1,
+                    cost           : 1,
+                    jobPrice       : 1,
+                    totalWorked    : 1,
+                    worked         : 1,
+                    revenue        : 1,
+                    tCardDateByWeek: 1,
+                    employee       : {$arrayElemAt: ['$employee', 0]},
+                    department     : {$arrayElemAt: ['$department', 0]}
+                }
+            }, {
+                $project: {
+                    name       : 1,
+                    invoice    : 1,
+                    type       : 1,
+                    quotation  : 1,
+                    workflow   : 1,
+                    cost       : 1,
+                    jobPrice   : 1,
+                    totalWorked: 1,
+                    worked     : 1,
+                    revenue    : 1,
+                    employee   : 1,
+                    transfer   : {
+                        $filter: {
+                            input: '$employee.transfer',
+                            as   : 'transfer',
+                            cond : {$lte: [{$add: [{$multiply: [{$year: '$$transfer.date'}, 100]}, {$week: '$$transfer.date'}]}, '$tCardDateByWeek']}
+                        }
+                    }
+                }
+            }, {
+                $unwind: {
+                    path                      : '$transfer',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $sort: {
+                    'transfer.date': -1
+                }
+            }, {
+                $group: {
+                    _id        : '$_id',
+                    name       : {$first: '$name'},
+                    invoice    : {$first: '$invoice'},
+                    type       : {$first: '$type'},
+                    quotation  : {$first: '$quotation'},
+                    workflow   : {$first: '$workflow'},
+                    cost       : {$first: '$cost'},
+                    jobPrice   : {$first: '$jobPrice'},
+                    worked     : {$first: '$worked'},
+                    totalWorked: {$first: '$totalWorked'},
+                    revenue    : {$first: '$revenue'},
+                    employee   : {$first: '$employee'},
+                    transfer   : {$first: '$transfer'}
+                }
+            }, {
+                $lookup: {
+                    from        : 'JobPosition',
+                    localField  : 'transfer.jobPosition',
+                    foreignField: '_id',
+                    as          : 'jobPosition'
+                }
+            }, {
+                $project: {
+                    name       : 1,
+                    invoice    : 1,
+                    type       : 1,
+                    quotation  : 1,
+                    workflow   : 1,
+                    cost       : 1,
+                    jobPrice   : 1,
+                    totalWorked: 1,
+                    worked     : 1,
+                    revenue    : 1,
+                    employee   : 1,
+                    jobPosition: {$arrayElemAt: ['$jobPosition', 0]}
+                }
+            }, {
+                $group: {
+                    _id         : '$_id._id',
+                    name        : {$first: '$name'},
+                    invoice     : {$first: '$invoice'},
+                    type        : {$first: '$type'},
+                    quotation   : {$first: '$quotation'},
+                    workflow    : {$first: '$workflow'},
+                    cost        : {$first: '$cost'},
+                    jobPrice    : {$first: '$jobPrice'},
+                    totalWorked : {$sum: '$worked'},
+                    totalRevenue: {$sum: '$revenue'},
+                    revenue     : {
+                        $push: {
+                            employee  : {
+                                _id        : '$employee._id',
+                                name       : {$concat: ['$employee.name.first', ' ', '$employee.name.last']},
+                                jobPosition: '$jobPosition.name',
+                                worked     : '$worked'
+                            },
+                            department: '$department.departmentName',
+                            revenue   : '$revenue'
+                        }
+                    }
+                }
+            }, {
+                $project: {
+                    name        : 1,
+                    invoice     : 1,
+                    type        : 1,
+                    quotation   : 1,
+                    workflow    : 1,
+                    cost        : 1,
+                    jobPrice    : 1,
+                    totalWorked : 1,
+                    worked      : 1,
+                    revenue     : 1,
+                    totalRevenue: 1,
+                    profit      : {$subtract: ['$totalRevenue', '$cost']}
+                }
+            }, {
+                $group: {
+                    _id         : null,
+                    revenueTotal: {$sum: '$totalRevenue'},
+                    profitTotal : {$sum: '$profit'},
+                    costTotal   : {$sum: '$cost'},
+                    workedTotal : {$sum: '$totalWorked'},
+                    root        : {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: {
+                    path                      : '$root',
+                    preserveNullAndEmptyArrays: true
+                }
+            }, {
+                $project: {
+                    _id         : '$root._id',
+                    name        : '$root.name',
+                    invoice     : '$root.invoice',
+                    type        : '$root.type',
+                    quotation   : '$root.quotation',
+                    workflow    : '$root.workflow',
+                    cost        : '$root.cost',
+                    jobPrice    : '$root.jobPrice',
+                    totalWorked : '$root.totalWorked',
+                    worked      : '$root.worked',
+                    revenue     : '$root.revenue',
+                    totalRevenue: '$root.totalRevenue',
+                    profit      : '$root.profit',
+                    revenueTotal: 1,
+                    profitTotal : 1,
+                    costTotal   : 1,
+                    workedTotal : 1
                 }
             }], function (err, jobs) {
                 if (err) {
                     return next(err);
                 }
 
-                res.status(200).send(jobs)
+                res.status(200).send(jobs);
             });
     };
 
@@ -1283,9 +1554,9 @@ var Jobs = function (models, event) {
         }
 
         query.find(queryObj, {
-            name    : 1,
-            _id     : 1,
-            "budget": 1
+            name  : 1,
+            _id   : 1,
+            budget: 1
         }, function (err, jobs) {
             if (err) {
                 return next(err);
