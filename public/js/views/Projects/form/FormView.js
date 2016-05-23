@@ -794,16 +794,18 @@ define([
                 var self = this;
                 var _id = window.location.hash.split('form/')[1];
                 var key = 'jobs_projectId:' + _id;
-                var jobsCollection = custom.retriveFromCash(key);
+                // var jobsCollection = custom.retriveFromCash(key);
                 var budgetTotal;
 
-                var projectTeam = _.filter(this.jobsCollection.toJSON(), function (el) {
+                var projectTeam = this.jobsCollection.toJSON();
+                
+                /*var projectTeam = _.filter(this.jobsCollection.toJSON(), function (el) {
                     return el.project._id === _id;
                 });
 
                 if (!jobsCollection || !jobsCollection.length) {
                     custom.cacheToApp(key, this.jobsCollection, true);
-                }
+                }*/
 
                 this.projectValues = {
                     revenue: 0,
@@ -817,7 +819,7 @@ define([
                         self.projectValues.revenue += budgetTotal.revenueSum || 0;
                         self.projectValues.cost += projectTeam.cost || 0;
                         self.projectValues.profit = self.projectValues.revenue - self.projectValues.cost;
-                        /*self.projectValues.profit += budgetTotal ? (budgetTotal.revenueSum - budgetTotal.costSum) : 0;*/
+                        /* self.projectValues.profit += budgetTotal ? (budgetTotal.revenueSum - budgetTotal.costSum) : 0; */
                     }
                 });
 
@@ -835,16 +837,15 @@ define([
 
                 container.html(template({
                         jobs            : projectTeam,
-                        bonus           : formModel.budget.bonus ? formModel.budget.bonus : [],
                         projectValues   : self.projectValues,
                         currencySplitter: helpers.currencySplitter,
                         contentType     : self.contentType
                     })
                 );
 
-                this.renderProformRevenue();
-                this.getInvoiceStats();
-                this.getProformaStats();
+               /*     this.renderProformRevenue();
+                    this.getInvoiceStats();
+                    this.getProformaStats();*/
             },
 
             getWTrack: function (cb) {
