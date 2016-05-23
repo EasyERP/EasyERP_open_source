@@ -1132,6 +1132,7 @@ require.config({
         templates    : './public/templates',
         helpers      : './public/js/helpers',
         d3           : './public/js/libs/d3.v3.min',
+        spinJs       : './public/js/libs/spin.js/spin',
         jQuery       : './public/js/libs/jquery-2.1.0.min.map',
         jqueryui     : './public/js/libs/jquery-ui.min',
         jqueryBarcode: './public/js/libs/jquery-barcode.min',

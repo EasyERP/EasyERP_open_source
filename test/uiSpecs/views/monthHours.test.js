@@ -756,15 +756,6 @@ define([
                 });
 
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
-                expect(topBarView.$el.find('#template-switcher')).to.exist;
-            });
-
-            it('Try to change ContentViewType', function(){
-                var $listTypeBtn = topBarView.$el.find('a[data-view-type="list"].changeContentView');
-
-                $listTypeBtn.click();
-
-                expect(window.location.hash).to.be.equals('#easyErp/monthHours/list');
             });
 
         });
@@ -984,20 +975,16 @@ define([
                     var $input;
                     var $fixedInput = listView.$el.find('td[data-content="fixedExpense"]')[0];
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
-                    var $body = $('body');
                     var $tableContainer = listView.$el.find('table');
 
                     $fixedInput.click();
 
                     $input = listView.$el.find('input.editing');
                     $input.val('165');
-
-                    $body.click();
+                    $input.trigger('change');
 
                     server.respondWith('PATCH', '/monthHours/', [200, {"Content-Type": "application/json"}, JSON.stringify({"month":8,"hours":150,"year":2016,"expenseCoefficient":1.45,"fixedExpense":78,"_id":"56e19608c5df6692126cc41f"})]);
-
                     $saveBtn.click();
-
                     server.respond();
 
                     expect($tableContainer.find('input[type="text"]').length).to.equals(0);

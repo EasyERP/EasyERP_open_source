@@ -24348,13 +24348,16 @@ define([
 
         describe('TopBarView', function(){
             var server;
+            var changeItemSpy;
 
             before(function(){
                 server = sinon.fakeServer.create();
+                changeItemSpy = sinon.spy(TopBarView.prototype, 'changeItemIndex');
             });
 
             after(function(){
                 server.restore();
+                changeItemSpy.restore();
             });
 
             it('Try to fetch collection with error response', function(){
@@ -24399,12 +24402,6 @@ define([
 
                 $kanBanTypeBtn.click();
                 expect(window.location.hash).to.be.equals('#easyErp/Opportunities/kanban');
-            });
-
-            it('Try to spy editEvent', function(){
-                var $editBtn = topBarView.$el.find('#top-bar-editBtn');
-
-                $editBtn.click();
             });
         });
 

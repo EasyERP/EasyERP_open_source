@@ -15981,7 +15981,7 @@ define([
                 var personsListUrl = new RegExp('\/persons\/list', 'i');
 
                 // open filter dropdown
-                $searchArrow.mouseover();
+                $searchArrow.click();
                 expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
 
                 // select full Person Name
@@ -16026,7 +16026,7 @@ define([
                 expect($thisEl.find('#listTable > tr').length).to.equals(2);
 
                 //close filter dropdown
-                $searchArrow.mouseover();
+                $searchArrow.click();
                 expect($searchContainer.find('.search-options')).to.have.class('hidden');
 
             });
@@ -16125,7 +16125,7 @@ define([
                 var personsThumbUrl = new RegExp('\/persons\/thumbnails', 'i');
 
                 // open filter dropdown
-                $searchArrow.mouseover();
+                $searchArrow.click();
                 expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
 
                 // select full Person Name
@@ -16166,7 +16166,7 @@ define([
                 expect($thisEl.find('.thumbnailwithavatar').length).to.equals(2);
 
                 //close filter dropdown
-                $searchArrow.mouseover();
+                $searchArrow.click();
                 expect($searchContainer.find('.search-options')).to.have.class('hidden');
             });
 

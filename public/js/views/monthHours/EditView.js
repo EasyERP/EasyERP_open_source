@@ -1,7 +1,6 @@
-/*
-/!**
+/**
  * Created by Liliya on 23.06.2015.
- *!/
+ */
 define([
         "common",
         "custom",
@@ -182,4 +181,3 @@ define([
 
         return EditView;
     });
-*/

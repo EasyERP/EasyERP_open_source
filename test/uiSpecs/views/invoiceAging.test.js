@@ -1183,7 +1183,6 @@ define([
                 });
 
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
-                expect(topBarView.$el.find('#template-switcher')).to.exist;
             });
 
         });

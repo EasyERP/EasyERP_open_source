@@ -4,13 +4,14 @@ define([
     'views/main/MainView',
     'views/jobsDashboard/list/ListView',
     'views/jobsDashboard/TopBarView',
+    'views/Projects/projectInfo/journalEntriesForJob/dialogView',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai',
     'custom',
     'async'
-], function (fixtures, JobsCollection, MainView, ListView, TopBarView, $, chai, chaiJquery, sinonChai, Custom, async) {
+], function (fixtures, JobsCollection, MainView, ListView, TopBarView, ReportView, $, chai, chaiJquery, sinonChai, Custom, async) {
     'use strict';
     var expect;
 
@@ -1915,10 +1916,9 @@ define([
 
 
         after(function () {
-            if (view){
-                view.remove();
-            }
             topBarView.remove();
+            listView.remove();
+            view.remove();
         });
 
         describe('#initialize()', function () {
@@ -1983,7 +1983,6 @@ define([
             });
 
             it('Try to create TopBarView', function () {
-
                 topBarView = new TopBarView({
                     actionType: 'Content'
                 });
@@ -1996,24 +1995,29 @@ define([
         });
 
         describe('ProjectsDashboardList view', function () {
+            var $thisEl;
             var server;
             var mainSpy;
+            var clock;
+            var reportViewSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
+                clock = sinon.useFakeTimers();
+                reportViewSpy = sinon.spy(ReportView.prototype, 'initialize');
             });
 
             after(function () {
-                listView.remove();
-
                 server.restore();
                 mainSpy.restore();
+                clock.restore();
+                reportViewSpy.restore();
             });
 
             describe('INITIALIZE', function () {
 
-                it('Try to create ListView', function () {
+                it('Try to create ListView', function (done) {
                     var $listHolder;
                     var jobsDashboardUrl = new RegExp('\/jobs\/', 'i');
 
@@ -2026,31 +2030,45 @@ define([
                         collection: jobsCollection
 
                     });
-                    $listHolder = listView.$el;
+                    $thisEl = listView.$el;
 
-                    expect($listHolder.find('table')).to.exist;
+                    clock.tick(200);
+                    expect($thisEl.find('table')).to.exist;
+                    done();
                 });
 
                 it('Try to go sort', function () {
-                    var $sortEl = listView.$el.find('th[data-sort="budget.budgetTotal.costSum"]');
+                    var $sortEl = $thisEl.find('th[data-sort="payment.paid"]');
                     var jobsDashboardUrl = new RegExp('\/jobs\/', 'i');
 
                     server.respondWith('GET', jobsDashboardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeJobsDashboard[1], fakeJobsDashboard[0]])]);
                     $sortEl.click();
                     server.respond();
-                    expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('564cfd8ba6e6390160c9ef7d');
+                    expect($thisEl.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('564cfd8ba6e6390160c9ef7d');
 
                     server.respondWith('GET', jobsDashboardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobsDashboard)]);
                     $sortEl.click();
                     server.respond();
-                    expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('564cfd8ba6e6390160c9ef5e');
+                    expect($thisEl.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('564cfd8ba6e6390160c9ef5e');
 
                 });
 
+                it('Try to open report', function () {
+                    var $jobNameBtn = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(4) > a');
+                    var journalEntryUrl = new RegExp('journal\/journalEntry\/getForReport', 'i');
+
+                    server.respondWith('GET', journalEntryUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        data: {
+                            wagesPayable: [ ]
+                        }
+                    })]);
+                    $jobNameBtn.click();
+                    server.respond();
+
+                    expect(reportViewSpy.called).to.be.true;
+                    expect($('.ui-dialog')).to.exist;
+                });
             });
-
         });
-
     });
-
 });

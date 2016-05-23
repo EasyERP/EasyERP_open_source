@@ -8,9 +8,8 @@ define([
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai',
-    'custom'
-], function (fixtures, DashBoardVacationCollection, MainView, IndexView, TopBarView, StatisticsView, $, chai, chaiJquery, sinonChai, Custom) {
+    'sinon-chai'
+], function (fixtures, DashBoardVacationCollection, MainView, IndexView, TopBarView, StatisticsView, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
 
@@ -9401,13 +9400,14 @@ define([
             var depOpenSpy;
             var devOpenSpy;
             var createWTrackSpy;
+            var clock;
 
             before(function () {
-
                 server = sinon.fakeServer.create();
                 depOpenSpy = sinon.spy(IndexView.prototype, 'openDepartment');
                 devOpenSpy = sinon.spy(IndexView.prototype, 'openEmployee');
                 createWTrackSpy = sinon.spy(IndexView.prototype, 'createWTrack');
+                clock = sinon.useFakeTimers();
             });
 
             after(function () {
@@ -9415,11 +9415,12 @@ define([
                 depOpenSpy.restore();
                 devOpenSpy.restore();
                 createWTrackSpy.restore();
+                clock.restore();
             });
 
             describe('INITIALIZE', function () {
 
-                it('Try to create categories list view', function () {
+                it('Try to create categories list view', function (done) {
                     var dashBoardUrl = new RegExp('dashboard\/vacation', 'i');
 
                     server.respondWith('GET', dashBoardUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDashBoardVacations)]);
@@ -9427,10 +9428,11 @@ define([
                         startTime: new Date()
                     });
                     server.respond();
-
+                    clock.tick(200);
 
                     expect(indexView.$el.find('.dashBoardMargin')).to.exist;
 
+                    done();
                 });
 
                 it('Try to expand all', function(){

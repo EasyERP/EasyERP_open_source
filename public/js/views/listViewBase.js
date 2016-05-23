@@ -8,7 +8,8 @@ define([
         'views/Notes/AttachView',
         'common',
         'dataService',
-        'constants'
+        'constants',
+        'helpers'
     ],
 
     function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, AttachView, common, dataService, CONSTANTS, helpers) {

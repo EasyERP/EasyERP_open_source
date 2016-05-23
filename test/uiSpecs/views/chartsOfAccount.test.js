@@ -1351,22 +1351,15 @@ define([
     var view;
     var topBarView;
     var listView;
-    var windowConfirmStub;
 
     describe('ChartsOfAccount View', function () {
         var $fixture;
         var $elFixture;
 
-        before(function(){
-            windowConfirmStub = sinon.stub(window, 'confirm');
-        });
-
         after(function(){
             view.remove();
             topBarView.remove();
             listView.remove();
-
-            windowConfirmStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -1420,15 +1413,18 @@ define([
         describe('topBarView', function(){
             var server;
             var consoleSpy;
+            var windowConfirmStub;
 
             before(function(){
                 server = sinon.fakeServer.create();
                 consoleSpy = sinon.spy(console, 'log');
+                windowConfirmStub = sinon.stub(window, 'confirm');
             });
 
             after(function(){
                 server.restore();
                 consoleSpy.restore();
+                windowConfirmStub.restore();
             });
 
             it('Try to fetch collection with error', function(){
@@ -1532,33 +1528,26 @@ define([
                     expect(listView.$el.find('input[type="checkbox"]').prop('checked')).to.be.false;
                 });
 
-                it('Try to delete item with Forbidden error result', function(){
+                /*it('Try to delete item with Forbidden error result', function(){
                     var spyResponse;
                     var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
                     var $firstEl = listView.$el.find('tr:nth-child(1) > td:nth-child(1) > .checkbox');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
-                    windowConfirmStub.returns(true);
-
-                    $firstEl.prop('checked', true);
-
-                    server.respondWith('DELETE', chartOfAccountUrl, [403, {"Content-Type": "application/json"}, JSON.stringify(new Error())]);
-
+                    $firstEl.click();
+                    server.respondWith('DELETE', chartOfAccountUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
                     $deleteBtn.click();
-
                     server.respond();
-                    spyResponse = mainSpy.args[0][0];
 
+                    spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                });
+                });*/
 
                 it('Try to delete item', function () {
                     var $firsElAfterDeleteCode;
                     var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
                     var $firstEl = listView.$el.find('tr:nth-child(1) > td:nth-child(1) > .checkbox');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
-
-                    windowConfirmStub.returns(true);
 
                     // check|uncheck checkbox
                     $firstEl.click();

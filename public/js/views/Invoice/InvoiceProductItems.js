@@ -10,8 +10,9 @@ define([
     'text!templates/Invoice/EditInvoiceProductInputContent.html',
     'text!templates/Product/InvoiceOrder/TotalAmount.html',
     'collections/Product/products',
-    'populate'
-], function (Backbone, $, _, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, ProductCollection, populate) {
+    'populate',
+    'helpers'
+], function (Backbone, $, _, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, ProductCollection, populate, helpers) {
     'use strict';
 
     var ProductItemTemplate = Backbone.View.extend({

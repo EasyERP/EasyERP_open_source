@@ -2,11 +2,14 @@
  * Created by soundstorm on 14.05.15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/salesProforma/list/ListTotal.html',
         'helpers'
     ],
 
-    function (listTemplate, helper) {
+    function (Backbone, $, _, listTemplate, helper) {
         var OrderListTotalView = Backbone.View.extend({
             el: '#listTotal',
 

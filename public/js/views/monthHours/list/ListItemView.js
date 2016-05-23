@@ -1,8 +1,9 @@
 define([
     'Backbone',
     'Underscore',
-    'text!templates/monthHours/list/listTemplate.html'
-], function (Backbone, _, listTemplate) {
+    'text!templates/monthHours/list/listTemplate.html',
+    'helpers'
+], function (Backbone, _, listTemplate, helpers) {
     var monthHoursListItemView = Backbone.View.extend({
         el           : '#listTable',
         newCollection: null,

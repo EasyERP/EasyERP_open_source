@@ -4152,8 +4152,6 @@ define([
     var view;
     var topBarView;
     var listView;
-    var formView;
-
 
     describe('PayRoll View', function () {
         var $fixture;
@@ -4163,7 +4161,6 @@ define([
             view.remove();
             topBarView.remove();
             listView.remove();
-
         });
 
         describe('#initialize()', function () {

@@ -1525,14 +1525,6 @@ define([
                 });
 
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
-                expect(topBarView.$el.find('#template-switcher')).to.exist;
-            });
-
-            it('Try to switch view type', function(){
-                var $listTemplateBtn = topBarView.$el.find('#listBtn');
-
-                $listTemplateBtn.click();
-                expect(window.location.hash).to.be.equals('#easyErp/Quotation/list');
             });
         });
 
@@ -1607,17 +1599,17 @@ define([
                     var $searchArrow = $searchContainer.find('.search-content');
                     var orderUrl = new RegExp('\/quotation\/list', 'i');
 
-                    $searchArrow.mouseover();
+                    $searchArrow.click();
                     expect($thisEl.find('.search-options')).to.not.have.class('hidden');
 
                     //select SM
-                    $salesManager = $searchContainer.find('#projectmanagerFullContainer > .groupName');
+                    $salesManager = $searchContainer.find('#salesmanagerFullContainer > .groupName');
                     $salesManager.click();
                     $next = $searchContainer.find('.next');
                     $next.click();
                     $prev = $searchContainer.find('.prev');
                     $prev.click();
-                    $selectedItem = $searchContainer.find('li[data-value="55b92ad221e4b7c40f000031"]');
+                    $selectedItem = $searchContainer.find('#salesmanagerUl > li').first();
 
                     server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeQuotation[0], fakeQuotation[1]])]);
                     $selectedItem.click();
@@ -1640,13 +1632,13 @@ define([
                     server.respond();
                     expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
 
-                    $searchArrow.mouseover();
+                    $searchArrow.click();
                     expect($thisEl.find('.search-options')).to.have.class('hidden');
                 });
 
                 it('Try to close SM filter', function(){
                     var $searchContainer = $thisEl.find('#searchContainer');
-                    var $closeFilterBtn = $searchContainer.find('span[data-value="projectmanager"]').next();
+                    var $closeFilterBtn = $searchContainer.find('span[data-value="salesmanager"]').next();
                     var orderUrl = new RegExp('\/quotation\/list', 'i');
 
                     server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
@@ -1663,12 +1655,12 @@ define([
                     server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeQuotation[1], fakeQuotation[0]])]);
                     $thSortEl.click();
                     server.respond();
-                    expect(listView.$el.find('tr:nth-child(1) > td.total').text()).to.be.equals('600.00');
+                    expect(listView.$el.find('tr:nth-child(1) > td.total').text()).to.be.equals('6.00');
 
                     server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
                     $thSortEl.click();
                     server.respond();
-                    expect(listView.$el.find('tr:nth-child(1) > td.total').text()).to.be.equals('1 500.00');
+                    expect(listView.$el.find('tr:nth-child(1) > td.total').text()).to.be.equals('15.00');
 
                 });
 

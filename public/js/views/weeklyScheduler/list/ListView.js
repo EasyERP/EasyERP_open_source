@@ -82,7 +82,6 @@ define([
                 var self = this;
                 var modelId = $(e.target).closest('tr').attr('data-id');
                 var model = self.collection.get(modelId);
-
                 e.preventDefault();
 
                 new editView({
@@ -100,7 +99,6 @@ define([
                 $currentEl = this.$el;
 
                 $currentEl.html('');
-
                 currentEllistRenderer(self);
 
                 self.renderCheckboxes();

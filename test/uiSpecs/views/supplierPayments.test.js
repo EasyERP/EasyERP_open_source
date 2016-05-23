@@ -8178,15 +8178,6 @@ define([
                 });
 
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
-                expect(topBarView.$el.find('#template-switcher')).to.exist;
-            });
-
-            it('Try to change ViewType', function(){
-                var $listBtn = topBarView.$el.find('#listBtn');
-
-                $listBtn.click();
-
-                expect(window.location.hash).to.be.equals('#easyErp/supplierPayments/list');
             });
 
         });
@@ -8342,7 +8333,7 @@ define([
                     var $searchArrow = $searchContainer.find('.search-content');
                     var supplierPaymentsUrl = new RegExp('\/payment\/supplier\/list', 'i');
 
-                    $searchArrow.mouseover();
+                    $searchArrow.click();
                     expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
 
                     // select employee
@@ -8376,7 +8367,7 @@ define([
                     expect($searchContainer.find('li[data-value="Sales/Head 8%"]')).to.have.not.class('checkedValue');
 
                     //close filter dropdown
-                    $searchArrow.mouseover();
+                    $searchArrow.click();
                     expect($searchContainer.find('.search-options')).to.have.class('hidden');
 
                     //close Employee filter
@@ -8457,21 +8448,15 @@ define([
                     var $input;
                     var $monthInput = listView.$el.find('td[data-content="month"]')[0];
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
-                    var $body = $('body');
                     var $tableContainer = listView.$el.find('table');
 
                     $monthInput.click();
-
                     $input = listView.$el.find('input.editing');
                     $input.val('2');
-
-                    $body.click();
+                    $input.trigger('change');
 
                     server.respondWith('PATCH', '/payment/supplier/', [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-
                     $saveBtn.click();
-                    listView.saveItem();
-
                     server.respond();
 
                     expect($tableContainer.find('input[type="text"].editing').length).to.equals(0);

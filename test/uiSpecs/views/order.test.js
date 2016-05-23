@@ -1737,16 +1737,8 @@ define([
                 });
 
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
-                expect(topBarView.$el.find('#template-switcher')).to.exist;
                 expect(topBarView.$el.find('h3')).to.exist;
                 expect(topBarView.$el.find('h3').text()).to.be.equals('Order');
-            });
-
-            it('Try to change ContentViewType', function(){
-                var $switchTmplBtn = topBarView.$el.find('a[data-view-type="list"]');
-
-                $switchTmplBtn.click();
-                expect(window.location.hash).to.be.equals('#easyErp/Order/list');
             });
         });
 
@@ -1754,16 +1746,20 @@ define([
             var server;
             var $thisEl;
             var windowConfirmStub;
+            var mainSpy;
+            var createInvoiceStub;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 windowConfirmStub = sinon.stub(window, 'confirm');
                 windowConfirmStub.returns(true);
+                mainSpy = sinon.spy(App, 'render');
             });
 
             after(function () {
                 server.restore();
                 windowConfirmStub.restore();
+                mainSpy.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -1804,17 +1800,17 @@ define([
                     var $searchArrow = $searchContainer.find('.search-content');
                     var orderUrl = new RegExp('\/quotation\/list', 'i');
 
-                    $searchArrow.mouseover();
+                    $searchArrow.click();
                     expect($thisEl.find('.search-options')).to.not.have.class('hidden');
 
                     //select SM
-                    $salesManager = $searchContainer.find('#projectmanagerFullContainer > .groupName');
+                    $salesManager = $searchContainer.find('#salesmanagerFullContainer > .groupName');
                     $salesManager.click();
                     $next = $searchContainer.find('.next');
                     $next.click();
                     $prev = $searchContainer.find('.prev');
                     $prev.click();
-                    $selectedItem = $searchContainer.find('li[data-value="55b92ad221e4b7c40f000031"]');
+                    $selectedItem = $searchContainer.find('#salesmanagerUl > li').first();
 
                     server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeOrders[0], fakeOrders[1]])]);
                     $selectedItem.click();
@@ -1837,13 +1833,13 @@ define([
                     server.respond();
                     expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
 
-                    $searchArrow.mouseover();
+                    $searchArrow.click();
                     expect($thisEl.find('.search-options')).to.have.class('hidden');
                 });
 
                 it('Try to close SM filter', function(){
                     var $searchContainer = $thisEl.find('#searchContainer');
-                    var $closeFilterBtn = $searchContainer.find('span[data-value="projectmanager"]').next();
+                    var $closeFilterBtn = $searchContainer.find('span[data-value="salesmanager"]').next();
                     var orderUrl = new RegExp('\/quotation\/list', 'i');
 
                     server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOrders)]);
@@ -1906,19 +1902,61 @@ define([
                     expect($firstTab).to.have.class('active');
                 });
 
+                it('Try to delete NotInvoiced Order with error response', function(){
+                    var spyResponse;
+                    var $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
+                    var orderUrl = new RegExp('\/order\/', 'i');
+
+                    server.respondWith('DELETE', orderUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    $deleteBtn.click();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+                });
+
+                it('Try to delete NotInvoiced Order ', function(){
+                    var $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
+                    var orderUrl = new RegExp('\/order\/', 'i');
+
+                    server.respondWith('DELETE', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"success":{"_id":"56c6ebd80769bba2647ae701","__v":0,"proformaCounter":0,"editedBy":{"date":"2016-04-11T07:01:01.309Z","user":"52203e707d4dba8813000003"},"createdBy":{"date":"2016-02-19T10:18:00.060Z","user":"52203e707d4dba8813000003"},"creationDate":"2016-02-19T10:18:00.060Z","groups":{"group":[],"users":[],"owner":"55ba28c8d79a3a3439000016"},"attachments":[],"whoCanRW":"everyOne","workflow":"55647b932e4aa3804a765ec5","products":[{"scheduledDate":"","jobs":"56afda4cf5c2bcd4555cb2f1","description":"","product":"5540d528dacb551c24000003","unitPrice":360000,"subTotal":360000,"taxes":0,"quantity":42}],"paymentInfo":{"taxes":0,"unTaxed":360000,"total":360000},"paymentTerm":null,"invoiceRecived":false,"invoiceControl":null,"incoterm":null,"destination":null,"name":"PO825","expectedDate":"2016-02-19T00:00:00.000Z","orderDate":"2016-02-19T00:00:00.000Z","deliverTo":"55543831d51bdef79ea0d58c","project":"56030dbffa3f91444e00000d","supplier":"56030d81fa3f91444e00000c","isOrder":true,"type":"Not Invoiced","forSales":true,"currency":{"rate":1,"_id":"565eab29aeb95fa9c0f9df2d"}}})]);
+                    $deleteBtn.click();
+                    server.respond();
+
+
+                });
+
                 it('Try to receive invoice', function(){
-                    var $dialog = $('.ui-dialog');
-                    var $receiveInvoiceBtn = $dialog.find('.receiveInvoice');
+
+                    var $needTd = listView.$el.find('#listTable > tr:nth-child(3) > td:nth-child(2)');
+                    var orderUrl = new RegExp('\/Order\/form', 'i');
+                    var usersUrl = new RegExp('\/users\/forDd', 'i');
+                    var incotermUrl = '/incoterm';
                     var orderUrl = new RegExp('\/order\/', 'i');
                     var invoiceUrl = '/invoice/receive';
+                    var $dialog;
+                    var $receiveInvoiceBtn;
 
+                    server.respondWith('GET', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeOrderById)]);
+                    server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
+                    server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
+                    $needTd.click();
+                    server.respond();
+                    server.respond();
+
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.exist;
+
+                    $dialog = $('.ui-dialog');
+                    $receiveInvoiceBtn = $dialog.find('.receiveInvoice');
                     server.respondWith('PATCH', orderUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
                     server.respondWith('POST', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
                     $receiveInvoiceBtn.click();
                     server.respond();
                     server.respond();
 
-                    expect($('.ui-dialog')).to.not.exist;
                 });
 
                 /*it('Try to edit item with error response', function(){
@@ -1969,7 +2007,7 @@ define([
                     server.respond();
 
                     //expect($('.ui-dialog')).to.not.exist;
-                    expect(window.location.hash).to.be.equals('#easyErp/salesInvoice');
+                    expect(window.location.hash).to.be.equals('#easyErp/salesOrder/list/p=1/c=100/filter=%7B%22forSales%22%3A%7B%22key%22%3A%22forSales%22%2C%22value%22%3A%5B%22true%22%5D%7D%7D');
                 });
 
 

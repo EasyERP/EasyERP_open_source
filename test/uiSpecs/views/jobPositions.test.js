@@ -14447,7 +14447,6 @@ define([
                 });
 
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
-                expect(topBarView.$el.find('#template-switcher')).to.exist;
             });
 
         });
@@ -14546,16 +14545,6 @@ define([
                     server.respond();
                     expect($pageListEl.find('a:nth-child(2)')).to.have.class('selectedItemsNumber');
                     expect(window.location.hash).to.be.equals('#easyErp/JobPositions/list/p=1/c=200');
-
-                    $thirdPageListEl.click();
-                    server.respond();
-                    expect($pageListEl.find('a:nth-child(3)')).to.have.class('selectedItemsNumber');
-                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions/list/p=1/c=500');
-
-                    $allPageListEl.click();
-                    server.respond();
-                    expect($pageListEl.find('a:nth-child(4)')).to.have.class('selectedItemsNumber');
-                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions/list/p=1/c=2');
                 });
 
                 it('Try to change status in listView', function(){

@@ -648,17 +648,18 @@ define([
 
         });
 
-        describe('SalaryReport ListView', function () {
+        describe('Efficiency ListView', function () {
             var server;
-            var mainSpy;
-            var windowConfirmStub;
+            var clock;
 
             before(function () {
                 server = sinon.fakeServer.create();
+                clock = sinon.useFakeTimers();
             });
 
             after(function () {
                 server.restore();
+                clock.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -666,18 +667,18 @@ define([
                 it('Try to application ListView', function (done) {
                     var revenueUrl = new RegExp('\/revenue\/getFromCash', 'i');
 
-                    setTimeout(function(){
-                        server.respondWith('GET', revenueUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeRevenue)]);
-                        indexView = new IndexView();
-                        server.respond();
+                    server.respondWith('GET', revenueUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeRevenue)]);
+                    indexView = new IndexView();
+                    server.respond();
 
-                        expect(indexView.$el.find('.chartContainer')).to.have.exist;
-                        expect(indexView.$el.find('#totalTotalHours')).to.have.exist;
-                        expect(indexView.$el.find('#totalHoursSold')).to.have.exist;
-                        expect(indexView.$el.find('#totalHoursUnsold')).to.have.exist;
+                    clock.tick(300);
 
-                        done();
-                    }, 300);
+                    expect(indexView.$el.find('.chartContainer')).to.have.exist;
+                    expect(indexView.$el.find('#totalTotalHours')).to.have.exist;
+                    expect(indexView.$el.find('#totalHoursSold')).to.have.exist;
+                    expect(indexView.$el.find('#totalHoursUnsold')).to.have.exist;
+
+                    done();
                 });
 
                 it('Try to change week', function(){

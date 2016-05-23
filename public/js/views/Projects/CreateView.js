@@ -8,12 +8,11 @@ define([
         'views/Assignees/AssigneesView',
         'views/Bonus/BonusView',
         'views/selectView/selectView',
-        "populate",
+        'populate',
         'custom',
         'constants'
-
     ],
-    function (Backbone, $, _, CreateTemplate, ProjectModel, AttachView, AssigneesView, BonusView, SelectView, populate, customFile) {
+    function (Backbone, $, _, CreateTemplate, ProjectModel, AttachView, AssigneesView, BonusView, SelectView, populate, customFile, CONSTANTS) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -288,8 +287,8 @@ define([
                     model: new ProjectModel()
                 });
                 populate.get("#projectTypeDD", CONSTANTS.URLS.PROJECT_TYPE, {}, "name", this, true, true);
-                populate.get("#paymentTerms", "/paymentTerm", {}, 'name', this, true, true, constants.PAYMENT_TERMS);
-                populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true, true, constants.PAYMENT_METHOD);
+                populate.get("#paymentTerms", "/paymentTerm", {}, 'name', this, true, true, CONSTANTS.PAYMENT_TERMS);
+                populate.get("#paymentMethod", "/paymentMethod", {}, 'name', this, true, true, CONSTANTS.PAYMENT_METHOD);
                 populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, true, true);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Projects"}, "name", this, true);
 

@@ -834,7 +834,6 @@ define([
         },
 
         deleteItemsRender: function (deleteCounter, deletePage) {
-
             this.renderTable(this.collection.toJSON());
 
             this.editCollection.reset(this.collection.models);

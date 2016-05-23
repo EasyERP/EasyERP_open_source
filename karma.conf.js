@@ -35,7 +35,7 @@ module.exports = function (config) {
 
             //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
 
-            {pattern: 'test/uiSpecs/**/opportunities.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/**/salesRevenue.test.js', included: false, watching: true},
             {pattern: 'test/uiSpecs/**/login.test.js', included: false, watching: true},
 
             {pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
@@ -68,7 +68,7 @@ module.exports = function (config) {
 
         autoWatch: true,
 
-        browsers: ['Chrome'/*,'Firefox', 'Safari', 'IE', 'PhantomJS'*/],
+        browsers: ['Chrome'/*, 'Firefox', 'Safari', 'IE', 'PhantomJS'*/],
 
         singleRun: false,
 

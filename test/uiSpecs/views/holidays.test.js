@@ -861,14 +861,6 @@ define([
                 });
 
                 expect(topBarView.$el.find('.createBtnHolder')).to.exist;
-                expect(topBarView.$el.find('#template-switcher')).to.exist;
-            });
-
-            it('Try to change ContentViewType', function(){
-                var $listTypeBtn = topBarView.$el.find('a[data-view-type="list"].changeContentView');
-
-                $listTypeBtn.click();
-                expect(window.location.hash).to.be.equals('#easyErp/Holiday/list');
             });
         });
 

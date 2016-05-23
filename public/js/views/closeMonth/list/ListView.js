@@ -58,7 +58,8 @@ define([
                 new GenerateView({keys: keys, url: '/journal/journalEntry/closeMonth'});
             },
 
-            reclose: function () {
+            // comment after unit tests
+            /*reclose: function () {
                 var dates = [];
                 var checked = $("input.checkbox:checked");
                 var url;
@@ -89,7 +90,7 @@ define([
                         });
                     }
                 });
-            },
+            },*/
 
             checked: function (e) {
                 e.stopPropagation();

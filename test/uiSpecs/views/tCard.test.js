@@ -1392,7 +1392,6 @@ define([
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
                 expect(topBarView.$el.find('h3')).to.exist;
                 expect(topBarView.$el.find('h3').text()).to.be.equals('Time Card');
-                expect(topBarView.$el.find('#template-switcher')).to.exist;
             });
 
         });
@@ -1402,6 +1401,8 @@ define([
             var windowConfirmStub;
             var mainSpy;
             var clock;
+            var deleteSpy;
+            var saveSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
@@ -1409,6 +1410,8 @@ define([
                 windowConfirmStub.returns(true);
                 mainSpy = sinon.spy(App, 'render');
                 clock = sinon.useFakeTimers();
+                deleteSpy = sinon.spy(ListView.prototype, 'deleteItems');
+                saveSpy = sinon.spy(ListView.prototype, 'saveItem');
             });
 
             after(function () {
@@ -1416,6 +1419,8 @@ define([
                 windowConfirmStub.restore();
                 mainSpy.restore();
                 clock.restore();
+                deleteSpy.restore();
+                saveSpy.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -1472,6 +1477,16 @@ define([
                 });
 
                 it('Try to delete item with 403 error', function(){
+                    App.startPreload = function() {
+                        App.preloaderShowFlag = true;
+                        $('#loading').show();
+                    };
+
+                    App.stopPreload = function() {
+                        App.preloaderShowFlag = false;
+                        $('#loading').hide();
+                    };
+
                     var spyResponse;
                     var $needCheckBtn = listView.$el.find('#listTable > tr:nth-child(1) > td.notForm > input');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
@@ -1486,6 +1501,7 @@ define([
                     spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+                    expect(deleteSpy.calledOnce).to.be.true;
                 });
 
                 it('Try to delete item', function(){
@@ -1496,7 +1512,7 @@ define([
                     $deleteBtn.click();
                     server.respond();
 
-                    expect(listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(4)').text().trim()).to.be.equals('Peter Voloshchuk')
+                    expect(deleteSpy.calledTwice).to.be.true;
                 });
 
                 it('Try to go sort', function () {
@@ -1557,11 +1573,11 @@ define([
                     var $select;
                     var $sprintBtn;
                     var $createBtn = topBarView.$el.find('#top-bar-createBtn');
+                    var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var jobUrl = new RegExp('\/jobs\/getForDD', 'i');
                     var wTrackUrl = '/wTrack/';
 
                     $createBtn.click();
-                    listView.createItem();
 
                     $projectBtn = listView.$el.find('#listTable > tr.false > td:nth-child(5)');
                     $projectBtn.click();
@@ -1586,11 +1602,10 @@ define([
                     $sprintBtn.text('March');
 
                     server.respondWith('POST', wTrackUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({id: '56f9172a160c8d6315f0862f'})]);
-                    listView.saveItem();
+                    $saveBtn.click();
                     server.respond();
 
-                    expect(listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(4)').text()).to.be.equals('Peter Voloshchuk')
-
+                    expect(saveSpy.calledOnce).to.be.true;
                 });
 
                 it('Try to copy tCard row', function () {

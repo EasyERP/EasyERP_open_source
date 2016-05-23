@@ -3427,7 +3427,11 @@ define([
                     name: "Gilad Nevo"
                 }
             ],
-            projectmanager: [
+            salesmanager: [
+                {
+                    _id: "565f0fa6f6427f253cf6bf19",
+                    name: "Alex Lysachenko"
+                },
                 {
                     _id: "56029cc950de7f4138000005",
                     name: "Eugen Lendyel"
@@ -3435,25 +3439,6 @@ define([
                 {
                     _id: "561ba8639ebb48212ea838c4",
                     name: "Nataliya Yartysh"
-                },
-                {
-                    _id: "55b92ad221e4b7c40f000063",
-                    name: "Yana Gusti"
-                },
-                {
-                    _id: "55b92ad221e4b7c40f0000a2",
-                    name: "Igor Stan"
-                },
-                {
-                    _id: "55b92ad221e4b7c40f0000cb",
-                    name: "Alona Yelahina"
-                },
-                {
-                    _id: "55b92ad221e4b7c40f00005f",
-                    name: "Peter Voloshchuk"
-                },
-                {
-                    name: null
                 },
                 {
                     _id: "55b92ad221e4b7c40f0000bb",
@@ -3468,12 +3453,36 @@ define([
                     name: "Ivan Bilak"
                 },
                 {
+                    _id: "55b92ad221e4b7c40f000063",
+                    name: "Yana Gusti"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f0000cb",
+                    name: "Alona Yelahina"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f00005f",
+                    name: "Peter Voloshchuk"
+                },
+                {
                     _id: "55b92ad221e4b7c40f00004a",
                     name: "Oleg Ostroverkh"
                 },
                 {
                     _id: "55b92ad221e4b7c40f000040",
                     name: "Vasiliy Almashiy"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f0000a2",
+                    name: "Igor Stan"
+                },
+                {
+                    _id: "56123232c90e2fb026ce064b",
+                    name: "Olga Sikora"
+                },
+                {
+                    _id: "561b756f9ebb48212ea838c0",
+                    name: "Stanislav Romanyuk"
                 },
                 {
                     _id: "55b92ad221e4b7c40f00004f",
@@ -3484,8 +3493,7 @@ define([
                     name: "Roland Katona"
                 },
                 {
-                    _id: "55b92ad221e4b7c40f000031",
-                    name: "Alex Gleba"
+                    name: null
                 }
             ],
             workflow: [
@@ -3810,22 +3818,38 @@ define([
                     name: "Erez Leket"
                 }
             ],
-            projectmanager: [
+            salesmanager: [
                 {
-                    _id: "55b92ad221e4b7c40f0000cb",
-                    name: "Alona Yelahina"
+                    _id: "55b92ad221e4b7c40f0000bb",
+                    name: "Igor Shepinka"
                 },
                 {
-                    _id: "55b92ad221e4b7c40f00005f",
-                    name: "Peter Voloshchuk"
+                    _id: "55b92ad221e4b7c40f0000a0",
+                    name: "Ivan Bilak"
+                },
+                {
+                    _id: "56029cc950de7f4138000005",
+                    name: "Eugen Lendyel"
                 },
                 {
                     _id: "5602a01550de7f4138000008",
                     name: "Yana Dufynets"
                 },
                 {
+                    _id: "55b92ad221e4b7c40f00005f",
+                    name: "Peter Voloshchuk"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f0000cb",
+                    name: "Alona Yelahina"
+                },
+                {
                     _id: "55b92ad221e4b7c40f000063",
                     name: "Yana Gusti"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f00004b",
+                    name: "Roland Katona"
                 },
                 {
                     _id: "55b92ad221e4b7c40f00004a",
@@ -3834,14 +3858,6 @@ define([
                 {
                     _id: "55b92ad221e4b7c40f000040",
                     name: "Vasiliy Almashiy"
-                },
-                {
-                    _id: "55b92ad221e4b7c40f000031",
-                    name: "Alex Gleba"
-                },
-                {
-                    _id: "55b92ad221e4b7c40f00004b",
-                    name: "Roland Katona"
                 },
                 {
                     _id: "561b756f9ebb48212ea838c0",
@@ -3854,10 +3870,6 @@ define([
                 {
                     _id: "55b92ad221e4b7c40f0000a2",
                     name: "Igor Stan"
-                },
-                {
-                    _id: "55b92ad221e4b7c40f0000a0",
-                    name: "Ivan Bilak"
                 }
             ],
             workflow: [
@@ -3868,6 +3880,266 @@ define([
                 {
                     _id: "55647b932e4aa3804a765ec5",
                     name: "Not Invoiced"
+                }
+            ]
+        },
+        Tasks: {
+            _id: null,
+            project: [
+                {
+                    _id: "56e689c75ec71b00429745a9",
+                    name: "360CamSDK"
+                },
+                {
+                    _id: "55cdc96d9b42266a4f000006",
+                    name: "Absolute Vodka"
+                },
+                { }
+            ],
+            summary: [
+                {
+                    _id: "573c65541d8f4ecb4c19a015",
+                    name: "fdsf"
+                },
+                {
+                    _id: "5717661c2c8b789c7a0bb82d",
+                    name: "tttttt"
+                },
+                {
+                    _id: "5350e815c3406b2c09000034",
+                    name: "Weekly sprint 03-07.02.14"
+                },
+                {
+                    _id: "5350e84ec3406b2c09000036",
+                    name: "design"
+                },
+                {
+                    _id: "5350e871c3406b2c09000037",
+                    name: "testing"
+                },
+                {
+                    _id: "5350ea5ac3406b2c0900003a",
+                    name: "new features"
+                },
+                {
+                    _id: "5350eb3fc3406b2c0900003c",
+                    name: "finishing the project"
+                },
+                {
+                    _id: "5350e82bc3406b2c09000035",
+                    name: "wallpapers"
+                },
+                {
+                    _id: "5350ea0dc3406b2c09000038",
+                    name: "finish the design"
+                },
+                {
+                    _id: "56dfd3e78c59375e055e0cc2",
+                    name: "Test"
+                },
+                {
+                    _id: "5350ea3ec3406b2c09000039",
+                    name: "bug fixng"
+                },
+                {
+                    _id: "5350eaabc3406b2c0900003b",
+                    name: "new skins"
+                }
+            ],
+            assignedTo: [
+                {
+                    _id: "55b92ad221e4b7c40f0000bd",
+                    name: "Michael Vashkeba"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f000090",
+                    name: "Gabriella Shterr"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f000030",
+                    name: "Alex Svatuk"
+                }
+            ],
+            workflow: [
+                {
+                    _id: "528ce30cf3f67bc40b00000f",
+                    name: "Fixed"
+                },
+                {
+                    _id: "528ce0cdf3f67bc40b00000c",
+                    name: "New"
+                },
+                {
+                    _id: "528ce131f3f67bc40b00000d",
+                    name: "In Progress"
+                }
+            ],
+            type: [
+                {
+                    _id: "Feature",
+                    name: "Feature"
+                },
+                {
+                    _id: "Bug",
+                    name: "Bug"
+                },
+                {
+                    _id: "Task",
+                    name: "Task"
+                }
+            ]
+        },
+        salesProforma: {
+            _id: null,
+            workflow: [
+                {
+                    _id: "56fabc6b5ad5d96f4fb08eab",
+                    name: "Unpaid"
+                },
+                {
+                    _id: "56fabcf0e71823e438e4e1ca",
+                    name: "Invoiced"
+                },
+                {
+                    _id: "56fabce2e71823e438e4e1c9",
+                    name: "Paid"
+                }
+            ],
+            project: [
+                {
+                    _id: "5731dfc53c171d6620f8affe",
+                    name: "test"
+                },
+                {
+                    _id: "55b92ad621e4b7c40f0006d4",
+                    name: "M-Government"
+                },
+                {
+                    _id: "5715dcfa4b1f720a63ae7e9a",
+                    name: "3DBolus"
+                },
+                {
+                    _id: "563295f6c928c61d052d5003",
+                    name: "WordPress Sites"
+                },
+                {
+                    _id: "56ab891074d57e0d56d6be1f",
+                    name: "Serial Box"
+                },
+                {
+                    _id: "5613b6f0c90e2fb026ce068c",
+                    name: "iTacit"
+                },
+                {
+                    _id: "562beda846bca6e4591f4930",
+                    name: "TreatMe"
+                },
+                {
+                    _id: "56fe645769c37d5903700b20",
+                    name: "Colgate"
+                },
+                {
+                    _id: "55b92ad621e4b7c40f000686",
+                    name: "Sensei"
+                },
+                {
+                    _id: "56e2cc9b74ac46664a83e949",
+                    name: "Backoffice 2.0 Stentle"
+                },
+                {
+                    _id: "571789282c8b789c7a0bb82f",
+                    name: "Richline Jewelry"
+                },
+                {
+                    _id: "569ced3fea21e2ac7d729e18",
+                    name: "MySmallCommunity"
+                },
+                {
+                    _id: "56e292585def9136621b7800",
+                    name: "Casino"
+                },
+                {
+                    _id: "56ab958e74d57e0d56d6be3b",
+                    name: "Planogram"
+                },
+                {
+                    _id: "56a0d60062d172544baf0e3d",
+                    name: "BuddyBet"
+                }
+            ],
+            salesPerson: [
+                {
+                    name: null
+                },
+                {
+                    _id: "55b92ad221e4b7c40f0000a0",
+                    name: "Ivan Bilak"
+                },
+                {
+                    _id: "56029cc950de7f4138000005",
+                    name: "Eugen Lendyel"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f0000a2",
+                    name: "Igor Stan"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f00005f",
+                    name: "Peter Voloshchuk"
+                },
+                {
+                    _id: "56123232c90e2fb026ce064b",
+                    name: "Olga Sikora"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f00004a",
+                    name: "Oleg Ostroverkh"
+                },
+                {
+                    _id: "561b756f9ebb48212ea838c0",
+                    name: "Stanislav Romanyuk"
+                }
+            ],
+            supplier: [
+                {
+                    _id: "55b92ad621e4b7c40f00063c",
+                    name: "DigiPresents "
+                },
+                {
+                    _id: "55ba0301d79a3a343900000d",
+                    name: "#Play "
+                },
+                {
+                    _id: "5717873cc6efb4847a5bc78c",
+                    name: "CEEK VR "
+                },
+                {
+                    _id: "56e291651f2850d361927dd0",
+                    name: "Gil Strauss"
+                },
+                {
+                    _id: "56a0d53b62d172544baf0e3c",
+                    name: "Ivar Liden"
+                },
+                {
+                    _id: "55cf4f834a91e37b0b000102",
+                    name: "SharperBuilds "
+                },
+                {
+                    _id: "5604170eb904af832d000005",
+                    name: "Stentle "
+                },
+                {
+                    _id: "55b92ad621e4b7c40f00064b",
+                    name: "Thomas "
+                },
+                {
+                    _id: "562bed4062461bfd59ef58d1",
+                    name: "TreatMe "
+                },
+                {
+                    _id: "55b92ad621e4b7c40f00063b",
+                    name: "Foxtrapp "
                 }
             ]
         }

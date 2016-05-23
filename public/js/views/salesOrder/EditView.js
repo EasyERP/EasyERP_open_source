@@ -47,7 +47,7 @@ define([
                 keydown                                                           : 'keydownHandler',
                 'click .dialog-tabs a'                                            : 'changeTab',
                 'click .current-selected'                                         : 'showNewSelect',
-                click                                                             : 'hideNewSelect',
+                'click'                                                           : 'hideNewSelect',
                 'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
                 'click .newSelectList li.miniStylePagination'                     : 'notHide',
                 'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
@@ -174,7 +174,6 @@ define([
 
                 $attachment.click();
                 $attachment.hide();
-
             },
 
             uploadAttachment: function (event) {
@@ -308,7 +307,7 @@ define([
 
                                         self.eventChannel && self.eventChannel.trigger('invoiceReceive');
 
-                                    };
+                                    }
 
                                     self.collection.unbind();
                                     self.collection.bind('reset', createView);

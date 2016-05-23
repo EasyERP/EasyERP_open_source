@@ -14286,7 +14286,7 @@ define([
                 var companiesThumbUrl = new RegExp('\/companies\/thumbnails', 'i');
 
                 // open filter dropdown
-                $searchArrow.mouseover();
+                $searchArrow.click();
                 expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
 
                 // select Company Name
@@ -14327,7 +14327,7 @@ define([
                 expect($thisEl.find('.thumbnailwithavatar').length).to.equals(2);
 
                 //close filter dropdown
-                $searchArrow.mouseover();
+                $searchArrow.click();
                 expect($searchContainer.find('.search-options')).to.have.class('hidden');
             });
 
@@ -15226,7 +15226,7 @@ define([
                 createBtn.click();
                 server.respond();
 
-                expect(window.location.hash).to.be.equals('#easyErp/Companies');
+                expect(window.location.hash).to.be.equals('#easyErp/Companies/thumbnails');
             });
         });
 

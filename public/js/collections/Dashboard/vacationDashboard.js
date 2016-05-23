@@ -1,8 +1,9 @@
 ﻿define([
         'Backbone',
         'models/VacationDashboard',
-        'constants'
-], function (Backbone, Model, CONSTANTS) {
+        'constants',
+        'custom'
+], function (Backbone, Model, CONSTANTS, custom) {
         'use strict';
 
         var Collection = Backbone.Collection.extend({

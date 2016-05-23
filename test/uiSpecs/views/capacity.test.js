@@ -6068,15 +6068,6 @@ define([
                 expect(topBarView.$el.find('h3')).to.exist;
                 expect(topBarView.$el.find('h3').text()).to.be.equals('Capacity');
             });
-
-            it('Try to change ContentTypeView', function () {
-                var $templateSwitchBtn = topBarView.$el.find('#listBtn');
-
-                $templateSwitchBtn.click();
-
-                expect(window.location.hash).to.be.equals('#easyErp/Capacity/list');
-            });
-
         });
 
         describe('CapacityView', function () {
@@ -6086,7 +6077,7 @@ define([
             var mainSpy;
 
             before(function () {
-                window.location.hash = '#easyErp/Capacity/list'
+                window.location.hash = '#easyErp/Capacity/list';
 
                 server = sinon.fakeServer.create();
                 windowConfirmStub = sinon.stub(window, 'confirm');
@@ -6160,7 +6151,6 @@ define([
 
                 it('Try to show more collection', function(done){
                     var $thisEl;
-                    var spyResponse;
                     var capacityUrl = new RegExp('\/capacity\/list', 'i');
 
                     server.respondWith('GET', capacityUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCapacity)]);
@@ -6197,7 +6187,6 @@ define([
 
                     $employeeSortBtn.click();
                     expect($thisEl.find('.subRowsWeb').attr('data-id')).to.be.equals('560e2b4bc90e2fb026cdffe8');
-
                 });
 
                 it('Try to create item', function () {
@@ -6221,12 +6210,9 @@ define([
                     $selectedItem.click();
 
                     expect($thisEl.find('.false > td[data-dayid="0"]').text()).to.be.equals('8');
-
                 });
 
                 it('Try to save created item', function () {
-                    var firefoxPattern = new RegExp('firefox', 'i');
-                    var userAgent = navigator.userAgent;
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var capacityUrl = new RegExp('\/capacity\/', 'i');
                     var hashUrlCapacity = new RegExp('#easyErp\/Capacity', 'i');

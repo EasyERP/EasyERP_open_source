@@ -14,6 +14,7 @@ define([
         'views/Filter/FilterView',
         'dataService',
         'constants',
+        'helpers',
     'helpers'
 ], function ($, _, listViewBase, listTemplate, listForWTrack, stagesTamplate, createView, ListItemView, ListTotalView, EditView, QuotationModel, contentCollection, filterView, dataService, CONSTANTS, helpers) {
         'use strict';

@@ -8,12 +8,13 @@
         'views/Tasks/TopBarView',
         'views/Tasks/CreateView',
         'views/Tasks/EditView',
+        'views/Filter/FilterView',
         'jQuery',
         'chai',
         'chai-jquery',
         'sinon-chai',
         'custom'
-    ], function (fixtures, TasksCollection, WorkflowCollection, MainView, ListView, KanBanView, TopBarView, CreateView, EditView, $, chai, chaiJquery, sinonChai, Custom) {
+    ], function (fixtures, TasksCollection, WorkflowCollection, MainView, ListView, KanBanView, TopBarView, CreateView, EditView, FilterView, $, chai, chaiJquery, sinonChai, Custom) {
         'use strict';
         var expect;
 
@@ -515,17 +516,17 @@
                 "ancestors": [],
                 "href": "DashBoardVacation"
             }];
-        var fakeTasks = {
+        var fakeTasks ={
             data: [
                 {
-                    _id: "56fcc88a956d5b400d39ea91",
-                    summary: "Test",
+                    _id: "573c65541d8f4ecb4c19a015",
+                    summary: "fdsf",
                     editedBy: {
-                        date: "2016-03-31T06:49:46.216Z",
+                        date: "2016-05-18T12:51:32.393Z",
                         user: {
                             _id: "52203e707d4dba8813000003",
                             __v: 0,
-                            attachments: [],
+                            attachments: [ ],
                             credentials: {
                                 access_token: "",
                                 refresh_token: ""
@@ -551,7 +552,7 @@
                                     ]
                                 }
                             },
-                            lastAccess: "2016-03-31T06:00:20.887Z",
+                            lastAccess: "2016-05-18T07:28:11.790Z",
                             login: "admin",
                             pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
                             profile: 1387275598000,
@@ -666,17 +667,27 @@
                                     _id: "56dfe8e56e2877d85455a6bb",
                                     viewType: "",
                                     byDefault: "Leads"
+                                },
+                                {
+                                    _id: "56f3d039c1785edc507e81ea",
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: "5708ca211d118cb6401008cc",
+                                    viewType: "",
+                                    byDefault: "Employees"
                                 }
                             ],
                             relatedEmployee: "55b92ad221e4b7c40f00004f"
                         }
                     },
                     createdBy: {
-                        date: "2016-03-31T06:49:46.216Z",
+                        date: "2016-05-18T12:51:32.393Z",
                         user: {
                             _id: "52203e707d4dba8813000003",
                             __v: 0,
-                            attachments: [],
+                            attachments: [ ],
                             credentials: {
                                 access_token: "",
                                 refresh_token: ""
@@ -702,7 +713,7 @@
                                     ]
                                 }
                             },
-                            lastAccess: "2016-03-31T06:00:20.887Z",
+                            lastAccess: "2016-05-18T07:28:11.790Z",
                             login: "admin",
                             pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
                             profile: 1387275598000,
@@ -817,6 +828,16 @@
                                     _id: "56dfe8e56e2877d85455a6bb",
                                     viewType: "",
                                     byDefault: "Leads"
+                                },
+                                {
+                                    _id: "56f3d039c1785edc507e81ea",
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: "5708ca211d118cb6401008cc",
+                                    viewType: "",
+                                    byDefault: "Employees"
                                 }
                             ],
                             relatedEmployee: "55b92ad221e4b7c40f00004f"
@@ -824,12 +845,12 @@
                     },
                     progress: 0,
                     logged: null,
-                    estimated: 8,
+                    estimated: 16,
                     type: "Task",
                     workflow: {
                         _id: "528ce0cdf3f67bc40b00000c",
                         __v: 0,
-                        attachments: [],
+                        attachments: [ ],
                         color: "#2C3E50",
                         name: "New",
                         sequence: 5,
@@ -842,83 +863,20 @@
                         ],
                         visible: true
                     },
-                    EndDate: "2016-03-03T06:00:00.000Z",
-                    StartDate: "2016-03-02T22:00:00.000Z",
+                    EndDate: "2016-05-20T13:00:00.000Z",
+                    StartDate: "2016-05-19T21:00:00.000Z",
                     sequence: 0,
                     tags: [
                         ""
                     ],
                     assignedTo: {
                         _id: "55b92ad221e4b7c40f0000bd",
-                        dateBirth: "1991-04-11T03:00:00.000Z",
+                        dateBirth: "1991-04-05T00:00:00.000Z",
                         ID: 2135,
                         isLead: 0,
-                        fire: [
-                            {
-                                date: "2015-05-11T21:00:00.000Z",
-                                info: "Update",
-                                salary: 350,
-                                jobType: "Full-time",
-                                manager: "55b92ad221e4b7c40f000060",
-                                jobPosition: "55b92acf21e4b7c40f000017",
-                                department: "55b92ace21e4b7c40f000016"
-                            },
-                            {
-                                date: "2015-08-31T21:00:00.000Z",
-                                info: "Update",
-                                salary: 450,
-                                jobType: "Full-time",
-                                manager: "55b92ad221e4b7c40f000060",
-                                jobPosition: "55b92acf21e4b7c40f000017",
-                                department: "55b92ace21e4b7c40f000016"
-                            },
-                            {
-                                date: "2015-10-31T22:00:00.000Z",
-                                info: "Update",
-                                salary: 600,
-                                jobType: "Full-time",
-                                manager: "55b92ad221e4b7c40f000060",
-                                jobPosition: "55b92acf21e4b7c40f000017",
-                                department: "55b92ace21e4b7c40f000016"
-                            }
-                        ],
+                        fire: [ ],
                         hire: [
-                            {
-                                date: "2015-05-11T21:00:00.000Z",
-                                info: "",
-                                salary: 350,
-                                jobType: "Full-time",
-                                manager: "55b92ad221e4b7c40f000060",
-                                jobPosition: "55b92acf21e4b7c40f000017",
-                                department: "55b92ace21e4b7c40f000016"
-                            },
-                            {
-                                date: "2015-08-31T21:00:00.000Z",
-                                info: "",
-                                salary: 450,
-                                jobType: "Full-time",
-                                manager: "55b92ad221e4b7c40f000060",
-                                jobPosition: "55b92acf21e4b7c40f000017",
-                                department: "55b92ace21e4b7c40f000016"
-                            },
-                            {
-                                date: "2015-10-31T22:00:00.000Z",
-                                info: "",
-                                salary: 600,
-                                jobType: "Full-time",
-                                manager: "55b92ad221e4b7c40f000060",
-                                jobPosition: "55b92acf21e4b7c40f000017",
-                                department: "55b92ace21e4b7c40f000016"
-                            },
-                            {
-                                date: "2016-02-29T22:00:00.000Z",
-                                info: "",
-                                salary: 700,
-                                jobType: "Full-time",
-                                manager: "55b92ad221e4b7c40f000060",
-                                jobPosition: "55b92acf21e4b7c40f000017",
-                                department: "55b92ace21e4b7c40f000016"
-                            }
+                            "2015-05-11T21:00:00.000Z"
                         ],
                         social: {
                             FB: "",
@@ -932,9 +890,9 @@
                             date: "2015-07-29T19:34:42.661Z",
                             reason: ""
                         },
-                        attachments: [],
+                        attachments: [ ],
                         editedBy: {
-                            date: "2016-03-11T13:54:05.498Z",
+                            date: "2016-04-05T07:12:56.567Z",
                             user: "55ba2f3ed79a3a343900001d"
                         },
                         createdBy: {
@@ -945,8 +903,8 @@
                         color: "#4d5a75",
                         otherInfo: "",
                         groups: {
-                            group: [],
-                            users: [],
+                            group: [ ],
+                            users: [ ],
                             owner: "55ba28c8d79a3a3439000016"
                         },
                         whoCanRW: "everyOne",
@@ -954,7 +912,7 @@
                         active: false,
                         referredBy: "",
                         source: "",
-                        age: 24,
+                        age: 25,
                         homeAddress: {
                             country: "",
                             zip: "",
@@ -996,41 +954,81 @@
                         subject: "",
                         imageSrc: "data:image/jpeg;base64,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",
                         isEmployee: true,
-                        __v: 0
+                        __v: 0,
+                        transfer: [
+                            {
+                                date: "2015-05-12T01:00:00.000Z",
+                                isDeveloper: true,
+                                info: "",
+                                salary: 350,
+                                jobType: "Full-time",
+                                manager: "55b92ad221e4b7c40f000060",
+                                jobPosition: "55b92acf21e4b7c40f000017",
+                                department: "55b92ace21e4b7c40f000016",
+                                status: "hired",
+                                weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                            },
+                            {
+                                date: "2015-09-01T01:00:00.000Z",
+                                isDeveloper: true,
+                                info: "",
+                                salary: 450,
+                                jobType: "Full-time",
+                                manager: "55b92ad221e4b7c40f000060",
+                                jobPosition: "55b92acf21e4b7c40f000017",
+                                department: "55b92ace21e4b7c40f000016",
+                                status: "updated",
+                                weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                            },
+                            {
+                                date: "2015-11-01T02:00:00.000Z",
+                                isDeveloper: true,
+                                info: "",
+                                salary: 600,
+                                jobType: "Full-time",
+                                manager: "55b92ad221e4b7c40f000060",
+                                jobPosition: "55b92acf21e4b7c40f000017",
+                                department: "55b92ace21e4b7c40f000016",
+                                status: "updated",
+                                weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                            },
+                            {
+                                date: "2016-02-01T02:00:00.000Z",
+                                isDeveloper: true,
+                                info: "",
+                                salary: 700,
+                                jobType: "Full-time",
+                                manager: "55b92ad221e4b7c40f000060",
+                                jobPosition: "55b92acf21e4b7c40f000017",
+                                department: "55b92ace21e4b7c40f000016",
+                                status: "updated",
+                                weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                            }
+                        ],
+                        weeklyScheduler: "57332c3b94ee1140b6bb49e2"
                     },
                     project: {
-                        _id: "562beda846bca6e4591f4930",
-                        StartDate: "2015-10-18T21:00:00.000Z",
+                        _id: "56e689c75ec71b00429745a9",
+                        TargetEndDate: "2016-03-31T00:00:00.000Z",
+                        StartDate: null,
                         budget: {
-                            bonus: [],
                             projectTeam: [
-                                "56e12f5c55a3e27b03061240",
-                                "56e12c2b8af0cbf501828bec",
-                                "56e12eb4d6b3628b02612e43",
-                                "56dffb84b07e2ad226b6893c",
-                                "56dff725a12a4f3c26919c96",
-                                "564cfdd06584412e6184219e",
-                                "56aa209fb4dc0d09232bd7a3",
-                                "56e12f39d40dde6a022319ad",
-                                "56dffb3ca12a4f3c26919c97",
-                                "566424e308ed794128637c24",
-                                "566424cd08ed794128637c23",
-                                "56dfe82f5db22bf954ad1fd0",
-                                "56dfe5de2a7718fe47355966"
-                            ]
+                                "56e6f1ae0d773c634e918b68"
+                            ],
+                            bonus: [ ]
                         },
-                        bonus: [],
+                        bonus: [ ],
                         health: 1,
                         editedBy: {
-                            date: "2016-03-14T17:40:17.881Z",
-                            user: "56239f14e9576d1728a9ed23"
+                            date: "2016-03-14T16:19:02.059Z",
+                            user: "55b9fc0fd79a3a3439000008"
                         },
-                        attachments: [],
-                        notes: [],
+                        attachments: [ ],
+                        notes: [ ],
                         projecttype: "iOs",
                         createdBy: {
-                            date: "2015-10-24T20:44:24.279Z",
-                            user: "55cb7302fea413b50b000007"
+                            date: "2016-03-14T09:52:07.280Z",
+                            user: "55b9fc0fd79a3a3439000008"
                         },
                         progress: 0,
                         remaining: 0,
@@ -1040,121 +1038,43 @@
                         parent: null,
                         sequence: 0,
                         groups: {
-                            group: [],
-                            users: [],
-                            owner: "560c099da5d4a2e20ba5068b"
+                            owner: "560c099da5d4a2e20ba5068b",
+                            users: [ ],
+                            group: [ ]
                         },
                         whoCanRW: "everyOne",
-                        projectmanager: "55b92ad221e4b7c40f00004a",
-                        customer: "562bed4062461bfd59ef58d1",
+                        projectmanager: null,
+                        customer: "56a9eeabd59a04d6225b0df5",
                         task: [
-                            "56fcc88a956d5b400d39ea91"
+                            "5717661c2c8b789c7a0bb82d",
+                            "573c65541d8f4ecb4c19a015"
                         ],
-                        projectName: "TreatMe",
-                        projectShortDesc: "Uber-like app",
+                        projectName: "360CamSDK",
+                        projectShortDesc: "SDK",
                         __v: 0,
-                        EndDate: "2016-03-10T22:00:00.000Z",
-                        TargetEndDate: "",
-                        description: ""
+                        EndDate: "2016-05-20T13:00:00.000Z",
+                        salesmanager: "55b92ad221e4b7c40f00005f"
                     },
-                    taskCount: 1
+                    taskCount: 2
                 },
                 {
-                    _id: "56dfd3e78c59375e055e0cc2",
+                    _id: "5717661c2c8b789c7a0bb82d",
                     editedBy: {
-                        date: "2016-03-11T07:39:26.649Z",
+                        date: "2016-05-16T11:36:15.965Z",
                         user: {
-                            _id: "56d7e73eae35cc4f0e72105b",
-                            profile: 1387275504000,
-                            relatedEmployee: null,
-                            savedFilters: [
-                                {
-                                    _id: "56d800358230197c0e089032",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d8003f8df756130e1e9c9e",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d8005f8230197c0e089033",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d8007818488d9d0e65ae58",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d8009618488d9d0e65ae59",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d800a8ae35cc4f0e721066",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d800c1981edd2e0e737449",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d8014e612326bf0dfdffd9",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d801c48df756130e1e9ca1",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d8037c32e6cca40d256671",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56e667895ec71b0042974587",
-                                    viewType: "",
-                                    byDefault: "DashVacation"
-                                },
-                                {
-                                    _id: "56e66e3ddd81ed4e426c60a5",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56e66e6c81046d9741fb66d6",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56e66e9204f9482d4273ed08",
-                                    viewType: "",
-                                    byDefault: "jobsDashboard"
-                                },
-                                {
-                                    _id: "56e67b59ef05acd9418dff30",
-                                    viewType: "",
-                                    byDefault: ""
-                                }
-                            ],
+                            _id: "55bf144765cda0810b000005",
+                            profile: 1387275598000,
                             kanbanSettings: {
                                 tasks: {
-                                    foldWorkflows: [],
+                                    foldWorkflows: [ ],
                                     countPerPage: 10
                                 },
                                 applications: {
-                                    foldWorkflows: [],
-                                    countPerPage: 20
+                                    foldWorkflows: [ ],
+                                    countPerPage: 5
                                 },
                                 opportunities: {
-                                    foldWorkflows: [],
+                                    foldWorkflows: [ ],
                                     countPerPage: 10
                                 }
                             },
@@ -1162,108 +1082,103 @@
                                 access_token: "",
                                 refresh_token: ""
                             },
-                            pass: "37268335dd6931045bdcdf92623ff819a64244b53d0e746d438797349d4da578",
-                            email: "test@test.com",
-                            login: "testuser",
-                            imageSrc: "data:image/jpeg;base64,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",
+                            pass: "ebe5ffd65e0e1de96e45a13e645646812c9ba15ba57d28a1cc3886365d948c26",
+                            email: "yana.gusti@thinkmobiles.com",
+                            login: "yana.gusti",
+                            imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
                             __v: 0,
-                            lastAccess: "2016-03-17T16:27:18.358Z"
+                            lastAccess: "2016-05-17T13:32:44.013Z",
+                            savedFilters: [
+                                {
+                                    _id: null,
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: null,
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: null,
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: null,
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: "5624c55fe9576d1728a9ed40",
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: "5624c78a25f58a237fd5b4d2",
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: "562df97d129820ab5994e8fb",
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: "562f6e8071c88830607cd587",
+                                    viewType: "",
+                                    byDefault: "salesInvoice"
+                                },
+                                {
+                                    _id: "565c5e853410ae512364dbb1",
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: "566010ba6226e3c43108dbe1",
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: "56618b467d284423697e2bf8",
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: "566191577d284423697e2d88",
+                                    viewType: "",
+                                    byDefault: ""
+                                },
+                                {
+                                    _id: "566e7a4a8453e8b464b70914",
+                                    viewType: "",
+                                    byDefault: "Projects"
+                                },
+                                {
+                                    _id: "56efa708fed15a0833469c69",
+                                    viewType: "",
+                                    byDefault: "wTrack"
+                                }
+                            ],
+                            relatedEmployee: null
                         }
                     },
                     createdBy: {
-                        date: "2016-03-09T07:42:31.415Z",
+                        date: "2016-04-20T11:21:00.114Z",
                         user: {
-                            _id: "56d7e73eae35cc4f0e72105b",
-                            profile: 1387275504000,
-                            relatedEmployee: null,
-                            savedFilters: [
-                                {
-                                    _id: "56d800358230197c0e089032",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d8003f8df756130e1e9c9e",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d8005f8230197c0e089033",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d8007818488d9d0e65ae58",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d8009618488d9d0e65ae59",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d800a8ae35cc4f0e721066",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d800c1981edd2e0e737449",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d8014e612326bf0dfdffd9",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d801c48df756130e1e9ca1",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56d8037c32e6cca40d256671",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56e667895ec71b0042974587",
-                                    viewType: "",
-                                    byDefault: "DashVacation"
-                                },
-                                {
-                                    _id: "56e66e3ddd81ed4e426c60a5",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56e66e6c81046d9741fb66d6",
-                                    viewType: "",
-                                    byDefault: ""
-                                },
-                                {
-                                    _id: "56e66e9204f9482d4273ed08",
-                                    viewType: "",
-                                    byDefault: "jobsDashboard"
-                                },
-                                {
-                                    _id: "56e67b59ef05acd9418dff30",
-                                    viewType: "",
-                                    byDefault: ""
-                                }
-                            ],
+                            _id: "55b9fc0fd79a3a3439000008",
+                            profile: 1438158771000,
                             kanbanSettings: {
                                 tasks: {
-                                    foldWorkflows: [],
+                                    foldWorkflows: [ ],
                                     countPerPage: 10
                                 },
                                 applications: {
-                                    foldWorkflows: [],
-                                    countPerPage: 20
+                                    foldWorkflows: [ ],
+                                    countPerPage: 10
                                 },
                                 opportunities: {
-                                    foldWorkflows: [],
+                                    foldWorkflows: [ ],
                                     countPerPage: 10
                                 }
                             },
@@ -1271,12 +1186,30 @@
                                 access_token: "",
                                 refresh_token: ""
                             },
-                            pass: "37268335dd6931045bdcdf92623ff819a64244b53d0e746d438797349d4da578",
-                            email: "test@test.com",
-                            login: "testuser",
-                            imageSrc: "data:image/jpeg;base64,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",
+                            pass: "ebe5ffd65e0e1de96e45a13e645646812c9ba15ba57d28a1cc3886365d948c26",
+                            email: "peter.voloshchuk@thinkmobiles.com",
+                            login: "peter.volosh",
+                            imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
                             __v: 0,
-                            lastAccess: "2016-03-17T16:27:18.358Z"
+                            lastAccess: "2016-05-05T18:18:26.470Z",
+                            savedFilters: [
+                                {
+                                    _id: "56de8c23da160ef305231c1e",
+                                    viewType: "",
+                                    byDefault: "Leads"
+                                },
+                                {
+                                    _id: "56e671387c22c0704120b1ce",
+                                    viewType: "",
+                                    byDefault: "Projects"
+                                },
+                                {
+                                    _id: "56f6d4e7b50d351f04817c00",
+                                    viewType: "",
+                                    byDefault: "Opportunities"
+                                }
+                            ],
+                            relatedEmployee: null
                         }
                     },
                     progress: 88,
@@ -1284,9 +1217,236 @@
                     estimated: 8,
                     type: "Task",
                     workflow: {
+                        _id: "528ce30cf3f67bc40b00000f",
+                        __v: 0,
+                        attachments: [ ],
+                        color: "#2C3E50",
+                        name: "Fixed",
+                        sequence: 3,
+                        status: "In Progress",
+                        wId: "Tasks",
+                        wName: "task",
+                        source: "task",
+                        targetSource: [
+                            "task"
+                        ],
+                        visible: true
+                    },
+                    EndDate: "2016-04-06T06:00:00.000Z",
+                    StartDate: "2016-04-05T22:00:00.000Z",
+                    sequence: 0,
+                    tags: [
+                        ""
+                    ],
+                    assignedTo: {
+                        _id: "55b92ad221e4b7c40f000090",
+                        dateBirth: "1992-12-20T04:00:00.000Z",
+                        ID: 1105,
+                        isLead: 0,
+                        fire: [ ],
+                        hire: [
+                            "2015-01-21T22:00:00.000Z"
+                        ],
+                        social: {
+                            FB: "",
+                            LI: ""
+                        },
+                        sequence: 0,
+                        jobType: "Full-time",
+                        gender: "male",
+                        marital: "unmarried",
+                        contractEnd: {
+                            date: "2015-07-29T19:34:42.492Z",
+                            reason: ""
+                        },
+                        attachments: [ ],
+                        editedBy: {
+                            date: "2016-04-25T08:39:44.384Z",
+                            user: "56c47f1ed2b48ede4ba42201"
+                        },
+                        createdBy: {
+                            date: "2015-07-29T19:34:42.492Z",
+                            user: "52203e707d4dba8813000003"
+                        },
+                        creationDate: "2015-07-29T19:34:42.492Z",
+                        color: "#4d5a75",
+                        otherInfo: "",
+                        groups: {
+                            group: [ ],
+                            users: [ ],
+                            owner: "55ba28c8d79a3a3439000016"
+                        },
+                        whoCanRW: "everyOne",
+                        workflow: null,
+                        active: false,
+                        referredBy: "",
+                        source: "",
+                        age: 23,
+                        homeAddress: {
+                            country: "",
+                            zip: "",
+                            state: "",
+                            city: "",
+                            street: ""
+                        },
+                        otherId: "",
+                        bankAccountNo: "",
+                        nationality: "",
+                        coach: null,
+                        manager: "55b92ad221e4b7c40f000030",
+                        jobPosition: "561b73fb9ebb48212ea838bf",
+                        department: "55bb1f40cb76ca630b000007",
+                        visibility: "Public",
+                        relatedUser: null,
+                        officeLocation: "",
+                        skype: "sterr.gabriella",
+                        workPhones: {
+                            phone: "",
+                            mobile: "+380662662064"
+                        },
+                        personalEmail: "sterr.gabriella@gmail.com",
+                        workEmail: "gabriella.shterr@thinkmobiles.com",
+                        workAddress: {
+                            country: "",
+                            zip: "",
+                            state: "",
+                            city: "",
+                            street: ""
+                        },
+                        tags: [
+                            ""
+                        ],
+                        name: {
+                            last: "Shterr",
+                            first: "Gabriella"
+                        },
+                        subject: "",
+                        imageSrc: "data:image/jpeg;base64,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",
+                        isEmployee: true,
+                        __v: 0,
+                        transferred: [
+                            {
+                                department: {
+                                    name: "Marketing",
+                                    _id: "55b92ace21e4b7c40f000013"
+                                },
+                                date: "2015-09-28T12:17:45.141Z"
+                            }
+                        ],
+                        transfer: [
+                            {
+                                date: "2015-01-22T02:00:00.000Z",
+                                isDeveloper: false,
+                                info: "",
+                                salary: 0,
+                                jobType: "Full-time",
+                                manager: "55b92ad221e4b7c40f00004f",
+                                jobPosition: "55b92acf21e4b7c40f000025",
+                                department: "55b92ace21e4b7c40f000013",
+                                status: "hired"
+                            },
+                            {
+                                date: "2015-08-31T01:00:00.000Z",
+                                isDeveloper: false,
+                                info: "",
+                                salary: 100,
+                                jobType: "Full-time",
+                                manager: "55b92ad221e4b7c40f00004f",
+                                jobPosition: "55b92acf21e4b7c40f000025",
+                                department: "55b92ace21e4b7c40f000013",
+                                status: "transfer"
+                            },
+                            {
+                                date: "2015-09-01T01:00:00.000Z",
+                                isDeveloper: false,
+                                info: "",
+                                salary: 200,
+                                jobType: "Full-time",
+                                manager: "55b92ad221e4b7c40f000030",
+                                jobPosition: "561b73fb9ebb48212ea838bf",
+                                department: "55bb1f40cb76ca630b000007",
+                                status: "updated"
+                            },
+                            {
+                                date: "2016-02-01T02:00:00.000Z",
+                                isDeveloper: false,
+                                info: "",
+                                salary: 250,
+                                jobType: "Full-time",
+                                manager: "55b92ad221e4b7c40f000030",
+                                jobPosition: "561b73fb9ebb48212ea838bf",
+                                department: "55bb1f40cb76ca630b000007",
+                                status: "updated"
+                            }
+                        ]
+                    },
+                    project: {
+                        _id: "56e689c75ec71b00429745a9",
+                        TargetEndDate: "2016-03-31T00:00:00.000Z",
+                        StartDate: null,
+                        budget: {
+                            projectTeam: [
+                                "56e6f1ae0d773c634e918b68"
+                            ],
+                            bonus: [ ]
+                        },
+                        bonus: [ ],
+                        health: 1,
+                        editedBy: {
+                            date: "2016-03-14T16:19:02.059Z",
+                            user: "55b9fc0fd79a3a3439000008"
+                        },
+                        attachments: [ ],
+                        notes: [ ],
+                        projecttype: "iOs",
+                        createdBy: {
+                            date: "2016-03-14T09:52:07.280Z",
+                            user: "55b9fc0fd79a3a3439000008"
+                        },
+                        progress: 0,
+                        remaining: 0,
+                        logged: 0,
+                        estimated: 0,
+                        workflow: "528ce7f2f3f67bc40b000023",
+                        parent: null,
+                        sequence: 0,
+                        groups: {
+                            owner: "560c099da5d4a2e20ba5068b",
+                            users: [ ],
+                            group: [ ]
+                        },
+                        whoCanRW: "everyOne",
+                        projectmanager: null,
+                        customer: "56a9eeabd59a04d6225b0df5",
+                        task: [
+                            "5717661c2c8b789c7a0bb82d",
+                            "573c65541d8f4ecb4c19a015"
+                        ],
+                        projectName: "360CamSDK",
+                        projectShortDesc: "SDK",
+                        __v: 0,
+                        EndDate: "2016-05-20T13:00:00.000Z",
+                        salesmanager: "55b92ad221e4b7c40f00005f"
+                    },
+                    taskCount: 1,
+                    summary: "tttttt"
+                },
+                {
+                    _id: "56dfd3e78c59375e055e0cc2",
+                    editedBy: {
+                        date: "2016-03-11T07:39:26.649Z"
+                    },
+                    createdBy: {
+                        date: "2016-03-09T07:42:31.415Z"
+                    },
+                    progress: 0,
+                    logged: 0,
+                    estimated: 0,
+                    type: "Task",
+                    workflow: {
                         _id: "528ce0cdf3f67bc40b00000c",
                         __v: 0,
-                        attachments: [],
+                        attachments: [ ],
                         color: "#2C3E50",
                         name: "New",
                         sequence: 5,
@@ -1299,8 +1459,8 @@
                         ],
                         visible: true
                     },
-                    EndDate: "2016-03-31T05:00:00.000Z",
-                    StartDate: "2016-03-30T21:00:00.000Z",
+                    EndDate: "2016-03-09T07:42:31.412Z",
+                    StartDate: "2016-03-09T07:42:31.412Z",
                     sequence: -1,
                     tags: [
                         ""
@@ -1310,36 +1470,9 @@
                         dateBirth: "1981-12-31T23:00:00.000Z",
                         ID: 1,
                         isLead: 2,
-                        fire: [
-                            {
-                                date: "2011-10-10T21:00:00.000Z",
-                                info: "Update",
-                                salary: 1800,
-                                jobType: "fullTime",
-                                manager: "55b92ad221e4b7c40f00004f",
-                                jobPosition: "5643483270bbc2b740ce8a16",
-                                department: "55b92ace21e4b7c40f000012"
-                            }
-                        ],
+                        fire: [ ],
                         hire: [
-                            {
-                                date: "2011-10-10T21:00:00.000Z",
-                                info: "",
-                                salary: 1800,
-                                jobType: "fullTime",
-                                manager: "55b92ad221e4b7c40f00004f",
-                                jobPosition: "5643483270bbc2b740ce8a16",
-                                department: "55b92ace21e4b7c40f000012"
-                            },
-                            {
-                                date: "2014-09-30T21:00:00.000Z",
-                                info: "",
-                                salary: 2000,
-                                jobType: "fullTime",
-                                manager: "55b92ad221e4b7c40f00004f",
-                                jobPosition: "564438d470bbc2b740ce8a1a",
-                                department: "55bb1f40cb76ca630b000007"
-                            }
+                            "2011-10-10T21:00:00.000Z"
                         ],
                         social: {
                             FB: "",
@@ -1353,9 +1486,9 @@
                             date: "2015-07-29T19:34:42.405Z",
                             reason: ""
                         },
-                        attachments: [],
+                        attachments: [ ],
                         editedBy: {
-                            date: "2016-03-11T13:37:17.835Z",
+                            date: "2016-04-06T14:10:52.559Z",
                             user: "55ba2f3ed79a3a343900001d"
                         },
                         createdBy: {
@@ -1366,8 +1499,8 @@
                         color: "#4d5a75",
                         otherInfo: "",
                         groups: {
-                            group: [],
-                            users: [],
+                            group: [ ],
+                            users: [ ],
                             owner: "55ba28c8d79a3a3439000016"
                         },
                         whoCanRW: "everyOne",
@@ -1417,20 +1550,55 @@
                         subject: "",
                         imageSrc: "data:image/jpeg;base64,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",
                         isEmployee: true,
-                        __v: 0
+                        __v: 0,
+                        transfer: [
+                            {
+                                date: "2011-10-11T01:00:00.000Z",
+                                isDeveloper: true,
+                                info: "",
+                                salary: 1800,
+                                jobType: "fullTime",
+                                manager: "55b92ad221e4b7c40f00004f",
+                                jobPosition: "5643483270bbc2b740ce8a16",
+                                department: "55b92ace21e4b7c40f000012",
+                                status: "hired"
+                            },
+                            {
+                                date: "2015-07-31T01:00:00.000Z",
+                                isDeveloper: true,
+                                info: "",
+                                salary: 1800,
+                                jobType: "fullTime",
+                                manager: "55b92ad221e4b7c40f00004f",
+                                jobPosition: "5643483270bbc2b740ce8a16",
+                                department: "55b92ace21e4b7c40f000012",
+                                status: "transfer"
+                            },
+                            {
+                                date: "2015-08-01T01:00:00.000Z",
+                                isDeveloper: true,
+                                info: "",
+                                salary: 2000,
+                                jobType: "fullTime",
+                                manager: "55b92ad221e4b7c40f00004f",
+                                jobPosition: "564438d470bbc2b740ce8a1a",
+                                department: "55bb1f40cb76ca630b000007",
+                                status: "updated"
+                            }
+                        ]
                     },
                     project: {
                         _id: "55cdc96d9b42266a4f000006",
                         TargetEndDate: "2015-08-17T22:00:00.000Z",
-                        StartDate: "2015-08-09T21:00:00.000Z",
-                        bonus: [],
+                        StartDate: null,
+                        bonus: [ ],
                         health: 1,
                         editedBy: {
                             date: "2015-12-04T16:59:53.625Z",
                             user: "55bf144765cda0810b000005"
                         },
-                        attachments: [],
-                        notes: [],
+                        attachments: [ ],
+                        notes: [ ],
                         projecttype: "",
                         createdBy: {
                             date: "2015-08-14T10:56:45.871Z",
@@ -1444,12 +1612,12 @@
                         parent: null,
                         sequence: 0,
                         groups: {
-                            group: [],
-                            users: [],
+                            group: [ ],
+                            users: [ ],
                             owner: "55ba28c8d79a3a3439000016"
                         },
                         whoCanRW: "everyOne",
-                        projectmanager: "55b92ad221e4b7c40f00004b",
+                        projectmanager: null,
                         customer: "55cdc93c9b42266a4f000005",
                         task: [
                             "56dfd3e78c59375e055e0cc2"
@@ -1457,16 +1625,17 @@
                         projectName: "Absolute Vodka",
                         projectShortDesc: "Absolute Vodka",
                         __v: 0,
-                        teams: {},
-                        info: {},
+                        teams: { },
+                        info: { },
                         description: "",
                         budget: {
-                            bonus: [],
+                            bonus: [ ],
                             projectTeam: [
                                 "564cfdd06584412e618421da"
                             ]
                         },
-                        EndDate: "2015-08-27T21:00:00.000Z"
+                        EndDate: null,
+                        salesmanager: "55b92ad221e4b7c40f00004b"
                     },
                     taskCount: 1,
                     summary: "Test"
@@ -6556,16 +6725,19 @@
 
                     });
                     server.respond();
-
-                    expect(window.location.hash).to.be.equals('#login');
                 });
 
                 it('Try to create TopBarView', function () {
                     window.location.hash = '#easyErp/Tasks';
 
                     var tasksUrl = new RegExp('\/Tasks\/list', 'i');
+                    var tasksTotal = new RegExp('\/totalCollectionLength\/Tasks', 'i');
 
                     server.respondWith('GET', tasksUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeTasks)]);
+                    server.respondWith('GET', tasksTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        showMore: false,
+                        count: 3
+                    })]);
                     tasksCollection = new TasksCollection({
                         page: 1,
                         count: 100,
@@ -6573,6 +6745,7 @@
                         viewType: 'list'
 
                     });
+                    server.respond();
                     server.respond();
 
                     topBarView = new TopBarView({
@@ -6596,19 +6769,17 @@
 
                     $listBtn.click();
                     expect(window.location.hash).to.be.equals('#easyErp/Tasks/list');
-
                 });
-
             });
-
 
             describe('Task list view', function () {
                 var server;
                 var windowConfirmStub;
-                var createView;
                 var mainSpy;
                 var windowAlertStub;
                 var clock;
+                var $thisEl;
+                var selectFilterSpy;
 
                 before(function () {
                     App.currentViewType = 'list';
@@ -6619,6 +6790,7 @@
                     windowAlertStub = sinon.stub(window, 'alert');
                     windowAlertStub.returns(true);
                     clock = sinon.useFakeTimers();
+                    selectFilterSpy = sinon.spy(FilterView.prototype, 'selectValue')
                 });
 
                 after(function () {
@@ -6627,6 +6799,7 @@
                     windowConfirmStub.restore();
                     windowAlertStub.restore();
                     clock.restore();
+                    selectFilterSpy.restore();
                 });
 
                 describe('INITIALIZE', function () {
@@ -6642,8 +6815,10 @@
                         });
                         server.respond();
 
-                        expect(listView.$el.find('.list')).to.exist;
-                        expect(listView.$el.find('#searchContainer')).to.exist;
+                        $thisEl = listView.$el;
+
+                        expect($thisEl.find('.list')).to.exist;
+                        expect($thisEl.find('#searchContainer')).to.exist;
 
                         // bind events to topBarView
                         topBarView.bind('copyEvent', listView.copy, listView);
@@ -6662,6 +6837,97 @@
 
                         // bind events to tasksCollection
                         tasksCollection.bind('showmore', listView.showMoreContent, listView);
+                    });
+
+                    it('Try to filter listView', function(){
+                        var $searchContainer = $thisEl.find('#searchContainer');
+                        var $searchArrow = $searchContainer.find('.search-content');
+                        var tasksUrl = new RegExp('\/Tasks\/list', 'i');
+                        var tasksTotal = new RegExp('\/totalCollectionLength\/Tasks', 'i');
+                        var $taskStatus;
+                        var $taskType;
+                        var $selectedItem;
+
+                        // open filter dropdown
+                        $searchArrow.click();
+                        expect($searchContainer.find('.search-options')).to.not.have.class('hidden');
+
+                        // select task status
+                        $taskStatus = $searchContainer.find('#workflowFullContainer > .groupName');
+                        $taskStatus.click();
+                        $selectedItem = $searchContainer.find('#workflowUl > li').first();
+                        server.respondWith('GET', tasksUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data:[
+                            fakeTasks.data[0],
+                            fakeTasks.data[1]
+                        ]})]);
+                        server.respondWith('GET', tasksTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                            showMore: false,
+                            count: 2
+                        })]);
+                        $selectedItem.click();
+                        server.respond();
+                        server.respond();
+
+                        expect(selectFilterSpy.calledOnce).to.be.true;
+                        expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
+
+                        // select task type
+                        $taskType = $searchContainer.find('#typeFullContainer > .groupName');
+                        $taskType.click();
+                        $selectedItem = $searchContainer.find('#typeUl > li').first();
+                        server.respondWith('GET', tasksUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data:[
+                            fakeTasks.data[0]
+                        ]})]);
+                        server.respondWith('GET', tasksTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                            showMore: false,
+                            count: 1
+                        })]);
+                        $selectedItem.click();
+                        server.respond();
+                        server.respond();
+
+                        expect(selectFilterSpy.calledTwice).to.be.true;
+                        expect($thisEl.find('#listTable > tr').length).to.be.equals(1);
+
+                        //unselect task type filter
+                        server.respondWith('GET', tasksUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data:[
+                            fakeTasks.data[0],
+                            fakeTasks.data[1]
+                        ]})]);
+                        server.respondWith('GET', tasksTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                            showMore: false,
+                            count: 2
+                        })]);
+                        $selectedItem.click();
+                        server.respond();
+                        server.respond();
+
+                        expect(selectFilterSpy.calledThrice).to.be.true;
+                        expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
+
+                        // close filter dropdown
+                        $searchArrow.click();
+                        expect($searchContainer.find('.search-options')).to.have.class('hidden');
+                    });
+
+                    it('Try to cancel status filter', function () {
+                        selectFilterSpy.reset();
+
+                        var $searchContainer = $thisEl.find('#searchContainer');
+                        var $deleteFilterBtn = $searchContainer.find('.removeValues');
+                        var tasksUrl = new RegExp('\/Tasks\/list', 'i');
+                        var tasksTotal = new RegExp('\/totalCollectionLength\/Tasks', 'i');
+
+                        server.respondWith('GET', tasksUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeTasks)]);
+                        server.respondWith('GET', tasksTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                            showMore: false,
+                            count: 3
+                        })]);
+                        $deleteFilterBtn.click();
+                        server.respond();
+                        server.respond();
+
+                        expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
                     });
 
                     it('Try to go to ProjectEditView with error', function () {

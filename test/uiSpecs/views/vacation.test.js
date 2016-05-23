@@ -4902,28 +4902,21 @@ define([
                 });
 
                 expect(topBarView.$el.find('.createBtnHolder')).to.exist;
-                expect(topBarView.$el.find('#template-switcher')).to.exist;
             });
-
-            it('Try to switch view type', function () {
-                var $listTemplateBtn = topBarView.$el.find('#listBtn');
-
-                $listTemplateBtn.click();
-                expect(window.location.hash).to.be.equals('#easyErp/Vacation/list');
-            });
-
         });
 
         describe('VacationsView', function () {
             var server;
             var clock;
             var mainSpy;
+            var deleteSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 windowConfirmStub = sinon.stub(window, 'confirm');
                 clock = sinon.useFakeTimers();
                 mainSpy = sinon.spy(App, 'render');
+                deleteSpy = sinon.spy(ListView.prototype, 'deleteItem');
             });
 
             after(function () {
@@ -4931,6 +4924,7 @@ define([
                 windowConfirmStub.restore();
                 clock.restore();
                 mainSpy.restore();
+                deleteSpy.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -4988,7 +4982,7 @@ define([
                     var $listTableEl = listView.$el.find('#listTable');
 
                     createBtn.click();
-                    expect($listTableEl.find('tr:nth-child(1) > td:nth-child(1)').text().trim()).to.be.equals('1\n        Select');
+                    expect($listTableEl.find('tr:nth-child(1) > td:nth-child(1)').text().trim()).to.be.equals('Select');
 
                 });
 
@@ -5058,20 +5052,28 @@ define([
                     expect(listView.$el.find('#listTable > tr:nth-child(2) > td.editable:nth-child(3)')).to.not.have.class('P');
                 });
 
-                it('Try to delete item', function () {
+                it('Try to delete last item in row', function () {
                     var $emptyEl;
                     var $needGrid = listView.$el.find('#listTable > tr:nth-child(5) > td.editable.V.selectedType');
                     var vacationUrl = new RegExp('\/vacation\/', 'i');
+                    var vacationListUrl = new RegExp('\/vacation\/list', 'i');
 
                     windowConfirmStub.returns(true);
-
                     server.respondWith('DELETE', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+
                     $needGrid.click();
                     $emptyEl = listView.$el.find('#content > ul > li:nth-child(1)');
+                    server.respondWith('GET', vacationListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
                     $emptyEl.click();
                     server.respond();
-                    //expect(listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)').text()).to.equals('');
+                    server.respond();
+
+                    expect(deleteSpy.calledOnce).to.be.true;
                 });
+
+                //it('Try to delete employee row', function(){
+                //    var
+                //});
 
                 it('Try to show more with error', function(){
                     var vacationUrl = new RegExp('\/vacation\/list', 'i');

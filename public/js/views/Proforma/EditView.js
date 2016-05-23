@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Proforma/EditTemplate.html',
         'views/Assignees/AssigneesView',
         'views/Notes/AttachView',
@@ -13,7 +16,7 @@ define([
         'constants',
         'helpers'
     ],
-    function (EditTemplate, AssigneesView, attachView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
+    function (Backbone, $, _, EditTemplate, AssigneesView, attachView, InvoiceItemView, wTrackRows, PaymentCreateView, listHederInvoice, common, Custom, dataService, populate, CONSTANTS, helpers) {
         "use strict";
 
         var EditView = Backbone.View.extend({
