@@ -1,0 +1,40 @@
+.submenu(@defaultColor: @bg-submenu ,@activeColor: #FFF, @height: 30px, @bg: @submenu-text-color) {
+  display: block;
+  height: @height;
+  width: auto;
+
+  nav {
+     ul {
+       .clearfix;
+        li {
+        list-style: none;
+        color: @bg;
+        line-height: @height;
+        float: left;
+        display: block;
+        width: 120px;
+        text-align: center;
+        background: @defaultColor;
+        a {
+          color: @bg;
+          font-size: 13px;
+          line-height: @height;
+          display: block;
+          .fullsize;
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+
+        &.selected {
+          position: relative;
+          height: @height;
+          line-height: @height;
+          a {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}

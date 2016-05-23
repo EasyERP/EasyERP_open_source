@@ -836,63 +836,7 @@ input::-ms-clear {
   }
 }
 
-.submenu(@defaultColor: @bg-submenu ,@activeColor: #FFF, @height: 30px, @bg: @submenu-text-color) {
-  display: block;
-  height: @height;
-  width: auto;
 
-  nav {
-    height: @height;
-
-    ul {
-      height: @height;
-
-      li {
-        list-style: none;
-        font-size: 14px;
-        color: @bg;
-        line-height: @height;
-        float: left;
-        display: block;
-        width: 120px;
-        height: @height;
-        text-align: center;
-        background: @defaultColor;
-
-        &.hover {
-          height: @height;
-          line-height: @height;
-
-          a {
-            color: @bg;
-            text-decoration: underline;
-          }
-        }
-
-        a {
-          font-family: 'Lato', Helvetica, Arial, sans-serif;
-          color: @bg;
-          font-size: 12px;
-          line-height: @height;
-          display: block;
-          .fullsize;
-        }
-
-        &.selected {
-          position: relative;
-          height: @height;
-          line-height: @height;
-
-          a {
-            line-height: @height;
-            height: @height;
-            text-decoration: underline;
-          }
-        }
-      }
-    }
-  }
-}
 
 .loginForm(@defaultWidth: 360px, @defaultMargin: 130px auto, @defaultMinHeight: 150px, @defaultBgColor: #fff, @defaultPadding: 20px 0 13px, @font-size: 24px) {
   display: block;
@@ -1369,11 +1313,7 @@ input::-ms-clear {
     h2 {
       width: auto;
       padding: 6px;
-      text-align: left;
-      color: #333333;
-      font-size: 16px;
-      //
-      //text-shadow: 0 1px 0 white;
+      text-align: center;
       white-space: nowrap;
 
       span {
@@ -1389,7 +1329,7 @@ input::-ms-clear {
         span {
           font-weight: normal;
           line-height: 13px;
-          font-size: 13px;
+          font-size: 18px;
         }
       }
     }
@@ -5111,18 +5051,22 @@ textarea#editInput {
           background: @overWork;
           color: @inactivate;
         }
+
         &.green {
           background: @normalWork;
           color: @inactivate;
         }
+
         &.brown {
           background: #5cb85c;
           color: @inactivate;
         }
+
         &.yellow {
           background: @littleWork;
           color: @inactivate;
         }
+
         &.pink {
           background: @oneWorkDay;
           color: @inactivate;
@@ -5133,6 +5077,7 @@ textarea#editInput {
           border-bottom: 1px solid @border-color-main;
           border-left: 1px solid @border-color-main;
         }
+
         &.active {
           border-left: 1px solid @border-color-selected !important;
           border-right: 1px solid @border-color-selected !important;
@@ -5174,6 +5119,7 @@ textarea#editInput {
             padding: 0;
             text-align: center;
             float: left;
+            height: 21px;
             background-color: #bdd7ee;
             color: white;
           }
