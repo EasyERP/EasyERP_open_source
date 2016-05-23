@@ -11,7 +11,7 @@ var connectOptions = {
     j   : true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('144.76.56.111', 'dendb', 28017, connectOptions);
 
 //var dbObject = mongoose.createConnection('localhost', 'production');
 
@@ -29,6 +29,12 @@ var parallelTasks = [function (cb) {
     Module.update({_id: 98}, {mname: "Expenses Payments"}, cb);
 }, function (cb) {
     Module.update({_id: 84}, {mname: "Product Categories"}, cb);
+}, function (cb) {
+    Module.update({_id: 102}, {mname: "Dividend Payments"}, cb);
+}, function (cb) {
+    Module.update({_id: 103}, {mname: "Settings Employee"}, cb);
+}, function (cb) {
+    Module.update({_id: 67}, {mname: "Profit"}, cb);
 }];
 
 async.parallel(parallelTasks, function (err) {

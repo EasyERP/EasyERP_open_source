@@ -1267,7 +1267,7 @@ input::-ms-clear {
       display: block;
       line-height: 18px;
       clear: left;
-
+      color: @black;
     }
   }
 
@@ -1866,13 +1866,13 @@ input::-ms-clear {
         height: 205px;
         margin-top: 8px !important;
         margin-left: 1px;
-        width: 260px;
+        width: 100%;
       }
       &.taskDescriptionEdit {
         height: 188px;
         margin-top: 8px !important;
         margin-left: 1px;
-        width: 230px;
+        width: 100%;
       }
       &.projectDescriptionCreate {
         height: 230px;
@@ -1971,7 +1971,7 @@ input::-ms-clear {
     color: @mainText-color;
 
     &:focus {
-      .box-shadow(0, 0, 5px, @border-color-selected);
+      //.box-shadow(0, 0, 5px, @border-color-selected);
       outline: medium none;
       border: @thin-border @border-color-selected;
     }
@@ -2107,7 +2107,7 @@ input::-ms-clear {
   label {
     font-weight: normal;
     border: none;
-    font-family: Arial, Helvetica, sans-serif;
+    //font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
     display: inline;
     float: none;
@@ -2149,7 +2149,6 @@ input::-ms-clear {
     color: @mainText-color;
 
     &:focus {
-      .box-shadow(0, 0, 5px, @border-color-selected);
       outline: medium none;
       border: @thin-border @border-color-selected;
     }
@@ -3243,7 +3242,7 @@ button.red, a.red {
 
   .info {
     color: @birth-text;
-    background: @fontColor-2;
+    background: @birth-bg;
     margin-left: 160px;
     margin-right: 40px;
     position: relative;
@@ -3256,16 +3255,16 @@ button.red, a.red {
     }
 
     &:after {
-      right: 100%;
-      border: solid @birth-bg;
       content: " ";
+      position: absolute;
+      right: 100%;
+      top: 19px;
       height: 0;
       width: 0;
-      position: absolute;
       pointer-events: none;
-      border-right-color: @fontColor-2;
-      border-width: 10px;
-      top: 19px;
+      border-top: 10px solid transparent;
+      border-right: 20px solid @birth-bg;
+      border-bottom: 10px solid transparent;
     }
 
     .top {
@@ -4166,6 +4165,8 @@ ul.chart-tabs {
 .axis {
   text {
     font: 14px sans-serif;
+    color: @text-color-svg;
+    fill: @text-color-svg !important;
   }
 
   path, line {
@@ -5349,7 +5350,7 @@ textarea#editInput {
       border-bottom: none;
 
       &:nth-child(even) {
-        background-color: @dashBoard-bg-color;
+        //background-color: @dashBoard-bg-color;
       }
 
       td {
@@ -5683,13 +5684,17 @@ textarea#editInput {
     }
 
     .y.axis .tick line {
-      stroke-width: 0;
-      stroke: transparent;
+      stroke-width: 1;
+      stroke: #000 !important;
     }
 
     .y.axis .tick text {
       font-size: 11px;
-      fill: #fff;
+      fill: @text-color-svg;
+    }
+
+    .axesName {
+      fill: @text-color-svg;
     }
 
     .domain {
@@ -6335,7 +6340,7 @@ textarea#editInput {
             border-color: @mainText-color;
             display: block;
             height: 5px;
-            right: 10%;
+            right: 5%;
             top: 5px;
             position: absolute;
             width: 5px;
@@ -6617,7 +6622,7 @@ textarea#editInput {
   }
   .chartContainer {
     .domain {
-      stroke: #fff !important;
+      stroke: @main-color-svg !important;
     }
   }
 }
@@ -6651,7 +6656,7 @@ textarea#editInput {
     }
   }
   .choseDateItem {
-    border: 1px solid @list-border-color;
+    border: 1px solid @border-color-main;
     button {
       background: #fff;
       color: #4d5a75;

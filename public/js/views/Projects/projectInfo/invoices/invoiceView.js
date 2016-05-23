@@ -85,6 +85,7 @@ define([
         },
 
         chooseOption: function (e) {
+            var self = this;
             var target$ = $(e.target);
             var targetElement = target$.parents("td");
             var targetTr = target$.parents("tr");
@@ -324,7 +325,7 @@ define([
             sortObject[sortBy] = sortConst;
 
             this.fetchSortCollection(sortObject);
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+            // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
         },
 
         checked: function (e) {

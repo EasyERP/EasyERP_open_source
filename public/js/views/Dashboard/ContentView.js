@@ -272,6 +272,9 @@ define([
 
                 $(".leadChart").empty();
                 common.getLeadsForChart(null, this.dateRange, this.dateItem, function (data) {
+                    var maxval = d3.max(data, function (d) {
+                        return d.count;
+                    });
                     $("#timeBuildingDataFromServer").text("Server response in " + self.buildTime + " ms");
                     var margin = {top: 20, right: 160, bottom: 190, left: 160},
                         width = $("#wrapper").width() - margin.left - margin.right,
@@ -306,6 +309,7 @@ define([
 
                     var yAxis = d3.svg.axis()
                         .scale(y)
+                        .ticks(maxval)
                         .orient("left");
 
                     var yAxis2 = d3.svg.axis()
@@ -448,12 +452,12 @@ define([
                         }
                         dataAll.push(({source: unicSource[z], count: d1 + d2}));
                     }
-                    var maxval = d3.max(data1, function (d) {
+                    maxval = d3.max(data1, function (d) {
                         return d.count;
                     });
                     data1 = dataAll;
                     var scale = 1;
-                    var maxval = d3.max(data1, function (d) {
+                    maxval = d3.max(data1, function (d) {
                             return d.count;
                         }) * scale;
                     var minval2 = d3.min(percent, function (d) {

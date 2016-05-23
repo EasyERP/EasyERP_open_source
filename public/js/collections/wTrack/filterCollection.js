@@ -15,13 +15,17 @@
             contentType : null,
 
             initialize: function (options) {
-                options = options || {};
-
-                this.startTime = new Date();
                 var that = this;
+
+                options = options || {};
+                this.startTime = new Date();
+                
+                this.startTime = new Date();
                 this.namberToShow = options.count || 100;
 
-                if (options && options.viewType) {
+                if (options && options.url) {
+                    this.url = options.url;
+                } else if (options && options.viewType) {
                     this.viewType = options.viewType || 'list';
                     this.url += this.viewType;
                 }
@@ -43,7 +47,7 @@
                         }
                         if (xhr.status === 403) {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: 'No access'
                             });
                         }

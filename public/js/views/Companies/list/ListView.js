@@ -21,10 +21,10 @@ define([
             contentCollection       : contentCollection,
             filterView              : filterView,
             contentType             : "Companies",
-            totalCollectionLengthUrl: '/customers/totalCollectionLength',
+            totalCollectionLengthUrl: '/totalCollectionLength/Companies',
             formUrl                 : "#easyErp/Companies/form/",
-            exportToXlsxUrl         : '/Customers/exportToXlsx?type=Company',
-            exportToCsvUrl          : '/Customers/exportToCsv?type=Company',
+            exportToXlsxUrl         : '/Customers/exportToXlsx/?type=Companies',
+            exportToCsvUrl          : '/Customers/exportToCsv/?type=Companies',
 
             events: {
                 "click .letter:not(.empty)": "alpabeticalRender"
@@ -48,6 +48,30 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
+            },
+
+            exportToXlsx: function () {
+                var tempExportToXlsxUrl = '';
+
+                if (this.exportToXlsxUrl) {
+                    tempExportToXlsxUrl = this.exportToXlsxUrl;
+                    if (this.filter) {
+                        tempExportToXlsxUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = tempExportToXlsxUrl;
+                }
+            },
+
+            exportToCsv: function () {
+                var tempExportToCsvUrl = '';
+
+                if (this.exportToCsvUrl) {
+                    tempExportToCsvUrl = this.exportToCsvUrl;
+                    if (this.filter) {
+                        tempExportToCsvUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
+                    }
+                    window.location = tempExportToCsvUrl;
+                }
             },
 
             render: function () {
