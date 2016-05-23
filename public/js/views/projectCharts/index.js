@@ -24,7 +24,7 @@ define([
 
             var WIDTH = $chartContainer.width();
             var HEIGH = $chartContainer.height();
-            var BAR_WIDTH = 20;
+            var BAR_WIDTH = 35;
             var data = this.data;
             data = [
                 {
@@ -36,7 +36,7 @@ define([
                     value: data.revenue
                 }
             ];
-            var margin = {top: 20, right: 70, bottom: 50, left: 100};
+            var margin = {top: 30, right: 10, bottom: 30, left: 100};
             var width = WIDTH - margin.left - margin.right;
             var height = HEIGH - margin.top - margin.bottom;
             var topChart = d3.select("#chart");
@@ -89,9 +89,14 @@ define([
                 .attr("y", function (d) {
                     return y(d.field);
                 })
-                .attr("height", y.rangeBand())
+                .attr("height", BAR_WIDTH)
                 .attr("width", function (d) {
                     return x(d.value/100);
+                });
+
+            topChart.selectAll(".x .tick line")
+                .attr("y2", function () {
+                    return -height;
                 });
         },
 
