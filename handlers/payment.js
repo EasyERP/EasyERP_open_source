@@ -162,10 +162,10 @@ var Payment = function (models, event) {
 
                 if (access) {
 
-                    count = parseInt(req.query.count, 10) || MAIN_CONSTANTS.DEF_LIST_COUNT;
+                    count = parseInt(req.query.count, 10);// || MAIN_CONSTANTS.DEF_LIST_COUNT;
                     page = parseInt(req.query.page, 10);
 
-                    count = count > MAIN_CONSTANTS.MAX_COUNT ? MAIN_CONSTANTS.MAX_COUNT : count;
+                   // count = count > MAIN_CONSTANTS.MAX_COUNT ? MAIN_CONSTANTS.MAX_COUNT : count;
                     skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     if (req.query.sort) {

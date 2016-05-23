@@ -21,7 +21,7 @@ var connectOptions = {
 };
 
 //var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
-var dbObject = mongoose.createConnection('localhost', 'alex', 28017, connectOptions);
+var dbObject = mongoose.createConnection('144.76.56.111', 'alex', 28017, connectOptions);
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
@@ -100,6 +100,10 @@ dbObject.once('open', function callback() {
                             date: new Date()
                         };
 
+                        if (debitObject.currency && debitObject.currency.rate) {
+                            debitObject.debit *= debitObject.currency.rate;
+                        }
+
                         if (amount && moment(debitObject.date).isBefore(now)) {
                             journalEntry = new Model(debitObject);
                             journalEntry.save(parallelCb);
@@ -123,6 +127,10 @@ dbObject.once('open', function callback() {
                             user: uId,
                             date: new Date()
                         };
+
+                        if (creditObject.currency && creditObject.currency.rate) {
+                            creditObject.credit *= creditObject.currency.rate;
+                        }
 
                         if (amount && moment(debitObject.date).isBefore(now)) {
                             journalEntry = new Model(creditObject);
