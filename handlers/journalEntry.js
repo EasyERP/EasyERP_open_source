@@ -27,6 +27,11 @@ var Module = function (models, event) {
     var access = require("../Modules/additions/access.js")(models);
     var CONSTANTS = require("../constants/mainConstants.js");
 
+    var matchObject = {};
+
+    matchObject[CONSTANTS.PRODUCT_SALES] = 'credit';
+    matchObject[CONSTANTS.COGS] = 'debit';
+
     var notDevArray = CONSTANTS.NOT_DEV_ARRAY;
 
     var lookupWTrackArray = [
@@ -51,7 +56,7 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
-                debit         : {$divide: ['$debit', '$currency.rate']},
+                debit         : 1,
                 journal       : {$arrayElemAt: ["$journal", 0]},
                 account       : {$arrayElemAt: ["$account", 0]},
                 sourceDocument: 1,
@@ -139,7 +144,7 @@ var Module = function (models, event) {
         }
     }, {
         $project: {
-            debit               : {$divide: ['$debit', '$currency.rate']},
+            debit               : 1,
             journal             : {$arrayElemAt: ["$journal", 0]},
             account             : {$arrayElemAt: ["$account", 0]},
             'sourceDocument._id': {$arrayElemAt: ["$sourceDocument._id", 0]},
@@ -218,7 +223,7 @@ var Module = function (models, event) {
         }
     }, {
         $project: {
-            debit                 : {$divide: ['$debit', '$currency.rate']},
+            debit                 : 1,
             currency              : 1,
             journal               : {$arrayElemAt: ["$journal", 0]},
             account               : {$arrayElemAt: ["$account", 0]},
@@ -301,7 +306,7 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
-                debit                 : {$divide: ['$debit', '$currency.rate']},
+                debit                 : 1,
                 currency              : 1,
                 journal               : {$arrayElemAt: ["$journal", 0]},
                 account               : {$arrayElemAt: ["$account", 0]},
@@ -383,7 +388,7 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
-                debit                 : {$divide: ['$debit', '$currency.rate']},
+                debit                 : 1,
                 currency              : 1,
                 journal               : {$arrayElemAt: ["$journal", 0]},
                 account               : {$arrayElemAt: ["$account", 0]},
@@ -1312,7 +1317,7 @@ var Module = function (models, event) {
         var year = parseInt(query.year, 10);
         var startDate = moment().year(year).month(month - 1).startOf('month');
         var localDate = moment().year(year).month(month - 1).endOf('month');
-        //var endDate = moment(localDate).add(3, 'hours');
+        var jeDate = moment(localDate).subtract(3, 'hours');
         var waterlallTasks;
         var productSales;
         var COGS;
@@ -1349,7 +1354,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CREDIT_IS,
-                        date          : new Date(localDate),
+                        date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth',
                             _id  : null
@@ -1390,7 +1395,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_COGS,
-                        date          : new Date(localDate),
+                        date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth',
                             _id  : null
@@ -1429,7 +1434,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_VAC_EXP,
-                        date          : new Date(localDate),
+                        date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1467,7 +1472,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_IDLE_EXP,
-                        date          : new Date(localDate),
+                        date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1505,7 +1510,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_ADMIN_EXP,
-                        date          : new Date(localDate),
+                        date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1548,7 +1553,7 @@ var Module = function (models, event) {
                     var body = {
                         currency      : CONSTANTS.CURRENCY_USD,
                         journal       : CONSTANTS.CLOSE_ADMIN_BUD,
-                        date          : new Date(localDate),
+                        date          : new Date(jeDate),
                         sourceDocument: {
                             model: 'closeMonth'
                         },
@@ -1596,7 +1601,7 @@ var Module = function (models, event) {
                 var body = {
                     currency      : CONSTANTS.CURRENCY_USD,
                     journal       : CONSTANTS.RETAINED_EARNINGS,
-                    date          : new Date(localDate),
+                    date          : new Date(jeDate),
                     sourceDocument: {
                         model: 'closeMonth'
                     },
@@ -3182,6 +3187,10 @@ var Module = function (models, event) {
                         date: new Date(date)
                     };
 
+                    if (debitObject.currency && debitObject.currency.rate) {
+                        debitObject.debit *= debitObject.currency.rate;
+                    }
+
                     if (amount && moment(debitObject.date).isBefore(now)) {
                         journalEntry = new Model(debitObject);
                         journalEntry.save(parallelCb);
@@ -3206,7 +3215,11 @@ var Module = function (models, event) {
                         date: new Date(date)
                     };
 
-                    if (amount && moment(debitObject.date).isBefore(now)) {
+                    if (creditObject.currency && creditObject.currency.rate) {
+                        creditObject.credit *= creditObject.currency.rate;
+                    }
+
+                    if (amount && moment(creditObject.date).isBefore(now)) {
                         journalEntry = new Model(creditObject);
                         journalEntry.save(parallelCb);
                     } else {
@@ -3339,6 +3352,10 @@ var Module = function (models, event) {
                             date: new Date()
                         };
 
+                        if (debitObject.currency && debitObject.currency.rate) {
+                            debitObject.debit *= debitObject.currency.rate;
+                        }
+
                         if (amount && moment(debitObject.date).isBefore(now)) {
                             journalEntry = new Model(debitObject);
                             journalEntry.save(parallelCb);
@@ -3362,6 +3379,10 @@ var Module = function (models, event) {
                             user: uId,
                             date: new Date()
                         };
+
+                        if (creditObject.currency && creditObject.currency.rate) {
+                            creditObject.credit *= creditObject.currency.rate;
+                        }
 
                         if (amount && moment(debitObject.date).isBefore(now)) {
                             journalEntry = new Model(creditObject);
@@ -3477,7 +3498,7 @@ var Module = function (models, event) {
                             }
                         }, {
                             $project: {
-                                debit               : {$divide: ['$debit', '$currency.rate']},
+                                debit               : 1,
                                 currency            : 1,
                                 journal             : {$arrayElemAt: ["$journal", 0]},
                                 'sourceDocument._id': {$arrayElemAt: ["$sourceDocument._id", 0]}
@@ -3524,7 +3545,7 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            debit         : {$divide: ['$debit', '$currency.rate']},
+                            debit         : 1,
                             journal       : {$arrayElemAt: ["$journal", 0]},
                             sourceDocument: 1
                         }
@@ -3579,7 +3600,7 @@ var Module = function (models, event) {
                         }
                     }, {
                         $project: {
-                            debit               : {$divide: ['$debit', '$currency.rate']},
+                            debit               : 1,
                             journal             : {$arrayElemAt: ["$journal", 0]},
                             'sourceDocument._id': {$arrayElemAt: ["$sourceDocument._id", 0]}
                         }
@@ -3855,8 +3876,8 @@ var Module = function (models, event) {
         }, {
             $project: {
                 date   : 1,
-                debit  : {$divide: ['$debit', '$currency.rate']},
-                credit : {$divide: ['$credit', '$currency.rate']},
+                debit  : 1,
+                credit : 1,
                 journal: 1
             }
         }, {
@@ -3894,12 +3915,23 @@ var Module = function (models, event) {
         });
     };
 
+    function matchEditor(account, match) {
+        var accountName = matchObject[account];
+
+        if (accountName){
+            match[accountName] = {$gt: 0};
+        }
+
+        return match;
+    }
+
     this.getAsyncDataForGL = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var query = req.query;
         var account = query._id;
         var startDate = query.startDate;
         var endDate = query.endDate;
+        var contentType = query.contentType;
 
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
@@ -3911,6 +3943,10 @@ var Module = function (models, event) {
             },
             account: objectId(account)
         };
+
+        if (!contentType){
+            match = matchEditor(account, match);
+        }
 
         if (!account) {
             return res.status(200).send({journalEntries: []});
@@ -3929,8 +3965,8 @@ var Module = function (models, event) {
         }, {
             $project: {
                 date   : 1,
-                debit  : {$divide: ['$debit', '$currency.rate']},
-                credit : {$divide: ['$credit', '$currency.rate']},
+                debit  : 1,
+                credit : 1,
                 account: 1
             }
         }, {
@@ -3987,7 +4023,7 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     date          : 1,
-                    debit         : {$divide: ['$debit', '$currency.rate']},
+                    debit         : 1,
                     sourceDocument: 1,
                     journal       : {$arrayElemAt: ["$journal", 0]}
                 }
@@ -4114,8 +4150,8 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    credit : {$divide: ['$credit', '$currency.rate']},
-                    debit  : {$divide: ['$debit', '$currency.rate']},
+                    credit : 1,
+                    debit  : 1,
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
@@ -4166,8 +4202,8 @@ var Module = function (models, event) {
                     }
                 }, {
                     $project: {
-                        credit : {$divide: ['$credit', '$currency.rate']},
-                        debit  : {$divide: ['$debit', '$currency.rate']},
+                        credit : 1,
+                        debit  : 1,
                         account: {$arrayElemAt: ["$account", 0]}
                     }
                 }, {
@@ -4216,8 +4252,8 @@ var Module = function (models, event) {
                     }
                 }, {
                     $project: {
-                        credit : {$divide: ['$credit', '$currency.rate']},
-                        debit  : {$divide: ['$debit', '$currency.rate']},
+                        credit : 1,
+                        debit  : 1,
                         account: {$arrayElemAt: ["$account", 0]}
                     }
                 }, {
@@ -4273,8 +4309,8 @@ var Module = function (models, event) {
                     }
                 }, {
                     $project: {
-                        debit  : {$divide: ['$debit', '$currency.rate']},
-                        credit : {$divide: ['$credit', '$currency.rate']},
+                        debit  : 1,
+                        credit : 1,
                         account: {$arrayElemAt: ["$account", 0]}
                     }
                 }, {
@@ -4314,7 +4350,7 @@ var Module = function (models, event) {
 
                 var newResult = _.union(result[0], result[2]);
 
-                if (!replaceToAssets){
+                if (!replaceToAssets) {
                     newResult = _.union(newResult, result[1]);
                 } else {
                     resultLiabilities = result[1];
@@ -4343,8 +4379,8 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     date   : 1,
-                    debit  : {$divide: ['$debit', '$currency.rate']},
-                    credit : {$divide: ['$credit', '$currency.rate']},
+                    debit  : 1,
+                    credit : 1,
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
@@ -4389,7 +4425,7 @@ var Module = function (models, event) {
 
             var assetsArray = result[0];
 
-            if (resultLiabilities){
+            if (resultLiabilities) {
                 assetsArray = _.union(assetsArray, resultLiabilities);
             }
 
@@ -4418,7 +4454,7 @@ var Module = function (models, event) {
                 $group: {
                     _id: null,
                     sum: {
-                        $sum: {$divide: ['$debit', '$currency.rate']}
+                        $sum: '$debit'
                     }
                 }
             }], function (err, result) {
@@ -4442,7 +4478,7 @@ var Module = function (models, event) {
                 $group: {
                     _id: null,
                     sum: {
-                        $sum: {$divide: ['$credit', '$currency.rate']}
+                        $sum: '$credit'
                     }
                 }
             }], function (err, result) {
@@ -4490,7 +4526,7 @@ var Module = function (models, event) {
                 $group: {
                     _id: null,
                     sum: {
-                        $sum: {$divide: ['$credit', '$currency.rate']}
+                        $sum: '$credit'
                     }
                 }
             }], function (err, result) {
@@ -4576,76 +4612,77 @@ var Module = function (models, event) {
                     return wfCb(err);
                 }
 
-                    var jobs = [];
+                var jobs = [];
 
-                    result.forEach(function (el) {
-                        jobs.push(el._id);
-                    });
-
-                    wfCb(null, jobs);
+                result.forEach(function (el) {
+                    jobs.push(el._id);
                 });
-            };
 
-            composeReport = function (jobs, wfCb) {
-                var parallelTasks;
+                wfCb(null, jobs);
+            });
+        };
 
-                var getOpening = function (pCb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {$lt: startDate},
-                            debit: {$gt: 0},
-                            "sourceDocument._id": {$in: jobs}
-                        }
-                    }, {
-                        $project: {
-                            sourceDocument: 1,
-                            debit: 1
-                        }
-                    }, {
-                        $group: {
-                            _id: '$sourceDocument._id',
-                            debit: {$sum: '$debit'}
-                        }
-                    }, {
-                        $lookup: {
-                            from: "jobs",
-                            localField: "_id",
-                            foreignField: "_id",
-                            as: "_id"
-                        }
-                    }, {
-                        $project: {
-                            _id: {$arrayElemAt: ['$_id', 0]},
-                            debit: 1
-                        }
-                    }, {
-                        $lookup: {
-                            from: "Project",
-                            localField: "_id.project",
-                            foreignField: "_id",
-                            as: "project"
-                        }
-                    }, {
-                        $project: {
-                            _id: '$_id._id',
-                            name: '$_id.name',
-                            project: {$arrayElemAt: ['$project', 0]},
-                            debit: 1
-                        }
-                    }, {
-                        $lookup: {
-                            from: "Employees",
-                            localField: "project.salesmanager",
-                            foreignField: "_id",
-                            as: "salesmanager"
-                        }
-                    }, {
-                        $project: {
-                            _id: 1,
-                            name: 1,
-                            project: 1,
-                            debit: 1,
-                            salesmanager: {$arrayElemAt: ['$salesmanager', 0]}
+        composeReport = function (jobs, wfCb) {
+            var parallelTasks;
+
+            var getOpening = function (pCb) {
+                Model.aggregate([{
+                    $match: {
+                        date                  : {$lt: startDate},
+                        debit                 : {$gt: 0},
+                        "sourceDocument._id"  : {$in: jobs},
+                        "sourceDocument.model": 'wTrack'
+                    }
+                }, {
+                    $project: {
+                        sourceDocument: 1,
+                        debit         : 1
+                    }
+                }, {
+                    $group: {
+                        _id  : '$sourceDocument._id',
+                        debit: {$sum: '$debit'}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "jobs",
+                        localField  : "_id",
+                        foreignField: "_id",
+                        as          : "_id"
+                    }
+                }, {
+                    $project: {
+                        _id  : {$arrayElemAt: ['$_id', 0]},
+                        debit: 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Project",
+                        localField  : "_id.project",
+                        foreignField: "_id",
+                        as          : "project"
+                    }
+                }, {
+                    $project: {
+                        _id    : '$_id._id',
+                        name   : '$_id.name',
+                        project: {$arrayElemAt: ['$project', 0]},
+                        debit  : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "project.salesmanager",
+                        foreignField: "_id",
+                        as          : "salesmanager"
+                    }
+                }, {
+                    $project: {
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        salesmanager: {$arrayElemAt: ['$salesmanager', 0]}
 
                     }
                 }, {
@@ -4661,66 +4698,67 @@ var Module = function (models, event) {
                         return pCb(err);
                     }
 
-                        pCb(null, result || []);
-                    });
-                };
+                    pCb(null, result || []);
+                });
+            };
 
-                var getInwards = function (pCb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {$lte: endDate, $gte: startDate},
-                            debit: {$gt: 0},
-                            "sourceDocument._id": {$in: jobs}
-                        }
-                    }, {
-                        $project: {
-                            sourceDocument: 1,
-                            debit: 1
-                        }
-                    }, {
-                        $group: {
-                            _id: '$sourceDocument._id',
-                            debit: {$sum: '$debit'}
-                        }
-                    }, {
-                        $lookup: {
-                            from: "jobs",
-                            localField: "_id",
-                            foreignField: "_id", as: "_id"
-                        }
-                    }, {
-                        $project: {
-                            _id: {$arrayElemAt: ['$_id', 0]},
-                            debit: 1
-                        }
-                    }, {
-                        $lookup: {
-                            from: "Project",
-                            localField: "_id.project",
-                            foreignField: "_id",
-                            as: "project"
-                        }
-                    }, {
-                        $project: {
-                            _id: '$_id._id',
-                            name: '$_id.name',
-                            project: {$arrayElemAt: ['$project', 0]},
-                            debit: 1
-                        }
-                    }, {
-                        $lookup: {
-                            from: "Employees",
-                            localField: "project.salesmanager",
-                            foreignField: "_id",
-                            as: "salesmanager"
-                        }
-                    }, {
-                        $project: {
-                            _id: 1,
-                            name: 1,
-                            project: 1,
-                            debit: 1,
-                            salesmanager: {$arrayElemAt: ['$salesmanager', 0]}
+            var getInwards = function (pCb) {
+                Model.aggregate([{
+                    $match: {
+                        date                  : {$lte: endDate, $gte: startDate},
+                        debit                 : {$gt: 0},
+                        "sourceDocument._id"  : {$in: jobs},
+                        "sourceDocument.model": 'wTrack'
+                    }
+                }, {
+                    $project: {
+                        sourceDocument: 1,
+                        debit         : 1
+                    }
+                }, {
+                    $group: {
+                        _id  : '$sourceDocument._id',
+                        debit: {$sum: '$debit'}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "jobs",
+                        localField  : "_id",
+                        foreignField: "_id", as: "_id"
+                    }
+                }, {
+                    $project: {
+                        _id  : {$arrayElemAt: ['$_id', 0]},
+                        debit: 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Project",
+                        localField  : "_id.project",
+                        foreignField: "_id",
+                        as          : "project"
+                    }
+                }, {
+                    $project: {
+                        _id    : '$_id._id',
+                        name   : '$_id.name',
+                        project: {$arrayElemAt: ['$project', 0]},
+                        debit  : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : "Employees",
+                        localField  : "project.salesmanager",
+                        foreignField: "_id",
+                        as          : "salesmanager"
+                    }
+                }, {
+                    $project: {
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        salesmanager: {$arrayElemAt: ['$salesmanager', 0]}
 
                     }
                 }, {
@@ -4737,9 +4775,9 @@ var Module = function (models, event) {
                         return pCb(err);
                     }
 
-                        pCb(null, result || []);
-                    });
-                };
+                    pCb(null, result || []);
+                });
+            };
 
             var getOutwards = function (pCb) {
                 Model.aggregate([{
@@ -4774,9 +4812,9 @@ var Module = function (models, event) {
                         return pCb(err);
                     }
 
-                        pCb(null, result || []);
-                    });
-                };
+                    pCb(null, result || []);
+                });
+            };
 
             parallelTasks = [getOpening, getInwards, getOutwards];
 
@@ -4809,7 +4847,7 @@ var Module = function (models, event) {
                     newElement.salesmanager = opening ? opening.salesmanager : (inwards ? inwards.salesmanager : '');
 
                     newElement.project = project ? project._id : null;
-                    newElement.projectName = project ? project.projectName: "-----";
+                    newElement.projectName = project ? project.projectName : "-----";
 
                     newElement.openingBalance = opening ? opening.debit / 100 : 0;
                     newElement.inwards = inwards ? inwards.debit / 100 : 0;
@@ -4878,105 +4916,105 @@ var Module = function (models, event) {
                     return wfCb(err);
                 }
 
-                    var jobs = [];
+                var jobs = [];
 
-                    result.forEach(function (el) {
-                        jobs.push(el._id);
-                    });
+                result.forEach(function (el) {
+                    jobs.push(el._id);
+                });
 
 
-                    wfCb(null, jobs);
+                wfCb(null, jobs);
+            });
+        };
+
+        composeReport = function (jobs, wfCb) {
+            var parallelTasks;
+
+            var getOpening = function (pCb) {
+                Model.aggregate([{
+                    $match: {
+                        date                : {$lt: startDate},
+                        debit               : {$gt: 0},
+                        "sourceDocument._id": {$in: jobs}
+                    }
+                }, {
+                    $project: {
+                        sourceDocument: 1,
+                        debit         : 1
+                    }
+                }, {
+                    $group: {
+                        _id  : '$sourceDocument._id',
+                        debit: {$sum: '$debit'}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "jobs",
+                        localField  : "_id",
+                        foreignField: "_id", as: "_id"
+                    }
+                }, {
+                    $project: {
+                        _id  : {$arrayElemAt: ['$_id', 0]},
+                        debit: 1
+                    }
+                }, {
+                    $project: {
+                        _id  : '$_id._id',
+                        name : '$_id.name',
+                        debit: 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pCb(err);
+                    }
+
+                    pCb(null, result || []);
                 });
             };
 
-            composeReport = function (jobs, wfCb) {
-                var parallelTasks;
+            var getInwards = function (pCb) {
+                Model.aggregate([{
+                    $match: {
+                        date                : {$lte: endDate, $gte: startDate},
+                        debit               : {$gt: 0},
+                        "sourceDocument._id": {$in: jobs}
+                    }
+                }, {
+                    $project: {
+                        sourceDocument: 1,
+                        debit         : 1
+                    }
+                }, {
+                    $group: {
+                        _id  : '$sourceDocument._id',
+                        debit: {$sum: '$debit'}
+                    }
+                }, {
+                    $lookup: {
+                        from        : "jobs",
+                        localField  : "_id",
+                        foreignField: "_id", as: "_id"
+                    }
+                }, {
+                    $project: {
+                        _id  : {$arrayElemAt: ['$_id', 0]},
+                        debit: 1
+                    }
+                }, {
+                    $project: {
+                        _id  : '$_id._id',
+                        name : '$_id.name',
+                        debit: 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pCb(err);
+                    }
 
-                var getOpening = function (pCb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {$lt: startDate},
-                            debit: {$gt: 0},
-                            "sourceDocument._id": {$in: jobs}
-                        }
-                    }, {
-                        $project: {
-                            sourceDocument: 1,
-                            debit: 1
-                        }
-                    }, {
-                        $group: {
-                            _id: '$sourceDocument._id',
-                            debit: {$sum: '$debit'}
-                        }
-                    }, {
-                        $lookup: {
-                            from: "jobs",
-                            localField: "_id",
-                            foreignField: "_id", as: "_id"
-                        }
-                    }, {
-                        $project: {
-                            _id: {$arrayElemAt: ['$_id', 0]},
-                            debit: 1
-                        }
-                    }, {
-                        $project: {
-                            _id: '$_id._id',
-                            name: '$_id.name',
-                            debit: 1
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pCb(err);
-                        }
-
-                        pCb(null, result || []);
-                    });
-                };
-
-                var getInwards = function (pCb) {
-                    Model.aggregate([{
-                        $match: {
-                            date: {$lte: endDate, $gte: startDate},
-                            debit: {$gt: 0},
-                            "sourceDocument._id": {$in: jobs}
-                        }
-                    }, {
-                        $project: {
-                            sourceDocument: 1,
-                            debit: 1
-                        }
-                    }, {
-                        $group: {
-                            _id: '$sourceDocument._id',
-                            debit: {$sum: '$debit'}
-                        }
-                    }, {
-                        $lookup: {
-                            from: "jobs",
-                            localField: "_id",
-                            foreignField: "_id", as: "_id"
-                        }
-                    }, {
-                        $project: {
-                            _id: {$arrayElemAt: ['$_id', 0]},
-                            debit: 1
-                        }
-                    }, {
-                        $project: {
-                            _id: '$_id._id',
-                            name: '$_id.name',
-                            debit: 1
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return pCb(err);
-                        }
-
-                        pCb(null, result || []);
-                    });
-                };
+                    pCb(null, result || []);
+                });
+            };
 
             var getOutwards = function (pCb) {
                 Model.aggregate([{
@@ -5010,9 +5048,9 @@ var Module = function (models, event) {
                         return pCb(err);
                     }
 
-                        pCb(null, result || []);
-                    });
-                };
+                    pCb(null, result || []);
+                });
+            };
 
             parallelTasks = [getOpening, getInwards, getOutwards];
 
@@ -5099,8 +5137,8 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             date   : 1,
-                            debit  : {$divide: ['$debit', '$currency.rate']},
-                            credit : {$divide: ['$credit', '$currency.rate']},
+                            debit  : 1,
+                            credit : 1,
                             account: {$arrayElemAt: ["$account", 0]}
                         }
                     }, {
@@ -5137,8 +5175,8 @@ var Module = function (models, event) {
                     }, {
                         $project: {
                             date   : 1,
-                            debit  : {$divide: ['$debit', '$currency.rate']},
-                            credit : {$divide: ['$credit', '$currency.rate']},
+                            debit  : 1,
+                            credit : 1,
                             account: {$arrayElemAt: ["$account", 0]}
                         }
                     }, {
@@ -5189,8 +5227,8 @@ var Module = function (models, event) {
                 }, {
                     $project: {
                         date   : 1,
-                        debit  : {$divide: ['$debit', '$currency.rate']},
-                        credit : {$divide: ['$credit', '$currency.rate']},
+                        debit  : 1,
+                        credit : 1,
                         account: {$arrayElemAt: ["$account", 0]}
                     }
                 }, {
@@ -5233,8 +5271,8 @@ var Module = function (models, event) {
                 }, {
                     $project: {
                         date   : 1,
-                        credit : {$divide: ['$credit', '$currency.rate']},
-                        debit  : {$divide: ['$debit', '$currency.rate']},
+                        credit : 1,
+                        debit  : 1,
                         account: {$arrayElemAt: ["$account", 0]}
                     }
                 }, {
@@ -5288,8 +5326,8 @@ var Module = function (models, event) {
                 }, {
                     $project: {
                         date   : 1,
-                        credit : {$divide: ['$credit', '$currency.rate']},
-                        debit  : {$divide: ['$debit', '$currency.rate']},
+                        credit : 1,
+                        debit  : 1,
                         account: {$arrayElemAt: ["$account", 0]}
                     }
                 }, {
@@ -5343,8 +5381,8 @@ var Module = function (models, event) {
                 }, {
                     $project: {
                         date   : 1,
-                        credit : {$divide: ['$credit', '$currency.rate']},
-                        debit  : {$divide: ['$debit', '$currency.rate']},
+                        credit : 1,
+                        debit  : 1,
                         account: {$arrayElemAt: ["$account", 0]}
                     }
                 }, {
@@ -5398,8 +5436,8 @@ var Module = function (models, event) {
                 }, {
                     $project: {
                         date   : 1,
-                        credit : {$divide: ['$credit', '$currency.rate']},
-                        debit  : {$divide: ['$debit', '$currency.rate']},
+                        credit : 1,
+                        debit  : 1,
                         account: {$arrayElemAt: ["$account", 0]}
                     }
                 }, {
@@ -5449,8 +5487,8 @@ var Module = function (models, event) {
                 }, {
                     $project: {
                         date   : 1,
-                        credit : {$divide: ['$credit', '$currency.rate']},
-                        debit  : {$divide: ['$debit', '$currency.rate']},
+                        credit : 1,
+                        debit  : 1,
                         account: {$arrayElemAt: ["$account", 0]}
                     }
                 }, {
@@ -5500,8 +5538,8 @@ var Module = function (models, event) {
                 }, {
                     $project: {
                         date   : 1,
-                        credit : {$divide: ['$credit', '$currency.rate']},
-                        debit  : {$divide: ['$debit', '$currency.rate']},
+                        credit : 1,
+                        debit  : 1,
                         account: {$arrayElemAt: ["$account", 0]}
                     }
                 }, {
@@ -5566,8 +5604,8 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     date   : 1,
-                    credit : {$divide: ['$credit', '$currency.rate']},
-                    debit  : {$divide: ['$debit', '$currency.rate']},
+                    credit : 1,
+                    debit  : 1,
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
@@ -5611,8 +5649,8 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     date   : 1,
-                    credit : {$divide: ['$credit', '$currency.rate']},
-                    debit  : {$divide: ['$debit', '$currency.rate']},
+                    credit : 1,
+                    debit  : 1,
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
@@ -5684,7 +5722,7 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     date   : 1,
-                    credit : {$divide: ['$credit', '$currency.rate']},
+                    credit : 1,
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
@@ -5731,7 +5769,7 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     date   : 1,
-                    debit  : {$divide: ['$debit', '$currency.rate']},
+                    debit  : 1,
                     account: {$arrayElemAt: ["$account", 0]}
                 }
             }, {
@@ -5822,8 +5860,8 @@ var Module = function (models, event) {
         }, {
             $project: {
                 date   : 1,
-                debit  : {$divide: ['$debit', '$currency.rate']},
-                credit : {$divide: ['$credit', '$currency.rate']},
+                debit  : 1,
+                credit : 1,
                 account: {$arrayElemAt: ["$account", 0]}
             }
         }, {
@@ -5894,8 +5932,8 @@ var Module = function (models, event) {
                 $project: {
                     date          : 1,
                     currency      : 1,
-                    debit         : {$divide: ['$debit', '$currency.rate']},
-                    credit        : {$divide: ['$credit', '$currency.rate']},
+                    debit         : 1,
+                    credit        : 1,
                     sourceDocument: {$arrayElemAt: ["$employee", 0]},
                     journal       : {$arrayElemAt: ["$journal", 0]}
                 }
@@ -5956,8 +5994,8 @@ var Module = function (models, event) {
                 $project: {
                     date          : 1,
                     currency      : 1,
-                    debit         : {$divide: ['$debit', '$currency.rate']},
-                    credit        : {$divide: ['$credit', '$currency.rate']},
+                    debit         : 1,
+                    credit        : 1,
                     sourceDocument: 1,
                     journal       : {$arrayElemAt: ["$journal", 0]}
                 }
@@ -6065,7 +6103,7 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     date : 1,
-                    debit: {$divide: ['$debit', '$currency.rate']}
+                    debit: 1
                 }
             }, {
                 $group: {
@@ -6328,7 +6366,7 @@ var Module = function (models, event) {
                             }
                         }, {
                             $project: {
-                                debit                 : {$divide: ['$debit', '$currency.rate']},
+                                debit                 : 1,
                                 currency              : 1,
                                 journal               : {$arrayElemAt: ["$journal", 0]},
                                 account               : {$arrayElemAt: ["$account", 0]},
@@ -6413,7 +6451,7 @@ var Module = function (models, event) {
                             }
                         }, {
                             $project: {
-                                debit                    : {$divide: ['$debit', '$currency.rate']},
+                                debit                    : 1,
                                 currency                 : 1,
                                 journal                  : {$arrayElemAt: ["$journal", 0]},
                                 account                  : {$arrayElemAt: ["$account", 0]},
@@ -6532,7 +6570,7 @@ var Module = function (models, event) {
                             }
                         }, {
                             $project: {
-                                debit                 : {$divide: ['$debit', '$currency.rate']},
+                                debit                 : 1,
                                 currency              : 1,
                                 journal               : {$arrayElemAt: ["$journal", 0]},
                                 account               : {$arrayElemAt: ["$account", 0]},
@@ -6641,7 +6679,7 @@ var Module = function (models, event) {
                             }
                         }, {
                             $project: {
-                                debit                 : {$divide: ['$debit', '$currency.rate']},
+                                debit                 : 1,
                                 currency              : 1,
                                 journal               : {$arrayElemAt: ["$journal", 0]},
                                 account               : {$arrayElemAt: ["$account", 0]},
@@ -6751,7 +6789,7 @@ var Module = function (models, event) {
                             }
                         }, {
                             $project: {
-                                debit                 : {$divide: ['$debit', '$currency.rate']},
+                                debit                 : 1,
                                 currency              : 1,
                                 journal               : {$arrayElemAt: ["$journal", 0]},
                                 account               : {$arrayElemAt: ["$account", 0]},
@@ -6860,7 +6898,7 @@ var Module = function (models, event) {
                             }
                         }, {
                             $project: {
-                                debit                 : {$divide: ['$debit', '$currency.rate']},
+                                debit                 : 1,
                                 currency              : 1,
                                 journal               : {$arrayElemAt: ["$journal", 0]},
                                 account               : {$arrayElemAt: ["$account", 0]},
