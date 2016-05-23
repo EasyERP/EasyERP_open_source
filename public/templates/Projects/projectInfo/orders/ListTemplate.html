@@ -10,9 +10,8 @@ class="notEditable"
                 <% } %>"/></td>
 <td class="centerCell"><%=startNumber + index + 1%></td>
 <td><%=order.name ? order.name : '------'%></td>
-<td><%=order.project ? order.project.projectName : '------'%></td>
 <td><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : '------'%></td>
-<td><%=(order.salesmanager) ? order.salesmanager.name.first + ' ' + order.salesmanager.name.last : '------'%></td>
+<td><%=(order.salesPerson) ? order.salesPerson.name.first + ' ' + order.salesPerson.name.last : '------'%></td>
 <td class="total <%=currencyClass(order.currency._id)%>"><%=(order.paymentInfo) ? currencySplitter(order.paymentInfo.total) : '0'%></td>
 <!--<td class="type"><%=order.type%></td>-->
 <td id='<%=order._id%>' class="centerCell workflow">

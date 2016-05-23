@@ -1201,7 +1201,8 @@ define([
             },
 
             getQuotations: function (cb) {
-                var _id = window.location.hash.split('form/')[1];
+                //var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
                 var self = this;
 
                 var filter = {
@@ -1212,10 +1213,11 @@ define([
                 };
 
                 this.qCollection = new quotationCollection({
-                    count      : 50,
+                    count      : 100,
                     viewType   : 'list',
                     contentType: 'salesQuotation',
-                    filter     : filter
+                    url     : 'project/' + _id + '/quotations'
+                    //filter     : filter
                 });
 
                 function createView() {
@@ -1246,7 +1248,9 @@ define([
 
             getOrders: function (cb) {
                 var self = this;
-                var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
+
+                // var _id = window.location.hash.split('form/')[1];
 
                 var filter = {
                     projectName: {
@@ -1260,10 +1264,11 @@ define([
                 };
 
                 this.ordersCollection = new quotationCollection({
-                    count      : 50,
+                    count      : 100,
                     viewType   : 'list',
                     contentType: 'salesOrder',
-                    filter     : filter
+                    url     : 'project/' + _id + '/orders'
+                    /*filter     : filter*/
                 });
 
                 function createView() {
