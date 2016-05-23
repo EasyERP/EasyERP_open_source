@@ -1133,30 +1133,16 @@ define([
 
             },
 
-            getPayments: function (activate) {
+            getPayments: function (cb, activate) {
                 var self = this;
-                var payFromInvoice;
-                var payFromProforma;
-                var payments;
-
-                self.payments = self.payments || {};
-                payFromInvoice = self.payments.fromInvoces || [];
-                payFromProforma = self.payments.fromProformas || [];
-
-                payments = payFromInvoice.concat(payFromProforma);
-
-                var filterPayment = {
-                    name: {
-                        key  : '_id',
-                        value: payments
-                    }
-                };
+                var _id = this.id;
+                var callback;
 
                 self.payCollection = new paymentCollection({
                     count      : 50,
                     viewType   : 'list',
                     contentType: 'customerPayments',
-                    filter     : filterPayment
+                    url        : 'project/' + _id + '/payments'
                 });
 
                 self.payCollection.unbind();
@@ -1165,15 +1151,20 @@ define([
                 function createPayment() {
                     var data = {
                         model       : self.payCollection,
-                        filter      : filterPayment,
                         activate    : activate,
                         eventChannel: self.eventChannel
                     };
 
                     new PaymentView(data);
 
+                    if (typeof(cb) === 'function') {
+                        callback();
+                    }
+
                     self.renderTabCounter();
                 }
+
+                callback = _.once(cb);
             },
 
             getProjectMembers: function (cb) {
@@ -1482,7 +1473,7 @@ define([
                 App.startPreload();
 
                 async.parallel(paralellTasks, function () {
-                    self.getPayments(true);
+                    self.getPayments(null, true);
                     App.stopPreload();
                 });
 
@@ -1578,7 +1569,7 @@ define([
                     }).render().el
                 );
 
-                _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
+                _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma', 'getPayments');
 
                 paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
 
@@ -1588,6 +1579,7 @@ define([
                         if (accessElement.access.read) {
                             paralellTasks.push(self.getInvoice);
                             paralellTasks.push(self.getProforma);
+                            paralellTasks.push(self.getPayments);
                         } else {
                             thisEl.find('#invoicesTab').parent().remove();
                             thisEl.find('div#invoices').parent().remove();
@@ -1634,7 +1626,6 @@ define([
                 }
 
                 async.parallel(paralellTasks, function (err, result) {
-                    self.getPayments();
                     App.stopPreload();
                     self.renderProformRevenue();
                     self.activeTab();
