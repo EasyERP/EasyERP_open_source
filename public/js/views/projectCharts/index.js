@@ -46,11 +46,11 @@ define([
             var x = d3.scale.linear()
                 .range([0, width]);
 
-            var xAxis = d3.svg.axis()
+            /*var xAxis = d3.svg.axis()
                 .scale(x)
                 .ticks(5)
                 .tickSubdivide(true)
-                .orient("bottom");
+                .orient("bottom");*/
 
             var yAxis = d3.svg.axis()
                 .scale(y)
@@ -69,10 +69,10 @@ define([
                 return d.value/100;
             }) + 10]);
 
-            topChart.append("g")
+            /*topChart.append("g")
                 .attr("class", "x axis")
                 .attr("transform", "translate(" + margin.left + ", " + height + ")")
-                .call(xAxis);
+                .call(xAxis);*/
 
             topChart.append("g")
                 .attr("class", "y axis")
@@ -94,10 +94,23 @@ define([
                     return x(d.value/100);
                 });
 
-            topChart.selectAll(".x .tick line")
-                .attr("y2", function () {
-                    return -height;
-                });
+            topChart
+                .selectAll()
+                .data(data)
+                .enter()
+                .append("svg:text")
+                .attr("x", function (d) {
+                    return x(d.value/100)/2 + margin.left - BAR_WIDTH/2;
+                })
+                .attr("y", function (d) {
+                    return y(d.field) ;
+                })
+                .attr("dx", 0)
+                .attr("dy", "1.5em")
+                .text(function(data) {
+                    return (data.value/100).toFixed(0);
+                })
+                .attr("fill", "white");
         },
 
         render: function () {
