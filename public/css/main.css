@@ -1970,7 +1970,8 @@ input::-ms-clear {
   margin-left: -3px;
   text-indent: -99999px;
   overflow: hidden;
-  background: url("../images/datepicker-sprite.png") no-repeat;
+  background: url("../images/datepicker-sprite_black.png") no-repeat;
+  /*/images/datepicker-sprite_black.png*/
   display: block;
   position: absolute;
   left: 50%;
@@ -1989,7 +1990,7 @@ input::-ms-clear {
   right: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next span {
-  background-position: -4px 0;
+  background-position: -5px 0;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title {
   margin: 0 2.3em;
@@ -6081,7 +6082,8 @@ ul.dialog-tabs li.right button {
   margin-left: -3px;
   text-indent: -99999px;
   overflow: hidden;
-  background: url("../images/datepicker-sprite.png") no-repeat;
+  background: url("../images/datepicker-sprite_black.png") no-repeat;
+  /*/images/datepicker-sprite_black.png*/
   display: block;
   position: absolute;
   left: 50%;
@@ -6100,7 +6102,7 @@ ul.dialog-tabs li.right button {
   right: 2px;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-next span {
-  background-position: -4px 0;
+  background-position: -5px 0;
 }
 .ui-datepicker .ui-datepicker-header .ui-datepicker-title {
   margin: 0 2.3em;
