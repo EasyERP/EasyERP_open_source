@@ -303,7 +303,7 @@ define([
             var $targetEl = $(e.target);
             var checkLength = el.find("input.checkbox:checked").length;
             var checkAll$ = el.find('#check_all_quotations');
-            var removeBtnEl = $('#removePayment');
+            var removeBtnEl = $('#removeQuotation');
 
             if ($targetEl.hasClass('notRemovable')) {
                 $targetEl.prop('checked', false);
