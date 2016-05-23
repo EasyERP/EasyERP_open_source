@@ -10,19 +10,15 @@
         </thead>
 
         <tbody id="wTracks" class="enableTableOdd">
-        <%var count = 0;%>
-        <%var budgetTotal = jobItem.budget.budgetTotal%>
-        <%var projectTeam = jobItem.budget.projectTeam%>
-        <% projectTeam.forEach(function(element,i){ %>
-        <%var budget = jobItem.budget.projectTeam[i].budget%>
-        <%if(element && element.employee && element.employee._id){%>
-        <tr data-id="<%=element.employee._id%>" id="<%=projectTeam + element.employee._id%>">
-            <td><%=element.employee.name.first + ' ' + element.employee.name.last%></td>
-            <td><%=element.employee.jobPosition.name%></td>
-            <td><%=element.department.departmentName%></td>
-            <td><%=currencySplitter(budget.hoursSum.toFixed())%></td>
-        </tr>
-        <%}%>
+        <% jobItem.revenue.forEach(function(element,i){ %>
+            <%if(element && element.employee && element.employee._id){%>
+                <tr data-id="<%=element.employee._id%>" id="<%=element._id + '_' + element.employee._id%>">
+                    <td><%=element.employee.name%></td>
+                    <td><%=element.employee.jobPosition%></td>
+                    <td><%=element.department%></td>
+                    <td><%=currencySplitter(element.employee.worked.toFixed())%></td>
+                </tr>
+            <%}%>
         <% })%>
         </tbody>
 

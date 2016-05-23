@@ -795,49 +795,12 @@ define([
                 var _id = window.location.hash.split('form/')[1];
                 var key = 'jobs_projectId:' + _id;
                 // var jobsCollection = custom.retriveFromCash(key);
-                var budgetTotal;
 
                 var projectTeam = this.jobsCollection.toJSON();
-                
-                /*var projectTeam = _.filter(this.jobsCollection.toJSON(), function (el) {
-                    return el.project._id === _id;
-                });
-
-                if (!jobsCollection || !jobsCollection.length) {
-                    custom.cacheToApp(key, this.jobsCollection, true);
-                }*/
-
-                this.projectValues = {
-                    revenue: 0,
-                    profit : 0,
-                    cost   : 0
-                };
-
-                projectTeam.forEach(function (projectTeam) {
-                    if (projectTeam && projectTeam.budget && projectTeam.budget.budgetTotal) {
-                        budgetTotal = projectTeam.budget.budgetTotal;
-                        self.projectValues.revenue += budgetTotal.revenueSum || 0;
-                        self.projectValues.cost += projectTeam.cost || 0;
-                        self.projectValues.profit = self.projectValues.revenue - self.projectValues.cost;
-                        /* self.projectValues.profit += budgetTotal ? (budgetTotal.revenueSum - budgetTotal.costSum) : 0; */
-                    }
-                });
-
-                this.projectValues.markUp = ((this.projectValues.profit / this.projectValues.cost) * 100);
-
-                if (!isFinite(this.projectValues.markUp)) {
-                    self.projectValues.markUp = 0;
-                }
-
-                this.projectValues.radio = ((this.projectValues.profit / this.projectValues.revenue) * 100);
-
-                if (!isFinite(this.projectValues.radio)) {
-                    this.projectValues.radio = 0;
-                }
 
                 container.html(template({
                         jobs            : projectTeam,
-                        projectValues   : self.projectValues,
+                       /* projectValues   : self.projectValues,*/
                         currencySplitter: helpers.currencySplitter,
                         contentType     : self.contentType
                     })
