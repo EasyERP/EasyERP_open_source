@@ -806,9 +806,9 @@ define([
                     })
                 );
 
-               /*     this.renderProformRevenue();
-                    this.getInvoiceStats();
-                    this.getProformaStats();*/
+                // this.renderProformRevenue();
+                this.getInvoiceStats();
+                this.getProformaStats();
             },
 
             getWTrack: function (cb) {
