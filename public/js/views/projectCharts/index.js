@@ -66,7 +66,7 @@ define([
                 return d.field;
             }));
             x.domain([0, d3.max(data, function (d) {
-                return d.value;
+                return d.value/100;
             }) + 10]);
 
             topChart.append("g")
@@ -91,7 +91,7 @@ define([
                 })
                 .attr("height", y.rangeBand())
                 .attr("width", function (d) {
-                    return x(d.value);
+                    return x(d.value/100);
                 });
         },
 
