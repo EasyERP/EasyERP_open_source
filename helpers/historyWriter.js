@@ -10,34 +10,43 @@ var History = function (models) {
 
     function generateHistoryEntry(contetntType, keyValue) {
         var mapSchema = historyMapper[contetntType.toUpperCase()];
+        var mapSchemaKeys = Object.keys(mapSchema.map);
         var historyEntry;
+        var i;
 
-        Object.keys(mapSchema.map).forEach(function (keyPath) {
+        function processKey(keyPath) {
             var keys = keyPath.split('.');
+            var val;
 
             if (keys[0] === keyValue.key) {
-                var val = keyValue.value;
+                val = keyValue.value;
 
                 if (keys.length > 1) {
                     keys.shift();
-                    keys.forEach(function (key) {
-                        if (val.hasOwnProperty(key)) {
-                            val = val[key];
+
+                    for (i = keys.length - 1; i >= 0; i--) {
+                        if (val.hasOwnProperty(keys[i])) {
+                            val = val[keys[i]];
                         } else {
                             return null;
                         }
-                    });
+                    }
                 }
+
                 historyEntry = {
                     collectionName: mapSchema.collectionName,
                     contetntType  : contetntType,
                     newValue      : val,
-                    changedField  : mapSchema.map[keyPath]
+                    changedField  : mapSchema.map[keyPath].name
                 };
             } else {
                 return null;
             }
-        });
+        }
+
+        for (i = mapSchemaKeys.length - 1; i >= 0; i--) {
+            processKey(mapSchemaKeys[i]);
+        }
 
         return historyEntry;
     }
@@ -46,25 +55,31 @@ var History = function (models) {
         var contetntType = options.contentType;
         var data = options.data;
         var historyRecords = [];
-        var date = Date.now();
+        var date = new Date();
         var HistoryEntry = models.get(options.req.session.lastDb, 'History', HistoryEntrySchema);
+        var dataKeys = Object.keys(data);
+        var keyValue;
+        var historyEntry;
+        var key;
+        var i;
 
-        Object.keys(data).forEach(function (key) {
-            var keyValue = {
+        for (i = dataKeys.length - 1; i >= 0; i--) {
+            key = dataKeys[i];
+            keyValue = {
                 key  : key,
                 value: data[key]
             };
-            var historyEntry = generateHistoryEntry(contetntType, keyValue);
+            historyEntry = generateHistoryEntry(contetntType, keyValue);
 
             if (historyEntry) {
 
                 historyEntry.editedBy = ObjectId(options.req.session.uId);
-                historyEntry.trackedObj = ObjectId(options.trackedObj);
+                historyEntry.contentId = ObjectId(options.trackedObj);
                 historyEntry.date = date;
 
                 historyRecords.push(historyEntry);
             }
-        });
+        }
 
         if (historyRecords.length) {
 
@@ -72,7 +87,7 @@ var History = function (models) {
                 HistoryEntry.aggregate([{
                     $match: {
                         changedField: historyRecord.changedField,
-                        trackedObj  : historyRecord.trackedObj
+                        contentId  : historyRecord.contentId
                     }
                 }, {
                     $sort: {
@@ -91,8 +106,8 @@ var History = function (models) {
                             historyRecord.prevValue = null;
                         }
 
-                        HistoryEntry.collection.insert(historyRecord, function (err, res) {
-                            if (err) {
+                        HistoryEntry.collection.insert(historyRecord, function (error, res) {
+                            if (error) {
                                 console.log(err);
                             }
                             cb();
@@ -116,7 +131,7 @@ var History = function (models) {
 
         HistoryEntry.aggregate([{
             $match: {
-                trackedObj: id
+                contentId: id
             }
         }, {
             $lookup: {
@@ -148,6 +163,7 @@ var History = function (models) {
             }
         }], function (err, result) {
             if (typeof callback === 'function') {
+                // populateFields(result, callback);
                 callback(err, result);
             }
         });
