@@ -41,7 +41,7 @@ var Proforma = function (models) {
             });
         }
 
-        function renameFolder(orderId, invoiceId) {
+        /*function renameFolder(orderId, invoiceId) {
             var os = require("os");
             var osType = (os.type().split('_')[0]);
             var dir;
@@ -63,7 +63,7 @@ var Proforma = function (models) {
             newDir = dir + invoiceId;
 
             fs.rename(oldDir, newDir);
-        }
+        }*/
 
         function fetchFirstWorkflow(callback) {
             request = {
@@ -217,7 +217,8 @@ var Proforma = function (models) {
 
             delete quotation._id;
 
-            quotation.attachments[0].shortPas = quotation.attachments[0].shortPas.replace('..%2Froutes', '');
+            //quotation.attachments[0].shortPas = quotation.attachments[0].shortPas.replace('..%2Froutes', '');
+            quotation.attachments && delete quotation.attachments;
 
             proforma = new Proforma(quotation);
 
@@ -277,16 +278,18 @@ var Proforma = function (models) {
         waterFallTasks = [parallel, createProforma/*, createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
-            var proformaId = result._id.toString();
-            var orderId = result.sourceDocument.toString();
+            // var proformaId = result._id.toString();
+            // var orderId = result.sourceDocument.toString();
+
+            // fs.mkdir(pathMod.join(__dirname, '/../routes/uploads/', proformaId));
 
             if (err) {
                 return next(err);
             }
 
-            result.attachments[0].shortPas = result.attachments[0].shortPas.replace(orderId, proformaId);
+            //result.attachments[0].shortPas = result.attachments[0].shortPas.replace(orderId, proformaId);
 
-            Proforma.findByIdAndUpdate(proformaId, {
+            /*Proforma.findByIdAndUpdate(proformaId, {
                 $set: {
                     attachments: result.attachments
                 }
@@ -294,10 +297,10 @@ var Proforma = function (models) {
                 if (err) {
                     return next(err);
                 }
-                renameFolder(orderId, proformaId);
+                renameFolder(orderId, proformaId);*/
 
                 res.status(201).send(result);
-            });
+            //});
         });
     };
 };
