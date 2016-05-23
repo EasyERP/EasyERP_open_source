@@ -215,7 +215,7 @@ define([
         showDialog: function (proformaId) {
             var self = this;
             var invoice = _.find(this.collection.toJSON(), function (el) {
-                return (el.sourceDocument ? el._id.toString() === proformaId.toString() : null);
+                return (el._id.toString() === proformaId.toString());
             });
 
             var model = new invoiceModel({validate: false});

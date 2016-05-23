@@ -346,27 +346,27 @@ var PayRoll = function (models) {
             $match: queryObject
         }, {
             $lookup: {
-                from        : "Employees",
-                localField  : "employee",
+                from: "Employees",
+                localField: "employee",
                 foreignField: "_id", as: "employee"
             }
         }, {
             $lookup: {
-                from        : "journals",
-                localField  : "type",
+                from: "journals",
+                localField: "type",
                 foreignField: "_id", as: "type"
             }
         }, {
             $project: {
                 employee: {$arrayElemAt: ["$employee", 0]},
-                type    : {$arrayElemAt: ["$type", 0]},
-                calc    : 1,
-                paid    : 1,
-                diff    : 1,
-                month   : 1,
-                year    : 1,
-                dataKey : 1,
-                date    : 1
+                type: {$arrayElemAt: ["$type", 0]},
+                calc: 1,
+                paid: 1,
+                diff: 1,
+                month: 1,
+                year: 1,
+                dataKey: 1,
+                date: 1
             }
         }, {
             $sort: sort
@@ -410,19 +410,19 @@ var PayRoll = function (models) {
                     }
                 }, {
                     $lookup: {
-                        from        : "Employees",
-                        localField  : "employee",
+                        from: "Employees",
+                        localField: "employee",
                         foreignField: "_id", as: "employee"
                     }
                 }, {
                     $project: {
                         employee: {$arrayElemAt: ["$employee", 0]},
-                        calc    : 1,
-                        paid    : 1,
-                        diff    : 1,
-                        month   : 1,
-                        year    : 1,
-                        dataKey : 1
+                        calc: 1,
+                        paid: 1,
+                        diff: 1,
+                        month: 1,
+                        year: 1,
+                        dataKey: 1
                     }
                 }, {
                     $sort: sort
@@ -460,19 +460,19 @@ var PayRoll = function (models) {
             $match: queryObject
         }, {
             $lookup: {
-                from        : "Employees",
-                localField  : "employee",
+                from: "Employees",
+                localField: "employee",
                 foreignField: "_id", as: "employee"
             }
         }, {
             $project: {
                 employee: {$arrayElemAt: ["$employee", 0]},
-                calc    : 1,
-                paid    : 1,
-                diff    : 1,
-                month   : 1,
-                year    : 1,
-                dataKey : 1
+                calc: 1,
+                paid: 1,
+                diff: 1,
+                month: 1,
+                year: 1,
+                dataKey: 1
             }
         }, {
             $sort: sort
@@ -590,7 +590,7 @@ var PayRoll = function (models) {
                          }]
                          },*/{
                             firstHire: {
-                                $ne : null,
+                                $ne: null,
                                 $lte: endDateKey
                             }
                         }]
@@ -599,12 +599,12 @@ var PayRoll = function (models) {
                             isEmployee: false
                         }, {
                             lastFire: {
-                                $ne : null,
+                                $ne: null,
                                 $gte: startDateKey
                             }
                         }, {
                             firstHire: {
-                                $ne : null,
+                                $ne: null,
                                 $lte: endDateKey
                             }
                         }]
@@ -623,24 +623,24 @@ var PayRoll = function (models) {
             Employee
                 .aggregate([{
                     $lookup: {
-                        from        : 'Department',
-                        localField  : 'department',
+                        from: 'Department',
+                        localField: 'department',
                         foreignField: '_id',
-                        as          : 'department'
+                        as: 'department'
                     }
                 }, {
                     $project: {
                         department: {$arrayElemAt: ["$department", 0]},
                         isEmployee: 1,
-                        name      : 1,
-                        lastFire  : 1,
-                        transfer  : 1,
-                        firstHire : {
+                        name: 1,
+                        lastFire: 1,
+                        transfer: 1,
+                        firstHire: {
                             $let: {
                                 vars: {
                                     firstHired: {$arrayElemAt: ["$hire", 0]}
                                 },
-                                in  : {$add: [{$multiply: [{$year: '$$firstHired'}, 100]}, {$week: '$$firstHired'}]}
+                                in: {$add: [{$multiply: [{$year: '$$firstHired'}, 100]}, {$week: '$$firstHired'}]}
                             }
                         }
                     }
@@ -656,10 +656,10 @@ var PayRoll = function (models) {
                     $project: {
                         isEmployee: 1,
                         department: 1,
-                        transfer  : 1,
-                        name      : 1,
-                        lastFire  : 1,
-                        year      : {$year: '$transfer.date'}
+                        transfer: 1,
+                        name: 1,
+                        lastFire: 1,
+                        year: {$year: '$transfer.date'}
                     }
                     //}, {
                     //    $match: {
@@ -669,41 +669,41 @@ var PayRoll = function (models) {
                     $project: {
                         isEmployee: 1,
                         department: 1,
-                        transfer  : 1,
-                        name      : 1,
-                        month     : {$month: '$transfer.date'},
-                        year      : 1,
-                        lastFire  : 1,
-                        hireDate  : {$add: [{$multiply: [{$year: '$transfer.date'}, 100]}, {$month: '$transfer.date'}]}
+                        transfer: 1,
+                        name: 1,
+                        month: {$month: '$transfer.date'},
+                        year: 1,
+                        lastFire: 1,
+                        hireDate: {$add: [{$multiply: [{$year: '$transfer.date'}, 100]}, {$month: '$transfer.date'}]}
                     }
                 }, {
                     $group: {
-                        _id       : '$_id',
+                        _id: '$_id',
                         department: {$addToSet: '$department'},
-                        name      : {$addToSet: '$name'},
-                        transfer  : {$push: '$$ROOT'},
-                        lastFire  : {$addToSet: '$lastFire'}
+                        name: {$addToSet: '$name'},
+                        transfer: {$push: '$$ROOT'},
+                        lastFire: {$addToSet: '$lastFire'}
                     }
                 }, {
                     $project: {
-                        _id       : 1,
+                        _id: 1,
                         department: {$arrayElemAt: ["$department", 0]},
-                        name      : {$arrayElemAt: ["$name", 0]},
-                        transfer  : 1,
-                        lastFire  : {$arrayElemAt: ["$lastFire", 0]}
+                        name: {$arrayElemAt: ["$name", 0]},
+                        transfer: 1,
+                        lastFire: {$arrayElemAt: ["$lastFire", 0]}
                     }
                 }, {
                     $project: {
-                        _id       : 1,
+                        _id: 1,
                         department: '$department.departmentName',
-                        name      : {$concat: ['$name.first', ' ', '$name.last']},
-                        transfer  : 1,
-                        lastFire  : 1
+                        name: {$concat: ['$name.first', ' ', '$name.last']},
+                        transfer: 1,
+                        lastFire: 1
                     }
                 }, {
                     $sort: {
                         department: 1,
-                        name      : 1
+                        name: 1
                     }
                 }], function (err, result) {
                     if (err) {
@@ -820,7 +820,7 @@ var PayRoll = function (models) {
         var employees;
         var ids = {};
         var i;
-        var date = moment().isoWeekYear(year).month(month - 1).startOf('month');
+        var date = moment().year(year).month(month - 1).startOf('month');
         var endDate = moment(date).endOf('month');
 
         function getEmployees(callback) {
@@ -846,8 +846,8 @@ var PayRoll = function (models) {
                     var fire = elem.fire;
                     var length = hire.length;
                     var dateToCreate = endDate;
-                    var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({
-                        hour  : 15,
+                    var localDate = new Date(moment().year(year).month(month - 1).endOf('month').set({
+                        hour: 15,
                         minute: 1,
                         second: 0
                     }));
@@ -860,8 +860,8 @@ var PayRoll = function (models) {
 
                     journalEntry.removeByDocId({
                         'sourceDocument._id': elem._id,
-                        journal             : CONSTANTS.ADMIN_SALARY_JOURNAL,
-                        date                : localDate
+                        journal: CONSTANTS.ADMIN_SALARY_JOURNAL,
+                        date: localDate
                     }, req.session.lastDb, function (err, result) {
 
                     });
@@ -894,7 +894,7 @@ var PayRoll = function (models) {
 
                     if (salary || (salary === 0)) {
                         ids[elem._id] = {
-                            salary    : salary,
+                            salary: salary,
                             department: department
                         };
                     }
@@ -910,7 +910,7 @@ var PayRoll = function (models) {
                     $match: {
                         'sourceDocument.model': "Employees",
                         journal: {$in: [ObjectId(CONSTANTS.IDLE_PAYABLE), ObjectId(CONSTANTS.VACATION_PAYABLE)]},
-                        date                  : {
+                        date: {
                             $gte: new Date(date),
                             $lte: new Date(endDate)
                         }
@@ -918,15 +918,15 @@ var PayRoll = function (models) {
                 }, {
                     $project: {
                         employee: '$sourceDocument._id',
-                        debit   : {$divide: ['$debit', 100]},
-                        credit  : {$divide: ['$credit', 100]},
-                        journal : 1,
-                        date    : 1
+                        debit: {$divide: ['$debit', 100]},
+                        credit: {$divide: ['$credit', 100]},
+                        journal: 1,
+                        date: 1
                     }
                 }, {
                     $group: {
-                        _id   : '$employee',
-                        debit : {$sum: '$debit'},
+                        _id: '$employee',
+                        debit: {$sum: '$debit'},
                         credit: {$sum: '$credit'}
                     }
                 }], function (err, result) {
@@ -942,24 +942,24 @@ var PayRoll = function (models) {
                 JournalEntry.aggregate([{
                     $match: {
                         'sourceDocument.model': "wTrack",
-                        journal               : {$in: journalArray},
-                        date                  : {
+                        journal: {$in: journalArray},
+                        date: {
                             $gte: new Date(date),
                             $lte: new Date(endDate)
                         }
                     }
                 }, {
                     $project: {
-                        debit   : {$divide: ['$debit', 100]},
-                        credit  : {$divide: ['$credit', 100]},
-                        journal : 1,
-                        date    : 1,
+                        debit: {$divide: ['$debit', 100]},
+                        credit: {$divide: ['$credit', 100]},
+                        journal: 1,
+                        date: 1,
                         employee: '$sourceDocument.employee'
                     }
                 }, {
                     $group: {
-                        _id   : '$employee',
-                        debit : {$sum: '$debit'},
+                        _id: '$employee',
+                        debit: {$sum: '$debit'},
                         credit: {$sum: '$credit'}
                     }
                 }], function (err, result) {
@@ -981,9 +981,9 @@ var PayRoll = function (models) {
 
                 callback(null, {
                     resultByEmployee: result[1],
-                    resultByWTrack  : result[0],
-                    ids             : _.union(empIds, empIdsSecond),
-                    empIds          : ids
+                    resultByWTrack: result[0],
+                    ids: _.union(empIds, empIdsSecond),
+                    empIds: ids
                 });
             });
         }
@@ -997,13 +997,13 @@ var PayRoll = function (models) {
             var newPayroll;
             var parallelTasks;
             var startBody = {
-                year   : year,
-                month  : month,
+                year: year,
+                month: month,
                 dataKey: dataKey,
-                paid   : 0
+                paid: 0
             };
             var localDate = new Date(moment().isoWeekYear(year).month(month - 1).endOf('month').set({
-                hour  : 15,
+                hour: 15,
                 minute: 1,
                 second: 0
             }));
@@ -1017,9 +1017,9 @@ var PayRoll = function (models) {
                     var cb = _.after(2, asyncCb);
 
                     var bodyAdminSalary = {
-                        currency      : CONSTANTS.CURRENCY_USD,
-                        journal       : CONSTANTS.ADMIN_SALARY_JOURNAL,
-                        date          : localDate,
+                        currency: CONSTANTS.CURRENCY_USD,
+                        journal: CONSTANTS.ADMIN_SALARY_JOURNAL,
+                        date: localDate,
                         sourceDocument: {
                             model: 'Employees'
                         }
