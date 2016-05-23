@@ -45,7 +45,6 @@ define([
                 var equity = 0;
                 var row;
                 var rowTd;
-                var totalEquityAndLiabilities;
 
                 var assetsFooter = this.$el.find('#assetsFooter');
                 var liabilitiesFooter = this.$el.find('#liabilitiesFooter');
