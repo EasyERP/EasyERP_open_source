@@ -156,7 +156,7 @@ define([
                 this.listenTo(eventChannel, 'orderUpdate', this.getOrders);
 
                 this.listenTo(eventChannel, 'invoiceRemove', this.newPayment);
-                this.listenTo(eventChannel, 'invoiceUpdated', this.updateInvoiseProforma);
+                this.listenTo(eventChannel, 'invoiceUpdated', this.updateInvoiceProforma);
                 this.listenTo(eventChannel, 'invoiceReceive', this.newInvoice);
 
 
@@ -1457,18 +1457,14 @@ define([
 
             },
 
-            updateInvoiseProforma: function () {
+            updateInvoiceProforma: function () {
                 var self = this;
                 var paralellTasks;
-
-                function getPaymentsWithContext(cb) {
-                    self.getPayments(false, self, cb);
-                }
 
                 paralellTasks = [
                     self.getInvoice,
                     self.getProforma,
-                    getPaymentsWithContext
+                    self.getPayments
                 ];
 
                 App.startPreload();
