@@ -10,9 +10,9 @@
     </td>-->
     <td data-content="project" data-id="<%= project ? project._id: null%>"><%=project ? project.projectName : ''%>
     </td>
-    <td data-content="workflow" data-id="<%=project.workflow ? project.workflow._id : ''%>"><%=project.workflow?
+<!--    <td data-content="workflow" data-id="<%=project.workflow ? project.workflow._id : ''%>"><%=project.workflow?
         project.workflow.name : ''%>
-    </td>
+    </td>-->
     <td data-content="customer"
         data-id="<%=project && project.customer? project.customer.name.first + ' ' + project.customer.name.last : ''%>">
         <%=project && project.customer? project.customer.name.first + ' ' + project.customer.name.last : ''%>
