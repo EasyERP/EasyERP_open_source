@@ -1011,7 +1011,7 @@ define([
                         eventChannel: self.eventChannel
                     });
 
-                    self.iCollection.toJSON().forEach(function (element) {
+                   /* self.iCollection.toJSON().forEach(function (element) {
                         if (element.payments) {
                             element.payments.forEach(function (payment) {
                                 payments.push(payment);
@@ -1021,7 +1021,7 @@ define([
 
                     self.payments = self.payments || {};
                     self.payments.fromInvoces = payments;
-
+*/
                     self.renderTabCounter();
 
                     if (cb) {
@@ -1073,7 +1073,9 @@ define([
                         proformaView.showDialog(quotationId);
                     }
 
-                    self.pCollection.toJSON().forEach(function (element) {
+                    self.renderTabCounter();
+
+                   /* self.pCollection.toJSON().forEach(function (element) {
                         if (element.payments) {
                             element.payments.forEach(function (payment) {
                                 payments.push(payment);
@@ -1082,7 +1084,7 @@ define([
                     });
 
                     self.payments = self.payments || {};
-                    self.payments.fromProformas = payments;
+                    self.payments.fromProformas = payments;*/
 
                     if (typeof(cb) === 'function') {
                         callback();

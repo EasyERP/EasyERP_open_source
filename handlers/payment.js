@@ -165,7 +165,7 @@ var Payment = function (models, event) {
                     count = parseInt(req.query.count, 10);// || MAIN_CONSTANTS.DEF_LIST_COUNT;
                     page = parseInt(req.query.page, 10);
 
-                   // count = count > MAIN_CONSTANTS.MAX_COUNT ? MAIN_CONSTANTS.MAX_COUNT : count;
+                    // count = count > MAIN_CONSTANTS.MAX_COUNT ? MAIN_CONSTANTS.MAX_COUNT : count;
                     skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     if (req.query.sort) {
@@ -954,7 +954,14 @@ var Payment = function (models, event) {
                                 workflow            : 1,
                                 date                : 1,
                                 'paymentMethod.name': '$paymentMethod.name',
-                                _type               : 1
+                                _type               : 1,
+                                removable           : {
+                                    $cond: {
+                                        if  : {$and: [{$eq: ['$_type', "ProformaPayment"]}, {$eq: ['$invoice.workflow.name', "Invoiced"]}]},
+                                        then: false,
+                                        else: true
+                                    }
+                                }
                             }
                         }, {
                             $project: {
@@ -968,7 +975,8 @@ var Payment = function (models, event) {
                                 workflow        : 1,
                                 date            : 1,
                                 paymentMethod   : 1,
-                                _type           : 1
+                                _type           : 1,
+                                removable       : 1
 
                             }
                         }, {
@@ -992,7 +1000,8 @@ var Payment = function (models, event) {
                                 date            : 1,
                                 name            : 1,
                                 paymentMethod   : 1,
-                                _type           : 1
+                                _type           : 1,
+                                removable       : 1
                             }
                         }, {
                             $project: {
@@ -1000,22 +1009,16 @@ var Payment = function (models, event) {
                                 currency        : 1,
                                 'invoice._id'   : 1,
                                 'invoice.name'  : 1,
-                                'assigned.name' : "$assigned.name",
+                                'assigned.name' : '$assigned.name',
                                 differenceAmount: 1,
                                 name            : 1,
                                 paidAmount      : 1,
                                 workflow        : 1,
                                 date            : 1,
                                 paymentMethod   : 1,
-                                removable       : {
-                                    $cond: {
-                                        if  : {$and: [{$eq: ['$_type', "ProformaPayment"]}, {$eq: ['$invoice.workflow.name', "Invoiced"]}]},
-                                        then: false,
-                                        else: true
-                                    }
-                                }
+                                removable       : 1
                             }
-                        },{
+                        }, {
                             $sort: sort
                         }, {
                             $skip: skip
@@ -1056,7 +1059,7 @@ var Payment = function (models, event) {
         var data = body;
         var isForSale = data.forSale;
         var project;
-        //var type = "Paid";
+        //var type = 'Paid';
 
         delete  data.mid;
 
@@ -1421,7 +1424,7 @@ var Payment = function (models, event) {
         }
 
         departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+            models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(
                 {
                     $match: {
                         users: objectId(req.session.uId)
@@ -1449,7 +1452,7 @@ var Payment = function (models, event) {
                 ]
             };
 
-            var Model = models.get(req.session.lastDb, "Payment", PaymentSchema);
+            var Model = models.get(req.session.lastDb, 'Payment', PaymentSchema);
 
             Model.aggregate(
                 {
@@ -1467,7 +1470,7 @@ var Payment = function (models, event) {
         contentSearcher = function (paymentIds, waterfallCallback) {
             var salesManagerMatch = {
                 $and: [
-                    {$eq: ["$$projectMember.projectPositionId", objectId(MAIN_CONSTANTS.SALESMANAGER)]},
+                    {$eq: ['$$projectMember.projectPositionId', objectId(MAIN_CONSTANTS.SALESMANAGER)]},
                     {
                         $or: [{
                             $and: [{
@@ -1507,28 +1510,28 @@ var Payment = function (models, event) {
                 }, {
                     $lookup: {
                         from        : supplier,
-                        localField  : "supplier",
-                        foreignField: "_id", as: "supplier"
+                        localField  : 'supplier',
+                        foreignField: '_id', as: 'supplier'
                     }
                 }, {
                     $lookup: {
-                        from        : "Invoice",
-                        localField  : "invoice",
-                        foreignField: "_id",
-                        as          : "invoice"
+                        from        : 'Invoice',
+                        localField  : 'invoice',
+                        foreignField: '_id',
+                        as          : 'invoice'
                     }
                 }, {
                     $lookup: {
                         from        : paymentMethod,
-                        localField  : "paymentMethod",
-                        foreignField: "_id",
-                        as          : "paymentMethod"
+                        localField  : 'paymentMethod',
+                        foreignField: '_id',
+                        as          : 'paymentMethod'
                     }
                 }, {
                     $project: {
-                        supplier        : {$arrayElemAt: ["$supplier", 0]},
-                        invoice         : {$arrayElemAt: ["$invoice", 0]},
-                        paymentMethod   : {$arrayElemAt: ["$paymentMethod", 0]},
+                        supplier        : {$arrayElemAt: ['$supplier', 0]},
+                        invoice         : {$arrayElemAt: ['$invoice', 0]},
+                        paymentMethod   : {$arrayElemAt: ['$paymentMethod', 0]},
                         forSale         : 1,
                         differenceAmount: 1,
                         paidAmount      : 1,
@@ -1576,7 +1579,7 @@ var Payment = function (models, event) {
                     $project: {
                         supplier        : 1,
                         invoice         : 1,
-                        salesmanagers   : {$arrayElemAt: ["$salesmanagers", 0]},
+                        salesmanagers   : {$arrayElemAt: ['$salesmanagers', 0]},
                         forSale         : 1,
                         differenceAmount: 1,
                         paidAmount      : 1,
@@ -1599,7 +1602,7 @@ var Payment = function (models, event) {
                     }
                 }, {
                     $project: {
-                        assigned        : {$arrayElemAt: ["$salesmanagers", 0]},
+                        assigned        : {$arrayElemAt: ['$salesmanagers', 0]},
                         supplier        : 1,
                         invoice         : 1,
                         forSale         : 1,
@@ -1648,7 +1651,7 @@ var Payment = function (models, event) {
         var salary = contentType === 'salary';
         var workflowHandler = new WorkflowHandler(models);
         var JobsModel = models.get(req.session.lastDb, 'jobs', JobsSchema);
-        var type = "Invoiced";
+        var type = 'Invoiced';
         var project;
         var options = {
             forSale: forSale,
@@ -1972,8 +1975,8 @@ var Payment = function (models, event) {
                                     async.each(invoice.products, function (_payment, eachCb) {
                                         payrollExpensUpdater(db, _payment, -1, eachCb);
                                         journalEntry.removeByDocId({
-                                            "sourceDocument.model": 'salaryPayment',
-                                            "sourceDocument._id"  : _payment
+                                            'sourceDocument.model': 'salaryPayment',
+                                            'sourceDocument._id'  : _payment
                                         }, req.session.lastDb, function () {
                                         });
                                     }, function (err) {
