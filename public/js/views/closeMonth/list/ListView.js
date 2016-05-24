@@ -145,7 +145,7 @@ define([
                         var journalEntries = result.journalEntries;
                         var mainTr = body.find("[data-id='" + asyncId + "']");
                         journalEntries.forEach(function (entry) {
-                            mainTr.after("<tr data-main='" + asyncId + "' class='hidden'><td colspan='3' class='leftBorderNone'>" + entry.journal.name + "</td><td>" + common.utcDateToLocaleFullDateTime(entry.date) + "</td><td>" + (entry.debit ? helpers.currencySplitter((entry.debit / 100).toFixed(2)) : helpers.currencySplitter((entry.credit / 100).toFixed(2))) + "</td></tr>");
+                            mainTr.after("<tr data-main='" + asyncId + "' class='hidden'><td colspan='3' class='leftBorderNone'>" + entry.journal.name + "</td><td>" + common.utcDateToLocaleFullDateTime(entry.date) + "</td><td class='money'>" + (entry.debit ? helpers.currencySplitter((entry.debit / 100).toFixed(2)) : helpers.currencySplitter((entry.credit / 100).toFixed(2))) + "</td></tr>");
                         });
                     });
 

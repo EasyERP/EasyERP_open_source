@@ -36,19 +36,11 @@
         <% if(editable) { %>
         <input id="editInput" class="statusInfo" maxlength="9" size=7 type="text" value="<%=product.unitPrice%>" />
         <% } else { %>
-        <span><%=product.unitPrice.toString()%></span>
+        <span><%=currencySplitter(product.unitPrice.toString())%></span>
         <% } %>
     </td>
-    <td class="<%=editable  ? 'editable' : ''%> <%=currencyClassVal%>">
-        <span>
-            <%= product.taxes ?  currencySplitter(product.taxes.toString()) : ''%>
-        </span>
-    </td>
-    <td class="subtotal <%=currencyClassVal%>">
-        <span>
-            <%= product.subTotal ? currencySplitter(product.subTotal.toString()) : ''%>
-        </span>
-    </td>
+    <td class="<%=editable  ? 'editable' : ''%> <%=currencyClassVal%>"><span><%= product.taxes ?  currencySplitter(product.taxes.toString()) : ''%></span></td>
+    <td class="subtotal <%=currencyClassVal%>"><span><%= product.subTotal ? currencySplitter(product.subTotal.toString()) : ''%></span></td>
 </tr>
 <% }); %>
 <%if(editable) {%>

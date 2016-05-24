@@ -480,7 +480,7 @@
                                     </a>
                                 </td>
                                 <%if (transfer.salary || transfer.salary === 0) {%>
-                                <td class="editable" data-id="salary"><%= transfer.salary %></td>
+                                <td class="editable dollar" data-id="salary"><%=currencySplitter(transfer.salary.toString())%></td>
                                 <% } %>
                                 <td>
 

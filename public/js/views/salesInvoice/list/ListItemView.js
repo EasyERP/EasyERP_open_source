@@ -19,7 +19,8 @@
                 el.append(_.template(listTemplate, {
                     invoiceCollection: this.collection.toJSON(),
                     startNumber      : this.startNumber,
-                    currencySplitter : helpers.currencySplitter
+                    currencySplitter : helpers.currencySplitter,
+                    currencyClass    : helpers.currencyClass
                 }));
             }
         });
