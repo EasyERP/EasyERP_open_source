@@ -299,7 +299,7 @@ var Invoice = function (models, event) {
                 workflow = parallelResponse[1];
 
                 //order.attachments[0].shortPas = order.attachments[0].shortPas.replace('..%2Froutes', '');
-                order.attachments && delete order.attachments;
+                delete order.attachments;
 
             } else {
                 err = new Error(RESPONSES.BAD_REQUEST);
