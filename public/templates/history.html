@@ -1,10 +1,11 @@
-<% history.forEach(function (historyObj) { %>
-    <span class="date"><%= new Date(historyObj._id) %></span>
+<% Object.keys(history).forEach(function (date) {
+    var historyObj = history[date] %>
+    <span class="date"><%= new Date(date) %></span>
     <span class="editedBy">Edited By: <%= historyObj.editedBy %></span>
-    <% historyObj.events.forEach(function (event) { %>
+    <% historyObj.forEach(function (historyEvent) { %>
         <div class="">
-            <span class="changedFieldName"><%= event.field %></span><br>
-            <span><%= event.prevVal %></span><span> -> </span><span><%= event.newVal %></span>
+            <span class="changedFieldName"><%= historyEvent.changedField %></span><br>
+            <span><%= historyEvent.prevValue || '' %></span><span> -> </span><span><%= historyEvent.newValue || '' %></span>
         </div>
     <% }) %>
     <div class="clearfix"></div>

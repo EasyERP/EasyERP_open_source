@@ -27,9 +27,6 @@
                 this.responseObj = {};
                 this.elementId = options ? options.elementId : null;
 
-                this.renderHistory = _.after(3, this.renderHistory);
-                this.composeEnteties = _.once(this.composeEnteties);
-
                 this.render();
             },
 
@@ -450,56 +447,11 @@
                 }
             },
 
-            composeEnteties: function (mapping) {
-                var self = this;
-                var responseObj = self.responseObj;
-                var composedEnteties = {};
-
-                Object.keys(responseObj).forEach(function (entetiesKey) {
-                    var arr = responseObj[entetiesKey];
-                    if (mapping[entetiesKey]) {
-                        if (entetiesKey === '#workflowDd') {
-                            arr = arr.concat(responseObj['#workflowsLeadsDd']);
-                        }
-                        composedEnteties[mapping[entetiesKey]] = _.indexBy(arr, '_id');
-                    }
-                });
-
-                self.composedEnteties = composedEnteties;
-            },
-
-            composeHistory: function () {
-                var self = this;
-                var composedEnteties = self.composedEnteties;
-                var history = self.model.get('history');
-
-                Object.keys(history).forEach(function (key) {
-                    history[key].events.map(function (eventElement) {
-                        var entities = composedEnteties[eventElement.field];
-                        if (entities) {
-                            eventElement.newVal = entities[eventElement.newVal].name;
-                            eventElement.prevVal = eventElement.prevVal && entities[eventElement.prevVal].name || '';
-                        }
-                        return eventElement;
-                    });
-                });
-
-                self.history = history;
-
-            },
-
             renderHistory: function () {
                 var self = this;
                 var historyString;
-                var mapping = {
-                    '#workflowDd'   : 'workflow',
-                    '#salesPersonDd': 'salesPerson'
-                };
 
-                self.composeEnteties(mapping);
-                self.composeHistory();
-
-                historyString = self.historyTemplate({history: self.history});
+                historyString = self.historyTemplate({history: self.model.get('history')});
                 self.$el.find('.history-container').html(historyString);
             },
 
@@ -552,6 +504,9 @@
                         model: this.currentModel,
                     }).render().el
                 );
+
+                self.renderHistory();
+
                 $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
 
@@ -572,10 +527,8 @@
                     });
 
                     self.responseObj['#salesPersonDd'] = employees;
-                    self.renderHistory();
                 });
-                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, null, self.renderHistory);
-                populate.getWorkflow("#workflowsLeadsDd", "", "/WorkflowsForDd", {id: "Leads"}, "name", this, null, self.renderHistory);
+                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, null);
                 populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, false, true);
 
 

@@ -1,63 +1,51 @@
 module.exports = {
     LEAD: {
-        collectionName : 'Opportunities',
-        reverseMap : {
-            'isOpportunitie:' : 'isOpportunitie',
-            'expectedRevenue' : 'expectedRevenue.value',
-            'salesPerson' : 'salesPerson',
-            'workflow' : 'workflow'
-        },
-        map: {
-            'isOpportunitie' : {
-                name: 'isOpportunitie',
+        collectionName: 'Opportunities',
+        map           : {
+            isOpportunitie: {
+                name : 'isOpportunitie',
                 isRef: false
             },
-            'expectedRevenue.value' : {
-                name: 'expectedRevenue',
+            'expectedRevenue.value': {
+                name : 'expectedRevenue',
                 isRef: false
             },
-            'salesPerson' : {
-                name: 'salesPerson',
-                isRef: true,
+            salesPerson: {
+                name      : 'salesPerson',
+                isRef     : true,
                 collection: 'Employees',
-                project: {$concat: ['$name.first', '$name.last']}
+                project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
             },
-            'workflow' : {
-                name: 'workflow',
-                isRef: true,
+            workflow: {
+                name      : 'workflow',
+                isRef     : true,
                 collection: 'workflows',
-                project: '$name'
+                project   : '$tmp.name'
             }
         }
     },
     OPPORTUNITIE: {
-        collectionName : 'Opportunities',
-        reverseMap : {
-            'isOpportunitie:' : 'isOpportunitie',
-            'expectedRevenue' : 'expectedRevenue.value',
-            'salesPerson' : 'salesPerson',
-            'workflow' : 'workflow'
-        },
-        map:  {
-            'isOpportunitie' : {
-                name: 'isOpportunitie',
+        collectionName: 'Opportunities',
+        map           : {
+            isOpportunitie: {
+                name : 'isOpportunitie',
                 isRef: false
             },
-            'expectedRevenue.value' : {
-                name: 'expectedRevenue',
+            'expectedRevenue.value': {
+                name : 'expectedRevenue',
                 isRef: false
             },
-            'salesPerson' : {
-                name: 'salesPerson',
-                isRef: true,
+            salesPerson: {
+                name      : 'salesPerson',
+                isRef     : true,
                 collection: 'Employees',
-                project: {$concat: ['$name.first', '$name.last']}
+                project   : {$concat: ['$tmp.name.first', ' ', '$tmp.name.last']}
             },
-            'workflow' : {
-                name: 'workflow',
-                isRef: true,
+            workflow: {
+                name      : 'workflow',
+                isRef     : true,
                 collection: 'workflows',
-                project: '$name'
+                project   : '$tmp.name'
             }
         }
     }

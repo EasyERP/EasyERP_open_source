@@ -22,9 +22,6 @@ define([
                 this.currentModel.urlRoot = "/Leads";
                 this.responseObj = {};
 
-                this.renderHistory = _.after(2, this.renderHistory);
-                this.composeEnteties = _.once(this.composeEnteties);
-
                 this.render();
             },
 
@@ -318,52 +315,11 @@ define([
 
             },
 
-            composeEnteties: function (mapping) {
-                var self = this;
-                var responseObj = self.responseObj;
-                var composedEnteties = {};
-
-                Object.keys(responseObj).forEach(function (entetiesKey) {
-                    if (mapping[entetiesKey]) {
-                        composedEnteties[mapping[entetiesKey]] = _.indexBy(responseObj[entetiesKey], '_id');
-                    }
-                });
-
-                self.composedEnteties = composedEnteties;
-            },
-
-            composeHistory: function () {
-                var self = this;
-                var composedEnteties = self.composedEnteties;
-                var history = self.model.get('history');
-
-                Object.keys(history).forEach(function (key) {
-                    history[key].events.map(function (eventElement) {
-                        var entities = composedEnteties[eventElement.field];
-                        if (entities) {
-                            eventElement.newVal = entities[eventElement.newVal].name;
-                            eventElement.prevVal = eventElement.prevVal && entities[eventElement.prevVal].name || '';
-                        }
-                        return eventElement;
-                    });
-                });
-
-                self.history = history;
-
-            },
-
             renderHistory: function () {
                 var self = this;
                 var historyString;
-                var mapping = {
-                    '#workflowDd'   : 'workflow',
-                    '#salesPersonDd': 'salesPerson'
-                };
 
-                self.composeEnteties(mapping);
-                self.composeHistory();
-
-                historyString = self.historyTemplate({history: self.history});
+                historyString = self.historyTemplate({history: self.model.get('history')});
                 self.$el.find('.history-container').html(historyString);
             },
 
@@ -398,6 +354,8 @@ define([
                     }
                 });
 
+                self.renderHistory();
+
                 notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
@@ -412,7 +370,7 @@ define([
                     });
                     self.responseObj['#priorityDd'] = priorities;
                 });
-                populate.getWorkflow("#workflowsDd", "", "/WorkflowsForDd", {id: "Leads"}, "name", this, null, self.renderHistory);
+                populate.getWorkflow("#workflowsDd", "", "/WorkflowsForDd", {id: "Leads"}, "name", this, null);
                 populate.get2name("#customerDd", "/Customer", {}, this, null, true);
                 dataService.getData('/employee/getForDD', {isEmployee : true}, function (employees) {
                     employees = _.map(employees.data, function (employee) {
@@ -422,7 +380,6 @@ define([
                     });
 
                     self.responseObj['#salesPerson'] = employees;
-                    self.renderHistory();
                 });
                 populate.get("#campaignDd", "/Campaigns", {}, "name", this);
                 populate.get("#sourceDd", "/sources", {}, "name", this);

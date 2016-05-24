@@ -413,7 +413,7 @@ var Opportunities = function (models, event) {
                                         contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
                                         data: data,
                                         req: req,
-                                        trackedObj: result._id
+                                        contentId: result._id
                                     };
 
                                     historyWriter.addEntry(historyOptions);
@@ -602,12 +602,11 @@ var Opportunities = function (models, event) {
                 } else {
                     historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
                         if (err) {
-                            return next(err);
-                        } else {
-                            result = result.toJSON();
-                            result.history = history;
-                            response.send(result);
+                            return console.log(err);
                         }
+                        result = result.toJSON();
+                        result.history = history;
+                        response.send(result);
                     });
                 }
             });
@@ -993,7 +992,7 @@ var Opportunities = function (models, event) {
                 contentType: 'lead',
                 data: data,
                 req: req,
-                trackedObj: _id
+                contentId: _id
             };
 
             historyWriter.addEntry(historyOptions);
@@ -1222,7 +1221,7 @@ var Opportunities = function (models, event) {
                 contentType: 'opportunitie',
                 data: data,
                 req: req,
-                trackedObj: _id
+                contentId: _id
             };
             var fileName = data.fileName;
 
