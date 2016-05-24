@@ -1104,7 +1104,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 .vacation-list .P,
 .vacation-list .S,
 .vacation-list .E {
-  color: #000000;
+  color: #ffffff;
 }
 .vacation-list .vacation_input .editing {
   width: 100%;
@@ -1207,7 +1207,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 }
 .vacation-list #caption th,
 .vacation-list .subHeaderHolder th {
-  color: #000000;
+  color: #ffffff;
   line-height: 20px;
 }
 .vacation-list .newSelectList,
