@@ -28,6 +28,6 @@ var logWriter = (function () {
     }
     return {
         log: erfunc
-    }
+    };
 })();
 module.exports = logWriter;

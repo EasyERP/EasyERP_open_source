@@ -18,7 +18,7 @@ require.config({
         ajaxForm     : './libs/jquery.form',
         imageCrop    : './libs/jquery.Jcrop.min',
         jqueryui     : './libs/jquery-ui.min',
-        spinJs       : './libs/spin.js/spin.min',
+        spinJs       : './libs/spin.js/spin',
         ladda        : './libs/spin.min',
         Underscore   : './libs/underscore-min.map.1.6.0',
         Backbone     : './libs/backbone-min.map.1.1.2',

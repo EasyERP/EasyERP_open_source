@@ -1,18 +1,21 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
-
         'text!templates/Employees/list/ListHeader.html',
         'views/Employees/CreateView',
         'views/Employees/EditView',
         'views/Employees/list/ListItemView',
         'views/Filter/FilterView',
-        'models/EmployeesModel',
+        'views/Employees/form/FormView',
         'collections/Employees/filterCollection',
+        'models/EmployeesModel',
         'common'
-
     ],
 
-    function (listViewBase, listTemplate, createView, EditView, listItemView, filterView, currentModel, contentCollection, common) {
+    function (Backbone, $, _, listViewBase, listTemplate, createView, listItemView, filterView, FormView, contentCollection, CurrentModel, common) {
+        'use strict';
         var EmployeesListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -20,10 +23,11 @@ define([
             contentCollection       : contentCollection,
             filterView              : filterView,
             contentType             : "Employees",
-            totalCollectionLengthUrl: '/totalCollectionLength/Employees',
+            totalCollectionLengthUrl: '/employees/totalCollectionLength',
             formUrl                 : "#easyErp/Employees/form/",
-            exportToXlsxUrl         : '/employee/exportToXlsx',
-            exportToCsvUrl          : '/employee/exportToCsv',
+            formView                : FormView,
+            exportToXlsxUrl         : '/employees/exportToXlsx',
+            exportToCsvUrl          : '/employees/exportToCsv',
             events                  : {
                 "click"                              : "hideItemsNumber",
                 "click .letter:not(.empty)"          : "alpabeticalRender",

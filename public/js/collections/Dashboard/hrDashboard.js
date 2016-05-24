@@ -1,11 +1,15 @@
 ﻿define([
-        'models/hrDashboard'
+        'Backbone',
+        'models/hrDashboard',
+        'constants'
     ],
-    function (Model) {
+    function (Backbone, Model, CONSTANTS) {
+        'use strict';
+
         var Colection = Backbone.Collection.extend({
             model: Model,
 
-            url: 'dashboard/hr',
+            url: CONSTANTS.URLS.DASHBOARD_HR,
 
             initialize: function () {
                 this.fetch({

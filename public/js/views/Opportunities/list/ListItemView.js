@@ -1,10 +1,10 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'text!templates/Opportunities/list/ListTemplate.html',
-        "common",
-        'helpers'
-    ],
-
-    function (OpportunitiesListTemplate, common, helpers) {
+        'common',
+    'helpers'
+], function (Backbone, _, OpportunitiesListTemplate, common) {
         var OpportunitiesListItemView = Backbone.View.extend({
             el: '#listTable',
 

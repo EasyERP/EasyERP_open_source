@@ -1,10 +1,12 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'text!templates/salesOrder/list/ListTemplate.html',
         'text!templates/salesOrder/wTrack/ListTemplate.html',
         'helpers'
     ],
 
-    function (listTemplate, listForWTrack, helpers) {
+    function (Backbone, _, listTemplate, listForWTrack, helpers) {
         var OrderListItemView = Backbone.View.extend({
             el: '#listTable',
 

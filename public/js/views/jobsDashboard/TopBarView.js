@@ -2,11 +2,14 @@
  * Created by lilya on 09/11/15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/jobsDashboard/TopBarTemplate.html',
         'custom',
         "common"
     ],
-    function (TopBarTemplate, Custom, Common) {
+    function (Backbone, $, _, TopBarTemplate, Custom, Common) {
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: "Dashboard",
@@ -22,7 +25,7 @@ define([
                 "click #top-bar-exportToXlsxBtn"    : "exportToXlsx",
             },
 
-            nextEvent  : function (event) {
+            /*nextEvent  : function (event) {
                 event.preventDefault();
                 this.trigger('nextEvent');
             },
@@ -50,13 +53,13 @@ define([
                 event.preventDefault();
                 this.trigger('editEvent');
 
-                /*var id = this.getIdFromHash(window.location.hash);
-                 Backbone.history.navigate("#home/action-Profiles/Edit/" + id, { trigger: true });*/
+                /!*var id = this.getIdFromHash(window.location.hash);
+                 Backbone.history.navigate("#home/action-Profiles/Edit/" + id, { trigger: true });*!/
             },
             getIdFromHash: function (hash) {
                 var hashItems = hash.split('/');
                 return hashItems[hashItems.length - 1];
-            },
+            },*/
             initialize   : function (options) {
                 this.actionType = options.actionType;
                 this.render();

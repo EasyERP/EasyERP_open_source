@@ -1,16 +1,18 @@
 ﻿define([
-        'text!templates/Applications/list/ListTemplate.html',
-        "common",
+        'Backbone',
+        'Underscore',
+        'text!templates/Applications/list/ListTemplate.html'
     ],
-    function (ApplicationsListTemplate, common) {
+    function (Backbone, _, ApplicationsListTemplate) {
+        'use strict';
         var ApplicationsListItemView = Backbone.View.extend({
             el: '#listTable',
+
             initialize: function (options) {
                 this.collection = options.collection;
                 this.page = options.page ? parseInt(options.page) : 1;
                 this.startNumber = (this.page - 1 ) * options.itemsNumber;
             },
-            events: {},
 
             render: function () {
                 this.$el.append(_.template(ApplicationsListTemplate, {

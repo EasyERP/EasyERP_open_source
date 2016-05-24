@@ -2,6 +2,9 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/customerPayments/forWTrack/ListHeader.html',
@@ -17,12 +20,14 @@ define([
         'async',
         "helpers"
     ],
-    function (listViewBase, listTemplate, ListHeaderForWTrack, cancelEdit, listItemView, filterView, EditView, paymentCollection, editCollection, currentModel, dataService, populate, async, helpers) {
-        var PaymentListView = listViewBase.extend({
+    function (Backbone, $, _, ListViewBase, listTemplate, ListHeaderForWTrack, cancelEdit, ListItemView, filterView, EditView, paymentCollection, EditCollection, CurrentModel, dataService, populate, async, helpers) {
+        'use strict';
+
+        var PaymentListView = ListViewBase.extend({
 
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
-            filterView              : filterView,//if reload page, and in url is valid page
+            listItemView            : ListItemView,
+            filterView              : filterView, //if reload page, and in url is valid page
             contentType             : 'customerPayments',//needs in view.prototype.changeLocationHash
             modelId                 : null,
             $listTable              : null,
@@ -86,7 +91,7 @@ define([
             setChangedValue: function () {
                 if (!this.changed) {
                     this.changed = true;
-                    this.showSaveCancelBtns()
+                    this.showSaveCancelBtns();
                 }
             },
 
@@ -109,10 +114,9 @@ define([
             },
 
             deleteItems: function () {
-                var $currentEl = this.$el;
-                var that = this,
-                    mid = 68,
-                    model;
+                var that = this;
+                var mid = 68;
+                var model;
                 var localCounter = 0;
                 var count = $("#listTable input:checked").length;
                 this.collectionLength = this.collection.length;
@@ -130,10 +134,6 @@ define([
                                 that.editCollection.on('remove', function () {
                                     this.listLength--;
                                     localCounter++;
-                                    //
-                                    //if (index === count - 1) {
-                                    //    that.triggerDeleteItemsRender(localCounter);
-                                    //}
 
                                     that.deleteCounter = localCounter;
                                     that.deletePage = $("#currentShowPage").val();
@@ -152,9 +152,6 @@ define([
                                         that.listLength--;
                                         localCounter++;
 
-                                        //if (index === count - 1) {
-                                        //    that.triggerDeleteItemsRender(localCounter);
-                                        //}
                                         that.deleteCounter = localCounter;
                                         that.deletePage = $("#currentShowPage").val();
                                         that.deleteItemsRender(that.deleteCounter, that.deletePage);
@@ -168,10 +165,8 @@ define([
                                         }
                                         that.listLength--;
                                         localCounter++;
-                                        if (index == count - 1) {
-                                            //if (index === count - 1) {
-                                            //    that.triggerDeleteItemsRender(localCounter);
-                                            //}
+                                        if (index === count - 1) {
+
                                             that.deleteCounter = localCounter;
                                             that.deletePage = $("#currentShowPage").val();
                                             that.deleteItemsRender(that.deleteCounter, that.deletePage);
@@ -244,7 +239,7 @@ define([
                     cb();
                 }, function (err) {
                     if (!err) {
-                        self.editCollection = new editCollection(collection.toJSON());
+                        self.editCollection = new EditCollection(collection.toJSON());
                         self.editCollection.on('saved', self.savedNewModel, self);
                         self.editCollection.on('updated', self.updatedOptions, self);
                         self.hideSaveCancelBtns();
@@ -260,7 +255,7 @@ define([
                 self.changedModels = {};
             },
 
-            editRow: function (e, prev, next) {
+            editRow: function (e) {
                 var self = this;
 
                 var ul;
@@ -339,10 +334,8 @@ define([
                 var targetW = targetElement.find("a");
                 var tr = target.parents("tr");
                 var modelId = tr.attr('data-id');
-                var id = target.attr("id");
                 var attr = targetElement.attr("id") || targetElement.attr("data-content");
                 var elementType = '#' + attr;
-                var workflow;
                 var changedAttr;
 
                 var editModel = this.editCollection.get(modelId);
@@ -377,10 +370,11 @@ define([
             saveItem: function () {
                 var model;
                 var modelJSON;
+                var id;
 
                 this.setChangedValueToModel();
 
-                for (var id in this.changedModels) {
+                for (id in this.changedModels) {
                     model = this.editCollection.get(id);
                     modelJSON = model.toJSON();
                     model.changed = this.changedModels[id];
@@ -452,7 +446,7 @@ define([
 
             resetCollection: function (model) {
                 if (model && model._id) {
-                    model = new currentModel(model);
+                    model = new CurrentModel(model);
                     this.collection.add(model);
                 } else {
                     this.collection.set(this.editCollection.models, {remove: false});
@@ -478,11 +472,11 @@ define([
                 this.showNewSelect(e, true, false);
             },
 
-            hideNewSelect: function (e) {
+            hideNewSelect: function () {
                 $(".newSelectList").remove();
             },
 
-            render: function (options) {
+            render: function () {
                 var self;
                 var $currentEl;
 
@@ -493,7 +487,7 @@ define([
 
                 $currentEl.html('');
                 $currentEl.append(_.template(ListHeaderForWTrack));
-                $currentEl.append(new listItemView({
+                $currentEl.append(new ListItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
@@ -507,8 +501,10 @@ define([
 
                 this.renderFilter(self);
 
+                // self.editCollection = new EditCollection(self.collection.toJSON()); //todo move into setTimeOut
+
                 setTimeout(function () {
-                    self.editCollection = new editCollection(self.collection.toJSON());
+                    self.editCollection = new EditCollection(self.collection.toJSON());
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
 

@@ -1,4 +1,8 @@
-define(['Validation', 'common', 'moment'], function (Validation, common, moment) {
+define([
+    'Backbone',
+    'Validation'
+], function (Backbone, Validation) {
+    'use strict';
     var wTrackModel = Backbone.Model.extend({
         idAttribute: "_id",
 
@@ -38,7 +42,7 @@ define(['Validation', 'common', 'moment'], function (Validation, common, moment)
             if (errors.length > 0) {
                 return errors;
             }
-        },
+        }
     });
 
     return wTrackModel;

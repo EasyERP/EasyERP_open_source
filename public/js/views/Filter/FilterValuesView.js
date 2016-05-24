@@ -3,14 +3,15 @@
  */
 define([
         'Backbone',
+        'jQuery',
         'Underscore',
         'text!templates/Filter/filterGroup.html',
         'collections/Filter/filterCollection',
-        'constants',
-        'jQuery'
+        'constants'
     ],
-    function (Backbone, _, valuesTemplate, FilterCollection, CONSTANTS, $) {
+    function (Backbone, $, _, valuesTemplate, FilterCollection, CONSTANTS) {
         'use strict';
+
         var filterValuesView = Backbone.View.extend({
             initialize: function (options) {
                 var sortOptions = options.sortOptions || {};
@@ -127,12 +128,12 @@ define([
                         if (element._id || element._id === 0) {
 
                             if (element.isEmployee === false) {
-
                                 if (!element.status) {
-                                    classFired = "fired";
+                                    classFired = 'fired';
                                 } else {
-                                    classFired = "fired checkedValue";
+                                    classFired = 'fired checkedValue';
                                 }
+                                
                                 ulElement.append('<li class="' + classFired + '" data-value="' + element._id + '"' + status + '>' + element.name + '</li>');
                             } else {
                                 ulElement.append('<li data-value="' + element._id + '"' + status + '>' + element.name + '</li>');

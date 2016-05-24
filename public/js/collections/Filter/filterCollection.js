@@ -2,8 +2,11 @@
  * Created by soundstorm on 12.08.15.
  */
 define([
+    'Backbone',
     'models/FilterModel'
-], function (FilterModel) {
+], function (Backbone, FilterModel) {
+    'use strict';
+
     var FilterCollection = Backbone.Collection.extend({
         model: FilterModel,
 
@@ -24,8 +27,8 @@ define([
 
             if ((nameA === 0 || nameA) && (nameB === 0 || nameB)) {
                 if (this.int) {
-                    nameA = parseInt(nameA);
-                    nameB = parseInt(nameB);
+                    nameA = parseInt(nameA, 10);
+                    nameB = parseInt(nameB, 10);
                 }
 
                 if (nameA > nameB) {
@@ -39,9 +42,8 @@ define([
         },
 
         sortBy: function (options) {
-            this.sortName = options.key ? options.key : 'name';
-            this.sortOrder = options.order ? options.order : 1;
-
+            this.sortName = options.key || 'name';
+            this.sortOrder = options.order || 1;
             this.int = options.int ? true : false;
 
             this.sort();

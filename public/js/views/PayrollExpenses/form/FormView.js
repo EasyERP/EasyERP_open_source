@@ -1,9 +1,10 @@
 /**
  * Created by lilya on 16/11/15.
  */
-'use strict';
 define([
         'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/PayrollExpenses/form/FormTemplate.html',
         'text!templates/PayrollExpenses/form/sortTemplate.html',
         'text!templates/PayrollExpenses/form/cancelEdit.html',
@@ -20,10 +21,10 @@ define([
         "populate",
         "dataService",
         "async",
-        'common'
+        'constants'
     ],
 
-    function (Backbone, PayrollTemplate, sortTemplate, cancelEdit, ReportView, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async, common) {
+    function (Backbone, $, _, PayrollTemplate, sortTemplate, cancelEdit, ReportView, editCollection, sortCollection, PaymentCollection, currentModel, selectView, paymentCreateView, createView, helpers, moment, populate, dataService, async, CONSTANTS) {
         var PayrollExpanses = Backbone.View.extend({
 
             el           : '#content-holder',
@@ -1086,7 +1087,7 @@ define([
             },
 
             filterEmployeesForDD: function (content) {
-                dataService.getData("/employee/getForDD", null, function (employees) {
+                dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -1102,27 +1103,9 @@ define([
                 });
             },
 
-            //showHidden: function (e) {
-            //    var $target = $(e.target);
-            //    var $tr = $target.closest('tr');
-            //    var dataId = $tr.attr('data-id');
-            //    var $body = this.$el.find('#payRoll-listTable');
-            //    var childTr = $body.find("[data-main='" + dataId + "']");
-            //    var sign = $.trim($tr.find('.expand').text());
-            //
-            //    if (sign === '+') {
-            //        $tr.find('.expand').text('-');
-            //    } else {
-            //        $tr.find('.expand').text('+');
-            //    }
-            //
-            //    childTr.toggleClass();
-            //},
-
             render: function () {
                 var self = this;
                 var collection = this.collection.toJSON();
-                var asyncKeys = [];
 
                 this.$el.html(_.template(PayrollTemplate, {
                     collection      : collection,

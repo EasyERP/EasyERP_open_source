@@ -263,14 +263,14 @@ define([
                 currentNames.push(employee.name);
             });
 
-            dataService.getData("/employee/getForDD", null, function (data) {
-                var employees = [];
-                _.each(data.data, function (employee) {
-                    employee.name = employee.name.first + ' ' + employee.name.last;
-                    if (!~currentNames.indexOf(employee.name)) {
-                        employees.push(employee);
-                    }
-                });
+                dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (data) {
+                    var employees = [];
+                    _.each(data.data, function (employee) {
+                        employee.name = employee.name.first + ' ' + employee.name.last;
+                        if (!~currentNames.indexOf(employee.name)) {
+                            employees.push(employee);
+                        }
+                    });
 
                 content.responseObj['#employee'] = employees;
             });
@@ -742,18 +742,18 @@ define([
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
         },
 
-        renderContent: function () {
-            var $currentEl = this.$el;
-            var tBody = $currentEl.find('#listTable');
-            $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
-            tBody.empty();
-            var itemView = new listItemView({
-                collection : this.collection,
-                page       : $currentEl.find("#currentShowPage").val(),
-                itemsNumber: $currentEl.find("span#itemsNumber").text()
-            });
-            tBody.append(itemView.render());
+            /*renderContent: function () {
+                var $currentEl = this.$el;
+                var tBody = $currentEl.find('#listTable');
+                $("#top-bar-deleteBtn").hide();
+                $('#check_all').prop('checked', false);
+                tBody.empty();
+                var itemView = new listItemView({
+                    collection : this.collection,
+                    page       : $currentEl.find("#currentShowPage").val(),
+                    itemsNumber: $currentEl.find("span#itemsNumber").text()
+                });
+                tBody.append(itemView.render());
 
             var pagenation = this.$el.find('.pagination');
 
@@ -780,10 +780,10 @@ define([
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
 
-            this.changeLocationHash(1, itemsNumber, this.filter);
-            this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-            this.getTotalLength(null, itemsNumber, this.filter);
-        },
+                this.changeLocationHash(1, itemsNumber, this.filter);
+                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
+                this.getTotalLength(null, itemsNumber, this.filter);
+            },*/
 
         showMoreContent: function (newModels) {
             var holder = this.$el;
@@ -834,7 +834,6 @@ define([
         },
 
         deleteItemsRender: function (deleteCounter, deletePage) {
-
             this.renderTable(this.collection.toJSON());
 
             this.editCollection.reset(this.collection.models);

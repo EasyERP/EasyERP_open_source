@@ -1,17 +1,18 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
-        'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Persons/list/ListHeader.html',
         'views/Persons/CreateView',
         'views/Persons/list/ListItemView',
-        'text!templates/Alpabet/AphabeticTemplate.html',
         'collections/Persons/filterCollection',
         'views/Filter/FilterView',
         'common',
-
+        'constants'
     ],
 
-    function (listViewBase, paginationTemplate, listTemplate, createView, listItemView, aphabeticTemplate, contentCollection, filterView, common) {
+    function ($, _, listViewBase, listTemplate, createView, listItemView, contentCollection, filterView, common, CONSTANTS) {
+        'use strict';
         var PersonsListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -29,6 +30,7 @@ define([
             },
 
             initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
@@ -44,8 +46,6 @@ define([
                 this.render();
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-
-                this.filterView;
             },
 
             exportToXlsx: function () {
@@ -96,7 +96,7 @@ define([
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 this.renderFilter(self);
-            },
+            }
         });
 
         return PersonsListView;

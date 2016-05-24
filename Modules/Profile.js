@@ -4,7 +4,7 @@ var Profile = function (models) {
     var users = mongoose.Schemas['User'];
     var ProfileSchema = mongoose.Schemas['Profile'];
 
-    function createProfile(req, data, res) {
+    /*function createProfile(req, data, res) {
         try {
             if (!data.profileName) {
                 logWriter.log('Profile.create Incorrect Incoming Data');
@@ -70,9 +70,9 @@ var Profile = function (models) {
             logWriter.log("Profile.js  create " + exception);
             res.send(500, { error: 'Profile.create find error' });
         }
-    };
+    };*/
 
-    function getProfile(req, response) {
+    /*function getProfile(req, response) {
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, "Profile", ProfileSchema).find({});
@@ -89,10 +89,10 @@ var Profile = function (models) {
                 response.send(res);
             }
         });
-    };
-    function getProfileForDd(req, response) {
+    };*/
+/*    function getProfileForDd(req, res) {
         var res = {};
-        res['data'] = [];
+        response['data'] = [];
         var query = models.get(req.session.lastDb, "Profile", ProfileSchema).find({});
         query.select("_id profileName");
         query.exec(function (err, result) {
@@ -100,15 +100,15 @@ var Profile = function (models) {
                 if (err) {
                     logWriter.log("Profile.js getProfiles profile.find " + err);
                 }
-                response.send(404, { error: "Can't find Profile" });
+                res.send(404, { error: "Can't find Profile" });
             } else {
-                res['data'] = result;
-                response.send(res);
+                response['data'] = result;
+                res.send(res);
             }
         });
-    };
+    };*/
 
-    function updateProfile(req, _id, data, res) {
+    /*function updateProfile(req, _id, data, res) {
         try {
             delete data._id;
             models.get(req.session.lastDb, "Profile", ProfileSchema).update({ _id: _id }, data, function (err, result) {
@@ -126,9 +126,9 @@ var Profile = function (models) {
             logWriter.log("Profile.js update " + exception);
             res.send(500, { error: exception });
         }
-    };
+    };*/
 
-    function removeProfile(req, _id, res) {
+    /*function removeProfile(req, _id, res) {
 		models.get(req.session.lastDb, 'Users', users).update({ profile: _id}, {profile:"1387275504000"},{multi:true}, function (err, result) {
 			models.get(req.session.lastDb, "Profile", ProfileSchema).remove({ _id: _id }, function (err, result) {
 				if (err) {
@@ -139,19 +139,19 @@ var Profile = function (models) {
 				}
 			});
 		});
-    };
+    };*/
 
     return {
         
-        createProfile: createProfile,
+        /*createProfile: createProfile,*/
         
-        getProfile: getProfile,
+        /*getProfile: getProfile,*/
 
-		getProfileForDd: getProfileForDd,
+		/*getProfileForDd: getProfileForDd,*/
         
-        updateProfile: updateProfile,
+        /*updateProfile: updateProfile,*/
         
-        removeProfile: removeProfile
+        /*removeProfile: removeProfile*/
     };
 
 };

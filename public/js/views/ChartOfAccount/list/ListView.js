@@ -2,9 +2,9 @@
  * Created by lilya on 27/11/15.
  */
 define([
+        'Backbone',
         'jQuery',
         'Underscore',
-        'Backbone',
         'text!templates/ChartOfAccount/list/ListHeader.html',
         'text!templates/ChartOfAccount/list/ListTemplate.html',
         'text!templates/ChartOfAccount/list/cancelEdit.html',
@@ -14,8 +14,9 @@ define([
         'models/chartOfAccount',
         "async"
     ],
-    function ($, _, Backbone, listHeaderTemplate, listTemplate, cancelEdit, CreateView, ContentCollection, EditCollection, CurrentModel, async) {
+    function (Backbone, $, _, listHeaderTemplate, listTemplate, cancelEdit, CreateView, ContentCollection, EditCollection, CurrentModel, async) {
         'use strict';
+
         var ProjectsListView = Backbone.View.extend({
             el           : '#content-holder',
             contentType  : "ChartOfAccount",
@@ -304,8 +305,6 @@ define([
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var trId = tr.data('id');
-                var colType = el.data('type');
-                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var tempContainer;
                 var width;
 
@@ -562,11 +561,11 @@ define([
 
                 setTimeout(function () {
                     self.editCollection = new EditCollection(self.collection.toJSON());
+                    self.$listTable = currentEl.find('#chartOfAccount');
+
                     self.editCollection.on('saved', self.savedNewModel, self);
                     self.editCollection.on('error', self.errorFunction, self);
                     self.editCollection.on('updated', self.updatedOptions, self);
-
-                    self.$listTable = currentEl.find('#chartOfAccount');
                 }, 10);
 
                 return this;

@@ -64,7 +64,7 @@
                     }
                 }
             });
-            
+
             currentEmployees.weekly = currentEmployees.monthly.filter(function (employee) {
                 if (employee.dateBirth) {
                     birthday = new Date(employee.dateBirth);
@@ -92,7 +92,7 @@
                     return -1;
                 return 0;
             });
-            
+
             currentEmployees.nextweek.sort(function (a, b) {
                 if (a.daysForBirth > b.daysForBirth)
                     return 1
@@ -102,7 +102,7 @@
             });
             return currentEmployees;
         };
-        
+
         var now = new Date();
         var day = 0;
         var _month = now.getMonth() + 1;
@@ -183,7 +183,7 @@
         var now = new Date();
 
         data['date'] = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        data['currentEmployees'] = currentEmployees,
+        data['currentEmployees'] = currentEmployees;
 
         models.get(req.session.lastDb, "birthdays", birthdaysSchema).findByIdAndUpdate({ _id: 1 }, data, {new: true, upsert: true }, function (error, birth) {
             if (error) {

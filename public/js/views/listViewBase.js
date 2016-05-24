@@ -1,18 +1,20 @@
 define([
+        'Backbone',
         'jQuery',
         'Underscore',
-        'Backbone',
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/Alpabet/AphabeticTemplate.html',
         'text!templates/Notes/importTemplate.html',
         'views/Notes/AttachView',
         'common',
         'dataService',
+        'constants',
         'helpers'
     ],
 
-    function ($, _, Backbone, paginationTemplate, aphabeticTemplate, importForm, attachView, common, dataService, helpers) {
-        'use strict';
+    function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, AttachView, common, dataService, CONSTANTS, helpers) {
+        "use strict";
+
         var ListViewBase = Backbone.View.extend({
             el                : '#content-holder',
             defaultItemsNumber: null,
@@ -124,9 +126,9 @@ define([
                     currentNumber: currentNumber,
                     filter       : filter,
                     contentType  : this.contentType,
-                    newCollection: this.newCollection
+                    newCollection: this.newCollection,
+                    mid          : this.mId
                 }, function (response, context) {
-
                     var page = context.page || 1;
                     var length = context.listLength = response.count || 0;
 
@@ -149,16 +151,18 @@ define([
             },
 
             gotoForm: function (e) {
+                var id = $(e.target).closest("tr").data("id");
+
                 if (!this.formUrl) {
                     return;
                 }
+
                 App.ownContentType = true;
-                var id = $(e.target).closest("tr").data("id");
                 window.location.hash = this.formUrl + id;
             },
 
             createItem: function () {
-                new this.createView();
+                return new this.createView();
             },
 
             checked: function (e) {
@@ -170,6 +174,7 @@ define([
                 if (this.collection.length > 0) {
 
                     checkLength = $("input.checkbox:checked").length;
+
                     if (checkLength > 0) {
                         $("#top-bar-deleteBtn").show();
                         checkAll$ = $('#check_all');
@@ -178,13 +183,13 @@ define([
                         if (checkLength === this.collection.length) {
                             checkAll$.prop('checked', true);
                         }
-                    }
-                    else {
+                    } else {
                         $("#top-bar-deleteBtn").hide();
                         checkAll$ = $('#check_all');
                         checkAll$.prop('checked', false);
                     }
                 }
+
                 if (typeof(this.setAllTotalVals) === "function") {   // added in case of existing setAllTotalVals in View
                     this.setAllTotalVals();
                 }
@@ -192,11 +197,12 @@ define([
 
             deleteItems: function () {
                 var that = this;
-                var mid = 39;
+                var mid = CONSTANTS.MID[this.contentType];
                 var model;
                 var localCounter = 0;
                 var listTableCheckedInput;
                 var count;
+
                 listTableCheckedInput = $("#listTable").find("input:checked");
 
                 count = listTableCheckedInput.length;
@@ -265,6 +271,7 @@ define([
 
             // carried off eventHandlers for pages in one
             checkPage: function (event) {
+
                 var newRows = this.$el.find('#false');
                 var elementId = $(event.target).attr('id');
                 var data = {
@@ -304,9 +311,10 @@ define([
                 }
 
                 dataService.getData(this.totalCollectionLengthUrl, {
-                    sort  : this.sort,
+                    sort       : this.sort,
                     filter     : this.filter,
                     contentType: this.contentType,
+                    mid        : this.mId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
@@ -365,7 +373,7 @@ define([
             },
 
             hidePagesPopup: function (e) {
-                var el = e.target;
+                var el = $(e.target);
 
                 if (this.selectView) {
                     this.selectView.remove();
@@ -427,7 +435,8 @@ define([
                 var holder = this.$el;
                 var itemView;
                 var page = parseInt(holder.find('#currentShowPage').val(), 10) || 1; // if filter give 0 elements
-
+                var pagenation;
+                
                 holder.find('#listTable').empty();
 
                 itemView = new this.listItemView({
@@ -440,12 +449,14 @@ define([
 
                 itemView.undelegateEvents();
 
-                var pagenation = holder.find('.pagination');
+                pagenation = holder.find('.pagination');
+
                 if (newModels.length !== 0) {
                     pagenation.show();
                 } else {
                     pagenation.hide();
                 }
+
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
 
@@ -460,10 +471,11 @@ define([
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             },
 
-            showMoreAlphabet: function (newModels) {
+           /* showMoreAlphabet: function (newModels) {
                 var holder = this.$el;
                 var alphaBet = holder.find('#startLetter');
                 var created = holder.find('#timeRecivingDataFromServer');
+
                 this.countPerPage = newModels.length;
                 content.remove();
                 holder.append(this.template({collection: newModels.toJSON()}));
@@ -473,7 +485,7 @@ define([
                 created.text("Created in " + (new Date() - this.startTime) + " ms");
                 holder.prepend(alphaBet);
                 holder.append(created);
-            },
+            },*/
 
             //</editor-fold>
 
@@ -516,10 +528,9 @@ define([
             alpabeticalRender: function (e) {
                 var target;
                 var itemsNumber = $("#itemsNumber").text();
+                var selectedLetter;
 
                 this.startTime = new Date();
-
-                var selectedLetter;
 
                 if (e && e.target) {
                     target = $(e.target);
@@ -562,6 +573,7 @@ define([
 
             renderCheckboxes: function () {
                 var self = this;
+
                 $('#check_all').click(function () {
                     $(':checkbox:not(.notRemovable)').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0) {
@@ -658,6 +670,7 @@ define([
                     filter       : this.filter,
                     newCollection: this.newCollection,
                     contentType  : this.contentType,
+                    mid          : this.mId
                 }, function (response, context) {
                     context.listLength = response.count || 0;
                 }, this);
@@ -722,7 +735,7 @@ define([
             },
 
             importFiles: function (context) {
-                new attachView({
+                new AttachView({
                     modelName: context.contentType,
                     import   : true
                 });
@@ -730,15 +743,18 @@ define([
 
         });
 
-        ListViewBase.extend = function (child) {
+        ListViewBase.extend = function () {
             var view = Backbone.View.extend.apply(this, arguments);
             var key;
             var protoEvents = this.prototype.events;
             var protoKeys = Object.keys(protoEvents);
             var viewEvents = view.prototype.events;
+            var length = protoKeys.length;
+            var i;
 
-            for (var i = 0, length = protoKeys.length; i < length; i++) {
+            for (i = 0; i < length; i++) {
                 key = protoKeys[i];
+
                 if (viewEvents.hasOwnProperty(key)) {
                     continue;
                 }

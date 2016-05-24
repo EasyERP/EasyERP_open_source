@@ -1,6 +1,3 @@
-/**
- * Created by liliya on 17.09.15.
- */
 define([
     'jQuery',
     'Underscore',
@@ -34,7 +31,7 @@ define([
              dataService,
              populate,
              async,
-             constants) {
+             CONSTANTS) {
     var wTrackView = listView.extend({
 
         el                      : '#timesheet',
@@ -62,7 +59,7 @@ define([
         initialize: function (options) {
             this.remove();
             this.collection = options.model;
-            this.defaultItemsNumber = options.defaultItemsNumber || constants.DEFAULT_ELEMENTS_PER_PAGE;
+            this.defaultItemsNumber = options.defaultItemsNumber || CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
             this.filter = options.filter ? options.filter : {};
             this.project = options.project ? options.project : {};
 

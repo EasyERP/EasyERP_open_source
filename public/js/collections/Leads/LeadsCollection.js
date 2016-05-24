@@ -1,12 +1,16 @@
 define([
+        'Backbone',
+        'jQuery',
         'models/LeadsModel',
-        'common'
+        'constants'
     ],
-    function (LeadModel, common) {
+    function (Backbone, $, LeadModel, CONSTANTS) {
+        'use strict';
+
         var LeadsCollection = Backbone.Collection.extend({
             model     : LeadModel,
             url       : function () {
-                return "/Leads";
+                return CONSTANTS.URLS.LEADS;
             },
             initialize: function () {
                 var mid = 39;
@@ -20,11 +24,10 @@ define([
                     error  : this.fetchError
                 });
             },
-            parse     : true,
 
             parse: function (response) {
                 return response.data;
-            },
+            }
         });
         return LeadsCollection;
     });

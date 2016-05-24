@@ -1,10 +1,9 @@
 ﻿define([
-        'text!templates/Users/list/ListTemplate.html'
-    ],
-
-    function (ListTemplate) {
-        var ListItemView = Backbone.View.extend({
-            el: '#listTable',
+    'Backbone',
+    'text!templates/Users/list/ListTemplate.html'
+], function (Backbone, ListTemplate) {
+    var ListItemView = Backbone.View.extend({
+        el: '#listTable',
 
             initialize: function (options) {
                 this.collection = options.collection;
@@ -20,5 +19,5 @@
             }
         });
 
-        return ListItemView;
-    });
+    return ListItemView;
+});

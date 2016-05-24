@@ -1,9 +1,13 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'text!templates/JobPositions/list/ListTemplate.html'
     ],
-    function (ListTemplate) {
+    function (Backbone, _, ListTemplate) {
+        'use strict';
+
         var JobPositionsListItemView = Backbone.View.extend({
-            el: '#listTable',
+            el        : '#listTable',
             initialize: function (options) {
                 this.collection = options.collection;
                 this.page = options.page ? parseInt(options.page, 10) : 1;

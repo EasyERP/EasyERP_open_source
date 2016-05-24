@@ -1,17 +1,18 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/invoiceAging/list/ListHeader.html',
         'views/invoiceAging/list/ListItemView',
-        'models/invoiceAging',
-        'collections/invoiceAging/filterCollection',
-        'dataService',
-        'custom'
+        'collections/invoiceAging/filterCollection'
     ],
 
-    function (listViewBase, listTemplate, listItemView, currentModel, contentCollection, dataService, custom) {
+    function ($, _, listViewBase, listTemplate, ListItemView, contentCollection) {
+        'use strict';
+
         var ListView = listViewBase.extend({
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            listItemView            : ListItemView,
             contentCollection       : contentCollection,
             totalCollectionLengthUrl: '/invoice/invoiceAging/totalCollectionLength',
             contentType             : 'invoiceAging',
@@ -42,7 +43,7 @@ define([
 
                 $currentEl.html('');
                 $currentEl.append(_.template(listTemplate));
-                itemView = new listItemView({
+                itemView = new ListItemView({
                     collection : this.collection,
                     itemsNumber: this.collection.namberToShow
                 });

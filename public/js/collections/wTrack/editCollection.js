@@ -1,8 +1,9 @@
 ﻿define([
-    'Backbone',
-    './filterCollection'
-], function (Backbone, ParrantCollection) {
-    'use strict';
+        'Backbone',
+        './filterCollection'
+    ],
+    function (Backbone, ParrantCollection) {
+        'use strict';
 
     var EditableColection = ParrantCollection.extend({
 

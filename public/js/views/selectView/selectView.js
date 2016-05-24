@@ -2,11 +2,14 @@
  * Created by liliy on 28.12.2015.
  */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/selectView/selectTemplate.html",
         "text!templates/selectView/selectContent.html",
         'collections/Filter/filterCollection'
     ],
-    function (selectTemplate, selectContent, filterCollection) {
+    function (Backbine, $, _, selectTemplate, selectContent, filterCollection) {
         var selectView = Backbone.View.extend({
             template       : _.template(selectTemplate),
             contentTemplate: _.template(selectContent),

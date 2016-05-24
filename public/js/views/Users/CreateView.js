@@ -1,11 +1,14 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Users/CreateTemplate.html",
         "models/UsersModel",
         "common",
         "populate",
         "Validation"
     ],
-    function (CreateTemplate, UsersModel, common, populate, Validation) {
+    function (Backbone, $, _, CreateTemplate, UsersModel, common, populate, Validation) {
 
         var UsersCreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -129,7 +132,7 @@ define([
                         }
                     }
                 });
-                populate.get("#profilesDd", "ProfilesForDd", {}, "profileName", this, true);
+                populate.get("#profilesDd", "profiles/forDd", {}, "profileName", this, true);
                 common.canvasDraw({model: this.model.toJSON()}, this);
                 return this;
             }

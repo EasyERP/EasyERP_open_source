@@ -1,12 +1,14 @@
 ﻿define([
         'Backbone',
         'models/VacationDashboard',
+        'constants',
         'custom'
-    ],
-    function (Backbone, Model, custom) {
-        var Colection = Backbone.Collection.extend({
+], function (Backbone, Model, CONSTANTS, custom) {
+        'use strict';
+
+        var Collection = Backbone.Collection.extend({
             model: Model,
-            url: 'dashboard/vacation',
+            url: CONSTANTS.URLS.DASHBOARD_VACATION,
 
             initialize: function (options) {
                 this.fetch({
@@ -25,5 +27,5 @@
 
         });
 
-        return Colection;
-    });
+        return Collection;
+});

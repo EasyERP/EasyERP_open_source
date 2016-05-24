@@ -2,8 +2,13 @@
  * Created by German on 02.07.2015.
  */
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Attendance/statisticsTemplate.html'
-], function (statiscticsBlock) {
+], function (Backbone, $, _, statiscticsBlock) {
+    'use strict';
+
     var StatisticsView = Backbone.View.extend({
         el        : '#statictics',
         initialize: function (options) {
@@ -32,7 +37,7 @@ define([
                 numberPercent = now / onePercent;
                 numberPercent = "DOWN " + Math.abs(Math.ceil(100 - numberPercent)) + "%";
             } else {
-                if (last == 0) {
+                if (last === 0) {
                     numberPercent = "UP " + Math.ceil(now * 100) + "%";
                 } else {
                     onePercent = last / 100;

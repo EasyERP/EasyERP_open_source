@@ -1,9 +1,14 @@
 define([
+        'Backbone',
+        'Underscore',
+        'jQuery',
         'text!templates/Workflows/TopBarTemplate.html',
         'custom',
         'common'
     ],
-    function (ContentTopBarTemplate, Custom, Common) {
+    function (Backbone, _, $, ContentTopBarTemplate, Custom, Common) {
+        'use strict';
+
         var TopBarView = Backbone.View.extend({
             el         : '#top-bar',
             contentType: "Workflows",
@@ -33,12 +38,12 @@ define([
                 Common.displayControlBtnsByActionType(this.actionType);
 
                 return this;
-            },
+            }/*,
 
             deleteEvent: function (event) {
                 event.preventDefault();
                 var answer = confirm("Really DELETE items ?!");
-                if (answer == true) {
+                if (answer === true) {
                     this.trigger('deleteEvent');
                 }
             },
@@ -50,7 +55,7 @@ define([
             createEvent : function (event) {
                 event.preventDefault();
                 this.trigger('createEvent');
-            }
+            }*/
         });
 
         return TopBarView;

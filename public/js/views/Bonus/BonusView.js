@@ -1,43 +1,45 @@
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'text!templates/Bonus/BonusTemplate.html',
     'views/selectView/selectView',
     'views/Bonus/CreateView',
     'models/BonusModel',
     "dataService",
-    'common',
-    "populate",
-    'moment'
-], function (bonusTemplate, selectView, createView, currentModel, dataService, common, populate, moment) {
-    var BonusView = Backbone.View.extend({
+    'moment',
+    'constants'
+], function (Backbone, $, _, bonusTemplate, SelectView, CreateView, CurrentModel, dataService, moment, CONSTANTS) {
+    'use strict';
 
+    var BonusView = Backbone.View.extend({
         initialize: function (options) {
             this.model = options.model;
             this.responseObj = {};
             this.selectedBonus = [];
             this.startDate = this.model.get('StartDate');
             this.endDate = this.model.get('EndDate');
-            // this.render();
         },
 
         template: _.template(bonusTemplate),
 
         events: {
-            'click #createBonus'                                              : 'addBonus',
-            'click #removeBonus'                                              : 'removeBonus',
-            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-            'click .choseType'                                                : 'showSelect',
-            'click .choseEmployee'                                            : 'showSelect',
-            'click .bonus-checkbox'                                           : 'checkBonus',
-            'click #check_all_bonus'                                          : 'checkAllBonus',
-            'click .startDate div'                                            : 'showDatepicker',
-            'click .endDate div'                                              : 'showDatepicker',
-            'click'                                                           : 'hideDatepicker'
+            'click #createBonus'                               : 'addBonus',
+            'click #removeBonus'                               : 'removeBonus',
+            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+            'click .choseType'                                 : 'showSelect',
+            'click .choseEmployee'                             : 'showSelect',
+            'click .bonus-checkbox'                            : 'checkBonus',
+            'click #check_all_bonus'                           : 'checkAllBonus',
+            'click .startDate div'                             : 'showDatepicker',
+            'click .endDate div'                               : 'showDatepicker',
+            'click'                                            : 'hideDatepicker'
         },
 
         hideDatepicker: function () {
             //ToDO Hide Datepicker
 
-            if (this.selectView){
+            if (this.selectView) {
                 this.selectView.remove();
             }
         },
@@ -101,7 +103,7 @@ define([
             }
         },
 
-        showSelect: function (e, prev, next) {
+        showSelect: function (e) {
             var $target = $(e.target);
             e.stopPropagation();
 
@@ -113,7 +115,7 @@ define([
                 this.selectView.remove();
             }
 
-            this.selectView = new selectView({
+            this.selectView = new SelectView({
                 e          : e,
                 responseObj: this.responseObj
             });
@@ -139,7 +141,7 @@ define([
             });
             var employee;
             var bonus;
-            var model = new currentModel();
+            var model = new CurrentModel();
 
             if (elementType === '#employee') {
                 tr.find('[data-content="employee"]').text(element.name);
@@ -180,7 +182,7 @@ define([
             var self = this;
             e.preventDefault();
 
-            new createView(self.model.toJSON());
+            new CreateView(self.model.toJSON());
         },
 
         removeBonus: function (e) {
@@ -274,11 +276,11 @@ define([
 
             self.$el.find('#removeBonus').hide();
 
-            dataService.getData("/employee/getForDD", null, function (employees) {
+            dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
 
-                    return employee
+                    return employee;
                 });
 
                 self.responseObj['#employee'] = employees;

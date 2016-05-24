@@ -1,18 +1,18 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
-
         'text!templates/Companies/list/ListHeader.html',
         'views/Companies/CreateView',
         'views/Companies/list/ListItemView',
-
         'collections/Companies/filterCollection',
         'views/Filter/FilterView',
-        'common'
+        'common',
+        'constants'
     ],
 
-    function (listViewBase, listTemplate, createView, listItemView,
-              contentCollection, filterView, common) {
-
+    function ($, _, listViewBase, listTemplate, createView, listItemView, contentCollection, filterView, common, CONSTANTS) {
+        'use strict';
         var CompaniesListView = listViewBase.extend({
 
             createView              : createView,
@@ -31,7 +31,7 @@ define([
             },
 
             initialize: function (options) {
-
+                this.mId = CONSTANTS.MID[this.contentType];
                 this.startTime = options.startTime;
                 this.collection = options.collection;
                 _.bind(this.collection.showMore, this.collection);
@@ -48,8 +48,6 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
-
-                this.filterView;
             },
 
             exportToXlsx: function () {
@@ -100,7 +98,7 @@ define([
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
                 this.renderFilter(self);
-            },
+            }
         });
         return CompaniesListView;
     });

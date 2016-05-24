@@ -1,4 +1,7 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Opportunities/EditTemplate.html",
         "text!templates/Opportunities/editSelectTemplate.html",
         'views/selectView/selectView',
@@ -9,9 +12,10 @@
         "custom",
         "populate",
         "dataService",
+        'constants',
         'helpers'
     ],
-    function (EditTemplate, editSelectTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService, helpers) {
+    function (Backbone, $, _, EditTemplate, editSelectTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService, CONSTANTS, helpers) {
         "use strict";
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
@@ -110,7 +114,7 @@
             },
 
             selectCustomer: function (id) {
-                dataService.getData('/Customer', {
+                dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
                     id: id
                 }, function (response, context) {
                     var customer = response.data[0];
@@ -138,7 +142,7 @@
 
             },
 
-            switchTab: function (e) {
+            /*switchTab: function (e) {  ui tests
                 e.preventDefault();
                 var link = this.$("#tabList a");
                 if (link.hasClass("selected")) {
@@ -146,7 +150,7 @@
                 }
                 var index = link.index($(e.target).addClass("selected"));
                 this.$(".tab").hide().eq(index).show();
-            },
+            },*/
 
             saveItem: function () {
                 var self = this;
@@ -305,6 +309,8 @@
                                 break;
                             case 'kanban':
                             {
+
+                                console.log(JSON.stringify(result));
                                 var kanban_holder = $("#" + model._id);
                                 var expectedRevenueHolder = kanban_holder.find('.opportunity-header h3');
                                 kanban_holder.find(".opportunity-header h4").text(name);
@@ -492,7 +498,7 @@
                     });
                     self.responseObj['#priorityDd'] = priorities;
                 });
-                populate.get2name("#customerDd", "/Customer", {}, this, false, true);
+                populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, false, true);
                 dataService.getData('/employee/getForDD', {isEmployee: true}, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
@@ -502,8 +508,8 @@
 
                     self.responseObj['#salesPersonDd'] = employees;
                 });
-                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this);
-                populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, false, true);
+                populate.getWorkflow("#workflowDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Opportunities"}, "name", this);
+                populate.get("#salesTeamDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this, false, true);
 
                 if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {

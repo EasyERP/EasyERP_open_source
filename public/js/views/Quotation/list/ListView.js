@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/Quotation/list/ListHeader.html',
         'text!templates/stages.html',
@@ -9,12 +11,12 @@ define([
         'models/QuotationModel',
         'collections/Quotation/filterCollection',
         'views/Filter/FilterView',
-        'common',
         'dataService',
+        'constants',
         'helpers'
-    ],
+], function ($, _, listViewBase, listTemplate, stagesTemplate, createView, listItemView, ListTotalView, EditView, CurrentModel, contentCollection, filterView, dataService, CONSTANTS, helpers) {
+        'use strict';
 
-    function (listViewBase, listTemplate, stagesTemplate, createView, listItemView, listTotalView, editView, currentModel, contentCollection, filterView, common, dataService, helpers) {
         var QuotationListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -28,7 +30,7 @@ define([
             initialize: function (options) {
                 this.startTime = options.startTime;
                 this.collection = options.collection;
-                this.filter = options.filter ? options.filter : {};
+                this.filter = options.filter || {};
                 this.filter.forSales = {
                     key  : 'forSales',
                     value: ['false']
@@ -94,13 +96,13 @@ define([
                 if ($(".newSelectList").is(":visible")) {
                     this.hideNewSelect();
                     return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
-                    return false;
                 }
+                $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
+                return false;
+
             },
 
-            hideNewSelect: function (e) {
+            hideNewSelect: function () {
                 $(".newSelectList").remove();
             },
 
@@ -118,9 +120,9 @@ define([
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
-                }).render());//added two parameters page and items number
+                }).render()); // added two parameters page and items number
 
-                $currentEl.append(new listTotalView({element: $currentEl.find("#listTable"), cellSpan: 4}).render());
+                $currentEl.append(new ListTotalView({element: $currentEl.find("#listTable"), cellSpan: 4}).render());
 
                 this.renderCheckboxes();
                 this.renderPagination($currentEl, this);
@@ -129,7 +131,7 @@ define([
 
                 this.renderFilter(self);
 
-                dataService.getData("/workflow/fetch", {
+                dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                     wId         : 'Purchase Order',
                     source      : 'purchase',
                     targetSource: 'quotation'
@@ -142,16 +144,16 @@ define([
                 e.preventDefault();
 
                 var id = $(e.target).closest("tr").data("id");
-                var model = new currentModel({validate: false});
+                var model = new CurrentModel({validate: false});
 
                 model.urlRoot = '/quotation/form/' + id;
                 model.fetch({
                     success: function (model) {
-                        new editView({model: model});
+                        new EditView({model: model});
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Please refresh browser"
                         });
                     }

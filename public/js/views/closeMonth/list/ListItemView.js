@@ -2,10 +2,11 @@
  * Created by liliy on 25.03.2016.
  */
 define([
+    'Backbone',
+    'Underscore',
     'text!templates/closeMonth/list/ListTemplate.html',
-    'moment',
-    'helpers'
-], function (listTemplate, moment, helpers) {
+    'moment'
+], function (Backbone, _, listTemplate, moment) {
     var ListItemView = Backbone.View.extend({
         el           : '#listTable',
         newCollection: null,

@@ -1,4 +1,7 @@
 ﻿define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'common',
         'views/Companies/EditView',
         'views/Companies/CreateView',
@@ -7,10 +10,11 @@
         "text!templates/Companies/thumbnails/ThumbnailsItemTemplate.html",
         'dataService',
         'views/Filter/FilterView',
-        'custom'
+        'constants'
     ],
 
-    function (common, editView, createView, attachView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, filterView, custom) {
+    function (Backbone, $, _, common, EditView, CreateView, AttachView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, FilterView, CONSTANTS) {
+        'use strict';
         var CompaniesThumbnalView = Backbone.View.extend({
             el                : '#content-holder',
             countPerPage      : 0,
@@ -26,6 +30,7 @@
             exportToCsvUrl    : '/Customers/exportToCsv/?type=Companies',
 
             initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
                 this.asyncLoadImgs(this.collection);
                 this.startTime = options.startTime;
                 this.collection = options.collection;
@@ -53,7 +58,7 @@
             },
 
             importFiles: function () {
-                new attachView({
+                new AttachView({
                     modelName: this.contentType,
                     import   : true
                 });
@@ -63,11 +68,11 @@
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
-                common.getImages(ids, "/getCustomersImages");
+                common.getImages(ids, "/customers/getCustomersImages");
             },
 
-            getTotalLength: function (currentNumber, filter, newCollection) {
-                dataService.getData('/totalCollectionLength/Companies', {
+            getTotalLength: function (currentNumber) {
+                dataService.getData('/customers/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter       : this.filter,
                     newCollection: this.newCollection,
@@ -171,7 +176,7 @@
                 });
                 $currentEl.append(createdInTag);
 
-                self.filterView = new filterView({contentType: self.contentType});
+                self.filterView = new FilterView({contentType: self.contentType});
 
                 self.filterView.bind('filter', function (filter) {
                     self.showFilteredPage(filter, self);
@@ -229,8 +234,8 @@
                 this.defaultItemsNumber += newModels.length;
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
-
-                if (showMore.length != 0) {
+                
+                if (showMore.length !== 0) {
                     showMore.before(this.template({collection: this.collection.toJSON()}));
                     $(".filter-check-list").eq(1).remove();
                     showMore.after(created);
@@ -258,15 +263,15 @@
             },
 
             createItem: function () {
-                new createView();
+                new CreateView();
             },
 
             editItem: function () {
-                new editView({collection: this.collection});
+                new EditView({collection: this.collection});
             },
 
             deleteItems: function () {
-                var mid = 39;
+                var mid = this.mId;
                 var model;
                 var self = this;
 
@@ -291,7 +296,7 @@
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
-                            if (target.text() == currentLetter) {
+                            if (target.text() === currentLetter) {
                                 target.addClass("current");
                             }
                         });

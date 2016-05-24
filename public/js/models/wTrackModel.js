@@ -1,7 +1,8 @@
 define([
-    'Backbone'
-], function (Backbone) {
-    "use strict";
+    'Backbone',
+    'constants'
+], function (Backbone, CONSTANTS) {
+    'use strict';
 
     var wTrackModel = Backbone.Model.extend({
         idAttribute: '_id',
@@ -30,7 +31,7 @@ define([
             rate       : 0
         },
         urlRoot : function () {
-            return '/wTrack/';
+            return CONSTANTS.URLS.WTRACK;
         },
         parse   : function (model) {
             var profit;

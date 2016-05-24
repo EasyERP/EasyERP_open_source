@@ -1,10 +1,12 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'text!templates/salesQuotation/list/ListTemplate.html',
         'text!templates/salesQuotation/wTrack/ListTemplate.html',
         'helpers'
     ],
 
-    function (listTemplate, listForWTrack, helpers) {
+    function (Backbone, _, listTemplate, listForWTrack, helpers) {
         var QuotationListItemView = Backbone.View.extend({
             el: '#listTable',
 

@@ -1,15 +1,16 @@
 ﻿define([
-        'models/CompaniesModel',
-        'common'
+        'Backbone',
+        'jQuery',
+        'models/CompaniesModel'
     ],
-    function (CompanyModel, common) {
+    function (Backbone, $, CompanyModel) {
         var CompaniesCollection = Backbone.Collection.extend({
             model: CompanyModel,
             url  : function () {
                 return "/ownCompanies";
             },
 
-            initialize: function (options) {
+            initialize: function () {
                 console.log("Companies Collection Init");
                 var mid = 39;
                 this.fetch({
@@ -23,13 +24,11 @@
                 });
             },
 
-            parse: true,
-
             parse: function (response) {
                 return response.data;
             },
 
-            fetchSuccess: function (collection, response) {
+            fetchSuccess: function () {
                 console.log("OwnCompanies fetchSuccess");
             },
             fetchError  : function (error) {

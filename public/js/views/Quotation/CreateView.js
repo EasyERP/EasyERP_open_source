@@ -1,4 +1,7 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         "text!templates/Quotation/CreateTemplate.html",
         "collections/Persons/PersonsCollection",
         "collections/Departments/DepartmentsCollection",
@@ -13,7 +16,7 @@ define([
         'helpers/keyValidator',
         'helpers'
     ],
-    function (CreateTemplate, PersonsCollection, DepartmentsCollection, selectView, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, keyValidator, helpers) {
+    function (Backbone, $, _, CreateTemplate, PersonsCollection, DepartmentsCollection, SelectView, ProductItemView, QuotationModel, common, populate, CONSTANTS, AssigneesView, dataService, keyValidator, helpers) {
 
         var CreateView = Backbone.View.extend({
             el         : "#content-holder",
@@ -52,7 +55,7 @@ define([
                     this.selectView.remove();
                 }
 
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
@@ -89,7 +92,7 @@ define([
                 var array = this.$el.find('.' + oldCurrencyClass);
                 array.removeClass(oldCurrencyClass).addClass(newCurrencyClass);
 
-                if (type ) {    // added condition for project with no data-level empty
+                if (type) {    // added condition for project with no data-level empty
                     this.salesManager = element.salesmanager;
 
                     this.$el.find('#supplierDd').text(element.customer.name.first + element.customer.name.last);
@@ -121,10 +124,6 @@ define([
                     default:
                         return keyValidator(e, true);
                 }
-            },
-
-            validateForm: function(e){
-
             },
 
             changeTab: function (e) {
@@ -363,14 +362,14 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#deliveryDd", "/deliverTo", {}, 'name', this, true);
 
-                populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
+                populate.get("#currencyDd", CONSTANTS.URLS.CURRENCY_FORDD, {}, 'name', this, true);
 
                 if (this.forSales) {
                     this.$el.find('#supplierDd').removeClass('current-selected');
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
                     //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
                 } else {
-                    populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
+                    populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
                 }
 
                 dataService.getData("/project/getForWtrack", null, function (projects) {

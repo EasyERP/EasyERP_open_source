@@ -52,6 +52,7 @@ define([
 
                 if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
+                        console.log('---------------->' + JSON.stringify(response));
                         if (response && !response.error) {
                             App.currentDb = response;
                             self.checkDbValue(App.currentDb);

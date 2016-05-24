@@ -1,11 +1,14 @@
 define([
+    'Backbone',
     'common',
-    'helpers'
-], function (common, helpers) {
+    'constants'
+], function (Backbone, common, CONSTANTS) {
+    'use strict';
+
     var JournalEntryModel = Backbone.Model.extend({
         idAttribute: "_id",
         urlRoot    : function () {
-            return "/journalEntry";
+            return CONSTANTS.URLS.JOURNALENTRY;
         },
 
         parse: function (response) {

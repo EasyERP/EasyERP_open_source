@@ -1,10 +1,9 @@
-/**
- * Created by Liliya on 23.06.2015.
- */
 define([
+    'Backbone',
+    'Underscore',
     'text!templates/monthHours/list/listTemplate.html',
     'helpers'
-    ], function (listTemplate, helpers) {
+], function (Backbone, _, listTemplate, helpers) {
     var monthHoursListItemView = Backbone.View.extend({
         el           : '#listTable',
         newCollection: null,

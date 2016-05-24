@@ -1,7 +1,7 @@
-/**
- * Created by Liliya_Pikiner on 7/1/2015.
- */
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/bonusType/list/listHeader.html',
         'text!templates/bonusType/cancelEdit.html',
@@ -17,9 +17,9 @@ define([
         'async',
         'constants',
         'helpers/keyCodeHelper'
-    ],
+], function (Backbone, $, _, paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants, keyCodes) {
+        'use strict';
 
-    function (paginationTemplate, listTemplate, cancelEdit, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, constants, keyCodes) {
         var bonusTypeListView = Backbone.View.extend({
             el                 : '#content-holder',
             defaultItemsNumber : null,
@@ -54,7 +54,7 @@ define([
             },
 
             events: {
-              //  "click .itemsNumber"                                              : "switchPageCounter",  // this method doesnt work
+                //  "click .itemsNumber"                                              : "switchPageCounter",  // this method doesnt work
                 "click .showPage"                                                 : "showPage",
                 "change #currentShowPage"                                         : "showPage",
                 "click #previousPage"                                             : "previousPage",
@@ -80,7 +80,6 @@ define([
                 var editedElementRowId;
                 var editedElementContent;
                 var editedElementValue;
-                var editModel;
 
                 if (navigator.userAgent.indexOf("Firefox") > -1) {
                     this.setEditable(editedElement);
@@ -126,18 +125,17 @@ define([
 
             switchNumberEl: function (event) {
                 var newRows = this.$el.find('#false');
+                var targetEl = $(event.target);
+                var itemsNumber;
 
                 event.preventDefault();
-
-                if ((this.changed) || newRows.length){
+                if (this.changed || newRows.length){
                     return App.render({
                         type   : 'notify',
                         message: 'Please, save previous changes or cancel them!'
                     });
                 }
 
-                var targetEl = $(event.target);
-                var itemsNumber;
 
                 if (this.previouslySelected) {
                     this.previouslySelected.removeClass("selectedItemsNumber");
@@ -179,12 +177,11 @@ define([
                 return !!edited.length;
             },
 
-            editRow: function (e, prev, next) {
+            editRow: function (e) {
                 $(".newSelectList").remove();
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var Ids = tr.data('id');
-                var colType = el.data('type');
                 var colContent = el.data('content');
                 var isType = (colContent === 'bonusType');
                 var isPercent = (colContent === 'isPercent' );
@@ -193,7 +190,7 @@ define([
                 var prevValue;
                 var width;
                 var ul;
-
+                var editedElement;
 
                 if (el.attr('data-content') === 'name') {
                     isName = true;
@@ -219,16 +216,16 @@ define([
                     prevValue = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + prevValue + '"   style="width:' + width + 'px">');
-                    if (!isName){
-                        el.find('input').attr('maxlength','6');
+                    if (!isName) {
+                        el.find('input').attr('maxlength', '6');
                     }
 
-                    el.find('.editing').keydown( function (e) {
+                    el.find('.editing').keydown(function (e) {
                         var code = e.keyCode;
 
                         if (keyCodes.isEnter(code)) {
                             self.setChangedValueToModel();
-                        } else if ( !isName && !keyCodes.isDigit(code) && !keyCodes.isBspaceAndDelete(code) ){
+                        } else if (!isName && !keyCodes.isDigit(code) && !keyCodes.isBspaceAndDelete(code)) {
                             e.preventDefault();
                         }
                     });
@@ -261,7 +258,7 @@ define([
                 changedAttr = this.changedModels[modelId];
                 targetElement.attr('data-id', id);
 
-                if (targetElement.attr('data-content') === 'bonusType' ){
+                if (targetElement.attr('data-content') === 'bonusType') {
                     datacontent = 'bonusType';
                 } else {
                     datacontent = 'isPercent';
@@ -391,7 +388,7 @@ define([
             },
 
             hideItemsNumber: function (e) {
-                var el = e.target;
+                var el = $(e.target);
                 var editedElement = this.$listTable.find('.editing');
 
                 this.$el.find(".allNumberPerPage").hide();
@@ -399,10 +396,9 @@ define([
                 if (!el.closest('.search-view')) {
                     $('.search-content').removeClass('fa-caret-up');
                 }
-                if (editedElement.val()){
+                if (editedElement.val()) {
                     this.setChangedValueToModel();
                 }
-
 
             },
 
@@ -612,7 +608,7 @@ define([
                 }, this);
             },
 
-            switchPageCounter: function (event) {
+            /*switchPageCounter: function (event) {
                 event.preventDefault();
                 this.startTime = new Date();
                 var itemsNumber = event.target.textContent;
@@ -633,7 +629,7 @@ define([
                 $("#top-bar-deleteBtn").hide();
                 $('#check_all').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
-            },
+            },*/
 
             showFilteredPage: function () {
                 var itemsNumber;
@@ -845,7 +841,7 @@ define([
                                     error  : function (model, res) {
                                         if (res.status === 403 && index === 0) {
                                             App.render({
-                                                type: 'error',
+                                                type   : 'error',
                                                 message: "You do not have permission to perform this action"
                                             });
                                         }

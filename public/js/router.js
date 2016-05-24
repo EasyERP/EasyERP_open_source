@@ -1,5 +1,7 @@
 define([
     'Backbone',
+    'Underscore',
+    'jQuery',
     'views/main/MainView',
     'views/login/LoginView',
     'dataService',
@@ -7,8 +9,8 @@ define([
     'common',
     'constants'
 
-], function (Backbone, mainView, loginView, dataService, custom, common, CONTENT_TYPES) {
-
+], function (Backbone, _, $, mainView, loginView, dataService, custom, common, CONTENT_TYPES) {
+    'use strict';
     var appRouter = Backbone.Router.extend({
 
         wrapperView: null,
@@ -75,7 +77,6 @@ define([
             });
             $(window).on("resize", function (e) {
                 $("#ui-datepicker-div").hide();
-                //				$(".hasDatepicker").datepicker("destroy");
             });
             $(document).on("paste", ".onlyNumber", function (e) {
                 return false;
@@ -90,7 +91,7 @@ define([
             });
 
             if (!App || !App.currentUser) {
-                dataService.getData('/currentUser', null, function (response) {
+                dataService.getData(CONTENT_TYPES.URLS.CURRENT_USER, null, function (response) {
                     if (response && !response.error) {
                         App.currentUser = response.user;
                         App.savedFilters = response.savedFilters;
@@ -99,7 +100,6 @@ define([
                     }
                 });
             }
-            ;
         },
 
         dashBoardVacation: function (filter) {
@@ -781,6 +781,7 @@ define([
         checkDatabase: function (db) {
             App.weTrack = true;
 
+            App.weTrack = true; //todo remove
             App.currentDb = db;
         },
 
@@ -1001,12 +1002,15 @@ define([
                     var getModel = new contentFormModel();
 
                     if (contentType === 'PayrollExpenses') {
-                        getModel.url = '/payroll/form';
+                        getModel.url = function () {
+                            return '/payroll/' + modelId;
+                        }
                     }
 
-                    getModel.urlRoot = '/' + contentType + '/form';
+                    //getModel.urlRoot = '/' + contentType + '/form';
+                    getModel.urlRoot = getModel.url() + modelId;
                     getModel.fetch({
-                        data   : {id: modelId},
+                        //data: {id: modelId},
                         success: function (model) {
                             var topbarView = new topBarView({actionType: "Content"});
                             var contentView = new contentFormView({model: model, startTime: startTime});

@@ -1,12 +1,18 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/JobPositions/form/FormTemplate.html',
         'views/JobPositions/EditView'
     ],
-    function (FormTemplate, EditView) {
+    function (Backbone, $, _, FormTemplate, EditView) {
+        'use strict';
+
         var FormView = Backbone.View.extend({
             el        : '#content-holder',
             initialize: function (options) {
                 this.formModel = options.model;
+                this.formModel.urlRoot = '/JobPositions/';
             },
 
             render: function () {
@@ -18,8 +24,10 @@ define([
             editItem   : function () {
                 new EditView({model: this.formModel});
             },
+
             deleteItems: function () {
                 var mid = 39;
+
                 this.formModel.destroy({
                     headers: {
                         mid: mid

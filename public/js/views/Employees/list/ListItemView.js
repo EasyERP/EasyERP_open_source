@@ -1,8 +1,11 @@
 ﻿define([
+        'Backbone',
+        'Underscore',
         'text!templates/Employees/list/ListTemplate.html'
     ],
 
-    function (EmployeesListTemplate) {
+    function (Backbone, _, EmployeesListTemplate) {
+        'use strict';
         var EmployeesListItemView = Backbone.View.extend({
             el: '#listTable',
 

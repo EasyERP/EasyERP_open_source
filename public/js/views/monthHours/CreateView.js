@@ -9,6 +9,7 @@ define([
 
     ],
     function (Backbone, $, _, CreateTemplate) {
+        'use strict';
         var CreateView = Backbone.View.extend({
             el      : "#listTable",
             template: _.template(CreateTemplate),
@@ -18,12 +19,12 @@ define([
             },
 
             render: function (options) {
-                var row = this.$el.find('tr').first();
+                var $row = this.$el.find('tr').first();
                 var $newRow;
                 var tds;
 
-                if (row) {
-                    this.$el.prepend('<tr id="false" data-id="' + options.cid + '">' + row.html() + '</tr>');
+                if ($row.length) {
+                    this.$el.prepend('<tr id="false" data-id="' + options.cid + '">' + $row.html() + '</tr>');
                     $newRow = this.$el.find('#false');
                     tds = $newRow.find('td');
 

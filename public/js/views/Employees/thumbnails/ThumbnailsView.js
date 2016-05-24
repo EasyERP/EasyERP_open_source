@@ -1,15 +1,20 @@
 ﻿define([
-        "text!templates/Employees/thumbnails/ThumbnailsItemTemplate.html",
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        'text!templates/Employees/thumbnails/ThumbnailsItemTemplate.html',
         'views/Employees/EditView',
         'views/Employees/CreateView',
         'views/Filter/FilterView',
         'dataService',
         'models/EmployeesModel',
         'common',
-        'text!templates/Alpabet/AphabeticTemplate.html'
+        'text!templates/Alpabet/AphabeticTemplate.html',
+        'constants'
     ],
 
-    function (thumbnailsItemTemplate, editView, createView, filterView, dataService, currentModel, common, AphabeticTemplate) {
+    function (Backbone, $, _, thumbnailsItemTemplate, EditView, CreateView, FilterView, dataService, CurrentModel, common, AphabeticTemplate, CONSTANTS) {
+        'use strict';
         var EmployeesThumbnalView = Backbone.View.extend({
             el                : '#content-holder',
             countPerPage      : 0,
@@ -23,6 +28,7 @@
             viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
+                this.mId = CONSTANTS.MID[this.contentType];
                 this.asyncLoadImgs(this.collection);
                 this.startTime = options.startTime;
                 this.collection = options.collection;
@@ -39,8 +45,6 @@
 
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
                 this.asyncLoadImgs(this.collection);
-
-                //this.filterView;
             },
 
             events: {
@@ -50,13 +54,14 @@
                 "click .saveFilterButton"   : "saveFilter",
                 "click .removeFilterButton" : "removeFilter"
             },
-
-            getTotalLength: function (currentNumber, filter, newCollection) {
-                dataService.getData('/totalCollectionLength/Employees', {
+            
+            getTotalLength: function (currentNumber) {
+                dataService.getData('/employees/totalCollectionLength', {
                     currentNumber: currentNumber,
                     filter       : this.filter,
                     newCollection: this.newCollection,
-                    contentType  : this.contentType
+                    contentType  : this.contentType,
+                    mid          : this.mId
                 }, function (response, context) {
                     var showMore = context.$el.find('#showMoreDiv');
                     if (response.showMore) {
@@ -76,7 +81,7 @@
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
-                common.getImages(ids, "/getEmployeesImages");
+                common.getImages(ids, "/employees/getEmployeesImages");
             },
 
             alpabeticalRender: function (e) {
@@ -87,6 +92,7 @@
                     target = $(e.target);
                     selectedLetter = $(e.target).text();
 
+                    this.filter.letter = selectedLetter;
                     if (!this.filter) {
                         this.filter = {};
                     }
@@ -136,10 +142,10 @@
                 } else {
                     $currentEl.html('<h2>No Employees found</h2>');
                 }
-                self.filterView = new filterView({contentType: self.contentType});
+                self.filterView = new FilterView({contentType: self.contentType});
 
                 self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter, self)
+                    self.showFilteredPage(filter, self);
                 });
                 self.filterView.bind('defaultFilter', function () {
                     self.showFilteredPage({}, self);
@@ -161,7 +167,7 @@
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
-                            if (target.text() == currentLetter) {
+                            if (target.text() === currentLetter) {
                                 target.addClass("current");
                             }
                         });
@@ -191,7 +197,7 @@
             },
 
             hideItemsNumber: function (e) {
-                var el = e.target;
+                var el = $(e.target);
 
                 this.$el.find(".allNumberPerPage, .newSelectList").hide();
                 if (!el.closest('.search-view')) {
@@ -210,12 +216,12 @@
                 } else {
                     e.preventDefault();
                     var id = $(e.target).closest('.thumbnailwithavatar').attr("id");
-                    var model = new currentModel({validate: false});
-                    model.urlRoot = '/Employees/form';
+                    var model = new CurrentModel({validate: false});
+                    model.urlRoot = '/employees/' + id;
                     model.fetch({
                         data   : {id: id},
                         success: function (model) {
-                            new editView({model: model});
+                            new EditView({model: model});
                         },
                         error  : function () {
                             App.render({
@@ -242,7 +248,7 @@
                 this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, App.filter);
                 this.getTotalLength(this.defaultItemsNumber, this.filter);
 
-                if (showMore.length != 0) {
+                if (showMore.length !== 0) {
                     showMore.before(this.template({collection: this.collection.toJSON()}));
                     $(".filter-check-list").eq(1).remove();
 
@@ -273,13 +279,12 @@
             },
 
             createItem: function () {
-                //create editView in dialog here
-                new createView();
+                new CreateView();
             },
 
             editItem: function () {
                 //create editView in dialog here
-                new editView({collection: this.collection});
+                new EditView({collection: this.collection});
             },
 
             deleteItems: function () {
@@ -301,14 +306,14 @@
                     self.alphabeticArray = arr;
                     $("#searchContainer").after(_.template(AphabeticTemplate, {
                         alphabeticArray   : self.alphabeticArray,
-                        selectedLetter    : (self.selectedLetter == "" ? "All" : self.selectedLetter),
+                        selectedLetter    : (self.selectedLetter === "" ? "All" : self.selectedLetter),
                         allAlphabeticArray: self.allAlphabeticArray
                     }));
                     var currentLetter = (self.filter) ? self.filter.letter.value : null;
                     if (currentLetter) {
                         $('#startLetter a').each(function () {
                             var target = $(this);
-                            if (target.text() == currentLetter) {
+                            if (target.text() === currentLetter) {
                                 target.addClass("current");
                             }
                         });
@@ -319,12 +324,12 @@
 
             exportToCsv: function () {
                 //todo change after routes refactoring
-                window.location = '/employee/exportToCsv'
+                window.location = '/employees/exportToCsv';
             },
 
             exportToXlsx: function () {
                 //todo change after routes refactoring
-                window.location = '/employee/exportToXlsx'
+                window.location = '/employees/exportToXlsx';
             }
         });
 

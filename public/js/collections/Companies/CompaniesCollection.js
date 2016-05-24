@@ -1,12 +1,17 @@
 define([
+        'Backbone',
+        'jQuery',
         'models/CompaniesModel',
-        'common'
+        'constants'
+
     ],
-    function (CompanyModel, common) {
+    function (Backbone, $, CompanyModel, CONSTANTS) {
+        'use strict';
+
         var CompaniesCollection = Backbone.Collection.extend({
             model: CompanyModel,
             url  : function () {
-                return "/Companies";
+                return CONSTANTS.URLS.COMPANIES;
             },
 
             initialize    : function () {
@@ -28,11 +33,9 @@ define([
                 return new CompaniesCollection(filtered);
             },
 
-            parse: true,
-
             parse: function (response) {
                 return response.data;
-            },
+            }
         });
         return CompaniesCollection;
     });

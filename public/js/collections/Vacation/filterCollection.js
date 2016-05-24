@@ -2,11 +2,15 @@
  * Created by soundstorm on 29.06.15.
  */
 define([
-    'models/VacationModel'
-], function (VacationModel) {
+    'Backbone',
+    'models/VacationModel',
+    'constants'
+], function (Backbone, VacationModel, CONSTANTS) {
+    'use strict';
+
     var VacationCollection = Backbone.Collection.extend({
         model      : VacationModel,
-        url        : "/vacation/",
+        url        : CONSTANTS.URLS.VACATION,
         viewType   : null,
         contentType: null,
 
@@ -21,9 +25,9 @@ define([
                 if (sortAttr) {
                     if (self.sortSubKey) {
                         return sortAttr[self.sortSubKey];
-                    } else {
-                        return sortAttr['name'];
                     }
+
+                    return sortAttr.name;
                 }
 
                 return false;
@@ -32,11 +36,13 @@ define([
             if (nameA && nameB) {
                 if (nameA > nameB) {
                     return self.sortOrder;
-                } else if (nameA < nameB) {
-                    return self.sortOrder * (-1);
-                } else {
-                    return 0;
                 }
+                if (nameA < nameB) {
+                    return self.sortOrder * (-1);
+                }
+
+                return 0;
+
             }
         },
 
@@ -50,8 +56,8 @@ define([
         showMore: function (options) {
             var that = this;
             var filterObject = options || {};
-            filterObject['month'] = (options && options.month) ? options.month.toString() : this.month.toString();
-            filterObject['year'] = (options && options.year) ? options.year : this.year;
+            filterObject.month = (options && options.month) ? options.month.toString() : this.month.toString();
+            filterObject.year = (options && options.year) ? options.year : this.year;
             this.fetch({
                 data   : filterObject,
                 waite  : true,
@@ -60,7 +66,7 @@ define([
                 },
                 error  : function () {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: "Some Error."
                     });
                 }
@@ -79,13 +85,13 @@ define([
             }
 
             if (options && options.year) {
-                options.year = options.year
+                options.year = options.year;
             } else {
                 options.year = this.year;
             }
 
             if (options && options.month) {
-                options.month = options.month
+                options.month = options.month;
             } else {
                 options.month = this.month;
             }
@@ -96,7 +102,7 @@ define([
                 success: function () {
                 },
                 error  : function (models, xhr) {
-                    if (xhr.status == 401) {
+                    if (xhr.status === 401) {
                         Backbone.history.navigate('#login', {trigger: true});
                     }
                 }

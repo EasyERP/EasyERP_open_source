@@ -1,19 +1,23 @@
-define(function () {
+define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'constants'
+], function (Backbone, $, _, CONSTANTS) {
+    'use strict';
+
     var MyModel = Backbone.Model.extend({
         idAttribute: '_id'
     });
 
     var MenuItems = Backbone.Collection.extend({
-        model           : MyModel,
-        url             : function () {
-            return "/getModules"
+        model        : MyModel,
+        currentModule: "HR",
+        url          : function () {
+            return CONSTANTS.URLS.MODULES;
         },
-        setCurrentModule: function (moduleName) {
-            this.currentModule = moduleName;
-            this.trigger('change:currentModule', this.currentModule, this);
-        },
-        currentModule   : "HR",
-        initialize      : function () {
+
+        initialize: function () {
             this.fetch({
                 type   : 'GET',
                 reset  : true,
@@ -24,13 +28,16 @@ define(function () {
             });
         },
 
-        parse: true,
+        setCurrentModule: function (moduleName) {
+            this.currentModule = moduleName;
+            this.trigger('change:currentModule', this.currentModule, this);
+        },
 
         parse: function (response) {
             return response;
         },
 
-        fetchError: function (collection, response) {
+        fetchError: function () {
             throw new Error("Not collection received from fetch");
         },
 
@@ -46,25 +53,29 @@ define(function () {
         },
 
         getRootElements: function () {
-            var model = Backbone.Model.extend({});
+            var Model = Backbone.Model.extend({});
+
             if (!this.relations) {
                 this.relationships();
             }
+
             return $.map(this.relations[0], function (current) {
-                return new model({
+                return new Model({
                     _id  : current.get('_id'),
                     mname: current.get('mname')
                 });
             });
         },
-        children       : function (model, self) {
+
+        children: function (model, self) {
+            var modules = self || [];
 
             if (!this.relations) {
                 this.relationships();
             }
-            var modules = (self) ? self : [];
-            if (typeof this.relations[model["id"]] != 'undefined') {
-                _.each(this.relations[model["id"]], function (module) {
+
+            if (this.relations[model.id] !== undefined) {
+                _.each(this.relations[model.id], function (module) {
                     if (module.get("link")) {
                         modules.push(module);
                     } else {
@@ -72,10 +83,11 @@ define(function () {
                     }
                 }, this);
             }
-            ;
+
             modules = _.sortBy(modules, function (model) {
                 return model.get("sequence");
             });
+
             return modules;
         },
 

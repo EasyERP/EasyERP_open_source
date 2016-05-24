@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/salesInvoice/list/ListHeader.html',
         'views/salesInvoice/CreateView',
@@ -9,11 +11,13 @@ define([
         'views/Filter/FilterView',
         'common',
         'dataService',
-        'constants',
-        'helpers'
+        'helpers',
+        'constants'
     ],
 
-    function (listViewBase, listTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
+    function ($, _, listViewBase, listTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, helpers, CONSTANTS) {
+        'use strict';
+
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
@@ -61,8 +65,9 @@ define([
             saveItem: function () {
                 var model;
                 var self = this;
+                var id;
 
-                for (var id in this.changedModels) {
+                for (id in this.changedModels) {
                     model = this.collection.get(id);
 
                     model.save({
@@ -182,7 +187,7 @@ define([
                 self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
-/*                dataService.getData("/workflow/fetch", {
+               /* dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                     wId         : 'Sales Invoice',
                     source      : 'purchase',
                     targetSource: 'invoice'

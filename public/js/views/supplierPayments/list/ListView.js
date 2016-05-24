@@ -2,6 +2,8 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+        'jQuery',
+        'Underscore',
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/supplierPayments/list/ListHeader.html',
         'text!templates/supplierPayments/forWTrack/ListHeader.html',
@@ -19,9 +21,10 @@ define([
         'async',
         'helpers/keyCodeHelper',
         'views/listViewBase',
-        'helpers'
+        'helpers',
+    'constants'
     ],
-    function (paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase,helpers) {
+    function ($, _,paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, createView, filterView, currentModel, listItemView, listTotalView, paymentCollection, editCollection, dataService, populate, async, keyCodes, ListViewBase,helpers, CONSTANTS) {
         var PaymentListView = ListViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -38,7 +41,7 @@ define([
 
             events: {
                 "click td.editable"                                               : "editRow",
-                "change .editable"                                               : "setEditable",
+                "change .editable"                                                : "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "focusout .editing"                                               : "onChangeInput",
                 "keydown .editing"                                                : "onKeyDownInput"
@@ -170,7 +173,6 @@ define([
                     tempContainer = el.text();
                     width = el.width() - 6;
                     el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
-
 
                     dataContent = el.attr('data-content');
                     editingEl = el.find('.editing');
@@ -422,7 +424,6 @@ define([
                 var edited = this.$listTable.find('.edited');
 
                 this.edited = edited;
-
                 return !!edited.length;
             },
 
@@ -453,7 +454,7 @@ define([
 
                 self.renderPagination($currentEl, self);
 
-                dataService.getData("/employee/getForDD", null, function (employees) {
+                dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 

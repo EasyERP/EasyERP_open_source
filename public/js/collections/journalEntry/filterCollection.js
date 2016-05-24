@@ -1,14 +1,15 @@
-"use strict";
 define([
         'Backbone',
         'models/journalEntry',
         'custom',
-        'moment'
+        'moment',
+        'constants'
     ],
-    function (Backbone, JournalEntryModel, custom, moment) {
+    function (Backbone, JournalEntryModel, custom, moment, CONSTANTS) {
+        'use strict';
         var JournalEntryCollection = Backbone.Collection.extend({
             model: JournalEntryModel,
-            url  : "/journal/journalEntry/",
+            url  : CONSTANTS.URLS.JOURNAL_ENTRY,
 
             showMore: function (options) {
                 var that = this;
@@ -31,7 +32,7 @@ define([
                     error  : function () {
                         App.render({
                             type   : 'error',
-                            message: "Some Error."
+                            message: 'Some Error.'
                         });
                     }
                 });

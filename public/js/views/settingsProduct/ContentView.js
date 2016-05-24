@@ -1,11 +1,14 @@
 define([
+        'Backbone',
+        'jQuery',
+        'Underscore',
         'text!templates/settingsProduct/list/ListHeader.html',
         'views/settingsProduct/CreateView',
         'models/Category',
         'views/settingsProduct/EditView'
     ],
 
-    function (ListTemplate, CreateView, currentModel, EditView) {
+    function (Backbone, $, _, ListTemplate, CreateView, currentModel, EditView) {
         var DepartmentsListView = Backbone.View.extend({
             el: '#content-holder',
 

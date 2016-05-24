@@ -1,4 +1,11 @@
-﻿define(['Validation', 'common'], function (Validation, common) {
+﻿define([
+    'Backbone',
+    'Validation',
+    'common',
+    'constants'
+], function (Backbone, Validation, common, CONSTANTS) {
+    'use strict';
+
     var LeadModel = Backbone.Model.extend({
         idAttribute: "_id",
         initialize : function () {
@@ -101,7 +108,7 @@
             }
         },
         urlRoot    : function () {
-            return "/Leads";
+            return CONSTANTS.URLS.LEADS;
         }
     });
 

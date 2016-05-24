@@ -1,9 +1,13 @@
 define([
+        'Backbone',
+        'Underscore',
         'text!templates/Birthdays/list/ListTemplate.html',
         'views/Birthdays/list/ListItemView',
         'common'
     ],
-    function (ListTemplate, ListItemView, common) {
+    function (Backbone, _, ListTemplate, ListItemView, common) {
+        'use strict';
+
         var ContentView = Backbone.View.extend({
             el        : '#content-holder',
             initialize: function (options) {
@@ -23,7 +27,7 @@ define([
                 ids = ids.concat(_.map(this.employeesCollection.monthly, function (item) {
                     return item._id;
                 }));
-                common.getImages(ids, "/getEmployeesImages");
+                common.getImages(ids, "/employees/getEmployeesImages");
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
             }
         });

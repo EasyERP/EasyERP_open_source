@@ -2,12 +2,15 @@
  * Created by soundstorm on 29.06.15.
  */
 define([
+    'Backbone',
     'models/HolidayModel',
-    'common'
-], function (HolidayModel, common) {
+    'constants'
+], function (Backbone, HolidayModel, CONSTANTS) {
+    'use strict';
+
     var HolidayCollection = Backbone.Collection.extend({
         model       : HolidayModel,
-        url         : "/holiday/",
+        url         : CONSTANTS.URLS.HOLIDAY,
         page        : null,
         namberToShow: null,
         viewType    : null,
@@ -16,10 +19,10 @@ define([
         showMore: function (options) {
             var that = this;
             var filterObject = options || {};
-            filterObject['page'] = (options && options.page) ? options.page : this.page;
-            filterObject['count'] = (options && options.count) ? options.count : this.namberToShow;
-            filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
-            filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
+            filterObject.page = (options && options.page) ? options.page : this.page;
+            filterObject.count = (options && options.count) ? options.count : this.namberToShow;
+            filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
+            filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
             this.fetch({
                 data   : filterObject,
                 waite  : true,
@@ -29,7 +32,7 @@ define([
                 },
                 error  : function () {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: "Some Error."
                     });
                 }
@@ -54,21 +57,15 @@ define([
                     that.page++;
                 },
                 error  : function (models, xhr) {
-                    if (xhr.status == 401) {
+                    if (xhr.status === 401) {
                         Backbone.history.navigate('#login', {trigger: true});
                     }
                 }
             });
         },
 
-        parse: true,
         parse: function (response) {
             var holidays = response.success;
-            /*            _.map(holidays, function (holiday) {
-             holiday.date = common.utcDateToLocaleDate(holiday.date);
-
-             return holiday;
-             });*/
 
             return holidays;
         }

@@ -1,4 +1,7 @@
 define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
     'views/listViewBase',
     'text!templates/monthHours/list/listHeader.html',
     'views/monthHours/CreateView',
@@ -14,7 +17,7 @@ define([
     'constants',
     'text!templates/monthHours/list/cancelEdit.html',
     'helpers'
-], function (listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, cancelEdit, helpers) {
+], function (Backbone, $, _, listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, cancelEdit, helpers) {
     var monthHoursListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -287,8 +290,7 @@ define([
                     delete self.changedModels[id];
                     self.editCollection.remove(id);
                 });
-            }
-            ,
+            },
 
             savedNewModel: function (modelObject) {
                 var savedRow = this.$listTable.find('#false');
@@ -310,8 +312,7 @@ define([
                 editedCol.text(editedEl.val());
                 editedEl.remove();
                 this.resetCollection(modelObject);
-            }
-            ,
+            },
 
             resetCollection: function (model) {
                 if (model && model._id) {
@@ -320,8 +321,7 @@ define([
                 } else {
                     this.collection.set(this.editCollection.models, {remove: false});
                 }
-            }
-            ,
+            },
 
             updatedOptions: function () {
                 var savedRow = this.$listTable.find('#false');
@@ -334,20 +334,17 @@ define([
                 editedEl.remove();
 
                 this.resetCollection();
-            }
-            ,
+            },
 
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
 
                 return false;
-            }
-            ,
+            },
 
             hideNewSelect: function (e) {
                 $(".newSelectList").remove();
-            }
-            ,
+            },
 
             render: function () {
                 var self;
@@ -364,7 +361,7 @@ define([
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
-                }).render());//added two parameters page and items number
+                }).render()); // added two parameters page and items number
 
                 this.renderCheckboxes();
 
@@ -381,23 +378,20 @@ define([
                 }, 10);
 
                 return this;
-            }
-            ,
+            },
 
             setChangedValue: function () {
                 if (!this.changed) {
                     this.changed = true;
                     this.showSaveCancelBtns();
                 }
-            }
-            ,
+            },
 
             isNewRow: function () {
                 var newRow = $('#false');
 
                 return !!newRow.length;
-            }
-            ,
+            },
 
             createItem: function () {
                 var startData = {};
@@ -414,8 +408,7 @@ define([
                 }
 
                 this.changed = true;
-            }
-            ,
+            },
 
             showSaveCancelBtns: function () {
                 var createBtnEl = $('#top-bar-createBtn');
@@ -429,8 +422,7 @@ define([
                 cancelBtnEl.show();
 
                 return false;
-            }
-            ,
+            },
 
             hideSaveCancelBtns: function () {
                 var createBtnEl = $('#top-bar-createBtn');
@@ -444,8 +436,7 @@ define([
                 createBtnEl.show();
 
                 return false;
-            }
-            ,
+            },
 
             deleteItemsRender: function (deleteCounter, deletePage) {
                 var pagenation;
@@ -483,15 +474,13 @@ define([
                 }
 
                 this.editCollection.reset(this.collection.models);
-            }
-            ,
+            },
 
             triggerDeleteItemsRender: function (deleteCounter) {
                 this.deleteCounter = deleteCounter;
                 this.deletePage = $("#currentShowPage").val();
                 this.deleteItemsRender(deleteCounter, this.deletePage);
-            }
-            ,
+            },
 
             deleteItems: function () {
                 var $currentEl = this.$el;
@@ -560,8 +549,7 @@ define([
                 } else {
                     this.cancelChanges();
                 }
-            }
-            ,
+            },
 
             cancelChanges: function () {
                 var self = this;
@@ -613,7 +601,8 @@ define([
                 self.changedModels = {};
             }
 
-        })
+        });
 
     return monthHoursListView;
-})
+});
+

@@ -1,14 +1,19 @@
-define(["text!templates/Projects/projectInfo/wTracks/generate.html",
-        "text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html",
-        'views/Projects/projectInfo/wTracks/wTrackPerEmployee',
-        'views/selectView/selectView',
-        'collections/Jobs/filterCollection',
-        'populate',
-        'dataService',
-        'moment',
-        'common'
+define([
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    "text!templates/Projects/projectInfo/wTracks/generate.html",
+    "text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html",
+    'views/Projects/projectInfo/wTracks/wTrackPerEmployee',
+    'views/selectView/selectView',
+    'collections/Jobs/filterCollection',
+    'populate',
+    'dataService',
+    'moment',
+    'common',
+    'constants'
     ],
-    function (generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, selectView, JobsCollection, populate, dataService, moment, common) {
+    function (Backbone, $, _, generateTemplate, wTrackPerEmployeeTemplate, wTrackPerEmployee, selectView, JobsCollection, populate, dataService, moment, common, CONSTANTS) {
         "use strict";
         var CreateView = Backbone.View.extend({
                 template                 : _.template(generateTemplate),
@@ -138,7 +143,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     var customer = currentModel.customer && currentModel.customer._id ? currentModel.customer._id : currentModel.customer;
 
                     if (pm) {
-                        common.getImagesPM([pm], "/getEmployeesImages", "#" + id, function (result) {
+                        common.getImagesPM([pm], "/employees/getEmployeesImages", "#" + id, function (result) {
                             var res = result.data[0];
 
                             $(".miniAvatarPM").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
@@ -146,7 +151,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }
 
                     if (customer) {
-                        common.getImagesPM([customer], "/getCustomersImages", "#" + id, function (result) {
+                        common.getImagesPM([customer], "/customers/getCustomersImages", "#" + id, function (result) {
                             var res = result.data[0];
 
                             $(".miniAvatarCustomer").attr("data-id", res._id).find("img").attr("src", res.imageSrc);
@@ -169,12 +174,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 addNewEmployeeRow: function (e) {
-                    this.stopDefaultEvents(e);
-
-                    this.setChangedValueToModel();
-
-                    var self = this;
-
                     var defaultObject = {
                         startDate: '',
                         endDate  : '',
@@ -208,6 +207,9 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     });
                     var errors = this.$el.find('.errorContent');
 
+                    this.stopDefaultEvents(e);
+                    this.setChangedValueToModel();
+                    
                     if ((rowId === undefined || rowId !== 'false') && errors.length === 0) {
 
                         this.resultArray.push(defaultObject);
@@ -727,7 +729,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         }
                     });
 
-                    dataService.getData("/employee/getForDD", {isEmployee: true, devDepartments: true}, function (employees) {
+                    dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, {isEmployee: true, devDepartments: true}, function (employees) {
                         employees = _.map(employees.data, function (employee) {
                             employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -737,7 +739,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         self.responseObj['#employee'] = employees;
                     });
 
-                    dataService.getData("/department/getForDD", {devDepartments : true}, function (departments) {
+                    dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, {devDepartments : true}, function (departments) {
                         departments = _.map(departments.data, function (department) {
                             department.name = department.departmentName;
 
