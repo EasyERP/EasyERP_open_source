@@ -29,6 +29,7 @@ define([
         'views/Projects/projectInfo/quotations/quotationView',
         'views/Projects/projectInfo/wTracks/generateWTrack',
         'views/Projects/projectInfo/orders/orderView',
+        'views/projectCharts/index',
         'collections/wTrack/filterCollection',
         'collections/Quotation/filterCollection',
         'collections/salesInvoice/filterCollection',
@@ -72,6 +73,7 @@ define([
               QuotationView,
               GenerateWTrack,
               oredrView,
+              ProjectChartsView,
               wTrackCollection,
               quotationCollection,
               invoiceCollection,
@@ -120,7 +122,7 @@ define([
                 'click a.quotation'                                                                     : 'viewQuotation',
                 'click a.invoice'                                                                       : 'viewInvoice',
                 'click a.proforma'                                                                      : 'viewProforma',
-                "click .report"                                                                         : "showReport",
+                "click .report"                                                                         : "showReport"
             },
 
             initialize: function (options) {
@@ -156,6 +158,8 @@ define([
                 this.listenTo(eventChannel, 'invoiceRemove', this.newPayment);
                 this.listenTo(eventChannel, 'invoiceUpdated', this.getInvoice);
                 this.listenTo(eventChannel, 'invoiceReceive', this.newInvoice);
+
+
             },
 
             viewQuotation: function (e) {
@@ -809,6 +813,7 @@ define([
                 // this.renderProformRevenue();
                 this.getInvoiceStats();
                 this.getProformaStats();
+                this.showProjectCharts();
             },
 
             getWTrack: function (cb) {
@@ -1481,6 +1486,14 @@ define([
                     }
                 });
 
+            },
+
+            showProjectCharts: function () {
+                var data = {
+                    data: this.projectValues
+                };
+
+                new ProjectChartsView(data);
             },
 
             render: function () {
