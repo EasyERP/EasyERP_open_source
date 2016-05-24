@@ -1444,7 +1444,8 @@ define([
                     self.getInvoice,
                     self.renderProformRevenue,
                     self.getInvoiceStats,
-                    self.getProformaStats
+                    self.getProformaStats,
+                    self.getOrders
                 ];
 
                 App.startPreload();
@@ -1480,7 +1481,8 @@ define([
                 paralellTasks = [
                     self.renderProformRevenue,
                     self.getProforma,
-                    self.getProformaStats
+                    self.getProformaStats,
+                    self.getQuotations
                 ];
                 App.startPreload();
 
