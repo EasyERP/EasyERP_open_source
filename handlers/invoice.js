@@ -298,7 +298,8 @@ var Invoice = function (models, event) {
                 order = parallelResponse[0];
                 workflow = parallelResponse[1];
 
-                order.attachments[0].shortPas = order.attachments[0].shortPas.replace('..%2Froutes', '');
+                //order.attachments[0].shortPas = order.attachments[0].shortPas.replace('..%2Froutes', '');
+                order.attachments && delete order.attachments;
 
             } else {
                 err = new Error(RESPONSES.BAD_REQUEST);
@@ -411,9 +412,9 @@ var Invoice = function (models, event) {
         waterFallTasks = [parallel, createInvoice/*, createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
-            var project;
+            // var project;
             var invoiceId = result._id;
-            var products = result.products;
+            // var products = result.products;
 
             if (err) {
                 return next(err);
@@ -429,22 +430,21 @@ var Invoice = function (models, event) {
                 }
             });
 
-            result.attachments[0].shortPas = result.attachments[0].shortPas.replace(id.toString(), invoiceId.toString());
+            //result.attachments[0].shortPas = result.attachments[0].shortPas.replace(id.toString(), invoiceId.toString());
 
-            Invoice.findByIdAndUpdate(invoiceId, {
+           /* Invoice.findByIdAndUpdate(invoiceId, {
                 $set: {
                     attachments: result.attachments
                 }
             }, {new: true}, function (err, invoice) {
                 if (err) {
                     return next(err);
-                }
+                }*/
 
-                renameFolder(id.toString(), invoiceId.toString());
-
+                // renameFolder(id.toString(), invoiceId.toString());
 
                 res.status(201).send(result);
-            });
+            // });
         });
 
     };
