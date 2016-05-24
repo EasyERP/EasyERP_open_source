@@ -22,8 +22,8 @@ describe("Employee Specs", function () {
                 .post('users/login')
                 .send({
                     login: 'admin',
-                    pass : '1q2w3eQWE',
-                    dbId : 'production'
+                    pass : 'tm2016',
+                    dbId : 'pavlodb'
                 })
                 .expect(200, done);
         });
@@ -43,12 +43,16 @@ describe("Employee Specs", function () {
                 "department" : "55b92ace21e4b7c40f00000f",
                 "jobPosition": "55b92acf21e4b7c40f00001d",
                 "dateBirth"  : "28 Dec, 1990",
-                "hire"       : [{
+                "hire"       : [ new Date()],
+                "transfer"       : [{
+                    status     : "hired",
+                    isDeveloper: true,
                     department : "55b92ace21e4b7c40f00000f",
                     jobPosition: "55b92acf21e4b7c40f00001d",
                     manager    : "56938d2cd87c9004552b639e",
-                    jobType    : 'Full-time',
+                    jobType    : 'fullTime',
                     info       : "Hired",
+                    salary     : 300,
                     date       : new Date()
                 }]
             };
@@ -348,7 +352,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get employees min hire date of employees", function (done) {
+      /*  it("should get employees min hire date of employees", function (done) {
             aggent
                 .get('employees/getMinHireDate')
                 .expect(200)
@@ -366,7 +370,7 @@ describe("Employee Specs", function () {
 
                     done();
                 });
-        });
+        });*/
 
         it("should get employee for related user", function (done) {
             aggent
@@ -500,7 +504,7 @@ describe("Employee Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'pavlodb'
                 })
                 .expect(200, done);
         });
