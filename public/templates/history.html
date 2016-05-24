@@ -1,7 +1,7 @@
 <% Object.keys(history).forEach(function (date) {
     var historyObj = history[date] %>
     <span class="date"><%= new Date(date) %></span>
-    <span class="editedBy">Edited By: <%= historyObj.editedBy %></span>
+    <span class="editedBy">Edited By: <%= historyObj[0].editedBy %></span>
     <% historyObj.forEach(function (historyEvent) { %>
         <div class="">
             <span class="changedFieldName"><%= historyEvent.changedField %></span><br>
