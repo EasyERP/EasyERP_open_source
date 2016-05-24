@@ -759,7 +759,7 @@ var Payment = function (models, event) {
         if (req.session && req.session.loggedIn && db) {
             access.getReadAccess(req, req.session.uId, moduleId, function (access) {
                 var query = req.query;
-                var queryObject = {};
+                //var queryObject = {};
                 var optionsObject = {};
                 var sort = {};
                 var Payment;
@@ -773,10 +773,10 @@ var Payment = function (models, event) {
                 var contentSearcher;
                 var waterfallTasks;
 
-                if (projectId) {
+                /*if (projectId) {
                     queryObject.invoice = {};
                     queryObject.invoice.project = projectId;
-                }
+                }*/
 
                 if (access) {
 
@@ -819,7 +819,9 @@ var Payment = function (models, event) {
                         var whoCanRw = [everyOne, owner, group];
                         var matchQuery = {
                             $and: [
-                                queryObject,
+                                {
+                                    'invoice.project': projectId
+                                },
                                 {
                                     $or: whoCanRw
                                 }
@@ -889,9 +891,10 @@ var Payment = function (models, event) {
                         optionsObject.$and = [];
 
                         optionsObject.$and.push({_id: {$in: _.pluck(ids, '_id')}});
+                        optionsObject.$and.push({_type: {$in: ["InvoicePayment", "ProformaPayment"]}});
 
                         Payment.aggregate([{
-                            $match: queryObject
+                            $match: optionsObject
                         }, {
                             $lookup: {
                                 from        : 'Customers',
@@ -925,6 +928,13 @@ var Payment = function (models, event) {
                                 name            : 1,
                                 date            : 1,
                                 _type           : 1
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'projectMembers',
+                                localField  : 'invoice.project',
+                                foreignField: 'projectId',
+                                as          : 'projectMembers'
                             }
                         }, {
                             $project: {
@@ -985,8 +995,6 @@ var Payment = function (models, event) {
                                 _type           : 1
                             }
                         }, {
-                            $match: optionsObject
-                        }, {
                             $project: {
                                 supplier        : 1,
                                 currency        : 1,
@@ -1007,7 +1015,7 @@ var Payment = function (models, event) {
                                     }
                                 }
                             }
-                        }, {
+                        },{
                             $sort: sort
                         }, {
                             $skip: skip

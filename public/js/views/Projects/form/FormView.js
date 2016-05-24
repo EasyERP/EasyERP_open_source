@@ -1139,7 +1139,7 @@ define([
                 var callback;
 
                 self.payCollection = new paymentCollection({
-                    count      : 50,
+                    count      : 100,
                     viewType   : 'list',
                     contentType: 'customerPayments',
                     url        : 'project/' + _id + '/payments'
