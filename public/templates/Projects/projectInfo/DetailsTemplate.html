@@ -95,9 +95,9 @@
             <td>&nbsp</td>
             <td>&nbsp</td>
             <td id="totalHours" data-value="<%=firstJob ? firstJob.workedTotal: 0%>"><%= firstJob ? currencySplitter(firstJob.workedTotal.toFixed()): 0%></td>
-            <td id="totalCost" class="dollar" data-value="<%=firstJob.costTotal || 0%>"> <%= firstJob ? currencySplitter((firstJob.costTotal/100).toFixed()): 0%></td>
-            <td id="totalRevenue" class="dollar" data-value="<%=firstJob.revenueTotal || 0%>"> <%= firstJob ? currencySplitter((firstJob.revenueTotal/100).toFixed()): 0%></td>
-            <td id="totalProfit" class="dollar" data-value="<%=firstJob.profitTotal || 0%>"> <%= firstJob ? currencySplitter((firstJob.profitTotal/100).toFixed()): 0%></td>
+            <td id="totalCost" class="dollar" data-value="<%=firstJob.costTotal || 0%>"><%= firstJob ? currencySplitter((firstJob.costTotal/100).toFixed()): 0%></td>
+            <td id="totalRevenue" class="dollar" data-value="<%=firstJob.revenueTotal || 0%>"><%= firstJob ? currencySplitter((firstJob.revenueTotal/100).toFixed()): 0%></td>
+            <td id="totalProfit" class="dollar" data-value="<%=firstJob.profitTotal || 0%>"><%= firstJob ? currencySplitter((firstJob.profitTotal/100).toFixed()): 0%></td>
         </tr>
 
         </tfoot>
@@ -138,8 +138,8 @@
                     murkUp = isFinite(murkUp) ? murkUp * 100 : 0;
                     margin = isFinite(margin) ? margin * 100 : 0;
                 %>
-                <td class="dollar"> <%= currencySplitter(revenueTotal.toFixed())%></td>
-                <td class="dollar"> <%= currencySplitter(profitTotal.toFixed())%></td>
+                <td class="dollar"><%= currencySplitter(revenueTotal.toFixed())%></td>
+                <td class="dollar"><%= currencySplitter(profitTotal.toFixed())%></td>
                 <td class="procent"><%= currencySplitter(murkUp.toFixed())%></td>
                 <td class="procent"><%= currencySplitter(margin.toFixed())%></td>
             </tr>
