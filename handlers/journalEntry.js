@@ -3969,19 +3969,19 @@ var Module = function (models, event) {
                 credit : 1,
                 account: 1
             }
-        }, {
+        }/*, {
             $group: {
                 _id    : '$date',
                 debit  : {$sum: '$debit'},
                 credit : {$sum: '$credit'},
                 account: {$addToSet: '$account'}
             }
-        }, {
+        }*/, {
             $project: {
-                _id    : 1,
+                _id    : '$date',
                 debit  : 1,
                 credit : 1,
-                account: {$arrayElemAt: ["$account", 0]}
+                account: 1
             }
         }, {
             $sort: {

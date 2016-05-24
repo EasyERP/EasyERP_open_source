@@ -30,7 +30,7 @@ dbObject.once('open', function callback() {
     var JE = dbObject.model("journalEntry", journalEntrySchema);
     var Currency = dbObject.model('currency', CurrencySchema);
 
-    var query = Payment.find({forSale: true, "_type" : {$in: ["Payment", "ProformaPayment"]}}).populate('invoice').lean();
+    var query = Payment.find({forSale: true, "_type" : {$in: ["Payment", "InvoicePayment", "ProformaPayment"]}}).populate('invoice').lean();
     var count = 0;
 
     function createReconciled(body, dbIndex, cb, uId) {
