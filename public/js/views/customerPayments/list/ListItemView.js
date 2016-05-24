@@ -26,7 +26,8 @@ define([
                 el.append(_.template(ListTemplateForWTrack, {
                     paymentCollection: this.collection.toJSON(),
                     startNumber      : this.startNumber,
-                    currencySplitter : helpers.currencySplitter
+                    currencySplitter : helpers.currencySplitter,
+                    currencyClass    : helpers.currencyClass
                 }));
             }
         });

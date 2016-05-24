@@ -78,7 +78,7 @@
                         <div class="half-block left">
                             <dl class="opp-info">
 
-                                <dt><label for="supplier">Supplier</label></dt>
+                                <dt><label for="supplier"><%=(forSales) ? 'Customer' : 'Supplier'%></label></dt>
                                 <dd>
                                     <a id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>"
                                         href="javascript:;"><%=(model.supplier && model.supplier.name)?model.supplier.name.first
@@ -95,7 +95,7 @@
                                     <span type="text" id="source_document"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></span>
                                 </dd>
 
-                                <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
+                                <dt><label for="supplier_invoice_num">Invoice Number</label></dt>
                                 <dd>
                                     <input type="text" id="supplier_invoice_num"
                                            value="<%=(model.name) ? model.name : ''%>"
@@ -140,7 +140,7 @@
                         <div class="half-block left">
                             <dl class="opp-info">
 
-                                <dt><label for="supplier">Supplier</label></dt>
+                                <dt><label for="supplier"><%=(forSales) ? 'Customer' : 'Supplier'%></label></dt>
                                 <dd>
                                     <span id="supplier" data-id="<%=(model.supplier)?model.supplier._id:''%>"
                                           href="javascript:;"><%=(model.supplier && model.supplier.name)?model.supplier.name.first + ' ' + model.supplier.name.last:""%></span>
@@ -151,7 +151,7 @@
                                     <span type="text" id="source_document"><%=(model.sourceDocument) ? model.sourceDocument.name : ''%></span>
                                 </dd>
 
-                                <dt><label for="supplier_invoice_num">Supplier Invoice Number</label></dt>
+                                <dt><label for="supplier_invoice_num">Invoice Number</label></dt>
                                 <dd>
                                     <span type="text"
                                           id="supplier_invoice_num"><%=(model.name) ? model.name : ''%></span>

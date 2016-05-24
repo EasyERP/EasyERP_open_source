@@ -17,10 +17,10 @@
             contentType : null,
 
             initialize: function (options) {
-                this.startTime = new Date();
-
                 var that = this;
                 var regex = /^sales/;
+
+                this.startTime = new Date();
 
                 this.namberToShow = options.count;
                 this.viewType = options.viewType;
@@ -47,7 +47,10 @@
 
                 this.filter = options.filter;
 
-                if (options && options.viewType) {
+                if (options && options.url) {
+                    this.url = options.url;
+                    delete options.url;
+                } else if (options && options.viewType) {
                     this.url += options.viewType;
                 }
 

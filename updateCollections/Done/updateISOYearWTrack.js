@@ -29,8 +29,8 @@ dbObject.once('open', function callback() {
         }
 
         res.forEach(function (wt) {
-            isoYear = isoWeekYearComposer(wt);
-            dateByWeek = wt.week + isoYear * 100;
+            isoYear = isoWeekYearComposer(wt) || 0;
+            dateByWeek = parseInt(wt.week, 10) + isoYear * 100;
             query = {isoYear: isoYear, dateByWeek: dateByWeek};
 
             wTrack.findByIdAndUpdate(wt._id, query, function (err, response) {

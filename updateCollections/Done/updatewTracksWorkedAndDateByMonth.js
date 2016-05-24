@@ -10,7 +10,7 @@ var wTrackSchema;
 var vacationSchema;
 var dbObject;
 var async = require('async');
-var wTrack;
+var wTrack; 
 var Vacation;
 var Holiday;
 var holidaySchema;

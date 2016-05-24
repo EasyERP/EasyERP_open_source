@@ -8,9 +8,9 @@
     <td><a data-id="<%=job._id%>" class="jobs"><%=job.name%></a></td>
     <td><%=job.workflow ? job.workflow.name : ''%></td>
     <td><%=job.type%></td>
-    <td><%=currencySplitter(job.cost ? (job.cost / 100).toFixed(2) : "0")%></td>
+    <td class="money"><%=currencySplitter(job.cost ? (job.cost / 100).toFixed(2) : "0")%></td>
     <% ArrayDepartments.forEach(function (el){%>
-    <td><%=currencySplitter(job['cost' + el] ? (job['cost' + el] / 100).toFixed(2) : "0")%></td>
+    <td class="money"><%=currencySplitter(job['cost' + el] ? (job['cost' + el] / 100).toFixed(2) : "0")%></td>
     <%  }); %>
     <% ArrayDepartments.forEach(function (el){%>
     <td><%=job['hours' + el] ? job['hours' + el]: "0"%></td>
@@ -18,10 +18,10 @@
     <td><%=job.margin ? job.margin.toFixed(2) : "0"%></td>
     <td><%=job.devMargin ? job.devMargin.toFixed(2) : "0"%></td>
     <td><%=job.avDevRate ? job.avDevRate.toFixed(2) : "0"%></td>
-    <td><%=currencySplitter(job.profit ? job.profit.toFixed(2) : "")%></td>
-    <td><%=currencySplitter(job.quotation ? (job.quotation.paymentInfo.total / 100).toFixed(2) : "")%></td>
-    <td><%=currencySplitter(job.invoice ? (job.invoice.paymentInfo.total / 100).toFixed(2) : "")%></td>
-        <td><%=currencySplitter(job.payment ? (job.payment.paid / 100).toFixed(2) : "")%></td>
+    <td class="money"><%=currencySplitter(job.profit ? job.profit.toFixed(2) : "")%></td>
+    <td class="money"><%=currencySplitter(job.quotation ? (job.quotation.paymentInfo.total / 100).toFixed(2) : "")%></td>
+    <td class="money"><%=currencySplitter(job.invoice ? (job.invoice.paymentInfo.total / 100).toFixed(2) : "")%></td>
+    <td class="money"><%=currencySplitter(job.payment ? (job.payment.paid / 100).toFixed(2) : "")%></td>
     <td><%=job.payment ? job.payment.count : ""%></td>
 </tr>
 <%  }); %>

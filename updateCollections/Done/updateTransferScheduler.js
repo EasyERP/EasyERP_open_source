@@ -41,8 +41,17 @@ query.exec(function (error, _res) {
         var transfer = emp.transfer;
         var newTransfer = [];
 
-       transfer.forEach(function (tr, i) {
+        transfer.forEach(function (tr, i) {
             tr.weeklyScheduler = '57332c3b94ee1140b6bb49e2';
+
+            if ((tr.status !== 'hired') && (tr.status !== 'fired')){
+                if (moment(new Date(tr.date)).date() === moment(new Date(tr.date)).endOf('month').date()){
+                    tr.date = moment(new Date(tr.date)).add(1, 'day').startOf('month');
+                } else {
+                    tr.date = moment(new Date(tr.date)).startOf('month');
+                }
+            }
+
             newTransfer.push(tr);
         });
 

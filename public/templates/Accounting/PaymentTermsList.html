@@ -1,0 +1,39 @@
+<div class="accounting-fourth-block left">
+    <table class="list tableProjects tableFixed">
+        <colgroup>
+            <col width="75%"/>
+            <col width="25%"/>
+        </colgroup>
+        <thead>
+        <tr>
+            <th  class="forCaption">Payment Terms</th>
+            <th class="forCaption">
+                <a href="javascript:;" class="fa fa-angle-down"></a>
+                <a href="javascript:;" class="btnAdd" title="Create" id="top-bar-createBtn">Add</a>
+            </th>
+        </tr>
+        <tr class="forToggle">
+            <th>Name</th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody class="forToggle">
+        <% collection.forEach(function(elem,index){ %>
+
+        <tr data-id="<%= elem._id%>">
+            <td><span><%=elem.name %></span></td>
+            <td class="centerCell">
+                <a href="javascript:;" class="fa fa-pencil-square-o" aria-hidden="true"></a>
+                <a href="javascript:;" class="fa fa-trash-o" aria-hidden="true"></a>
+            </td>
+        </tr>
+
+
+        <% }) %>
+
+        </tbody>
+    </table>
+</div>
+
+
+

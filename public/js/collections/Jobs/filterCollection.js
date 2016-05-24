@@ -9,16 +9,22 @@ define([
     var JobsCollection = Backbone.Collection.extend({
 
         model       : JobsModel,
-        url         : CONSTANTS.URLS.JOBS,
+        url         : '/jobs/getForOverview',
         contentType : null,
         page        : null,
         numberToShow: null,
         viewType    : 'list',
 
         initialize: function (options) {
+            var self = this;
+
             options = options || {};
             this.startTime = new Date();
-            var self = this;
+
+            if (options && options.url) {
+                this.url = options.url;
+                delete options.url;
+            }
 
             this.filter = options ? options.filter : {};
             this.projectId = options.projectId;
@@ -28,7 +34,6 @@ define([
                 data   : options,
                 reset  : true,
                 success: function (newCollection) {
-
                     var key = 'jobs_projectId:' + self.projectId;
                     var collection = custom.retriveFromCash(key);
 

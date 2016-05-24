@@ -6,30 +6,19 @@
             <th>Job Position</th>
             <th>Department</th>
             <th>Hours</th>
-            <th>Cost</th>
-            <th>Revenue</th>
-            <th>Profit</th>
         </tr>
         </thead>
 
         <tbody id="wTracks" class="enableTableOdd">
-        <%var count = 0;%>
-        <%var budgetTotal = jobItem.budget.budgetTotal%>
-        <%var projectTeam = jobItem.budget.projectTeam%>
-        <% projectTeam.forEach(function(element,i){ %>
-        <%var budget = jobItem.budget.projectTeam[i].budget%>
-        <%if(element && element.employee && element.employee._id){%>
-        <tr data-id="<%=element.employee._id%>" id="<%=projectTeam + element.employee._id%>">
-            <td><%=element.employee.name.first + ' ' + element.employee.name.last%></td>
-            <td><%=element.employee.jobPosition.name%></td>
-            <td><%=element.department.departmentName%></td>
-            <td><%=currencySplitter(budget.hoursSum.toFixed())%></td>
-            <td class="dollar"> <%=currencySplitter(budget.costSum ? (budget.costSum/100).toFixed() : '0')%></td>
-            <td class="dollar"> <%=currencySplitter((budget.revenueSum/100).toFixed())%></td>
-            <td class="dollar"> <%=currencySplitter(((budget.revenueSum - budget.costSum)/100).toFixed())%></td>
-        </tr>
-        <%}%>
-        <% count++ %>
+        <% jobItem.revenue.forEach(function(element,i){ %>
+            <%if(element && element.employee && element.employee._id){%>
+                <tr data-id="<%=element.employee._id%>" id="<%=jobItem._id + '_' + element.employee._id%>">
+                    <td><%=element.employee.name%></td>
+                    <td><%=element.employee.jobPosition%></td>
+                    <td><%=element.department%></td>
+                    <td><%=currencySplitter(element.employee.worked.toFixed())%></td>
+                </tr>
+            <%}%>
         <% })%>
         </tbody>
 
@@ -39,7 +28,7 @@
             <td>
                 <a href="javascript:;" data-id="<%=jobItem._id%>" data-value="<%=jobItem.name%>"
                    id="createItem">
-                    add more...
+                    Generate more tCards
                 </a>
             </td>
         </tr>

@@ -335,7 +335,7 @@ define([
                         model: this.currentModel
                     }).render().el
                 );
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Applications"}, "name", this, false, function (data) {
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Applications"}, "name", this, true, function (data) {
                     var i;
 
                     for (i = 0; i < data.length; i++) {

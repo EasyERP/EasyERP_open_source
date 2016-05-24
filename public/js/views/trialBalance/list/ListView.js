@@ -94,14 +94,15 @@ define([
 
                 async.each(asyncKeys, function (asyncId) {
                     dataService.getData('/journal/journalEntry/getAsyncDataForGL', {
-                        startDate: self.startDate,
-                        endDate  : self.endDate,
-                        _id      : asyncId
+                        startDate  : self.startDate,
+                        endDate    : self.endDate,
+                        contentType: 'trialBalance',
+                        _id        : asyncId
                     }, function (result) {
                         var journalEntries = result.journalEntries;
                         var mainTr = body.find("[data-id='" + asyncId + "']");
                         journalEntries.forEach(function (entry) {
-                            mainTr.after("<tr data-main='" + asyncId + "' class='hidden'><td colspan='3' class='leftBorderNone'>" + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td>" + helpers.currencySplitter((entry.debit / 100).toFixed(2)) + "</td><td>" + helpers.currencySplitter((entry.credit / 100).toFixed(2)) + "</td><td>" + helpers.currencySplitter(((entry.debit - entry.credit) / 100).toFixed(2)) + "</td></tr>");
+                            mainTr.after("<tr data-main='" + asyncId + "' class='hidden'><td colspan='3' class='leftBorderNone'>" + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + helpers.currencySplitter((entry.debit / 100).toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter((entry.credit / 100).toFixed(2)) + "</td><td class='money'>" + helpers.currencySplitter(((entry.debit - entry.credit) / 100).toFixed(2)) + "</td></tr>");
                         });
                     });
 

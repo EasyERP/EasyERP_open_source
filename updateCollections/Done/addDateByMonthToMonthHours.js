@@ -36,9 +36,8 @@ dbObject.once('open', function callback() {
                 console.log(dateByMonth);
             });
         });
-    });
-*/
-  /*   monthHoursModel.find({}, function (err, result) {
+    });*/
+ /*    monthHoursModel.find({}, function (err, result) {
          if (err){
              return console.log(err);
          }
@@ -51,7 +50,7 @@ dbObject.once('open', function callback() {
              });
          });
      });*/
-  /*   Vacation.find({}, function (err, result) {
+ /*    Vacation.find({}, function (err, result) {
          if (err){
              return console.log(err);
          }

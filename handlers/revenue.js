@@ -3246,7 +3246,7 @@ var wTrack = function (models) {
         async.parallel({
             invoiced: invoiceGrouper,
             paid    : paymentGrouper,
-            revenue : revenueGrouper
+           /* revenue : revenueGrouper*/
         }, function (err, response) {
             var sales;
             var _sales;
@@ -3273,8 +3273,8 @@ var wTrack = function (models) {
             sales = response.invoiced[0] ? response.invoiced[0].salesArray : [];
             _sales = response.paid[0] ? response.paid[0].salesArray : [];
             sales = sales.concat(_sales);
-            _sales = response.revenue[0] ? response.revenue[0].salesArray : [];
-            sales = sales.concat(_sales);
+            /*_sales = response.revenue[0] ? response.revenue[0].salesArray : [];
+            sales = sales.concat(_sales);*/
             sales = _.uniq(sales, function (elm) {
                 if (elm._id) {
                     return elm._id.toString();
@@ -3282,14 +3282,14 @@ var wTrack = function (models) {
             });
 
             mergeByProperty(response.invoiced, response.paid, 'date');
-            mergeByProperty(response.invoiced, response.revenue, 'date');
+            // mergeByProperty(response.invoiced, response.revenue, 'date');
 
             response.invoiced = _.sortBy(response.invoiced, 'date');
 
-            mergeByProperty(response.invoiced, response.paid, 'date');
-            mergeByProperty(response.invoiced, response.revenue, 'date');
+            // mergeByProperty(response.invoiced, response.paid, 'date');
+            // mergeByProperty(response.invoiced, response.revenue, 'date');
 
-            response.invoiced = _.sortBy(response.invoiced, 'date');
+            // response.invoiced = _.sortBy(response.invoiced, 'date');
 
             res.status(200).send({payments: response.invoiced, sales: sales});
             /*res.status(200).send(response);*/

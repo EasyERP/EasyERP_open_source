@@ -5,6 +5,7 @@ define([
         'views/listViewBase',
         'text!templates/Employees/list/ListHeader.html',
         'views/Employees/CreateView',
+        'views/Employees/EditView',
         'views/Employees/list/ListItemView',
         'views/Filter/FilterView',
         'views/Employees/form/FormView',
@@ -28,8 +29,9 @@ define([
             exportToXlsxUrl         : '/employees/exportToXlsx',
             exportToCsvUrl          : '/employees/exportToCsv',
             events                  : {
-                "click"                    : "hideItemsNumber",
-                "click .letter:not(.empty)": "alpabeticalRender"
+                "click"                              : "hideItemsNumber",
+                "click .letter:not(.empty)"          : "alpabeticalRender",
+                "click .list td:not(.notForm)"       : "gotoEditForm"
             },
 
             initialize: function (options) {
@@ -48,6 +50,27 @@ define([
 
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
+            },
+
+            gotoEditForm: function (e) {
+                var id = $(e.target).closest("tr").data("id");
+                var model = new currentModel({validate: false});
+
+                e.preventDefault();
+
+                model.urlRoot = '/Employees/form';
+                model.fetch({
+                    data   : {id: id},
+                    success: function (model) {
+                        new EditView({model: model});
+                    },
+                    error  : function () {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please refresh browser'
+                        });
+                    }
+                });
             },
 
             render: function () {

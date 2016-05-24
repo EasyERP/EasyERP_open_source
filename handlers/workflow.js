@@ -51,6 +51,8 @@ var workflows = function (models, event) {
         var order = queryObject.order || -1;
         var source = queryObject.source;
         var targetSource = queryObject.targetSource;
+        var name = queryObject.name;
+
         var err;
         var query;
 
@@ -79,6 +81,9 @@ var workflows = function (models, event) {
         }
         if (targetSource) {
             query.targetSource = targetSource;
+        }
+        if (name) {
+            query.name = name;
         }
 
         Workflow
