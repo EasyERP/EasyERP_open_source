@@ -545,6 +545,63 @@ th {
   outline: medium none;
   border: 1px solid #3e88b9 !important;
 }
+.history_item {
+  padding: 10px 5px;
+  border-bottom: 1px solid #7f7f80;
+}
+.history_item .history_header {
+  zoom: 1;
+  clear: both;
+  margin-bottom: 10px;
+}
+.history_item .history_header:before {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.history_item .history_header:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
+}
+.history_item .history_header .editBy {
+  float: left;
+}
+.history_item .history_header .editBy_name {
+  color: #3e88b9;
+}
+.history_item .history_header .date {
+  float: right;
+}
+.history_item .history_body .history_changed {
+  zoom: 1;
+  clear: both;
+  margin-bottom: 10px;
+}
+.history_item .history_body .history_changed:before {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.history_item .history_body .history_changed:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
+}
+.history_item .history_body .history_changed .changedFieldName {
+  float: left;
+  width: 100px;
+}
+.history_item .history_body .history_changed .changed_field {
+  float: left;
+  margin-left: 130px;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
@@ -739,6 +796,7 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
 /*== Thumbnail ==============================*/
 /*== Dialog =============================*/
 /*== Birthday ===========================*/
+/*== History ============================*/
 .salary-list tbody#listTable .subRow:hover {
   background-color: transparent;
 }
