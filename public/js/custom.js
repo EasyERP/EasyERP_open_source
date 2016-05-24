@@ -54,6 +54,7 @@ define([
         var id;
         var viewtype;
         var url;
+        var filter;
 
         if (contentType) {
             this.contentType = contentType;
@@ -79,6 +80,17 @@ define([
                 var model = collection.getElement();
                 url += "/" + model.attributes._id;
             }
+        }
+
+        if (id && (viewtype === 'list') && (this.contentType === 'Tasks')){
+            filter = {
+                'project': {
+                    key  : 'project._id',
+                    value: [id]
+                }
+            };
+
+            url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
         }
 
         App.ownContentType = true;
