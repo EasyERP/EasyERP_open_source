@@ -20,7 +20,7 @@ define([
             return (store && JSON.parse(store)) || null;
         };
         this.remove = function (name) {
-           localStorage.removeItem(name);
+            localStorage.removeItem(name);
         };
     };
 
@@ -52,9 +52,10 @@ define([
         var windowLocHash = windowLocation.split('/')[3];
         var browserFilter = windowLocation.split('/filter=')[1];
         var id;
-        var viewtype;
+        var viewType;
         var url;
         var filter;
+        var kanbanFilter = browserFilter ? JSON.parse(decodeURIComponent(browserFilter)) : null;
 
         if (contentType) {
             this.contentType = contentType;
@@ -64,11 +65,11 @@ define([
             id = windowLocHash;
         }
 
-        viewtype = $(event.target).attr('data-view-type');
-        url = "#easyErp/" + this.contentType + "/" + viewtype + (browserFilter ? '/filter=' + browserFilter : '');
+        viewType = $(event.target).attr('data-view-type');
+        url = "#easyErp/" + this.contentType + "/" + viewType + (browserFilter ? '/filter=' + browserFilter : '');
 
         if (id) {
-            if (viewtype !== "list" && (viewtype !== "thumbnails")) {
+            if (viewType !== "list" && (viewType !== "thumbnails")) {
                 url += "/" + id;
             }
             if (collection) {
@@ -76,13 +77,13 @@ define([
             }
         } else {
 
-            if (viewtype === "form" && collection) {
+            if (viewType === "form" && collection) {
                 var model = collection.getElement();
                 url += "/" + model.attributes._id;
             }
         }
 
-        if (id && (viewtype === 'list') && (this.contentType === 'Tasks')){
+        if (id && (viewType === 'list') && (this.contentType === 'Tasks')) {
             filter = {
                 'project': {
                     key  : 'project._id',
@@ -91,6 +92,8 @@ define([
             };
 
             url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
+        } else if (kanbanFilter && (viewType === 'kanban') && (this.contentType === 'Tasks')) {
+            url = "#easyErp/" + this.contentType + "/" + viewType + "/" + kanbanFilter.project.value[0];
         }
 
         App.ownContentType = true;
@@ -477,19 +480,19 @@ define([
     App.storage = new Store();
 
     return {
-        runApplication: runApplication,
-        changeContentViewType: changeContentViewType,
-        getCurrentVT: getCurrentVT,
-        setCurrentVT: setCurrentVT,
-        getCurrentCL: getCurrentCL,
-        setCurrentCL: setCurrentCL,
-        cacheToApp: cacheToApp,
-        retriveFromCash: retriveFromCash,
-        removeFromCash: removeFromCash,
-        savedFilters: savedFilters,
+        runApplication          : runApplication,
+        changeContentViewType   : changeContentViewType,
+        getCurrentVT            : getCurrentVT,
+        setCurrentVT            : setCurrentVT,
+        getCurrentCL            : getCurrentCL,
+        setCurrentCL            : setCurrentCL,
+        cacheToApp              : cacheToApp,
+        retriveFromCash         : retriveFromCash,
+        removeFromCash          : removeFromCash,
+        savedFilters            : savedFilters,
         getFiltersForContentType: getFiltersForContentType,
-        getFilterById: getFilterById,
-        getWeeks: getWeeks,
-        getFiltersValues: getFiltersValues
+        getFilterById           : getFilterById,
+        getWeeks                : getWeeks,
+        getFiltersValues        : getFiltersValues
     };
 });
