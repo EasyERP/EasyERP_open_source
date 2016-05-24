@@ -17,14 +17,14 @@ define([
         el: '#invoiceItemsHolder',
 
         events: {
-            'click .addProductItem'                                                   : 'getProducts',
-            "click .newSelectList li:not(.miniStylePagination)"                       : "chooseOption",
-            "click .newSelectList li.miniStylePagination"                             : "notHide",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)"        : "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)"        : "prevSelect",
-            "click .current-selected"                                                 : "showProductsSelect",
-            'change input.statusInfo'                                                 : 'recalculateTaxes',
-            'keyup input.statusInfo'                                                  : 'recalculateTaxes'
+            'click .addProductItem'                                           : 'getProducts',
+            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
+            "click .newSelectList li.miniStylePagination"                     : "notHide",
+            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
+            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
+            "click .current-selected"                                         : "showProductsSelect",
+            'change input.statusInfo'                                         : 'recalculateTaxes',
+            'keyup input.statusInfo'                                          : 'recalculateTaxes'
         },
 
         initialize: function (options) {
@@ -40,7 +40,8 @@ define([
                 this.isPaid = !!options.isPaid;
                 this.notAddItem = !!options.notAddItem;
                 this.paid = options.paid;
-            };
+            }
+            ;
 
             this.forSales = options.forSales;
 
@@ -200,27 +201,31 @@ define([
                 products = options.model.products;
 
                 thisEl.html(_.template(productItemTemplate, {
-                    model     : options.model,
-                    forSales  : self.forSales,
-                    isPaid    : self.isPaid,
-                    notAddItem: this.notAddItem
+                    model           : options.model,
+                    forSales        : self.forSales,
+                    isPaid          : self.isPaid,
+                    notAddItem      : this.notAddItem,
+                    currencySplitter: helpers.currencySplitter,
+                    currencyClass   : helpers.currencyClass
                 }));
 
                 if (products) {
                     productsContainer = thisEl.find('#productList');
                     productsContainer.prepend(_.template(ProductItemsEditList, {
-                        products  : products,
-                        forSales  : self.forSales,
-                        isPaid    : self.isPaid,
-                        notAddItem: this.notAddItem,
-                        currencySplitter : helpers.currencySplitter
+                        products        : products,
+                        forSales        : self.forSales,
+                        isPaid          : self.isPaid,
+                        notAddItem      : this.notAddItem,
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass
                     }));
                     this.recalculateTaxes(this.$el.find('.listTable'));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
-                        model         : options.model,
-                        balanceVisible: this.visible,
-                        currencySplitter : helpers.currencySplitter
+                        model           : options.model,
+                        balanceVisible  : this.visible,
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass
                     }));
                 }
             } else {
@@ -232,7 +237,12 @@ define([
                     notAddItem: this.notAddItem
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
-                totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));
+                totalAmountContainer.append(_.template(totalAmount, {
+                    model           : null,
+                    balanceVisible  : this.visible,
+                    currencySplitter: helpers.currencySplitter,
+                    currencyClass   : helpers.currencyClass
+                }));
             }
 
             return this;
