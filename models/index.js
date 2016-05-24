@@ -60,4 +60,5 @@ module.exports = (function () {
     require('./projectMember.js');
     require('./weeklyScheduler.js');
     require('./payrollComponentType.js');
+    require('./historyEntry.js');
 })();
