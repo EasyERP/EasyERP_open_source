@@ -21,7 +21,7 @@ var connectOptions = {
 };
 
 //var dbObject = mongoose.createConnection('144.76.56.111', 'lilyadb', 28017, connectOptions);
-var dbObject = mongoose.createConnection('144.76.56.111', 'alex', 28017, connectOptions);
+var dbObject = mongoose.createConnection('localhost', 'production'/*, 28017, connectOptions*/);
 dbObject.on('error', console.error.bind(console, 'connection error:'));
 dbObject.once('open', function callback() {
     console.log("Connection to production is success");
@@ -207,7 +207,7 @@ dbObject.once('open', function callback() {
 
                     count++;
 
-                    createReconciled(body, 'alex', cb, '52203e707d4dba8813000003');
+                    createReconciled(body, 'production', cb, '52203e707d4dba8813000003');
                 } else {
                     cb();
                 }

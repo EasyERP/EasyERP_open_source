@@ -58,16 +58,16 @@ var Proforma = function (models) {
             var err;
             var expensesInvoice;
             var saveObject = {
-                currency: data.currency,
-                dueDate: data.dueDate,
-                forSales: data.forSales,
-                groups: data.groups,
+                currency   : data.currency,
+                dueDate    : data.dueDate,
+                forSales   : data.forSales,
+                groups     : data.groups,
                 invoiceDate: data.invoiceDate,
                 paymentInfo: data.paymentInfo,
-                products: data.products,
-                supplier: data.supplier,
-                name: data.supplierInvoiceNumber,
-                whoCanRW: data.whoCanRW
+                products   : data.products,
+                supplier   : data.supplier,
+                name       : data.supplierInvoiceNumber,
+                whoCanRW   : data.whoCanRW
             };
 
             if (parallelResponse && parallelResponse.length) {
