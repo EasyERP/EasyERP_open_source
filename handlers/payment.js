@@ -1897,6 +1897,10 @@ var Payment = function (models, event) {
                                                 } else {
                                                     request.query.status = 'New';
                                                     request.query.order = 1;
+
+                                                    if ((invoiceType === 'Proforma') && !payments.length && invoice.get('invoiced')) {
+                                                        request.query.status = 'Cancelled';
+                                                    }
                                                 }
 
                                                 workflowHandler.getFirstForConvert(request, function (err, workflow) {
