@@ -1351,6 +1351,21 @@ var Jobs = function (models, event) {
                     workflow       : 1,
                     cost           : 1,
                     jobPrice       : 1,
+                    totalWorked    : {
+                        $cond: [{$eq: ['$totalWorked', 0]}, 1, '$totalWorked']
+                    },
+                    worked         : 1,
+                    tCardDateByWeek: 1
+                }
+            },{
+                $project: {
+                    name           : 1,
+                    invoice        : 1,
+                    type           : 1,
+                    quotation      : 1,
+                    workflow       : 1,
+                    cost           : 1,
+                    jobPrice       : 1,
                     totalWorked    : 1,
                     worked         : 1,
                     tCardDateByWeek: 1,
