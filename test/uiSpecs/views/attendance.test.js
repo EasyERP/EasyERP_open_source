@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'views/main/MainView',
@@ -3412,7 +3413,7 @@ define([
                     done();
                 });
 
-               /* it('Try to change employee', function(){
+               /!* it('Try to change employee', function(){
                     var $next;
                     var $prev;
                     var $selectedItem;
@@ -3447,7 +3448,7 @@ define([
                     expect($thisEl.find('.grid-conatiner')).to.exist;
                     expect($thisEl.find('.grid-conatiner > .attendance')).to.exist;
                     expect($thisEl.find('.grid-conatiner > .statisticsAtten')).to.exist;
-                });*/
+                });*!/
             });
 
         });
@@ -3455,3 +3456,4 @@ define([
     });
 
 });
+*/

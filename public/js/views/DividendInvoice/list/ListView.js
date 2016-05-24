@@ -1,4 +1,6 @@
 define([
+        'jQuery',
+        'Underscore',
         'views/listViewBase',
         'text!templates/DividendInvoice/list/ListHeader.html',
         'views/DividendInvoice/CreateView',
@@ -13,7 +15,7 @@ define([
         'helpers'
     ],
 
-    function (listViewBase, listTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
+    function ($, _, listViewBase, listTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,

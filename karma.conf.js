@@ -35,7 +35,7 @@ module.exports = function (config) {
 
             //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
 
-            {pattern: 'test/uiSpecs/**/salesRevenue.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/**/settingsEmployee.test.js', included: false, watching: true},
             {pattern: 'test/uiSpecs/**/login.test.js', included: false, watching: true},
 
             {pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},

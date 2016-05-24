@@ -1,3 +1,4 @@
+/*
 define([
     'models/PersonsModel',
     'chai'
@@ -131,3 +132,4 @@ define([
 
     });
 });
+*/

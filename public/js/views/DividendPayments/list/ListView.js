@@ -2,6 +2,8 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+    'jQuery',
+    'Underscore',
     'text!templates/Pagination/PaginationTemplate.html',
     'text!templates/DividendPayments/list/ListHeader.html',
     'text!templates/DividendPayments/list/ListHeader.html',
@@ -21,7 +23,8 @@ define([
     'views/listViewBase',
     'helpers'
     ],
-    function (paginationTemplate,
+    function ($, _,
+              paginationTemplate,
               listTemplate,
               ListHeaderForWTrack,
               cancelEdit,

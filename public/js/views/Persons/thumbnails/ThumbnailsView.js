@@ -219,7 +219,6 @@
                 }
             },
 
-            showMore       : function () {
             showMore       : function (event) {
                 //event.preventDefault();
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});

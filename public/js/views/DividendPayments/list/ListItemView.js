@@ -2,11 +2,13 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
+        'Backbone',
+        'Underscore',
         'text!templates/DividendPayments/list/ListTemplate.html',
         'helpers'
     ],
 
-    function (PaymentListTemplate, helpers) {
+    function (Backbone, _, PaymentListTemplate, helpers) {
         var PaymentListItemView = Backbone.View.extend({
             el: '#listTable',
 
