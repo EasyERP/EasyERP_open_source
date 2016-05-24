@@ -341,7 +341,7 @@ define([
                         model: this.currentModel,
                     }).render().el
                 );
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Applications"}, "name", this, false, function (data) {
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Applications"}, "name", this, true, function (data) {
                     var id;
                     for (var i = 0; i < data.length; i++) {
                         if (data[i].name == "Refused") {
