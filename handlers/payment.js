@@ -937,11 +937,19 @@ var Payment = function (models, event) {
                                 as          : 'projectMembers'
                             }
                         }, {
+                            $lookup: {
+                                from        : 'workflows',
+                                localField  : 'invoice.workflow',
+                                foreignField: '_id',
+                                as          : 'invoice.workflow'
+                            }
+                        }, {
                             $project: {
                                 'supplier.name'     : '$supplier.name',
                                 currency            : 1,
                                 'invoice._id'       : 1,
                                 'invoice.name'      : 1,
+                                'invoice.workflow'  : {$arrayElemAt: ['$invoice.workflow', 0]},
                                 salesmanagers       : {
                                     $filter: {
                                         input: '$projectMembers',
@@ -954,14 +962,7 @@ var Payment = function (models, event) {
                                 workflow            : 1,
                                 date                : 1,
                                 'paymentMethod.name': '$paymentMethod.name',
-                                _type               : 1,
-                                removable           : {
-                                    $cond: {
-                                        if  : {$and: [{$eq: ['$_type', "ProformaPayment"]}, {$eq: ['$invoice.workflow.name', "Invoiced"]}]},
-                                        then: false,
-                                        else: true
-                                    }
-                                }
+                                _type               : 1
                             }
                         }, {
                             $project: {
@@ -976,7 +977,13 @@ var Payment = function (models, event) {
                                 date            : 1,
                                 paymentMethod   : 1,
                                 _type           : 1,
-                                removable       : 1
+                                removable       : {
+                                    $cond: {
+                                        if  : {$and: [{$eq: ['$_type', "ProformaPayment"]}, {$eq: ['$invoice.workflow.name', "Invoiced"]}]},
+                                        then: false,
+                                        else: true
+                                    }
+                                }
 
                             }
                         }, {
