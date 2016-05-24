@@ -5893,6 +5893,9 @@ ul.dialog-tabs li.right button {
 .thumbnailwithavatar .company {
   color: #5184a6;
 }
+.thumbnailwithavatar .company {
+  color: #000000;
+}
 .list {
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   width: 100%;
