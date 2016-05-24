@@ -53,9 +53,9 @@ define([
             "click"                                            : "hideNewSelect",
             "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
             "click .confirmOrder"                              : "confirmOrder",
-            "click .createProforma"                            : "addAttachment",
+            "click .createProforma"                            : "createProforma", /*"addAttachment",*/
             "click .cancelQuotation"                           : "cancelQuotation",
-            'change #proformaAttachment'                       : 'uploadAttachment',
+            //'change #proformaAttachment'                       : 'uploadAttachment',
             "click .setDraft"                                  : "setDraft"
         },
 
@@ -243,7 +243,7 @@ define([
             });
         },
 
-        addAttachment: function (e) {
+        /*addAttachment: function (e) {
             var self = this;
             var $attachment;
 
@@ -259,9 +259,9 @@ define([
             $attachment.click();
             $attachment.hide();
 
-        },
+        },*/
 
-        uploadAttachment: function (event) {
+        /*uploadAttachment: function (event) {
             var self = this;
             var currentModel = this.model;
             var currentModelId = currentModel ? currentModel.id : null;
@@ -324,7 +324,7 @@ define([
                 return false;
             }
             return file.size < App.File.MAXSIZE;
-        },
+        },*/
 
         createProforma: function (e) {
             e && e.preventDefault();

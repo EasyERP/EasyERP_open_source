@@ -6,11 +6,9 @@
     <td class="centerCell notForm"><input type="checkbox" data-id="<%=key%>" class="totalRowCB checkbox"/></td>
     <!--<td class = "notForm centerCell"><input type="checkbox" id="<%=key%>" class="check_all" /></td>-->
     <td><%=weekSplitter(key)%></td>
-    <td data-cash="<%=totalObj.calc.onCash%>" class="total_calc_salary money">
-        <%=currencySplitter(totalObj.calc.onCash.toFixed(2))%>
+    <td data-cash="<%=totalObj.calc.onCash%>" class="total_calc_salary money"><%=currencySplitter(totalObj.calc.onCash.toFixed(2))%>
     </td>
-    <td data-cash="<%=totalObj.paid.onCash%>" class="total_paid_onCash cash money">
-        <%=currencySplitter(totalObj.paid.onCash.toFixed(2))%>
+    <td data-cash="<%=totalObj.paid.onCash%>" class="total_paid_onCash cash money"><%=currencySplitter(totalObj.paid.onCash.toFixed(2))%>
     </td>
 
     <td data-cash="<%=totalObj.diff.onCash%>" class="total_diff_onCash

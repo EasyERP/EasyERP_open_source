@@ -2,10 +2,9 @@
         'Backbone',
         'Underscore',
         'text!templates/Opportunities/list/ListTemplate.html',
-        "common"
-    ],
-
-    function (Backbone, _, OpportunitiesListTemplate, common) {
+        'common',
+    'helpers'
+], function (Backbone, _, OpportunitiesListTemplate, common) {
         var OpportunitiesListItemView = Backbone.View.extend({
             el: '#listTable',
 
@@ -18,7 +17,8 @@
                 var self = this;
                 this.$el.append(_.template(OpportunitiesListTemplate, {
                     opportunitiesCollection: this.collection.toJSON(),
-                    startNumber            : this.startNumber
+                    startNumber            : this.startNumber,
+                    currencySplitter       : helpers.currencySplitter
                 }));
             }
         });

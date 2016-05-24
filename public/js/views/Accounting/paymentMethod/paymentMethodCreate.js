@@ -103,9 +103,6 @@ define([
 
         hideDialog: function () {
             $(".edit-dialog").remove();
-            $(".add-group-dialog").remove();
-            $(".add-user-dialog").remove();
-            $(".crop-images-dialog").remove();
         },
 
         render: function () {
@@ -120,7 +117,7 @@ define([
                 resizable    : true,
                 dialogClass  : "edit-dialog",
                 title        : "Create Bank Account",
-                width        : "500px",
+                width        : "550px",
                 buttons      : [
                     {
                         text : "Save",
@@ -139,7 +136,7 @@ define([
 
             });
 
-            populate.get("#currency", "/currency/getForDd", {}, 'name', this, true);
+            populate.get('#currency', '/currency/getForDd', {}, 'name', this, true);
 
             App.stopPreload();
 

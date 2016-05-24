@@ -4,10 +4,10 @@
     <td class="editable <%= enable ? 'textUnderlineHover' : ''%> " data-content="jobs" data-id="<%=model.jobs ? model.jobs.name : '------'%>"><%=model.jobs ? model.jobs.name :
         '------'%>
     </td>
-    <td data-content="assigned"><%=model.project && model.projectmanager? model.projectmanager.name.first + ' ' +
+    <!--<td data-content="assigned"><%=model.project && model.projectmanager? model.projectmanager.name.first + ' ' +
         model.projectmanager.name.last :
         ''%>
-    </td>
+    </td>-->
     <td class="editable" data-content="project" data-id="<%= model.project._id%>"><%=model.project ? model.project.projectName : ''%></td>
     <td data-content="workflow" data-id="<%= model.workflow ? model.workflow._id : ''%>"><%=model.project && model.workflow? model.workflow.name : ''%></td>
     <td data-content="customer" data-id="<%= model.customer? model.customer.name.first + ' ' + model.customer.name.last : ''%>"><%= model.customer ? model.customer.name.first + ' ' + model.customer.name.last : ''%></td>

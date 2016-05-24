@@ -51,14 +51,17 @@ module.exports = function (models) {
 
                 return next();
             }
-
-            result = JSON.parse(result);
-            res.status(200).send(result);
-            console.timeEnd('cash');
+            try {
+                result = JSON.parse(result);
+                res.status(200).send(result);
+                console.timeEnd('cash');
+            } catch (exc){
+                return next();
+            }
         });
     }
 
-    router.get('/vacation', authStackMiddleware, accessStackMiddlwareVacation, /*cacheRetriver, */handler.composeForVacation);
+    router.get('/vacation', authStackMiddleware, accessStackMiddlwareVacation, cacheRetriver, handler.composeForVacation);
     //router.get('/vacation', handler.getFromCache);
     router.get('/hr', authStackMiddleware, accessStackMiddlwareHR, handler.composeForHr);
 

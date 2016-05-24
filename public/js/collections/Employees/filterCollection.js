@@ -39,7 +39,7 @@
                 });
             },
 
-            showMore        : function (options) {
+            showMore: function (options) {
                 var that = this;
                 var filterObject = options || {};
                 filterObject.page = (options && options.page) ? options.page : this.page;
@@ -62,6 +62,7 @@
                     }
                 });
             },
+            
             showMoreAlphabet: function (options) {
                 var that = this;
                 var filterObject = options || {};

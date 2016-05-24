@@ -2,25 +2,21 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
-    "text!templates/Accounting/EditPaymentMethods.html",
+    "text!templates/Accounting/CreatePaymentTerms.html",
     'views/selectView/selectView',
+    'models/paymentTerm',
     'populate'
-], function (Backbone, $, _, EditTemplate, SelectView, populate) {
+], function (Backbone, $, _, template, SelectView, Model, populate) {
     'use strict';
 
     var EditView = Backbone.View.extend({
-        template   : _.template(EditTemplate),
+        template   : _.template(template),
 
         initialize: function (options) {
 
-            _.bindAll(this, "render", "saveItem");
+            _.bindAll(this, 'render', 'saveItem');
 
-            if (options.model) {
-                this.currentModel = options.model;
-            } else {
-                this.currentModel = options.collection.getElement();
-            }
-            this.currentModel.urlRoot = "/paymentMethod";
+            this.currentModel = new Model();
 
             this.responseObj = {};
 
@@ -55,8 +51,6 @@ define([
             return false;
         },
 
-
-
         hideNewSelect: function () {
             $(".newSelectList").hide();
 
@@ -71,21 +65,15 @@ define([
             this.hideNewSelect();
         },
 
-        saveItem: function (proformaCb /*orderCb*/) {
+        saveItem: function () {
             var self = this;
             var thisEl = this.$el;
 
-            var name = thisEl.find('#paymentMethodName').val();
-            var account = thisEl.find('#account').val();
-            var currency = $.trim(thisEl.find('#currency').text())
-            var bank = thisEl.find('#bankName').val();
+            var name = thisEl.find('#paymentTermName').val();
 
 
             var data = {
-                currency         : currency,
-                name             : name,
-                account          : account,
-                bank             : bank
+                name             : name
             };
 
             this.currentModel.save(data, {
@@ -109,12 +97,7 @@ define([
 
         hideDialog: function () {
             $(".edit-dialog").remove();
-            $(".add-group-dialog").remove();
-            $(".add-user-dialog").remove();
-            $(".crop-images-dialog").remove();
         },
-
-
 
         render: function () {
             var self = this;
@@ -127,8 +110,8 @@ define([
                 autoOpen     : true,
                 resizable    : true,
                 dialogClass  : "edit-dialog",
-                title        : "Edit Bank Account",
-                width        : "500px",
+                title        : "Create Bank Account",
+                width        : "250px",
                 buttons      : [
                     {
                         text : "Save",
@@ -147,9 +130,7 @@ define([
 
             });
 
-            populate.get("#currency", "/currency/getForDd", {}, 'name', this, true);
-
-            App.stopPreload();
+            populate.get('#currency', '/currency/getForDd', {}, 'name', this, true);
 
             return this;
         }

@@ -1009,6 +1009,7 @@ define([
             modelObjects.forEach(function (modelObject) { // now only one element from list? because we hav ot checkbox
                 modelId = modelObject._id;
                 $savedRow.attr('data-id', modelId);
+                $savedRow.removeClass('false');
                 $checkbox.val(modelId);
                 $savedRow.removeAttr('id');
             });

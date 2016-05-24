@@ -29,6 +29,7 @@ define([
         'views/Projects/projectInfo/quotations/quotationView',
         'views/Projects/projectInfo/wTracks/generateWTrack',
         'views/Projects/projectInfo/orders/orderView',
+        'views/projectCharts/index',
         'collections/wTrack/filterCollection',
         'collections/Quotation/filterCollection',
         'collections/salesInvoice/filterCollection',
@@ -72,6 +73,7 @@ define([
               QuotationView,
               GenerateWTrack,
               oredrView,
+              ProjectChartsView,
               wTrackCollection,
               quotationCollection,
               invoiceCollection,
@@ -120,7 +122,7 @@ define([
                 'click a.quotation'                                                                     : 'viewQuotation',
                 'click a.invoice'                                                                       : 'viewInvoice',
                 'click a.proforma'                                                                      : 'viewProforma',
-                "click .report"                                                                         : "showReport",
+                "click .report"                                                                         : "showReport"
             },
 
             initialize: function (options) {
@@ -155,8 +157,10 @@ define([
                 this.listenTo(eventChannel, 'orderUpdate', this.getOrders);
 
                 this.listenTo(eventChannel, 'invoiceRemove', this.newPayment);
-                this.listenTo(eventChannel, 'invoiceUpdated', this.getInvoice);
+                this.listenTo(eventChannel, 'invoiceUpdated', this.updateInvoiceProforma);
                 this.listenTo(eventChannel, 'invoiceReceive', this.newInvoice);
+
+
             },
 
             viewQuotation: function (e) {
@@ -768,7 +772,8 @@ define([
 
             renderProjectInfo: function (cb) {
                 var self = this;
-                var _id = window.location.hash.split('form/')[1];
+                // var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
                 var filter = {
                     project: {
                         key  : 'project._id',
@@ -780,7 +785,8 @@ define([
                     viewType : 'list',
                     filter   : filter,
                     projectId: _id,
-                    count    : 50
+                    count    : 50,
+                    url      : 'project/' + _id + '/info'
                 });
 
                 this.jobsCollection.bind('reset add remove', self.renderJobs, self);
@@ -795,57 +801,29 @@ define([
                 var self = this;
                 var _id = window.location.hash.split('form/')[1];
                 var key = 'jobs_projectId:' + _id;
-                var jobsCollection = custom.retriveFromCash(key);
-                var budgetTotal;
+                // var jobsCollection = custom.retriveFromCash(key);
 
-                var projectTeam = _.filter(this.jobsCollection.toJSON(), function (el) {
-                    return el.project._id === _id;
-                });
-
-                if (!jobsCollection || !jobsCollection.length) {
-                    custom.cacheToApp(key, this.jobsCollection, true);
-                }
+                var projectTeam = this.jobsCollection.toJSON();
+                var firstJob = projectTeam[0];
+                var cost = firstJob ? firstJob.costTotal : 0;
+                var revenue = firstJob ? firstJob.revenueTotal : 0;
 
                 this.projectValues = {
-                    revenue: 0,
-                    profit : 0,
-                    cost   : 0
+                    cost   : cost,
+                    revenue: revenue
                 };
-
-                projectTeam.forEach(function (projectTeam) {
-                    if (projectTeam && projectTeam.budget && projectTeam.budget.budgetTotal) {
-                        budgetTotal = projectTeam.budget.budgetTotal;
-                        self.projectValues.revenue += budgetTotal.revenueSum || 0;
-                        self.projectValues.cost += budgetTotal.costSum || 0;
-                        self.projectValues.profit = self.projectValues.revenue - self.projectValues.cost;
-                        /*self.projectValues.profit += budgetTotal ? (budgetTotal.revenueSum - budgetTotal.costSum) : 0;*/
-                    }
-                });
-
-                this.projectValues.markUp = ((this.projectValues.profit / this.projectValues.cost) * 100);
-
-                if (!isFinite(this.projectValues.markUp)) {
-                    self.projectValues.markUp = 0;
-                }
-
-                this.projectValues.radio = ((this.projectValues.profit / this.projectValues.revenue) * 100);
-
-                if (!isFinite(this.projectValues.radio)) {
-                    this.projectValues.radio = 0;
-                }
 
                 container.html(template({
                         jobs            : projectTeam,
-                        bonus           : formModel.budget.bonus ? formModel.budget.bonus : [],
-                        projectValues   : self.projectValues,
                         currencySplitter: helpers.currencySplitter,
                         contentType     : self.contentType
                     })
                 );
 
-                this.renderProformRevenue();
+                // this.renderProformRevenue();
                 this.getInvoiceStats();
                 this.getProformaStats();
+                this.showProjectCharts();
             },
 
             getWTrack: function (cb) {
@@ -855,19 +833,19 @@ define([
                 // var _id = window.location.hash.split('form/')[1];
                 var _id = this.id;
 
-                /*var filter = {
+                var filter = {
                     projectName: {
                         key  : 'project._id',
                         value: [_id],
                         type : 'ObjectId'
                     }
-                };*/
+                };
 
                 this.wCollection = new wTrackCollection({
                     viewType: 'list',
                     /*filter  : filter,*/
                     count   : 100,
-                    url: 'project/' + _id + '/weTracks'
+                    url     : 'project/' + _id + '/weTracks'
                 });
 
                 function createView() {
@@ -875,9 +853,9 @@ define([
                     var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
                     var itemsNumber = parseInt($('.selectedItemsNumber').text(), 10) || 'all';
                     var defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
-                    
+
                     callback();
-                    
+
                     if (self.wTrackView) {
                         self.wTrackView.undelegateEvents();
                     }
@@ -885,7 +863,7 @@ define([
                     this.wTrackView = new wTrackView({
                         model             : self.wCollection,
                         defaultItemsNumber: defaultItemsNumber,
-                        /*filter            : filter,*/
+                        filter            : filter,
                         startNumber       : startNumber,
                         project           : self.formModel
                     });
@@ -907,13 +885,13 @@ define([
 
                 var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
 
-               /* var filter = {
+                var filter = {
                     projectName: {
                         key  : 'project._id',
                         value: [_id],
                         type : 'ObjectId'
                     }
-                };*/
+                };
 
                 if (self.wTrackView) {
                     self.wTrackView.undelegateEvents();
@@ -921,10 +899,10 @@ define([
 
                 this.wTrackView = new wTrackView({
                     model      : self.wCollection,
-                    /*filter     : filter,*/
+                    filter     : filter,
                     startNumber: startNumber,
                     project    : self.formModel,
-                    url: 'project/' + _id + '/weTracks'
+                    url        : 'project/' + _id + '/weTracks'
                 });
 
                 this.wCollection.bind('reset', this.createView);
@@ -1048,17 +1026,17 @@ define([
                         eventChannel: self.eventChannel
                     });
 
-                    self.iCollection.toJSON().forEach(function (element) {
-                        if (element.payments) {
-                            element.payments.forEach(function (payment) {
-                                payments.push(payment);
-                            });
-                        }
-                    });
+                    /* self.iCollection.toJSON().forEach(function (element) {
+                     if (element.payments) {
+                     element.payments.forEach(function (payment) {
+                     payments.push(payment);
+                     });
+                     }
+                     });
 
-                    self.payments = self.payments || {};
-                    self.payments.fromInvoces = payments;
-
+                     self.payments = self.payments || {};
+                     self.payments.fromInvoces = payments;
+                     */
                     self.renderTabCounter();
 
                     if (cb) {
@@ -1110,16 +1088,18 @@ define([
                         proformaView.showDialog(quotationId);
                     }
 
-                    self.pCollection.toJSON().forEach(function (element) {
-                        if (element.payments) {
-                            element.payments.forEach(function (payment) {
-                                payments.push(payment);
-                            });
-                        }
-                    });
+                    self.renderTabCounter();
 
-                    self.payments = self.payments || {};
-                    self.payments.fromProformas = payments;
+                    /* self.pCollection.toJSON().forEach(function (element) {
+                     if (element.payments) {
+                     element.payments.forEach(function (payment) {
+                     payments.push(payment);
+                     });
+                     }
+                     });
+
+                     self.payments = self.payments || {};
+                     self.payments.fromProformas = payments;*/
 
                     if (typeof(cb) === 'function') {
                         callback();
@@ -1133,30 +1113,16 @@ define([
 
             },
 
-            getPayments: function (activate) {
+            getPayments: function (cb, activate) {
                 var self = this;
-                var payFromInvoice;
-                var payFromProforma;
-                var payments;
-
-                self.payments = self.payments || {};
-                payFromInvoice = self.payments.fromInvoces || [];
-                payFromProforma = self.payments.fromProformas || [];
-
-                payments = payFromInvoice.concat(payFromProforma);
-
-                var filterPayment = {
-                    name: {
-                        key  : '_id',
-                        value: payments
-                    }
-                };
+                var _id = this.id;
+                var callback;
 
                 self.payCollection = new paymentCollection({
-                    count      : 50,
+                    count      : 100,
                     viewType   : 'list',
                     contentType: 'customerPayments',
-                    filter     : filterPayment
+                    url        : 'project/' + _id + '/payments'
                 });
 
                 self.payCollection.unbind();
@@ -1165,15 +1131,20 @@ define([
                 function createPayment() {
                     var data = {
                         model       : self.payCollection,
-                        filter      : filterPayment,
                         activate    : activate,
                         eventChannel: self.eventChannel
                     };
 
                     new PaymentView(data);
 
+                    if (typeof(cb) === 'function') {
+                        callback();
+                    }
+
                     self.renderTabCounter();
                 }
+
+                callback = _.once(cb);
             },
 
             getProjectMembers: function (cb) {
@@ -1201,7 +1172,8 @@ define([
             },
 
             getQuotations: function (cb) {
-                var _id = window.location.hash.split('form/')[1];
+                //var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
                 var self = this;
 
                 var filter = {
@@ -1212,10 +1184,11 @@ define([
                 };
 
                 this.qCollection = new quotationCollection({
-                    count      : 50,
+                    count      : 100,
                     viewType   : 'list',
                     contentType: 'salesQuotation',
-                    filter     : filter
+                    url        : 'project/' + _id + '/quotations'
+                    //filter     : filter
                 });
 
                 function createView() {
@@ -1241,13 +1214,14 @@ define([
                 };
 
                 this.qCollection.bind('reset', createView);
-                this.qCollection.bind('add', self.renderProformRevenue);
-                this.qCollection.bind('remove', self.renderProformRevenue);
+                this.qCollection.bind('add remove', self.renderProformRevenue);
             },
 
             getOrders: function (cb) {
                 var self = this;
-                var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
+
+                // var _id = window.location.hash.split('form/')[1];
 
                 var filter = {
                     projectName: {
@@ -1261,10 +1235,11 @@ define([
                 };
 
                 this.ordersCollection = new quotationCollection({
-                    count      : 50,
+                    count      : 100,
                     viewType   : 'list',
                     contentType: 'salesOrder',
-                    filter     : filter
+                    url        : 'project/' + _id + '/orders'
+                    /*filter     : filter*/
                 });
 
                 function createView() {
@@ -1449,18 +1424,18 @@ define([
                 var tabId;
                 var dialogsDiv = $('#dialogContainer').is(':empty');
 
-                if (dialogsDiv && App.projectInfo && App.projectInfo.currentTab && App.projectInfo.currentTab !== 'overview') {
-                    tabId = App.projectInfo.currentTab;
-                    tabs = $('.chart-tabs');
-                    activeTab = tabs.find('.active');
+                /*if (dialogsDiv && App.projectInfo && App.projectInfo.currentTab && App.projectInfo.currentTab !== 'overview') {
+                 tabId = App.projectInfo.currentTab;
+                 tabs = $('.chart-tabs');
+                 activeTab = tabs.find('.active');
 
-                    activeTab.removeClass('active');
-                    tabs.find('#' + tabId + 'Tab').addClass('active');
+                 activeTab.removeClass('active');
+                 tabs.find('#' + tabId + 'Tab').addClass('active');
 
-                    dialogHolder = $('.dialog-tabs-items');
-                    dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-                    dialogHolder.find('div#' + tabId).closest('.dialog-tabs-item').addClass('active'); // added selector div in case finding bad element
-                }
+                 dialogHolder = $('.dialog-tabs-items');
+                 dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+                 dialogHolder.find('div#' + tabId).closest('.dialog-tabs-item').addClass('active'); // added selector div in case finding bad element
+                 }*/
             },
 
             newPayment: function () {
@@ -1472,13 +1447,32 @@ define([
                     self.getInvoice,
                     self.renderProformRevenue,
                     self.getInvoiceStats,
-                    self.getProformaStats
+                    self.getProformaStats,
+                    self.getOrders
                 ];
 
                 App.startPreload();
 
                 async.parallel(paralellTasks, function () {
-                    self.getPayments(true);
+                    self.getPayments(null, true);
+                    App.stopPreload();
+                });
+
+            },
+
+            updateInvoiceProforma: function () {
+                var self = this;
+                var paralellTasks;
+
+                paralellTasks = [
+                    self.getInvoice,
+                    self.getProforma,
+                    self.getPayments
+                ];
+
+                App.startPreload();
+
+                async.parallel(paralellTasks, function () {
                     App.stopPreload();
                 });
 
@@ -1508,7 +1502,8 @@ define([
                 paralellTasks = [
                     self.renderProformRevenue,
                     self.getProforma,
-                    self.getProformaStats
+                    self.getProformaStats,
+                    self.getQuotations
                 ];
                 App.startPreload();
 
@@ -1521,6 +1516,14 @@ define([
                     }
                 });
 
+            },
+
+            showProjectCharts: function () {
+                var data = {
+                    data: this.projectValues
+                };
+
+                new ProjectChartsView(data);
             },
 
             render: function () {
@@ -1574,7 +1577,7 @@ define([
                     }).render().el
                 );
 
-                _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
+                _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma', 'getPayments');
 
                 paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
 
@@ -1584,6 +1587,7 @@ define([
                         if (accessElement.access.read) {
                             paralellTasks.push(self.getInvoice);
                             paralellTasks.push(self.getProforma);
+                            paralellTasks.push(self.getPayments);
                         } else {
                             thisEl.find('#invoicesTab').parent().remove();
                             thisEl.find('div#invoices').parent().remove();
@@ -1630,7 +1634,6 @@ define([
                 }
 
                 async.parallel(paralellTasks, function (err, result) {
-                    self.getPayments();
                     App.stopPreload();
                     self.renderProformRevenue();
                     self.activeTab();

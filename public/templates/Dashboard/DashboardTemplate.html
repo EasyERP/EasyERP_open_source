@@ -1,9 +1,42 @@
 <ul class="chart-tabs dashboard">
-    <li><a class="active" href="javascript:;">Leads by date</a></li>
+    <li><a class="active" href="javascript:;" class="">Leads by sale</a></li>
+    <li><a href="javascript:;">Leads by date</a></li>
     <li><a href="javascript:;" class="">Leads by source</a></li>
 </ul>
 <div class="chart-tabs-items">
     <div class="chart-tabs-item active">
+        <div class="clearfix"></div>
+        <h3 class="dashboard">Who created most leads?</h3>
+
+        <div class="choseDateRangeSource" data-type="sales">
+            <div class="item" data-day="7">7D</div>
+            <div class="item active" data-day="30">30D</div>
+            <div class="item" data-day="90">90D</div>
+            <div class="item" data-day="365">12M</div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="legend-box small">
+            <div class="total">
+                <div class="square">
+                </div>
+                <div class="text">
+                    Total Leads
+                </div>
+            </div>
+            <div class="opportunities">
+                <div class="square">
+                </div>
+                <div class="text">
+                    Opportunities
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+        </div>
+
+        <svg class="chart salesChart"></svg>
+    </div>
+    <div class="chart-tabs-item">
         <div class="clearfix"></div>
         <h3 class="dashboard">How many leads have been created?</h3>
 
@@ -80,7 +113,7 @@
 
         </div>
 
-        <svg class="chart"></svg>
+        <svg class="chart sourcesChart"></svg>
     </div>
 </div>
 <div class="clearfix"></div>

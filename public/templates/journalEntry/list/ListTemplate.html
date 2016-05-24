@@ -10,11 +10,11 @@
     <td><%=journalEntry.journal.creditAccount.name%></td>
 
     <%if (journalEntry.debit) {%>
-    <td class="value" data-amount="<%= journalEntry.debit%>"><%=currencySplitter(journalEntry.debit.toFixed(2))%></td>
+    <td class="value <%=currencyClass(journalEntry.currency._id)%>" data-amount="<%= journalEntry.debit%>"><%=currencySplitter(journalEntry.debit.toFixed(2))%></td>
     <%}%>
 
     <%if (journalEntry.credit) {%>
-    <td class="value" data-amount="<%=journalEntry.credit%>"><%=currencySplitter(journalEntry.credit.toFixed(2))%></td>
+    <td class="value <%=currencyClass(journalEntry.currency._id)%>" data-amount="<%=journalEntry.credit%>"><%=currencySplitter(journalEntry.credit.toFixed(2))%></td>
     <%}%>
 </tr>
 <% }) %>

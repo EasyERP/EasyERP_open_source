@@ -5,13 +5,13 @@ var async = require('async');
 var ModuleSchema = mongoose.Schemas.modules;
 
 var connectOptions = {
-    user: 'easyerp',
+    user: 'easyErp',
     pass: '1q2w3e!@#',
     w   : 1,
     j   : true
 };
 
-var dbObject = mongoose.createConnection('144.76.56.111', 'dendb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('localhost', 'production', 27017, connectOptions);
 
 //var dbObject = mongoose.createConnection('localhost', 'production');
 

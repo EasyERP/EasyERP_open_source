@@ -47,13 +47,13 @@ define([
                 keydown                                                           : 'keydownHandler',
                 'click .dialog-tabs a'                                            : 'changeTab',
                 'click .current-selected'                                         : 'showNewSelect',
-                'click'                                                           : 'hideNewSelect',
+                click                                                           : 'hideNewSelect',
                 'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
                 'click .newSelectList li.miniStylePagination'                     : 'notHide',
                 'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
                 'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
-                'click .receiveInvoice'                                           : 'createInvoice',
-                'change #invoiceAttachment'                                       : 'uploadAttachment',
+                'click .receiveInvoice'                                           : 'receiveInvoice', /*'createInvoice',*/
+                //'change #invoiceAttachment'                                       : 'uploadAttachment',
                 'click .cancelOrder'                                              : 'cancelOrder',
                 'click .setDraft'                                                 : 'setDraft'
             },
@@ -159,7 +159,7 @@ define([
                 });
             },
 
-            createInvoice: function(e) {
+            /*createInvoice: function(e) {
                 var self = this;
                 var $attachment;
 
@@ -174,9 +174,10 @@ define([
 
                 $attachment.click();
                 $attachment.hide();
-            },
 
-            uploadAttachment: function (event) {
+            },*/
+
+            /*uploadAttachment: function (event) {
                 var self = this;
                 var currentModel = this.model;
                 var currentModelId = currentModel ? currentModel["id"] : null;
@@ -239,7 +240,7 @@ define([
                     return false;
                 }
                 return file.size < App.File.MAXSIZE;
-            },
+            },*/
 
             receiveInvoice: function (e) {
                 e && e.preventDefault();
@@ -253,6 +254,8 @@ define([
                     currency: this.currentModel.currency,
                     journal : CONSTANTS.INVOICE_JOURNAL
                 };
+
+                App.startPreload();
 
                 this.saveItem(function (err) {
                     if (!err) {

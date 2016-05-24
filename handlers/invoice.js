@@ -298,7 +298,8 @@ var Invoice = function (models, event) {
                 order = parallelResponse[0];
                 workflow = parallelResponse[1];
 
-                order.attachments[0].shortPas = order.attachments[0].shortPas.replace('..%2Froutes', '');
+                //order.attachments[0].shortPas = order.attachments[0].shortPas.replace('..%2Froutes', '');
+                delete order.attachments;
 
             } else {
                 err = new Error(RESPONSES.BAD_REQUEST);
@@ -411,9 +412,9 @@ var Invoice = function (models, event) {
         waterFallTasks = [parallel, createInvoice/*, createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
-            var project;
+            // var project;
             var invoiceId = result._id;
-            var products = result.products;
+            // var products = result.products;
 
             if (err) {
                 return next(err);
@@ -429,22 +430,21 @@ var Invoice = function (models, event) {
                 }
             });
 
-            result.attachments[0].shortPas = result.attachments[0].shortPas.replace(id.toString(), invoiceId.toString());
+            //result.attachments[0].shortPas = result.attachments[0].shortPas.replace(id.toString(), invoiceId.toString());
 
-            Invoice.findByIdAndUpdate(invoiceId, {
-                $set: {
-                    attachments: result.attachments
-                }
-            }, {new: true}, function (err, invoice) {
-                if (err) {
-                    return next(err);
-                }
+            /* Invoice.findByIdAndUpdate(invoiceId, {
+                 $set: {
+                     attachments: result.attachments
+                 }
+             }, {new: true}, function (err, invoice) {
+                 if (err) {
+                     return next(err);
+                 }*/
 
-                renameFolder(id.toString(), invoiceId.toString());
+            // renameFolder(id.toString(), invoiceId.toString());
 
-
-                res.status(201).send(result);
-            });
+            res.status(201).send(result);
+            // });
         });
 
     };
@@ -850,50 +850,89 @@ var Invoice = function (models, event) {
 
                         journalEntryComposer(resp, req.session.lastDb, function () {
                         }, req.session.uId);
+                        var parallelTask;
+                        var setWorkflow;
+                        var updateJobs;
 
                         products = resp.products;
 
                         if (resp._type !== 'Proforma') {
-                            if (products) {
-                                async.each(products, function (result, cb) {
-                                    var jobs = result.jobs;
-                                    var editedBy = {
-                                        user: req.session.uId,
-                                        date: new Date()
-                                    };
-                                    JobsModel.findByIdAndUpdate(jobs, {
-                                        $set: {
-                                            invoice : resp._id,
-                                            type    : "Invoiced",
-                                            workflow: CONSTANTS.JOBSFINISHED,
-                                            editedBy: editedBy
-                                        }
-                                    }, {new: true}, function (err, job) {
-                                        if (err) {
-                                            return cb(err);
-                                        }
-                                        project = job.project || null;
+                            setWorkflow = function (callback) {
+                                var request = {
+                                    query  : {
+                                        wId   : 'Proforma',
+                                        status: 'Cancelled'
+                                    },
+                                    session: req.session
+                                };
 
-                                        _journalEntryHandler.checkAndCreateForJob({
-                                            req     : req,
-                                            jobId   : jobs,
-                                            workflow: CONSTANTS.JOBSFINISHED,
-                                            wTracks : job.wTracks,
-                                            date    : resp.invoiceDate
+                                workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                                    Invoice.update(
+                                        {
+                                            sourceDocument: objectId(resp.sourceDocument),
+                                            payments      : []
+                                        },
+                                        {
+                                            $set: {
+                                                workflow: workflow._id,
+                                                invoiced: true
+                                            }
+                                        },
+                                        {
+                                            multi: true
+                                        }, callback);
+                                });
+                            };
+
+                            updateJobs = function (callback) {
+                                if (products) {
+                                    async.each(products, function (result, cb) {
+                                        var jobs = result.jobs;
+                                        var editedBy = {
+                                            user: req.session.uId,
+                                            date: new Date()
+                                        };
+                                        JobsModel.findByIdAndUpdate(jobs, {
+                                            $set: {
+                                                invoice : resp._id,
+                                                type    : "Invoiced",
+                                                workflow: CONSTANTS.JOBSFINISHED,
+                                                editedBy: editedBy
+                                            }
+                                        }, {new: true}, function (err, job) {
+                                            if (err) {
+                                                return cb(err);
+                                            }
+                                            project = job.project || null;
+
+                                            _journalEntryHandler.createCostsForJob({
+                                                req     : req,
+                                                jobId   : jobs,
+                                                workflow: CONSTANTS.JOBSFINISHED
+                                            });
+
+                                            cb();
                                         });
 
-                                        cb();
+                                    }, function () {
+                                        if (project) {
+                                            event.emit('fetchJobsCollection', {project: project});
+                                        }
+                                        callback();
                                     });
+                                }
+                            };
 
-                                }, function () {
-                                    if (project) {
-                                        event.emit('fetchJobsCollection', {project: project});
-                                    }
-                                });
-                            }
+                            parallelTask = [updateJobs, setWorkflow];
+                            async.parallel(parallelTask, function (err, response) {
+                                if (err) {
+                                    return next(err);
+                                }
+                                res.status(200).send(response);
+                            });
+                        } else {
+                            res.status(200).send(resp);
                         }
-
-                        res.status(200).send(resp);
                     });
 
                 } else {
@@ -1025,10 +1064,10 @@ var Invoice = function (models, event) {
                         Invoice = models.get(db, 'Invoice', InvoiceSchema);
                     }
 
-                    count = parseInt(query.count) || CONSTANTS.DEF_LIST_COUNT;
+                    count = parseInt(query.count); //|| CONSTANTS.DEF_LIST_COUNT;
                     page = parseInt(query.page);
 
-                    count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+                    // count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
                     skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     if (req.query.sort) {
@@ -1470,6 +1509,9 @@ var Invoice = function (models, event) {
                 if (access) {
 
                     models.get(db, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
+                        var proformaBalance;
+                        var isProformaPaid;
+
                         if (err) {
                             return next(err);
                         }
@@ -1498,6 +1540,9 @@ var Invoice = function (models, event) {
                             paymentIds.push(payment);
                         });
 
+                        proformaBalance = result.get('paymentInfo').balance;
+                        isProformaPaid = (proformaBalance === 0);
+
                         function proformaUpdate(parallelCb) {
                             var request = {
                                 query  : {
@@ -1511,7 +1556,51 @@ var Invoice = function (models, event) {
                                 Proforma.update(
                                     {
                                         sourceDocument: orderId,
-                                        _type         : 'Proforma'
+                                        _type         : 'Proforma',
+                                        payments      : []
+                                    },
+                                    {
+                                        $set: {
+                                            workflow: workflow._id,
+                                            invoiced: false
+                                        }
+                                    },
+                                    {
+                                        multi: true
+                                    },
+                                    parallelCb);
+                            });
+                        }
+
+                        function proformaCancelledUpdate(parallelCb) {
+                            var request;
+
+                            if (isProformaPaid) {
+                                request = {
+                                    query  : {
+                                        wId   : 'Proforma',
+                                        status: 'Done',
+                                        name  : 'Paid'
+                                    },
+                                    session: req.session
+                                };
+
+                            } else {
+                                request = {
+                                    query  : {
+                                        wId   : 'Proforma',
+                                        status: 'In Progress'
+                                    },
+                                    session: req.session
+                                };
+                            }
+
+                            workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                                Proforma.update(
+                                    {
+                                        sourceDocument: orderId,
+                                        _type         : 'Proforma',
+                                        payments      : {$ne: []}
                                     },
                                     {
                                         $set: {
@@ -1650,9 +1739,9 @@ var Invoice = function (models, event) {
                         }
 
                         if (result && result._type !== 'expensesInvoice') {
-                            parallelTasks = [proformaUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove];
+                            parallelTasks = [proformaUpdate, proformaCancelledUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove];
                         } else {
-                            parallelTasks = [proformaUpdate, paymentsRemove, journalEntryRemove, folderRemove]
+                            parallelTasks = [proformaUpdate, proformaCancelledUpdate, paymentsRemove, journalEntryRemove, folderRemove]
                         }
 
                         async.parallel(parallelTasks, function (err, result) {
@@ -2174,6 +2263,7 @@ var Invoice = function (models, event) {
             $project: {
                 salesPerson          : {$arrayElemAt: ['$salesmanagers', 0]},
                 dueDate              : 1,
+                invoiceDate          : 1,
                 'project.projectName': 1,
                 'supplier.name'      : 1,
                 name                 : 1,
@@ -2186,6 +2276,7 @@ var Invoice = function (models, event) {
                     $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
                 },
                 dueDate              : 1,
+                invoiceDate          : 1,
                 'project.projectName': 1,
                 'supplier.name'      : 1,
                 name                 : 1,
@@ -2318,13 +2409,15 @@ var Invoice = function (models, event) {
                                 $lookup: {
                                     from        : "Project",
                                     localField  : "project",
-                                    foreignField: "_id", as: "project"
+                                    foreignField: "_id",
+                                    as          : "project"
                                 }
                             }, {
                                 $lookup: {
                                     from        : "workflows",
                                     localField  : "workflow",
-                                    foreignField: "_id", as: "workflow"
+                                    foreignField: "_id",
+                                    as          : "workflow"
                                 }
                             }, {
                                 $project: {

@@ -427,46 +427,47 @@
         });
     };
 
-    var populateDepartments = function (selectId, url, model, callback, removeSelect) {
-        var selectList = $(selectId);
-        var self = this;
-        if (!removeSelect) {
-            selectList.append($("<option/>").val('').text('Select...'));
+        var populateDepartments = function (selectId, url, model, callback, removeSelect) {
+            var selectList = $(selectId);
+            var self = this;
+            if (!removeSelect) {
+                selectList.append($("<option/>").val('').text('Select...'));
+            }
+            var id = (model) ? (model._id) : null;
+            dataService.getData(url, {mid: 39, id: id}, function (response) {
+                var options = [];
+                if (model && (model.department || (model.salesPurchases && model.salesPurchases.salesTeam) || model.salesTeam || model.parentDepartment)) {
+                    options = $.map(response.data, function (item) {
+                        return ((model.department === item._id) || (model.department && model.department._id === item._id) || (model.salesPurchases && model.salesPurchases.salesTeam && model.salesPurchases.salesTeam === item._id) || (model.salesPurchases && model.salesPurchases.salesTeam && model.salesPurchases.salesTeam._id === item._id) || (model.salesTeam && (model.salesTeam._id === item._id)) || (model.salesTeam === item._id) || (model.parentDepartment && model.parentDepartment === item._id)) ?
+                            $('<option/>').val(item._id).text(item.departmentName).attr('selected', 'selected').attr('data-level', item.nestingLevel) :
+                            $('<option/>').val(item._id).text(item.departmentName).attr('data-level', item.nestingLevel);
+                    });
+                } else {
+                    options = $.map(response.data, function (item) {
+                        return $('<option/>').val(item._id).text(item.departmentName).attr('data-level', item.nestingLevel);
+                    });
+                }
+                selectList.append(options);
+                if (callback) {
+                    callback();
+                }
+            });
+        };
+        var getLeadsForChart = function (source, sales, dataRange, dataItem, callback) {
+            dataService.getData("/leads/getLeadsForChart", {
+                source   : source,
+                dataRange: dataRange,
+                sales: sales,
+                dataItem : dataItem
+            }, function (response) {
+                callback(response.data);
+            });
         }
-        var id = (model) ? (model._id) : null;
-        dataService.getData(url, {mid: 39, id: id}, function (response) {
-            var options = [];
-            if (model && (model.department || (model.salesPurchases && model.salesPurchases.salesTeam) || model.salesTeam || model.parentDepartment)) {
-                options = $.map(response.data, function (item) {
-                    return ((model.department === item._id) || (model.department && model.department._id === item._id) || (model.salesPurchases && model.salesPurchases.salesTeam && model.salesPurchases.salesTeam === item._id) || (model.salesPurchases && model.salesPurchases.salesTeam && model.salesPurchases.salesTeam._id === item._id) || (model.salesTeam && (model.salesTeam._id === item._id)) || (model.salesTeam === item._id) || (model.parentDepartment && model.parentDepartment === item._id)) ?
-                        $('<option/>').val(item._id).text(item.departmentName).attr('selected', 'selected').attr('data-level', item.nestingLevel) :
-                        $('<option/>').val(item._id).text(item.departmentName).attr('data-level', item.nestingLevel);
-                });
-            } else {
-                options = $.map(response.data, function (item) {
-                    return $('<option/>').val(item._id).text(item.departmentName).attr('data-level', item.nestingLevel);
-                });
-            }
-            selectList.append(options);
-            if (callback) {
-                callback();
-            }
-        });
-    };
-    var getLeadsForChart = function (source, dataRange, dataItem, callback) {
-        dataService.getData("/leads/getLeadsForChart", {
-            source   : source,
-            dataRange: dataRange,
-            dataItem : dataItem
-        }, function (response) {
-            callback(response.data);
-        });
-    }
-    var populateDepartmentsList = function (selectId, targetId, url, model, page, callback) {
-        var selectList = $(selectId);
-        var targetList = $(targetId);
-        var self = this;
-        var options2;
+        var populateDepartmentsList = function (selectId, targetId, url, model, page, callback) {
+            var selectList = $(selectId);
+            var targetList = $(targetId);
+            var self = this;
+            var options2;
 
         selectList.next(".userPagination").remove();
         dataService.getData(url, {mid: 39}, function (response) {

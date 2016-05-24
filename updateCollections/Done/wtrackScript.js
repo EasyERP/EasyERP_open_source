@@ -60,7 +60,8 @@ wTrack.aggregate([{
         6     : {$sum: '$6'},
         7     : {$sum: '$7'},
         worked: {$sum: '$worked'},
-        root  : {$push: '$$ROOT'}
+        root  : {$push: '$$ROOT'},
+        dateByWeek: {$addToSet: '$dateByWeek'}
     }
 }, {
     $project: {
@@ -73,7 +74,8 @@ wTrack.aggregate([{
         7        : 1,
         worked   : 1,
         root     : 1,
-        arraySize: {$size: "$root"}
+        arraySize: {$size: "$root"},
+        dateByWeek: 1
     }
 }, {
     $match: {
@@ -82,14 +84,37 @@ wTrack.aggregate([{
         }, {$or: [{1: {$gt: 8}}, {2: {$gt: 8}}, {3: {$gt: 8}}, {4: {$gt: 8}}, {5: {$gt: 8}}, {6: {$gt: 8}}, {7: {$gt: 8}}]}]
 
     }
+}, {
+    $group: {
+        _id: '$_id.employee',
+        dateByWeek: {$addToSet: '$_id.dateByWeek'}
+    }
+}, {
+    $lookup: {
+        from        : 'Employees',
+        localField  : '_id',
+        foreignField: '_id',
+        as          : 'employee'
+    }
+}, {
+    $project:{
+        employee: {$arrayElemAt: ['$employee', 0]},
+        dateByWeek: 1
+    }
+}, {
+    $project:{
+        employee: '$employee.name',
+        dateByWeek: 1,
+        _id: 0
+    }
 }], function (err, results) { // if _type was set
     'use strict';
 
     if (err) {
         console.log(err);
     }
-    console.log(results.length);
-    async.eachSeries(results, function (doc, callback) {
+    console.log(results);
+    /*async.eachSeries(results, function (doc, callback) {
             var elem = doc;
             var id = elem._id._id;
 
@@ -281,7 +306,7 @@ wTrack.aggregate([{
             console.dir('collection updated');
         }
     )
-    ;
+    ;*/
 })
 ;
 

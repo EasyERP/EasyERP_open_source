@@ -47,55 +47,38 @@
         </thead>
 
         <tbody id="projectTeam">
-        <%var count = 0;%>
-        <%var totalEmp = 0;%>
-        <%var totalHours = 0;%>
-        <%var totalCost = 0;%>
-        <%var totalRevenue = 0;%>
-        <%var totalProfit = 0;%>
+        <%var firstJob = jobs && jobs.length ? jobs[0] : null;%>
         <% jobs.forEach(function(element,i){ %>
-        <%if (element.budget) {%>
-        <%var budgetTotal = element.budget.budgetTotal%>
+            <tr data-id="<%=element._id%>" id="jobsItem">
 
-        <tr data-id="<%=element._id%>" id="jobsItem">
-
-            <td class="remove"><a
-                    class="fa fa-trash hidden <%=((element.quotation && element.quotation._id) || (element.invoice && element.invoice._id)) ? 'notRemovable' : ''%>"
-                    id="<%=element._id%>"></a></td>
-            <td class="expand">+</td>
-            <td class="report"><a class="centerCell fa fa-university"></a></td>
-            <td class="editableJobs" id="jobsName"><%=element.name%></td>
-            <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a>
-            </td>
-            <td class="selects"><a data-id="<%=element.type%>" id="type"><%=element.type%></a>
-                <!--<ul class="newSelectList" style="display: none;">-->
+                <td class="remove"><a
+                        class="fa fa-trash hidden <%=((element.quotation && element.quotation._id) || (element.invoice && element.invoice._id)) ? 'notRemovable' : ''%>"
+                        id="<%=element._id%>"></a></td>
+                <td class="expand">+</td>
+                <td class="report"><a class="centerCell fa fa-university"></a></td>
+                <td class="editableJobs" id="jobsName"><%=element.name%></td>
+                <td class="selects"><a data-id="<%=element.workflow._id%>" id="workflow" class="current-selected"><%=element.workflow.name%></a>
+                </td>
+                <td class="selects"><a data-id="<%=element.type%>" id="type"><%=element.type%></a>
+                    <!--<ul class="newSelectList" style="display: none;">-->
                     <!--<li>Ordered</li>-->
                     <!--<li>Quoted</li>-->
                     <!--<li>Invoiced</li>-->
                     <!--<li>Not Quoted</li>-->
-                <!--</ul>-->
-            </td>
-            <td><a data-id="<%=element.quotation ? element.quotation._id : null%>" class="quotation"><%=element.quotation
-                ? element.quotation.name: ''%></a></td>
-            <td><a data-id="<%=element.invoice ? element.invoice._id : null%>" class="invoice"><%=element.invoice ?
-                element.invoice.name : ''%></a></td>
-            <% if(element.budget && element.budget.projectTeam && element.budget.projectTeam[0].employee){%>
-            <td><%= element.budget.projectTeam[0].employee._id ? element.budget.projectTeam.length : 0%></td>
-            <%} else {%>
-            <td>0</td>
-            <%}%>
-            <td><%= budgetTotal ? currencySplitter(budgetTotal.hoursSum.toFixed()) : 0%></td>
-            <td class="dollar"> <%= budgetTotal.costSum ? currencySplitter((budgetTotal.costSum/100).toFixed()) : 0%></td>
-            <td class="dollar"> <%= budgetTotal ? currencySplitter((budgetTotal.revenueSum/100).toFixed()) : 0%></td>
-            <td class="dollar"> <%= currencySplitter(((budgetTotal.revenueSum - budgetTotal.costSum)/100).toFixed())%></td>
+                    <!--</ul>-->
+                </td>
+                <td><a data-id="<%=element.quotation ? element.quotation._id : null%>" class="quotation"><%=element.quotation
+                    ? element.quotation.name: ''%></a></td>
+                <td><a data-id="<%=element.invoice ? element.invoice._id : null%>" class="invoice"><%=element.invoice ?
+                    element.invoice.name : ''%></a>
+                </td>
+                <td><%= element.revenue ? element.revenue.length : 0 %></td>
+                <td><%= currencySplitter(element.totalWorked.toFixed()) || 0%></td>
+                <td class="dollar"> <%= currencySplitter((element.cost/100).toFixed()) || 0%></td>
+                <td class="dollar"> <%= currencySplitter((element.totalRevenue/100).toFixed()) || 0%></td>
+                <td class="dollar"> <%= currencySplitter((element.profit/100).toFixed()) || 0%></td>
 
-        </tr>
-        <% count++ %>
-        <% totalHours += budgetTotal.hoursSum %>
-        <% totalCost += budgetTotal.costSum %>
-        <% totalRevenue += budgetTotal.revenueSum%>
-        <% totalProfit = (totalRevenue - totalCost)/100%>
-        <% } %>
+            </tr>
         <% })%>
 
         </tbody>
@@ -111,10 +94,10 @@
             <td>&nbsp</td>
             <td>&nbsp</td>
             <td>&nbsp</td>
-            <td id="totalHours" data-value="<%=totalHours%>"><%= currencySplitter(totalHours.toFixed())%></td>
-            <td id="totalCost" class="dollar" data-value="<%=totalCost%>"> <%= currencySplitter((totalCost/100).toFixed())%></td>
-            <td id="totalRevenue" class="dollar" data-value="<%=totalRevenue%>"> <%= currencySplitter((totalRevenue/100).toFixed())%></td>
-            <td id="totalProfit" class="dollar" data-value="<%=totalProfit%>"> <%= currencySplitter(totalProfit.toFixed())%></td>
+            <td id="totalHours" data-value="<%=firstJob ? firstJob.workedTotal: 0%>"><%= firstJob ? currencySplitter(firstJob.workedTotal.toFixed()): 0%></td>
+            <td id="totalCost" class="dollar" data-value="<%=firstJob ? firstJob.costTotal : 0%>"><%= firstJob ? currencySplitter((firstJob.costTotal/100).toFixed()): 0%></td>
+            <td id="totalRevenue" class="dollar" data-value="<%=firstJob ? firstJob.revenueTotal : 0%>"><%= firstJob ? currencySplitter((firstJob.revenueTotal/100).toFixed()): 0%></td>
+            <td id="totalProfit" class="dollar" data-value="<%=firstJob ? firstJob.profitTotal : 0%>"><%= firstJob ? currencySplitter((firstJob.profitTotal/100).toFixed()): 0%></td>
         </tr>
 
         </tfoot>
@@ -125,34 +108,6 @@
 
 
 <div class="forInfo-half-block right">
-<!--    <div>
-        <table class="list tableProjects">
-            <colgroup span="3">
-                <col span="1">
-                <col span="1">
-                <col span="1">
-            </colgroup>
-            <thead>
-            <tr>
-                <th colspan="3" class="forCaption">Bonus for Sales Managers</th>
-            </tr>
-            <tr>
-                <th>Resource</th>
-                <th>Percentage</th>
-                <th>Bonus</th>
-            </tr>
-            </thead>
-            <tbody id="bonuses">
-            <% bonus.forEach(function(element){ %>
-            <tr>
-                <td><%=element.resource%></td>
-                <td><%=element.percentage%></td>
-                <td><%=currencySplitter((element.bonus/100).toFixed(2))%></td>
-            </tr>
-            <% })%>
-            </tbody>
-        </table>
-    </div>-->
     <div>
         <table class="list tableProjects">
             <colgroup span="4">
@@ -173,14 +128,21 @@
             </tr>
             </thead>
             <tbody id="project">
-            <%if (projectValues) {%>
             <tr>
-                <td class="dollar"> <%=currencySplitter((projectValues.revenue/100).toFixed())%></td>
-                <td class="dollar"> <%=currencySplitter((projectValues.profit/100).toFixed())%></td>
-                <td class="procent"><%=(projectValues.markUp).toFixed() %></td>
-                <td class="procent"><%=(projectValues.radio).toFixed()%></td>
+                <%  var revenueTotal = firstJob ? firstJob.revenueTotal/100 : 0;
+                    var profitTotal = firstJob ? firstJob.profitTotal/100: 0;
+                    var costTotal = firstJob ? firstJob.costTotal/100: 0;
+                    var murkUp = profitTotal/costTotal;
+                    var margin = profitTotal/revenueTotal;
+
+                    murkUp = isFinite(murkUp) ? murkUp * 100 : 0;
+                    margin = isFinite(margin) ? margin * 100 : 0;
+                %>
+                <td class="dollar"><%= currencySplitter(revenueTotal.toFixed())%></td>
+                <td class="dollar"><%= currencySplitter(profitTotal.toFixed())%></td>
+                <td class="procent"><%= currencySplitter(murkUp.toFixed())%></td>
+                <td class="procent"><%= currencySplitter(margin.toFixed())%></td>
             </tr>
-            <% } %>
             </tbody>
         </table>
     </div>

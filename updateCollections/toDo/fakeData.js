@@ -9,12 +9,12 @@ var mainCb;
 
 var forbiddenIds = [];
 
-var production = mongoose.createConnection('localhost', 'production', 27017, {
+var production = mongoose.createConnection('localhost', 'demodb'/*, 27017, {
     db: {native_parser: true},
     server: {poolSize: 5},
-    user: 'easyErp',
+    user: 'easyerp',
     pass: '1q2w3e!@#'
-});
+}*/);
 
 var crm = mongoose.createConnection('localhost', 'CRM', 27017, {
     db: {native_parser: true},

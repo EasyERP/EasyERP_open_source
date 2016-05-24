@@ -545,6 +545,117 @@ th {
   outline: medium none;
   border: 1px solid #3e88b9 !important;
 }
+.week_list {
+  zoom: 1;
+  clear: both;
+}
+.week_list:before {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.week_list:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
+}
+.week_list .week_title {
+  font-size: 30px;
+  line-height: 30px;
+  padding-top: 15px;
+  text-align: center;
+}
+.thumbnail_birthday_list {
+  zoom: 1;
+  clear: both;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+.thumbnail_birthday_list:before {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+}
+.thumbnail_birthday_list:after {
+  content: "\0020";
+  display: block;
+  height: 0;
+  overflow: hidden;
+  clear: both;
+}
+.thumbnail_birthday_list > li {
+  box-sizing: border-box;
+  float: left;
+  border: 1px solid #7f7f80;
+  padding: 5px;
+  width: 380px;
+  min-height: 130px;
+  margin-right: 5px;
+  margin-bottom: 5px;
+}
+.thumbnail_birthday_list .avatar {
+  float: left;
+  width: 40%;
+  height: 120px;
+  text-align: center;
+  font: 0/0 a;
+  overflow: hidden;
+}
+.thumbnail_birthday_list .avatar:before {
+  /* create a full-height inline block pseudo=element */
+  content: ' ';
+  display: inline-block;
+  vertical-align: middle;
+  /* vertical alignment of the inline element */
+  height: 100%;
+}
+.thumbnail_birthday_list .avatar .avatar_img {
+  vertical-align: middle;
+  width: 100%;
+  display: inline-block;
+  font: 16px/1 Arial sans-serif;
+}
+.thumbnail_birthday_list .avatar .avatar_img img {
+  width: 100%;
+}
+.thumbnail_birthday_list .birthday_info {
+  padding: 0;
+  margin: 0;
+  list-style: none;
+  float: left;
+  width: 55%;
+  margin-left: 5%;
+}
+.thumbnail_birthday_list .birthday_info .readMore {
+  display: block;
+  text-align: center;
+}
+.birthday_info {
+  text-align: center;
+}
+.birthday_info .user_name {
+  display: inline-block;
+  font-weight: bold;
+  line-height: 25px;
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+.birthday_info .birthday_day {
+  line-height: 25px;
+}
+.birthday_info .readMore {
+  text-decoration: none;
+  color: #000;
+}
+.birthday_info .readMore .fa {
+  display: inline-block;
+  margin-top: 5px;
+}
 .btn {
   border: 1px solid #7f7f80;
   margin: 0;
@@ -760,14 +871,14 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   box-sizing: border-box;
   color: #000000;
   line-height: 20px;
-  font-size: 12px;
+  font-size: 13px;
 }
 .list2 thead tr {
   border: none;
   vertical-align: top;
 }
 .list2 thead th {
-  font-size: 12px;
+  font-size: 13px;
   text-align: right;
 }
 .list2 tbody tr {
@@ -850,14 +961,14 @@ OLD: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIW
   box-sizing: border-box;
   color: #000000;
   line-height: 20px;
-  font-size: 12px;
+  font-size: 13px;
 }
 .list2 thead tr {
   border: none;
   vertical-align: top;
 }
 .list2 thead th {
-  font-size: 12px;
+  font-size: 13px;
   text-align: right;
 }
 .list2 tbody tr {
@@ -1286,6 +1397,9 @@ tr.redBorder {
 #forInfo.accounting .accounting-half-block {
   width: 50%;
 }
+#forInfo.accounting .accounting-fourth-block {
+  width: 25%;
+}
 #forInfo.accounting th .fa {
   display: inline-block;
   font-size: 17px;
@@ -1604,6 +1718,10 @@ input::-ms-clear {
 .kanban .opportunity-header h3 {
   text-align: right;
 }
+.kanban .opportunity-header h4 {
+  color: #2c3e50;
+  font-weight: bold;
+}
 .kanban .opportunity-content {
   margin-top: -7px;
   margin-bottom: -3px;
@@ -1780,7 +1898,7 @@ input::-ms-clear {
   position: absolute;
   top: 4px;
   right: 28px;
-  color: #a9a9a9;
+  color: #2c3e50;
 }
 .kanban .column .columnNameDiv .columnName .fold-unfold {
   display: block;
@@ -1796,11 +1914,14 @@ input::-ms-clear {
   line-height: 19px;
   margin: 0 2px 0 4px;
   cursor: pointer;
-  color: #a9a9a9;
+  color: #2c3e50;
 }
 .kanban .column .columnNameDiv .columnName .text {
   color: #3e88b9;
   font-size: 13px;
+}
+.kanban .column .columnNameDiv .columnName .text .dollar {
+  margin-left: 5px;
 }
 .kanban .column .columnNameDiv.cancelled .columnName {
   border-bottom: 2px solid #FF5454 !important;
@@ -2295,8 +2416,6 @@ select:not([type="checkbox"]) {
   text-decoration: none;
   display: block;
   line-height: 28px;
-  width: 100%;
-  height: 100%;
 }
 .icon:hover {
   text-decoration: none;
@@ -2327,6 +2446,7 @@ a:focus {
 h3 {
   color: #3e88b9;
   font-size: 18px;
+  line-height: 24px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -4771,8 +4891,6 @@ a.red:hover {
   text-decoration: none;
   display: block;
   line-height: 28px;
-  width: 100%;
-  height: 100%;
   display: block !important;
   content: 'h';
   width: auto;
@@ -5672,31 +5790,16 @@ ul.dialog-tabs li.right button {
 .thumbnailwithavatar .info p a {
   color: #000000;
 }
-.thumbnailwithavatar h4 {
-  color: #3e88b9;
-  font-size: 12px;
-  line-height: 18px;
-  font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
-  white-space: normal;
-}
-.thumbnailwithavatar h4 span {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  white-space: normal;
-  width: 182px;
-}
-.thumbnailwithavatar h4:hover {
-  text-decoration: underline;
-  cursor: pointer;
-}
+.thumbnailwithavatar h4,
 .thumbnailwithavatar .title {
   color: #3e88b9;
-  font-size: 12px;
+  font-size: 13px;
+  font-weight: 600;
   line-height: 18px;
   font-family: 'Helvetica Neue', 'Segoe UI', Helvetica, Verdana, san-serif;
   white-space: normal;
 }
+.thumbnailwithavatar h4 span,
 .thumbnailwithavatar .title span {
   overflow: hidden;
   white-space: nowrap;
@@ -5801,14 +5904,14 @@ ul.dialog-tabs li.right button {
   box-sizing: border-box;
   color: #000000;
   line-height: 20px;
-  font-size: 12px;
+  font-size: 13px;
 }
 .list thead tr {
   border: none;
   vertical-align: top;
 }
 .list thead th {
-  font-size: 12px;
+  font-size: 13px;
   text-align: right;
 }
 .list tbody tr {
@@ -9780,6 +9883,11 @@ textarea#editInput {
 }
 .invoiceChart-legend-box .list tbody .boldInvoiced td,
 .invoiceChart-legend-box .list tbody .boldPaid td {
+  color: #ffffff;
+}
+.invoiceChart-legend-box .list tbody .revenueBySales td,
+.invoiceChart-legend-box .list tbody .totalBySales td,
+.invoiceChart-legend-box .list tbody .paidBySales td {
   color: #ffffff;
 }
 .invoiceChart-legend-box .chartContainer .domain {

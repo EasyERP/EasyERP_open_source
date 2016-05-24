@@ -432,7 +432,7 @@ var requestHandler = function (app, event, mainDb) {
     });
 
     event.on('updateProjectDetails', function (options) {
-        var updateProject = _.debounce(updateProjectDet, 500);
+        /*var updateProject = _.debounce(updateProjectDet, 500);
         var pId = options._id;
 
         updateProject();
@@ -554,8 +554,8 @@ var requestHandler = function (app, event, mainDb) {
                         budgetTotal.costSum = 0;
                         budgetTotal.revenueSum = 0;
                         budgetTotal.hoursSum = 0;
-                        /* budgetTotal.revenueByQA = 0;
-                         budgetTotal.hoursByQA = 0;*/
+                        /!*                        budgetTotal.revenueByQA = 0;
+                         budgetTotal.hoursByQA = 0;*!/
 
                         wTRack.forEach(function (wTrack) {
                             var key;
@@ -586,10 +586,10 @@ var requestHandler = function (app, event, mainDb) {
 
                                 if (empId === emp) {
                                     if (projectTeam[empId]) {
-                                        /*                                        if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                        /!*                                        if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
                                          projectTeam[empId].byQA.revenue += parseFloat(wTrack.revenue);
                                          projectTeam[empId].byQA.hours += parseFloat(wTrack.worked);
-                                         }*/
+                                         }*!/
                                         projectTeam[empId].profit += parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                         projectTeam[empId].cost += parseFloat((wTrack.cost / 100).toFixed(2));
                                         projectTeam[empId].rate += parseFloat(wTrack.rate);
@@ -598,11 +598,11 @@ var requestHandler = function (app, event, mainDb) {
                                     } else {
                                         projectTeam[empId] = {};
 
-                                        /*                                       if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
+                                        /!*                                       if (wTrack.department.toString() === '55b92ace21e4b7c40f000011') {
                                          projectTeam[empId].byQA = {};
                                          projectTeam[empId].byQA.revenue = parseFloat(wTrack.revenue);
                                          projectTeam[empId].byQA.hours = parseFloat(wTrack.worked);
-                                         }*/
+                                         }*!/
                                         projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                         projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
                                         projectTeam[empId].rate = parseFloat(wTrack.rate);
@@ -658,8 +658,8 @@ var requestHandler = function (app, event, mainDb) {
 
                                 response = response || [];
 
-                                /*                                bonuses.forEach(function (element) {
-                                 var objToSave = {};
+/!*                                bonuses.forEach(function (element) {
+                                    var objToSave = {};
 
                                  objToSave.bonus = 0;
                                  objToSave.resource = element.employeeId.name.first + ' ' + element.employeeId.name.last;
@@ -677,7 +677,7 @@ var requestHandler = function (app, event, mainDb) {
                                  bonus.push(objToSave);
                                  }
 
-                                 });*/
+                                });*!/
 
                                 keysForPT = Object.keys(projectTeam);
 
@@ -746,7 +746,7 @@ var requestHandler = function (app, event, mainDb) {
 
             });
 
-        };
+        };*/
     });
 
     event.on('updateJobBudget', function (options) {

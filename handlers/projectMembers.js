@@ -56,9 +56,20 @@ var ProjectMembers = function (models) {
             if (err) {
                 return next(err);
             }
-
             changedManager(db, doc);
-            res.status(200).send(doc);
+
+            doc.populate({path: 'projectPositionId', select: '_id name'})
+                .populate({path: 'employeeId', select: '_id name'})
+                .populate({path: 'bonusId', select: '_id name value isPercent'}, function (err) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send(doc);
+                });
+
+
+
         });
     };
 

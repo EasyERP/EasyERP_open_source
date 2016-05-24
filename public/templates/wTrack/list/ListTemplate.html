@@ -8,15 +8,15 @@
         <td data-content="jobs" class="editable <%= enable ? 'textUnderlineHover' : ''%>" data-id="<%=wTrack.jobs ? wTrack.jobs._id : null%>"><%=wTrack.jobs ?
             wTrack.jobs.name : '------'%>
         </td>
-        <td data-content="assigned"><%=wTrack && wTrack.salesmanager ? wTrack.salesmanager.name.first + ' ' +
+       <!-- <td data-content="assigned"><%=wTrack && wTrack.salesmanager ? wTrack.salesmanager.name.first + ' ' +
             wTrack.salesmanager.name.last : ''%>
-        </td>
+        </td>-->
         <td class="editable" data-content="project" data-id="<%= wTrack.project._id%>"><%=wTrack.project ?
             wTrack.project.projectName : ''%>
         </td>
-        <td data-content="workflow" data-id="<%=wTrack.workflow ? wTrack.workflow._id : ''%>"><%=wTrack.workflow?
+        <!--<td data-content="workflow" data-id="<%=wTrack.workflow ? wTrack.workflow._id : ''%>"><%=wTrack.workflow?
             wTrack.workflow.name : ''%>
-        </td>
+        </td>-->
         <td data-content="customer"
             data-id="<%= wTrack.customer? wTrack.customer.name.first + ' ' + wTrack.customer.name.last : ''%>">
             <%=wTrack.customer?wTrack.customer.name.first + ' ' + wTrack.customer.name.last: ''%>

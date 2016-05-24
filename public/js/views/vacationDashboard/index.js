@@ -269,7 +269,7 @@ define([
             }
 
             if (!self.isWorking(employee, week)) {
-                s += 'inactive ';
+                s = 'inactive ';
             }
             return s;
         },
@@ -379,6 +379,8 @@ define([
             };
 
             dataService.getData('/wTrack/dash', queryData, function (response) {
+                var err;
+
                 if (!response.error) {
                     return new VacationDashEdit({
                         tr            : tr,
@@ -390,6 +392,11 @@ define([
                         wTracks       : response.wTracks
                     });
                 }
+                err = response && response.error ? response.error.statusText : 'Some error';
+                App.render({
+                    type   : 'error',
+                    message: err
+                });
             });
         },
 

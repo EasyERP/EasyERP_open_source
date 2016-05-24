@@ -1,11 +1,13 @@
-define([
-        "text!templates/Accounting/AccountingTemplate.html",
-        "async",
-        "dataService",
-        "collections/paymentMethod/paymentMethods",
-        "views/Accounting/paymentMethodView"
+define(['Backbone',
+        'text!templates/Accounting/AccountingTemplate.html',
+        'async',
+        'dataService',
+        'collections/paymentMethod/paymentMethods',
+        'collections/paymentTerms/paymentTerms',
+        'views/Accounting/paymentMethod/paymentMethodView',
+        'views/Accounting/paymentTerms/paymentTermsView'
     ],
-    function (DashboardTemplate, async, dataService, payMethodsCollection, paymentMethodView) {
+    function (Backbone, DashboardTemplate, async, dataService, payMethodsCollection, paymentTermsCollection, paymentMethodView, paymentTermsView) {
         var ContentView = Backbone.View.extend({
             contentType: "Accounts",
             actionType : "Content",
@@ -15,7 +17,9 @@ define([
                 this.startTime = options.startTime;
 
                 this.payMethodsCollection = new payMethodsCollection();
+                this.paymentTermsCollection = new paymentTermsCollection();
                 this.payMethodsCollection.bind('reset', this.renderPaymentMethods, this);
+                this.paymentTermsCollection.bind('reset', this.renderPaymentTerms, this);
                 this.render();
             },
 
@@ -24,7 +28,11 @@ define([
                     collection: this.payMethodsCollection
                 }).render();
             },
-
+            renderPaymentTerms: function () {
+                new paymentTermsView({
+                    collection: this.paymentTermsCollection
+                }).render();
+            },
 
             render: function () {
                 this.$el.html(this.template());

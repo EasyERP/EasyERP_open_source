@@ -224,8 +224,8 @@ define([
 
             total = parseFloat(total);
             order = parseFloat(order);
-            newTotal = total + modelJSON.paymentInfo.total;
-            newOrder = order + modelJSON.paymentInfo.total;
+            newTotal = total + parseFloat(modelJSON.paymentInfo.total);
+            newOrder = order + parseFloat(modelJSON.paymentInfo.total);
 
             orderSum.attr('data-value', newOrder);
             orderSum.text(helpers.currencySplitter(newOrder.toString()));
@@ -302,7 +302,7 @@ define([
             var $targetEl = $(e.target);
             var checkLength = el.find("input.checkbox:checked").length;
             var checkAll$ = el.find('#check_all_quotations');
-            var removeBtnEl = $('#removePayment');
+            var removeBtnEl = $('#removeQuotation');
 
             if ($targetEl.hasClass('notRemovable')) {
                 $targetEl.prop('checked', false);

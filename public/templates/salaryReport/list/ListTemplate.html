@@ -29,7 +29,11 @@
     <%continue;%>
     <%}%>
 
-    <td data-id="<%=i%>"><%=salary%></td>
+    <%if(salary >= 0){%>
+    <td class= "money" data-id="<%=i%>"><%=currencySplitter(salary.toString())%></td>
+    <%} else{%>
+    <td  data-id="<%=i%>"><%=salary%></td>
+    <%}%>
 
     <%}%>
 </tr>

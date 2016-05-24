@@ -4,7 +4,7 @@
     <td class="centerCell" data-content="number"><%=startNumber + index + 1%></td>
     <td><%=payment.name%></td>
     <td><%=payment.invoice.name%></td>
-    <td class="totalPaid"><%=(payment.paidAmount) ? payment.paidAmount : '0.00'%></td>
+    <td class="totalPaid <%=currencyClass(payment.currency._id)%>"><%=(payment.paidAmount) ? payment.paidAmount : '0.00'%></td>
     <td><%=payment.date%></td>
 </tr>
 <% }) %>

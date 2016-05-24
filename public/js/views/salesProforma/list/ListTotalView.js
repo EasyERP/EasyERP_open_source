@@ -18,7 +18,7 @@ define([
                 this.element.find('.total').each(function () {
                     result.total += parseFloat(helper.spaceReplacer($(this).text()));
                 });
-                this.element.find('.paid').each(function () {
+                this.element.find('td.paid').each(function () {
                     result.paid += parseFloat(helper.spaceReplacer($(this).text()));
                 });
                 this.element.find('.balance').each(function () {
