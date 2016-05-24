@@ -377,7 +377,7 @@ define([
                         return job._id === jobId;
                     });
 
-                    quantity = currentJob ? currentJob.budget.budgetTotal.hoursSum : 1;
+                    quantity = 1;
 
                     $parrent.find('.jobs').text($target.text()).attr('data-id', jobId);
                     $parrent.attr('data-content', jobId); // in case of getting id  on edit quotation
@@ -396,7 +396,7 @@ define([
                 selectedProduct = model ? model.toJSON() : null;
 
                 if (currentJob && selectedProduct) {
-                    selectedProduct.info.salePrice = currentJob.budget.budgetTotal.revenueSum;
+                    selectedProduct.info.salePrice = 0;
 
                     this.taxesRate = 0;
                 }

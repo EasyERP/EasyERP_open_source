@@ -432,18 +432,18 @@ var Invoice = function (models, event) {
 
             //result.attachments[0].shortPas = result.attachments[0].shortPas.replace(id.toString(), invoiceId.toString());
 
-           /* Invoice.findByIdAndUpdate(invoiceId, {
-                $set: {
-                    attachments: result.attachments
-                }
-            }, {new: true}, function (err, invoice) {
-                if (err) {
-                    return next(err);
-                }*/
+            /* Invoice.findByIdAndUpdate(invoiceId, {
+                 $set: {
+                     attachments: result.attachments
+                 }
+             }, {new: true}, function (err, invoice) {
+                 if (err) {
+                     return next(err);
+                 }*/
 
-                // renameFolder(id.toString(), invoiceId.toString());
+            // renameFolder(id.toString(), invoiceId.toString());
 
-                res.status(201).send(result);
+            res.status(201).send(result);
             // });
         });
 
@@ -853,9 +853,9 @@ var Invoice = function (models, event) {
                         var parallelTask;
                         var setWorkflow;
                         var updateJobs;
-                        
+
                         products = resp.products;
-                        
+
                         if (resp._type !== 'Proforma') {
                             setWorkflow = function (callback) {
                                 var request = {
@@ -905,12 +905,10 @@ var Invoice = function (models, event) {
                                             }
                                             project = job.project || null;
 
-                                            _journalEntryHandler.checkAndCreateForJob({
+                                            _journalEntryHandler.createCostsForJob({
                                                 req     : req,
                                                 jobId   : jobs,
-                                                workflow: CONSTANTS.JOBSFINISHED,
-                                                wTracks : job.wTracks,
-                                                date    : resp.invoiceDate
+                                                workflow: CONSTANTS.JOBSFINISHED
                                             });
 
                                             cb();
@@ -1069,7 +1067,7 @@ var Invoice = function (models, event) {
                     count = parseInt(query.count); //|| CONSTANTS.DEF_LIST_COUNT;
                     page = parseInt(query.page);
 
-                   // count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+                    // count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
                     skip = (page - 1) > 0 ? (page - 1) * count : 0;
 
                     if (req.query.sort) {
@@ -2412,15 +2410,15 @@ var Invoice = function (models, event) {
                                 $lookup: {
                                     from        : "Project",
                                     localField  : "project",
-                                    foreignField: "_id", 
-                                    as: "project"
+                                    foreignField: "_id",
+                                    as          : "project"
                                 }
                             }, {
                                 $lookup: {
                                     from        : "workflows",
                                     localField  : "workflow",
-                                    foreignField: "_id", 
-                                    as: "workflow"
+                                    foreignField: "_id",
+                                    as          : "workflow"
                                 }
                             }, {
                                 $project: {

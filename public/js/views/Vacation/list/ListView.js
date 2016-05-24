@@ -865,7 +865,7 @@ define([
             var model;
             var mid = 39;
 
-            var answer = confirm("Do You want to DELETE item ?!");
+            var answer = confirm('Vacation is empty. Do you want to delete it?');
 
             if (answer === true) {
                 if (id.length < 24) {

@@ -821,18 +821,20 @@ var Module = function (models, event) {
         });
     }
 
+    function checkAndCreateForJob(options) {
+        this.checkAndCreateForJob(options);
+    }
+
     this.checkAndCreateForJob = function (options) {
         var req = options.req;
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var jobId = options.jobId;
         var workflow = options.workflow;
         var remove = false;
-        var wTracks = options.wTracks;
-        var date = moment(options.date).subtract(1, 'seconds');
         var bodyFinishedJob = {
             currency      : CONSTANTS.CURRENCY_USD,
             journal       : CONSTANTS.FINISHED_JOB_JOURNAL,
-            date          : new Date(date),
             sourceDocument: {
                 model: 'jobs',
                 _id  : jobId
@@ -843,7 +845,6 @@ var Module = function (models, event) {
         var bodyClosedJob = {
             currency      : CONSTANTS.CURRENCY_USD,
             journal       : CONSTANTS.CLOSED_JOB,
-            date          : new Date(moment(date).subtract(1, 'seconds')),
             sourceDocument: {
                 model: 'jobs',
                 _id  : jobId
@@ -861,7 +862,7 @@ var Module = function (models, event) {
 
         if (remove) {
             Model.remove({
-                journal             : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]},
+                journal             : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB, CONSTANTS.SALARY_PAYABLE, CONSTANTS.OVERTIME_PAYABLE, CONSTANTS.OVERHEAD]},
                 "sourceDocument._id": jobId
             }, function (err, result) {
                 if (err) {
@@ -869,32 +870,44 @@ var Module = function (models, event) {
                 }
             })
         } else {
-            Model.aggregate([{
-                $match: {
-                    'sourceDocument._id': {$in: wTracks},
-                    debit               : {$gt: 0}
-                }
-            }, {
-                $group: {
-                    _id   : null,
-                    amount: {$sum: '$debit'}
-                }
-            }], function (err, result) {
+            Job.findById(jobId, {invoice: 1}).populate('invoice').exec(function (err, result) {
                 if (err) {
                     return console.log(err);
                 }
 
-                bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
-                bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
+                var date = moment(result.invoice.date).subtract(1, 'seconds');
 
-                if (bodyFinishedJob.amount > 0) {
-                    createReconciled(bodyFinishedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
-                }
+                bodyFinishedJob.date = new Date(date);
+                bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds')),
 
-                if (bodyClosedJob.amount > 0) {
-                    createReconciled(bodyClosedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
-                }
+                    Model.aggregate([{
+                        $match: {
+                            'sourceDocument._id'  : jobId,
+                            'sourceDocument.model': 'wTrack',
+                            debit                 : {$gt: 0}
+                        }
+                    }, {
+                        $group: {
+                            _id   : null,
+                            amount: {$sum: '$debit'}
+                        }
+                    }], function (err, result) {
+                        if (err) {
+                            return console.log(err);
+                        }
 
+                        bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
+                        bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
+
+                        if (bodyFinishedJob.amount > 0) {
+                            createReconciled(bodyFinishedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
+                        }
+
+                        if (bodyClosedJob.amount > 0) {
+                            createReconciled(bodyClosedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
+                        }
+
+                    });
             });
         }
 
@@ -2500,6 +2513,9 @@ var Module = function (models, event) {
      });
 
      };*/
+    this.createCostsForJob = function (options) {
+
+    }
 
     this.reconcile = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
@@ -2523,17 +2539,19 @@ var Module = function (models, event) {
         var createForJob;
         var mainWaterfallTasks;
         var getJobsToCreateExpenses;
+        var match = {};
 
         if (jobIds && !Array.isArray(jobIds)) {
             jobIds = [jobIds];
+            match = {
+                jobs: {$in: jobIds.objectID()}
+            };
         }
 
         getJobsToCreateExpenses = function (mainCb) {
-            WTrack.aggregate([/*{
-             $match: {
-             dateByMonth: 201408
-             }
-             }, */{
+            WTrack.aggregate([{
+                $match: match
+            }, {
                 $group: {
                     _id: '$jobs'
                 }
@@ -3128,6 +3146,14 @@ var Module = function (models, event) {
 
             console.log('Success');
             event.emit('sendMessage', {view: 'journalEntry', message: 'Please, refresh browser, data was changed.'});
+
+            jobIds.forEach(function (job) {
+                checkAndCreateForJob({
+                    req     : req,
+                    jobId   : job,
+                    workflow: CONSTANTS.JOBSFINISHED
+                })
+            });
 
             Job.update({_id: {$in: jobIds}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
 
@@ -3918,7 +3944,7 @@ var Module = function (models, event) {
     function matchEditor(account, match) {
         var accountName = matchObject[account];
 
-        if (accountName){
+        if (accountName) {
             match[accountName] = {$gt: 0};
         }
 
@@ -3944,7 +3970,7 @@ var Module = function (models, event) {
             account: objectId(account)
         };
 
-        if (!contentType){
+        if (!contentType) {
             match = matchEditor(account, match);
         }
 

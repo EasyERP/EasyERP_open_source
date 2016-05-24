@@ -678,12 +678,14 @@ define([
             exportToCsv: function () {
                 //todo change after routes refactoring
                 var filterString = '';
+                var tempExportToCsvUrl = '';
 
                 if (this.exportToCsvUrl) {
+                    tempExportToCsvUrl = this.exportToCsvUrl;
                     if (this.filter) {
-                        this.exportToCsvUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
+                        tempExportToCsvUrl += '/' + encodeURIComponent(JSON.stringify(this.filter));
                     }
-                    window.location = this.exportToCsvUrl;
+                    window.location = tempExportToCsvUrl;
                 } else {
                     if (this.collection) {
                         filterString += '/' + encodeURIComponent(JSON.stringify(this.filter));
