@@ -705,6 +705,94 @@ define([
     ];
     var fakeDividend = [
         {
+            _id: "574400dd355ba73610d82ec0",
+            _type: "dividendInvoicePayment",
+            period: null,
+            paymentMethod: {
+                _id: "565f2e05ab70d49024242e07",
+                name: "Erste Bank HU24 1160 0006 0000 0000 4916 1522",
+                account: "HU24 1160 0006 0000 0000 4916 1522",
+                currency: "USD",
+                bank: "Erste Bank",
+                owner: "Alexander Sokhanych"
+            },
+            paymentRef: "",
+            forSale: false,
+            currency: {
+                rate: 1,
+                name: "USD",
+                _id: "565eab29aeb95fa9c0f9df2d"
+            },
+            differenceAmount: 0,
+            workflow: "Paid",
+            date: "2016-05-23T21:00:00.000Z",
+            paidAmount: 55500,
+            invoice: {
+                _id: "574400cf355ba73610d82ebe",
+                workflow: {
+                    _id: "55647d982e4aa3804a765ecb",
+                    sequence: 2,
+                    status: "Done",
+                    name: "Paid",
+                    wId: "Sales Invoice",
+                    color: "#2C3E50",
+                    __v: 0,
+                    source: "purchase",
+                    targetSource: [
+                        "invoice"
+                    ],
+                    wName: "invoice",
+                    visible: true
+                },
+                name: "DD3"
+            },
+            removable: true
+        },
+        {
+            _id: "574400f9355ba73610d82ec4",
+            _type: "dividendInvoicePayment",
+            period: null,
+            paymentMethod: {
+                _id: "565f2e05ab70d49024242e07",
+                name: "Erste Bank HU24 1160 0006 0000 0000 4916 1522",
+                account: "HU24 1160 0006 0000 0000 4916 1522",
+                currency: "USD",
+                bank: "Erste Bank",
+                owner: "Alexander Sokhanych"
+            },
+            paymentRef: "",
+            forSale: false,
+            currency: {
+                rate: 1,
+                name: "USD",
+                _id: "565eab29aeb95fa9c0f9df2d"
+            },
+            differenceAmount: 0,
+            workflow: "Paid",
+            date: "2016-05-23T21:00:00.000Z",
+            paidAmount: 77700,
+            invoice: {
+                _id: "574400d3355ba73610d82ebf",
+                workflow: {
+                    _id: "55647d982e4aa3804a765ecb",
+                    sequence: 2,
+                    status: "Done",
+                    name: "Paid",
+                    wId: "Sales Invoice",
+                    color: "#2C3E50",
+                    __v: 0,
+                    source: "purchase",
+                    targetSource: [
+                        "invoice"
+                    ],
+                    wName: "invoice",
+                    visible: true
+                },
+                name: "DD4"
+            },
+            removable: true
+        },
+        {
             _id: "5742f2d07afe352f10c11c3e",
             _type: "dividendInvoicePayment",
             period: null,
@@ -748,7 +836,97 @@ define([
             },
             removable: true
         }
-    ]
+    ];
+    var fakeDividendAfterDelete = [
+        {
+            _id: "574400dd355ba73610d82ec0",
+            _type: "dividendInvoicePayment",
+            period: null,
+            paymentMethod: {
+                _id: "565f2e05ab70d49024242e07",
+                name: "Erste Bank HU24 1160 0006 0000 0000 4916 1522",
+                account: "HU24 1160 0006 0000 0000 4916 1522",
+                currency: "USD",
+                bank: "Erste Bank",
+                owner: "Alexander Sokhanych"
+            },
+            paymentRef: "",
+            forSale: false,
+            currency: {
+                rate: 1,
+                name: "USD",
+                _id: "565eab29aeb95fa9c0f9df2d"
+            },
+            differenceAmount: 0,
+            workflow: "Paid",
+            date: "2016-05-23T21:00:00.000Z",
+            paidAmount: 55500,
+            invoice: {
+                _id: "574400cf355ba73610d82ebe",
+                workflow: {
+                    _id: "55647d982e4aa3804a765ecb",
+                    sequence: 2,
+                    status: "Done",
+                    name: "Paid",
+                    wId: "Sales Invoice",
+                    color: "#2C3E50",
+                    __v: 0,
+                    source: "purchase",
+                    targetSource: [
+                        "invoice"
+                    ],
+                    wName: "invoice",
+                    visible: true
+                },
+                name: "DD3"
+            },
+            removable: true
+        },
+        {
+            _id: "574400f9355ba73610d82ec4",
+            _type: "dividendInvoicePayment",
+            period: null,
+            paymentMethod: {
+                _id: "565f2e05ab70d49024242e07",
+                name: "Erste Bank HU24 1160 0006 0000 0000 4916 1522",
+                account: "HU24 1160 0006 0000 0000 4916 1522",
+                currency: "USD",
+                bank: "Erste Bank",
+                owner: "Alexander Sokhanych"
+            },
+            paymentRef: "",
+            forSale: false,
+            currency: {
+                rate: 1,
+                name: "USD",
+                _id: "565eab29aeb95fa9c0f9df2d"
+            },
+            differenceAmount: 0,
+            workflow: "Paid",
+            date: "2016-05-23T21:00:00.000Z",
+            paidAmount: 77700,
+            invoice: {
+                _id: "574400d3355ba73610d82ebf",
+                workflow: {
+                    _id: "55647d982e4aa3804a765ecb",
+                    sequence: 2,
+                    status: "Done",
+                    name: "Paid",
+                    wId: "Sales Invoice",
+                    color: "#2C3E50",
+                    __v: 0,
+                    source: "purchase",
+                    targetSource: [
+                        "invoice"
+                    ],
+                    wName: "invoice",
+                    visible: true
+                },
+                name: "DD4"
+            },
+            removable: true
+        }
+    ];
 
     var view;
     var topBarView;
@@ -831,7 +1009,12 @@ define([
                 var dividendUrl = new RegExp('\/payment\/dividend\/list', 'i');
 
                 server.respondWith('GET', dividendUrl, [401, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                dividendCollection = new DividendCollection({});
+                dividendCollection = new DividendCollection({
+                    viewType: 'list',
+                    contentType: 'DividendPayments',
+                    page: 1,
+                    count: 2
+                });
                 server.respond();
             });
 
@@ -843,7 +1026,12 @@ define([
                 server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
                     count: 1
                 })]);
-                dividendCollection = new DividendCollection({});
+                dividendCollection = new DividendCollection({
+                    viewType: 'list',
+                    contentType: 'DividendPayments',
+                    page: 1,
+                    count: 2
+                });
                 server.respond();
 
                 topBarView = new TopBarView({
@@ -863,6 +1051,8 @@ define([
             var mainSpy;
             var windowConfirmStub;
             var alertStub;
+            var deleteSpy;
+            var sortSpy;
 
             before(function () {
                 App.startPreload = function() {
@@ -884,6 +1074,8 @@ define([
                 windowConfirmStub.returns(true);
                 alertStub = sinon.stub(window, 'alert');
                 alertStub.returns(true);
+                deleteSpy = sinon.spy(ListView.prototype, 'deleteItems');
+                sortSpy = sinon.spy(ListView.prototype, 'goSort');
             });
 
             after(function () {
@@ -892,6 +1084,8 @@ define([
                 mainSpy.restore();
                 windowConfirmStub.restore();
                 alertStub.restore();
+                deleteSpy.restore();
+                sortSpy.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -902,7 +1096,7 @@ define([
 
                     server.respondWith('GET', dividendUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividend)]);
                     server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count: 1
+                        count: 3
                     })]);
                     listView = new ListView({
                         startTime: new Date(),
@@ -915,443 +1109,124 @@ define([
                     $thisEl = listView.$el;
 
                     expect($thisEl.find('#listTable')).to.exist;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(1);
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
 
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+
+                    dividendCollection.bind('showmore', listView.showMoreContent, listView);
+                    
                     done();
                 });
 
-                /*it('Try to go to EditDialog', function(){
-                 var $needTd = $thisEl.find('#weeklyScheduler tr:nth-child(1) > td:nth-child(2)');
-
-                 $needTd.click();
-                 expect($('.ui-dialog')).to.exist;
-                 });
-
-                 it('Try to edit item', function(){
-                 var $dialog = $('.ui-dialog');
-                 var $nameInput = $dialog.find('#weeklySchedulerName > input');
-                 var $mondayInput = $dialog.find('td[data-content="1"] > input');
-                 var $saveBtn = $dialog.find('#create-weeklyScheduler-dialog');
-                 var keyUpEvent = $.Event('keyup');
-                 var scheduleUrl = new RegExp('weeklyScheduler\/', 'i');
-                 var weekScheduleUrl = new RegExp('\/weeklyScheduler\/list', 'i');
-                 var spyResponse;
-
-                 $nameInput.val('');
-                 $mondayInput.val('3');
-                 $mondayInput.trigger(keyUpEvent);
-
-                 //save with empty name
-                 $saveBtn.click();
-                 spyResponse = mainSpy.args[0][0];
-                 expect(spyResponse).to.have.property('type', 'error');
-                 expect(spyResponse).to.have.property('message', 'name can\'t be empty');
-
-                 //save with hours > 24
-                 $nameInput.val('Test');
-                 $mondayInput.val('25');
-                 $saveBtn.click();
-                 spyResponse = mainSpy.args[1][0];
-                 expect(spyResponse).to.have.property('type', 'error');
-                 expect(spyResponse).to.have.property('message', 'hours should be in 0-24 range');
-
-                 //save with error response
-                 $mondayInput.val('3');
-                 server.respondWith('PATCH', scheduleUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                 $saveBtn.click();
-                 server.respond();
-
-                 server.respondWith('GET', weekScheduleUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSchedule)]);
-                 server.respondWith('PATCH', scheduleUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"1":8,"2":8,"3":8,"4":8,"5":8,"6":0,"7":0,"_id":"57332c3b94ee1140b6bb49e2","totalHours":40,"name":"UA-40"})]);
-                 $saveBtn.click();
-                 server.respond();
-                 server.respond();
-
-                 expect($('.ui-dialog')).to.not.exist;
-                 });
-
-                 it('Try cancel EditDialog', function(){
-                 var $needTd = $thisEl.find('#weeklyScheduler tr:nth-child(1) > td:nth-child(2)');
-                 var $cancelBtn;
-
-                 $needTd.click();
-                 expect($('.ui-dialog')).to.exist;
-
-                 $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-                 $cancelBtn.click();
-
-                 expect($('.ui-dialog')).to.not.exist;
-                 });
-
-                 it('Try to delete schedule item', function(){
-                 var $deleteBtn = $thisEl.find('.fa-trash-o').eq(1);
-                 var scheduleUrl = new RegExp('\/weeklyScheduler\/', 'i');
-
-                 server.respondWith('DELETE', scheduleUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"1":4,"2":4,"3":4,"4":4,"5":4,"6":0,"7":0,"_id":"573add0245310a4662c8005b","__v":0,"totalHours":20,"name":"UA-20"})]);
-                 $deleteBtn.click();
-                 server.respond();
-
-                 expect(deleteScheduleSpy.calledOnce).to.be.true;
-                 });
-
-                 it('Try to create schedule item', function(){
-                 mainSpy.reset();
-
-                 var $createBtn = $thisEl.find('#weeklyScheduler .fa-plus');
-
-                 $createBtn.click();
-                 expect($('.ui-dialog')).to.exist;
-
-                 var $dialog = $('.ui-dialog');
-                 var $nameInput = $dialog.find('#weeklySchedulerName > input');
-                 var $mondayInput = $dialog.find('td[data-content="1"] > input');
-                 var $saveBtn = $dialog.find('#create-weeklyScheduler-dialog');
-                 var keyUpEvent = $.Event('keyup');
-                 var scheduleUrl = 'weeklyScheduler';
-                 var weekScheduleUrl = new RegExp('\/weeklyScheduler\/list', 'i');
-                 var spyResponse;
-
-                 $nameInput.val('');
-                 $mondayInput.val('3');
-                 $mondayInput.trigger(keyUpEvent);
-
-                 //save with empty name
-                 $saveBtn.click();
-                 spyResponse = mainSpy.args[0][0];
-                 expect(spyResponse).to.have.property('type', 'error');
-                 expect(spyResponse).to.have.property('message', 'name can\'t be empty');
-
-                 //save with hours > 24
-                 $nameInput.val('Test');
-                 $mondayInput.val('25');
-                 $saveBtn.click();
-                 spyResponse = mainSpy.args[1][0];
-                 expect(spyResponse).to.have.property('type', 'error');
-                 expect(spyResponse).to.have.property('message', 'hours should be in 0-24 range');
-
-                 $mondayInput.val('3');
-                 server.respondWith('GET', weekScheduleUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSchedule)]);
-                 server.respondWith('POST', scheduleUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"__v":0,"_id":"573f35b5a7312792307f9e50","totalHours":0,"name":"sf"})]);
-                 $saveBtn.click();
-                 server.respond();
-                 server.respond();
-
-                 expect($('.ui-dialog')).to.not.exist;
-                 });
-
-                 it('Try cancel CreateDialog', function(){
-                 var $createBtn = $thisEl.find('#weeklyScheduler .fa-plus');
-                 var $cancelBtn;
-
-                 $createBtn.click();
-                 expect($('.ui-dialog')).to.exist;
-
-                 $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-                 $cancelBtn.click();
-
-                 expect($('.ui-dialog')).to.not.exist;
-                 });
-
-                 // payRollEarning views testing
-                 it('Try to go to EditDialog', function(){
-                 var $needTd = $thisEl.find('#listTableearnings > tr:nth-child(1) > td:nth-child(2)');
-
-                 $needTd.click();
-                 expect($('.ui-dialog')).to.be.exist;
-                 });
-
-                 it('Try to save payroll earning with empty name', function(){
-                 mainSpy.reset();
-
-                 var $dialog = $('.ui-dialog');
-                 var $nameInput = $dialog.find('#payrollComponentTypeName');
-                 var $saveBtn = $('#create-weeklyScheduler-dialog');
-                 var spyResponse;
-
-                 $nameInput.val('');
-                 $saveBtn.click();
-
-                 spyResponse = mainSpy.args[0][0];
-                 expect(spyResponse).to.have.property('type', 'error');
-                 expect(spyResponse).to.have.property('message', 'name can\'t be empty');
-                 });
-
-                 it('Try to save model with error response', function(){
-                 var $dialog = $('.ui-dialog');
-                 var $nameInput = $dialog.find('#payrollComponentTypeName');
-                 var $saveBtn = $('#create-weeklyScheduler-dialog');
-                 var patchUrl = new RegExp('\/payrollComponentTypes\/', 'i');
-
-                 $nameInput.val('Test');
-
-                 server.respondWith('PATCH', patchUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                 $saveBtn.click();
-                 server.respond();
-
-                 expect($('.ui-dialog')).to.be.exist;
-                 });
-
-                 it('Try to save model with good response', function(){
-                 var $dialog = $('.ui-dialog');
-                 var $nameInput = $dialog.find('#payrollComponentTypeName');
-                 var $saveBtn = $('#create-weeklyScheduler-dialog');
-                 var patchUrl = new RegExp('payrollComponentTypes\/', 'i');
-                 var earningsUrl = '/payrollComponentTypes/list/?count=100&type=earnings';
-
-                 $nameInput.val('Test');
-                 server.respondWith('GET', earningsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEarning)]);
-                 server.respondWith('PATCH', patchUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"_id":"573edafcf9281fb40d5db50a","__v":0,"description":"fff","type":"earnings","name":"ffff"})]);
-                 $saveBtn.click();
-                 server.respond();
-                 server.respond();
-
-                 expect($('.ui-dialog')).to.not.exist;
-                 });
-
-                 it('Try to cancel EditDialog', function(){
-                 var $needTd = $thisEl.find('#listTableearnings > tr:nth-child(1) > td:nth-child(2)');
-                 var $cancelBtn;
-
-                 $needTd.click();
-                 expect($('.ui-dialog')).to.be.exist;
-
-                 $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-                 $cancelBtn.click();
-
-                 expect($('.ui-dialog')).to.not.exist;
-                 });
-
-                 it('Try to remove Payroll earning type item', function(){
-                 var $deleteBtn = $thisEl.find('#earningType .fa-trash-o');
-                 var deleteUrl = new RegExp('\/payrollComponentTypes\/', 'i');
-                 var earningsUrl = '/payrollComponentTypes/list/?count=100&type=earnings';
-
-                 server.respondWith('GET', earningsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEarning)]);
-                 server.respondWith('DELETE', deleteUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                 _id: "573edafcf9281fb40d5db50a",
-                 __v: 0,
-                 description: "fff",
-                 type: "earnings",
-                 name: "fff"
-                 })]);
-                 $deleteBtn.click();
-                 server.respond();
-                 server.respond();
-
-                 expect(deletePayrollSpy.calledOnce).to.be.true;
-                 });
-
-                 it('Try to open CreateDialog', function(){
-                 var $createBtn = $thisEl.find('#earningType #top-bar-createBtn');
-
-                 $createBtn.click();
-                 expect($('.ui-dialog')).to.be.exist;
-                 });
-
-                 it('Try to create PayRollEarning Type item with empty name', function(){
-                 mainSpy.reset();
-
-                 var $createBtn = $('#create-weeklyScheduler-dialog');
-                 var spyResponse;
-
-                 $createBtn.click();
-                 spyResponse = mainSpy.args[0][0];
-                 expect(spyResponse).to.have.property('type', 'error');
-                 expect(spyResponse).to.have.property('message', 'name can\'t be empty');
-                 });
-
-                 it('Try create item with error response', function(){
-                 var $dialog = $('.ui-dialog');
-                 var $createBtn = $('#create-weeklyScheduler-dialog');
-                 var $nameInput = $dialog.find('#payrollComponentTypeName');
-                 var patchUrl = new RegExp('\/payrollComponentTypes', 'i');
-
-                 $nameInput.val('Test');
-
-                 server.respondWith('POST', patchUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                 $createBtn.click();
-                 server.respond();
-
-                 expect($('.ui-dialog')).to.be.exist;
-                 });
-
-                 it('Try to create item with good response', function(){
-                 var $dialog = $('.ui-dialog');
-                 var $createBtn = $('#create-weeklyScheduler-dialog');
-                 var $nameInput = $dialog.find('#payrollComponentTypeName');
-                 var patchUrl = new RegExp('payrollComponentTypes', 'i');
-                 var earningsUrl = '/payrollComponentTypes/list/?count=100&type=earnings';
-
-                 $nameInput.val('Test');
-                 server.respondWith('GET', earningsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEarning)]);
-                 server.respondWith('POST', patchUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"__v":0,"_id":"5742ecdf7afe352f10c11c3a","description":"Test test","type":"earnings","name":"TestName"})]);
-                 $createBtn.click();
-                 server.respond();
-                 server.respond();
-
-                 expect($('.ui-dialog')).to.not.exist;
-                 });
-
-                 it('Try to cancel CreateDialog', function(){
-                 var $createBtn = $thisEl.find('#earningType #top-bar-createBtn');
-                 var $cancelBtn;
-
-                 $createBtn.click();
-                 expect($('.ui-dialog')).to.be.exist;
-
-                 $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-
-                 $cancelBtn.click();
-                 expect($('.ui-dialog')).to.not.exist;
-                 });
-
-                 // payRollDeduction views testing
-                 it('Try to go to EditDialog', function(){
-                 var $needTd = $thisEl.find('#listTabledeductions > tr:nth-child(1) > td:nth-child(2)');
-
-                 $needTd.click();
-                 expect($('.ui-dialog')).to.be.exist;
-                 });
-
-                 it('Try to save payroll deduction with empty name', function(){
-                 mainSpy.reset();
-
-                 var $dialog = $('.ui-dialog');
-                 var $nameInput = $dialog.find('#payrollComponentTypeName');
-                 var $saveBtn = $('#create-weeklyScheduler-dialog');
-                 var spyResponse;
-
-                 $nameInput.val('');
-                 $saveBtn.click();
-
-                 spyResponse = mainSpy.args[0][0];
-                 expect(spyResponse).to.have.property('type', 'error');
-                 expect(spyResponse).to.have.property('message', 'name can\'t be empty');
-                 });
-
-                 it('Try to save model with error response', function(){
-                 var $dialog = $('.ui-dialog');
-                 var $nameInput = $dialog.find('#payrollComponentTypeName');
-                 var $saveBtn = $('#create-weeklyScheduler-dialog');
-                 var patchUrl = new RegExp('\/payrollComponentTypes\/', 'i');
-
-                 $nameInput.val('Test');
-
-                 server.respondWith('PATCH', patchUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                 $saveBtn.click();
-                 server.respond();
-
-                 //expect($('.ui-dialog')).to.be.exist;
-                 });
-
-                 it('Try to save model with good response', function(){
-                 var $dialog = $('.ui-dialog');
-                 var $nameInput = $dialog.find('#payrollComponentTypeName');
-                 var $saveBtn = $('#create-weeklyScheduler-dialog');
-                 var patchUrl = new RegExp('payrollComponentTypes\/', 'i');
-                 var earningsUrl = '/payrollComponentTypes/list/?count=100&type=deductions';
-
-                 $nameInput.val('Test');
-                 server.respondWith('GET', earningsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDeductions)]);
-                 server.respondWith('PATCH', patchUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"_id":"5742ee217afe352f10c11c3b","__v":0,"description":"asdsd","type":"deductions","name":"sdsa"})]);
-                 $saveBtn.click();
-                 server.respond();
-                 server.respond();
-
-                 expect($('.ui-dialog')).to.not.exist;
-                 });
-
-                 it('Try to cancel EditDialog', function(){
-                 var $needTd = $thisEl.find('#listTabledeductions > tr:nth-child(1) > td:nth-child(2)');
-                 var $cancelBtn;
-
-                 $needTd.click();
-                 expect($('.ui-dialog')).to.be.exist;
-
-                 $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-                 $cancelBtn.click();
-
-                 expect($('.ui-dialog')).to.not.exist;
-                 });
-
-                 it('Try to remove Payroll deduction type item', function(){
-                 var $deleteBtn = $thisEl.find('#deductionType .fa-trash-o');
-                 var deleteUrl = new RegExp('\/payrollComponentTypes\/', 'i');
-                 var earningsUrl = '/payrollComponentTypes/list/?count=100&type=earnings';
-
-                 server.respondWith('GET', earningsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDeductions)]);
-                 server.respondWith('DELETE', deleteUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"_id":"5742ee217afe352f10c11c3b","__v":0,"description":"asdsd","type":"deductions","name":"sdsa"})]);
-                 $deleteBtn.click();
-                 server.respond();
-                 server.respond();
-
-                 expect(deletePayrollSpy.calledTwice).to.be.true;
-                 });
-
-                 it('Try to open CreateDialog', function(){
-                 var $createBtn = $thisEl.find('#deductionType #top-bar-createBtn');
-
-                 $createBtn.click();
-                 expect($('.ui-dialog')).to.be.exist;
-                 });
-
-                 it('Try to create PayRollDeduction Type item with empty name', function(){
-                 mainSpy.reset();
-
-                 var $createBtn = $('#create-weeklyScheduler-dialog');
-                 var spyResponse;
-
-                 $createBtn.click();
-                 spyResponse = mainSpy.args[0][0];
-                 expect(spyResponse).to.have.property('type', 'error');
-                 expect(spyResponse).to.have.property('message', 'name can\'t be empty');
-                 });
-
-                 it('Try create item with error response', function(){
-                 var $dialog = $('.ui-dialog');
-                 var $createBtn = $('#create-weeklyScheduler-dialog');
-                 var $nameInput = $dialog.find('#payrollComponentTypeName');
-                 var patchUrl = new RegExp('\/payrollComponentTypes\/', 'i');
-
-                 $nameInput.val('Test');
-
-                 server.respondWith('POST', patchUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                 $createBtn.click();
-                 server.respond();
-
-                 //expect($('.ui-dialog')).to.be.exist;
-                 });
-
-
-                 it('Try to create item with good response', function(){
-                 var $dialog = $('.ui-dialog');
-                 var $createBtn = $('#create-weeklyScheduler-dialog');
-                 var $nameInput = $dialog.find('#payrollComponentTypeName');
-                 var patchUrl = new RegExp('payrollComponentTypes', 'i');
-                 var earningsUrl = '/payrollComponentTypes/list/?count=100&type=deductions';
-
-                 $nameInput.val('Test');
-                 server.respondWith('GET', earningsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDeductions)]);
-                 server.respondWith('POST', patchUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"__v":0,"_id":"5742ef4d7afe352f10c11c3c","description":"Test","type":"deductions","name":"TestName"})]);
-                 $createBtn.click();
-                 server.respond();
-                 server.respond();
-
-                 expect($('.ui-dialog')).to.not.exist;
-                 });
-
-                 it('Try to cancel CreateDialog', function(){
-                 var $createBtn = $thisEl.find('#deductionType #top-bar-createBtn');
-                 var $cancelBtn;
-
-                 $createBtn.click();
-                 expect($('.ui-dialog')).to.be.exist;
-
-                 $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-
-                 $cancelBtn.click();
-                 expect($('.ui-dialog')).to.not.exist;
-                 });*/
+                it('Try to delete item with error response', function(){
+                    var $needCheckBox = $thisEl.find('#listTable > tr:nth-child(3) > td.notForm > input');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var dividendUrl = new RegExp('\/payment\/', 'i');
+                    var spyResponse;
+
+                    $needCheckBox.click();
+
+                    server.respondWith('DELETE', dividendUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    $deleteBtn.click();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[0][0];
+
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+                    expect(deleteSpy.calledOnce).to.be.true;
+                });
+
+                it('Try to delete item', function(){
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var dividendUrl = new RegExp('\/payment\/', 'i');
+                    var dividendListUrl = new RegExp('\/payment\/dividend\/list', 'i');
+                    var dividendTotalUrl = new RegExp('\/payment\/dividend\/totalCollectionLength');
+
+                    server.respondWith('GET', dividendListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendAfterDelete)]);
+                    server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 2
+                    })]);
+                    server.respondWith('DELETE', dividendUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"success":{"_id":"5742f2d07afe352f10c11c3e","_type":"dividendInvoicePayment","__v":0,"period":null,"paymentMethod":"565f2e05ab70d49024242e07","supplier":null,"paymentRef":"","forSale":false,"editedBy":{"date":"2016-05-23T12:08:48.125Z","user":"52203e707d4dba8813000003"},"createdBy":{"date":"2016-05-23T12:08:48.125Z","user":"52203e707d4dba8813000003"},"groups":{"group":[],"users":[],"owner":"560c099da5d4a2e20ba5068b"},"currency":{"rate":1,"_id":"565eab29aeb95fa9c0f9df2d"},"whoCanRW":"everyOne","differenceAmount":-250000,"workflow":"Paid","name":"PP_1","date":"2016-05-22T21:00:00.000Z","paidAmount":250000,"invoice":"5742f26e7afe352f10c11c3d"}})]);
+                    $deleteBtn.click();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+
+                    expect(deleteSpy.calledTwice).to.be.true;
+                });
+
+                it('Try to sort ListView', function(){
+                    var $sortBtn = $thisEl.find('th[data-sort="paidAmount"]');
+                    var dividendListUrl = new RegExp('\/payment\/dividend\/list', 'i');
+                    var dividendTotalUrl = new RegExp('\/payment\/dividend\/totalCollectionLength');
+
+                    server.respondWith('GET', dividendListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeDividendAfterDelete[1], fakeDividendAfterDelete[0]])]);
+                    server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 2
+                    })]);
+                    $sortBtn.click();
+                    server.respond();
+                    server.respond();
+                    expect(sortSpy.calledOnce).to.be.true;
+
+
+                    server.respondWith('GET', dividendListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendAfterDelete)]);
+                    server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 2
+                    })]);
+                    $sortBtn.click();
+                    server.respond();
+                    server.respond();
+                    expect(sortSpy.calledTwice).to.be.true;
+                });
+
+                it('Try to show more items with error response', function(){
+                    mainSpy.reset();
+
+                    var $pageList = $thisEl.find('.pageList');
+                    var $needBtn = $pageList.find('a').eq(1);
+                    var dividendListUrl = new RegExp('\/payment\/dividend\/list', 'i');
+                    var spyResponse;
+
+                    server.respondWith('GET', dividendListUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    $needBtn.click();
+                    server.respond();
+
+                    spyResponse = mainSpy.args[0][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', 'Some Error.');
+                });
+
+                it('Try to show more items', function(){
+                    var $pageList = $thisEl.find('.pageList');
+                    var $needBtn = $pageList.find('a').eq(1);
+                    var dividendListUrl = new RegExp('\/payment\/dividend\/list', 'i');
+                    var dividendTotalUrl = new RegExp('\/payment\/dividend\/totalCollectionLength');
+
+                    server.respondWith('GET', dividendListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendAfterDelete)]);
+                    server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 2
+                    })]);
+                    $needBtn.click();
+                    server.respond();
+                    server.respond();
+
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
+                });
+
             });
         });
     });

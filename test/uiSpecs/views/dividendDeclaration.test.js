@@ -6,11 +6,12 @@ define([
     'views/DividendInvoice/TopBarView',
     'views/DividendInvoice/CreateView',
     'views/DividendInvoice/EditView',
+    'views/DividendPayments/CreateView',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (fixtures, DividendCollection, MainView, ListView, TopBarView, CreateView, EditView, $, chai, chaiJquery, sinonChai) {
+], function (fixtures, DividendCollection, MainView, ListView, TopBarView, CreateView, EditView, PaymentsCreateView, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
 
@@ -706,9 +707,369 @@ define([
     ];
     var fakeDividendDeclaration = [
         {
-            _id: "5742f26e7afe352f10c11c3d",
+        _id: "574400cf355ba73610d82ebe",
+        _type: "dividendInvoice",
+        dueDate: "2016-06-06T21:00:00.000Z",
+        approved: false,
+        removable: true,
+        editedBy: {
+            user: {
+                _id: "52203e707d4dba8813000003",
+                __v: 0,
+                attachments: [ ],
+                credentials: {
+                    access_token: "",
+                    refresh_token: ""
+                },
+                email: "info@thinkmobiles.com",
+                kanbanSettings: {
+                    applications: {
+                        countPerPage: 10,
+                        foldWorkflows: [
+                            "Empty"
+                        ]
+                    },
+                    opportunities: {
+                        countPerPage: 10
+                    },
+                    tasks: {
+                        countPerPage: 10,
+                        foldWorkflows: [
+                            "528ce3caf3f67bc40b000013",
+                            "528ce3acf3f67bc40b000012",
+                            "528ce30cf3f67bc40b00000f",
+                            "528ce35af3f67bc40b000010"
+                        ]
+                    }
+                },
+                lastAccess: "2016-05-24T07:28:57.964Z",
+                login: "admin",
+                pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                profile: 1387275598000,
+                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                savedFilters: [
+                    {
+                        _id: "56213057c558b13c1bbf874d",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5621307bc558b13c1bbf874f",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56213103c558b13c1bbf8750",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56213197c558b13c1bbf8751",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56215e86c558b13c1bbf8755",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56229009184ec5a427913306",
+                        viewType: "",
+                        byDefault: "salesInvoice"
+                    },
+                    {
+                        _id: "562506bb19a2ecca01ca84b3",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56265005d53978de6e9ea440",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "562b83ccb4677e225aa31df6",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "564dd4ce9fb8bc3f2195662c",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56570d714d96962262fd4b55",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56572368bfd103f108eb4a24",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56604795ccc590f32c577ece",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "566047c6ccc590f32c577ed1",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5661a7bf7d284423697e34a8",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5665429e9294f4d728bcafaa",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "566eba768453e8b464b70a40",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56c711ab0769bba2647ae710",
+                        viewType: "",
+                        byDefault: "Projects"
+                    },
+                    {
+                        _id: "56daf5322e7b62c613ff2552",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dd69d991cb620c19ff60c2",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dd6af71e6cb7131892b2ba",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dfe8e56e2877d85455a6bb",
+                        viewType: "",
+                        byDefault: "Leads"
+                    },
+                    {
+                        _id: "56f3d039c1785edc507e81ea",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5708ca211d118cb6401008cc",
+                        viewType: "",
+                        byDefault: "Employees"
+                    }
+                ],
+                relatedEmployee: "55b92ad221e4b7c40f00004f"
+            }
+        },
+        createdBy: {
+            user: {
+                _id: "52203e707d4dba8813000003",
+                __v: 0,
+                attachments: [ ],
+                credentials: {
+                    access_token: "",
+                    refresh_token: ""
+                },
+                email: "info@thinkmobiles.com",
+                kanbanSettings: {
+                    applications: {
+                        countPerPage: 10,
+                        foldWorkflows: [
+                            "Empty"
+                        ]
+                    },
+                    opportunities: {
+                        countPerPage: 10
+                    },
+                    tasks: {
+                        countPerPage: 10,
+                        foldWorkflows: [
+                            "528ce3caf3f67bc40b000013",
+                            "528ce3acf3f67bc40b000012",
+                            "528ce30cf3f67bc40b00000f",
+                            "528ce35af3f67bc40b000010"
+                        ]
+                    }
+                },
+                lastAccess: "2016-05-24T07:28:57.964Z",
+                login: "admin",
+                pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                profile: 1387275598000,
+                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                savedFilters: [
+                    {
+                        _id: "56213057c558b13c1bbf874d",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5621307bc558b13c1bbf874f",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56213103c558b13c1bbf8750",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56213197c558b13c1bbf8751",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56215e86c558b13c1bbf8755",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56229009184ec5a427913306",
+                        viewType: "",
+                        byDefault: "salesInvoice"
+                    },
+                    {
+                        _id: "562506bb19a2ecca01ca84b3",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56265005d53978de6e9ea440",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "562b83ccb4677e225aa31df6",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "564dd4ce9fb8bc3f2195662c",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56570d714d96962262fd4b55",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56572368bfd103f108eb4a24",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56604795ccc590f32c577ece",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "566047c6ccc590f32c577ed1",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5661a7bf7d284423697e34a8",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5665429e9294f4d728bcafaa",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "566eba768453e8b464b70a40",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56c711ab0769bba2647ae710",
+                        viewType: "",
+                        byDefault: "Projects"
+                    },
+                    {
+                        _id: "56daf5322e7b62c613ff2552",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dd69d991cb620c19ff60c2",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dd6af71e6cb7131892b2ba",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dfe8e56e2877d85455a6bb",
+                        viewType: "",
+                        byDefault: "Leads"
+                    },
+                    {
+                        _id: "56f3d039c1785edc507e81ea",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5708ca211d118cb6401008cc",
+                        viewType: "",
+                        byDefault: "Employees"
+                    }
+                ],
+                relatedEmployee: "55b92ad221e4b7c40f00004f"
+            }
+        },
+        workflow: {
+            _id: "55647d982e4aa3804a765ecb",
+            sequence: 2,
+            status: "Done",
+            name: "Paid",
+            wId: "Sales Invoice",
+            color: "#2C3E50",
+            __v: 0,
+            source: "purchase",
+            targetSource: [
+                "invoice"
+            ],
+            wName: "invoice",
+            visible: true
+        },
+        payments: [
+            "574400dd355ba73610d82ec0"
+        ],
+        paymentInfo: {
+            total: 0,
+            balance: -55500,
+            unTaxed: 0,
+            taxes: 0
+        },
+        currency: {
+            _id: "565eab29aeb95fa9c0f9df2d",
+            rate: 1
+        },
+        invoiceDate: "2016-05-23T21:00:00.000Z",
+        forSales: false,
+        name: "DD3",
+        paymentDate: "2016-05-23T21:00:00.000Z",
+        paid: 555
+    },
+        {
+            _id: "574400d3355ba73610d82ebf",
             _type: "dividendInvoice",
-            dueDate: "2016-06-05T21:00:00.000Z",
+            dueDate: "2016-06-06T21:00:00.000Z",
             approved: false,
             removable: true,
             editedBy: {
@@ -741,7 +1102,7 @@ define([
                             ]
                         }
                     },
-                    lastAccess: "2016-05-23T09:57:39.014Z",
+                    lastAccess: "2016-05-24T07:28:57.964Z",
                     login: "admin",
                     pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
                     profile: 1387275598000,
@@ -901,7 +1262,7 @@ define([
                             ]
                         }
                     },
-                    lastAccess: "2016-05-23T09:57:39.014Z",
+                    lastAccess: "2016-05-24T07:28:57.964Z",
                     login: "admin",
                     pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
                     profile: 1387275598000,
@@ -1047,13 +1408,370 @@ define([
                 visible: true
             },
             payments: [
-                "5742f2d07afe352f10c11c3e"
+                "574400f9355ba73610d82ec4"
             ],
             paymentInfo: {
                 total: 0,
-                balance: -250000,
+                balance: -77700,
+                unTaxed: 0,
+                taxes: 0
+            },
+            currency: {
+                _id: "565eab29aeb95fa9c0f9df2d",
+                rate: 1
+            },
+            invoiceDate: "2016-05-23T21:00:00.000Z",
+            forSales: false,
+            name: "DD4",
+            paymentDate: "2016-05-23T21:00:00.000Z",
+            paid: 777
+        },
+        {
+            _id: "5742f26e7afe352f10c11c3d",
+            _type: "dividendInvoice",
+            dueDate: "2016-06-05T21:00:00.000Z",
+            approved: false,
+            removable: true,
+            editedBy: {
+                user: {
+                    _id: "52203e707d4dba8813000003",
+                    __v: 0,
+                    attachments: [ ],
+                    credentials: {
+                        access_token: "",
+                        refresh_token: ""
+                    },
+                    email: "info@thinkmobiles.com",
+                    kanbanSettings: {
+                        applications: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "Empty"
+                            ]
+                        },
+                        opportunities: {
+                            countPerPage: 10
+                        },
+                        tasks: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "528ce3caf3f67bc40b000013",
+                                "528ce3acf3f67bc40b000012",
+                                "528ce30cf3f67bc40b00000f",
+                                "528ce35af3f67bc40b000010"
+                            ]
+                        }
+                    },
+                    lastAccess: "2016-05-24T07:28:57.964Z",
+                    login: "admin",
+                    pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                    profile: 1387275598000,
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    savedFilters: [
+                        {
+                            _id: "56213057c558b13c1bbf874d",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5621307bc558b13c1bbf874f",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213103c558b13c1bbf8750",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213197c558b13c1bbf8751",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56215e86c558b13c1bbf8755",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56229009184ec5a427913306",
+                            viewType: "",
+                            byDefault: "salesInvoice"
+                        },
+                        {
+                            _id: "562506bb19a2ecca01ca84b3",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56265005d53978de6e9ea440",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "562b83ccb4677e225aa31df6",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "564dd4ce9fb8bc3f2195662c",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56570d714d96962262fd4b55",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56572368bfd103f108eb4a24",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56604795ccc590f32c577ece",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566047c6ccc590f32c577ed1",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5661a7bf7d284423697e34a8",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5665429e9294f4d728bcafaa",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566eba768453e8b464b70a40",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56c711ab0769bba2647ae710",
+                            viewType: "",
+                            byDefault: "Projects"
+                        },
+                        {
+                            _id: "56daf5322e7b62c613ff2552",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd69d991cb620c19ff60c2",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd6af71e6cb7131892b2ba",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dfe8e56e2877d85455a6bb",
+                            viewType: "",
+                            byDefault: "Leads"
+                        },
+                        {
+                            _id: "56f3d039c1785edc507e81ea",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5708ca211d118cb6401008cc",
+                            viewType: "",
+                            byDefault: "Employees"
+                        }
+                    ],
+                    relatedEmployee: "55b92ad221e4b7c40f00004f"
+                }
+            },
+            createdBy: {
+                user: {
+                    _id: "52203e707d4dba8813000003",
+                    __v: 0,
+                    attachments: [ ],
+                    credentials: {
+                        access_token: "",
+                        refresh_token: ""
+                    },
+                    email: "info@thinkmobiles.com",
+                    kanbanSettings: {
+                        applications: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "Empty"
+                            ]
+                        },
+                        opportunities: {
+                            countPerPage: 10
+                        },
+                        tasks: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "528ce3caf3f67bc40b000013",
+                                "528ce3acf3f67bc40b000012",
+                                "528ce30cf3f67bc40b00000f",
+                                "528ce35af3f67bc40b000010"
+                            ]
+                        }
+                    },
+                    lastAccess: "2016-05-24T07:28:57.964Z",
+                    login: "admin",
+                    pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                    profile: 1387275598000,
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    savedFilters: [
+                        {
+                            _id: "56213057c558b13c1bbf874d",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5621307bc558b13c1bbf874f",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213103c558b13c1bbf8750",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213197c558b13c1bbf8751",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56215e86c558b13c1bbf8755",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56229009184ec5a427913306",
+                            viewType: "",
+                            byDefault: "salesInvoice"
+                        },
+                        {
+                            _id: "562506bb19a2ecca01ca84b3",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56265005d53978de6e9ea440",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "562b83ccb4677e225aa31df6",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "564dd4ce9fb8bc3f2195662c",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56570d714d96962262fd4b55",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56572368bfd103f108eb4a24",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56604795ccc590f32c577ece",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566047c6ccc590f32c577ed1",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5661a7bf7d284423697e34a8",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5665429e9294f4d728bcafaa",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566eba768453e8b464b70a40",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56c711ab0769bba2647ae710",
+                            viewType: "",
+                            byDefault: "Projects"
+                        },
+                        {
+                            _id: "56daf5322e7b62c613ff2552",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd69d991cb620c19ff60c2",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd6af71e6cb7131892b2ba",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dfe8e56e2877d85455a6bb",
+                            viewType: "",
+                            byDefault: "Leads"
+                        },
+                        {
+                            _id: "56f3d039c1785edc507e81ea",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5708ca211d118cb6401008cc",
+                            viewType: "",
+                            byDefault: "Employees"
+                        }
+                    ],
+                    relatedEmployee: "55b92ad221e4b7c40f00004f"
+                }
+            },
+            workflow: {
+                _id: "55647d932e4aa3804a765ec9",
+                color: "#2C3E50",
+                name: "Unpaid",
+                sequence: 4,
+                status: "New",
+                wId: "Sales Invoice",
+                wName: "invoice",
+                source: "purchase",
+                targetSource: [
+                    "invoice"
+                ],
+                visible: true
+            },
+            payments: [ ],
+            paymentInfo: {
+                balance: 0,
                 unTaxed: 0,
                 taxes: 0,
+                total: 0
             },
             currency: {
                 _id: "565eab29aeb95fa9c0f9df2d",
@@ -1063,9 +1781,2319 @@ define([
             forSales: false,
             name: "DD1",
             paymentDate: "2016-05-22T21:00:00.000Z",
-            paid: 2500
+            paid: 0
+        },
+        {
+            _id: "574448a58aa0eeae38752548",
+            _type: "dividendInvoice",
+            dueDate: "2016-06-06T21:00:00.000Z",
+            approved: false,
+            removable: true,
+            editedBy: {
+                user: {
+                    _id: "52203e707d4dba8813000003",
+                    __v: 0,
+                    attachments: [ ],
+                    credentials: {
+                        access_token: "",
+                        refresh_token: ""
+                    },
+                    email: "info@thinkmobiles.com",
+                    kanbanSettings: {
+                        applications: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "Empty"
+                            ]
+                        },
+                        opportunities: {
+                            countPerPage: 10
+                        },
+                        tasks: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "528ce3caf3f67bc40b000013",
+                                "528ce3acf3f67bc40b000012",
+                                "528ce30cf3f67bc40b00000f",
+                                "528ce35af3f67bc40b000010"
+                            ]
+                        }
+                    },
+                    lastAccess: "2016-05-24T07:28:57.964Z",
+                    login: "admin",
+                    pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                    profile: 1387275598000,
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    savedFilters: [
+                        {
+                            _id: "56213057c558b13c1bbf874d",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5621307bc558b13c1bbf874f",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213103c558b13c1bbf8750",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213197c558b13c1bbf8751",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56215e86c558b13c1bbf8755",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56229009184ec5a427913306",
+                            viewType: "",
+                            byDefault: "salesInvoice"
+                        },
+                        {
+                            _id: "562506bb19a2ecca01ca84b3",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56265005d53978de6e9ea440",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "562b83ccb4677e225aa31df6",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "564dd4ce9fb8bc3f2195662c",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56570d714d96962262fd4b55",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56572368bfd103f108eb4a24",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56604795ccc590f32c577ece",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566047c6ccc590f32c577ed1",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5661a7bf7d284423697e34a8",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5665429e9294f4d728bcafaa",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566eba768453e8b464b70a40",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56c711ab0769bba2647ae710",
+                            viewType: "",
+                            byDefault: "Projects"
+                        },
+                        {
+                            _id: "56daf5322e7b62c613ff2552",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd69d991cb620c19ff60c2",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd6af71e6cb7131892b2ba",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dfe8e56e2877d85455a6bb",
+                            viewType: "",
+                            byDefault: "Leads"
+                        },
+                        {
+                            _id: "56f3d039c1785edc507e81ea",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5708ca211d118cb6401008cc",
+                            viewType: "",
+                            byDefault: "Employees"
+                        }
+                    ],
+                    relatedEmployee: "55b92ad221e4b7c40f00004f"
+                }
+            },
+            createdBy: {
+                user: {
+                    _id: "52203e707d4dba8813000003",
+                    __v: 0,
+                    attachments: [ ],
+                    credentials: {
+                        access_token: "",
+                        refresh_token: ""
+                    },
+                    email: "info@thinkmobiles.com",
+                    kanbanSettings: {
+                        applications: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "Empty"
+                            ]
+                        },
+                        opportunities: {
+                            countPerPage: 10
+                        },
+                        tasks: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "528ce3caf3f67bc40b000013",
+                                "528ce3acf3f67bc40b000012",
+                                "528ce30cf3f67bc40b00000f",
+                                "528ce35af3f67bc40b000010"
+                            ]
+                        }
+                    },
+                    lastAccess: "2016-05-24T07:28:57.964Z",
+                    login: "admin",
+                    pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                    profile: 1387275598000,
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    savedFilters: [
+                        {
+                            _id: "56213057c558b13c1bbf874d",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5621307bc558b13c1bbf874f",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213103c558b13c1bbf8750",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213197c558b13c1bbf8751",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56215e86c558b13c1bbf8755",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56229009184ec5a427913306",
+                            viewType: "",
+                            byDefault: "salesInvoice"
+                        },
+                        {
+                            _id: "562506bb19a2ecca01ca84b3",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56265005d53978de6e9ea440",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "562b83ccb4677e225aa31df6",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "564dd4ce9fb8bc3f2195662c",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56570d714d96962262fd4b55",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56572368bfd103f108eb4a24",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56604795ccc590f32c577ece",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566047c6ccc590f32c577ed1",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5661a7bf7d284423697e34a8",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5665429e9294f4d728bcafaa",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566eba768453e8b464b70a40",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56c711ab0769bba2647ae710",
+                            viewType: "",
+                            byDefault: "Projects"
+                        },
+                        {
+                            _id: "56daf5322e7b62c613ff2552",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd69d991cb620c19ff60c2",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd6af71e6cb7131892b2ba",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dfe8e56e2877d85455a6bb",
+                            viewType: "",
+                            byDefault: "Leads"
+                        },
+                        {
+                            _id: "56f3d039c1785edc507e81ea",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5708ca211d118cb6401008cc",
+                            viewType: "",
+                            byDefault: "Employees"
+                        }
+                    ],
+                    relatedEmployee: "55b92ad221e4b7c40f00004f"
+                }
+            },
+            workflow: {
+                _id: "55647d932e4aa3804a765ec9",
+                color: "#2C3E50",
+                name: "Unpaid",
+                sequence: 4,
+                status: "New",
+                wId: "Sales Invoice",
+                wName: "invoice",
+                source: "purchase",
+                targetSource: [
+                    "invoice"
+                ],
+                visible: true
+            },
+            payments: [ ],
+            paymentInfo: {
+                taxes: 0,
+                unTaxed: 0,
+                balance: 0,
+                total: 0
+            },
+            currency: {
+                rate: 1,
+                _id: "565eab29aeb95fa9c0f9df2d"
+            },
+            invoiceDate: "2016-05-23T21:00:00.000Z",
+            forSales: false,
+            name: "DD8",
+            paid: 0
         }
     ];
+    var fakeDividendAfterDelete = [
+        {
+            _id: "574400cf355ba73610d82ebe",
+            _type: "dividendInvoice",
+            dueDate: "2016-06-06T21:00:00.000Z",
+            approved: false,
+            removable: true,
+            editedBy: {
+                user: {
+                    _id: "52203e707d4dba8813000003",
+                    __v: 0,
+                    attachments: [ ],
+                    credentials: {
+                        access_token: "",
+                        refresh_token: ""
+                    },
+                    email: "info@thinkmobiles.com",
+                    kanbanSettings: {
+                        applications: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "Empty"
+                            ]
+                        },
+                        opportunities: {
+                            countPerPage: 10
+                        },
+                        tasks: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "528ce3caf3f67bc40b000013",
+                                "528ce3acf3f67bc40b000012",
+                                "528ce30cf3f67bc40b00000f",
+                                "528ce35af3f67bc40b000010"
+                            ]
+                        }
+                    },
+                    lastAccess: "2016-05-24T07:28:57.964Z",
+                    login: "admin",
+                    pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                    profile: 1387275598000,
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    savedFilters: [
+                        {
+                            _id: "56213057c558b13c1bbf874d",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5621307bc558b13c1bbf874f",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213103c558b13c1bbf8750",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213197c558b13c1bbf8751",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56215e86c558b13c1bbf8755",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56229009184ec5a427913306",
+                            viewType: "",
+                            byDefault: "salesInvoice"
+                        },
+                        {
+                            _id: "562506bb19a2ecca01ca84b3",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56265005d53978de6e9ea440",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "562b83ccb4677e225aa31df6",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "564dd4ce9fb8bc3f2195662c",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56570d714d96962262fd4b55",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56572368bfd103f108eb4a24",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56604795ccc590f32c577ece",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566047c6ccc590f32c577ed1",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5661a7bf7d284423697e34a8",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5665429e9294f4d728bcafaa",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566eba768453e8b464b70a40",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56c711ab0769bba2647ae710",
+                            viewType: "",
+                            byDefault: "Projects"
+                        },
+                        {
+                            _id: "56daf5322e7b62c613ff2552",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd69d991cb620c19ff60c2",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd6af71e6cb7131892b2ba",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dfe8e56e2877d85455a6bb",
+                            viewType: "",
+                            byDefault: "Leads"
+                        },
+                        {
+                            _id: "56f3d039c1785edc507e81ea",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5708ca211d118cb6401008cc",
+                            viewType: "",
+                            byDefault: "Employees"
+                        }
+                    ],
+                    relatedEmployee: "55b92ad221e4b7c40f00004f"
+                }
+            },
+            createdBy: {
+                user: {
+                    _id: "52203e707d4dba8813000003",
+                    __v: 0,
+                    attachments: [ ],
+                    credentials: {
+                        access_token: "",
+                        refresh_token: ""
+                    },
+                    email: "info@thinkmobiles.com",
+                    kanbanSettings: {
+                        applications: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "Empty"
+                            ]
+                        },
+                        opportunities: {
+                            countPerPage: 10
+                        },
+                        tasks: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "528ce3caf3f67bc40b000013",
+                                "528ce3acf3f67bc40b000012",
+                                "528ce30cf3f67bc40b00000f",
+                                "528ce35af3f67bc40b000010"
+                            ]
+                        }
+                    },
+                    lastAccess: "2016-05-24T07:28:57.964Z",
+                    login: "admin",
+                    pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                    profile: 1387275598000,
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    savedFilters: [
+                        {
+                            _id: "56213057c558b13c1bbf874d",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5621307bc558b13c1bbf874f",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213103c558b13c1bbf8750",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213197c558b13c1bbf8751",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56215e86c558b13c1bbf8755",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56229009184ec5a427913306",
+                            viewType: "",
+                            byDefault: "salesInvoice"
+                        },
+                        {
+                            _id: "562506bb19a2ecca01ca84b3",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56265005d53978de6e9ea440",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "562b83ccb4677e225aa31df6",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "564dd4ce9fb8bc3f2195662c",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56570d714d96962262fd4b55",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56572368bfd103f108eb4a24",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56604795ccc590f32c577ece",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566047c6ccc590f32c577ed1",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5661a7bf7d284423697e34a8",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5665429e9294f4d728bcafaa",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566eba768453e8b464b70a40",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56c711ab0769bba2647ae710",
+                            viewType: "",
+                            byDefault: "Projects"
+                        },
+                        {
+                            _id: "56daf5322e7b62c613ff2552",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd69d991cb620c19ff60c2",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd6af71e6cb7131892b2ba",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dfe8e56e2877d85455a6bb",
+                            viewType: "",
+                            byDefault: "Leads"
+                        },
+                        {
+                            _id: "56f3d039c1785edc507e81ea",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5708ca211d118cb6401008cc",
+                            viewType: "",
+                            byDefault: "Employees"
+                        }
+                    ],
+                    relatedEmployee: "55b92ad221e4b7c40f00004f"
+                }
+            },
+            workflow: {
+                _id: "55647d982e4aa3804a765ecb",
+                sequence: 2,
+                status: "Done",
+                name: "Paid",
+                wId: "Sales Invoice",
+                color: "#2C3E50",
+                __v: 0,
+                source: "purchase",
+                targetSource: [
+                    "invoice"
+                ],
+                wName: "invoice",
+                visible: true
+            },
+            payments: [
+                "574400dd355ba73610d82ec0"
+            ],
+            paymentInfo: {
+                total: 0,
+                balance: -55500,
+                unTaxed: 0,
+                taxes: 0
+            },
+            currency: {
+                _id: "565eab29aeb95fa9c0f9df2d",
+                rate: 1
+            },
+            invoiceDate: "2016-05-23T21:00:00.000Z",
+            forSales: false,
+            name: "DD3",
+            paymentDate: "2016-05-23T21:00:00.000Z",
+            paid: 555
+        },
+        {
+            _id: "574400d3355ba73610d82ebf",
+            _type: "dividendInvoice",
+            dueDate: "2016-06-06T21:00:00.000Z",
+            approved: false,
+            removable: true,
+            editedBy: {
+                user: {
+                    _id: "52203e707d4dba8813000003",
+                    __v: 0,
+                    attachments: [ ],
+                    credentials: {
+                        access_token: "",
+                        refresh_token: ""
+                    },
+                    email: "info@thinkmobiles.com",
+                    kanbanSettings: {
+                        applications: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "Empty"
+                            ]
+                        },
+                        opportunities: {
+                            countPerPage: 10
+                        },
+                        tasks: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "528ce3caf3f67bc40b000013",
+                                "528ce3acf3f67bc40b000012",
+                                "528ce30cf3f67bc40b00000f",
+                                "528ce35af3f67bc40b000010"
+                            ]
+                        }
+                    },
+                    lastAccess: "2016-05-24T07:28:57.964Z",
+                    login: "admin",
+                    pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                    profile: 1387275598000,
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    savedFilters: [
+                        {
+                            _id: "56213057c558b13c1bbf874d",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5621307bc558b13c1bbf874f",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213103c558b13c1bbf8750",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213197c558b13c1bbf8751",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56215e86c558b13c1bbf8755",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56229009184ec5a427913306",
+                            viewType: "",
+                            byDefault: "salesInvoice"
+                        },
+                        {
+                            _id: "562506bb19a2ecca01ca84b3",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56265005d53978de6e9ea440",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "562b83ccb4677e225aa31df6",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "564dd4ce9fb8bc3f2195662c",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56570d714d96962262fd4b55",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56572368bfd103f108eb4a24",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56604795ccc590f32c577ece",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566047c6ccc590f32c577ed1",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5661a7bf7d284423697e34a8",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5665429e9294f4d728bcafaa",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566eba768453e8b464b70a40",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56c711ab0769bba2647ae710",
+                            viewType: "",
+                            byDefault: "Projects"
+                        },
+                        {
+                            _id: "56daf5322e7b62c613ff2552",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd69d991cb620c19ff60c2",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd6af71e6cb7131892b2ba",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dfe8e56e2877d85455a6bb",
+                            viewType: "",
+                            byDefault: "Leads"
+                        },
+                        {
+                            _id: "56f3d039c1785edc507e81ea",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5708ca211d118cb6401008cc",
+                            viewType: "",
+                            byDefault: "Employees"
+                        }
+                    ],
+                    relatedEmployee: "55b92ad221e4b7c40f00004f"
+                }
+            },
+            createdBy: {
+                user: {
+                    _id: "52203e707d4dba8813000003",
+                    __v: 0,
+                    attachments: [ ],
+                    credentials: {
+                        access_token: "",
+                        refresh_token: ""
+                    },
+                    email: "info@thinkmobiles.com",
+                    kanbanSettings: {
+                        applications: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "Empty"
+                            ]
+                        },
+                        opportunities: {
+                            countPerPage: 10
+                        },
+                        tasks: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "528ce3caf3f67bc40b000013",
+                                "528ce3acf3f67bc40b000012",
+                                "528ce30cf3f67bc40b00000f",
+                                "528ce35af3f67bc40b000010"
+                            ]
+                        }
+                    },
+                    lastAccess: "2016-05-24T07:28:57.964Z",
+                    login: "admin",
+                    pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                    profile: 1387275598000,
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    savedFilters: [
+                        {
+                            _id: "56213057c558b13c1bbf874d",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5621307bc558b13c1bbf874f",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213103c558b13c1bbf8750",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213197c558b13c1bbf8751",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56215e86c558b13c1bbf8755",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56229009184ec5a427913306",
+                            viewType: "",
+                            byDefault: "salesInvoice"
+                        },
+                        {
+                            _id: "562506bb19a2ecca01ca84b3",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56265005d53978de6e9ea440",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "562b83ccb4677e225aa31df6",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "564dd4ce9fb8bc3f2195662c",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56570d714d96962262fd4b55",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56572368bfd103f108eb4a24",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56604795ccc590f32c577ece",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566047c6ccc590f32c577ed1",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5661a7bf7d284423697e34a8",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5665429e9294f4d728bcafaa",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566eba768453e8b464b70a40",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56c711ab0769bba2647ae710",
+                            viewType: "",
+                            byDefault: "Projects"
+                        },
+                        {
+                            _id: "56daf5322e7b62c613ff2552",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd69d991cb620c19ff60c2",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd6af71e6cb7131892b2ba",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dfe8e56e2877d85455a6bb",
+                            viewType: "",
+                            byDefault: "Leads"
+                        },
+                        {
+                            _id: "56f3d039c1785edc507e81ea",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5708ca211d118cb6401008cc",
+                            viewType: "",
+                            byDefault: "Employees"
+                        }
+                    ],
+                    relatedEmployee: "55b92ad221e4b7c40f00004f"
+                }
+            },
+            workflow: {
+                _id: "55647d982e4aa3804a765ecb",
+                sequence: 2,
+                status: "Done",
+                name: "Paid",
+                wId: "Sales Invoice",
+                color: "#2C3E50",
+                __v: 0,
+                source: "purchase",
+                targetSource: [
+                    "invoice"
+                ],
+                wName: "invoice",
+                visible: true
+            },
+            payments: [
+                "574400f9355ba73610d82ec4"
+            ],
+            paymentInfo: {
+                total: 0,
+                balance: -77700,
+                unTaxed: 0,
+                taxes: 0
+            },
+            currency: {
+                _id: "565eab29aeb95fa9c0f9df2d",
+                rate: 1
+            },
+            invoiceDate: "2016-05-23T21:00:00.000Z",
+            forSales: false,
+            name: "DD4",
+            paymentDate: "2016-05-23T21:00:00.000Z",
+            paid: 777
+        },
+        {
+            _id: "574448a58aa0eeae38752548",
+            _type: "dividendInvoice",
+            dueDate: "2016-06-06T21:00:00.000Z",
+            approved: false,
+            removable: true,
+            editedBy: {
+                user: {
+                    _id: "52203e707d4dba8813000003",
+                    __v: 0,
+                    attachments: [ ],
+                    credentials: {
+                        access_token: "",
+                        refresh_token: ""
+                    },
+                    email: "info@thinkmobiles.com",
+                    kanbanSettings: {
+                        applications: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "Empty"
+                            ]
+                        },
+                        opportunities: {
+                            countPerPage: 10
+                        },
+                        tasks: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "528ce3caf3f67bc40b000013",
+                                "528ce3acf3f67bc40b000012",
+                                "528ce30cf3f67bc40b00000f",
+                                "528ce35af3f67bc40b000010"
+                            ]
+                        }
+                    },
+                    lastAccess: "2016-05-24T07:28:57.964Z",
+                    login: "admin",
+                    pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                    profile: 1387275598000,
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    savedFilters: [
+                        {
+                            _id: "56213057c558b13c1bbf874d",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5621307bc558b13c1bbf874f",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213103c558b13c1bbf8750",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213197c558b13c1bbf8751",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56215e86c558b13c1bbf8755",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56229009184ec5a427913306",
+                            viewType: "",
+                            byDefault: "salesInvoice"
+                        },
+                        {
+                            _id: "562506bb19a2ecca01ca84b3",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56265005d53978de6e9ea440",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "562b83ccb4677e225aa31df6",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "564dd4ce9fb8bc3f2195662c",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56570d714d96962262fd4b55",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56572368bfd103f108eb4a24",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56604795ccc590f32c577ece",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566047c6ccc590f32c577ed1",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5661a7bf7d284423697e34a8",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5665429e9294f4d728bcafaa",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566eba768453e8b464b70a40",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56c711ab0769bba2647ae710",
+                            viewType: "",
+                            byDefault: "Projects"
+                        },
+                        {
+                            _id: "56daf5322e7b62c613ff2552",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd69d991cb620c19ff60c2",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd6af71e6cb7131892b2ba",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dfe8e56e2877d85455a6bb",
+                            viewType: "",
+                            byDefault: "Leads"
+                        },
+                        {
+                            _id: "56f3d039c1785edc507e81ea",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5708ca211d118cb6401008cc",
+                            viewType: "",
+                            byDefault: "Employees"
+                        }
+                    ],
+                    relatedEmployee: "55b92ad221e4b7c40f00004f"
+                }
+            },
+            createdBy: {
+                user: {
+                    _id: "52203e707d4dba8813000003",
+                    __v: 0,
+                    attachments: [ ],
+                    credentials: {
+                        access_token: "",
+                        refresh_token: ""
+                    },
+                    email: "info@thinkmobiles.com",
+                    kanbanSettings: {
+                        applications: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "Empty"
+                            ]
+                        },
+                        opportunities: {
+                            countPerPage: 10
+                        },
+                        tasks: {
+                            countPerPage: 10,
+                            foldWorkflows: [
+                                "528ce3caf3f67bc40b000013",
+                                "528ce3acf3f67bc40b000012",
+                                "528ce30cf3f67bc40b00000f",
+                                "528ce35af3f67bc40b000010"
+                            ]
+                        }
+                    },
+                    lastAccess: "2016-05-24T07:28:57.964Z",
+                    login: "admin",
+                    pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                    profile: 1387275598000,
+                    imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                    savedFilters: [
+                        {
+                            _id: "56213057c558b13c1bbf874d",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5621307bc558b13c1bbf874f",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213103c558b13c1bbf8750",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56213197c558b13c1bbf8751",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56215e86c558b13c1bbf8755",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56229009184ec5a427913306",
+                            viewType: "",
+                            byDefault: "salesInvoice"
+                        },
+                        {
+                            _id: "562506bb19a2ecca01ca84b3",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56265005d53978de6e9ea440",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "562b83ccb4677e225aa31df6",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "564dd4ce9fb8bc3f2195662c",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56570d714d96962262fd4b55",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56572368bfd103f108eb4a24",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56604795ccc590f32c577ece",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566047c6ccc590f32c577ed1",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5661a7bf7d284423697e34a8",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5665429e9294f4d728bcafaa",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "566eba768453e8b464b70a40",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56c711ab0769bba2647ae710",
+                            viewType: "",
+                            byDefault: "Projects"
+                        },
+                        {
+                            _id: "56daf5322e7b62c613ff2552",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd69d991cb620c19ff60c2",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dd6af71e6cb7131892b2ba",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "56dfe8e56e2877d85455a6bb",
+                            viewType: "",
+                            byDefault: "Leads"
+                        },
+                        {
+                            _id: "56f3d039c1785edc507e81ea",
+                            viewType: "",
+                            byDefault: ""
+                        },
+                        {
+                            _id: "5708ca211d118cb6401008cc",
+                            viewType: "",
+                            byDefault: "Employees"
+                        }
+                    ],
+                    relatedEmployee: "55b92ad221e4b7c40f00004f"
+                }
+            },
+            workflow: {
+                _id: "55647d932e4aa3804a765ec9",
+                color: "#2C3E50",
+                name: "Unpaid",
+                sequence: 4,
+                status: "New",
+                wId: "Sales Invoice",
+                wName: "invoice",
+                source: "purchase",
+                targetSource: [
+                    "invoice"
+                ],
+                visible: true
+            },
+            payments: [ ],
+            paymentInfo: {
+                taxes: 0,
+                unTaxed: 0,
+                balance: 0,
+                total: 0
+            },
+            currency: {
+                rate: 1,
+                _id: "565eab29aeb95fa9c0f9df2d"
+            },
+            invoiceDate: "2016-05-23T21:00:00.000Z",
+            forSales: false,
+            name: "DD8",
+            paid: 0
+        }
+    ];
+    var fakeDividendForForm =  {
+        _id: "574400cf355ba73610d82ebe",
+        _type: "dividendInvoice",
+        dueDate: "2016-06-06T21:00:00.000Z",
+        products: [ ],
+        emailed: false,
+        approved: false,
+        removable: true,
+        invoiced: false,
+        attachments: [ ],
+        editedBy: {
+            user: {
+                _id: "52203e707d4dba8813000003",
+                __v: 0,
+                attachments: [ ],
+                credentials: {
+                    access_token: "",
+                    refresh_token: ""
+                },
+                email: "info@thinkmobiles.com",
+                kanbanSettings: {
+                    applications: {
+                        countPerPage: 10,
+                        foldWorkflows: [
+                            "Empty"
+                        ]
+                    },
+                    opportunities: {
+                        countPerPage: 10
+                    },
+                    tasks: {
+                        countPerPage: 10,
+                        foldWorkflows: [
+                            "528ce3caf3f67bc40b000013",
+                            "528ce3acf3f67bc40b000012",
+                            "528ce30cf3f67bc40b00000f",
+                            "528ce35af3f67bc40b000010"
+                        ]
+                    }
+                },
+                lastAccess: "2016-05-24T07:28:57.964Z",
+                login: "admin",
+                pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                profile: 1387275598000,
+                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                savedFilters: [
+                    {
+                        _id: "56213057c558b13c1bbf874d",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5621307bc558b13c1bbf874f",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56213103c558b13c1bbf8750",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56213197c558b13c1bbf8751",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56215e86c558b13c1bbf8755",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56229009184ec5a427913306",
+                        viewType: "",
+                        byDefault: "salesInvoice"
+                    },
+                    {
+                        _id: "562506bb19a2ecca01ca84b3",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56265005d53978de6e9ea440",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "562b83ccb4677e225aa31df6",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "564dd4ce9fb8bc3f2195662c",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56570d714d96962262fd4b55",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56572368bfd103f108eb4a24",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56604795ccc590f32c577ece",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "566047c6ccc590f32c577ed1",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5661a7bf7d284423697e34a8",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5665429e9294f4d728bcafaa",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "566eba768453e8b464b70a40",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56c711ab0769bba2647ae710",
+                        viewType: "",
+                        byDefault: "Projects"
+                    },
+                    {
+                        _id: "56daf5322e7b62c613ff2552",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dd69d991cb620c19ff60c2",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dd6af71e6cb7131892b2ba",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dfe8e56e2877d85455a6bb",
+                        viewType: "",
+                        byDefault: "Leads"
+                    },
+                    {
+                        _id: "56f3d039c1785edc507e81ea",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5708ca211d118cb6401008cc",
+                        viewType: "",
+                        byDefault: "Employees"
+                    }
+                ],
+                relatedEmployee: "55b92ad221e4b7c40f00004f"
+            },
+            date: "2016-05-24T07:20:47.685Z"
+        },
+        createdBy: {
+            user: {
+                _id: "52203e707d4dba8813000003",
+                __v: 0,
+                attachments: [ ],
+                credentials: {
+                    access_token: "",
+                    refresh_token: ""
+                },
+                email: "info@thinkmobiles.com",
+                kanbanSettings: {
+                    applications: {
+                        countPerPage: 10,
+                        foldWorkflows: [
+                            "Empty"
+                        ]
+                    },
+                    opportunities: {
+                        countPerPage: 10
+                    },
+                    tasks: {
+                        countPerPage: 10,
+                        foldWorkflows: [
+                            "528ce3caf3f67bc40b000013",
+                            "528ce3acf3f67bc40b000012",
+                            "528ce30cf3f67bc40b00000f",
+                            "528ce35af3f67bc40b000010"
+                        ]
+                    }
+                },
+                lastAccess: "2016-05-24T07:28:57.964Z",
+                login: "admin",
+                pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                profile: 1387275598000,
+                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                savedFilters: [
+                    {
+                        _id: "56213057c558b13c1bbf874d",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5621307bc558b13c1bbf874f",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56213103c558b13c1bbf8750",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56213197c558b13c1bbf8751",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56215e86c558b13c1bbf8755",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56229009184ec5a427913306",
+                        viewType: "",
+                        byDefault: "salesInvoice"
+                    },
+                    {
+                        _id: "562506bb19a2ecca01ca84b3",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56265005d53978de6e9ea440",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "562b83ccb4677e225aa31df6",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "564dd4ce9fb8bc3f2195662c",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56570d714d96962262fd4b55",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56572368bfd103f108eb4a24",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56604795ccc590f32c577ece",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "566047c6ccc590f32c577ed1",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5661a7bf7d284423697e34a8",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5665429e9294f4d728bcafaa",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "566eba768453e8b464b70a40",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56c711ab0769bba2647ae710",
+                        viewType: "",
+                        byDefault: "Projects"
+                    },
+                    {
+                        _id: "56daf5322e7b62c613ff2552",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dd69d991cb620c19ff60c2",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dd6af71e6cb7131892b2ba",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dfe8e56e2877d85455a6bb",
+                        viewType: "",
+                        byDefault: "Leads"
+                    },
+                    {
+                        _id: "56f3d039c1785edc507e81ea",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5708ca211d118cb6401008cc",
+                        viewType: "",
+                        byDefault: "Employees"
+                    }
+                ],
+                relatedEmployee: "55b92ad221e4b7c40f00004f"
+            },
+            date: "2016-05-24T07:20:47.685Z"
+        },
+        creationDate: "2016-05-24T07:20:47.685Z",
+        groups: {
+            owner: {
+                _id: "560c099da5d4a2e20ba5068b",
+                login: "AlexSvatuk"
+            },
+            users: [ ],
+            group: [ ]
+        },
+        whoCanRW: "everyOne",
+        workflow: {
+            _id: "55647d982e4aa3804a765ecb",
+            status: "Done",
+            name: "Paid"
+        },
+        payments: [
+            {
+                _id: "574400dd355ba73610d82ec0",
+                paymentRef: "",
+                name: "PP_2",
+                date: "2016-05-23T21:00:00.000Z",
+                paidAmount: 55500
+            }
+        ],
+        paymentInfo: {
+            total: 0,
+            balance: -55500,
+            unTaxed: 0,
+            taxes: 0
+        },
+        paymentTerms: null,
+        salesPerson: null,
+        currency: {
+            _id: {
+                _id: "565eab29aeb95fa9c0f9df2d",
+                name: "USD",
+                sequence: 0
+            },
+            rate: 1
+        },
+        journal: "572347d78ba4fd1330062726",
+        invoiceDate: "2016-05-23T21:00:00.000Z",
+        paymentReference: "free",
+        sourceDocument: null,
+        supplier: null,
+        forSales: false,
+        name: "DD3",
+        __v: 0,
+        paymentDate: "2016-05-23T21:00:00.000Z"
+    };
+    var fakeDividendUnpaidFoForm = {
+        _id: "574448a58aa0eeae38752548",
+        _type: "dividendInvoice",
+        dueDate: "2016-06-06T21:00:00.000Z",
+        products: [ ],
+        emailed: false,
+        approved: false,
+        removable: true,
+        invoiced: false,
+        attachments: [ ],
+        editedBy: {
+            date: "2016-05-24T12:27:17.691Z",
+            user: {
+                _id: "52203e707d4dba8813000003",
+                __v: 0,
+                attachments: [ ],
+                credentials: {
+                    access_token: "",
+                    refresh_token: ""
+                },
+                email: "info@thinkmobiles.com",
+                kanbanSettings: {
+                    applications: {
+                        countPerPage: 10,
+                        foldWorkflows: [
+                            "Empty"
+                        ]
+                    },
+                    opportunities: {
+                        countPerPage: 10
+                    },
+                    tasks: {
+                        countPerPage: 10,
+                        foldWorkflows: [
+                            "528ce3caf3f67bc40b000013",
+                            "528ce3acf3f67bc40b000012",
+                            "528ce30cf3f67bc40b00000f",
+                            "528ce35af3f67bc40b000010"
+                        ]
+                    }
+                },
+                lastAccess: "2016-05-24T07:28:57.964Z",
+                login: "admin",
+                pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                profile: 1387275598000,
+                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                savedFilters: [
+                    {
+                        _id: "56213057c558b13c1bbf874d",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5621307bc558b13c1bbf874f",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56213103c558b13c1bbf8750",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56213197c558b13c1bbf8751",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56215e86c558b13c1bbf8755",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56229009184ec5a427913306",
+                        viewType: "",
+                        byDefault: "salesInvoice"
+                    },
+                    {
+                        _id: "562506bb19a2ecca01ca84b3",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56265005d53978de6e9ea440",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "562b83ccb4677e225aa31df6",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "564dd4ce9fb8bc3f2195662c",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56570d714d96962262fd4b55",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56572368bfd103f108eb4a24",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56604795ccc590f32c577ece",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "566047c6ccc590f32c577ed1",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5661a7bf7d284423697e34a8",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5665429e9294f4d728bcafaa",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "566eba768453e8b464b70a40",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56c711ab0769bba2647ae710",
+                        viewType: "",
+                        byDefault: "Projects"
+                    },
+                    {
+                        _id: "56daf5322e7b62c613ff2552",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dd69d991cb620c19ff60c2",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dd6af71e6cb7131892b2ba",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dfe8e56e2877d85455a6bb",
+                        viewType: "",
+                        byDefault: "Leads"
+                    },
+                    {
+                        _id: "56f3d039c1785edc507e81ea",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5708ca211d118cb6401008cc",
+                        viewType: "",
+                        byDefault: "Employees"
+                    }
+                ],
+                relatedEmployee: "55b92ad221e4b7c40f00004f"
+            }
+        },
+        createdBy: {
+            date: "2016-05-24T12:27:17.691Z",
+            user: {
+                _id: "52203e707d4dba8813000003",
+                __v: 0,
+                attachments: [ ],
+                credentials: {
+                    access_token: "",
+                    refresh_token: ""
+                },
+                email: "info@thinkmobiles.com",
+                kanbanSettings: {
+                    applications: {
+                        countPerPage: 10,
+                        foldWorkflows: [
+                            "Empty"
+                        ]
+                    },
+                    opportunities: {
+                        countPerPage: 10
+                    },
+                    tasks: {
+                        countPerPage: 10,
+                        foldWorkflows: [
+                            "528ce3caf3f67bc40b000013",
+                            "528ce3acf3f67bc40b000012",
+                            "528ce30cf3f67bc40b00000f",
+                            "528ce35af3f67bc40b000010"
+                        ]
+                    }
+                },
+                lastAccess: "2016-05-24T07:28:57.964Z",
+                login: "admin",
+                pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                profile: 1387275598000,
+                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                savedFilters: [
+                    {
+                        _id: "56213057c558b13c1bbf874d",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5621307bc558b13c1bbf874f",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56213103c558b13c1bbf8750",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56213197c558b13c1bbf8751",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56215e86c558b13c1bbf8755",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56229009184ec5a427913306",
+                        viewType: "",
+                        byDefault: "salesInvoice"
+                    },
+                    {
+                        _id: "562506bb19a2ecca01ca84b3",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56265005d53978de6e9ea440",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "562b83ccb4677e225aa31df6",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "564dd4ce9fb8bc3f2195662c",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56570d714d96962262fd4b55",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56572368bfd103f108eb4a24",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56604795ccc590f32c577ece",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "566047c6ccc590f32c577ed1",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5661a7bf7d284423697e34a8",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5665429e9294f4d728bcafaa",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "566eba768453e8b464b70a40",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56c711ab0769bba2647ae710",
+                        viewType: "",
+                        byDefault: "Projects"
+                    },
+                    {
+                        _id: "56daf5322e7b62c613ff2552",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dd69d991cb620c19ff60c2",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dd6af71e6cb7131892b2ba",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "56dfe8e56e2877d85455a6bb",
+                        viewType: "",
+                        byDefault: "Leads"
+                    },
+                    {
+                        _id: "56f3d039c1785edc507e81ea",
+                        viewType: "",
+                        byDefault: ""
+                    },
+                    {
+                        _id: "5708ca211d118cb6401008cc",
+                        viewType: "",
+                        byDefault: "Employees"
+                    }
+                ],
+                relatedEmployee: "55b92ad221e4b7c40f00004f"
+            }
+        },
+        creationDate: "2016-05-24T12:27:17.691Z",
+        groups: {
+            group: [ ],
+            users: [ ],
+            owner: {
+                _id: "560c099da5d4a2e20ba5068b",
+                login: "AlexSvatuk"
+            }
+        },
+        whoCanRW: "everyOne",
+        workflow: {
+            _id: "55647d932e4aa3804a765ec9",
+            name: "Unpaid",
+            status: "New"
+        },
+        payments: [ ],
+        paymentInfo: {
+            taxes: 0,
+            unTaxed: 0,
+            balance: 0,
+            total: 0
+        },
+        paymentTerms: null,
+        salesPerson: null,
+        currency: {
+            rate: 1,
+            _id: {
+                _id: "565eab29aeb95fa9c0f9df2d",
+                name: "USD",
+                sequence: 0
+            }
+        },
+        journal: "572347d78ba4fd1330062726",
+        invoiceDate: "2016-05-23T21:00:00.000Z",
+        paymentReference: "free",
+        sourceDocument: null,
+        supplier: null,
+        forSales: false,
+        name: "DD8",
+        __v: 0
+    };
+    var fakePaymentMethods = {
+        data: [
+            {
+                _id: "565f2e05ab70d49024242e10",
+                name: "CASH UAH",
+                account: "CASH UAH",
+                currency: "UAH",
+                bank: "",
+                owner: "CASH UAH"
+            },
+            {
+                _id: "565f2e05ab70d49024242e0f",
+                name: "CASH USD",
+                account: "CASH USD",
+                currency: "USD",
+                bank: "",
+                owner: "CASH USD"
+            },
+            {
+                _id: "565f2e05ab70d49024242e07",
+                name: "Erste Bank HU24 1160 0006 0000 0000 4916 1522",
+                account: "HU24 1160 0006 0000 0000 4916 1522",
+                currency: "USD",
+                bank: "Erste Bank",
+                owner: "Alexander Sokhanych"
+            },
+            {
+                _id: "565f2e05ab70d49024242e08",
+                name: "Erste Bank HU27 1160 0006 0000 0000 4810 3101",
+                account: "HU27 1160 0006 0000 0000 4810 3101",
+                currency: "EUR",
+                bank: "Erste Bank",
+                owner: "Alexander Sokhanych"
+            },
+            {
+                _id: "555cc981532aebbc4a8baf36",
+                name: "Payoneer ",
+                account: "Payoneer ",
+                currency: "USD",
+                bank: "",
+                owner: "Payoneer "
+            },
+            {
+                _id: "555cc981532aebbc4a8baf38",
+                name: "Primary",
+                owner: ""
+            },
+            {
+                _id: "555cc981532aebbc4a8baf37",
+                name: "UkrSibBank",
+                owner: ""
+            },
+            {
+                _id: "565f2e05ab70d49024242e0c",
+                name: "Ukrsibbank 26000479199400",
+                account: "26000479199400",
+                currency: "USD",
+                bank: "Ukrsibbank",
+                owner: "YourTradingSystems"
+            },
+            {
+                _id: "565f2e05ab70d49024242e0d",
+                name: "Ukrsibbank 26000479199400",
+                account: "26000479199400",
+                currency: "UAH",
+                bank: "Ukrsibbank",
+                owner: "YourTradingSystems"
+            },
+            {
+                _id: "565f2e05ab70d49024242e09",
+                name: "Ukrsibbank 26005536599700",
+                account: "26005536599700",
+                currency: "USD",
+                bank: "Ukrsibbank",
+                owner: "ThinkMobiles"
+            },
+            {
+                _id: "565f2e05ab70d49024242e0b",
+                name: "Ukrsibbank 26005536599700",
+                account: "26005536599700",
+                currency: "UAH",
+                bank: "Ukrsibbank",
+                owner: "ThinkMobiles"
+            },
+            {
+                _id: "565f2e05ab70d49024242e0a",
+                name: "Ukrsibbank 26049536599700",
+                account: "26049536599700",
+                currency: "EUR",
+                bank: "Ukrsibbank",
+                owner: "ThinkMobiles"
+            },
+            {
+                _id: "565f2e05ab70d49024242e0e",
+                name: "Unicreditbank",
+                account: "Unicreditbank",
+                currency: "USD",
+                bank: "",
+                owner: "Unicreditbank"
+            }
+        ]
+    };
+    var fakeCurrency = {
+        data: [
+            {
+                _id: "565eab29aeb95fa9c0f9df2d",
+                sequence: 0,
+                name: "USD"
+            },
+            {
+                _id: "565eab34aeb95fa9c0f9df2e",
+                sequence: 1,
+                name: "EUR"
+            },
+            {
+                _id: "565eab3faeb95fa9c0f9df2f",
+                sequence: 2,
+                name: "UAH"
+            }
+        ]
+    };
 
     var view;
     var topBarView;
@@ -1148,7 +4176,12 @@ define([
                 var dividendUrl = new RegExp('\/Invoice\/list', 'i');
 
                 server.respondWith('GET', dividendUrl, [401, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                dividendCollection = new DividendCollection({});
+                dividendCollection = new DividendCollection({
+                    viewType: 'list',
+                    contentType: 'DividendInvoice',
+                    page: 1,
+                    count: 2
+                });
                 server.respond();
             });
 
@@ -1160,7 +4193,12 @@ define([
                 server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
                     count: 1
                 })]);
-                dividendCollection = new DividendCollection({});
+                dividendCollection = new DividendCollection({
+                    viewType: 'list',
+                    contentType: 'DividendInvoice',
+                    page: 1,
+                    count: 2
+                });
                 server.respond();
 
                 topBarView = new TopBarView({
@@ -1179,9 +4217,11 @@ define([
             var $thisEl;
             var mainSpy;
             var windowConfirmStub;
-            var deleteScheduleSpy;
-            var deletePayrollSpy;
             var alertStub;
+            var deleteSpy;
+            var deleteRenderSpy;
+            var jQueryAjaxSpy;
+            var paymentCreateInitSpy;
 
             before(function () {
                 App.startPreload = function() {
@@ -1195,6 +4235,11 @@ define([
                 };
 
                 App.currentDb = 'michelDb';
+                App.currentUser = {
+                        profile: {
+                            _id: '1387275598000'
+                        }
+                    };
 
                 server = sinon.fakeServer.create();
                 clock = sinon.useFakeTimers();
@@ -1203,6 +4248,10 @@ define([
                 windowConfirmStub.returns(true);
                 alertStub = sinon.stub(window, 'alert');
                 alertStub.returns(true);
+                deleteSpy = sinon.spy(ListView.prototype, 'deleteItems');
+                deleteRenderSpy = sinon.spy(ListView.prototype, 'deleteItemsRender');
+                jQueryAjaxSpy = sinon.spy($, 'ajax');
+                paymentCreateInitSpy = sinon.spy(PaymentsCreateView.prototype, 'initialize');
             });
 
             after(function () {
@@ -1211,17 +4260,21 @@ define([
                 mainSpy.restore();
                 windowConfirmStub.restore();
                 alertStub.restore();
+                deleteRenderSpy.restore();
+                deleteSpy.restore();
+                jQueryAjaxSpy.restore();
+                paymentCreateInitSpy.restore();
             });
 
             describe('INITIALIZE', function () {
 
-                /*it('Try to create dividendDeclarationListView', function (done) {
-                    var dividendUrl = new RegExp('\/Invoice\/list', 'i');
+                it('Try to create dividendDeclarationListView', function (done) {
+                    var dividendListUrl = new RegExp('\/Invoice\/list', 'i');
                     var dividendTotalUrl = new RegExp('\/Invoice\/totalCollectionLength');
 
-                    server.respondWith('GET', dividendUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendDeclaration)]);
+                    server.respondWith('GET', dividendListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendDeclaration)]);
                     server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count: 1
+                        count: 4
                     })]);
                     listView = new ListView({
                         startTime: new Date(),
@@ -1234,443 +4287,221 @@ define([
                     $thisEl = listView.$el;
 
                     expect($thisEl.find('#listTable')).to.exist;
-                    expect($thisEl.find('#listTable > tr').length).to.be.equals(1);
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(4);
+
+                    // bind events to topBarView and filterCollection
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+
+                    dividendCollection.bind('showmore', listView.showMoreContent, listView);
 
                     done();
-                });*/
-
-                /*it('Try to go to EditDialog', function(){
-                    var $needTd = $thisEl.find('#weeklyScheduler tr:nth-child(1) > td:nth-child(2)');
-
-                    $needTd.click();
-                    expect($('.ui-dialog')).to.exist;
                 });
 
-                it('Try to edit item', function(){
-                    var $dialog = $('.ui-dialog');
-                    var $nameInput = $dialog.find('#weeklySchedulerName > input');
-                    var $mondayInput = $dialog.find('td[data-content="1"] > input');
-                    var $saveBtn = $dialog.find('#create-weeklyScheduler-dialog');
-                    var keyUpEvent = $.Event('keyup');
-                    var scheduleUrl = new RegExp('weeklyScheduler\/', 'i');
-                    var weekScheduleUrl = new RegExp('\/weeklyScheduler\/list', 'i');
+                it('Try to delete item with error response', function(){
+                    mainSpy.reset();
+
+                    var $needCheckBox = $thisEl.find('#listTable > tr:nth-child(3) > td.notForm > input');
+                    var dividendUrl = new RegExp('\/Invoice\/', 'i');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var spyResponse;
 
-                    $nameInput.val('');
-                    $mondayInput.val('3');
-                    $mondayInput.trigger(keyUpEvent);
+                    $needCheckBox.click();
 
-                    //save with empty name
-                    $saveBtn.click();
-                    spyResponse = mainSpy.args[0][0];
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'name can\'t be empty');
-
-                    //save with hours > 24
-                    $nameInput.val('Test');
-                    $mondayInput.val('25');
-                    $saveBtn.click();
-                    spyResponse = mainSpy.args[1][0];
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'hours should be in 0-24 range');
-
-                    //save with error response
-                    $mondayInput.val('3');
-                    server.respondWith('PATCH', scheduleUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                    $saveBtn.click();
-                    server.respond();
-
-                    server.respondWith('GET', weekScheduleUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSchedule)]);
-                    server.respondWith('PATCH', scheduleUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"1":8,"2":8,"3":8,"4":8,"5":8,"6":0,"7":0,"_id":"57332c3b94ee1140b6bb49e2","totalHours":40,"name":"UA-40"})]);
-                    $saveBtn.click();
-                    server.respond();
-                    server.respond();
-
-                    expect($('.ui-dialog')).to.not.exist;
-                });
-
-                it('Try cancel EditDialog', function(){
-                    var $needTd = $thisEl.find('#weeklyScheduler tr:nth-child(1) > td:nth-child(2)');
-                    var $cancelBtn;
-
-                    $needTd.click();
-                    expect($('.ui-dialog')).to.exist;
-
-                    $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-                    $cancelBtn.click();
-
-                    expect($('.ui-dialog')).to.not.exist;
-                });
-
-                it('Try to delete schedule item', function(){
-                    var $deleteBtn = $thisEl.find('.fa-trash-o').eq(1);
-                    var scheduleUrl = new RegExp('\/weeklyScheduler\/', 'i');
-
-                    server.respondWith('DELETE', scheduleUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"1":4,"2":4,"3":4,"4":4,"5":4,"6":0,"7":0,"_id":"573add0245310a4662c8005b","__v":0,"totalHours":20,"name":"UA-20"})]);
+                    server.respondWith('DELETE', dividendUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
                     $deleteBtn.click();
                     server.respond();
 
-                    expect(deleteScheduleSpy.calledOnce).to.be.true;
-                });
-
-                it('Try to create schedule item', function(){
-                    mainSpy.reset();
-
-                    var $createBtn = $thisEl.find('#weeklyScheduler .fa-plus');
-
-                    $createBtn.click();
-                    expect($('.ui-dialog')).to.exist;
-
-                    var $dialog = $('.ui-dialog');
-                    var $nameInput = $dialog.find('#weeklySchedulerName > input');
-                    var $mondayInput = $dialog.find('td[data-content="1"] > input');
-                    var $saveBtn = $dialog.find('#create-weeklyScheduler-dialog');
-                    var keyUpEvent = $.Event('keyup');
-                    var scheduleUrl = 'weeklyScheduler';
-                    var weekScheduleUrl = new RegExp('\/weeklyScheduler\/list', 'i');
-                    var spyResponse;
-
-                    $nameInput.val('');
-                    $mondayInput.val('3');
-                    $mondayInput.trigger(keyUpEvent);
-
-                    //save with empty name
-                    $saveBtn.click();
                     spyResponse = mainSpy.args[0][0];
+                    expect(deleteSpy.calledOnce).to.be.true;
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'name can\'t be empty');
-
-                    //save with hours > 24
-                    $nameInput.val('Test');
-                    $mondayInput.val('25');
-                    $saveBtn.click();
-                    spyResponse = mainSpy.args[1][0];
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'hours should be in 0-24 range');
-
-                    $mondayInput.val('3');
-                    server.respondWith('GET', weekScheduleUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeSchedule)]);
-                    server.respondWith('POST', scheduleUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"1":0,"2":0,"3":0,"4":0,"5":0,"6":0,"7":0,"__v":0,"_id":"573f35b5a7312792307f9e50","totalHours":0,"name":"sf"})]);
-                    $saveBtn.click();
-                    server.respond();
-                    server.respond();
-
-                    expect($('.ui-dialog')).to.not.exist;
+                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
                 });
 
-                it('Try cancel CreateDialog', function(){
-                    var $createBtn = $thisEl.find('#weeklyScheduler .fa-plus');
-                    var $cancelBtn;
+                it('Try to delete item good response', function(){
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var dividendUrl = new RegExp('\/Invoice\/', 'i');
+                    var dividendTotalUrl = new RegExp('\/Invoice\/totalCollectionLength');
+                    var dividendListUrl = new RegExp('\/Invoice\/list', 'i');
 
-                    $createBtn.click();
-                    expect($('.ui-dialog')).to.exist;
-
-                    $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-                    $cancelBtn.click();
-
-                    expect($('.ui-dialog')).to.not.exist;
-                });
-
-                // payRollEarning views testing
-                it('Try to go to EditDialog', function(){
-                    var $needTd = $thisEl.find('#listTableearnings > tr:nth-child(1) > td:nth-child(2)');
-
-                    $needTd.click();
-                    expect($('.ui-dialog')).to.be.exist;
-                });
-
-                it('Try to save payroll earning with empty name', function(){
-                    mainSpy.reset();
-
-                    var $dialog = $('.ui-dialog');
-                    var $nameInput = $dialog.find('#payrollComponentTypeName');
-                    var $saveBtn = $('#create-weeklyScheduler-dialog');
-                    var spyResponse;
-
-                    $nameInput.val('');
-                    $saveBtn.click();
-
-                    spyResponse = mainSpy.args[0][0];
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'name can\'t be empty');
-                });
-
-                it('Try to save model with error response', function(){
-                    var $dialog = $('.ui-dialog');
-                    var $nameInput = $dialog.find('#payrollComponentTypeName');
-                    var $saveBtn = $('#create-weeklyScheduler-dialog');
-                    var patchUrl = new RegExp('\/payrollComponentTypes\/', 'i');
-
-                    $nameInput.val('Test');
-
-                    server.respondWith('PATCH', patchUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                    $saveBtn.click();
-                    server.respond();
-
-                    expect($('.ui-dialog')).to.be.exist;
-                });
-
-                it('Try to save model with good response', function(){
-                    var $dialog = $('.ui-dialog');
-                    var $nameInput = $dialog.find('#payrollComponentTypeName');
-                    var $saveBtn = $('#create-weeklyScheduler-dialog');
-                    var patchUrl = new RegExp('payrollComponentTypes\/', 'i');
-                    var earningsUrl = '/payrollComponentTypes/list/?count=100&type=earnings';
-
-                    $nameInput.val('Test');
-                    server.respondWith('GET', earningsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEarning)]);
-                    server.respondWith('PATCH', patchUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"_id":"573edafcf9281fb40d5db50a","__v":0,"description":"fff","type":"earnings","name":"ffff"})]);
-                    $saveBtn.click();
-                    server.respond();
-                    server.respond();
-
-                    expect($('.ui-dialog')).to.not.exist;
-                });
-
-                it('Try to cancel EditDialog', function(){
-                    var $needTd = $thisEl.find('#listTableearnings > tr:nth-child(1) > td:nth-child(2)');
-                    var $cancelBtn;
-
-                    $needTd.click();
-                    expect($('.ui-dialog')).to.be.exist;
-
-                    $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-                    $cancelBtn.click();
-
-                    expect($('.ui-dialog')).to.not.exist;
-                });
-
-                it('Try to remove Payroll earning type item', function(){
-                    var $deleteBtn = $thisEl.find('#earningType .fa-trash-o');
-                    var deleteUrl = new RegExp('\/payrollComponentTypes\/', 'i');
-                    var earningsUrl = '/payrollComponentTypes/list/?count=100&type=earnings';
-
-                    server.respondWith('GET', earningsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEarning)]);
-                    server.respondWith('DELETE', deleteUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        _id: "573edafcf9281fb40d5db50a",
-                        __v: 0,
-                        description: "fff",
-                        type: "earnings",
-                        name: "fff"
+                    server.respondWith('GET', dividendListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendAfterDelete)]);
+                    server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 3
                     })]);
+                    server.respondWith('DELETE', dividendUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"_id":"5742f26e7afe352f10c11c3d","_type":"dividendInvoice","dueDate":"2016-06-05T21:00:00.000Z","__v":0,"paymentDate":"2016-05-22T21:00:00.000Z","products":[],"emailed":false,"approved":false,"removable":true,"invoiced":false,"attachments":[],"editedBy":{"date":"2016-05-23T12:07:10.745Z","user":"52203e707d4dba8813000003"},"createdBy":{"date":"2016-05-23T12:07:10.745Z","user":"52203e707d4dba8813000003"},"creationDate":"2016-05-23T12:07:10.745Z","groups":{"group":[],"users":[],"owner":"560c099da5d4a2e20ba5068b"},"whoCanRW":"everyOne","workflow":"55647d932e4aa3804a765ec9","payments":[],"paymentInfo":{"taxes":0,"unTaxed":0,"balance":0,"total":0},"paymentTerms":null,"salesPerson":null,"currency":{"rate":1,"_id":"565eab29aeb95fa9c0f9df2d"},"journal":"572347d78ba4fd1330062726","invoiceDate":"2016-05-22T21:00:00.000Z","paymentReference":"free","sourceDocument":null,"supplier":null,"forSales":false,"name":"DD1","id":"5742f26e7afe352f10c11c3d"})]);
                     $deleteBtn.click();
                     server.respond();
                     server.respond();
+                    server.respond();
 
-                    expect(deletePayrollSpy.calledOnce).to.be.true;
+                    expect(deleteSpy.calledTwice).to.be.true;
                 });
 
-                it('Try to open CreateDialog', function(){
-                    var $createBtn = $thisEl.find('#earningType #top-bar-createBtn');
-
-                    $createBtn.click();
-                    expect($('.ui-dialog')).to.be.exist;
-                });
-
-                it('Try to create PayRollEarning Type item with empty name', function(){
+                it('Try to showMore items with error response', function(){
                     mainSpy.reset();
 
-                    var $createBtn = $('#create-weeklyScheduler-dialog');
+                    var $secondBtn = $thisEl.find('.pageList > a').eq(1);
+                    var dividendListUrl = new RegExp('\/Invoice\/list', 'i');
                     var spyResponse;
 
-                    $createBtn.click();
-                    spyResponse = mainSpy.args[0][0];
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'name can\'t be empty');
-                });
-
-                it('Try create item with error response', function(){
-                    var $dialog = $('.ui-dialog');
-                    var $createBtn = $('#create-weeklyScheduler-dialog');
-                    var $nameInput = $dialog.find('#payrollComponentTypeName');
-                    var patchUrl = new RegExp('\/payrollComponentTypes', 'i');
-
-                    $nameInput.val('Test');
-
-                    server.respondWith('POST', patchUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                    $createBtn.click();
+                    server.respondWith('GET', dividendListUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendAfterDelete)]);
+                    $secondBtn.click();
                     server.respond();
-
-                    expect($('.ui-dialog')).to.be.exist;
-                });
-
-                it('Try to create item with good response', function(){
-                    var $dialog = $('.ui-dialog');
-                    var $createBtn = $('#create-weeklyScheduler-dialog');
-                    var $nameInput = $dialog.find('#payrollComponentTypeName');
-                    var patchUrl = new RegExp('payrollComponentTypes', 'i');
-                    var earningsUrl = '/payrollComponentTypes/list/?count=100&type=earnings';
-
-                    $nameInput.val('Test');
-                    server.respondWith('GET', earningsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEarning)]);
-                    server.respondWith('POST', patchUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"__v":0,"_id":"5742ecdf7afe352f10c11c3a","description":"Test test","type":"earnings","name":"TestName"})]);
-                    $createBtn.click();
-                    server.respond();
-                    server.respond();
-
-                    expect($('.ui-dialog')).to.not.exist;
-                });
-
-                it('Try to cancel CreateDialog', function(){
-                    var $createBtn = $thisEl.find('#earningType #top-bar-createBtn');
-                    var $cancelBtn;
-
-                    $createBtn.click();
-                    expect($('.ui-dialog')).to.be.exist;
-
-                    $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-
-                    $cancelBtn.click();
-                    expect($('.ui-dialog')).to.not.exist;
-                });
-
-                // payRollDeduction views testing
-                it('Try to go to EditDialog', function(){
-                    var $needTd = $thisEl.find('#listTabledeductions > tr:nth-child(1) > td:nth-child(2)');
-
-                    $needTd.click();
-                    expect($('.ui-dialog')).to.be.exist;
-                });
-
-                it('Try to save payroll deduction with empty name', function(){
-                    mainSpy.reset();
-
-                    var $dialog = $('.ui-dialog');
-                    var $nameInput = $dialog.find('#payrollComponentTypeName');
-                    var $saveBtn = $('#create-weeklyScheduler-dialog');
-                    var spyResponse;
-
-                    $nameInput.val('');
-                    $saveBtn.click();
 
                     spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'name can\'t be empty');
+                    expect(spyResponse).to.have.property('message', 'Some Error.');
                 });
 
-                it('Try to save model with error response', function(){
-                    var $dialog = $('.ui-dialog');
-                    var $nameInput = $dialog.find('#payrollComponentTypeName');
-                    var $saveBtn = $('#create-weeklyScheduler-dialog');
-                    var patchUrl = new RegExp('\/payrollComponentTypes\/', 'i');
+                it('Try to showMore items with good response', function(){
+                    var $secondBtn = $thisEl.find('.pageList > a').eq(1);
+                    var dividendTotalUrl = new RegExp('\/Invoice\/totalCollectionLength');
+                    var dividendListUrl = new RegExp('\/Invoice\/list', 'i');
 
-                    $nameInput.val('Test');
-
-                    server.respondWith('PATCH', patchUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                    $saveBtn.click();
-                    server.respond();
-
-                    //expect($('.ui-dialog')).to.be.exist;
-                });
-
-                it('Try to save model with good response', function(){
-                    var $dialog = $('.ui-dialog');
-                    var $nameInput = $dialog.find('#payrollComponentTypeName');
-                    var $saveBtn = $('#create-weeklyScheduler-dialog');
-                    var patchUrl = new RegExp('payrollComponentTypes\/', 'i');
-                    var earningsUrl = '/payrollComponentTypes/list/?count=100&type=deductions';
-
-                    $nameInput.val('Test');
-                    server.respondWith('GET', earningsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDeductions)]);
-                    server.respondWith('PATCH', patchUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"_id":"5742ee217afe352f10c11c3b","__v":0,"description":"asdsd","type":"deductions","name":"sdsa"})]);
-                    $saveBtn.click();
+                    server.respondWith('GET', dividendListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendAfterDelete)]);
+                    server.respondWith('GET', dividendTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count: 2
+                    })]);
+                    $secondBtn.click();
                     server.respond();
                     server.respond();
 
-                    expect($('.ui-dialog')).to.not.exist;
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
                 });
 
-                it('Try to cancel EditDialog', function(){
-                    var $needTd = $thisEl.find('#listTabledeductions > tr:nth-child(1) > td:nth-child(2)');
-                    var $cancelBtn;
+                it('Try to go to editDialog with error response', function(){
+                    mainSpy.reset();
 
+                    var $needTd = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(3)');
+                    var dividendUrl = new RegExp('\/Invoice\/form');
+
+                    server.respondWith('GET', dividendUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
                     $needTd.click();
-                    expect($('.ui-dialog')).to.be.exist;
+                    server.respond();
 
-                    $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-                    $cancelBtn.click();
-
-                    expect($('.ui-dialog')).to.not.exist;
+                    expect(mainSpy.args[0][0]).to.have.property('type', 'error');
+                    expect(mainSpy.args[0][0]).to.have.property('message', 'Please refresh browser');
                 });
 
-                it('Try to remove Payroll deduction type item', function(){
-                    var $deleteBtn = $thisEl.find('#deductionType .fa-trash-o');
-                    var deleteUrl = new RegExp('\/payrollComponentTypes\/', 'i');
-                    var earningsUrl = '/payrollComponentTypes/list/?count=100&type=earnings';
+                it('Try to go to editDialog with good response', function(){
+                    mainSpy.reset();
 
-                    server.respondWith('GET', earningsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDeductions)]);
-                    server.respondWith('DELETE', deleteUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"_id":"5742ee217afe352f10c11c3b","__v":0,"description":"asdsd","type":"deductions","name":"sdsa"})]);
+                    var $needTd = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(3)');
+                    var dividendUrl = new RegExp('\/Invoice\/form');
+
+                    server.respondWith('GET', dividendUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendForForm)]);
+                    $needTd.click();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.exist;
+                });
+
+                it('Try to change tab', function(){
+                    var $dialog = $('.ui-dialog');
+                    var $firstTab = $dialog.find('.dialog-tabs > li').eq(0).find('a');
+                    var $secondTab = $dialog.find('.dialog-tabs > li').eq(1).find('a');
+
+                    expect($firstTab).to.have.class('active');
+
+                    $secondTab.click();
+                    expect($secondTab).to.have.class('active');
+
+                    $firstTab.click();
+                    expect($firstTab).to.have.class('active');
+                });
+
+                it('Try to delete item with 403 error status response', function(){
+                    mainSpy.reset();
+
+                    var $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-invoice-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
+                    var dividendUrl = new RegExp('\/Invoice\/', 'i');
+
+                    server.respondWith('DELETE', dividendUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
                     $deleteBtn.click();
                     server.respond();
-                    server.respond();
 
-                    expect(deletePayrollSpy.calledTwice).to.be.true;
+                    expect(mainSpy.args[0][0]).to.have.property('type', 'error');
+                    expect(mainSpy.args[0][0]).to.have.property('message', 'You do not have permission to perform this action');
                 });
 
-                it('Try to open CreateDialog', function(){
-                    var $createBtn = $thisEl.find('#deductionType #top-bar-createBtn');
+                it('Try to delete item', function(){
+                    deleteRenderSpy.reset();
+                    var $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-invoice-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
+                    var dividendUrl = new RegExp('\/Invoice\/', 'i');
 
-                    $createBtn.click();
-                    expect($('.ui-dialog')).to.be.exist;
-                });
-
-                it('Try to create PayRollDeduction Type item with empty name', function(){
-                    mainSpy.reset();
-
-                    var $createBtn = $('#create-weeklyScheduler-dialog');
-                    var spyResponse;
-
-                    $createBtn.click();
-                    spyResponse = mainSpy.args[0][0];
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'name can\'t be empty');
-                });
-
-                it('Try create item with error response', function(){
-                    var $dialog = $('.ui-dialog');
-                    var $createBtn = $('#create-weeklyScheduler-dialog');
-                    var $nameInput = $dialog.find('#payrollComponentTypeName');
-                    var patchUrl = new RegExp('\/payrollComponentTypes\/', 'i');
-
-                    $nameInput.val('Test');
-
-                    server.respondWith('POST', patchUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                    $createBtn.click();
-                    server.respond();
-
-                    //expect($('.ui-dialog')).to.be.exist;
-                });
-
-
-                it('Try to create item with good response', function(){
-                    var $dialog = $('.ui-dialog');
-                    var $createBtn = $('#create-weeklyScheduler-dialog');
-                    var $nameInput = $dialog.find('#payrollComponentTypeName');
-                    var patchUrl = new RegExp('payrollComponentTypes', 'i');
-                    var earningsUrl = '/payrollComponentTypes/list/?count=100&type=deductions';
-
-                    $nameInput.val('Test');
-                    server.respondWith('GET', earningsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDeductions)]);
-                    server.respondWith('POST', patchUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"__v":0,"_id":"5742ef4d7afe352f10c11c3c","description":"Test","type":"deductions","name":"TestName"})]);
-                    $createBtn.click();
-                    server.respond();
+                    server.respondWith('DELETE', dividendUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({"_id":"5742f26e7afe352f10c11c3d","_type":"dividendInvoice","dueDate":"2016-06-05T21:00:00.000Z","__v":0,"paymentDate":"2016-05-22T21:00:00.000Z","products":[],"emailed":false,"approved":false,"removable":true,"invoiced":false,"attachments":[],"editedBy":{"date":"2016-05-23T12:07:10.745Z","user":"52203e707d4dba8813000003"},"createdBy":{"date":"2016-05-23T12:07:10.745Z","user":"52203e707d4dba8813000003"},"creationDate":"2016-05-23T12:07:10.745Z","groups":{"group":[],"users":[],"owner":"560c099da5d4a2e20ba5068b"},"whoCanRW":"everyOne","workflow":"55647d932e4aa3804a765ec9","payments":[],"paymentInfo":{"taxes":0,"unTaxed":0,"balance":0,"total":0},"paymentTerms":null,"salesPerson":null,"currency":{"rate":1,"_id":"565eab29aeb95fa9c0f9df2d"},"journal":"572347d78ba4fd1330062726","invoiceDate":"2016-05-22T21:00:00.000Z","paymentReference":"free","sourceDocument":null,"supplier":null,"forSales":false,"name":"DD1","id":"5742f26e7afe352f10c11c3d"})]);
+                    $deleteBtn.click();
                     server.respond();
 
                     expect($('.ui-dialog')).to.not.exist;
+                    //expect(deleteRenderSpy.called).to.be.true;  //todo uncomment after fix ListView
                 });
 
-                it('Try to cancel CreateDialog', function(){
-                    var $createBtn = $thisEl.find('#deductionType #top-bar-createBtn');
-                    var $cancelBtn;
+                it('Try to open not paid item and open CreatePaymentView', function(done){
+                    paymentCreateInitSpy.reset();
 
-                    $createBtn.click();
-                    expect($('.ui-dialog')).to.be.exist;
+                    var $unPaidTd = $thisEl.find('#listTable > tr:nth-child(3) > td:nth-child(2)');
+                    var dividendUrl = new RegExp('\/Invoice\/form');
+                    var paymentMethodUrl = '/paymentMethod';
+                    var currencyUrl = '/currency/getForDd';
+                    var $dialog;
+                    var $payBtn;
 
-                    $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
+                    server.respondWith('GET', dividendUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDividendUnpaidFoForm)]);
+                    $unPaidTd.click();
+                    server.respond();
 
-                    $cancelBtn.click();
-                    expect($('.ui-dialog')).to.not.exist;
-                });*/
+                    expect($('.ui-dialog')).to.exist;
+
+                    // go to payment dialog
+                    $dialog = $('.ui-dialog');
+                    $payBtn = $dialog.find('.newPayment');
+
+                    server.respondWith('GET', paymentMethodUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePaymentMethods)]);
+                    server.respondWith('GET', currencyUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCurrency)]);
+                    $payBtn.click();
+                    server.respond();
+                    server.respond();
+
+                    clock.tick(500);
+
+                    expect($('.ui-dialog')).to.exist;
+                    expect(paymentCreateInitSpy.calledOnce).to.be.true;
+                    done();
+                });
+
+                it('Try to changePaidAmount', function(done){
+                    jQueryAjaxSpy.reset();
+
+                    var $dialog = $('.ui-dialog');
+                    var $amountInput = $dialog.find('#paidAmount');
+                    var amountLeftUrl = new RegExp('\/payment\/amountLeftCalc', 'i');
+
+                    server.respondWith('GET', amountLeftUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        difference: -5000
+                    })]);
+                    $amountInput.val('5000');
+                    //$amountInput.trigger('keyup'); // not work
+                    
+                    server.respond();
+
+                    clock.tick(200);
+
+                    expect(jQueryAjaxSpy.called).to.be.true;
+
+                    done();
+                });
             });
         });
     });
