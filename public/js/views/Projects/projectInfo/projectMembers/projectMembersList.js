@@ -245,8 +245,15 @@ define([
         },
 
         updatedOptions: function () {
+            var id;
+
             this.showCreateBtn();
-            this.changedModels = {};
+
+            for (id in this.changedModels) {
+                this.collection.get(id).set(this.changedModels[id]);
+                delete this.changedModels[id];
+            }
+
             this.$el.find('.edited').removeClass('edited');
             this.changedSales();
         },
