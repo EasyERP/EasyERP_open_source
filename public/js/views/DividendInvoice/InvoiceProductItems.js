@@ -35,7 +35,8 @@ define([
                 this.isPaid = !!options.isPaid;
                 this.notAddItem = !!options.notAddItem;
                 this.paid = options.paid;
-            };
+            }
+            ;
 
             this.forSales = options.forSales;
 
@@ -143,27 +144,36 @@ define([
                 if (products) {
                     productsContainer = thisEl.find('#productList');
                     productsContainer.prepend(_.template(ProductItemsEditList, {
-                        products  : products,
-                        forSales  : self.forSales,
-                        isPaid    : self.isPaid,
-                        notAddItem: this.notAddItem,
-                        currencySplitter : helpers.currencySplitter
+                        products        : products,
+                        forSales        : self.forSales,
+                        isPaid          : self.isPaid,
+                        notAddItem      : this.notAddItem,
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass
                     }));
                     totalAmountContainer = thisEl.find('#totalAmountContainer');
                     totalAmountContainer.append(_.template(totalAmount, {
-                        model         : options.model,
-                        balanceVisible: this.visible,
-                        currencySplitter : helpers.currencySplitter
+                        model           : options.model,
+                        balanceVisible  : this.visible,
+                        currencySplitter: helpers.currencySplitter,
+                        currencyClass   : helpers.currencyClass
                     }));
                 }
             } else {
                 this.$el.html(this.template({
-                    forSales  : self.forSales,
-                    isPaid    : self.isPaid,
-                    notAddItem: this.notAddItem
+                    forSales        : self.forSales,
+                    isPaid          : self.isPaid,
+                    notAddItem      : this.notAddItem,
+                    currencySplitter: helpers.currencySplitter,
+                    currencyClass   : helpers.currencyClass
                 }));
                 totalAmountContainer = thisEl.find('#totalAmountContainer');
-                totalAmountContainer.append(_.template(totalAmount, {model: null, balanceVisible: this.visible}));
+                totalAmountContainer.append(_.template(totalAmount, {
+                    model           : null,
+                    balanceVisible  : this.visible,
+                    currencySplitter: helpers.currencySplitter,
+                    currencyClass   : helpers.currencyClass
+                }));
             }
 
             return this;

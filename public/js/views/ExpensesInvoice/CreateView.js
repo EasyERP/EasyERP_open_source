@@ -134,9 +134,9 @@ define([
                 var balance = parseFloat($currentEl.find("#balance").text());
 
                 var payments = {
-                    total  : total * 100,
-                    unTaxed: unTaxed * 100,
-                    balance: balance * 100
+                    total  : total,
+                    unTaxed: unTaxed,
+                    balance: balance
                 };
 
                 var currency = {
