@@ -1011,7 +1011,7 @@ define([
                         eventChannel: self.eventChannel
                     });
 
-                    self.iCollection.toJSON().forEach(function (element) {
+                   /* self.iCollection.toJSON().forEach(function (element) {
                         if (element.payments) {
                             element.payments.forEach(function (payment) {
                                 payments.push(payment);
@@ -1021,7 +1021,7 @@ define([
 
                     self.payments = self.payments || {};
                     self.payments.fromInvoces = payments;
-
+*/
                     self.renderTabCounter();
 
                     if (cb) {
@@ -1073,7 +1073,9 @@ define([
                         proformaView.showDialog(quotationId);
                     }
 
-                    self.pCollection.toJSON().forEach(function (element) {
+                    self.renderTabCounter();
+
+                   /* self.pCollection.toJSON().forEach(function (element) {
                         if (element.payments) {
                             element.payments.forEach(function (payment) {
                                 payments.push(payment);
@@ -1082,7 +1084,7 @@ define([
                     });
 
                     self.payments = self.payments || {};
-                    self.payments.fromProformas = payments;
+                    self.payments.fromProformas = payments;*/
 
                     if (typeof(cb) === 'function') {
                         callback();
@@ -1096,30 +1098,16 @@ define([
 
             },
 
-            getPayments: function (activate) {
+            getPayments: function (cb, activate) {
                 var self = this;
-                var payFromInvoice;
-                var payFromProforma;
-                var payments;
-
-                self.payments = self.payments || {};
-                payFromInvoice = self.payments.fromInvoces || [];
-                payFromProforma = self.payments.fromProformas || [];
-
-                payments = payFromInvoice.concat(payFromProforma);
-
-                var filterPayment = {
-                    name: {
-                        key  : '_id',
-                        value: payments
-                    }
-                };
+                var _id = this.id;
+                var callback;
 
                 self.payCollection = new paymentCollection({
-                    count      : 50,
+                    count      : 100,
                     viewType   : 'list',
                     contentType: 'customerPayments',
-                    filter     : filterPayment
+                    url        : 'project/' + _id + '/payments'
                 });
 
                 self.payCollection.unbind();
@@ -1128,15 +1116,20 @@ define([
                 function createPayment() {
                     var data = {
                         model       : self.payCollection,
-                        filter      : filterPayment,
                         activate    : activate,
                         eventChannel: self.eventChannel
                     };
 
                     new PaymentView(data);
 
+                    if (typeof(cb) === 'function') {
+                        callback();
+                    }
+
                     self.renderTabCounter();
                 }
+
+                callback = _.once(cb);
             },
 
             getProjectMembers: function (cb) {
@@ -1164,7 +1157,8 @@ define([
             },
 
             getQuotations: function (cb) {
-                var _id = window.location.hash.split('form/')[1];
+                //var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
                 var self = this;
 
                 var filter = {
@@ -1175,10 +1169,11 @@ define([
                 };
 
                 this.qCollection = new quotationCollection({
-                    count      : 50,
+                    count      : 100,
                     viewType   : 'list',
                     contentType: 'salesQuotation',
-                    filter     : filter
+                    url     : 'project/' + _id + '/quotations'
+                    //filter     : filter
                 });
 
                 function createView() {
@@ -1209,7 +1204,9 @@ define([
 
             getOrders: function (cb) {
                 var self = this;
-                var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
+
+                // var _id = window.location.hash.split('form/')[1];
 
                 var filter = {
                     projectName: {
@@ -1223,10 +1220,11 @@ define([
                 };
 
                 this.ordersCollection = new quotationCollection({
-                    count      : 50,
+                    count      : 100,
                     viewType   : 'list',
                     contentType: 'salesOrder',
-                    filter     : filter
+                    url     : 'project/' + _id + '/orders'
+                    /*filter     : filter*/
                 });
 
                 function createView() {
@@ -1440,7 +1438,7 @@ define([
                 App.startPreload();
 
                 async.parallel(paralellTasks, function () {
-                    self.getPayments(true);
+                    self.getPayments(null, true);
                     App.stopPreload();
                 });
 
@@ -1536,7 +1534,7 @@ define([
                     }).render().el
                 );
 
-                _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma');
+                _.bindAll(this, 'getQuotations', 'getProjectMembers', 'getOrders', 'getWTrack', 'renderProformRevenue', 'renderProjectInfo', 'renderJobs', 'getInvoice', 'getInvoiceStats', 'getProformaStats', 'getProforma', 'getPayments');
 
                 paralellTasks = [this.renderProjectInfo, this.getQuotations, this.getOrders];
 
@@ -1546,6 +1544,7 @@ define([
                         if (accessElement.access.read) {
                             paralellTasks.push(self.getInvoice);
                             paralellTasks.push(self.getProforma);
+                            paralellTasks.push(self.getPayments);
                         } else {
                             thisEl.find('#invoicesTab').parent().remove();
                             thisEl.find('div#invoices').parent().remove();
@@ -1592,7 +1591,6 @@ define([
                 }
 
                 async.parallel(paralellTasks, function (err, result) {
-                    self.getPayments();
                     App.stopPreload();
                     self.renderProformRevenue();
                     self.activeTab();
