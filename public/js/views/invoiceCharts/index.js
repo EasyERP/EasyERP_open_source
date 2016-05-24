@@ -132,13 +132,13 @@ define([
                 d.paid = d.paid || 0;
                 d.revenue = d.revenue || 0;
 
-                return Math.min(d.invoiced, d.paid, d.revenue);
+                return Math.min(d.invoiced, d.paid/*, d.revenue*/);
             })), d3.max(data.map(function (d) {
                 d.invoiced = d.invoiced || 0;
                 d.paid = d.paid || 0;
                 d.revenue = d.revenue || 0;
 
-                return Math.max(d.invoiced, d.paid, d.revenue);
+                return Math.max(d.invoiced, d.paid/*, d.revenue*/);
             }))]);
 
             line = d3.svg.line()
@@ -165,7 +165,7 @@ define([
                     return height - y(datum.invoiced);
                 })
                 .attr("width", x.rangeBand())
-                .attr("fill", "#01579B")//lighBlue
+                .attr("fill", "#01579B") // lighBlue
                 .attr("opacity", 0.3)
                 .on('mouseover', function (d) {
 
@@ -189,15 +189,15 @@ define([
                 .attr("fill", "#40C4FF")// blue  #40C4FF
                 .attr("opacity", 0.3);
 
-            topChart.append("path")
+            /*topChart.append("path")
                 .datum(data)
                 .attr('stroke', 'yellow')
                 .attr('stroke-width', 2)
                 .style('fill', 'none')
-               /* .attr("class", "line")*/
-                .attr("d", line);
+               /!* .attr("class", "line")*!/
+                .attr("d", line);*/
 
-            topChart.selectAll(".circle")
+            /*topChart.selectAll(".circle")
                 .data(data)
                 .enter()
                 .append("circle")
@@ -213,7 +213,7 @@ define([
                 })
                 .style("fill", "#1EBBEA")
                 .style("stroke", "#fff")
-                .style("stroke-width", "2");
+                .style("stroke-width", "2");*/
 
             xAxis = d3.svg.axis()
                 .scale(x)

@@ -1060,15 +1060,16 @@ var Project = function (models, event) {
         var projectPosition = models.get(req.session.lastDb, 'projectPosition', projectPositionSchema);
         var bonusType = models.get(req.session.lastDb, 'bonusType', BonusTypeSchema);
         var employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        
         query.populate('bonus.employeeId', '_id name')
-            .populate('bonus.bonusId', '_id name value isPercent')
-            .populate('createdBy.user', '_id login')
-            .populate('editedBy.user', '_id login')
+            // .populate('bonus.bonusId', '_id name value isPercent')
+            // .populate('createdBy.user', '_id login')
+            // .populate('editedBy.user', '_id login')
             .populate('groups.owner', '_id name')
             .populate('groups.users', '_id login')
             .populate('groups.group', '_id departmentName')
             .populate('groups.owner', '_id login')
-            .populate('budget.projectTeam')
+            // .populate('budget.projectTeam')
             .populate('projectmanager', '_id name fullName')
             .populate('salesmanager', '_id name fullName')
             .populate('customer', '_id name fullName')

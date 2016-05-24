@@ -765,7 +765,8 @@ define([
 
             renderProjectInfo: function (cb) {
                 var self = this;
-                var _id = window.location.hash.split('form/')[1];
+                // var _id = window.location.hash.split('form/')[1];
+                var _id = this.id;
                 var filter = {
                     project: {
                         key  : 'project._id',
@@ -777,7 +778,8 @@ define([
                     viewType : 'list',
                     filter   : filter,
                     projectId: _id,
-                    count    : 50
+                    count    : 50,
+                    url      : 'project/' + _id + '/info'
                 });
 
                 this.jobsCollection.bind('reset add remove', self.renderJobs, self);
@@ -792,55 +794,19 @@ define([
                 var self = this;
                 var _id = window.location.hash.split('form/')[1];
                 var key = 'jobs_projectId:' + _id;
-                var jobsCollection = custom.retriveFromCash(key);
-                var budgetTotal;
+                // var jobsCollection = custom.retriveFromCash(key);
 
-                var projectTeam = _.filter(this.jobsCollection.toJSON(), function (el) {
-                    return el.project._id === _id;
-                });
-
-                if (!jobsCollection || !jobsCollection.length) {
-                    custom.cacheToApp(key, this.jobsCollection, true);
-                }
-
-                this.projectValues = {
-                    revenue: 0,
-                    profit : 0,
-                    cost   : 0
-                };
-
-                projectTeam.forEach(function (projectTeam) {
-                    if (projectTeam && projectTeam.budget && projectTeam.budget.budgetTotal) {
-                        budgetTotal = projectTeam.budget.budgetTotal;
-                        self.projectValues.revenue += budgetTotal.revenueSum || 0;
-                        self.projectValues.cost += projectTeam.cost || 0;
-                        self.projectValues.profit = self.projectValues.revenue - self.projectValues.cost;
-                        /*self.projectValues.profit += budgetTotal ? (budgetTotal.revenueSum - budgetTotal.costSum) : 0;*/
-                    }
-                });
-
-                this.projectValues.markUp = ((this.projectValues.profit / this.projectValues.cost) * 100);
-
-                if (!isFinite(this.projectValues.markUp)) {
-                    self.projectValues.markUp = 0;
-                }
-
-                this.projectValues.radio = ((this.projectValues.profit / this.projectValues.revenue) * 100);
-
-                if (!isFinite(this.projectValues.radio)) {
-                    this.projectValues.radio = 0;
-                }
+                var projectTeam = this.jobsCollection.toJSON();
 
                 container.html(template({
                         jobs            : projectTeam,
-                        bonus           : formModel.budget.bonus ? formModel.budget.bonus : [],
-                        projectValues   : self.projectValues,
+                       /* projectValues   : self.projectValues,*/
                         currencySplitter: helpers.currencySplitter,
                         contentType     : self.contentType
                     })
                 );
 
-                this.renderProformRevenue();
+                // this.renderProformRevenue();
                 this.getInvoiceStats();
                 this.getProformaStats();
             },
@@ -864,7 +830,7 @@ define([
                     viewType: 'list',
                     /*filter  : filter,*/
                     count   : 100,
-                    url: 'project/' + _id + '/weTracks'
+                    url     : 'project/' + _id + '/weTracks'
                 });
 
                 function createView() {
@@ -872,9 +838,9 @@ define([
                     var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
                     var itemsNumber = parseInt($('.selectedItemsNumber').text(), 10) || 'all';
                     var defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
-                    
+
                     callback();
-                    
+
                     if (self.wTrackView) {
                         self.wTrackView.undelegateEvents();
                     }
@@ -921,7 +887,7 @@ define([
                     filter     : filter,
                     startNumber: startNumber,
                     project    : self.formModel,
-                    url: 'project/' + _id + '/weTracks'
+                    url        : 'project/' + _id + '/weTracks'
                 });
 
                 this.wCollection.bind('reset', this.createView);
@@ -1238,8 +1204,7 @@ define([
                 };
 
                 this.qCollection.bind('reset', createView);
-                this.qCollection.bind('add', self.renderProformRevenue);
-                this.qCollection.bind('remove', self.renderProformRevenue);
+                this.qCollection.bind('add remove', self.renderProformRevenue);
             },
 
             getOrders: function (cb) {
@@ -1446,18 +1411,18 @@ define([
                 var tabId;
                 var dialogsDiv = $('#dialogContainer').is(':empty');
 
-                if (dialogsDiv && App.projectInfo && App.projectInfo.currentTab && App.projectInfo.currentTab !== 'overview') {
-                    tabId = App.projectInfo.currentTab;
-                    tabs = $('.chart-tabs');
-                    activeTab = tabs.find('.active');
+                /*if (dialogsDiv && App.projectInfo && App.projectInfo.currentTab && App.projectInfo.currentTab !== 'overview') {
+                 tabId = App.projectInfo.currentTab;
+                 tabs = $('.chart-tabs');
+                 activeTab = tabs.find('.active');
 
-                    activeTab.removeClass('active');
-                    tabs.find('#' + tabId + 'Tab').addClass('active');
+                 activeTab.removeClass('active');
+                 tabs.find('#' + tabId + 'Tab').addClass('active');
 
-                    dialogHolder = $('.dialog-tabs-items');
-                    dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-                    dialogHolder.find('div#' + tabId).closest('.dialog-tabs-item').addClass('active'); // added selector div in case finding bad element
-                }
+                 dialogHolder = $('.dialog-tabs-items');
+                 dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+                 dialogHolder.find('div#' + tabId).closest('.dialog-tabs-item').addClass('active'); // added selector div in case finding bad element
+                 }*/
             },
 
             newPayment: function () {

@@ -36,7 +36,7 @@
                 });
             },
 
-            showMore        : function (options) {
+            showMore: function (options) {
                 var that = this;
                 var filterObject = options || {};
                 filterObject['page'] = (options && options.page) ? options.page : this.page;
@@ -53,12 +53,13 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }
                 });
             },
+            
             showMoreAlphabet: function (options) {
                 var that = this;
                 var filterObject = options || {};
@@ -79,7 +80,7 @@
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: "Some Error."
                         });
                     }

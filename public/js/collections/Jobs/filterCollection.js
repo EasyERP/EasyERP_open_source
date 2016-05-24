@@ -12,9 +12,15 @@ define([
         viewType    : 'list',
 
         initialize: function (options) {
+            var self = this;
+
             options = options || {};
             this.startTime = new Date();
-            var self = this;
+
+            if (options && options.url) {
+                this.url = options.url;
+                delete options.url;
+            }
 
             this.filter = options ? options.filter : {};
             this.projectId = options.projectId;
@@ -24,7 +30,6 @@ define([
                 data   : options,
                 reset  : true,
                 success: function (newCollection) {
-
                     var key = 'jobs_projectId:' + self.projectId;
                     var collection = custom.retriveFromCash(key);
 
@@ -73,7 +78,7 @@ define([
                 },
                 error  : function () {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: "Some Error."
                     });
                 }

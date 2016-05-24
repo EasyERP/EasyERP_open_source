@@ -43,7 +43,7 @@
                 //this.filterView;
             },
 
-            events        : {
+            events: {
                 "click #showMore"           : "showMore",
                 "click .thumbnailwithavatar": "gotoEditForm",
                 "click .letter:not(.empty)" : "alpabeticalRender",
@@ -72,7 +72,7 @@
                 }, this);
             },
 
-            asyncLoadImgs    : function (collection) {
+            asyncLoadImgs: function (collection) {
                 var ids = _.map(collection.toJSON(), function (item) {
                     return item._id;
                 });
@@ -219,7 +219,7 @@
                         },
                         error  : function () {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: 'Please refresh browser'
                             });
                         }
@@ -227,7 +227,7 @@
                 }
             },
 
-            showMore       : function (event) {
+            showMore: function (event) {
                 event.preventDefault();
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
