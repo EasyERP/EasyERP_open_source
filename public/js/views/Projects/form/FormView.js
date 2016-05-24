@@ -801,10 +801,17 @@ define([
                 // var jobsCollection = custom.retriveFromCash(key);
 
                 var projectTeam = this.jobsCollection.toJSON();
+                var firstJob = projectTeam[0];
+                var cost = firstJob ? firstJob.costTotal : 0;
+                var revenue = firstJob ? firstJob.revenueTotal : 0;
+
+                this.projectValues = {
+                    cost   : cost,
+                    revenue: revenue
+                };
 
                 container.html(template({
                         jobs            : projectTeam,
-                       /* projectValues   : self.projectValues,*/
                         currencySplitter: helpers.currencySplitter,
                         contentType     : self.contentType
                     })
@@ -1016,17 +1023,17 @@ define([
                         eventChannel: self.eventChannel
                     });
 
-                   /* self.iCollection.toJSON().forEach(function (element) {
-                        if (element.payments) {
-                            element.payments.forEach(function (payment) {
-                                payments.push(payment);
-                            });
-                        }
-                    });
+                    /* self.iCollection.toJSON().forEach(function (element) {
+                     if (element.payments) {
+                     element.payments.forEach(function (payment) {
+                     payments.push(payment);
+                     });
+                     }
+                     });
 
-                    self.payments = self.payments || {};
-                    self.payments.fromInvoces = payments;
-*/
+                     self.payments = self.payments || {};
+                     self.payments.fromInvoces = payments;
+                     */
                     self.renderTabCounter();
 
                     if (cb) {
@@ -1080,16 +1087,16 @@ define([
 
                     self.renderTabCounter();
 
-                   /* self.pCollection.toJSON().forEach(function (element) {
-                        if (element.payments) {
-                            element.payments.forEach(function (payment) {
-                                payments.push(payment);
-                            });
-                        }
-                    });
+                    /* self.pCollection.toJSON().forEach(function (element) {
+                     if (element.payments) {
+                     element.payments.forEach(function (payment) {
+                     payments.push(payment);
+                     });
+                     }
+                     });
 
-                    self.payments = self.payments || {};
-                    self.payments.fromProformas = payments;*/
+                     self.payments = self.payments || {};
+                     self.payments.fromProformas = payments;*/
 
                     if (typeof(cb) === 'function') {
                         callback();
@@ -1177,7 +1184,7 @@ define([
                     count      : 100,
                     viewType   : 'list',
                     contentType: 'salesQuotation',
-                    url     : 'project/' + _id + '/quotations'
+                    url        : 'project/' + _id + '/quotations'
                     //filter     : filter
                 });
 
@@ -1228,7 +1235,7 @@ define([
                     count      : 100,
                     viewType   : 'list',
                     contentType: 'salesOrder',
-                    url     : 'project/' + _id + '/orders'
+                    url        : 'project/' + _id + '/orders'
                     /*filter     : filter*/
                 });
 
