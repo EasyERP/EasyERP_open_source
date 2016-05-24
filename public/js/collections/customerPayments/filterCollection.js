@@ -23,6 +23,13 @@ define([
                 filterObject['viewType'] = (options && options.viewType) ? options.viewType : this.viewType;
                 filterObject['contentType'] = (options && options.contentType) ? options.contentType : this.contentType;
 
+                if (options && options.url) {
+                    this.url = options.url;
+                    delete options.url;
+                } else if (options && options.viewType) {
+                    this.url += options.viewType;
+                }
+
                 this.fetch({
                     data   : filterObject,
                     waite  : true,
@@ -55,7 +62,10 @@ define([
                 this.count = options.count;
                 this.page = options.page || 1;
 
-                if (options && options.viewType) {
+                if (options && options.url) {
+                    this.url = options.url;
+                    delete options.url;
+                } else if (options && options.viewType) {
                     this.url += options.viewType;
                 }
 

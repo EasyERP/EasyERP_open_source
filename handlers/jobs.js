@@ -1399,6 +1399,7 @@ var Jobs = function (models, event) {
                     worked     : 1,
                     revenue    : 1,
                     employee   : 1,
+                    department : '$department.departmentName',
                     transfer   : {
                         $filter: {
                             input: '$employee.transfer',
@@ -1430,6 +1431,7 @@ var Jobs = function (models, event) {
                     totalWorked: {$first: '$totalWorked'},
                     revenue    : {$first: '$revenue'},
                     employee   : {$first: '$employee'},
+                    department : {$first: '$department'},
                     transfer   : {$first: '$transfer'}
                 }
             }, {
@@ -1452,6 +1454,7 @@ var Jobs = function (models, event) {
                     worked     : 1,
                     revenue    : 1,
                     employee   : 1,
+                    department : 1,
                     jobPosition: {$arrayElemAt: ['$jobPosition', 0]}
                 }
             }, {
@@ -1474,7 +1477,7 @@ var Jobs = function (models, event) {
                                 jobPosition: '$jobPosition.name',
                                 worked     : '$worked'
                             },
-                            department: '$department.departmentName',
+                            department: '$department',
                             revenue   : '$revenue'
                         }
                     }

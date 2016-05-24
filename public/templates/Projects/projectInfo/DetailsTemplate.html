@@ -129,10 +129,19 @@
             </thead>
             <tbody id="project">
             <tr>
-                <td class="dollar"> <%= firstJob ? currencySplitter((firstJob.revenueTotal/100).toFixed()): 0%></td>
-                <td class="dollar"> <%= firstJob ? currencySplitter((firstJob.profitTotal/100).toFixed()): 0%></td>
-                <td class="procent"><%= firstJob ? currencySplitter((firstJob.profitTotal/firstJob.costTotal * 100).toFixed()): 0%></td>
-                <td class="procent"><%= firstJob ? currencySplitter((firstJob.profitTotal/firstJob.revenueTotal * 100).toFixed()): 0%></td>
+                <%  var revenueTotal = firstJob ? firstJob.revenueTotal/100 : 0;
+                    var profitTotal = firstJob ? firstJob.profitTotal/100: 0;
+                    var costTotal = firstJob ? firstJob.costTotal/100: 0;
+                    var murkUp = profitTotal/costTotal;
+                    var margin = profitTotal/revenueTotal;
+
+                    murkUp = isFinite(murkUp) ? murkUp * 100 : 0;
+                    margin = isFinite(margin) ? margin * 100 : 0;
+                %>
+                <td class="dollar"> <%= currencySplitter(revenueTotal.toFixed())%></td>
+                <td class="dollar"> <%= currencySplitter(profitTotal.toFixed())%></td>
+                <td class="procent"><%= currencySplitter(murkUp.toFixed())%></td>
+                <td class="procent"><%= currencySplitter(margin.toFixed())%></td>
             </tr>
             </tbody>
         </table>

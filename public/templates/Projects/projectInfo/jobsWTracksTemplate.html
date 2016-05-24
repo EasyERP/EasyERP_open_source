@@ -12,7 +12,7 @@
         <tbody id="wTracks" class="enableTableOdd">
         <% jobItem.revenue.forEach(function(element,i){ %>
             <%if(element && element.employee && element.employee._id){%>
-                <tr data-id="<%=element.employee._id%>" id="<%=element._id + '_' + element.employee._id%>">
+                <tr data-id="<%=element.employee._id%>" id="<%=jobItem._id + '_' + element.employee._id%>">
                     <td><%=element.employee.name%></td>
                     <td><%=element.employee.jobPosition%></td>
                     <td><%=element.department%></td>
