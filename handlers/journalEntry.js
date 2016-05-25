@@ -3501,7 +3501,7 @@ var Module = function (models, event) {
                             $match: matchObject
                         }, {
                             $match: {
-                                "sourceDocument.model": {$in: ["Invoice", "proforma", "dividendInvoice"]},
+                                "sourceDocument.model": {$in: ["Invoice", "Proforma", "dividendInvoice"]},
                                 debit                 : {$gt: 0}
                             }
                         }, {
