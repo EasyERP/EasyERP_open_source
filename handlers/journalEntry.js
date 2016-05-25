@@ -1196,7 +1196,7 @@ var Module = function (models, event) {
                                 department = transferObj.department;
                                 break;
                             }
-                        } else {
+                        } else if (transferObj.status !== 'transfer') {
                             salaryForDate = transferObj.salary;
                             weeklyScheduler = transferObj.weeklyScheduler;
                             department = transferObj.department;
@@ -1204,6 +1204,10 @@ var Module = function (models, event) {
                         }
                     }
                 }
+
+                if (employeeId.toString() === '55b92ad221e4b7c40f000084'){
+                            console.log('fff');
+                        }
 
                 if (notDevArray.indexOf(department.toString()) !== -1) {
                     salaryForDate = 0;
@@ -2941,7 +2945,7 @@ var Module = function (models, event) {
                                         weeklyScheduler = transferObj.weeklyScheduler;
                                         break;
                                     }
-                                } else {
+                                } else if (transferObj.status !== 'transfer'){
                                     salaryForDate = transferObj.salary;
                                     weeklyScheduler = transferObj.weeklyScheduler;
                                     break;
