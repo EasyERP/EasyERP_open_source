@@ -27,7 +27,7 @@ describe("Dashboard Vacation Specs", function () {
                 .expect(200, done);
         });
 
-        it("should return dashboard using startDate == now", function (done) {
+        it("should return HRdashboard", function (done) {
 
             startTime = new Date();
 
@@ -41,6 +41,10 @@ describe("Dashboard Vacation Specs", function () {
 
                     var body = res.body;
                     var dateStart = moment().subtract(11, 'month').startOf('month');
+                    var hiredEmployees;
+                    var firedEmployees;
+                    var dateStartHired;
+                    var dateStartFired;
 
                     expect(body)
                         .to.be.instanceOf(Array)
@@ -50,147 +54,49 @@ describe("Dashboard Vacation Specs", function () {
                         .and.to.have.deep.property('0')
                         .and.to.have.property('hiredEmployees');
 
-                    var hired = body[0].data[0].hiredEmployees;
-                    var fired = body[1].data[0].firedEmployees;
-
-                    expect(hired)
-                        .to.have.property('employees')
-                        .and.to.be.instanceOf(Array);
-
-                    var employee = departmentDashboard.employees[0];
-
-                    expect(departmentDashboard)
-                        .to.have.property('department');
-
-                    var department = departmentDashboard.department;
-
-                    expect(department)
-                        .to.have.property('_id');
-                    expect(department)
-                        .to.have.property('departmentName');
-
-                    var departmentId = department._id;
-
-                    expect(employee)
-                        .to.have.property('_id');
-                    expect(employee)
-                        .to.have.property('fired')
-                        .and.to.be.instanceOf(Array);
-                    expect(employee)
-                        .to.have.property('hired')
-                        .and.to.be.instanceOf(Array);
-                    expect(employee)
-                        .to.have.property('isLead')
-                        .and.to.be.least(0);
-                    expect(employee)
-                        .to.have.property('lastHire');
-                    expect(employee)
-                        .to.have.property('maxProjects')
-                        .and.to.be.least(0);
-                    expect(employee)
-                        .to.have.property('name');
-                    expect(employee)
-                        .to.have.property('weekData')
+                    expect(body)
+                        .to.be.instanceOf(Array)
+                        .and.to.have.deep.property('1')
+                        .and.to.have.property('data')
                         .and.to.be.instanceOf(Array)
-                        .and.to.have.length(duration + 1);
+                        .and.to.have.deep.property('0')
+                        .and.to.have.property('firedEmployees');
 
-                    var employeeId = employee._id;
-                    var hired = employee.hired.reduce(function(previous, current) {
-                        return previous.date > current.date ? previous : current;
-                    });
+                    for (var i = 0; i <= 11; i++) {
+                        if (body[0].data[i].hiredEmployees.length) {
+                            hiredEmployees = body[0].data[i].hiredEmployees;
+                            dateStartHired = dateStart.add(i, 'month');
+                            break;
+                        }
+                    }
+                    for (var j = 0; j <= 11; j++) {
+                        if (body[1].data[j].firedEmployees.length) {
+                            firedEmployees = body[1].data[j].firedEmployees;
+                            dateStartFired = dateStart.add(j, 'month');
+                            break;
+                        }
+                    }
 
-                    expect(hired)
-                        .to.have.property('date');
-
-                    var hireDate = moment(hired.date);
-                    var hireWeekDate = hireDate.isoWeek() - 1 + 100 * hireDate.isoWeekYear();
-                    hireDate = hireDate.valueOf();
-                    var now = moment().valueOf();
-
-                    expect(employee.lastHire)
-                        .to.be.equal(hireWeekDate);
-
-                    expect(hireDate).to.be.below(now);
-                    expect(hired)
-                        .to.have.property('info');
-                    expect(hired)
-                        .to.have.property('salary')
-                        .and.to.be.least(0);
-                    expect(hired)
-                        .to.have.property('jobType');
-                    expect(hired)
-                        .to.have.property('manager');
-                    expect(hired)
-                        .to.have.property('jobPosition');
-                    expect(hired)
-                        .to.have.property('department')
-                        .and.to.be.equal(departmentId);
-
-                    var weekData = employee.weekData.reduce(function(previous, current) {
-                        return previous.dateByWeek < current.dateByWeek ? previous : current;
-                    });
-
-                    expect(weekData)
-                        .to.have.property('projectRoot')
-                        .and.to.be.instanceOf(Array);
-                    expect(weekData)
-                        .to.have.property('hours')
-                        .and.to.be.least(0)
-                        .and.to.be.most(168);
-                    expect(weekData)
-                        .to.have.property('department')
-                        .and.to.be.equal(departmentId);
-                    expect(weekData)
-                        .to.have.property('employee')
-                        .and.to.be.equal(employeeId);
-                    expect(weekData)
-                        .to.have.property('dateByWeek')
-                        .and.to.be.equal(dateByWeekStart);
-                    expect(weekData)
-                        .to.have.property('projects');
-                    expect(weekData)
-                        .to.have.property('holidays')
-                        .and.to.be.least(0)
-                        .and.to.be.most(168);
-                    expect(weekData)
-                        .to.have.property('vacations')
-                        .and.to.be.least(0)
-                        .and.to.be.most(168);
-
-                    var project = weekData.projectRoot[0];
-
-                    expect(project)
-                        .to.have.property('hours')
-                        .and.to.be.least(0)
-                        .and.to.be.most(168);
-                    expect(project)
-                        .to.have.property('department')
-                        .and.to.be.equal(departmentId);
-                    expect(project)
-                        .to.have.property('employee')
-                        .and.to.be.equal(employeeId);
-                    expect(project)
-                        .to.have.property('dateByWeek')
-                        .and.to.be.equal(dateByWeekStart);
-                    expect(project)
-                        .to.have.property('project');
-
-                    weekData = employee.weekData.reduce(function(previous, current) {
-                        return previous.dateByWeek > current.dateByWeek ? previous : current;
-                    });
-
-
-                    expect(weekData)
-                        .to.have.property('dateByWeek')
-                        .and.to.be.equal(dateByWeekEnd);
-                    expect(weekData)
-                        .to.have.property('holidays')
-                        .and.to.be.least(0)
-                        .and.to.be.most(168);
-                    expect(weekData)
-                        .to.have.property('vacations')
-                        .and.to.be.least(0)
-                        .and.to.be.most(168);
+                    if (hiredEmployees) {
+                        expect(hiredEmployees[0])
+                            .to.be.instanceOf(Object)
+                            .and.to.have.property('hireDate')
+                            .and.to.be.gte(dateStartHired.month() + 1 + dateStartHired.year() * 100);
+                        expect(hiredEmployees[0])
+                            .to.have.property('department')
+                            .and.to.be.instanceOf(Object)
+                            .and.to.have.property('departmentName');
+                    }
+                    if (firedEmployees) {
+                        expect(firedEmployees[0])
+                            .to.be.instanceOf(Object)
+                            .and.to.have.property('fireDate')
+                            .and.to.be.lte(dateStartFired.month() + 1 + dateStartFired.year() * 100);
+                        expect(firedEmployees[0])
+                            .to.have.property('department')
+                            .and.to.be.instanceOf(Object)
+                            .and.to.have.property('departmentName');
+                    }
 
 
                     done();
@@ -229,7 +135,6 @@ describe("Dashboard Vacation Specs", function () {
 
             aggent
                 .get('dashboard/hr')
-                .query({"filter[startDate]": startTime.toString()})
                 .expect(403, done);
         });
 
