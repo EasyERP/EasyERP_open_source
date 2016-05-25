@@ -23,7 +23,7 @@ describe("Employee Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'lilyadb'
                 })
                 .expect(200, done);
         });
@@ -504,7 +504,7 @@ describe("Employee Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'pavlodb'
+                    dbId : 'lilyadb'
                 })
                 .expect(200, done);
         });
