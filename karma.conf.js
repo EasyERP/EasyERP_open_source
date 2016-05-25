@@ -33,7 +33,8 @@ module.exports = function (config) {
             {pattern: 'public/templates/**/*.html', included: false, watching: false},
             {pattern: 'public/js/*.js', included: false, watching: false},
             
-            {pattern: 'test/uiSpecs/**/*.test.js', included: false, watching: true}
+            //{pattern: 'test/uiSpecs/**/*.test.js', included: false, watching: true}
+            {pattern: 'test/uiSpecs/views/login.test.js', included: false, watching: true}
         ],
 
         exclude: [],

@@ -20,9 +20,7 @@
     "spin.js": "spinjs#^2.3.2",
     "async": "~1.2.1",
     "moment": "~2.11.2",
-    "backbone.memento": "~0.4.1",
     "backbone": "~1.2.3",
-    "jquery": "~2.1.4",
-    "ladda": "~1.0.0"
+    "jquery": "~2.1.4"
   }
 }

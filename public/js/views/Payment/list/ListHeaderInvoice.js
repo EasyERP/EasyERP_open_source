@@ -1,11 +1,9 @@
-/**
- * Created by soundstorm on 21.05.15.
- */
 define([
-    "text!templates/Payment/list/ListHeaderInvoice.html",
-    "text!templates/Payment/list/ListTemplateInvoice.html",
+    'Backbone',
+    'text!templates/Payment/list/ListHeaderInvoice.html',
+    'text!templates/Payment/list/ListTemplateInvoice.html',
     'helpers'
-], function (listHeaderTemplate, listTemplate, helpers) {
+], function (Backbone, listHeaderTemplate, listTemplate, helpers) {
     var PaymentItemsTemplate = Backbone.View.extend({
         el: '#payments-container',
 
