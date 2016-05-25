@@ -1205,6 +1205,11 @@ var Module = function (models, event) {
                     }
                 }
 
+                if (employeeId.toString() === '55b92ad221e4b7c40f000030'){
+                    console.log('ddd');
+
+                }
+
 
                 if (notDevArray.indexOf(department.toString()) !== -1) {
                     salaryForDate = 0;
@@ -1265,7 +1270,7 @@ var Module = function (models, event) {
                     salaryIdleBody.amount = (idleHours - vacationHours) * costForHour * 100;
                     vacationBody.amount = vacationCost;
 
-                    if (salaryIdleBody.amount > 0) {
+                    if (vacationBody.amount > 0) {
                         createReconciled(vacationBody, req.session.lastDb, cb, req.session.uId);
                     } else {
                         cb();
