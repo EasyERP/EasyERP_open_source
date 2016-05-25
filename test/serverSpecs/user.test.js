@@ -2,21 +2,29 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
+var dbId = 'dendb';
+var admin = {
+    login: 'admin',
+    pass : 'tm2016',
+    dbId : dbId
+};
+var failUser = {
+    login: 'ArturMyhalko',
+    pass : 'thinkmobiles2015',
+    dbId : dbId
+};
 
 describe("User Specs", function () {
     'use strict';
     describe("Create User block", function () {
         var id;
+        var idCur;
 
         before(function (done) {
             aggent = request.agent(url);
             aggent
                 .post('users/login')
-                .send({
-                    login: 'admin',
-                    pass : '1q2w3eQWE',
-                    dbId : 'production'
-                })
+                .send(admin)
                 .expect(200, done);
         });
 
@@ -164,9 +172,155 @@ describe("User Specs", function () {
 
         });
 
-        it("should remove user", function (done) {
+        it('should return current user by id without password', function (done) {
+            aggent
+                .get('users/current')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+                    var _user;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body).to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('user')
+                        .and.to.be.instanceOf(Object);
+
+                    _user = body.user;
+
+                    expect(body).to.have.property('savedFilters');
+                    expect(_user).to.not.have.property('pass');
+
+                    done();
+                });
+
+        });
+
+        it('should get totalCollectionLength of users', function (done) {
+            aggent
+                .get('users/totalCollectionLength')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('count');
+
+                    done();
+                });
+        });
+
+        it('should update password', function (done) {
+            var body = {
+                oldpass: 'superpass',
+                pass   : 'superpass'
+            };
+
+            aggent
+                .patch('users/' + id)
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('success');
+
+                    done();
+                });
+        });
+
+        it("should don't update password", function (done) {
+            var body = {
+                oldpass: 'superpas',
+                pass   : 'superpass'
+            };
+
+            aggent
+                .patch('users/' + id)
+                .send(body)
+                .expect(400, done);
+        });
+
+        it('should update current + id', function (done) {
+            var body = {
+
+            };
+
+            aggent
+                .patch('users/current/' + id)
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('success');
+
+                    done();
+                });
+        });
+
+        it('should create current user', function (done) {
+            var body = {
+                "login"  : "super.current",
+                "pass"   : "superpass",
+                "email"  : "super.current@valid.com",
+                "profile": 1234
+            };
+
+            aggent
+                .post('users')
+                .send(body)
+                .expect(201)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('id');
+
+                    idCur = body.id;
+
+                    done();
+                });
+        });
+
+        it('should remove user', function (done) {
             aggent
                 .delete('users/' + id)
+                .expect(200, done);
+        });
+
+        it('should remove current user', function (done) {
+            aggent
+                .delete('users/' + idCur)
                 .expect(200, done);
         });
     });
@@ -177,11 +331,7 @@ describe("User Specs", function () {
         });
 
         it("should login success", function (done) {
-            var body = {
-                "login": "admin",
-                "pass" : "1q2w3eQWE",
-                "dbId" : "production"
-            };
+            var body = admin;
 
             aggent
                 .post('users/login')
@@ -192,8 +342,7 @@ describe("User Specs", function () {
         it("should fail login, empty pass field", function (done) {
             var body = {
                 "login" : "admin",
-                "sfshdf": "1q2w3eQWE",
-                "dbId"  : "production"
+                "dbId"  : dbId
             };
 
             aggent
@@ -206,7 +355,7 @@ describe("User Specs", function () {
             var body = {
                 "login": "admin",
                 "pass" : "jdgfdfjkgbdjgbjhfdbgdfbg",
-                "dbId" : "production"
+                "dbId" : dbId
             };
 
             aggent
