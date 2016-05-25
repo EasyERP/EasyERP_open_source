@@ -856,30 +856,31 @@ var Module = function (models, event) {
             return false;
         };
 
-        if (workflow !== CONSTANTS.JOB_FINISHED) {
-            remove = true;
-        }
+        Job.findById(jobId, {workflow: 1, invoice: 1}).populate('invoice').exec(function (err, result) {
+            if (err) {
+                return console.log(err);
+            }
 
-        if (remove) {
-            Model.remove({
-                journal             : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB, CONSTANTS.SALARY_PAYABLE, CONSTANTS.OVERTIME_PAYABLE, CONSTANTS.OVERHEAD]},
-                "sourceDocument._id": jobId
-            }, function (err, result) {
-                if (err) {
-                    return console.log(err);
-                }
-            })
-        } else {
-            Job.findById(jobId, {invoice: 1}).populate('invoice').exec(function (err, result) {
-                if (err) {
-                    return console.log(err);
-                }
+            if (result.workflow.toString() !== CONSTANTS.JOB_FINISHED) {
+                remove = true;
+            }
+
+            if (remove) {
+                Model.remove({
+                    journal             : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB, CONSTANTS.SALARY_PAYABLE, CONSTANTS.OVERTIME_PAYABLE, CONSTANTS.OVERHEAD]},
+                    "sourceDocument._id": jobId
+                }, function (err, result) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                })
+            } else {
 
                 var date = result && result.invoice ? moment(result.invoice.date).subtract(1, 'seconds') : null;
 
                 if (date) {
                     bodyFinishedJob.date = new Date(date);
-                    bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds')),
+                    bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds'));
 
                         Model.aggregate([{
                             $match: {
@@ -911,8 +912,10 @@ var Module = function (models, event) {
                         });
 
                 }
-            });
-        }
+
+            }
+
+        });
 
     };
 
@@ -2955,19 +2958,19 @@ var Module = function (models, event) {
                             }
                         }
 
-                      /*  if (employee.toString() === '55b92ad221e4b7c40f00008a'){
-                            console.dir(weeklyScheduler);
-                        }*/
+                        /*  if (employee.toString() === '55b92ad221e4b7c40f00008a'){
+                              console.dir(weeklyScheduler);
+                          }*/
 
                         if (!Object.keys(weeklyScheduler).length) {
                             weeklyScheduler = {
-                                1       : 8,
-                                2       : 8,
-                                3       : 8,
-                                4       : 8,
-                                5       : 8,
-                                6       : 0,
-                                7       : 0,
+                                1         : 8,
+                                2         : 8,
+                                3         : 8,
+                                4         : 8,
+                                5         : 8,
+                                6         : 0,
+                                7         : 0,
                                 name      : 'UA-40',
                                 totalHours: 40
                             };
@@ -3178,13 +3181,12 @@ var Module = function (models, event) {
             console.log('Success');
             event.emit('sendMessage', {view: 'journalEntry', message: 'Please, refresh browser, data was changed.'});
 
-            jobIds.forEach(function (job) {
+           /* jobIds.forEach(function (job) {
                 checkAndCreateForJob({
-                    req     : req,
-                    jobId   : job,
-                    workflow: CONSTANTS.JOBSFINISHED
+                    req  : req,
+                    jobId: job
                 })
-            });
+            });*/
 
             Job.update({_id: {$in: jobIds}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
 
