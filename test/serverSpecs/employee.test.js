@@ -7,6 +7,7 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
+var moment = require('moment');
 var aggent;
 
 describe("Employee Specs", function () {
@@ -229,6 +230,82 @@ describe("Employee Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
+
+                    done();
+                });
+        });
+
+        it("should get salaryByMonth", function (done) {
+
+            var query = {
+                _id          : id,
+                month        : moment().month(),
+                year         : moment().year(),
+                count        : 100,
+                page         : 1,
+                newCollection: false
+            };
+            aggent
+                .get('employees/getByMonth')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data')
+                        .and.to.be.equal(300);
+
+                    done();
+                });
+        });
+
+        it("should get Years", function (done) {
+
+            aggent
+                .get('employees/getYears')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('min')
+                        .and.to.be.instanceOf(Date);
+
+                    done();
+                });
+        });
+
+        it("should get Employees count", function (done) {
+
+            aggent
+                .get('employees/getEmployeesCount')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('count')
+                        .and.to.be.instanceOf(Number);
 
                     done();
                 });
