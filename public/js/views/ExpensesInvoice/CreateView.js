@@ -129,14 +129,14 @@ define([
                 var invoiceDate = $currentEl.find("#invoice_date").val();
                 var dueDate = $currentEl.find("#due_date").val();
 
-                var total = parseFloat($currentEl.find("#totalAmount").text());
-                var unTaxed = parseFloat($currentEl.find("#totalUntaxes").text());
-                var balance = parseFloat($currentEl.find("#balance").text());
+                var total = 100 * parseFloat($currentEl.find("#totalAmount").text());
+                var unTaxed = 100 * parseFloat($currentEl.find("#totalUntaxes").text());
+                var balance = 100 * parseFloat($currentEl.find("#balance").text());
 
                 var payments = {
-                    total  : total * 100,
-                    unTaxed: unTaxed * 100,
-                    balance: balance * 100
+                    total  : total,
+                    unTaxed: unTaxed,
+                    balance: balance
                 };
 
                 var currency = {
@@ -169,10 +169,10 @@ define([
                             products.push({
                                 product    : productId,
                                 description: description,
-                                unitPrice  : price * 100,
+                                unitPrice  : price,
                                 quantity   : quantity,
-                                taxes      : taxes * 100,
-                                subTotal   : amount * 100
+                                taxes      : taxes,
+                                subTotal   : amount
                             });
                         }
                     }

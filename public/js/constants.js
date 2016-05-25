@@ -706,6 +706,8 @@ define([], function () {
         PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146',
         PAYMENT_TERMS   : '55536e52475b7be475f335f6',
         PAYMENT_METHOD  : '565f2e05ab70d49024242e07',
-        END_OF_PROJECT  : 'To end of project'
+        END_OF_PROJECT  : 'To end of project',
+        
+        DEFAULT_SCREEN_WIDTH: 1349
     };
 });

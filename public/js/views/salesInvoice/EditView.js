@@ -1,11 +1,10 @@
 define([
-        'views/Invoice/EditView'
-    ],
-    function (ParrentView) {
+    'views/Invoice/EditView'
+], function (ParrentView) {
 
-        var EditView = ParrentView.extend({
-            forSales: true
-        });
-
-        return EditView;
+    var EditView = ParrentView.extend({
+        forSales: true
     });
+
+    return EditView;
+});

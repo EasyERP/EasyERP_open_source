@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/ChartOfAccount/filterCollection',
@@ -1528,7 +1529,7 @@ define([
                     expect(listView.$el.find('input[type="checkbox"]').prop('checked')).to.be.false;
                 });
 
-                /*it('Try to delete item with Forbidden error result', function(){
+                /!*it('Try to delete item with Forbidden error result', function(){
                     var spyResponse;
                     var chartOfAccountUrl = new RegExp('\/ChartOfAccount\/', 'i');
                     var $firstEl = listView.$el.find('tr:nth-child(1) > td:nth-child(1) > .checkbox');
@@ -1541,7 +1542,7 @@ define([
 
                     spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                });*/
+                });*!/
 
                 it('Try to delete item', function () {
                     var $firsElAfterDeleteCode;
@@ -1689,3 +1690,4 @@ define([
     });
 
 });
+*/

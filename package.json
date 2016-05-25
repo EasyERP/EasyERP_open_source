@@ -72,7 +72,7 @@
     "istanbul": "^0.4.2",
     "jasmine-core": "^2.4.1",
     "jsdoc": "^3.3.2",
-    "karma": "^0.13.19",
+    "karma": "0.13.20",
     "karma-chai": "^0.1.0",
     "karma-chai-jquery": "^1.0.0",
     "karma-chrome-launcher": "^0.2.2",
@@ -91,10 +91,10 @@
     "mocha": "^2.3.4",
     "mocha-lcov-reporter": "^1.0.0",
     "open": "0.0.5",
-    "phantomjs-prebuilt": "^2.1.4",
-    "requirejs": "^2.1.22",
-    "sinon": "^1.17.2",
-    "sinon-chai": "^2.8.0",
-    "supertest": "^1.0.1"
+    "phantomjs-prebuilt": "2.1.4",
+    "requirejs": "2.1.22",
+    "sinon": "1.17.2",
+    "sinon-chai": "2.8.0",
+    "supertest": "1.0.1"
   }
 }

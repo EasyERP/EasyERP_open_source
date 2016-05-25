@@ -35,13 +35,13 @@ module.exports = function (config) {
 
             //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
 
-            //{pattern: 'test/uiSpecs/**/dividendDeclaration.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/**/journalEntry.test.js', included: false, watching: true},
             {pattern: 'test/uiSpecs/**/login.test.js', included: false, watching: true},
 
-            //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
-            //{pattern: 'test/uiSpecs/fixtures/*.test.js', included: false, watching: true},
-            //{pattern: 'test/uiSpecs/models/*.test.js', included: false, watching: true},
-            //
+            {pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/fixtures/*.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/models/*.test.js', included: false, watching: true},
+
             //{pattern: 'test/uiSpecs/**/*.test.js', included: false, watching: true}
         ],
 

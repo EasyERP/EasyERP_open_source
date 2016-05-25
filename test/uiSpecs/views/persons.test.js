@@ -16247,9 +16247,6 @@ define([
 
                 expect(window.location.hash).to.be.equals(expectedUrl)
             });
-
-            it('Try')
-
         });
 
         describe('Form View', function () {
