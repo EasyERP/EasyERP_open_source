@@ -1205,7 +1205,7 @@ var Module = function (models, event) {
                     }
                 }
 
-                if (employeeId.toString() === '55b92ad221e4b7c40f000030'){
+                if (employeeId.toString() === '55b92ad221e4b7c40f000030') {
                     console.log('ddd');
 
                 }
@@ -2947,7 +2947,7 @@ var Module = function (models, event) {
                                         weeklyScheduler = transferObj.weeklyScheduler;
                                         break;
                                     }
-                                } else if (transferObj.status !== 'transfer'){
+                                } else if (transferObj.status !== 'transfer') {
                                     salaryForDate = transferObj.salary;
                                     weeklyScheduler = transferObj.weeklyScheduler;
                                     break;
@@ -2955,11 +2955,24 @@ var Module = function (models, event) {
                             }
                         }
 
-                       /* if (employee.toString() === '55b92ad221e4b7c40f000084'){
-                            console.log('fff');
+                        /*if (employee.toString() === '55b92ad221e4b7c40f00008a'){
+                            console.dir(weeklyScheduler);
+                        }*/
+
+                        if (!Object.keys(weeklyScheduler).length) {
+                            weeklyScheduler = {
+                                '1'       : 8,
+                                '2'       : 8,
+                                '3'       : 8,
+                                '4'       : 8,
+                                '5'       : 8,
+                                '6'       : 0,
+                                '7'       : 0,
+                                name      : 'UA-40',
+                                totalHours: 40
+                            };
                         }
 
-*/
                         holidays.forEach(function (holiday) {
                             if ((holiday.day !== 0) && (holiday.day !== 6)) {
                                 hoursToRemove += parseInt(weeklyScheduler[holiday.day]) || 0;
