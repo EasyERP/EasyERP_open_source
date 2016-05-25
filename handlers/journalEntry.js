@@ -3066,7 +3066,7 @@ var Module = function (models, event) {
 
             createForJob = function (result, cb) {
 
-                Job.find({_id: {$in: jobIds}}, {invoice: 1}).populate('invoice').exec(function (err, result) {
+                Job.find({_id: {$in: jobIds}}, {invoice: 1}).populate('invoice').lean().exec(function (err, result) {
                     if (err) {
                         return cb(err);
                     }
