@@ -1188,7 +1188,7 @@ var Module = function (models, event) {
                 for (var i = transferLength - 1; i >= 0; i--) {
                     var transferObj = transfer[i];
 
-                    if ((moment(moment(startDate).add(1, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
+                    if ((moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
                         if (transferObj.status === 'fired') {
                             if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
                                 salaryForDate = transferObj.salary;
@@ -1205,9 +1205,6 @@ var Module = function (models, event) {
                     }
                 }
 
-                if (employeeId.toString() === '55b92ad221e4b7c40f000084'){
-                            console.log('fff');
-                        }
 
                 if (notDevArray.indexOf(department.toString()) !== -1) {
                     salaryForDate = 0;
@@ -2938,7 +2935,7 @@ var Module = function (models, event) {
                         for (var i = transferLength - 1; i >= 0; i--) {
                             var transferObj = transfer[i];
 
-                            if ((moment(moment(startDate).add(1, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
+                            if ((moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
                                 if (transferObj.status === 'fired') {
                                     if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
                                         salaryForDate = transferObj.salary;
@@ -2953,7 +2950,11 @@ var Module = function (models, event) {
                             }
                         }
 
+                       /* if (employee.toString() === '55b92ad221e4b7c40f000084'){
+                            console.log('fff');
+                        }
 
+*/
                         holidays.forEach(function (holiday) {
                             if ((holiday.day !== 0) && (holiday.day !== 6)) {
                                 hoursToRemove += parseInt(weeklyScheduler[holiday.day]) || 0;
