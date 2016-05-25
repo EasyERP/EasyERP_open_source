@@ -764,9 +764,9 @@ define([
     var showDatePickerSpy;
 
     describe('CashFlowView', function () {
-
         var $fixture;
         var $elFixture;
+
         before(function(){
             setDateRangeSpy = sinon.spy(TopBarView.prototype, 'setDateRange');
             showDatePickerSpy = sinon.spy(TopBarView.prototype, 'showDatePickers');
