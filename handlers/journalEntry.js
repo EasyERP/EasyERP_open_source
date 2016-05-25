@@ -875,39 +875,42 @@ var Module = function (models, event) {
                     return console.log(err);
                 }
 
-                var date = moment(result.invoice.date).subtract(1, 'seconds');
+                var date = result && result.invoice ? moment(result.invoice.date).subtract(1, 'seconds') : null;
 
-                bodyFinishedJob.date = new Date(date);
-                bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds')),
+                if (date){
+                    bodyFinishedJob.date = new Date(date);
+                    bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds')),
 
-                    Model.aggregate([{
-                        $match: {
-                            'sourceDocument._id'  : jobId,
-                            'sourceDocument.model': 'wTrack',
-                            debit                 : {$gt: 0}
-                        }
-                    }, {
-                        $group: {
-                            _id   : null,
-                            amount: {$sum: '$debit'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return console.log(err);
-                        }
+                        Model.aggregate([{
+                            $match: {
+                                'sourceDocument._id'  : jobId,
+                                'sourceDocument.model': 'wTrack',
+                                debit                 : {$gt: 0}
+                            }
+                        }, {
+                            $group: {
+                                _id   : null,
+                                amount: {$sum: '$debit'}
+                            }
+                        }], function (err, result) {
+                            if (err) {
+                                return console.log(err);
+                            }
 
-                        bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
-                        bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
+                            bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
+                            bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
 
-                        if (bodyFinishedJob.amount > 0) {
-                            createReconciled(bodyFinishedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
-                        }
+                            if (bodyFinishedJob.amount > 0) {
+                                createReconciled(bodyFinishedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
+                            }
 
-                        if (bodyClosedJob.amount > 0) {
-                            createReconciled(bodyClosedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
-                        }
+                            if (bodyClosedJob.amount > 0) {
+                                createReconciled(bodyClosedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
+                            }
 
-                    });
+                        });
+
+                }
             });
         }
 
@@ -2569,7 +2572,7 @@ var Module = function (models, event) {
 
         parallelFunction = function (mainCb) {
             reconcileInvoiceEntries = function (mainCallback) {
-                Invoice.find({reconcile: true, approved: true, _type: {$ne: "Proforma"}}, function (err, result) {
+                Invoice.find({reconcile: true, approved: true, _type: "wTrackInvoice"}, function (err, result) {
                     if (err) {
                         return mainCallback(err);
                     }
@@ -2669,7 +2672,7 @@ var Module = function (models, event) {
                                         paidAmount += paidInUSD;
                                     });
 
-                                    if (paidAmount && (invoice.paymentInfo.total - paidAmount >= 0)) {
+                                    if (paidAmount) {
                                         cb = _.after(2, asyncCb);
 
                                         beforeInvoiceBody.date = invoice.invoiceDate;
@@ -2692,7 +2695,7 @@ var Module = function (models, event) {
                                 journalEntryBody.date = invoice.invoiceDate;
                                 journalEntryBody.journal = invoice.journal || CONSTANTS.INVOICE_JOURNAL;
                                 journalEntryBody.currency = invoice.currency ? invoice.currency._id : 'USD';
-                                journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total - paidAmount : 0;
+                                journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
                                 journalEntryBody.sourceDocument = {};
                                 journalEntryBody.sourceDocument._id = invoice._id;
                                 journalEntryBody.sourceDocument.model = 'Invoice';
@@ -6366,7 +6369,7 @@ var Module = function (models, event) {
                             $match: matchObject
                         }, {
                             $match: {
-                                "sourceDocument.model": {$in: ["Invoice", "proforma", "dividendInvoice"]},
+                                "sourceDocument.model": {$in: ["Invoice", "Proforma", "dividendInvoice"]},
                                 debit                 : {$gt: 0}
                             }
                         }, {
