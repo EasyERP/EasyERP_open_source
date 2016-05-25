@@ -104,7 +104,7 @@ var BonusType = function (models) {
         });
     };
 
-    this.remove = function (req, res, id, next) {
+    this.remove = function (req, res, next) {
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
         access.getDeleteAccess(req, req.session.uId, 72, function (access) {
             if (access) {

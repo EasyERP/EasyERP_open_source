@@ -26,8 +26,10 @@ var Opportunity = function (models, event) {
         }
 
         this.addNewLeadFromSite = function (req, res, next) {
-            var db = 'production';
-            var Opportunitie = models.get(db, 'Opportunitie', opportunitiesSchema);
+            //var db = 'production';
+            //var Opportunitie = models.get(db, 'Opportunitie', opportunitiesSchema);
+            var db = req.session.lastDb;
+            var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
 
             var body = req.body;
             var name = body.name ? validator.escape(body.name) : '';
@@ -154,7 +156,7 @@ var Opportunity = function (models, event) {
                 workflow      : CONSTANTS.LEAD_DRAFT
             };
 
-                leadModel = new Opportunitie(saveObject);
+                leadModel = new Opportunity(saveObject);
 
                 leadModel.save(function (err, result) {
                     if (err) {
