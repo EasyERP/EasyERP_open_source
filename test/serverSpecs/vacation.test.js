@@ -8,15 +8,16 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
+var dbId = 'dendb';
 var admin = {
     login: 'admin',
     pass : 'tm2016',
-    dbId : 'dendb'
+    dbId : dbId
 };
-var failUser = {
+var bannedUser = {
     login: 'ArturMyhalko',
     pass : 'thinkmobiles2015',
-    dbId : 'dendb'
+    dbId : dbId
 };
 
 describe("Vacation Specs", function () {
@@ -185,7 +186,7 @@ describe("Vacation Specs", function () {
 
             aggent
                 .post('users/login')
-                .send(failUser)
+                .send(bannedUser)
                 .expect(200, done);
         });
 

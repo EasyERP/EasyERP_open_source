@@ -8,7 +8,7 @@ var admin = {
     pass : 'tm2016',
     dbId : dbId
 };
-var failUser = {
+var bannedUser = {
     login: 'ArturMyhalko',
     pass : 'thinkmobiles2015',
     dbId : dbId
