@@ -32,9 +32,17 @@ module.exports = function (config) {
             {pattern: 'public/js/views/*.js', included: false, watching: false},
             {pattern: 'public/templates/**/*.html', included: false, watching: false},
             {pattern: 'public/js/*.js', included: false, watching: false},
-            
+
+            //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
+
+            {pattern: 'test/uiSpecs/**/journalEntry.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/**/login.test.js', included: false, watching: true},
+
+            {pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/fixtures/*.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/models/*.test.js', included: false, watching: true},
+
             //{pattern: 'test/uiSpecs/**/*.test.js', included: false, watching: true}
-            {pattern: 'test/uiSpecs/views/login.test.js', included: false, watching: true}
         ],
 
         exclude: [],
@@ -60,7 +68,7 @@ module.exports = function (config) {
 
         autoWatch: false,
 
-        browsers: ['Chrome', 'Firefox', /*'Safari',*/ 'IE', 'PhantomJS'],
+        browsers: ['Chrome'/*, 'Firefox', 'Safari', 'IE', 'PhantomJS'*/],
 
         singleRun: false,
 
@@ -70,6 +78,8 @@ module.exports = function (config) {
             }
         },
 
-        concurrency: Infinity
+        concurrency: Infinity,
+
+        browserNoActivityTimeout: 100000
     });
 };

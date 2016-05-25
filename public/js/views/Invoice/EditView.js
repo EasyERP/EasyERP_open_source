@@ -78,7 +78,7 @@ define([
 
             this.notCreate = options.notCreate ? false : true;
 
-            /*if (!App || !App.currentDb) {
+            /* if (!App || !App.currentDb) {
              dataService.getData('/currentDb', null, function (response) {
              if (response && !response.error) {
              App.currentDb = response;
@@ -360,7 +360,7 @@ define([
                 App.stopPreload();
 
                 return App.render({
-                    type: 'error',
+                    type   : 'error',
                     message: 'Please fill all required fields.'
                 });
             }

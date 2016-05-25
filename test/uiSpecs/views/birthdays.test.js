@@ -1210,7 +1210,7 @@ define([
                 });
 
                 it('Try to go to the form', function(){
-                    var $readMoreBtn = listView.$el.find('#weekList > div > div.birthday-item > div.info > div.top-wrapper > a')[0];
+                    var $readMoreBtn = listView.$el.find('.thumbnail_birthday_list > li').first().find('a');
 
                     $readMoreBtn.click();
 
