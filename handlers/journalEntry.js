@@ -821,11 +821,11 @@ var Module = function (models, event) {
         });
     }
 
-    this.checkAndCreateForJob = function(options) {
+    this.checkAndCreateForJob = function (options) {
         checkAndCreateForJob(options);
     };
 
-    function checkAndCreateForJob (options) {
+    function checkAndCreateForJob(options) {
         var req = options.req;
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
@@ -877,7 +877,7 @@ var Module = function (models, event) {
 
                 var date = result && result.invoice ? moment(result.invoice.date).subtract(1, 'seconds') : null;
 
-                if (date){
+                if (date) {
                     bodyFinishedJob.date = new Date(date);
                     bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds')),
 
@@ -1183,10 +1183,12 @@ var Module = function (models, event) {
                     localEndDate = localStartKey - 1;
                 }
 
-                for (var i = 0; i <= transferLength - 1; i++) {
+                transfer = _.sortBy(transfer, 'date');
+
+                for (var i = transferLength - 1; i >= 0; i--) {
                     var transferObj = transfer[i];
 
-                    if ((moment(moment(startDate)).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
+                    if ((moment(moment(startDate).add(1, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
                         if (transferObj.status === 'fired') {
                             if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
                                 salaryForDate = transferObj.salary;
@@ -2924,13 +2926,15 @@ var Module = function (models, event) {
                             }
                         };
 
+                        transfer = _.sortBy(transfer, 'date');
+
                         if ((parseInt(year, 10) * 100 + parseInt(month, 10)) === (moment(transfer[transferLength - 1].date).year() * 100 + moment(transfer[transferLength - 1].date).month() + 1)) {
                             startDate = moment(transfer[transferLength - 1].date);
                         }
-                        for (var i = 0; i <= transferLength - 1; i++) {
+                        for (var i = transferLength - 1; i >= 0; i--) {
                             var transferObj = transfer[i];
 
-                            if ((moment(moment(startDate)).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
+                            if ((moment(moment(startDate).add(1, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
                                 if (transferObj.status === 'fired') {
                                     if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
                                         salaryForDate = transferObj.salary;
@@ -2944,6 +2948,7 @@ var Module = function (models, event) {
                                 }
                             }
                         }
+
 
                         holidays.forEach(function (holiday) {
                             if ((holiday.day !== 0) && (holiday.day !== 6)) {
