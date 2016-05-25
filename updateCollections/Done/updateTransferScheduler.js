@@ -36,13 +36,13 @@ query.exec(function (error, _res) {
         return console.dir(error);
     }
 
-    async.eachLimit(_res, 50, function (emp, callback) {
+    async.each(_res, function (emp, callback) {
         var objectToSave;
         var transfer = emp.transfer;
         var newTransfer = [];
 
         transfer.forEach(function (tr, i) {
-            tr.weeklyScheduler = '57332c3b94ee1140b6bb49e2';
+            tr.weeklyScheduler = ObjectId('57332c3b94ee1140b6bb49e2');
 
             if ((tr.status !== 'hired') && (tr.status !== 'fired')){
                 if (moment(new Date(tr.date)).date() === moment(new Date(tr.date)).endOf('month').date()){
