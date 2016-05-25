@@ -596,9 +596,9 @@ var Opportunities = function (models, event) {
                 models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate(
                     {
                         $match: {
-                            $and: [/*{
+                            $and: [{
                                 isOpportunitie: true
-                            },*/
+                            },
                                 {'createdBy.date': {$gte: a}}
                             ]
                         }

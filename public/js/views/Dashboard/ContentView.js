@@ -731,6 +731,7 @@ define([
                     var data4;
                     var arrData;
                     var arrSum;
+                    var i;
 
                     console.log(data);
 
@@ -757,12 +758,42 @@ define([
                     data3 = data3 || [];
                     data4 = data4 || [];
 
+                    for (i = data1.length-1; i>=0; i--) {
+                        if (data1[i] && !data1[i].sum || data1[i].sum === 0) {
+                            data1.splice(i, 1);
+                        }
+                    }
+
+                    for (i = data2.length-1; i>=0; i--) {
+                        if (data2[i] && !data2[i].sum || data2[i].sum === 0) {
+                            data2.splice(i, 1);
+                        }
+                    }
+
+                    for (i = data3.length-1; i>=0; i--) {
+                        if (data3[i] && !data3[i].sum || data3[i].sum === 0) {
+                            data3.splice(i, 1);
+                        }
+                    }
+
+                    for (i = data4.length-1; i>=0; i--) {
+                        if (data4[i] && !data4[i].sum || data4[i].sum === 0) {
+                            data4.splice(i, 1);
+                        }
+                    }
+
                     arrData = _.union(_.pluck(data1, 'salesPerson'), _.pluck(data2, 'salesPerson'), _.pluck(data3, 'salesPerson'), _.pluck(data4, 'salesPerson'));
                     arrSum = _.map(_.groupBy(_.union(data1, data2, data3, data4), 'salesPerson'), function (el) {
                         return _.reduce(el, function(memo, num){
                             return memo + num.sum;
                         }, 0);
                     });
+
+                    for (i = arrData.length-1; i>=0; i--) {
+                        if (!arrData[i]) {
+                            arrData[i] = "NoUser";
+                        }
+                    }
 
                     y.domain(arrData.map(function (d) {
                         return d;
