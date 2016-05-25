@@ -35,13 +35,13 @@ module.exports = function (config) {
 
             //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
 
-            {pattern: 'test/uiSpecs/**/settingsEmployee.test.js', included: false, watching: true},
+            //{pattern: 'test/uiSpecs/**/dividendDeclaration.test.js', included: false, watching: true},
             {pattern: 'test/uiSpecs/**/login.test.js', included: false, watching: true},
 
-            {pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
-            {pattern: 'test/uiSpecs/fixtures/*.test.js', included: false, watching: true},
-            {pattern: 'test/uiSpecs/models/*.test.js', included: false, watching: true},
-
+            //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
+            //{pattern: 'test/uiSpecs/fixtures/*.test.js', included: false, watching: true},
+            //{pattern: 'test/uiSpecs/models/*.test.js', included: false, watching: true},
+            //
             //{pattern: 'test/uiSpecs/**/*.test.js', included: false, watching: true}
         ],
 
@@ -66,7 +66,7 @@ module.exports = function (config) {
 
         logLevel: config.LOG_INFO,
 
-        autoWatch: true,
+        autoWatch: false,
 
         browsers: ['Chrome'/*, 'Firefox', 'Safari', 'IE', 'PhantomJS'*/],
 

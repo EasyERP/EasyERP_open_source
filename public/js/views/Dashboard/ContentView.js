@@ -1,3 +1,4 @@
+/*
 define([
         'Backbone',
         'jQuery',
@@ -724,3 +725,4 @@ define([
         });
         return ContentView;
     });
+*/

@@ -1646,7 +1646,6 @@ define([
                     $deleteBtn.click();
 
                     expect(listView.$el.find('tr:nth-child(1) > td:nth-child(3)').text()).to.be.equals('1111111');
-
                 });
 
                 it ('Try to sort up list', function(){

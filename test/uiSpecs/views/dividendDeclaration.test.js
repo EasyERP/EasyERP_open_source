@@ -1,4 +1,5 @@
 define([
+    'Underscore',
     'text!fixtures/index.html',
     'collections/DividendInvoice/filterCollection',
     'views/main/MainView',
@@ -11,7 +12,7 @@ define([
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (fixtures, DividendCollection, MainView, ListView, TopBarView, CreateView, EditView, PaymentsCreateView, $, chai, chaiJquery, sinonChai) {
+], function (_, fixtures, DividendCollection, MainView, ListView, TopBarView, CreateView, EditView, PaymentsCreateView, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
 
@@ -4104,9 +4105,6 @@ define([
 
         var $fixture;
         var $elFixture;
-        before(function(){
-
-        });
 
         after(function () {
             view.remove();
@@ -4211,7 +4209,7 @@ define([
             });
         });
 
-        describe('CloseMonthView', function () {
+        describe('DeividendDeclarationViews', function () {
             var server;
             var clock;
             var $thisEl;
@@ -4220,8 +4218,8 @@ define([
             var alertStub;
             var deleteSpy;
             var deleteRenderSpy;
-            var jQueryAjaxSpy;
             var paymentCreateInitSpy;
+            var debounceStub;
 
             before(function () {
                 App.startPreload = function() {
@@ -4250,8 +4248,10 @@ define([
                 alertStub.returns(true);
                 deleteSpy = sinon.spy(ListView.prototype, 'deleteItems');
                 deleteRenderSpy = sinon.spy(ListView.prototype, 'deleteItemsRender');
-                jQueryAjaxSpy = sinon.spy($, 'ajax');
                 paymentCreateInitSpy = sinon.spy(PaymentsCreateView.prototype, 'initialize');
+                debounceStub = sinon.stub(_, 'debounce', function(debFunction){
+                    return debFunction;
+                });
             });
 
             after(function () {
@@ -4262,8 +4262,8 @@ define([
                 alertStub.restore();
                 deleteRenderSpy.restore();
                 deleteSpy.restore();
-                jQueryAjaxSpy.restore();
                 paymentCreateInitSpy.restore();
+                debounceStub.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -4407,7 +4407,7 @@ define([
                     expect($('.ui-dialog')).to.exist;
                 });
 
-                it('Try to change tab', function(){
+                /*it('Try to change tab', function(){
                     var $dialog = $('.ui-dialog');
                     var $firstTab = $dialog.find('.dialog-tabs > li').eq(0).find('a');
                     var $secondTab = $dialog.find('.dialog-tabs > li').eq(1).find('a');
@@ -4419,7 +4419,7 @@ define([
 
                     $firstTab.click();
                     expect($firstTab).to.have.class('active');
-                });
+                });*/
 
                 it('Try to delete item with 403 error status response', function(){
                     mainSpy.reset();
@@ -4474,15 +4474,15 @@ define([
                     server.respond();
                     server.respond();
 
-                    clock.tick(500);
+                    clock.tick(2000);
 
                     expect($('.ui-dialog')).to.exist;
                     expect(paymentCreateInitSpy.calledOnce).to.be.true;
                     done();
                 });
 
-                it('Try to changePaidAmount', function(done){
-                    jQueryAjaxSpy.reset();
+                it('Try to changePaidAmount', function (done) {
+                    debounceStub.reset();
 
                     var $dialog = $('.ui-dialog');
                     var $amountInput = $dialog.find('#paidAmount');
@@ -4491,17 +4491,54 @@ define([
                     server.respondWith('GET', amountLeftUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
                         difference: -5000
                     })]);
-                    $amountInput.val('5000');
-                    //$amountInput.trigger('keyup'); // not work
-                    
+                    clock.tick(10000);
+                    $amountInput.trigger('keyup'); // not work
                     server.respond();
-
-                    clock.tick(200);
-
-                    expect(jQueryAjaxSpy.called).to.be.true;
+                    expect($dialog.find('#differenceAmount').text().trim()).to.be.equals('-5000.00');
 
                     done();
                 });
+
+                it('Try to select bank account and currency', function(){
+                    var $dialog = $('.ui-dialog');
+                    var $bankAccount = $dialog.find('#paymentMethod');
+                    var $currency = $dialog.find('#currencyDd');
+                    var $next;
+                    var $prev;
+                    var $selectedItem;
+
+                    // select bank account
+                    $bankAccount.click();
+                    $next = $dialog.find('.next');
+                    $next.click();
+
+                    expect($dialog.find('.counter').text().trim()).to.be.equals('11-13 of 13');
+                    $prev = $dialog.find('.prev');
+                    $prev.click();
+
+                    expect($dialog.find('.counter').text().trim()).to.be.equals('1-10 of 13');
+                    $selectedItem = $dialog.find('ul.newSelectList').first().find('li').first();
+                    $selectedItem.click();
+                    expect($dialog.find('#paymentMethod').text().trim()).to.be.equals('CASH UAH');
+
+                    // select currency
+                    $currency.click();
+                    $selectedItem = $dialog.find('ul.newSelectList').eq(1).find('li').eq(1);
+                    $selectedItem.click();
+                    expect($dialog.find('#currencyDd').text().trim()).to.be.equals('EUR');
+                });
+
+                it('Try to save payment with error response', function(){
+                    main
+                    var $saveBtn = $('#create-payment-dialog');
+                    var paymentUrl = '/payment/';
+
+                    server.respondWith('POST', paymentUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    $saveBtn.click();
+                    server.respond();
+
+                });
+
             });
         });
     });
