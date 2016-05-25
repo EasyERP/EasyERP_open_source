@@ -40,19 +40,20 @@ describe("Dashboard Vacation Specs", function () {
                     }
 
                     var body = res.body;
-                    var dateByWeekStart = moment().subtract(CONSTANTS.DASH_VAC_WEEK_BEFORE, 'weeks');
-                    var dateByWeekEnd = moment().add(CONSTANTS.DASH_VAC_WEEK_AFTER, 'weeks');
-                    var duration = dateByWeekEnd.diff(dateByWeekStart, 'weeks');
-
-                    dateByWeekStart = dateByWeekStart.isoWeek() + 100 * dateByWeekStart.isoWeekYear();
-                    dateByWeekEnd = dateByWeekEnd.isoWeek() + 100 * dateByWeekEnd.isoWeekYear();
+                    var dateStart = moment().subtract(11, 'month').startOf('month');
 
                     expect(body)
-                        .to.be.instanceOf(Array);
+                        .to.be.instanceOf(Array)
+                        .and.to.have.deep.property('0')
+                        .and.to.have.property('data')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('0')
+                        .and.to.have.property('hiredEmployees');
 
-                    var departmentDashboard = body[0];
+                    var hired = body[0].data[0].hiredEmployees;
+                    var fired = body[1].data[0].firedEmployees;
 
-                    expect(departmentDashboard)
+                    expect(hired)
                         .to.have.property('employees')
                         .and.to.be.instanceOf(Array);
 
