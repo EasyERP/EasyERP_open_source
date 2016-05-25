@@ -821,11 +821,11 @@ var Module = function (models, event) {
         });
     }
 
-    function checkAndCreateForJob(options) {
-        this.checkAndCreateForJob(options);
-    }
+    this.checkAndCreateForJob = function(options) {
+        checkAndCreateForJob(options);
+    };
 
-    this.checkAndCreateForJob = function (options) {
+    function checkAndCreateForJob (options) {
         var req = options.req;
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
