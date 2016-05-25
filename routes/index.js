@@ -1515,6 +1515,13 @@ module.exports = function (app, mainDb) {
         data.opportunitie = req.body;
         requestHandler.createOpportunitie(req, res, data);
     });
+    app.get('/OpportunitiesForChart', function (req, res) {
+        var data = {};
+        data.source = req.param('source');
+        data.dataRange = req.param('dataRange');
+        data.dataItem = req.param('dataItem');
+        requestHandler.getOpportunitiesForChart(req, res, data);
+    });
     app.get('/Opportunities/:viewType', function (req, res) {
         var data = {};
         for (var i in req.query) {

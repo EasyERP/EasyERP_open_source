@@ -435,7 +435,16 @@
             }, function (response) {
                 callback(response.data);
             });
-        }
+        };
+        var getOpportunitiesForChart = function (source, dataRange, dataItem, callback) {
+            dataService.getData("/OpportunitiesForChart", {
+                source   : source,
+                dataRange: dataRange,
+                dataItem : dataItem
+            }, function (response) {
+                callback(response.data);
+            });
+        };
         var populateDepartmentsList = function (selectId, targetId, url, model, page, callback) {
             var selectList = $(selectId);
             var targetList = $(targetId);
@@ -1103,6 +1112,7 @@
             populateParentDepartments       : populateParentDepartments,
             populateDepartmentsList         : populateDepartmentsList,
             getLeadsForChart                : getLeadsForChart,
+            getOpportunitiesForChart        : getOpportunitiesForChart,
             getImages                       : getImages,
             getImagesPM                     : getImagesPM,
             populateOpportunitiesForMiniView: populateOpportunitiesForMiniView

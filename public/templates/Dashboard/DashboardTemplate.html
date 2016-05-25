@@ -1,6 +1,7 @@
 <ul class="chart-tabs dashboard">
     <li><a class="active" href="javascript:;">Leads by date</a></li>
     <li><a href="javascript:;" class="">Leads by source</a></li>
+    <li><a href="javascript:;" class="">Opportunities</a></li>
 </ul>
 <div class="chart-tabs-items">
     <div class="chart-tabs-item active">
@@ -81,6 +82,54 @@
         </div>
 
         <svg class="chart"></svg>
+    </div>
+    <div class="chart-tabs-item">
+        <div class="clearfix"></div>
+        <h3 class="dashboard">What stage are my opportunities in?</h3>
+
+        <div class="choseDateRangeOpportunities">
+            <div class="item" data-day="7">7D</div>
+            <div class="item active" data-day="30">30D</div>
+            <div class="item" data-day="90">90D</div>
+            <div class="item" data-day="365">12M</div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="legend-box small">
+            <div class="new">
+                <div style="background-color: #E3DE4E;" class="square">
+                </div>
+                <div class="text">
+                    New
+                </div>
+            </div>
+            <div class="% 25-50">
+                <div style="background-color: #56D1B5;" class="square">
+                </div>
+                <div class="text">
+                    % 25-50
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="% 50-75">
+                <div style="background-color: #5FBA51;" class="square">
+                </div>
+                <div class="text">
+                    % 50-75
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="% 75-100">
+                <div style="background-color: #26A7DE;" class="square">
+                </div>
+                <div class="text">
+                    % 75-100
+                </div>
+                <div class="clearfix"></div>
+            </div>
+
+        </div>
+
+        <svg class="opportunitiesChart"></svg>
     </div>
 </div>
 <div class="clearfix"></div>
