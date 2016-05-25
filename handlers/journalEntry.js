@@ -2961,13 +2961,13 @@ var Module = function (models, event) {
 
                         if (!Object.keys(weeklyScheduler).length) {
                             weeklyScheduler = {
-                                '1'       : 8,
-                                '2'       : 8,
-                                '3'       : 8,
-                                '4'       : 8,
-                                '5'       : 8,
-                                '6'       : 0,
-                                '7'       : 0,
+                                1       : 8,
+                                2       : 8,
+                                3       : 8,
+                                4       : 8,
+                                5       : 8,
+                                6       : 0,
+                                7       : 0,
                                 name      : 'UA-40',
                                 totalHours: 40
                             };
