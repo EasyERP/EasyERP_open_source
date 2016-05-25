@@ -1,5 +1,6 @@
 define([
         "text!templates/Leads/EditTemplate.html",
+        "text!templates/history.html",
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         "custom",
@@ -7,12 +8,13 @@ define([
         'dataService',
         "populate"
     ],
-    function (EditTemplate, selectView, AssigneesView, Custom, common, dataService, populate) {
+    function (EditTemplate, historyTemplate, selectView, AssigneesView, Custom, common, dataService, populate) {
 
         var EditView = Backbone.View.extend({
             el         : "#content-holder",
             contentType: "Leads",
             template   : _.template(EditTemplate),
+            historyTemplate: _.template(historyTemplate),
             initialize : function (options) {
                 _.bindAll(this, "render", "saveItem");
                 _.bindAll(this, "render", "deleteItem");
@@ -313,6 +315,14 @@ define([
 
             },
 
+            renderHistory: function () {
+                var self = this;
+                var historyString;
+
+                historyString = self.historyTemplate({history: self.model.get('history')});
+                self.$el.find('.history-container').html(historyString);
+            },
+
             render: function () {
                 var formString = this.template({
                     model: this.currentModel.toJSON()
@@ -344,6 +354,8 @@ define([
                     }
                 });
 
+                self.renderHistory();
+
                 notDiv = this.$el.find('.assignees-container');
                 notDiv.append(
                     new AssigneesView({
@@ -358,7 +370,7 @@ define([
                     });
                     self.responseObj['#priorityDd'] = priorities;
                 });
-                populate.getWorkflow("#workflowsDd", "", "/WorkflowsForDd", {id: "Leads"}, "name", this);
+                populate.getWorkflow("#workflowsDd", "", "/WorkflowsForDd", {id: "Leads"}, "name", this, null);
                 populate.get2name("#customerDd", "/Customer", {}, this, null, true);
                 dataService.getData('/employee/getForDD', {isEmployee : true}, function (employees) {
                     employees = _.map(employees.data, function (employee) {

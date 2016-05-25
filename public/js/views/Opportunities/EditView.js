@@ -1,6 +1,7 @@
 ﻿define([
         "text!templates/Opportunities/EditTemplate.html",
         "text!templates/Opportunities/editSelectTemplate.html",
+        "text!templates/history.html",
         'views/selectView/selectView',
         'views/Assignees/AssigneesView',
         'views/Notes/NoteView',
@@ -11,12 +12,13 @@
         "dataService",
         'helpers'
     ],
-    function (EditTemplate, editSelectTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService, helpers) {
+    function (EditTemplate, editSelectTemplate, historyTemplate, selectView, AssigneesView, noteView, attachView, common, custom, populate, dataService, helpers) {
         "use strict";
         var EditView = Backbone.View.extend({
-            el         : "#content-holder",
-            contentType: "Opportunities",
-            template   : _.template(EditTemplate),
+            el             : "#content-holder",
+            contentType    : "Opportunities",
+            template       : _.template(EditTemplate),
+            historyTemplate: _.template(historyTemplate),
 
             initialize: function (options) {
                 _.bindAll(this, "render", "saveItem", "deleteItem");
@@ -157,7 +159,7 @@
                 var viewType = custom.getCurrentVT();
                 var expectedRevenueValue = $.trim($("#expectedRevenueValue").val());
                 var expectedRevenueProgress = $.trim($("#expectedRevenueProgress").val());
-                if (expectedRevenueValue || expectedRevenueProgress) {
+                if (expectedRevenueValue !== (this.currentModel.get('expectedRevenue')).value.toString()) {
                     var expectedRevenue = {
                         value   : expectedRevenueValue,
                         currency: '$',
@@ -172,6 +174,8 @@
 
                 var salesPersonId = this.$("#salesPersonDd").data("id");
                 salesPersonId = salesPersonId ? salesPersonId : null;
+
+                var currentSalesPerson = this.currentModel.get('salesPerson');
 
                 var salesTeamId = this.$("#salesTeamDd").data("id");
                 salesTeamId = salesTeamId ? salesTeamId : null;
@@ -236,10 +240,8 @@
                 var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
                 var data = {
                     name           : name,
-                    expectedRevenue: expectedRevenue,
                     customer       : customerId,
                     email          : email,
-                    salesPerson    : salesPersonId,
                     salesTeam      : salesTeamId,
                     nextAction     : nextAction,
                     expectedClosing: expectedClosing,
@@ -260,16 +262,28 @@
                     whoCanRW       : whoCanRW
                 };
                 var currentWorkflow = this.currentModel.get('workflow');
+
+                if (expectedRevenue) {
+                    data.expectedRevenue = expectedRevenue;
+                }
+
                 if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id != workflow)) {
                     data['workflow'] = workflow;
                     data['sequence'] = -1;
                     data['sequenceStart'] = this.currentModel.toJSON().sequence;
                     data['workflowStart'] = currentWorkflow._id;
                 }
-                ;
+
+                if (currentSalesPerson && currentSalesPerson._id && salesPersonId && (currentSalesPerson._id !== salesPersonId)) {
+                    data['salesPerson'] = salesPersonId;
+                } else if (!currentSalesPerson && salesPersonId) {
+                    data['salesPerson'] = salesPersonId;
+                }
+
 
                 var oldWorkFlow = this.currentModel.get('workflow')._id;
-                this.currentModel.save(data, {
+                this.currentModel.set(data);
+                this.currentModel.save(this.currentModel.changed, {
                     headers: {
                         mid: mid
                     },
@@ -367,12 +381,12 @@
                 });
             },
 
-            countTotalAmountForWorkflow: function(workflowId){
+            countTotalAmountForWorkflow: function (workflowId) {
                 var column = $('td[data-id="' + workflowId + '"]');
                 var oldColumnContainer = $('td[data-id="' + workflowId + '"] #forContent h3');
 
                 var sum = 0;
-                oldColumnContainer.each(function(item){
+                oldColumnContainer.each(function (item) {
                     var value = $(this).text().replace(/\s/g, '');
                     sum += parseFloat(value) || 0;
                 });
@@ -432,7 +446,16 @@
                     });
                 }
             },
-            render    : function () {
+
+            renderHistory: function () {
+                var self = this;
+                var historyString;
+
+                historyString = self.historyTemplate({history: self.model.get('history')});
+                self.$el.find('.history-container').html(historyString);
+            },
+
+            render: function () {
                 var formString = this.template({
                     model: this.currentModel.toJSON()
                 });
@@ -481,6 +504,9 @@
                         model: this.currentModel,
                     }).render().el
                 );
+
+                self.renderHistory();
+
                 $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
 
@@ -502,8 +528,9 @@
 
                     self.responseObj['#salesPersonDd'] = employees;
                 });
-                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this);
+                populate.getWorkflow("#workflowDd", "#workflowNamesDd", "/WorkflowsForDd", {id: "Opportunities"}, "name", this, null);
                 populate.get("#salesTeamDd", "/DepartmentsForDd", {}, "departmentName", this, false, true);
+
 
                 if (model.groups) {
                     if (model.groups.users.length > 0 || model.groups.group.length) {
