@@ -79,6 +79,7 @@ define([
                         if (xhr.status == 401) {
                             Backbone.history.navigate('#login', {trigger: true});
                         }
+                        App.stopPreload();
                     }
                 });
             },
