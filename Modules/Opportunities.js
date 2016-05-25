@@ -1,16 +1,18 @@
 var Opportunities = function (models, event) {
-    var mongoose = require('mongoose');
-    var logWriter = require('../helpers/logWriter.js');
-    var objectId = mongoose.Types.ObjectId;
-    var opportunitiesSchema = mongoose.Schemas.Opportunitie;
-    var departmentSchema = mongoose.Schemas.Department;
-    var customerSchema = mongoose.Schemas.Customer;
-    var workflowSchema = mongoose.Schemas.workflow;
-    var fs = require('fs');
+        var mongoose = require('mongoose');
+        var logWriter = require('../helpers/logWriter.js');
+        var HistoryWriter = require('../helpers/historyWriter.js');
+        var objectId = mongoose.Types.ObjectId;
+        var opportunitiesSchema = mongoose.Schemas.Opportunitie;
+        var departmentSchema = mongoose.Schemas.Department;
+        var customerSchema = mongoose.Schemas.Customer;
+        var workflowSchema = mongoose.Schemas.workflow;
+        var fs = require('fs');
 
         var Mailer = require('../helpers/mailer');
         var mailer = new Mailer();
         var EmployeeSchema = mongoose.Schemas.Employee;
+        var historyWriter = new HistoryWriter(models);
 
         function getTotalCount(req, response) {
             var res = {};
@@ -401,10 +403,21 @@ var Opportunities = function (models, event) {
                         event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
                             _opportunitie.sequence = sequence;
                             _opportunitie.save(function (err, result) {
+                                var historyOptions;
                                 if (err) {
                                     console.log("Opportunities.js create savetoDB _opportunitie.save " + err);
                                     res.send(500, {error: 'Opportunities.save BD error'});
                                 } else {
+
+                                    historyOptions = {
+                                        contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                                        data: data,
+                                        req: req,
+                                        contentId: result._id
+                                    };
+
+                                    historyWriter.addEntry(historyOptions);
+
                                     res.send(201, {
                                         success: {
                                             massage: 'A new Opportunities create success',
@@ -619,16 +632,28 @@ var Opportunities = function (models, event) {
         var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).findById(id);
         query.populate('company customer salesPerson salesTeam workflow').populate('groups.users').populate('groups.group').populate('createdBy.user').populate('editedBy.user').populate('groups.owner', '_id login');
 
-        query.exec(function (err, result) {
-            if (err) {
-                console.log(err);
-                logWriter.log('Opportunities.js get job.find' + err);
-                response.send(500, {error: "Can't find Opportunities"});
-            } else {
-                response.send(result);
-            }
-        });
-    }
+            query.exec(function (err, result) {
+                var historyOptions = {
+                    req: req,
+                    id: result._id
+                };
+
+                if (err) {
+                    console.log(err);
+                    logWriter.log('Opportunities.js get job.find' + err);
+                    response.send(500, {error: "Can't find Opportunities"});
+                } else {
+                    historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                        if (err) {
+                            return console.log(err);
+                        }
+                        result = result.toJSON();
+                        result.history = history;
+                        response.send(result);
+                    });
+                }
+            });
+        }
 
     function ConvertType(array, type) {
         if (type === 'integer') {
@@ -1006,46 +1031,55 @@ var Opportunities = function (models, event) {
 
     function updateLead(req, _id, data, res) {
 
-        function updateOpp() {
-            var createPersonCustomer = function (company) {
-                if (data.contactName && (data.contactName.first || data.contactName.last)) {
-                    var _person = {
-                        name          : data.contactName,
-                        email         : data.email,
-                        phones        : data.phones,
-                        company       : company._id,
-                        salesPurchases: {
-                            isCustomer : true,
-                            salesPerson: data.salesPerson
-                        },
-                        type          : 'Person',
-                        createdBy     : {user: req.session.uId}
-                    };
-                    models.get(req.session.lastDb, "Customers", customerSchema).find({$and: [{'name.first': data.contactName.first}, {'name.last': data.contactName.last}]}, function (err, _persons) {
-                        if (err) {
-                            console.log(err);
-                            logWriter.log("Opportunities.js update opportunitie.update " + err);
-                        } else if (_persons.length > 0) {
-                            if (_persons[0].salesPurchases && !_persons[0].salesPurchases.isCustomer) {
-                                models.get(req.session.lastDb, "Customers", customerSchema).update({_id: _persons[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err, success) {
+            var historyOptions = {
+                contentType: 'lead',
+                data: data,
+                req: req,
+                contentId: _id
+            };
+
+            historyWriter.addEntry(historyOptions);
+
+            function updateOpp() {
+                var createPersonCustomer = function (company) {
+                    if (data.contactName && (data.contactName.first || data.contactName.last)) {
+                        var _person = {
+                            name          : data.contactName,
+                            email         : data.email,
+                            phones        : data.phones,
+                            company       : company._id,
+                            salesPurchases: {
+                                isCustomer : true,
+                                salesPerson: data.salesPerson
+                            },
+                            type          : 'Person',
+                            createdBy     : {user: req.session.uId}
+                        };
+                        models.get(req.session.lastDb, "Customers", customerSchema).find({$and: [{'name.first': data.contactName.first}, {'name.last': data.contactName.last}]}, function (err, _persons) {
+                            if (err) {
+                                console.log(err);
+                                logWriter.log("Opportunities.js update opportunitie.update " + err);
+                            } else if (_persons.length > 0) {
+                                if (_persons[0].salesPurchases && !_persons[0].salesPurchases.isCustomer) {
+                                    models.get(req.session.lastDb, "Customers", customerSchema).update({_id: _persons[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err, success) {
+                                        if (err) {
+                                            console.log(err);
+                                            logWriter.log("Opportunities.js update opportunitie.update " + err);
+                                        }
+                                    });
+                                }
+                            } else {
+                                var _Person = new models.get(req.session.lastDb, "Customers", customerSchema)(_person);
+                                _Person.save(function (err, _res) {
                                     if (err) {
                                         console.log(err);
                                         logWriter.log("Opportunities.js update opportunitie.update " + err);
                                     }
                                 });
                             }
-                        } else {
-                            var _Person = new models.get(req.session.lastDb, "Customers", customerSchema)(_person);
-                            _Person.save(function (err, _res) {
-                                if (err) {
-                                    console.log(err);
-                                    logWriter.log("Opportunities.js update opportunitie.update " + err);
-                                }
-                            });
-                        }
-                    });
-                }
-            };
+                        });
+                    }
+                };
 
             if (data.company && data.company._id) {
                 data.company = data.company._id;
@@ -1226,7 +1260,16 @@ var Opportunities = function (models, event) {
         }
 
         function updateOnlySelectedFields(req, _id, data, res) {
+            var historyOptions = {
+                contentType: 'opportunitie',
+                data: data,
+                req: req,
+                contentId: _id
+            };
             var fileName = data.fileName;
+
+            historyWriter.addEntry(historyOptions);
+
             delete data.fileName;
             if (data.workflow && data.sequenceStart && data.workflowStart) {
                 if (data.sequence == -1) {

@@ -821,11 +821,11 @@ var Module = function (models, event) {
         });
     }
 
-    function checkAndCreateForJob(options) {
-        this.checkAndCreateForJob(options);
-    }
-
     this.checkAndCreateForJob = function (options) {
+        checkAndCreateForJob(options);
+    };
+
+    function checkAndCreateForJob(options) {
         var req = options.req;
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
@@ -875,39 +875,42 @@ var Module = function (models, event) {
                     return console.log(err);
                 }
 
-                var date = moment(result.invoice.date).subtract(1, 'seconds');
+                var date = result && result.invoice ? moment(result.invoice.date).subtract(1, 'seconds') : null;
 
-                bodyFinishedJob.date = new Date(date);
-                bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds')),
+                if (date) {
+                    bodyFinishedJob.date = new Date(date);
+                    bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds')),
 
-                    Model.aggregate([{
-                        $match: {
-                            'sourceDocument._id'  : jobId,
-                            'sourceDocument.model': 'wTrack',
-                            debit                 : {$gt: 0}
-                        }
-                    }, {
-                        $group: {
-                            _id   : null,
-                            amount: {$sum: '$debit'}
-                        }
-                    }], function (err, result) {
-                        if (err) {
-                            return console.log(err);
-                        }
+                        Model.aggregate([{
+                            $match: {
+                                'sourceDocument._id'  : jobId,
+                                'sourceDocument.model': 'wTrack',
+                                debit                 : {$gt: 0}
+                            }
+                        }, {
+                            $group: {
+                                _id   : null,
+                                amount: {$sum: '$debit'}
+                            }
+                        }], function (err, result) {
+                            if (err) {
+                                return console.log(err);
+                            }
 
-                        bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
-                        bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
+                            bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
+                            bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
 
-                        if (bodyFinishedJob.amount > 0) {
-                            createReconciled(bodyFinishedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
-                        }
+                            if (bodyFinishedJob.amount > 0) {
+                                createReconciled(bodyFinishedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
+                            }
 
-                        if (bodyClosedJob.amount > 0) {
-                            createReconciled(bodyClosedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
-                        }
+                            if (bodyClosedJob.amount > 0) {
+                                createReconciled(bodyClosedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
+                            }
 
-                    });
+                        });
+
+                }
             });
         }
 
@@ -1180,10 +1183,12 @@ var Module = function (models, event) {
                     localEndDate = localStartKey - 1;
                 }
 
-                for (var i = 0; i <= transferLength - 1; i++) {
+                transfer = _.sortBy(transfer, 'date');
+
+                for (var i = transferLength - 1; i >= 0; i--) {
                     var transferObj = transfer[i];
 
-                    if ((moment(moment(startDate)).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
+                    if ((moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
                         if (transferObj.status === 'fired') {
                             if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
                                 salaryForDate = transferObj.salary;
@@ -1191,7 +1196,7 @@ var Module = function (models, event) {
                                 department = transferObj.department;
                                 break;
                             }
-                        } else {
+                        } else if (transferObj.status !== 'transfer') {
                             salaryForDate = transferObj.salary;
                             weeklyScheduler = transferObj.weeklyScheduler;
                             department = transferObj.department;
@@ -1199,6 +1204,7 @@ var Module = function (models, event) {
                         }
                     }
                 }
+
 
                 if (notDevArray.indexOf(department.toString()) !== -1) {
                     salaryForDate = 0;
@@ -2569,7 +2575,7 @@ var Module = function (models, event) {
 
         parallelFunction = function (mainCb) {
             reconcileInvoiceEntries = function (mainCallback) {
-                Invoice.find({reconcile: true, approved: true, _type: {$ne: "Proforma"}}, function (err, result) {
+                Invoice.find({reconcile: true, approved: true, _type: "wTrackInvoice"}, function (err, result) {
                     if (err) {
                         return mainCallback(err);
                     }
@@ -2669,7 +2675,7 @@ var Module = function (models, event) {
                                         paidAmount += paidInUSD;
                                     });
 
-                                    if (paidAmount && (invoice.paymentInfo.total - paidAmount >= 0)) {
+                                    if (paidAmount) {
                                         cb = _.after(2, asyncCb);
 
                                         beforeInvoiceBody.date = invoice.invoiceDate;
@@ -2692,7 +2698,7 @@ var Module = function (models, event) {
                                 journalEntryBody.date = invoice.invoiceDate;
                                 journalEntryBody.journal = invoice.journal || CONSTANTS.INVOICE_JOURNAL;
                                 journalEntryBody.currency = invoice.currency ? invoice.currency._id : 'USD';
-                                journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total - paidAmount : 0;
+                                journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
                                 journalEntryBody.sourceDocument = {};
                                 journalEntryBody.sourceDocument._id = invoice._id;
                                 journalEntryBody.sourceDocument.model = 'Invoice';
@@ -2921,20 +2927,22 @@ var Module = function (models, event) {
                             }
                         };
 
+                        transfer = _.sortBy(transfer, 'date');
+
                         if ((parseInt(year, 10) * 100 + parseInt(month, 10)) === (moment(transfer[transferLength - 1].date).year() * 100 + moment(transfer[transferLength - 1].date).month() + 1)) {
                             startDate = moment(transfer[transferLength - 1].date);
                         }
-                        for (var i = 0; i <= transferLength - 1; i++) {
+                        for (var i = transferLength - 1; i >= 0; i--) {
                             var transferObj = transfer[i];
 
-                            if ((moment(moment(startDate)).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
+                            if ((moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
                                 if (transferObj.status === 'fired') {
                                     if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
                                         salaryForDate = transferObj.salary;
                                         weeklyScheduler = transferObj.weeklyScheduler;
                                         break;
                                     }
-                                } else {
+                                } else if (transferObj.status !== 'transfer'){
                                     salaryForDate = transferObj.salary;
                                     weeklyScheduler = transferObj.weeklyScheduler;
                                     break;
@@ -2942,6 +2950,11 @@ var Module = function (models, event) {
                             }
                         }
 
+                       /* if (employee.toString() === '55b92ad221e4b7c40f000084'){
+                            console.log('fff');
+                        }
+
+*/
                         holidays.forEach(function (holiday) {
                             if ((holiday.day !== 0) && (holiday.day !== 6)) {
                                 hoursToRemove += parseInt(weeklyScheduler[holiday.day]) || 0;
@@ -3498,7 +3511,7 @@ var Module = function (models, event) {
                             $match: matchObject
                         }, {
                             $match: {
-                                "sourceDocument.model": {$in: ["Invoice", "proforma", "dividendInvoice"]},
+                                "sourceDocument.model": {$in: ["Invoice", "Proforma", "dividendInvoice"]},
                                 debit                 : {$gt: 0}
                             }
                         }, {
@@ -6366,7 +6379,7 @@ var Module = function (models, event) {
                             $match: matchObject
                         }, {
                             $match: {
-                                "sourceDocument.model": {$in: ["Invoice", "proforma", "dividendInvoice"]},
+                                "sourceDocument.model": {$in: ["Invoice", "Proforma", "dividendInvoice"]},
                                 debit                 : {$gt: 0}
                             }
                         }, {

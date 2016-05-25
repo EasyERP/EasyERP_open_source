@@ -257,7 +257,7 @@ var Proforma = function (models) {
                 currency      : CONSTANTS.CURRENCY_USD,
                 journal       : CONSTANTS.PROFORMA_JOURNAL,
                 sourceDocument: {
-                    model: 'proforma',
+                    model: 'Proforma',
                     _id  : proforma._id
                 },
                 amount        : 0,
