@@ -5,6 +5,17 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
+var dbId = 'dendb'
+var admin = {
+    login: 'admin',
+    pass : 'tm2016',
+    dbId : dbId
+};
+var failUser = {
+    login: 'ArturMyhalko',
+    pass : 'thinkmobiles2015',
+    dbId : dbId
+};
 
 describe("Opportunity Specs", function () {
     'use strict';
@@ -17,11 +28,7 @@ describe("Opportunity Specs", function () {
 
             aggent
                 .post('users/login')
-                .send({
-                    login: 'admin',
-                    pass : '1q2w3eQWE',
-                    dbId : 'production'
-                })
+                .send(admin)
                 .expect(200, done);
         });
 
@@ -286,7 +293,9 @@ describe("Opportunity Specs", function () {
 
         it('should create opportunity createLeadFromSite', function (done) {
             var body = {
-                email: "test@example.com"
+                email  : 'test@example.com',
+                name   : 'testName',
+                company: 'testCompany'
             };
 
             aggent
@@ -332,11 +341,7 @@ describe("Opportunity Specs", function () {
 
             aggent
                 .post('users/login')
-                .send({
-                    login: 'ArturMyhalko',
-                    pass : 'thinkmobiles2015',
-                    dbId : 'production'
-                })
+                .send(failUser)
                 .expect(200, done);
         });
 

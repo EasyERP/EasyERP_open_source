@@ -2,6 +2,17 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var aggent;
+var dbId = 'dendb';
+var admin = {
+    login: 'admin',
+    pass : 'tm2016',
+    dbId : dbId
+};
+var failUser = {
+    login: 'ArturMyhalko',
+    pass : 'thinkmobiles2015',
+    dbId : dbId
+};
 
 describe("User Specs", function () {
     'use strict';
@@ -12,11 +23,7 @@ describe("User Specs", function () {
             aggent = request.agent(url);
             aggent
                 .post('users/login')
-                .send({
-                    login: 'admin',
-                    pass : '1q2w3eQWE',
-                    dbId : 'production'
-                })
+                .send(admin)
                 .expect(200, done);
         });
 
@@ -177,11 +184,7 @@ describe("User Specs", function () {
         });
 
         it("should login success", function (done) {
-            var body = {
-                "login": "admin",
-                "pass" : "1q2w3eQWE",
-                "dbId" : "production"
-            };
+            var body = admin;
 
             aggent
                 .post('users/login')
@@ -193,7 +196,7 @@ describe("User Specs", function () {
             var body = {
                 "login" : "admin",
                 "sfshdf": "1q2w3eQWE",
-                "dbId"  : "production"
+                "dbId"  : dbId
             };
 
             aggent
@@ -206,7 +209,7 @@ describe("User Specs", function () {
             var body = {
                 "login": "admin",
                 "pass" : "jdgfdfjkgbdjgbjhfdbgdfbg",
-                "dbId" : "production"
+                "dbId" : dbId
             };
 
             aggent
