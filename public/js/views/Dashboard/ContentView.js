@@ -132,6 +132,7 @@ define([
                         self.renderPopulateSource();
                     }
                     self.renderOpportunities();
+                    self.renderOpportunitiesWinAndLost();
                     if ($(window).width() < 1370) {
                         $(".legend-box").css("margin-top", "10px");
                     } else {
@@ -693,15 +694,7 @@ define([
 
             renderOpportunities : function () {
                 var self = this;
-                var intFiltersArray = ['week', 'month', 'year', 'paymentsCount'];
-                var mapData;
-                var key = "Sales Person";
-                var filterView = "salesPerson";
-                var filterBackend = {};
-                var contentType = "Opportunities";
-                /*if (that) {
-                    self = that;
-                }*/
+
                 $(".opportunitiesChart").empty();
 
                 common.getOpportunitiesForChart(null, this.dateRangeOpportunities, this.dateItem, function (data) {
@@ -830,7 +823,7 @@ define([
                         .attr("height", y.rangeBand())
                         .attr("width", function (d) {
                             return  x(d.sum);
-                        }).style("fill", "#E3DE4E");
+                        }).style("fill", "yellow");
 
                     chart.selectAll(".bar2")
                         .data(data2)
@@ -909,7 +902,7 @@ define([
 
                             data3.forEach(function (item) {
                                 if (d.salesPerson === item.salesPerson) {
-                                    x0 = x(item.sum);
+                                    x0 += x(item.sum);
                                 }
                             });
 
@@ -930,8 +923,111 @@ define([
                             return -height;
                         });
                 });
-            }
+            },
 
+            renderOpportunitiesWinAndLost : function () {
+                var self = this;
+
+                $(".winAndLostOpportunitiesChart").empty();
+
+                common.getOpportunitiesForChart(null, this.dateRangeOpportunities, this.dateItem, function (data) {
+                    var maxval = d3.max(data, function (d) {
+                        return d.count;
+                    });
+                    $("#timeBuildingDataFromServer").text("Server response in " + self.buildTime + " ms");
+                    var margin = {top: 20, right: 160, bottom: 190, left: 160},
+                        width = $("#wrapper").width() - margin.left - margin.right,
+                        height = 500 - margin.top - margin.bottom;
+                    var x = d3.scale.ordinal()
+                        .rangeRoundBands([0, width], 0.6);
+
+                    var y = d3.scale.linear()
+                        .range([height, 0]);
+
+                    var y2 = d3.scale.linear()
+                        .range([height, 0]);
+
+                    var x2 = d3.scale.linear()
+                        .range([0, width]);
+
+                    var xAxis = d3.svg.axis()
+                        .scale(x)
+                        .orient("bottom")
+                        .tickFormat(function (d) {
+                            switch (self.dateItem) {
+                                case "DW":
+                                    return self.getDay(d);
+                                case "M":
+                                    return self.getMonth(d);
+                                case "D":
+                                    return self.getDateFromDayOfYear(d);
+                            }
+                            return d;
+
+                        });
+
+                    var yAxis = d3.svg.axis()
+                        .scale(y)
+                        .ticks(maxval)
+                        .orient("left");
+
+                    var yAxis2 = d3.svg.axis()
+                        .scale(y2)
+                        .orient("right")
+                        .tickFormat(function (d) {
+                            return d + "%";
+                        });
+                    var chart = d3.select(".winAndLostOpportunitiesChart")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                    chart.append("g")
+                        .attr("class", "y axis")
+                        .call(yAxis)
+                        .selectAll(".tick line")
+                        .attr("x2", function (d) {
+                            return width;
+                        })
+                        .style("fill", "#1EBBEA");
+
+                    chart.append("g")
+                        .attr("class", "y2 axis")
+                        .attr("transform", "translate(" + width + ",0)")
+                        .call(yAxis2);
+
+                   /* chart.selectAll(".bar")
+                        .data(data1)
+                        .enter().append("rect")
+                        .attr("class", "bar")
+                        .attr("x", function (d) {
+                            return x(d.source);
+                        })
+                        .attr("y", function (d) {
+                            return y(d.count);
+                        })
+                        .attr("height", function (d) {
+                            return height - y(d.count);
+                        })
+                        .attr("width", x.rangeBand());
+
+                    chart.selectAll(".bar2")
+                        .data(data2)
+                        .enter().append("rect")
+                        .attr("class", "bar2")
+                        .attr("x", function (d) {
+                            return x(d.source);
+                        })
+                        .attr("y", function (d) {
+                            return y(d.count);
+                        })
+                        .attr("height", function (d) {
+                            return height - y(d.count);
+                        })
+                        .attr("width", x.rangeBand());*/
+                });
+            }
         });
         return ContentView;
     });
