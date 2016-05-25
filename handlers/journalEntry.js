@@ -2934,7 +2934,7 @@ var Module = function (models, event) {
 
                         transfer = _.sortBy(transfer, 'date');
 
-                        if ((parseInt(year, 10) * 100 + parseInt(month, 10)) === (moment(transfer[transferLength - 1].date).year() * 100 + moment(transfer[transferLength - 1].date).month() + 1)) {
+                        if ((parseInt(year, 10) * 100 + parseInt(month, 10)) === (moment(transfer[0].date).year() * 100 + moment(transfer[0].date).month() + 1)) {
                             startDate = moment(transfer[transferLength - 1].date);
                         }
                         for (var i = transferLength - 1; i >= 0; i--) {
@@ -2955,7 +2955,7 @@ var Module = function (models, event) {
                             }
                         }
 
-                        /*if (employee.toString() === '55b92ad221e4b7c40f00008a'){
+                      /*  if (employee.toString() === '55b92ad221e4b7c40f00008a'){
                             console.dir(weeklyScheduler);
                         }*/
 
