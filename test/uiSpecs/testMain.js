@@ -2,8 +2,8 @@ var allTestFiles = [];
 var TEST_REGEXP = /(spec|test)\.js$/i;
 var App = App || {
         savedFilters: {},
-        weTrack: true,
-        render: function (options) {
+        weTrack     : true,
+        render      : function (options) {
             "use strict";
             Backbone.Collection.prototype.getElement = function (id) {
                 return (id) ? this.get(id) : ((this.currentElement) ? this.currentElement : this.at(0));
@@ -34,7 +34,7 @@ var App = App || {
                             Backbone.history.navigate("login", {trigger: true});
                         } else {
                             App.render({
-                                type: 'error',
+                                type   : 'error',
                                 message: "You do not have permission to perform this action."
                             });
                         }
@@ -1156,22 +1156,23 @@ require.config({
         images       : './public/images'
     },
     shim   : {
-        'jqueryui' : ['jQuery'],
+        jqueryui     : ['jQuery'],
         'chai-jquery': ['jqueryui', 'chai'],
-        'Backbone'   : ['Underscore', 'jqueryui'],
-        'Underscore' : {
+        Backbone     : ['Underscore', 'jqueryui'],
+        Underscore   : {
             exports: '_'
         },
-        'jQuery'     : {
+        jQuery       : {
             exports: '$'
         },
-        'async': {
+        async        : {
             exports: 'async'
         },
-        'jqueryui': {
+        jqueryui     : {
             exports: 'jqueryui'
         },
-        'd3'        : {
+        jqueryBarcode: ['jQuery'],
+        d3           : {
             exports: 'd3'
         }
     },

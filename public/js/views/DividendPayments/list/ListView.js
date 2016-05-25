@@ -5,7 +5,7 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Pagination/PaginationTemplate.html',
-    'text!templates/DividendPayments/list/ListHeader.html',
+    'text!templates/DividendPayments/list/ListTemplate.html',
     'text!templates/DividendPayments/list/ListHeader.html',
     'text!templates/supplierPayments/forWTrack/cancelEdit.html',
     'views/selectView/selectView',
@@ -58,7 +58,7 @@ define([
 
             events: {
                 "click td.editable"                                               : "editRow",
-                "change .editable"                                               : "setEditable",
+                "change .editable"                                                : "setEditable",
                 "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
                 "focusout .editing"                                               : "onChangeInput",
                 "keydown .editing"                                                : "onKeyDownInput"
@@ -113,7 +113,6 @@ define([
                 }
 
                 if (elementType === '#employee') {
-
                     tr.find('[data-content="employee"]').text(element.name);
 
                     //supplier = _.clone(editModel.get('supplier'));
@@ -602,7 +601,7 @@ define([
                             cb();
                         },
                         error  : function (model, res) {
-                            if (res.status === 403 && index === 0) {
+                            if (res.status === 403/* && index === 0 comment after unit tests */) {
                                 App.render({
                                     type: 'error',
                                     message: "You do not have permission to perform this action"
