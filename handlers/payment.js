@@ -1452,7 +1452,6 @@ var Payment = function (models, event) {
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
                 $and: [
-                    queryObject,
                     {
                         $or: whoCanRw
                     }
@@ -1549,7 +1548,8 @@ var Payment = function (models, event) {
                         paymentRef      : 1,
                         year            : 1,
                         month           : 1,
-                        period          : 1
+                        period          : 1,
+                        _type           : 1
                     }
                 }, {
                     $lookup: {
@@ -1580,7 +1580,8 @@ var Payment = function (models, event) {
                         paymentRef      : 1,
                         year            : 1,
                         month           : 1,
-                        period          : 1
+                        period          : 1,
+                        _type           : 1
                     }
                 }, {
                     $project: {
@@ -1598,7 +1599,8 @@ var Payment = function (models, event) {
                         paymentRef      : 1,
                         year            : 1,
                         month           : 1,
-                        period          : 1
+                        period          : 1,
+                        _type           : 1
                     }
                 }, {
                     $lookup: {
@@ -1625,6 +1627,8 @@ var Payment = function (models, event) {
                         month           : 1,
                         period          : 1
                     }
+                }, {
+                    $match: queryObject
                 }
             ], waterfallCallback);
         };
