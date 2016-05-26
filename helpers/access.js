@@ -2,8 +2,16 @@ module.exports = function (moduleId, models) {
     "use strict";
     return function (req, res, next) {
         var access = require("../Modules/additions/access.js")(models);
+        var MODULES = require('../constants/modules');
         var method = req.method;
+        var type = req.headers.type;
+        var baseUrl = req.baseUrl;
         var err;
+
+        if (type === 'sales'){
+            baseUrl.substr(1);
+            moduleId = MODULES['SALES' + baseUrl.toUpperCase()] || moduleId;
+        }
 
         function sender(access) {
             if (access) {
