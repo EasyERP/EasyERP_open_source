@@ -24,9 +24,9 @@ module.exports = function (models, event) {
     router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
 
     // router.get('/form', authStackMiddleware, accessStackMiddlware, handler.getById);
-    // router.get('/list', authStackMiddleware, accessStackMiddlware, handler.getFilterCustomers);
+   //  router.get('/list', authStackMiddleware, accessStackMiddlware, handler.getFilterCustomers);
     // router.get('/thumbnails', authStackMiddleware, accessStackMiddlware, handler.getFilterCustomers);
-    // router.get('/:id', checkAuth, handler.getById);
+   //  router.get('/:id', accessStackMiddlware, handler.getById);
     
     return router;
 };

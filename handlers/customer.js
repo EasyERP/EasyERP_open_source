@@ -117,7 +117,7 @@ var Customers = function (models) {
 
             queryObject.$and = [];
 
-            if (optionsObject.$and.length) {
+            if (optionsObject.$and && optionsObject.$and.length) {
                 queryObject.$and.push(optionsObject);
             }
 
@@ -483,7 +483,7 @@ var Customers = function (models) {
                 break;
         }
 
-        Customers.find(optionsObject, {_id: 1, imageSrc: 1}, function (err, response) {
+        Customers.  find(optionsObject, {_id: 1, imageSrc: 1}, function (err, response) {
             if (err) {
                 return next(err);
             }
@@ -601,7 +601,7 @@ var Customers = function (models) {
 
             queryObject.$and = [];
 
-            if (optionsObject.$and.length) {
+            if (optionsObject.$and && optionsObject.$and.length) {
                 queryObject.$and.push(optionsObject);
             }
 
