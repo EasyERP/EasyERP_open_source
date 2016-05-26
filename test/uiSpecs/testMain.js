@@ -1153,23 +1153,24 @@ require.config({
         'chai-jquery': './node_modules/chai-jquery/chai-jquery',
         'sinon-chai' : './node_modules/sinon-chai/lib/sinon-chai',
         fixtures     : './test/uiSpecs/fixtures',
-        images       : './public/images'
+        images       : './public/images',
+        modules      : './constants/test/modules'
     },
     shim   : {
-        jqueryui     : ['jQuery'],
+        jQuery       : {
+            exports: '$'
+        },
+        jqueryui     : {
+            deps   : ['jQuery'],
+            exports: 'jqueryui'
+        },
         'chai-jquery': ['jqueryui', 'chai'],
         Backbone     : ['Underscore', 'jqueryui'],
         Underscore   : {
             exports: '_'
         },
-        jQuery       : {
-            exports: '$'
-        },
         async        : {
             exports: 'async'
-        },
-        jqueryui     : {
-            exports: 'jqueryui'
         },
         jqueryBarcode: ['jQuery'],
         d3           : {
