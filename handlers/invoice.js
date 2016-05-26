@@ -2200,7 +2200,8 @@ var Invoice = function (models, event) {
                 dueDate      : 1,
                 name         : 1,
                 invoiceDate  : 1,
-                paymentInfo  : 1
+                paymentInfo  : 1,
+                currency     : 1
             }
         }, {
             $project: {
@@ -2213,6 +2214,7 @@ var Invoice = function (models, event) {
                 },
                 name                 : 1,
                 paymentInfo          : 1,
+                currency             : 1,
                 diffStatus           : {
                     $cond: {
                         if  : {
@@ -2271,6 +2273,7 @@ var Invoice = function (models, event) {
                 'supplier.name'      : 1,
                 name                 : 1,
                 paymentInfo          : 1,
+                currency             : 1,
                 diffStatus           : 1
             }
         }, {
@@ -2284,6 +2287,21 @@ var Invoice = function (models, event) {
                 'supplier.name'      : 1,
                 name                 : 1,
                 paymentInfo          : 1,
+                rate                 : '$currency.rate',
+                diffStatus           : 1
+            }
+        }, {
+            $project: {
+                'salesPerson.name'   : 1,
+                dueDate              : 1,
+                invoiceDate          : 1,
+                'project.projectName': 1,
+                'supplier.name'      : 1,
+                name                 : 1,
+                'paymentInfo.taxes'  : {$divide: ['$paymentInfo.taxes', '$rate']},
+                'paymentInfo.unTaxed': {$divide: ['$paymentInfo.unTaxed', '$rate']},
+                'paymentInfo.balance': {$divide: ['$paymentInfo.balance', '$rate']},
+                'paymentInfo.total'  : {$divide: ['$paymentInfo.total', '$rate']},
                 diffStatus           : 1
             }
         }, {
