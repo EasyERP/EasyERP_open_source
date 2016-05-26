@@ -18,10 +18,10 @@
             render    : function () {
 
                 this.$el.append(_.template(listForWTrack, {
-                    quotations : this.collection.toJSON(),
-                    startNumber: this.startNumber,
+                    quotations      : this.collection.toJSON(),
+                    startNumber     : this.startNumber,
                     currencySplitter: helpers.currencySplitter,
-                    currencyClass: helpers.currencyClass
+                    currencyClass   : helpers.currencyClass
                 }));
             }
         });

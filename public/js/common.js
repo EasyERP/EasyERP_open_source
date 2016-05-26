@@ -15,7 +15,7 @@
     };
 
     var utcDateToLocaleDate = function (utcDateString) {
-        utcDateString = utcDateString ? moment(utcDateString).format("D mmm, YYYY") : null;
+        utcDateString = utcDateString ? moment(utcDateString).format("DD MMM, YYYY") : null;
 
         return utcDateString;
     };

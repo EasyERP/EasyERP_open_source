@@ -66,7 +66,7 @@ define([
             if (products) {
                 products = _.map(products, function (product) {
                     if (product.scheduledDate) {
-                        product.scheduledDate = common.utcDateToLocaleDate(product.scheduledDate);
+                        product.scheduledDate = common.utcDateToLocaleDate(new Date(product.scheduledDate));
                     }
 
                     unitPrice = product.unitPrice || 0;
@@ -85,10 +85,10 @@ define([
                 });
             }
             if (model.expectedDate) {
-                model.expectedDate = common.utcDateToLocaleDate(model.expectedDate);
+                model.expectedDate = common.utcDateToLocaleDate(new Date(model.expectedDate));
             }
             if (model.orderDate) {
-                model.orderDate = common.utcDateToLocaleDate(model.orderDate);
+                model.orderDate = common.utcDateToLocaleDate(new Date(model.orderDate));
             }
             return model;
         }

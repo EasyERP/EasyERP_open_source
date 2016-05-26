@@ -1321,7 +1321,7 @@ var Module = function (models, event) {
                 return next(err);
             }
 
-            res.status(200).send();
+            res.status(200).send({'success': true});
         });
     };
 
@@ -4042,8 +4042,7 @@ var Module = function (models, event) {
         var query = req.query;
         var sourceDocument = query._id;
         var date = query.date;
-        var debit;
-        var resultFinder;
+        
         Model
             .aggregate([{
                 $match: {
