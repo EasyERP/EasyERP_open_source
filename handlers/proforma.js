@@ -232,6 +232,7 @@ var Proforma = function (models) {
             proforma.workflow = workflow._id;
             proforma.paymentInfo.balance = quotation.paymentInfo.total;
             proforma.journal = CONSTANTS.PROFORMA_JOURNAL;
+            proforma.invoiceDate = quotation.orderDate;
 
             proforma.currency.rate = oxr.rates[quotation.currency.obj.name];
             proforma.currency._id = quotation.currency._id;

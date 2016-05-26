@@ -86,11 +86,11 @@ define([
                 this.saveItem(function (err, currency) {
                     if (!err) {
                         paymentView = new PaymentCreateView({
-                            model     : self.currentModel,
-                            redirect  : self.redirect,
-                            collection: self.collection,
-                            currency  : currency,
-                            mid       : 95,
+                            model       : self.currentModel,
+                            redirect    : self.redirect,
+                            collection  : self.collection,
+                            currency    : currency,
+                            mid         : 95,
                             eventChannel: self.eventChannel
                         });
                     }
@@ -247,7 +247,7 @@ define([
                         payBtnHtml = '<button class="btn newPayment"><span>Pay</span></button>';
                         url = '/invoice/approve';
                         data = {
-                            invoiceId: proformaId,
+                            invoiceId  : proformaId,
                             invoiceDate: invoiceDate
                         };
 
@@ -257,7 +257,7 @@ define([
                                 self.currentModel.set({approved: true});
                                 $li.html(payBtnHtml);
                                 $currencyDd.removeClass('current-selected');
-                                $priceInputs.each(function() {
+                                $priceInputs.each(function () {
                                     var $td = $(this);
                                     var price = $td.find('input').val();
 
@@ -344,7 +344,7 @@ define([
                     App.stopPreload();
 
                     return App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'Please fill all required fields.'
                     });
                 }
@@ -358,8 +358,8 @@ define([
                             quantity = targetEl.find('[data-name="quantity"]').text();
                             price = targetEl.find('[data-name="price"] input').val() || targetEl.find('[data-name="price"] span').text();
                             price = parseFloat(price) * 100;
-                            
-                            if (isNaN(price) || price <=0) {
+
+                            if (isNaN(price) || price <= 0) {
                                 return App.render({
                                     type   : 'error',
                                     message: 'Please, enter Unit Price!'
@@ -372,12 +372,12 @@ define([
                             amount = parseFloat(amount) * 100;
 
                             products.push({
-                                product    : productId,
-                                jobs       : jobs,
-                                unitPrice  : price,
-                                quantity   : quantity,
-                                taxes      : taxes,
-                                subTotal   : amount
+                                product  : productId,
+                                jobs     : jobs,
+                                unitPrice: price,
+                                quantity : quantity,
+                                taxes    : taxes,
+                                subTotal : amount
                             });
                         }
                     }
@@ -405,7 +405,7 @@ define([
                     dueDate              : dueDate,
                     account              : null,
                     journal              : journalId,
-                    paymentTerms: paymentTermId,
+                    paymentTerms         : paymentTermId,
 
                     products   : products,
                     paymentInfo: payments,
@@ -619,7 +619,7 @@ define([
                 populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, true, true);
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
-              //  populate.get("#journal", "/journal/getForDd", {}, 'name', this, true);
+                //  populate.get("#journal", "/journal/getForDd", {}, 'name', this, true);
 
                 this.$el.find('#invoice_date').datepicker({
                     dateFormat : "d M, yy",
@@ -627,6 +627,7 @@ define([
                     changeYear : true,
                     disabled   : model.approved,
                     maxDate    : 0,
+                    minDate    : invoiceDate,
                     onSelect   : function () {
                         var dueDatePicker = $('#due_date');
                         var endDate = $(this).datepicker('getDate');
