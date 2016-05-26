@@ -7137,8 +7137,7 @@ ul.chart-tabs .withEndContract .arrow {
 }
 .choseDateRange,
 .choseDateItem,
-.choseDateRangeSource,
-.choseDateRangeOpportunities{
+.choseDateRangeSource {
   padding: 5px;
   border: 1px solid #efefef;
   float: right;
@@ -7146,8 +7145,7 @@ ul.chart-tabs .withEndContract .arrow {
 }
 .choseDateRange .item,
 .choseDateItem .item,
-.choseDateRangeSource .item,
-.choseDateRangeOpportunities .item{
+.choseDateRangeSource .item {
   margin-left: 5px;
   float: left;
   padding: 5px 10px;
@@ -7158,14 +7156,12 @@ ul.chart-tabs .withEndContract .arrow {
 }
 .choseDateRange .item:first-child,
 .choseDateItem .item:first-child,
-.choseDateRangeSource .item:first-child,
-.choseDateRangeOpportunities .item:first-child{
+.choseDateRangeSource .item:first-child {
   margin-left: 0;
 }
 .choseDateRange .item.active,
 .choseDateItem .item.active,
-.choseDateRangeSource .item.active,
-.choseDateRangeOpportunities .item.active{
+.choseDateRangeSource .item.active {
   background-color: #3e88b9;
   color: white;
 }
@@ -7179,9 +7175,6 @@ ul.chart-tabs .withEndContract .arrow {
 }
 .legend-box.small {
   width: 255px;
-}
-.legend-box.opportunities{
-  width: 420px;
 }
 .legend-box div {
   float: left;
