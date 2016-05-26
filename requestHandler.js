@@ -3138,6 +3138,20 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
+    function getOpportunitiesForChart(req, res, data) {
+        if (req.session && req.session.loggedIn) {
+            access.getReadAccess(req, req.session.uId, 24, function (access) {
+                if (access) {
+                    opportunities.getOpportunitiesForChart(req, res, data);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
 //-------------------Opportunities---------------------------
 
 // Get  Leads or Opportunities for List
@@ -3451,6 +3465,7 @@ var requestHandler = function (app, event, mainDb) {
         removeLead      : removeLead,
         getLeadsById    : getLeadsById,
         getLeadsForChart: getLeadsForChart,
+        getOpportunitiesForChart: getOpportunitiesForChart,
 
         opportunitiesTotalCollectionLength  : opportunitiesTotalCollectionLength,
         getOpportunitiesLengthByWorkflows   : getOpportunitiesLengthByWorkflows,

@@ -2,9 +2,12 @@ define([
         "text!templates/Dashboard/DashboardTemplate.html",
         "d3",
         "common",
-        "dataService"
+        "dataService",
+        'collections/Filter/filterCollection',
+        "collections/Workflows/WorkflowsCollection",
+        'collections/Opportunities/OpportunitiesCollection'
     ],
-    function (DashboardTemplate, d3, common, dataService) {
+    function (DashboardTemplate, d3, common, dataService, filterValuesCollection, workflowsCollection, OpportunitiesCollection) {
         var ContentView = Backbone.View.extend({
             contentType: "Dashboard",
             actionType : "Content",
@@ -16,6 +19,7 @@ define([
                 this.buildTime = 0;
                 this.dateRange = 30;
                 this.dateRangeSource = 30;
+                this.dateRangeOpportunities = 30;
                 this.dateItem = "D";
                 this.numberToDate = {};
                 this.source = null;
@@ -26,10 +30,11 @@ define([
                 this.render();
             },
             events     : {
-                "click .choseDateRange .item"      : "newRange",
-                "click .choseDateRangeSource .item": "newRangeSource",
-                "click .choseDateItem .item"       : "newItem",
-                'click .chart-tabs a'              : 'changeTab'
+                "click .choseDateRange .item"              : "newRange",
+                "click .choseDateRangeSource .item"        : "newRangeSource",
+                "click .choseDateRangeOpportunities .item" : "newRangeOpportunities",
+                "click .choseDateItem .item"               : "newItem",
+                'click .chart-tabs a'                      : 'changeTab'
             },
             changeTab  : function (e) {
                 $(e.target).closest(".chart-tabs").find("a.active").removeClass("active");
@@ -54,6 +59,13 @@ define([
                 $(e.target).addClass("active");
                 this.dateRangeSource = $(e.target).data("day");
                 this.renderPopulateSource(this, !!type);
+            },
+
+            newRangeOpportunities: function (e) {
+                $(e.target).parent().find(".active").removeClass("active");
+                $(e.target).addClass("active");
+                this.dateRangeOpportunities = $(e.target).data("day");
+                this.renderOpportunities();
             },
 
             newItem             : function (e) {
@@ -120,13 +132,17 @@ define([
                 if (!self.source) {
                     dataService.getData("/sources", null, function (response) {
                         self.source = response;
-                        self.renderPopulateSource(self, null);
+                        self.renderPopulateSource(self);
                         self.renderPopulateSource(self, true);
                     });
                 } else {
-                    self.renderPopulateSource(self, null);
+                    self.renderPopulateSource(self);
                     self.renderPopulateSource(self, true)
                 }
+
+                self.renderOpportunities();
+                self.renderOpportunitiesWinAndLost();
+                
                 if ($(window).width() < 1370) {
                     $(".legend-box").css("margin-top", "10px");
                 } else {
@@ -140,9 +156,10 @@ define([
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
                 $(window).unbind("resize").resize(self.resizeHandler);
             },
+            
             renderPopulateSource: function (that, sales) {
                 var self = this;
-                var sources = sales ? null : true
+                var sources = !!sales;
                 var chartClass = sales ? '.salesChart' : '.sourcesChart';
                 if (that) {
                     self = that;
@@ -700,6 +717,343 @@ define([
                     }
                 });
 
+            },
+
+            renderOpportunities : function () {
+                var self = this;
+
+                $(".opportunitiesChart").empty();
+
+                common.getOpportunitiesForChart(null, this.dateRangeOpportunities, this.dateItem, function (data) {
+                    var margin = {top: 20, right: 160, bottom: 30, left: 160},
+                        width = $("#wrapper").width() - margin.left - margin.right,
+                        height = 600 - margin.top - margin.bottom;
+                    var y = d3.scale.ordinal()
+                        .rangeRoundBands([0, height], 0.3);
+                    var x = d3.scale.linear()
+                        .range([0,width]);
+                    var x2 = d3.scale.linear()
+                        .range([0, width]);
+                    var xAxis = d3.svg.axis()
+                        .scale(x)
+                        .orient("bottom");
+                    var yAxis = d3.svg.axis()
+                        .scale(y)
+                        .orient("left");
+                    var chart = d3.select(".opportunitiesChart")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+                    var data1;
+                    var data2;
+                    var data3;
+                    var data4;
+                    var arrData;
+                    var arrSum;
+                    var i;
+
+                    console.log(data);
+
+                    self.opportunitiesData = data;
+
+
+                    data.forEach(function (item) {
+                        if (item._id === "New") {
+                            data1 = item.data;
+                        }
+                        if (item._id === "% 25-50") {
+                            data2 = item.data;
+                        }
+                        if (item._id === "% 50-75") {
+                            data3 = item.data;
+                        }
+                        if (item._id === "% 75-100") {
+                            data4 = item.data;
+                        }
+                    });
+
+                    data1 = data1 || [];
+                    data2 = data2 || [];
+                    data3 = data3 || [];
+                    data4 = data4 || [];
+
+                    for (i = data1.length-1; i>=0; i--) {
+                        if (data1[i] && !data1[i].sum || data1[i].sum === 0) {
+                            data1.splice(i, 1);
+                        }
+                    }
+
+                    for (i = data2.length-1; i>=0; i--) {
+                        if (data2[i] && !data2[i].sum || data2[i].sum === 0) {
+                            data2.splice(i, 1);
+                        }
+                    }
+
+                    for (i = data3.length-1; i>=0; i--) {
+                        if (data3[i] && !data3[i].sum || data3[i].sum === 0) {
+                            data3.splice(i, 1);
+                        }
+                    }
+
+                    for (i = data4.length-1; i>=0; i--) {
+                        if (data4[i] && !data4[i].sum || data4[i].sum === 0) {
+                            data4.splice(i, 1);
+                        }
+                    }
+
+                    arrData = _.union(_.pluck(data1, 'salesPerson'), _.pluck(data2, 'salesPerson'), _.pluck(data3, 'salesPerson'), _.pluck(data4, 'salesPerson'));
+                    arrSum = _.map(_.groupBy(_.union(data1, data2, data3, data4), 'salesPerson'), function (el) {
+                        return _.reduce(el, function(memo, num){
+                            return memo + num.sum;
+                        }, 0);
+                    });
+
+                    for (i = arrData.length-1; i>=0; i--) {
+                        if (!arrData[i]) {
+                            arrData[i] = "NoUser";
+                        }
+                    }
+
+                    y.domain(arrData.map(function (d) {
+                        return d;
+                    }));
+
+                    x.domain([0, d3.max(arrSum, function (d) {
+                        return d;
+                    }) + 10]);
+
+                    x2.domain([0, d3.max(data, function (d) {
+                        return d.count;
+                    }) + 10]);
+
+                    chart.append("g")
+                        .attr("class", "x axis")
+                        .attr("transform", "translate(0," + height + ")")
+                        .call(xAxis);
+
+                    chart.append("g")
+                        .attr("class", "y axis")
+                        .call(yAxis);
+
+                    chart.selectAll(".bar")
+                        .data(data1)
+                        .enter()
+                        .append("rect")
+                        .attr("class", "bar")
+                        .attr("x", function (d) {
+                            return 0;
+                        })
+                        .attr("y", function (d) {
+                            return y(d.salesPerson);
+                        })
+                        .attr("height", y.rangeBand())
+                        .attr("width", function (d) {
+                            return  x(d.sum);
+                        }).style("fill", "yellow");
+
+                    chart.selectAll(".bar2")
+                        .data(data2)
+                        .enter()
+                        .append("rect")
+                        .attr("class", "bar2")
+                        .attr("x", function (d) {
+                            var x0 = 0;
+
+                            data1.forEach(function (item) {
+                                if (d.salesPerson === item.salesPerson) {
+                                    x0 += x(item.sum);
+                                }
+                            });
+
+                            return x0;
+                        })
+                        .attr("y", function (d) {
+                            return y(d.salesPerson);
+                        })
+                        .attr("height", y.rangeBand())
+                        .attr("width", function (d) {
+                            return x(d.sum);
+                        })
+                        .style("fill", "#56D1B5");
+
+                    chart.selectAll(".bar3")
+                        .data(data3)
+                        .enter()
+                        .append("rect")
+                        .attr("class", "bar3")
+                        .attr("x", function (d) {
+                            var x0 = 0;
+
+                            data1.forEach(function (item) {
+                                if (d.salesPerson === item.salesPerson) {
+                                    x0 += x(item.sum);
+                                }
+                            });
+
+                            data2.forEach(function (item) {
+                                if (d.salesPerson === item.salesPerson) {
+                                    x0 += x(item.sum);
+                                }
+                            });
+
+                            return x0;
+                        })
+                        .attr("y", function (d) {
+                            return y(d.salesPerson);
+                        })
+                        .attr("height", y.rangeBand())
+                        .attr("width", function (d) {
+                            return x(d.sum);
+                        })
+                        .style("fill", "#26A7DE");
+
+                    chart.selectAll(".bar4")
+                        .data(data4)
+                        .enter()
+                        .append("rect")
+                        .attr("class", "bar4")
+                        .attr("x", function (d) {
+                            var x0 = 0;
+                            data1.forEach(function (item) {
+                                if (d.salesPerson === item.salesPerson) {
+                                    x0 += x(item.sum);
+                                }
+                            });
+
+                            data2.forEach(function (item) {
+                                if (d.salesPerson === item.salesPerson) {
+                                    x0 += x(item.sum);
+                                }
+                            });
+
+                            data3.forEach(function (item) {
+                                if (d.salesPerson === item.salesPerson) {
+                                    x0 += x(item.sum);
+                                }
+                            });
+
+                            return x0;
+                        })
+                        .attr("y", function (d) {
+                            return y(d.salesPerson);
+                        })
+                        .attr("height", y.rangeBand())
+                        .attr("width", function (d) {
+                            return  x(d.sum);
+                        })
+                        .style("fill", "#5FBA51");
+
+                    chart.selectAll(".x .tick line")
+                        .data(x.ticks())
+                        .attr("y2", function (d) {
+                            return -height;
+                        });
+                });
+            },
+
+            renderOpportunitiesWinAndLost : function () {
+                var self = this;
+
+                $(".winAndLostOpportunitiesChart").empty();
+
+                common.getOpportunitiesForChart(null, this.dateRangeOpportunities, this.dateItem, function (data) {
+                    var maxval = d3.max(data, function (d) {
+                        return d.count;
+                    });
+                    $("#timeBuildingDataFromServer").text("Server response in " + self.buildTime + " ms");
+                    var margin = {top: 20, right: 160, bottom: 190, left: 160},
+                        width = $("#wrapper").width() - margin.left - margin.right,
+                        height = 500 - margin.top - margin.bottom;
+                    var x = d3.scale.ordinal()
+                        .rangeRoundBands([0, width], 0.6);
+
+                    var y = d3.scale.linear()
+                        .range([height, 0]);
+
+                    var y2 = d3.scale.linear()
+                        .range([height, 0]);
+
+                    var x2 = d3.scale.linear()
+                        .range([0, width]);
+
+                    var xAxis = d3.svg.axis()
+                        .scale(x)
+                        .orient("bottom")
+                        .tickFormat(function (d) {
+                            switch (self.dateItem) {
+                                case "DW":
+                                    return self.getDay(d);
+                                case "M":
+                                    return self.getMonth(d);
+                                case "D":
+                                    return self.getDateFromDayOfYear(d);
+                            }
+                            return d;
+
+                        });
+
+                    var yAxis = d3.svg.axis()
+                        .scale(y)
+                        .ticks(maxval)
+                        .orient("left");
+
+                    var yAxis2 = d3.svg.axis()
+                        .scale(y2)
+                        .orient("right")
+                        .tickFormat(function (d) {
+                            return d + "%";
+                        });
+                    var chart = d3.select(".winAndLostOpportunitiesChart")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.top + margin.bottom)
+                        .append("g")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+                    chart.append("g")
+                        .attr("class", "y axis")
+                        .call(yAxis)
+                        .selectAll(".tick line")
+                        .attr("x2", function (d) {
+                            return width;
+                        })
+                        .style("fill", "#1EBBEA");
+
+                    chart.append("g")
+                        .attr("class", "y2 axis")
+                        .attr("transform", "translate(" + width + ",0)")
+                        .call(yAxis2);
+
+                   /* chart.selectAll(".bar")
+                        .data(data1)
+                        .enter().append("rect")
+                        .attr("class", "bar")
+                        .attr("x", function (d) {
+                            return x(d.source);
+                        })
+                        .attr("y", function (d) {
+                            return y(d.count);
+                        })
+                        .attr("height", function (d) {
+                            return height - y(d.count);
+                        })
+                        .attr("width", x.rangeBand());
+
+                    chart.selectAll(".bar2")
+                        .data(data2)
+                        .enter().append("rect")
+                        .attr("class", "bar2")
+                        .attr("x", function (d) {
+                            return x(d.source);
+                        })
+                        .attr("y", function (d) {
+                            return y(d.count);
+                        })
+                        .attr("height", function (d) {
+                            return height - y(d.count);
+                        })
+                        .attr("width", x.rangeBand());*/
+                });
             }
         });
         return ContentView;

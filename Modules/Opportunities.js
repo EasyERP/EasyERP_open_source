@@ -609,6 +609,117 @@ var Opportunities = function (models, event) {
             }
         }
 
+        function getOpportunitiesForChart(req, response, data) {
+            var res = {};
+            if (!data.dataRange) {
+                data.dataRange = 365;
+            }
+            if (!data.dataItem) {
+                data.dataItem = "M";
+            }
+            switch (data.dataItem) {
+                case "M":
+                    data.dataItem = "$month";
+                    break;
+                case "W":
+                    data.dataItem = "$week";
+                    break;
+                case "D":
+                    data.dataItem = "$dayOfYear";
+                    break;
+                case "DW":
+                    data.dataItem = "$dayOfWeek";
+                    break;
+                case "DM":
+                    data.dataItem = "$dayOfMonth";
+                    break;
+
+            }
+            if (data.source) {
+
+            } else {
+             /*   var item = data.dataItem;
+                var myItem = {};
+                myItem["$project"] = {isOpportunitie: 1, convertedDate: 1};
+                myItem["$project"]["dateBy"] = {};
+                myItem["$project"]["dateBy"][data.dataItem] = "$convertedDate";
+                if (data.dataItem == "$dayOfYear") {
+                    myItem["$project"]["year"] = {};
+                    myItem["$project"]["year"]["$year"] = "$convertedDate";
+                }*/
+                var c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
+                var a = new Date(c);
+                models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate(
+                    {
+                        $match: {
+                            $and: [{
+                                isOpportunitie: true
+                            },
+                                {'createdBy.date': {$gte: a}}
+                            ]
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from        : 'workflows',
+                            localField  : 'workflow',
+                            foreignField: '_id',
+                            as          : 'workflow'
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'salesPerson',
+                            foreignField: '_id',
+                            as          : 'salesPerson'
+                        }
+                    },
+                    {
+                        $project: {
+                            "salesPerson"   : {$arrayElemAt: ["$salesPerson", 0]},
+                            "workflow"      : {$arrayElemAt: ["$workflow", 0]},
+                            "name"          : 1,
+                            "revenue"       : '$expectedRevenue.value'
+                        }
+                    },
+                    {
+                        $project: {
+                            "salesPerson": {$concat: ['$salesPerson.name.first', " ", '$salesPerson.name.last']},
+                            "workflow": '$workflow.name',
+                            "revenue" : 1
+                        }
+                    },
+                    {
+                        $group: {
+                            _id  : {salesPerson: "$salesPerson", workflow: "$workflow"},
+                            count: {$sum: 1},
+                            sum: {$sum: "$revenue"}
+                        }
+                    },
+                    {
+                        $group: {
+                            _id  : "$_id.workflow",
+                            data : {$push: {"salesPerson": "$_id.salesPerson", "count": "$count", "sum": "$sum"}}
+                        }
+                    },
+                    {
+                        $sort: {year: 1, source: 1}
+                    }
+                ).exec(function (err, result) {
+                    if (err) {
+                        console.log(err);
+                        logWriter.log('Opportunities.js chart' + err);
+                        response.send(500, {error: "Can't get chart"});
+                    } else {
+                        res.data = result;
+                        response.send(res);
+                    }
+
+                });
+            }
+        }
+
         function get(req, response) {
             var res = {};
             res.data = [];
@@ -1874,6 +1985,7 @@ var Opportunities = function (models, event) {
             getFilterOpportunitiesForMiniView: getFilterOpportunitiesForMiniView,
             getFilter                        : getFilter,
             getLeadsForChart                 : getLeadsForChart,
+            getOpportunitiesForChart         : getOpportunitiesForChart,
             update                           : update,
             updateLead                       : updateLead,
             updateOnlySelectedFields         : updateOnlySelectedFields,
