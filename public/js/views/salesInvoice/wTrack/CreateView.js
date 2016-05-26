@@ -50,8 +50,8 @@
 
             showNewSelect: function (e, prev, next) {
                 populate.showSelect(e, prev, next, this);
+                
                 return false;
-
             },
 
             chooseOption: function (e) {
@@ -90,7 +90,7 @@
                 }
             },
 
-            editRow: function (e, prev, next) {
+            editRow: function (e) {
                 var el = $(e.target);
                 var tr = el.closest('tr');
                 var wTrackId = tr.data('id');
@@ -254,7 +254,7 @@
 
                 } else {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: CONSTANTS.RESPONSES.CREATE_QUOTATION
                     });
                 }

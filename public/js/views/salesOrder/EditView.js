@@ -14,21 +14,23 @@ define([
     'populate',
     'constants',
     'helpers'
-], function (Backbone,
-             $,
-             _,
-             EditTemplate,
-             ViewTemplate,
-             AssigneesView,
-             ProductItemView,
-             InvoiceView,
-             InvoiceCollection,
-             common,
-             Custom,
-             dataService,
-             populate,
-             CONSTANTS,
-             helpers) {
+], function (
+    Backbone,
+    $,
+    _,
+    EditTemplate,
+    ViewTemplate,
+    AssigneesView,
+    ProductItemView,
+    InvoiceView,
+    InvoiceCollection,
+    common,
+    Custom,
+    dataService,
+    populate,
+    CONSTANTS,
+    helpers
+) {
     'use strict';
     var EditView = Backbone.View.extend({
         contentType: 'Order',
@@ -54,6 +56,7 @@ define([
             this.currentModel = (options.model) ? options.model : options.collection.getElement();
             this.currentModel.urlRoot = '/order';
             this.responseObj = {};
+            
             this.render(options);
         },
 
@@ -74,8 +77,8 @@ define([
 
         showNewSelect: function (e, prev, next) {
             populate.showSelect(e, prev, next, this);
+            
             return false;
-
         },
 
         notHide: function () {
@@ -184,6 +187,8 @@ define([
             }
 
             this.saveItem(function (err) {
+                App.stopPreload();
+                
                 if (!err) {
                     dataService.postData(url, data, function (err, response) {
                         var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
@@ -192,8 +197,6 @@ define([
                         var tr;
 
                         function createView() {
-
-                            App.stopPreload();
 
                             self.invoiceView = new InvoiceView({
                                 model       : self.collection,

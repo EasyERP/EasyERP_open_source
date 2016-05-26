@@ -16,14 +16,14 @@
                 this.startNumber = (this.page - 1) * options.itemsNumber;
             },
 
-            render    : function (options) {
+            render: function (options) {
                 var el = (options && options.thisEl) ? options.thisEl : this.$el;
 
                 el.append(_.template(listForWTrack, {
-                    orderCollection: this.collection.toJSON(),
-                    startNumber    : this.startNumber,
+                    orderCollection : this.collection.toJSON(),
+                    startNumber     : this.startNumber,
                     currencySplitter: helpers.currencySplitter,
-                    currencyClass: helpers.currencyClass
+                    currencyClass   : helpers.currencyClass
                 }));
             }
         });

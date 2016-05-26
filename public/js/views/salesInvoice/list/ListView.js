@@ -48,10 +48,10 @@ define([
             },
 
             events: {
-               // "click .stageSelect"                       : "showNewSelect",
+                // "click .stageSelect"                       : "showNewSelect",
                 "click  .list tbody td:not(.notForm, .validated)": "goToEditDialog",
-                "click .newSelectList li"                  : "chooseOption",
-                "click .selectList"                        : "showSelects"
+                "click .newSelectList li"                        : "chooseOption",
+                "click .selectList"                              : "showSelects"
             },
 
             showSelects: function (e) {
@@ -90,35 +90,6 @@ define([
             },
 
             chooseOption: function (e) {
-                //var self = this;
-                //var target$ = $(e.target);
-                //var targetElement = target$.parents("td");
-                //var wId = target$.attr("id");
-                //var status = _.find(this.stages, function (stage) {
-                //    return wId === stage._id;
-                //});
-                //var name = target$.text();
-                //var id = targetElement.attr("id");
-                //var model = this.collection.get(id);
-                //
-                //model.save({
-                //    'workflow._id'   : wId,
-                //    'workflow.status': status.status,
-                //    'workflow.name'  : name
-                //}, {
-                //    headers : {
-                //        mid: 55
-                //    },
-                //    patch   : true,
-                //    validate: false,
-                //    success : function () {
-                //        self.showFilteredPage(self.filter, self);
-                //    }
-                //});
-                //
-                //this.hideNewSelect();
-                //return false;
-                var self = this;
                 var target$ = $(e.target);
                 var targetElement = target$.parents("td");
                 var targetTr = target$.parents("tr");
@@ -138,23 +109,23 @@ define([
                 this.hideNewSelect();
 
                 $("#top-bar-saveBtn").show();
+
                 return false;
-
             },
 
-           /* showNewSelect: function (e) {
-                if ($(".newSelectList").is(":visible")) {
-                    this.hideNewSelect();
-                    return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
-                    return false;
-                }
-            },
+            currentEllistRenderer: function (self) {
+                var $currentEl = self.$el;
+                
+                $currentEl.append(_.template(listTemplate, {currentDb: true}));
+                var itemView = new listItemView({
+                    collection : self.collection,
+                    page       : self.page,
+                    itemsNumber: self.collection.namberToShow
+                });
+                itemView.bind('incomingStages', self.pushStages, self);
 
-            hideNewSelect: function (e) {
-                $(".newSelectList").remove();
-            },*/
+                $currentEl.append(itemView.render());
+            },
 
             render: function () {
                 var self;
@@ -167,51 +138,15 @@ define([
 
                 $currentEl.html('');
 
-                /*if (!App || !App.currentDb) {
-                    dataService.getData('/currentDb', null, function (response) {
-                        if (response && !response.error) {
-                            App.currentDb = response;
-                            App.weTrack = response === "weTrack" || response === "production" || response === "development";
-                        }
-
-                        currentEllistRenderer(self);
-                        //$currentEl.append(itemView.render());
-                    });
-                } else {
-                    currentEllistRenderer(self);
-                    //$currentEl.append(itemView.render());
-                }*/
-                currentEllistRenderer(self);
+                this.currentEllistRenderer(self);
 
                 self.renderCheckboxes();
                 self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
-               /* dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
-                    wId         : 'Sales Invoice',
-                    source      : 'purchase',
-                    targetSource: 'invoice'
-                }, function (stages) {
-                    self.stages = stages;
-                });*/
-
                 this.recalcTotal();
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
-                function currentEllistRenderer(self) {
-                    $currentEl.append(_.template(listTemplate, {currentDb: true}));
-                    var itemView = new listItemView({
-                        collection : self.collection,
-                        page       : self.page,
-                        itemsNumber: self.collection.namberToShow
-                    });
-                    itemView.bind('incomingStages', self.pushStages, self);
-
-                    $currentEl.append(itemView.render());
-
-                }
-
             },
 
             recalcTotal: function () {
@@ -222,7 +157,7 @@ define([
                     var sum = 0;
 
                     _.each(self.collection.toJSON(), function (model) {
-                        if (col === 'paid'){
+                        if (col === 'paid') {
                             sum += parseFloat(model[col]);
                         } else {
                             sum += parseFloat(model.paymentInfo[col]);

@@ -337,7 +337,7 @@ define([
             var data = {
                 forSales   : this.forSales,
                 quotationId: quotationId,
-                currency   : this.currentModel.currency,
+                currency   : this.currentModel.toJSON().currency,
                 journal    : CONSTANTS.PROFORMA_JOURNAL
             };
 
@@ -348,14 +348,14 @@ define([
                     dataService.postData(url, data, function (err, response) {
                         var tr;
 
+                        App.stopPreload();
+
                         if (err) {
-                            App.stopPreload();
                             App.render({
                                 type   : 'error',
                                 message: 'Can\'t create proforma'
                             });
                         } else {
-
                             if (App.projectInfo) {
                                 App.projectInfo.currentTab = 'proforma';
                             }

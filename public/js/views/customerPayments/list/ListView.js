@@ -143,6 +143,7 @@ define([
                             } else {
 
                                 model = that.collection.get(value);
+                                model.urlRoot = 'payment';
                                 model.destroy({
                                     headers: {
                                         mid: mid

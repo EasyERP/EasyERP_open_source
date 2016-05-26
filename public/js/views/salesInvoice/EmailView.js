@@ -5,8 +5,7 @@ define([
     'text!templates/salesInvoice/EmailTemplate.html',
     'common',
     'populate',
-    'dataService',
-    'helpers/keyValidator'
+    'dataService'
 ], function (
     Backbone,
     $,
@@ -14,22 +13,20 @@ define([
     CreateTemplate,
     common,
     populate,
-    dataService,
-    keyValidator
-) {
+    dataService) {
     var EmailView = Backbone.View.extend({
         el      : '#emailHolder',
         template: _.template(CreateTemplate),
 
         initialize: function (options) {
-
             var self = this;
             var url = 'project/emails/';
-
             this.model = options.model.toJSON();
             this.attachments = this.model.attachments;
 
-            url = url + App.projectInfo.projectId;
+            var projectId = App.projectInfo && App.projectInfo.projectId ? App.projectInfo.projectId :  this.model.project._id;
+
+            url = url + projectId;
 
             dataService.getData(url, null, function (response) {
                 var emails = {};
@@ -37,6 +34,7 @@ define([
 
                 emails.Cc = (res.projectmanager || '') + ', ' + (res.salesmanager || '');
                 emails.To = (res.customerCompany || '') + ', ' + res.customerPersons.join(', ');
+                
                 self.render(emails);
             });
         },
@@ -117,6 +115,7 @@ define([
             });
 
             this.delegateEvents(this.events);
+           
             return this;
         }
     });

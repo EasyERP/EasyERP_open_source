@@ -32,7 +32,7 @@ define([
                           common,
                           populate,
                           dataService,
-                          constants,
+                          CONSTANTS,
                           keyValidator,
                           helpers) {
     var CreateView = Backbone.View.extend({
@@ -104,7 +104,7 @@ define([
             data.paymentCurrency = currency;
             data.date = date;
 
-            dataService.getData(constants.URLS.PAYMENT_AMOUNT_LEFT, data,
+            dataService.getData(CONSTANTS.URLS.PAYMENT_AMOUNT_LEFT, data,
                 function (res, self) {
                     if (res.difference) {
                         differenceAmount.text(res.difference.toFixed(2));

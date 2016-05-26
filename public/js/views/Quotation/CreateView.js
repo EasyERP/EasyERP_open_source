@@ -159,8 +159,16 @@ define([
                 var quantity;
                 var price;
                 var scheduledDate;
-                var forSales = (this.forSales) ? true : false;
+
+                var forSales = this.forSales ? true : false;
+
+                var currency = {
+                    _id : thisEl.find('#currencyDd').attr('data-id'),
+                    name: $.trim(thisEl.find('#currencyDd').text())
+                };
+
                 var supplier = thisEl.find('#supplierDd').attr('data-id');
+
                 var project = thisEl.find('#projectDd').attr('data-id');
                 var destination = $.trim(thisEl.find('#destination').attr('data-id'));
                 var deliverTo = $.trim(thisEl.find('#deliveryDd').attr('data-id'));
@@ -168,11 +176,12 @@ define([
                 var invoiceControl = $.trim(thisEl.find('#invoicingControl').attr('data-id'));
                 var paymentTerm = $.trim(thisEl.find('#paymentTerm').attr('data-id'));
                 var fiscalPosition = $.trim(thisEl.find('#fiscalPosition').attr('data-id'));
+
                 var orderDate = thisEl.find('#orderDate').val();
-                var expectedDate = thisEl.find('#expectedDate').val() || orderDate;
-                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+                var expectedDate = thisEl.find('#expectedDate').val() || thisEl.find('#orderDate').val();
+
                 var total = helpers.spaceReplacer($.trim(thisEl.find('#totalAmount').text()));
-                var totalTaxes = helpers.spaceReplacer($.trim(thisEl.find('#taxes').text()));
+                var totalTaxes = $.trim(thisEl.find('#taxes').text());
                 var taxes;
                 var description;
                 var unTaxed = helpers.spaceReplacer($.trim(thisEl.find('#totalUntaxes').text()));
@@ -180,8 +189,14 @@ define([
                 var jobs;
                 var usersId = [];
                 var groupsId = [];
+                var i;
 
-                $(".groupsAndUser tr").each(function () {
+                var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+
+                total = parseFloat(total) * 100;
+                unTaxed = parseFloat(unTaxed) * 100;
+
+                thisEl.find(".groupsAndUser tr").each(function () {
                     if ($(this).data("type") == "targetUsers") {
                         usersId.push($(this).data("id"));
                     }
@@ -192,23 +207,39 @@ define([
                 });
 
                 if (selectedLength) {
-                    for (var i = selectedLength - 1;
-                         i >= 0;
-                         i--) {
+                    for (i = selectedLength - 1; i >= 0; i--) {
                         targetEl = $(selectedProducts[i]);
                         productId = targetEl.data('id');
+
                         if (productId) {
                             quantity = targetEl.find('[data-name="quantity"]').text();
-                            price = helpers.spaceReplacer(targetEl.find('[data-name="price"] input').val());
-                            /*scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();*/
-                            taxes = helpers.spaceReplacer(targetEl.find('.taxes').text());
+                            price = targetEl.find('[data-name="price"] input').val();
+                            price = parseFloat(price) * 100;
+
+                            if (isNaN(price) || price <= 0) {
+                                return App.render({
+                                    type   : 'error',
+                                    message: 'Please, enter Unit Price!'
+                                });
+                            }
+                            scheduledDate = targetEl.find('[data-name="scheduledDate"]').text();
+                            taxes = targetEl.find('.taxes').text();
+                            taxes = parseFloat(taxes) * 100;
                             description = targetEl.find('[data-name="productDescr"]').text();
                             subTotal = helpers.spaceReplacer(targetEl.find('.subtotal').text());
+                            subTotal = parseFloat(subTotal) * 100;
                             jobs = targetEl.find('.current-selected.jobs').attr('data-id');
 
-                            if (jobs === "jobs" && this.forSales) {
+                            if (price == '') {
                                 return App.render({
-                                    type   : 'notify',
+                                    type   : 'error',
+                                    message: 'Unit price can\'t be empty'
+                                });
+                            }
+
+                            if (jobs.length < 24) {
+                                return App.render({
+                                    type   : 'error',
                                     message: "Job field can't be empty. Please, choose or create one."
                                 });
                             }
@@ -217,7 +248,7 @@ define([
                                 product      : productId,
                                 unitPrice    : price,
                                 quantity     : quantity,
-                               /* scheduledDate: scheduledDate,*/
+                                scheduledDate: scheduledDate,
                                 taxes        : taxes,
                                 description  : description,
                                 subTotal     : subTotal,
@@ -225,19 +256,15 @@ define([
                             });
                         } else {
                             return App.render({
-                                type   : 'notify',
+                                type   : 'error',
                                 message: "Products can't be empty."
                             });
                         }
                     }
-                } else { // added in case of no rows
-                    return App.render({
-                        type   : 'notify',
-                        message: "Products can't be empty."
-                    });
                 }
 
                 data = {
+                    currency      : currency,
                     forSales      : forSales,
                     supplier      : supplier,
                     project       : project,
@@ -250,7 +277,7 @@ define([
                     invoiceControl: invoiceControl,
                     paymentTerm   : paymentTerm,
                     fiscalPosition: fiscalPosition,
-                    populate      : true,
+                    populate      : true, //Need Populate data from server
                     paymentInfo   : {
                         total  : total,
                         unTaxed: unTaxed,
@@ -281,14 +308,13 @@ define([
 
                 } else {
                     return App.render({
-                        type   : 'notify',
-                        message: CONSTANTS.RESPONSES.CREATE_QUOTATION
+                        type   : 'error',
+                        message: "Products can not be empty."
                     });
-
                 }
             },
 
-            redirectAfterSave: function (content, model) {
+            redirectAfterSave: function (content) {
                 var redirectUrl = content.forSales ? "easyErp/salesQuotation" : "easyErp/Quotation";
 
                 content.hideDialog();
@@ -367,7 +393,6 @@ define([
                 if (this.forSales) {
                     this.$el.find('#supplierDd').removeClass('current-selected');
                     populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
-                    //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
                 } else {
                     populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
                 }

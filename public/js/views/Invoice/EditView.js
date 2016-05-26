@@ -119,14 +119,13 @@ define([
         },
 
         sendEmail: function (e) {
-            var emailView;
             var self = this;
 
             e.preventDefault();
 
             self.hideDialog();
 
-            emailView = new EmailVew({
+            new EmailVew({
                 model: self.currentModel
             });
         },
@@ -170,7 +169,7 @@ define([
 
                             App.stopPreload();
 
-                            self.eventChannel.trigger('invoiceUpdated');
+                            self.eventChannel && self.eventChannel.trigger('invoiceUpdated');
 
                             self.$el.find('.input-file').remove();
                             self.$el.find('a.deleteAttach').remove();
@@ -638,7 +637,7 @@ define([
             );
 
             populate.get2name("#supplier", "/supplier", {}, this, false);
-            populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
+            populate.get2name("#salesPerson", CONSTANTS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
             populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
 
             if (!model.paymentMethod && model.project && model.project.paymentMethod) {

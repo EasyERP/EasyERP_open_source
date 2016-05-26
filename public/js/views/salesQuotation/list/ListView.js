@@ -13,7 +13,8 @@ define([
         'collections/salesQuotation/filterCollection',
         'views/Filter/FilterView',
         'dataService',
-        'constants'
+        'constants',
+        'helpers'
     ],
 
     function ($, _, listViewBase, listTemplate, listForWTrack, stagesTemplate, createView, ListItemView, ListTotalView, EditView, CurrentModel, contentCollection, filterView, dataService, CONSTANTS, helpers) {

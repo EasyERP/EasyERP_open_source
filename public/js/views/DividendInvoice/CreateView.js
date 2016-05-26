@@ -284,7 +284,7 @@ define([
                 populate.get("#currencyDd", "/currency/getForDd", {}, 'name', this, true);
                 populate.get2name("#employeesDd", "/getPersonsForDd", {}, this, true, false);
                 populate.get("#payment_terms", "/paymentTerm", {}, 'name', this, true, true);
-                populate.get2name("#salesPerson", "/getForDdByRelatedUser", {}, this, true, true);
+                populate.get2name("#salesPerson", CONSTANTS.EMPLOYEES_RELATEDUSER, {}, this, true, true);
                 populate.fetchWorkflow({wId: 'Purchase Invoice'}, function (response) {
                     if (!response.error) {
                         self.defaultWorkflow = response._id;

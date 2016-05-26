@@ -1075,7 +1075,7 @@ var Invoice = function (models, event) {
                         req.query.sort[key] = parseInt(req.query.sort[key]);
                         sort = req.query.sort;
                     } else {
-                        sort = {"workflow": -1};
+                        sort = {"editedBy.date": -1};
                     }
 
                     departmentSearcher = function (waterfallCallback) {
@@ -1233,6 +1233,7 @@ var Invoice = function (models, event) {
                                     workflow        : {$arrayElemAt: ["$workflow", 0]},
                                     supplier        : {$arrayElemAt: ["$supplier", 0]},
                                     'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                    'editedBy.date' : 1,
                                     'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
                                     project         : {$arrayElemAt: ["$project", 0]},
                                     salesmanagers   : {
@@ -1264,6 +1265,7 @@ var Invoice = function (models, event) {
                                     supplier        : 1,
                                     'editedBy.user' : 1,
                                     'createdBy.user': 1,
+                                    'editedBy.date' : 1,
                                     project         : 1,
                                     expense         : 1,
                                     forSales        : 1,
@@ -1294,6 +1296,7 @@ var Invoice = function (models, event) {
                                     supplier        : 1,
                                     'editedBy.user' : 1,
                                     'createdBy.user': 1,
+                                    'editedBy.date' : 1,
                                     project         : 1,
                                     expense         : 1,
                                     forSales        : 1,

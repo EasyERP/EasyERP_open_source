@@ -15,7 +15,7 @@
 </td>
 <td><%=invoice.name%></td>
 <td><%=invoice.paymentDate%></td>
-<td><%=(invoice.salesPerson) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
+<td><%=(invoice.salesPerson && invoice.salesPerson.name) ? invoice.salesPerson.name.first + ' ' + invoice.salesPerson.name.last : ''%></td>
 <td><% if (overdue > 0) {%>
     <span class="red"><%=Math.ceil(overdue / (1000 * 3600 * 24)) + " days"%></span>
     <% } else {%>
