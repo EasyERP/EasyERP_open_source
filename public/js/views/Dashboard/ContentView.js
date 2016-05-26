@@ -18,10 +18,10 @@ define([
                 this.startTime = new Date();
                 this.buildTime = 0;
                 this.dateRange = {
-                    date: 30,
-                    source: 30,
+                    date        : 30,
+                    source      : 30,
                     opportunitie: 30,
-                    sale: 7
+                    sale        : 7
                 };
 
                 this.dateItem = "D";
@@ -34,11 +34,11 @@ define([
                 this.render();
             },
             events     : {
-                "click .choseDateRange .item"              : "newRange",
-                "click .choseDateRangeSource .item"        : "newRangeSource",
-                "click .choseDateRangeOpportunities .item" : "newRangeOpportunities",
-                "click .choseDateItem .item"               : "newItem",
-                'click .chart-tabs a'                      : 'changeTab'
+                "click .choseDateRange .item"             : "newRange",
+                "click .choseDateRangeSource .item"       : "newRangeSource",
+                "click .choseDateRangeOpportunities .item": "newRangeOpportunities",
+                "click .choseDateItem .item"              : "newItem",
+                'click .chart-tabs a'                     : 'changeTab'
             },
             changeTab  : function (e) {
                 $(e.target).closest(".chart-tabs").find("a.active").removeClass("active");
@@ -48,7 +48,7 @@ define([
                 $(".chart-tabs-items").find(".chart-tabs-item").eq(n).addClass("active");
             },
 
-            newRange      : function (e) {
+            newRange: function (e) {
                 $(e.target).parent().find(".active").removeClass("active");
                 $(e.target).addClass("active");
                 this.dateRange.date = $(e.target).data("day");
@@ -72,18 +72,18 @@ define([
                 this.renderOpportunities();
             },
 
-            newItem             : function (e) {
+            newItem: function (e) {
                 $(e.target).parent().find(".active").removeClass("active");
                 $(e.target).addClass("active");
                 this.dateItem = $(e.target).data("item");
                 this.renderPopulate();
             },
-            
+
             getDateFromDayOfYear: function (index) {
                 return dateFormat(new Date(this.numberToDate[index]).toString('MMMM ,yyyy'), "mmmm dd, yyyy");
             },
-            
-            getDay              : function (index) {
+
+            getDay: function (index) {
                 switch (index) {
                     case 1:
                         return "Monday";
@@ -101,8 +101,8 @@ define([
                         return "Sunday";
                 }
             },
-            
-            getMonth            : function (index) {
+
+            getMonth: function (index) {
                 switch (index) {
                     case 1:
                         return "January";
@@ -136,12 +136,12 @@ define([
                 var self = this;
 
                 self.renderPopulate();
-                
+
                 self.renderPopulateByType(self, 'source');
                 self.renderPopulateByType(self, 'sale');
                 self.renderOpportunities();
                 self.renderOpportunitiesWinAndLost();
-                
+
                 if ($(window).width() < 1370) {
                     $(".legend-box").css("margin-top", "10px");
                 } else {
@@ -149,13 +149,13 @@ define([
                 }
             },
 
-            render              : function () {
+            render: function () {
                 var self = this;
                 this.$el.html(this.template());
                 this.$el.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
                 $(window).unbind("resize").resize(self.resizeHandler);
             },
-            
+
             renderPopulateByType: function (that, type) {
                 var self = this;
                 var chartClass = '.' + type + 'sChart';
@@ -296,8 +296,8 @@ define([
 
                 });
             },
-            
-            renderPopulate      : function () {
+
+            renderPopulate: function () {
                 var self = this;
                 $(".leadChart").empty();
                 common.getLeadsForChart('date', this.dateRange.date, this.dateItem, function (data) {
@@ -415,11 +415,11 @@ define([
                             var dayofYera = Math.floor(diff / oneDay);
                             if (dt.indexOf(dayofYera) === -1)
                                 data.push({
-                                    count: 0,
-                                    date: [now],
-                                    isOpp: true,
+                                    count : 0,
+                                    date  : [now],
+                                    isOpp : true,
                                     source: dayofYera,
-                                    year: now.getFullYear()
+                                    year  : now.getFullYear()
                                 });
                             // data.push({count: 0, date: [now], source: dayofYera, isOpp: true, year: now.getFullYear()});
                         }
@@ -721,7 +721,7 @@ define([
 
             },
 
-            renderOpportunities : function () {
+            renderOpportunities: function () {
                 var self = this;
 
                 $(".opportunitiesChart").empty();
@@ -733,7 +733,7 @@ define([
                     var y = d3.scale.ordinal()
                         .rangeRoundBands([0, height], 0.3);
                     var x = d3.scale.linear()
-                        .range([0,width]);
+                        .range([0, width]);
                     var x2 = d3.scale.linear()
                         .range([0, width]);
                     var xAxis = d3.svg.axis()
@@ -780,25 +780,25 @@ define([
                     data3 = data3 || [];
                     data4 = data4 || [];
 
-                    for (i = data1.length-1; i>=0; i--) {
+                    for (i = data1.length - 1; i >= 0; i--) {
                         if (data1[i] && !data1[i].sum || data1[i].sum === 0) {
                             data1.splice(i, 1);
                         }
                     }
 
-                    for (i = data2.length-1; i>=0; i--) {
+                    for (i = data2.length - 1; i >= 0; i--) {
                         if (data2[i] && !data2[i].sum || data2[i].sum === 0) {
                             data2.splice(i, 1);
                         }
                     }
 
-                    for (i = data3.length-1; i>=0; i--) {
+                    for (i = data3.length - 1; i >= 0; i--) {
                         if (data3[i] && !data3[i].sum || data3[i].sum === 0) {
                             data3.splice(i, 1);
                         }
                     }
 
-                    for (i = data4.length-1; i>=0; i--) {
+                    for (i = data4.length - 1; i >= 0; i--) {
                         if (data4[i] && !data4[i].sum || data4[i].sum === 0) {
                             data4.splice(i, 1);
                         }
@@ -806,12 +806,12 @@ define([
 
                     arrData = _.union(_.pluck(data1, 'salesPerson'), _.pluck(data2, 'salesPerson'), _.pluck(data3, 'salesPerson'), _.pluck(data4, 'salesPerson'));
                     arrSum = _.map(_.groupBy(_.union(data1, data2, data3, data4), 'salesPerson'), function (el) {
-                        return _.reduce(el, function(memo, num){
+                        return _.reduce(el, function (memo, num) {
                             return memo + num.sum;
                         }, 0);
                     });
 
-                    for (i = arrData.length-1; i>=0; i--) {
+                    for (i = arrData.length - 1; i >= 0; i--) {
                         if (!arrData[i]) {
                             arrData[i] = "NoUser";
                         }
@@ -851,7 +851,7 @@ define([
                         })
                         .attr("height", y.rangeBand())
                         .attr("width", function (d) {
-                            return  x(d.sum);
+                            return x(d.sum);
                         }).style("fill", "yellow");
 
                     chart.selectAll(".bar2")
@@ -942,7 +942,7 @@ define([
                         })
                         .attr("height", y.rangeBand())
                         .attr("width", function (d) {
-                            return  x(d.sum);
+                            return x(d.sum);
                         })
                         .style("fill", "#5FBA51");
 
@@ -954,7 +954,7 @@ define([
                 });
             },
 
-            renderOpportunitiesWinAndLost : function () {
+            renderOpportunitiesWinAndLost: function () {
                 var self = this;
 
                 $(".winAndLostOpportunitiesChart").empty();
@@ -1026,35 +1026,35 @@ define([
                         .attr("transform", "translate(" + width + ",0)")
                         .call(yAxis2);
 
-                   /* chart.selectAll(".bar")
-                        .data(data1)
-                        .enter().append("rect")
-                        .attr("class", "bar")
-                        .attr("x", function (d) {
-                            return x(d.source);
-                        })
-                        .attr("y", function (d) {
-                            return y(d.count);
-                        })
-                        .attr("height", function (d) {
-                            return height - y(d.count);
-                        })
-                        .attr("width", x.rangeBand());
+                    /* chart.selectAll(".bar")
+                     .data(data1)
+                     .enter().append("rect")
+                     .attr("class", "bar")
+                     .attr("x", function (d) {
+                     return x(d.source);
+                     })
+                     .attr("y", function (d) {
+                     return y(d.count);
+                     })
+                     .attr("height", function (d) {
+                     return height - y(d.count);
+                     })
+                     .attr("width", x.rangeBand());
 
-                    chart.selectAll(".bar2")
-                        .data(data2)
-                        .enter().append("rect")
-                        .attr("class", "bar2")
-                        .attr("x", function (d) {
-                            return x(d.source);
-                        })
-                        .attr("y", function (d) {
-                            return y(d.count);
-                        })
-                        .attr("height", function (d) {
-                            return height - y(d.count);
-                        })
-                        .attr("width", x.rangeBand());*/
+                     chart.selectAll(".bar2")
+                     .data(data2)
+                     .enter().append("rect")
+                     .attr("class", "bar2")
+                     .attr("x", function (d) {
+                     return x(d.source);
+                     })
+                     .attr("y", function (d) {
+                     return y(d.count);
+                     })
+                     .attr("height", function (d) {
+                     return height - y(d.count);
+                     })
+                     .attr("width", x.rangeBand());*/
                 });
             }
         });
