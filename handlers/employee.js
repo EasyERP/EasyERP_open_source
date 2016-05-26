@@ -1123,120 +1123,51 @@ var Employee = function (event, models) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var response = {};
         var startTime = new Date();
-        var filterObj = {};
-        var condition;
         var data = req.query;
+        var accessRollSearcher;
+        var contentSearcher;
+        var waterfallTasks;
 
         response.data = [];
         response.workflowId = data.workflowId;
-        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-            {
-                $match: {
-                    users: objectId(req.session.uId)
-                }
-            }, {
-                $project: {
-                    _id: 1
-                }
-            },
-            function (err, deps) {
-                if (err) {
-                    return next(err);
-                }
 
-                var arrOfObjectId = deps.objectID();
-                filterObj.$and = [];
-                filterObj.$and.push({isEmployee: false});
-                filterObj.$and.push({workflow: objectId(data.workflowId)});
-                /*filterObj['$and'].push({$or: []});
-                 or = filterObj['$and'][2]['$or'];*/
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Employee, cb);
+        };
 
-                if (data && data.filter) {
-                    if (data.filter.condition === 'or') {
-                        filterObj.$and.push({$or: []});
-                        condition = filterObj.$and[2].$or;
-                    } else {
-                        filterObj.$and.push({$and: []});
-                        condition = filterObj.$and[2].$and;
+        contentSearcher = function (responseApplications, cb) {
+
+            Employee
+                .where('_id').in(responseApplications)
+                .select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired")
+                .populate('workflow', '_id')
+                .populate('jobPosition', '_id name')
+                .sort({lastFire: -1, 'sequence': -1})
+                .limit(req.session.kanbanSettings.applications.countPerPage)
+                .exec(function (err, result) {
+                    if (err) {
+                        return next(err);
                     }
+                    cb(null, result);
+                });
+        }
 
-                    if (data.filter && data.filter.Name) {
-                        condition.push({'name.last': {$in: data.filter.Name}});
-                    }
-                    if (data.filter && data.filter.Email) {
-                        condition.push({'workEmail': {$in: data.filter.Email}});
-                    }
-                    if (!condition.length) {
-                        filterObj.$and.pop();
-                    }
-                }
-                Employee.aggregate(
-                    {
-                        $match: {
-                            $and: [
-                                filterObj,
-                                {
-                                    $or: [
-                                        {
-                                            $or: [
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'group'},
-                                                        {'groups.users': objectId(req.session.uId)}
-                                                    ]
-                                                },
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'group'},
-                                                        {'groups.group': {$in: arrOfObjectId}}
-                                                    ]
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            $and: [
-                                                {whoCanRW: 'owner'},
-                                                {'groups.owner': objectId(req.session.uId)}
-                                            ]
-                                        },
-                                        {whoCanRW: "everyOne"}
-                                    ]
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        $project: {
-                            _id: 1
-                        }
-                    },
-                    function (err, responseApplications) {
-                        if (err) {
-                            return next(err);
-                        }
+        waterfallTasks = [accessRollSearcher, contentSearcher];
 
-                        Employee
-                            .where('_id').in(responseApplications)
-                            .select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired")
-                            .populate('workflow', '_id')
-                            .populate('jobPosition', '_id name')
-                            .sort({lastFire: -1, 'sequence': -1})
-                            .limit(req.session.kanbanSettings.applications.countPerPage)
-                            .exec(function (err, result) {
-                                if (err) {
-                                    return next(err);
-                                }
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
 
-                                response.data = result;
-                                response.time = (new Date() - startTime);
-                                response.workflowId = data.workflowId;
-                                response.fold = (req.session.kanbanSettings.applications.foldWorkflows && req.session.kanbanSettings.applications.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
+            response.data = result;
+            response.time = (new Date() - startTime);
+            response.workflowId = data.workflowId;
+            response.fold = (req.session.kanbanSettings.applications.foldWorkflows && req.session.kanbanSettings.applications.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
 
-                                res.status(200).send(response);
-                            });
-                    });
-            });
+            res.status(200).send(response);
+        });
     }
+
 
     this.getForDdByRelatedUser = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
