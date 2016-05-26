@@ -15,7 +15,7 @@ define([
     'dataService',
     'async'
 ], function (Backbone, _, $, ContentFilterTemplate, savedFilterTemplate, searchGroupLiTemplate, valuesView, savedFiltersView, filterValuesCollection, custom, Common, CONSTANTS, UsersModel, dataService, async) {
-    "use strict";
+    'use strict';
 
     var FilterView;
     FilterView = Backbone.View.extend({

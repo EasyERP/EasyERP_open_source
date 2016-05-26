@@ -4685,29 +4685,6 @@ define([
                     expect(listView.$el.find('#listTable > tr:nth-child(2) > td.editable:nth-child(3)')).to.not.have.class('P');
                 });
 
-                it('Try to delete last item in row', function () {
-                    var $emptyEl;
-                    var $needGrid = listView.$el.find('#listTable > tr:nth-child(5) > td.editable.V.selectedType');
-                    var vacationUrl = new RegExp('\/vacation\/', 'i');
-                    var vacationListUrl = new RegExp('\/vacation\/list', 'i');
-
-                    windowConfirmStub.returns(true);
-                    server.respondWith('DELETE', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-
-                    $needGrid.click();
-                    $emptyEl = listView.$el.find('#content > ul > li:nth-child(1)');
-                    server.respondWith('GET', vacationListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
-                    $emptyEl.click();
-                    server.respond();
-                    server.respond();
-
-                    expect(deleteSpy.calledOnce).to.be.true;
-                });
-
-                //it('Try to delete employee row', function(){
-                //    var
-                //});
-
                 it('Try to show more with error', function(){
                     var vacationUrl = new RegExp('\/vacation\/list', 'i');
                     var spyResponse;
