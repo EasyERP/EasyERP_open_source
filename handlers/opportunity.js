@@ -1095,7 +1095,7 @@ var Opportunity = function (models, event) {
                     mid = 24;
                     optionsObject['$and'].push({'isOpportunitie': false});
 
-                    if (data.filter.isConverted) {
+                    if (data.filter && data.filter.isConverted) {
                         optionsObject['isConverted'] = true;
                         optionsObject['isOpportunitie'] = true;
                     }
