@@ -7180,6 +7180,9 @@ ul.chart-tabs .withEndContract .arrow {
 .legend-box.small {
   width: 255px;
 }
+.legend-box.opportunities{
+  width: 420px;
+}
 .legend-box div {
   float: left;
   padding: 5px 10px;

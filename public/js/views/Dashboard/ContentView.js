@@ -831,15 +831,15 @@ define([
                         .append("rect")
                         .attr("class", "bar2")
                         .attr("x", function (d) {
-                            var x0;
+                            var x0 = 0;
 
                             data1.forEach(function (item) {
                                 if (d.salesPerson === item.salesPerson) {
-                                    x0 = x(item.sum);
+                                    x0 += x(item.sum);
                                 }
                             });
 
-                            return x0 || 0;
+                            return x0;
                         })
                         .attr("y", function (d) {
                             return y(d.salesPerson);
@@ -848,7 +848,7 @@ define([
                         .attr("width", function (d) {
                             return x(d.sum);
                         })
-                        .style("fill", "#5FBA51");
+                        .style("fill", "#56D1B5");
 
                     chart.selectAll(".bar3")
                         .data(data3)
@@ -879,7 +879,7 @@ define([
                         .attr("width", function (d) {
                             return x(d.sum);
                         })
-                        .style("fill", "#56D1B5");
+                        .style("fill", "#26A7DE");
 
                     chart.selectAll(".bar4")
                         .data(data4)
@@ -915,7 +915,7 @@ define([
                         .attr("width", function (d) {
                             return  x(d.sum);
                         })
-                        .style("fill", "#26A7DE");
+                        .style("fill", "#5FBA51");
 
                     chart.selectAll(".x .tick line")
                         .data(x.ticks())
