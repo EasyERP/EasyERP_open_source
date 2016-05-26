@@ -899,9 +899,9 @@ var Customers = function (event, models) {
 
             if (data && data.id) {
                 query.where({_id: objectId(data.id)});
-            } else {
+            } /*else {
                 query.where({type: 'Company', isCustomer: true});
-            }
+            }*/
 
             query.sort({"name.first": 1});
             query.exec(function (err, customers) {
