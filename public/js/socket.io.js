@@ -39,7 +39,7 @@ define([
 
     function fetchJobs(options) {
 
-        if (options.project === App.projectInfo.projectId) {
+        if (App.projectInfo && (options.project === App.projectInfo.projectId)) {
             App.render({
                 type: 'notify',
                 message: 'Project data updated.'
@@ -50,7 +50,7 @@ define([
 
     function fetchInvoice(options) {
 
-        if (options.project === App.projectInfo.projectId) {
+        if (App.projectInfo && (options.project === App.projectInfo.projectId)) {
             App.render({
                 type: 'notify',
                 message: 'Invoices data updated.'
