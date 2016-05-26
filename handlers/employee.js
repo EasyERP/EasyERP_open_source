@@ -122,7 +122,7 @@ var Employee = function (event, models) {
         });
     };
 
-    this.getSalaryByMonth = function (req, res, next) {
+    /*this.getSalaryByMonth = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var query = req.query;
         var _id = query._id;
@@ -154,7 +154,7 @@ var Employee = function (event, models) {
 
             res.status(200).send({data: salary});
         });
-    };
+    };*/
 
     this.getYears = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -1495,7 +1495,7 @@ var Employee = function (event, models) {
         });
     };
 
-    this.getSalaryByMonth = function (req, res, next) {
+    /*this.getSalaryByMonth = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var query = req.query;
         var _id = query._id;
@@ -1521,7 +1521,7 @@ var Employee = function (event, models) {
 
             return res.status(200).send({data: salary});
         });
-    };
+    };*/
 
     this.uploadEmployeesFiles = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);

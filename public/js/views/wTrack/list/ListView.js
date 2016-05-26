@@ -169,7 +169,7 @@ define([
 
             if (keyCodes.isEnter(code)) {
                 this.autoCalc(e);
-                this.calculateCost(e, this.wTrackId);
+               // this.calculateCost(e, this.wTrackId);
                 this.setChangedValueToModel();
                 this.showSaveCancelBtns();
 
@@ -564,7 +564,7 @@ define([
                         weeks: weeks
                     }));
 
-                    this.calculateCost(e, wTrackId);
+                   // this.calculateCost(e, wTrackId);
                 } else if (isYear) {
                     currentYear = parseInt(moment().year(), 10);
                     previousYear = currentYear - 1;
@@ -573,7 +573,7 @@ define([
                     width = el.width() - 6;
                     el.append('<ul class="newSelectList"><li>' + previousYear + '</li><li>' + currentYear + '</li><li>' + nextYear + '</li></ul>');
 
-                    this.calculateCost(e, wTrackId);
+                  //  this.calculateCost(e, wTrackId);
                 } else if (el.attr('id') === 'selectInput') {
                     return false;
                 } else {
@@ -588,10 +588,9 @@ define([
                     insertedInput[0].setSelectionRange(0, insertedInput.val().length);
 
                     this.autoCalc(e);
-
-                    if (wTrackId) {
+                    /* if (wTrackId) {
                         this.calculateCost(e, wTrackId);
-                    }
+                    }*/
                 }
 
                 return false;
@@ -615,7 +614,7 @@ define([
             });
         },
 
-        calculateCost: function (e, wTrackId) {
+       /* calculateCost: function (e, wTrackId) {
             var self = this;
             var tr = $(e.target).closest('tr');
             var profit = tr.find('[data-content="profit"]');
@@ -656,7 +655,7 @@ define([
                 trackWeek = tr.find('[data-content="worked"]').text();
             }
 
-            async.parallel([getBaseSalary, getMonthData], function callback(err, results) {
+            async.parallel([getMonthData], function callback(err, results) {
                 var baseSalary = results[0];
                 var coefficients = (results[1] && results[1][0]) || {};
 
@@ -726,7 +725,7 @@ define([
             }
 
             return false;
-        },
+        },*/
 
         chooseOption: function (e) {
             var self = this;

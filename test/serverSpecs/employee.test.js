@@ -7,6 +7,7 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
+var moment = require('moment');
 var aggent;
 
 describe("Employee Specs", function () {
@@ -141,6 +142,30 @@ describe("Employee Specs", function () {
                 });
         });
 
+        it("should get wTrack totalCollectionLength", function (done) {
+
+            aggent
+                .get('employees/totalCollectionLength')
+                .query({"contentType" : "Employees"})
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+
+                    expect(body)
+                        .to.have.property('count')
+                        .and.to.be.gte(1);
+
+                    done();
+                });
+        });
+
         it("should get by viewType thumbnails employee", function (done) {
             var query = {
                 viewType     : "thumbnails",
@@ -229,6 +254,50 @@ describe("Employee Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
+
+                    done();
+                });
+        });
+
+        it("should get Years", function (done) {
+
+            aggent
+                .get('employees/getYears')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('min')
+                        .and.to.be.a('string');
+
+                    done();
+                });
+        });
+
+        it("should get Employees count", function (done) {
+
+            aggent
+                .get('employees/getEmployeesCount')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('count')
+                        .and.to.be.a('number');
 
                     done();
                 });
