@@ -16925,7 +16925,7 @@ define([
                 expect(topBarView.$el.find('h3').text()).to.be.equals('Projects');
             });
 
-            it('Try to change ContentTypeView', function(){
+            it('Try to change ContentTypeView', function () {
                 var $listBtn = topBarView.$el.find('#listBtn');
                 var $thumbnailsBtn = topBarView.$el.find('#thumbBtn');
 

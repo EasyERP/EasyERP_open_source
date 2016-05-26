@@ -211,7 +211,7 @@ define([
             $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-        calcTotal: function () {
+        /* calcTotal: function () {
             var $curEl = this.$el;
             var $rows = $curEl.find('#listTable tr').not('#listFooter');
             var $totalEl = $curEl.find('#listFooter').find('#totalDebit');
@@ -229,7 +229,7 @@ define([
             $totalEl.text(helpers.currencySplitter(total.toFixed(2)));
 
             return total;
-        },
+        },*/
 
         render: function () {
             var $currentEl;

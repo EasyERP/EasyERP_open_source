@@ -15,9 +15,6 @@ module.exports = function (config) {
             {pattern: 'public/js/libs/**/*.js', included: false, watching: false},
 
             {pattern: 'test/uiSpecs/jqueryPrivate.js', included: false, watching: false},
-            /*{pattern: 'public/js/populate.js', included: false, watching: false},
-             {pattern: 'public/js/dataService.js', included: false, watching: false},
-             {pattern: 'public/js/router.js', included: false, watching: false},*/
 
             {pattern: 'node_modules/chai/chai.js', included: false, watching: false},
             {pattern: 'node_modules/chai-jquery/chai-jquery.js', included: false, watching: false},
@@ -33,14 +30,14 @@ module.exports = function (config) {
             {pattern: 'public/templates/**/*.html', included: false, watching: false},
             {pattern: 'public/js/*.js', included: false, watching: false},
 
-            //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
+            // {pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
 
-            {pattern: 'test/uiSpecs/**/journalEntry.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/**/projects.test.js', included: false, watching: true},
             {pattern: 'test/uiSpecs/**/login.test.js', included: false, watching: true},
 
             {pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
             {pattern: 'test/uiSpecs/fixtures/*.test.js', included: false, watching: true},
-            {pattern: 'test/uiSpecs/models/*.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/models/*.test.js', included: false, watching: true}
 
             //{pattern: 'test/uiSpecs/**/*.test.js', included: false, watching: true}
         ],
@@ -48,9 +45,9 @@ module.exports = function (config) {
         exclude: [],
 
         preprocessors: {
-            'public/js/models/**/*.js': ['coverage'],
-            'public/js/views/**/*.js' : ['coverage'],
-            'public/js/collections/**/*.js' : ['coverage']
+            'public/js/models/**/*.js'     : ['coverage'],
+            'public/js/views/**/*.js'      : ['coverage'],
+            'public/js/collections/**/*.js': ['coverage']
         },
 
         coverageReporter: {
@@ -68,18 +65,17 @@ module.exports = function (config) {
 
         autoWatch: false,
 
-        browsers: ['Chrome'/*, 'Firefox', 'Safari', 'IE', 'PhantomJS'*/],
+        browsers: ['Chrome', 'Firefox', /*'Safari', 'IE',*/ 'PhantomJS'],
+        //browsers: [/*'Chrome', */'Firefox'/*, 'Safari', 'IE', 'PhantomJS'*/],
 
         singleRun: false,
 
         client: {
             mocha: {
-                ui  : "bdd"
+                ui: 'bdd'
             }
         },
 
-        concurrency: Infinity,
-
-        browserNoActivityTimeout: 100000
+        concurrency: Infinity
     });
 };

@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Product/filterCollection',
@@ -1727,7 +1728,7 @@ define([
                     }
                 });
 
-                /*it('Try to delete item for EditView with 403 error', function(){
+                /!*it('Try to delete item for EditView with 403 error', function(){
                     var $deleteBtn;
                     var spyResponse;
                     var productFormUrl = new RegExp('\/Product\/form\/', 'i');
@@ -1749,7 +1750,7 @@ define([
                     spyResponse = mainSpy.args[1][0];
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
-                });*/
+                });*!/
 
                 it('Try to delete item for EditView', function(){
                     var $deleteBtn;
@@ -2087,3 +2088,4 @@ define([
 
 
 });
+*/

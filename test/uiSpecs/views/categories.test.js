@@ -949,6 +949,8 @@ define([
                     $saveBtn.click();
                     server.respond();
 
+                    $('.ui-dialog').remove();
+
                     expect(window.location.hash).to.be.equals('#easyErp/productSettings');
                 });
 

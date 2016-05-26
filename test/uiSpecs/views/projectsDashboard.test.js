@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Projects/projectInfoCollection',
@@ -1249,3 +1250,4 @@ define([
     });
 
 });
+*/

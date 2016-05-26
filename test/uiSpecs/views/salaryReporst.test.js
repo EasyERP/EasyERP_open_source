@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/salaryReport/filterCollection',
@@ -965,3 +966,4 @@ define([
 
 
 });
+*/

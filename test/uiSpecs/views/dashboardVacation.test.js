@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Dashboard/vacationDashboard',
@@ -9560,3 +9561,4 @@ define([
         });
     });
 });
+*/

@@ -1,22 +1,18 @@
 define([
+    'Underscore',
     'text!fixtures/index.html',
     'collections/journalEntry/filterCollection',
     'views/main/MainView',
     'views/journalEntry/list/ListView',
     'views/journalEntry/TopBarView',
+    'views/Filter/FilterView',
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai',
-    'custom',
-    'async'
-], function (fixtures, JournalEntryCollection, MainView, ListView, TopBarView, $, chai, chaiJquery, sinonChai, Custom, async) {
+    'sinon-chai'
+], function (_, fixtures, JournalEntryCollection, MainView, ListView, TopBarView, FilterView, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
-
-    chai.use(chaiJquery);
-    chai.use(sinonChai);
-    expect = chai.expect;
 
     var modules = [
         {
@@ -1487,7 +1483,6 @@ define([
         attachments     : [],
         removable       : false
     };
-
     var journalEntryCollection;
     var view;
     var topBarView;
@@ -1495,6 +1490,12 @@ define([
     var setDateRangeSpy;
     var showDatePickerSpy;
     var reconcileSpy;
+    // var debounceStub;
+
+    chai.use(chaiJquery);
+    chai.use(sinonChai);
+
+    expect = chai.expect;
 
     describe('JournalEntry View', function () {
         var $fixture;
@@ -1504,6 +1505,9 @@ define([
             setDateRangeSpy = sinon.spy(TopBarView.prototype, 'setDateRange');
             showDatePickerSpy = sinon.spy(TopBarView.prototype, 'showDatePickers');
             reconcileSpy = sinon.spy(TopBarView.prototype, 'reconcile');
+            //debounceStub = sinon.stub(_, 'debounce', function(debFunction){
+            //    return debFunction;
+            //});
         });
 
         after(function () {
@@ -1514,6 +1518,7 @@ define([
             setDateRangeSpy.restore();
             showDatePickerSpy.restore();
             reconcileSpy.restore();
+            //debounceStub.restore();
         });
 
         describe('#initialize()', function () {
@@ -1525,7 +1530,6 @@ define([
                 $elFixture = $fixture.find('#wrapper');
 
                 server = sinon.fakeServer.create();
-
             });
 
             after(function () {
@@ -1577,7 +1581,7 @@ define([
                 server.restore();
             });
 
-            it('Try to create TopBarView', function () {
+            it('Try to create TopBarView', function (done) {
                 var journalEntryUrl = new RegExp('\/journal\/journalEntry\/list', 'i');
                 var journalTotalUrl = new RegExp('\/journal\/journalEntry\/totalCollectionLength', 'i');
 
@@ -1599,6 +1603,8 @@ define([
                 });
 
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
+
+                done();
             });
 
         });
@@ -1609,12 +1615,14 @@ define([
             var clock;
             var renderSpy;
             var $thisEl;
+            var selectSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
                 clock = sinon.useFakeTimers();
                 renderSpy = sinon.spy(ListView.prototype, 'render');
+                selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
             });
 
             after(function () {
@@ -1622,6 +1630,7 @@ define([
                 mainSpy.restore();
                 clock.restore();
                 renderSpy.restore();
+                selectSpy.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -1629,7 +1638,6 @@ define([
                 it('Try to create JournalEntry list view', function (done) {
                     var journalEntryUrl = new RegExp('\/journal\/journalEntry\/list', 'i');
                     var journalTotalUrl = new RegExp('\/journal\/journalEntry\/totalCollectionLength', 'i');
-                    var $listHolder;
 
                     server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         count     : 3,
@@ -1668,7 +1676,107 @@ define([
                     done();
                 });
 
-                it('Try to change date range', function () {
+                it('Try to filter ListView', function () {
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var journalEntryUrl = new RegExp('\/journal\/journalEntry\/list', 'i');
+                    var journalTotalUrl = new RegExp('\/journal\/journalEntry\/totalCollectionLength', 'i');
+                    var $journal;
+                    var $subject;
+                    var $next;
+                    var $prev;
+                    var $selectedItem;
+
+                    // open search dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                    // select Journal filter
+                    $journal = $searchContainer.find('#journalNameFullContainer > .groupName');
+                    $journal.click();
+                    $selectedItem = $searchContainer.find('#journalNameUl > li').first();
+
+                    server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                        count     : 2,
+                        totalValue: 10000
+                    })]);
+                    server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([
+                        fakeJournalEntry[0],
+                        fakeJournalEntry[1]
+                    ])]);
+                    $selectedItem.click();
+                    server.respond();
+                    server.respond();
+
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
+                    expect(selectSpy.calledOnce).to.be.true;
+
+                    // select Subject
+                    $subject = $searchContainer.find('#sourceDocumentFullContainer > .groupName');
+                    $subject.click();
+                    $next = $searchContainer.find('.next');
+                    $next.click();
+                    expect($searchContainer.find('#sourceDocumentContainer .counter').text().trim()).to.be.equals('8-14 of 20');
+                    $prev = $searchContainer.find('.prev');
+                    $prev.click();
+                    expect($searchContainer.find('#sourceDocumentContainer .counter').text().trim()).to.be.equals('1-7 of 20');
+                    $selectedItem = $searchContainer.find('#sourceDocumentUl > li').first();
+
+                    server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                        count     : 1,
+                        totalValue: 10000
+                    })]);
+                    server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([
+                        fakeJournalEntry[0]
+                    ])]);
+                    $selectedItem.click();
+                    server.respond();
+                    server.respond();
+
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(1);
+                    expect(selectSpy.calledTwice).to.be.true;
+
+                    // unselect Subject filter
+                    server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                        count     : 2,
+                        totalValue: 10000
+                    })]);
+                    server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([
+                        fakeJournalEntry[0],
+                        fakeJournalEntry[1]
+                    ])]);
+                    $selectedItem = $searchContainer.find('#sourceDocumentUl > li').first();
+                    $selectedItem.click();
+                    server.respond();
+                    server.respond();
+
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
+                    expect(selectSpy.calledThrice).to.be.true;
+
+                    // close filter dropdown
+                    $searchArrow.click();
+                    expect($searchContainer.find('.search-options')).to.have.class('hidden');
+                });
+
+                it('Try to remove Journal filter', function () {
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $closeBtn = $searchContainer.find('.removeValues');
+                    var journalEntryUrl = new RegExp('\/journal\/journalEntry\/list', 'i');
+                    var journalTotalUrl = new RegExp('\/journal\/journalEntry\/totalCollectionLength', 'i');
+
+                    server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                        count     : 3,
+                        totalValue: 10000
+                    })]);
+                    server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJournalEntry)]);
+                    $closeBtn.click();
+                    server.respond();
+                    server.respond();
+
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
+                });
+
+                it('Try to change date range', function (done) {
                     var $topBarEl = topBarView.$el;
                     var $updateDateBtn = $topBarEl.find('#updateDate');
                     var $dateRange = $topBarEl.find('.dateRange');
@@ -1746,6 +1854,8 @@ define([
 
                     $updateDateBtn.click();
                     server.respond();
+
+                    done();
                 });
 
                 it('Try to reconcile JournalEntry with reconcile btn have class "greenBtn"', function () {
@@ -1804,9 +1914,15 @@ define([
                     expect(spyResponse).to.have.property('message', 'Please refresh browser');
                 });
 
-                /*it('Try to viewSourceDocument with 200 status response', function (done) { not opened editView
+                it('Try to viewSourceDocument with 200 status response', function (done) {
                     var $needDividendInvoice = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(5) > a');
                     var invoiceUrl = new RegExp('\/Invoice\/form', 'i');
+
+                    App.currentUser = {
+                        profile: {
+                            _id: '1387275598000'
+                        }
+                    };
 
                     mainSpy.reset();
 
@@ -1819,7 +1935,7 @@ define([
                     expect($('.ui-dialog')).to.exist;
 
                     done();
-                });*/
+                });
             });
         });
     });

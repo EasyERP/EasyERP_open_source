@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/Applications/filterCollection',
@@ -5628,7 +5629,7 @@ define([
     var workflowCollection;
     var applicationCollection;
 
-    describe('DashboardVacation', function () {
+    describe('ApplicationsView', function () {
 
         var $fixture;
         var $elFixture;
@@ -6152,3 +6153,4 @@ define([
 
 
 });
+*/

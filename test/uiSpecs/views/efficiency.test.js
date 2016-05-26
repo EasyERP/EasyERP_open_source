@@ -585,7 +585,7 @@ define([
     var view;
     var indexView;
 
-    describe('SalaryReport View', function () {
+    describe('Efficiency View', function () {
 
         var $fixture;
         var $elFixture;
@@ -664,7 +664,7 @@ define([
 
             describe('INITIALIZE', function () {
 
-                it('Try to application ListView', function (done) {
+                it('Try to Efficiency ListView', function (done) {
                     var revenueUrl = new RegExp('\/revenue\/getFromCash', 'i');
 
                     server.respondWith('GET', revenueUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeRevenue)]);
