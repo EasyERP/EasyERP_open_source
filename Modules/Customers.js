@@ -896,8 +896,13 @@ var Customers = function (event, models) {
             var res = {};
             res['data'] = [];
             var query = models.get(req.session.lastDb, "Customers", customerSchema).find();
-            if (data && data.id)
+
+            if (data && data.id) {
                 query.where({_id: objectId(data.id)});
+            } /*else {
+                query.where({type: 'Company', isCustomer: true});
+            }*/
+
             query.sort({"name.first": 1});
             query.exec(function (err, customers) {
                 if (err) {

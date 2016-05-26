@@ -2036,7 +2036,7 @@ var Project = function (models, event) {
 
                                 query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").
                                     populate('assignedTo', 'name').
-                                    populate('project', 'projectShortDesc').
+                                    populate('project', 'projectName').
                                     sort({'sequence': -1}).
                                     limit(req.session.kanbanSettings.tasks.countPerPage).
                                     exec(function (err, result) {

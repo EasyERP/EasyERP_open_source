@@ -152,7 +152,7 @@ var Quotation = function (models, event) {
 
                 async.each(products, function (product, cb) {
                     var jobs = product.jobs;
-                    var _type = data.isOrder ? 'Ordered' : 'Quoted';
+                    var _type = quotation.toJSON().isOrder ? 'Ordered' : 'Quoted';
 
                     var index = indexOfBinary(oldProducts, jobs.id);
 

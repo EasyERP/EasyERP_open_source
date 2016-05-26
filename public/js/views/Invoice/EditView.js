@@ -16,23 +16,25 @@ define([
     'populate',
     'constants',
     'helpers'
-], function ($,
-             _,
-             Backbone,
-             EditTemplate,
-             attachView,
-             AssigneesView,
-             InvoiceItemView,
-             wTrackRows,
-             PaymentCreateView,
-             EmailVew,
-             listHederInvoice,
-             common,
-             Custom,
-             dataService,
-             populate,
-             CONSTANTS,
-             helpers) {
+], function (
+    $,
+    _,
+    Backbone,
+    EditTemplate,
+    attachView,
+    AssigneesView,
+    InvoiceItemView,
+    wTrackRows,
+    PaymentCreateView,
+    EmailVew,
+    listHederInvoice,
+    common,
+    Custom,
+    dataService,
+    populate,
+    CONSTANTS,
+    helpers
+) {
     'use strict';
 
     var EditView = Backbone.View.extend({
@@ -360,7 +362,7 @@ define([
                 App.stopPreload();
 
                 return App.render({
-                    type: 'error',
+                    type   : 'error',
                     message: 'Please fill all required fields.'
                 });
             }
@@ -660,6 +662,7 @@ define([
                 changeYear : true,
                 disabled   : model.approved,
                 maxDate    : 0,
+                minDate    : invoiceDate,
                 onSelect   : function () {
                     var dueDatePicker = $('#due_date');
                     var endDate = $(this).datepicker('getDate');

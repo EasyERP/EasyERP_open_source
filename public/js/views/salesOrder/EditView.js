@@ -38,6 +38,7 @@ define([
                 this.currentModel = (options.model) ? options.model : options.collection.getElement();
                 this.currentModel.urlRoot = "/order";
                 this.responseObj = {};
+
                 this.render(options);
             },
 
@@ -62,7 +63,7 @@ define([
 
             },
 
-            notHide      : function () {
+            notHide: function () {
                 return false;
             },
 
@@ -70,7 +71,7 @@ define([
                 $(".newSelectList").hide();
             },
 
-            chooseOption : function (e) {
+            chooseOption: function (e) {
                 //var currencyElement = $(e.target).parents('dd').find('.current-selected');
                 //var oldCurrency = currencyElement.attr('data-id');
                 //var newCurrency = $(e.target).attr('id');
@@ -83,11 +84,11 @@ define([
                 $(e.target).parents("dd").find(".current-selected").text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
             },
 
-            nextSelect   : function (e) {
+            nextSelect: function (e) {
                 this.showNewSelect(e, false, true);
             },
 
-            prevSelect   : function (e) {
+            prevSelect: function (e) {
                 this.showNewSelect(e, true, false);
             },
 
@@ -300,7 +301,7 @@ define([
                                             model       : self.collection,
                                             activeTab   : true,
                                             eventChannel: self.eventChannel,
-                                            filter     : filter
+                                            filter      : filter
                                         });
 
                                         this.invoiceView.showDialog(orderId);
@@ -351,7 +352,7 @@ define([
                 });
             },
 
-            saveItem: function (invoiceCb) {
+            saveItem  : function (invoiceCb) {
 
                 var self = this;
                 var mid = this.forSales ? 62 : 55;
@@ -629,7 +630,8 @@ define([
                     dateFormat : "d M, yy",
                     changeMonth: true,
                     changeYear : true,
-                    maxDate    : 0
+                    maxDate    : 0,
+                    minDate    : model.orderDate
                 });
 
                 productItemContainer = this.$el.find('#productItemsHolder');

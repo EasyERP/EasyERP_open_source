@@ -319,6 +319,8 @@ var Invoice = function (models, event) {
                 invoice = new Invoice(order);
             }
 
+            invoice.invoiceDate = order.orderDate;
+
             if (proforma) {
                 proforma.paymentsInfo.forEach(function (payment) {
                     var paid = payment.paidAmount;
