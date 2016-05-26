@@ -142,6 +142,30 @@ describe("Employee Specs", function () {
                 });
         });
 
+        it("should get wTrack totalCollectionLength", function (done) {
+
+            aggent
+                .get('employees/totalCollectionLength')
+                .query({"contentType" : "Employees"})
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+
+                    expect(body)
+                        .to.have.property('count')
+                        .and.to.be.gte(1);
+
+                    done();
+                });
+        });
+
         it("should get by viewType thumbnails employee", function (done) {
             var query = {
                 viewType     : "thumbnails",
@@ -235,42 +259,10 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get salaryByMonth", function (done) {
-
-            var query = {
-                _id          : id,
-                month        : moment().month(),
-                year         : moment().year(),
-                count        : 100,
-                page         : 1,
-                newCollection: false
-            };
-            aggent
-                .get('employees/getByMonth')
-                .query(query)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('data')
-                        .and.to.be.equal(300);
-
-                    done();
-                });
-        });
-
         it("should get Years", function (done) {
 
             aggent
                 .get('employees/getYears')
-                .query(query)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -283,7 +275,7 @@ describe("Employee Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('min')
-                        .and.to.be.instanceOf(Date);
+                        .and.to.be.a('string');
 
                     done();
                 });
@@ -305,7 +297,7 @@ describe("Employee Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('count')
-                        .and.to.be.instanceOf(Number);
+                        .and.to.be.a('number');
 
                     done();
                 });

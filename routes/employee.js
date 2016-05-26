@@ -28,13 +28,13 @@ module.exports = function (event, models) {
     router.get('/nationality', authStackMiddleware, handler.getNationality);
     router.get('/languages', authStackMiddleware, handler.getLanguages);
     router.get('/sources', authStackMiddleware, handler.getSources);
-    router.get('/getByMonth', authStackMiddleware, handler.getSalaryByMonth);
+    /*router.get('/getByMonth', authStackMiddleware, handler.getSalaryByMonth);*/
 
     router.get('/birthdays', authStackMiddleware, handler.getBirthdays);
-
-    router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getByViewTpe);
     router.get('/getYears', handler.getYears);
     router.get('/getEmployeesCount', handler.getEmployeesCount);
+    router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getByViewTpe);
+
     
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.post('/uploadEmployeesFiles', authStackMiddleware, accessStackMiddlware, multipartMiddleware, handler.uploadEmployeesFiles);
