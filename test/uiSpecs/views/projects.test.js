@@ -9,14 +9,14 @@ define([
     'collections/Projects/filterCollection',
     'views/main/MainView',
     'views/Projects/TopBarView',
+    'views/Projects/thumbnails/ThumbnailsView',
     /*'views/Projects/list/ListView',
      'views/Projects/form/FormView',
-     'views/Projects/thumbnails/ThumbnailsView',
      'views/Projects/CreateView',
      'views/Projects/EditView',
      'custom',
      'async'*/
-], function ($, chai, chaiJquery, sinonChai, modules, fixtures, ProjectModel, ProjectCollection, MainView, topBarView/*, ListView, FormView, ThumbnailsView, CreateView, EditView*/) {
+], function ($, chai, chaiJquery, sinonChai, modules, fixtures, ProjectModel, ProjectCollection, MainView, topBarView, ThumbnailsView/*, ListView, FormView, ThumbnailsView, CreateView, EditView*/) {
     'use strict';
 
     var fakeProjects = {
@@ -16345,9 +16345,9 @@ define([
 
         after(function () {
             topBarView.remove();
-             /*listView.remove();
-             thumbnailsView.remove();
-             formView.remove();*/
+            thumbnailsView.remove();
+            /*formView.remove();
+             listView.remove();*/
             view.remove();
         });
 
@@ -16430,13 +16430,12 @@ define([
                 expect(topBarView.$el.find('h3')).to.exist;
                 expect(topBarView.$el.find('h3').text()).to.be.equals('Projects');
             });
-            
+
             it('Try to change ContentTypeView', function () {
                 var $listBtn = topBarView.$el.find('#listBtn');
                 var $thumbnailsBtn = topBarView.$el.find('#thumbBtn');
 
                 $thumbnailsBtn.click();
-                clock.tick(15000);
                 expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails');
 
                 $listBtn.click();
@@ -16445,478 +16444,399 @@ define([
 
         });
 
-        /* describe('ListView', function () {
-         var server;
-         var mainSpy;
-         var windowConfirmStub;
-         var $thisEl;
-         var fakeClock;
-
-         before(function () {
-         server = sinon.fakeServer.create();
-         mainSpy = sinon.spy(App, 'render');
-         windowConfirmStub = sinon.stub(window, 'confirm');
-         fakeClock = sinon.useFakeTimers();
-         });
-
-         after(function () {
-         server.restore();
-         mainSpy.restore();
-         fakeClock.restore();
-         windowConfirmStub.restore();
-         });
-
-         describe('INITIALIZE', function () {
-
-         it('Try to create ListView', function (done) {
-         var worlflowUrl = new RegExp('\/Workflows', 'i');
-
-         server.respondWith('GET', worlflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflows)]);
-         listView = new ListView({
-         startTime : new Date(),
-         collection: projectsCollection
-         });
-         server.respond();
-
-         fakeClock.tick(200);
-
-         $thisEl = listView.$el;
-
-         expect($thisEl.find('table')).to.have.class('list');
-
-         done();
-         });
-
-         it('Try to change health of project', function () {
-         var $healthSelectedItem;
-         var $needRow = $thisEl.find('tr[data-id="55f55d31b81672730c000020"]');
-         var $projectHealthBtn = $needRow.find('#health .health-container');
-         var projectUrl = new RegExp('\/Projects\/', 'i');
-
-         $projectHealthBtn.click();
-         $healthSelectedItem = $needRow.find('#health ul li div.health2');
-
-         server.respondWith('PATCH', projectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
-         $healthSelectedItem.click();
-         server.respond();
-
-         expect($needRow.find('#health a')).to.have.class('health2');
-
-         });
-
-         it('Try to change project status', function () {
-         var $statusSelectedItem;
-         var $needRow = $thisEl.find('tr[data-id="55f55d31b81672730c000020"]');
-         var $projectStatusBtn = $needRow.find('a.stageSelect');
-         var projectUrl = new RegExp('\/Projects\/', 'i');
-
-         $projectStatusBtn.click();
-         $statusSelectedItem = $needRow.find('.newSelectList li:nth-child(3)');
-
-         server.respondWith('PATCH', projectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
-         $statusSelectedItem.click();
-         server.respond();
-
-         expect(window.location.hash).to.be.equals('#easyErp/Projects/list/p=1/c=100');
-         });
-         });
-         });
-
-         describe('ThumbnailsView', function () {
-         var server;
-         var mainSpy;
-         var windowConfirmStub;
-         var $thisEl;
-         var clock;
-
-         before(function () {
-         window.location.hash = '#easyErp/Projects/thumbnails';
-         server = sinon.fakeServer.create();
-         mainSpy = sinon.spy(App, 'render');
-         windowConfirmStub = sinon.stub(window, 'confirm');
-         clock = sinon.useFakeTimers();
-         });
-
-         after(function () {
-         server.restore();
-         mainSpy.restore();
-         windowConfirmStub.restore();
-         clock.restore();
-         });
-
-         describe('INITIALIZE', function () {
-
-         it('Try to create ThumbnailsView', function (done) {
-         var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
-         var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
-         var worlflowUrl = new RegExp('\/Workflows', 'i');
-
-         server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-         count   : 1,
-         showMore: true
-         })]);
-         server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakeProjectsForThumbnails.data[0]]})]);
-         projectsThumbCollection = new ProjectCollection({
-         viewType   : 'thumbnails',
-         contentType: 'Projects'
-         });
-         server.respond();
-         server.respond();
-
-         server.respondWith('GET', worlflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflows)]);
-         thumbnailsView = new ThumbnailsView({
-         startTime : new Date(),
-         collection: projectsThumbCollection
-         });
-         server.respond();
-
-         clock.tick(200);
-
-         $thisEl = thumbnailsView.$el;
-         expect($thisEl.find('#thumbnailContent')).to.exist;
-
-         topBarView.bind('createEvent', thumbnailsView.createItem, thumbnailsView);
-         topBarView.bind('editEvent', thumbnailsView.editItem, thumbnailsView);
-         topBarView.bind('deleteEvent', thumbnailsView.deleteItems, thumbnailsView);
-         topBarView.bind('exportToCsv', thumbnailsView.exportToCsv, thumbnailsView);
-         topBarView.bind('exportToXlsx', thumbnailsView.exportToXlsx, thumbnailsView);
-         topBarView.bind('importEvent', thumbnailsView.importFiles, thumbnailsView);
-         projectsThumbCollection.bind('showmore', thumbnailsView.showMoreContent, thumbnailsView);
-         projectsThumbCollection.bind('showmoreAlphabet', thumbnailsView.showMoreAlphabet, thumbnailsView);
-
-         done();
-         });
-
-         it('Try to showMore', function () {
-         var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
-         var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
-         var $thisEl = thumbnailsView.$el;
-         var $showMoreBtn = $thisEl.find('#showMore');
-
-         server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-         count   : 2,
-         showMore: false
-         })]);
-         server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
-         $showMoreBtn.click();
-         server.respond();
-         server.respond();
-
-         expect($thisEl.find('#thumbnailContent')).to.exist;
-         expect($thisEl.find('.thumbnail').length).to.be.equals(3);
-         });
-
-         it('Try to filtered projects', function () {
-         var $selectedItem;
-         var $contactBtn;
-         var $projectNameBtn;
-         var $searchContainer = $thisEl.find('#searchContainer');
-         var $searchArrow = $searchContainer.find('.search-content');
-         var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
-         var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
-
-         $searchArrow.mouseover();
-
-         // select contact
-         $contactBtn = $searchContainer.find('#customerFullContainer >.groupName');
-         $contactBtn.click();
-         $selectedItem = $searchContainer.find('li[data-value="55b92ad621e4b7c40f000635"]');
-         server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-         count   : 2,
-         showMore: false
-         })]);
-         server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
-         $selectedItem.click();
-         server.respond();
-         server.respond();
-         expect($thisEl.find('.thumbnail').length).to.be.equals(2);
-
-         // select project name
-         $projectNameBtn = $searchContainer.find('#nameFullContainer >.groupName');
-         $projectNameBtn.click();
-         $selectedItem = $searchContainer.find('li[data-value="56e689c75ec71b00429745a9"]');
-         server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-         count   : 1,
-         showMore: true
-         })]);
-         server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakeProjectsForThumbnails.data[0]]})]);
-         $selectedItem.click();
-         server.respond();
-         server.respond();
-         expect($thisEl.find('.thumbnail').length).to.be.equals(1);
-
-         // close project name filter
-         server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-         count   : 2,
-         showMore: false
-         })]);
-         server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
-         $selectedItem.click();
-         server.respond();
-         server.respond();
-         expect($thisEl.find('.thumbnail').length).to.be.equals(2);
-         });
-
-         it('Try to close contact filter', function () {
-         var $searchContainer = $thisEl.find('#searchContainer');
-         var $closeContactBtn = $searchContainer.find('span[data-value="customer"]').next();
-         var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
-         var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
-
-         server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-         count   : 2,
-         showMore: false
-         })]);
-         server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
-         $closeContactBtn.click();
-         server.respond();
-         server.respond();
-         });
-
-         /!*it('Try to change project status', function(){
-         var $statusSelectedItem;
-         var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
-         var $projectStatusBtn = $needItem.find('.stageSelect');
-         var projectUrl = new RegExp('\/Projects\/', 'i');
-
-         $projectStatusBtn.click();
-         $statusSelectedItem = $needItem.find('.newSelectList li:nth-child(3)');
-         $statusSelectedItem.click();
-
-         server.respondWith('PATCH', projectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
-         $statusSelectedItem.click();
-         server.respond();
-
-         expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails');
-         });*!/
-
-         it('Try to change health of project', function () {
-         var $healthSelectedItem;
-         var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
-         var $projectHealthBtn = $needItem.find('.health-container');
-         var projectUrl = new RegExp('\/Projects\/', 'i');
-
-         $projectHealthBtn.click();
-         $healthSelectedItem = $needItem.find('ul li div.health1');
-
-         server.respondWith('PATCH', projectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
-         $healthSelectedItem.click();
-         server.respond();
-
-         expect($needItem.find('.health-container a')).to.have.class('health1');
-
-         });
-
-         it('Try to open CreateView', function () {
-         var $createBtn = topBarView.$el.find('#top-bar-createBtn');
-         var usersUrl = '/users/forDd';
-         var employeesUrl = '/employees/getPersonsForDd';
-         var customerUrl = '/customers/';
-
-         server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
-         server.respondWith('GET', employeesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployees)]);
-         server.respondWith('GET', customerUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
-         $createBtn.click();
-         thumbnailsView.createItem();
-         server.respond();
-         server.respond();
-         server.respond();
-
-         expect($('.ui-dialog')).to.exist;
-         });
-
-         it('Try to change tabs', function () {
-         var $dialogEl = $('.ui-dialog');
-         var $firstTab = $dialogEl.find('.dialog-tabs > li:nth-child(1) > a');
-         var $secondTab = $dialogEl.find('.dialog-tabs > li:nth-child(2) > a');
-
-         expect($firstTab).to.have.class('active');
-
-         $secondTab.click();
-         expect($secondTab).to.have.class('active');
-
-         $firstTab.click();
-         expect($firstTab).to.have.class('active');
-
-         });
-
-         it('Try to create item without required data', function () {
-         var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
-         var spyResponse;
-
-         $createBtn.click();
-         spyResponse = mainSpy.args[0][0];
-
-         expect(spyResponse).to.have.property('type', 'error');
-
-         });
-
-         it('Try to set set required data to CreateView', function () {
-         var $selectedItem;
-         var $salesManagerSelect;
-         var $projectHealthSelect;
-         var $customerSelect;
-         var $next;
-         var $prev;
-         var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
-         var $dialogEl = $('.ui-dialog');
-         var $projectNameEl = $dialogEl.find('#projectName');
-         var $projectDescEl = $dialogEl.find('#projectShortDesc');
-         var $startDate = $dialogEl.find('#StartDate');
-         var $endDate = $dialogEl.find('#EndDateTarget');
-         var projectsUrl = '/Projects/';
-
-         $projectNameEl.val('Test');
-         $projectDescEl.val('Test');
-         $startDate.val('5 Apr, 2016');
-         $endDate.val('25 Apr, 2016');
-
-         // select sales manager
-         $salesManagerSelect = $dialogEl.find('#projectManagerDD');
-         $salesManagerSelect.click();
-         $next = $dialogEl.find('.next');
-         $next.click();
-         $prev = $dialogEl.find('.prev');
-         $prev.click();
-         $selectedItem = $dialogEl.find('#55b92ad221e4b7c40f000084');
-         $selectedItem.click();
-
-         //select customer
-         $customerSelect = $dialogEl.find('#customerDd');
-         $customerSelect.click();
-         $selectedItem = $dialogEl.find('#55b92ad521e4b7c40f00060e');
-         $selectedItem.click();
-
-         //select project health
-         $projectHealthSelect = $dialogEl.find('#health a');
-         $projectHealthSelect.click();
-         $selectedItem = $dialogEl.find('.health2');
-         $selectedItem.click();
-
-         server.respondWith('POST', projectsUrl, [201, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
-         $createBtn.click();
-         server.respond();
-
-         expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=100');
-         });
-
-         it('Close CreateView', function () {
-         var $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
-
-         $cancelBtn.click();
-
-         expect($('.ui-dialog')).to.not.exist;
-         });
-
-
-         /!*it('Try to open EditView', function(){
-         var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
-         var projectFormUrl = new RegExp('\/Projects\/form\/', 'i');
-         var usersUrl = '/users/forDd';
-         var employeesUrl = '/employees/getPersonsForDd';
-         var customerUrl = '/customers/';
-
-         server.respondWith('GET', projectFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectById)]);
-         server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
-         server.respondWith('GET', employeesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployees)]);
-         server.respondWith('GET', customerUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
-         $needItem.click();
-         server.respond();
-         server.respond();
-         server.respond();
-         server.respond();
-
-         expect($('.ui-dialog')).to.exist;
-         });
-
-         it('Try to change tabs', function(){
-         var $dialogEl = $('.ui-dialog');
-         var $firstTab = $dialogEl.find('.dialog-tabs > li:nth-child(1) > a');
-         var $secondTab = $dialogEl.find('.dialog-tabs > li:nth-child(2) > a');
-
-         expect($firstTab).to.have.class('active');
-
-         $secondTab.click();
-         expect($secondTab).to.have.class('active');
-
-         $firstTab.click();
-         expect($firstTab).to.have.class('active');
-
-         });
-
-         it('Try to set required data to EditView', function(){
-         var $selectedItem;
-         var $salesManagerSelect;
-         var $projectHealthSelect;
-         var $customerSelect;
-         var $next;
-         var $prev;
-         var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-project-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
-         var $dialogEl = $('.ui-dialog');
-         var projectsUrl = new RegExp('\/Projects\/', 'i');
-         var $startDate = $dialogEl.find('#StartDate');
-         var $endTargetDate = $dialogEl.find('#EndDateTarget');
-         var $endDate = $dialogEl.find('#EndDate');
-
-         $startDate.val('5 Apr, 2016');
-         $endTargetDate.val('25 Apr, 2016');
-         $endDate.val('25 Apr, 2016');
-
-         // select sales manager
-         $salesManagerSelect = $dialogEl.find('#projectManagerDD');
-         $salesManagerSelect.click();
-         $next = $dialogEl.find('.next');
-         $next.click();
-         $prev = $dialogEl.find('.prev');
-         $prev.click();
-         $selectedItem = $dialogEl.find('#55b92ad221e4b7c40f000084');
-         $selectedItem.click();
-
-         //select customer
-         $customerSelect = $dialogEl.find('#customerDd');
-         $customerSelect.click();
-         $selectedItem =  $dialogEl.find('#55b92ad521e4b7c40f00060e');
-         $selectedItem.click();
-
-         //select project health
-         $projectHealthSelect = $dialogEl.find('#health a');
-         $projectHealthSelect.click();
-         $selectedItem = $dialogEl.find('.health2');
-         $selectedItem.click();
-
-         server.respondWith('PUT', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
-         $saveBtn.click();
-         server.respond();
-
-         expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails');
-         });
-
-         it('Try to delete project', function(){
-         var $deleteBtn;
-         var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
-         var projectsUrl = new RegExp('\/Projects\/', 'i');
-
-         windowConfirmStub.returns(true);
-         $needItem.click();
-         server.respond();
-
-         $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-project-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
-
-         server.respondWith('DELETE', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
-         $deleteBtn.click();
-         server.respond();
-
-         expect($('.ui-dialog')).to.not.exist;
-         expect($thisEl.find('.thumbnail').length).to.be.equals(1);
-
-         });*!/
-
-
-         });
-
-         });
-
-         describe('FormView', function () {
+        describe('ThumbnailsView', function () {
+            var server;
+            var mainSpy;
+            var windowConfirmStub;
+            var $thisEl;
+            var clock;
+
+            before(function () {
+                window.location.hash = '#easyErp/Projects/thumbnails';
+                server = sinon.fakeServer.create();
+                mainSpy = sinon.spy(App, 'render');
+                windowConfirmStub = sinon.stub(window, 'confirm');
+                clock = sinon.useFakeTimers();
+            });
+
+            after(function () {
+                server.restore();
+                mainSpy.restore();
+                windowConfirmStub.restore();
+                clock.restore();
+            });
+
+            describe('INITIALIZE', function () {
+
+                it('Try to create ThumbnailsView', function (done) {
+                    var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
+                    var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
+                    var worlflowUrl = new RegExp('\/Workflows', 'i');
+
+                    server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count   : 1,
+                        showMore: true
+                    })]);
+                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakeProjectsForThumbnails.data[0]]})]);
+                    projectsThumbCollection = new ProjectCollection({
+                        viewType   : 'thumbnails',
+                        contentType: 'Projects'
+                    });
+                    server.respond();
+                    server.respond();
+
+                    server.respondWith('GET', worlflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflows)]);
+                    thumbnailsView = new ThumbnailsView({
+                        startTime : new Date(),
+                        collection: projectsThumbCollection
+                    });
+                    server.respond();
+
+                    clock.tick(200);
+
+                    $thisEl = thumbnailsView.$el;
+                    expect($thisEl.find('#thumbnailContent')).to.exist;
+
+                    topBarView.bind('createEvent', thumbnailsView.createItem, thumbnailsView);
+                    topBarView.bind('editEvent', thumbnailsView.editItem, thumbnailsView);
+                    topBarView.bind('deleteEvent', thumbnailsView.deleteItems, thumbnailsView);
+                    topBarView.bind('exportToCsv', thumbnailsView.exportToCsv, thumbnailsView);
+                    topBarView.bind('exportToXlsx', thumbnailsView.exportToXlsx, thumbnailsView);
+                    topBarView.bind('importEvent', thumbnailsView.importFiles, thumbnailsView);
+                    projectsThumbCollection.bind('showmore', thumbnailsView.showMoreContent, thumbnailsView);
+                    projectsThumbCollection.bind('showmoreAlphabet', thumbnailsView.showMoreAlphabet, thumbnailsView);
+
+                    done();
+                });
+
+                /*it('Try to showMore', function () {
+                    var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
+                    var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
+                    var $thisEl = thumbnailsView.$el;
+                    var $showMoreBtn = $thisEl.find('#showMore');
+
+                    server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count   : 2,
+                        showMore: false
+                    })]);
+                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
+                    $showMoreBtn.click();
+                    server.respond();
+                    server.respond();
+
+                    expect($thisEl.find('#thumbnailContent')).to.exist;
+                    expect($thisEl.find('.thumbnail').length).to.be.equals(3);
+                });
+
+                it('Try to filtered projects', function () {
+                    var $selectedItem;
+                    var $contactBtn;
+                    var $projectNameBtn;
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $searchArrow = $searchContainer.find('.search-content');
+                    var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
+                    var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
+
+                    $searchArrow.mouseover();
+
+                    // select contact
+                    $contactBtn = $searchContainer.find('#customerFullContainer >.groupName');
+                    $contactBtn.click();
+                    $selectedItem = $searchContainer.find('li[data-value="55b92ad621e4b7c40f000635"]');
+                    server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count   : 2,
+                        showMore: false
+                    })]);
+                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
+                    $selectedItem.click();
+                    server.respond();
+                    server.respond();
+                    expect($thisEl.find('.thumbnail').length).to.be.equals(2);
+
+                    // select project name
+                    $projectNameBtn = $searchContainer.find('#nameFullContainer >.groupName');
+                    $projectNameBtn.click();
+                    $selectedItem = $searchContainer.find('li[data-value="56e689c75ec71b00429745a9"]');
+                    server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count   : 1,
+                        showMore: true
+                    })]);
+                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakeProjectsForThumbnails.data[0]]})]);
+                    $selectedItem.click();
+                    server.respond();
+                    server.respond();
+                    expect($thisEl.find('.thumbnail').length).to.be.equals(1);
+
+                    // close project name filter
+                    server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count   : 2,
+                        showMore: false
+                    })]);
+                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
+                    $selectedItem.click();
+                    server.respond();
+                    server.respond();
+                    expect($thisEl.find('.thumbnail').length).to.be.equals(2);
+                });
+
+                it('Try to close contact filter', function () {
+                    var $searchContainer = $thisEl.find('#searchContainer');
+                    var $closeContactBtn = $searchContainer.find('span[data-value="customer"]').next();
+                    var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
+                    var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
+
+                    server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        count   : 2,
+                        showMore: false
+                    })]);
+                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
+                    $closeContactBtn.click();
+                    server.respond();
+                    server.respond();
+                });
+
+                it('Try to change project status', function () {
+                    var $statusSelectedItem;
+                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
+                    var $projectStatusBtn = $needItem.find('.stageSelect');
+                    var projectUrl = new RegExp('\/Projects\/', 'i');
+
+                    $projectStatusBtn.click();
+                    $statusSelectedItem = $needItem.find('.newSelectList li:nth-child(3)');
+                    $statusSelectedItem.click();
+
+                    server.respondWith('PATCH', projectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+                    $statusSelectedItem.click();
+                    server.respond();
+
+                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails');
+                });
+
+                it('Try to change health of project', function () {
+                    var $healthSelectedItem;
+                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
+                    var $projectHealthBtn = $needItem.find('.health-container');
+                    var projectUrl = new RegExp('\/Projects\/', 'i');
+
+                    $projectHealthBtn.click();
+                    $healthSelectedItem = $needItem.find('ul li div.health1');
+
+                    server.respondWith('PATCH', projectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+                    $healthSelectedItem.click();
+                    server.respond();
+
+                    expect($needItem.find('.health-container a')).to.have.class('health1');
+
+                });
+
+                it('Try to open CreateView', function () {
+                    var $createBtn = topBarView.$el.find('#top-bar-createBtn');
+                    var usersUrl = '/users/forDd';
+                    var employeesUrl = '/employees/getPersonsForDd';
+                    var customerUrl = '/customers/';
+
+                    server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
+                    server.respondWith('GET', employeesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployees)]);
+                    server.respondWith('GET', customerUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
+                    $createBtn.click();
+                    thumbnailsView.createItem();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.exist;
+                });
+
+                it('Try to change tabs', function () {
+                    var $dialogEl = $('.ui-dialog');
+                    var $firstTab = $dialogEl.find('.dialog-tabs > li:nth-child(1) > a');
+                    var $secondTab = $dialogEl.find('.dialog-tabs > li:nth-child(2) > a');
+
+                    expect($firstTab).to.have.class('active');
+
+                    $secondTab.click();
+                    expect($secondTab).to.have.class('active');
+
+                    $firstTab.click();
+                    expect($firstTab).to.have.class('active');
+
+                });
+
+                it('Try to create item without required data', function () {
+                    var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                    var spyResponse;
+
+                    $createBtn.click();
+                    spyResponse = mainSpy.args[0][0];
+
+                    expect(spyResponse).to.have.property('type', 'error');
+
+                });
+
+                it('Try to set set required data to CreateView', function () {
+                    var $selectedItem;
+                    var $salesManagerSelect;
+                    var $projectHealthSelect;
+                    var $customerSelect;
+                    var $next;
+                    var $prev;
+                    var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                    var $dialogEl = $('.ui-dialog');
+                    var $projectNameEl = $dialogEl.find('#projectName');
+                    var $projectDescEl = $dialogEl.find('#projectShortDesc');
+                    var $startDate = $dialogEl.find('#StartDate');
+                    var $endDate = $dialogEl.find('#EndDateTarget');
+                    var projectsUrl = '/Projects/';
+
+                    $projectNameEl.val('Test');
+                    $projectDescEl.val('Test');
+                    $startDate.val('5 Apr, 2016');
+                    $endDate.val('25 Apr, 2016');
+
+                    // select sales manager
+                    $salesManagerSelect = $dialogEl.find('#projectManagerDD');
+                    $salesManagerSelect.click();
+                    $next = $dialogEl.find('.next');
+                    $next.click();
+                    $prev = $dialogEl.find('.prev');
+                    $prev.click();
+                    $selectedItem = $dialogEl.find('#55b92ad221e4b7c40f000084');
+                    $selectedItem.click();
+
+                    //select customer
+                    $customerSelect = $dialogEl.find('#customerDd');
+                    $customerSelect.click();
+                    $selectedItem = $dialogEl.find('#55b92ad521e4b7c40f00060e');
+                    $selectedItem.click();
+
+                    //select project health
+                    $projectHealthSelect = $dialogEl.find('#health a');
+                    $projectHealthSelect.click();
+                    $selectedItem = $dialogEl.find('.health2');
+                    $selectedItem.click();
+
+                    server.respondWith('POST', projectsUrl, [201, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
+                    $createBtn.click();
+                    server.respond();
+
+                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=100');
+                });
+
+                it('Close CreateView', function () {
+                    var $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
+
+                    $cancelBtn.click();
+
+                    expect($('.ui-dialog')).to.not.exist;
+                });
+
+
+                it('Try to open EditView', function () {
+                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
+                    var projectFormUrl = new RegExp('\/Projects\/form\/', 'i');
+                    var usersUrl = '/users/forDd';
+                    var employeesUrl = '/employees/getPersonsForDd';
+                    var customerUrl = '/customers/';
+
+                    server.respondWith('GET', projectFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectById)]);
+                    server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
+                    server.respondWith('GET', employeesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployees)]);
+                    server.respondWith('GET', customerUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
+                    $needItem.click();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.exist;
+                });
+
+                it('Try to change tabs', function () {
+                    var $dialogEl = $('.ui-dialog');
+                    var $firstTab = $dialogEl.find('.dialog-tabs > li:nth-child(1) > a');
+                    var $secondTab = $dialogEl.find('.dialog-tabs > li:nth-child(2) > a');
+
+                    expect($firstTab).to.have.class('active');
+
+                    $secondTab.click();
+                    expect($secondTab).to.have.class('active');
+
+                    $firstTab.click();
+                    expect($firstTab).to.have.class('active');
+
+                });
+
+                it('Try to set required data to EditView', function () {
+                    var $selectedItem;
+                    var $salesManagerSelect;
+                    var $projectHealthSelect;
+                    var $customerSelect;
+                    var $next;
+                    var $prev;
+                    var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-project-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                    var $dialogEl = $('.ui-dialog');
+                    var projectsUrl = new RegExp('\/Projects\/', 'i');
+                    var $startDate = $dialogEl.find('#StartDate');
+                    var $endTargetDate = $dialogEl.find('#EndDateTarget');
+                    var $endDate = $dialogEl.find('#EndDate');
+
+                    $startDate.val('5 Apr, 2016');
+                    $endTargetDate.val('25 Apr, 2016');
+                    $endDate.val('25 Apr, 2016');
+
+                    // select sales manager
+                    $salesManagerSelect = $dialogEl.find('#projectManagerDD');
+                    $salesManagerSelect.click();
+                    $next = $dialogEl.find('.next');
+                    $next.click();
+                    $prev = $dialogEl.find('.prev');
+                    $prev.click();
+                    $selectedItem = $dialogEl.find('#55b92ad221e4b7c40f000084');
+                    $selectedItem.click();
+
+                    //select customer
+                    $customerSelect = $dialogEl.find('#customerDd');
+                    $customerSelect.click();
+                    $selectedItem = $dialogEl.find('#55b92ad521e4b7c40f00060e');
+                    $selectedItem.click();
+
+                    //select project health
+                    $projectHealthSelect = $dialogEl.find('#health a');
+                    $projectHealthSelect.click();
+                    $selectedItem = $dialogEl.find('.health2');
+                    $selectedItem.click();
+
+                    server.respondWith('PUT', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
+                    $saveBtn.click();
+                    server.respond();
+
+                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails');
+                });
+
+                it('Try to delete project', function () {
+                    var $deleteBtn;
+                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
+                    var projectsUrl = new RegExp('\/Projects\/', 'i');
+
+                    windowConfirmStub.returns(true);
+                    $needItem.click();
+                    server.respond();
+
+                    $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-project-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
+
+                    server.respondWith('DELETE', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
+                    $deleteBtn.click();
+                    server.respond();
+
+                    expect($('.ui-dialog')).to.not.exist;
+                    expect($thisEl.find('.thumbnail').length).to.be.equals(1);
+
+                });*/
+            });
+
+        });
+
+        /* describe('FormView', function () {
          var $thisEl;
          var projectModel;
 
@@ -17182,7 +17102,7 @@ define([
          expect(window.location.hash).to.be.equals('#easyErp/Projects/form/570cc46ecf6668c214f2ba4b');
          });
 
-         /!* it('Try to go to quotationView', function(){
+         it('Try to go to quotationView', function () {
          var $quotationBtn;
          var $closeBtn;
          var orderUrl = new RegExp('\/Order\/form\/', 'i');
@@ -17194,15 +17114,14 @@ define([
          server.respond();
 
          expect($('.ui-dialog')).to.exist;
-
-         /!* $closeBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button');
+         $closeBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button');
 
          $closeBtn.click();
-         expect($('.ui-dialog')).to.not.exist;*!/
+         expect($('.ui-dialog')).to.not.exist;
 
          });
 
-         it('Try to go to invoiceView', function(){
+         it('Try to go to invoiceView', function () {
          var $invoiceBtn;
          var $closeBtn;
          var invoiceUrl = new RegExp('\/Invoice\/form', 'i');
@@ -17215,12 +17134,12 @@ define([
 
          expect($('.ui-dialog')).to.exist;
 
-         /!* $closeBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button');
+         $closeBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button');
 
          $closeBtn.click();
-         expect($('.ui-dialog')).to.not.exist;*!/
+         expect($('.ui-dialog')).to.not.exist;
 
-         });*!/
+         });
 
          });
 
@@ -17818,7 +17737,7 @@ define([
          windowConfirmStub.restore();
          });
 
-         /!*it('Try to sort invoice list', function(){
+         it('Try to sort invoice list', function () {
          var invoiceUrl = new RegExp('\/Invoice\/list', 'i');
          var $sortBtn = $thisEl.find('#invoices tr > th[data-sort="name"]');
 
@@ -17831,7 +17750,7 @@ define([
          $sortBtn.click();
          server.respond();
          expect($thisEl.find('#invoices #listTable tr:nth-child(1)').attr('data-id')).to.be.equals('55b92ae121e4b7c40f001265');
-         });*!/
+         });
 
          it('Try to delete item with 403 error', function () {
          var $deleteBtn;
@@ -17869,7 +17788,7 @@ define([
          expect($thisEl.find('#invoices #listTable > tr[data-id="5710e5873a8d9e4a38be9f11"]')).to.not.exist;
          });
 
-         /!*it('Try to open EditView', function(){
+         it('Try to open EditView', function () {
          var $needTd = $thisEl.find('#invoices #listTable tr[data-id="55b92ae121e4b7c40f001265"] > td:nth-child(3)');
          var invoiceUrl = new RegExp('\/Invoice\/form', 'i');
 
@@ -17881,7 +17800,7 @@ define([
 
          expect($('.ui-dialog')).to.be.exist;
 
-         });*!/
+         });
 
          });
 
@@ -18036,6 +17955,83 @@ define([
          });
          });
 
+         });
+
+         describe('ListView', function () {
+         var server;
+         var mainSpy;
+         var windowConfirmStub;
+         var $thisEl;
+         var fakeClock;
+
+         before(function () {
+         server = sinon.fakeServer.create();
+         mainSpy = sinon.spy(App, 'render');
+         windowConfirmStub = sinon.stub(window, 'confirm');
+         fakeClock = sinon.useFakeTimers();
+         });
+
+         after(function () {
+         server.restore();
+         mainSpy.restore();
+         fakeClock.restore();
+         windowConfirmStub.restore();
+         });
+
+         describe('INITIALIZE', function () {
+
+         it('Try to create ListView', function (done) {
+         var worlflowUrl = new RegExp('\/Workflows', 'i');
+
+         server.respondWith('GET', worlflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflows)]);
+         listView = new ListView({
+         startTime : new Date(),
+         collection: projectsCollection
+         });
+         server.respond();
+
+         fakeClock.tick(200);
+
+         $thisEl = listView.$el;
+
+         expect($thisEl.find('table')).to.have.class('list');
+
+         done();
+         });
+
+         it('Try to change health of project', function () {
+         var $healthSelectedItem;
+         var $needRow = $thisEl.find('tr[data-id="55f55d31b81672730c000020"]');
+         var $projectHealthBtn = $needRow.find('#health .health-container');
+         var projectUrl = new RegExp('\/Projects\/', 'i');
+
+         $projectHealthBtn.click();
+         $healthSelectedItem = $needRow.find('#health ul li div.health2');
+
+         server.respondWith('PATCH', projectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+         $healthSelectedItem.click();
+         server.respond();
+
+         expect($needRow.find('#health a')).to.have.class('health2');
+
+         });
+
+         it('Try to change project status', function () {
+         var $statusSelectedItem;
+         var $needRow = $thisEl.find('tr[data-id="55f55d31b81672730c000020"]');
+         var $projectStatusBtn = $needRow.find('a.stageSelect');
+         var projectUrl = new RegExp('\/Projects\/', 'i');
+
+         $projectStatusBtn.click();
+         $statusSelectedItem = $needRow.find('.newSelectList li:nth-child(3)');
+
+         server.respondWith('PATCH', projectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+         $statusSelectedItem.click();
+         server.respond();
+
+         expect(window.location.hash).to.be.equals('#easyErp/Projects/list/p=1/c=100');
+         });
+         });
          });*/
 
     });
