@@ -17,9 +17,13 @@ define([
                 this.startTime = options.startTime;
                 this.startTime = new Date();
                 this.buildTime = 0;
-                this.dateRange = 30;
-                this.dateRangeSource = 30;
-                this.dateRangeOpportunities = 30;
+                this.dateRange = {
+                    date: 30,
+                    source: 30,
+                    opportunitie: 30,
+                    sale: 7
+                };
+
                 this.dateItem = "D";
                 this.numberToDate = {};
                 this.source = null;
@@ -47,7 +51,7 @@ define([
             newRange      : function (e) {
                 $(e.target).parent().find(".active").removeClass("active");
                 $(e.target).addClass("active");
-                this.dateRange = $(e.target).data("day");
+                this.dateRange.date = $(e.target).data("day");
                 this.renderPopulate();
             },
 
@@ -57,14 +61,14 @@ define([
 
                 $(e.target).parent().find(".active").removeClass("active");
                 $(e.target).addClass("active");
-                this.dateRangeSource = $(e.target).data("day");
-                this.renderPopulateSource(this, !!type);
+                this.dateRange[type] = $(e.target).data("day");
+                this.renderPopulateByType(this, type);
             },
 
             newRangeOpportunities: function (e) {
                 $(e.target).parent().find(".active").removeClass("active");
                 $(e.target).addClass("active");
-                this.dateRangeOpportunities = $(e.target).data("day");
+                this.dateRange.opportunitie = $(e.target).data("day");
                 this.renderOpportunities();
             },
 
@@ -74,9 +78,11 @@ define([
                 this.dateItem = $(e.target).data("item");
                 this.renderPopulate();
             },
+            
             getDateFromDayOfYear: function (index) {
                 return dateFormat(new Date(this.numberToDate[index]).toString('MMMM ,yyyy'), "mmmm dd, yyyy");
             },
+            
             getDay              : function (index) {
                 switch (index) {
                     case 1:
@@ -95,6 +101,7 @@ define([
                         return "Sunday";
                 }
             },
+            
             getMonth            : function (index) {
                 switch (index) {
                     case 1:
@@ -129,17 +136,9 @@ define([
                 var self = this;
 
                 self.renderPopulate();
-                if (!self.source) {
-                    dataService.getData("/sources", null, function (response) {
-                        self.source = response;
-                        self.renderPopulateSource(self);
-                        self.renderPopulateSource(self, true);
-                    });
-                } else {
-                    self.renderPopulateSource(self);
-                    self.renderPopulateSource(self, true)
-                }
-
+                
+                self.renderPopulateByType(self, 'source');
+                self.renderPopulateByType(self, 'sale');
                 self.renderOpportunities();
                 self.renderOpportunitiesWinAndLost();
                 
@@ -157,18 +156,20 @@ define([
                 $(window).unbind("resize").resize(self.resizeHandler);
             },
             
-            renderPopulateSource: function (that, sales) {
+            renderPopulateByType: function (that, type) {
                 var self = this;
-                var sources = !!sales;
-                var chartClass = sales ? '.salesChart' : '.sourcesChart';
+                var chartClass = '.' + type + 'sChart';
+                var dateRange = self.dateRange[type];
+
                 if (that) {
                     self = that;
                 }
+
                 $(chartClass).empty();
-                common.getLeadsForChart(sources, sales, self.dateRangeSource, self.dateItem, function (data) {
+                common.getLeadsForChart(type, dateRange, self.dateItem, function (data) {
                     $("#timeBuildingDataFromServer").text("Server response in " + self.buildTime + " ms");
 
-                    if (!sales) {
+                    if (type === 'source') {
                         self.source.data.forEach(function (item) {
                             var b = false;
 
@@ -185,7 +186,7 @@ define([
                                 data.push({source: item.name, count: 0, isOpp: false});
                             }
                         });
-                    } else {
+                    } else if (type === 'sale') {
                         data.map(function (el) {
                             el.source = el.source || 'No User';
                             return el;
@@ -295,10 +296,11 @@ define([
 
                 });
             },
+            
             renderPopulate      : function () {
                 var self = this;
                 $(".leadChart").empty();
-                common.getLeadsForChart(null, null, this.dateRange, this.dateItem, function (data) {
+                common.getLeadsForChart('date', this.dateRange.date, this.dateItem, function (data) {
                     var maxval = d3.max(data, function (d) {
                         return d.count;
                     });
@@ -724,7 +726,7 @@ define([
 
                 $(".opportunitiesChart").empty();
 
-                common.getOpportunitiesForChart(null, this.dateRangeOpportunities, this.dateItem, function (data) {
+                common.getOpportunitiesForChart(null, this.dateRange.opportunitie, this.dateItem, function (data) {
                     var margin = {top: 20, right: 160, bottom: 30, left: 160},
                         width = $("#wrapper").width() - margin.left - margin.right,
                         height = 600 - margin.top - margin.bottom;
@@ -957,7 +959,7 @@ define([
 
                 $(".winAndLostOpportunitiesChart").empty();
 
-                common.getOpportunitiesForChart(null, this.dateRangeOpportunities, this.dateItem, function (data) {
+                common.getOpportunitiesForChart(null, this.dateRange.opportunitie, this.dateItem, function (data) {
                     var maxval = d3.max(data, function (d) {
                         return d.count;
                     });

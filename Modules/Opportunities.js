@@ -448,6 +448,10 @@ var Opportunities = function (models, event) {
 
         function getLeadsForChart(req, response, data) {
             var res = {};
+            var type = data.type;
+            var c;
+            var a;
+            
             if (!data.dataRange) {
                 data.dataRange = 365;
             }
@@ -472,45 +476,45 @@ var Opportunities = function (models, event) {
                     break;
 
             }
-            if (data.source) {
+            if (type === 'source') {
+                c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
+                a = new Date(c);
 
-                var c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
-                var a = new Date(c);
-                models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate({
+                models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema).aggregate({
                     $match: {
                         $and: [{
                             createdBy: {$ne: null},
-                            source   : {$ne: ""},
+                            source   : {$ne: ''},
                             $or      : [{isConverted: true}, {isOpportunitie: false}]
                         }, {'createdBy.date': {$gte: a}}]
                     }
                 }, {
                     $group: {
-                        _id  : {source: "$source", isOpportunitie: "$isOpportunitie"},
+                        _id  : {source: '$source', isOpportunitie: '$isOpportunitie'},
                         count: {$sum: 1}
                     }
                 }, {
                     $project: {
-                        "source": "$_id.source",
+                        'source': '$_id.source',
                         count   : 1,
-                        "isOpp" : "$_id.isOpportunitie",
+                        'isOpp' : '$_id.isOpportunitie',
                         _id     : 0
                     }
                 }).exec(function (err, result) {
                     if (err) {
                         console.log(err);
                         logWriter.log('Opportunities.js chart' + err);
-                        response.send(500, {error: "Can't get chart"});
+                        response.send(500, {error: 'Can\'t get chart'});
                     } else {
                         res['data'] = result;
                         response.send(res);
                     }
 
                 });
-            } else if (data.sales) {
-                var c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
-                var a = new Date(c);
-                models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate({
+            } else if (type === 'sale') {
+                c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
+                a = new Date(c);
+                models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema).aggregate({
                     $match: {
                         $and: [{
                             createdBy: {$ne: null},
@@ -519,7 +523,7 @@ var Opportunities = function (models, event) {
                     }
                 }, {
                     $group: {
-                        _id  : {createdBy: "$createdBy.user", isOpportunitie: "$isOpportunitie"},
+                        _id  : {createdBy: '$createdBy.user', isOpportunitie: '$isOpportunitie'},
                         count: {$sum: 1}
                     }
                 }, {
@@ -531,14 +535,14 @@ var Opportunities = function (models, event) {
                     }
                 }, {
                     $project: {
-                        createdBy: {$arrayElemAt: ["$createdBy", 0]},
+                        createdBy: {$arrayElemAt: ['$createdBy', 0]},
                         count   : 1
                     }
                 }, {
                     $project: {
                         source: '$createdBy.login',
                         count   : 1,
-                        isOpp : "$_id.isOpportunitie",
+                        isOpp : '$_id.isOpportunitie',
                         _id     : 0
                     }
                 }).exec(function (err, result) {
@@ -550,7 +554,7 @@ var Opportunities = function (models, event) {
                     }
 
                 });
-            } else {
+            } else if (type === 'date') {
                 var item = data.dataItem;
                 var myItem = {};
                 myItem["$project"] = {isOpportunitie: 1, convertedDate: 1};
@@ -560,8 +564,8 @@ var Opportunities = function (models, event) {
                     myItem["$project"]["year"] = {};
                     myItem["$project"]["year"]["$year"] = "$convertedDate";
                 }
-                var c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
-                var a = new Date(c);
+                c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
+                a = new Date(c);
                 models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate(
                     {
                         $match: {
