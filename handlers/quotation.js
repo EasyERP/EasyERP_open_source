@@ -408,7 +408,8 @@ var Quotation = function (models, event) {
                                     paymentInfo  : 1,
                                     orderDate    : 1,
                                     name         : 1,
-                                    isOrder      : 1
+                                    isOrder      : 1,
+                                    proformaCounter:1
                                 }
                             }, {
                                 $project: {
@@ -425,7 +426,8 @@ var Quotation = function (models, event) {
                                     paymentInfo  : 1,
                                     orderDate    : 1,
                                     name         : 1,
-                                    isOrder      : 1
+                                    isOrder      : 1,
+                                    proformaCounter: 1
                                 }
                             }, {
                                 $lookup: {
@@ -443,7 +445,8 @@ var Quotation = function (models, event) {
                                     paymentInfo: 1,
                                     orderDate  : 1,
                                     name       : 1,
-                                    isOrder    : 1
+                                    isOrder    : 1,
+                                    proformaCounter: 1
                                 }
                             }, {
                                 $project: {
@@ -457,7 +460,8 @@ var Quotation = function (models, event) {
                                     paymentInfo: 1,
                                     orderDate  : 1,
                                     name       : 1,
-                                    isOrder    : 1
+                                    isOrder    : 1,
+                                    proformaCounter: 1
                                 }
                             }, {
                                 $match: optionsObject
