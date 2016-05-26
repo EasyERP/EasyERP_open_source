@@ -783,7 +783,7 @@ th {
 }
 .vacation-list #caption th,
 .vacation-list .subHeaderHolder th {
-  color: #ffffff;
+  color: #000000;
   line-height: 20px;
 }
 .vacation-list .newSelectList,
