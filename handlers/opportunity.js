@@ -10,6 +10,7 @@ var Opportunity = function (models, event) {
         var DepartmentSchema = mongoose.Schemas['Department'];
         var CustomerSchema = mongoose.Schemas.Customer;
         var WorkflowSchema = mongoose.Schemas.workflow;
+        var prioritySchema = mongoose.Schemas.Priority;
         var async = require('async');
         var validator = require('validator');
         var CONSTANTS = require('../constants/mainConstants.js');
@@ -1815,6 +1816,19 @@ var Opportunity = function (models, event) {
 
             });
         }
+
+        this.getLeadsPriority = function (req, res, next) {
+            var response = {};
+            response['data'] = [];
+            models.get(req.session.lastDb, 'Priority', prioritySchema).find({type: 'Leads'}, function (err, _priority) {
+                if (err) {
+                    return next(err);
+                } else {
+                    response['data'] = _priority;
+                    res.send(response);
+                }
+            });
+        };
 
         /**
          * @module Leads

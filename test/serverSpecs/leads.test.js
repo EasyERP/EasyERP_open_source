@@ -74,6 +74,27 @@ describe('Leads Specs', function () {
                 .expect(404, done);
         });
 
+        it('should get Leads Priority', function (done) {
+            aggent
+                .get('leads/priority')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+                    expect(body.data)
+                        .to.be.instanceOf(Array);
+                    done();
+                });
+        });
+
         it('should get Leads totalCollectionLength', function (done) {
             aggent
                 .get('leads/totalCollectionLength')
