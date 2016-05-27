@@ -129,7 +129,7 @@ define([
 
             initialize: function (options) {
                 var eventChannel = {};
-                
+
                 _.extend(eventChannel, Backbone.Events);
 
                 App.projectInfo = App.projectInfo || {};
@@ -174,7 +174,7 @@ define([
                 var onlyView = false;
 
                 e.stopPropagation();
-                
+
                 if (type === 'Quoted') {
                     model = new quotationModel({validate: false});
 
@@ -553,7 +553,7 @@ define([
                 });
 
                 $target.append(this.selectView.render().el);
-                
+
                 return false;
             },
 
@@ -797,13 +797,13 @@ define([
                     }
                 };
 
-                this.jobsCollection = new jobsCollection({
-                    viewType : 'list',
-                    filter   : filter,
-                    projectId: _id,
-                    count    : 50,
-                    url      : 'project/' + _id + '/info'
-                });
+            this.jobsCollection = new jobsCollection({
+                viewType : 'list',
+                filter   : filter,
+                projectId: _id,
+                count    : 50,
+                url      : CONSTANTS.URLS.PROJECTS + _id + '/info'
+            });
 
                 this.jobsCollection.bind('reset add remove', self.renderJobs, self);
 
@@ -857,12 +857,12 @@ define([
                     }
                 };
 
-                this.wCollection = new wTrackCollection({
-                    viewType: 'list',
-                    /*filter  : filter,*/
-                    count   : 100,
-                    url     : 'project/' + _id + '/weTracks'
-                });
+            this.wCollection = new wTrackCollection({
+                viewType: 'list',
+                /*filter  : filter,*/
+                count   : 100,
+                url     : CONSTANTS.URLS.PROJECTS + _id + '/weTracks'
+            });
 
                 function createView() {
                     var gridStart = $('#grid-start').text();
@@ -882,7 +882,7 @@ define([
                     if (self.wTrackView) {
                         self.wTrackView.undelegateEvents();
                     }
-                    
+
                     this.wTrackView = new wTrackView({
                         model             : self.wCollection,
                         defaultItemsNumber: defaultItemsNumber,
@@ -920,13 +920,13 @@ define([
                     self.wTrackView.undelegateEvents();
                 }
 
-                this.wTrackView = new wTrackView({
-                    model      : self.wCollection,
-                    filter     : filter,
-                    startNumber: startNumber,
-                    project    : self.formModel,
-                    url        : 'project/' + _id + '/weTracks'
-                });
+            this.wTrackView = new wTrackView({
+                model      : self.wCollection,
+                filter     : filter,
+                startNumber: startNumber,
+                project    : self.formModel,
+                url        : CONSTANTS.URLS.PROJECTS + _id + '/weTracks'
+            });
 
                 this.wCollection.bind('reset', this.createView);
             },
@@ -1030,13 +1030,13 @@ define([
                  };*/
                 var callback;
 
-                self.iCollection = new invoiceCollection({
-                    count      : 50,
-                    viewType   : 'list',
-                    contentType: 'salesInvoice',
-                    /*filter     : filter,*/
-                    url        : 'project/' + _id + '/invoices'
-                });
+            self.iCollection = new invoiceCollection({
+                count      : 50,
+                viewType   : 'list',
+                contentType: 'salesInvoice',
+                /*filter     : filter,*/
+                url        : CONSTANTS.URLS.PROJECTS + _id + '/invoices'
+            });
 
                 function createView() {
                     var payments = [];
@@ -1086,13 +1086,13 @@ define([
                  };*/
                 var callback;
 
-                self.pCollection = new proformaCollection({
-                    count      : 50,
-                    viewType   : 'list',
-                    contentType: 'proforma',
-                    url        : 'project/' + _id + '/invoices'
-                    // filter     : filter
-                });
+            self.pCollection = new proformaCollection({
+                count      : 50,
+                viewType   : 'list',
+                contentType: 'proforma',
+                url        : CONSTANTS.URLS.PROJECTS + _id + '/invoices'
+                // filter     : filter
+            });
 
                 function createView() {
                     var proformaView;
@@ -1141,12 +1141,13 @@ define([
                 var _id = this.id;
                 var callback;
 
-                self.payCollection = new paymentCollection({
-                    count      : 100,
-                    viewType   : 'list',
-                    contentType: 'customerPayments',
-                    url        : 'project/' + _id + '/payments'
-                });
+            self.payCollection = new paymentCollection({
+                count      : 100,
+                viewType   : 'list',
+                contentType: 'customerPayments',
+                url        : CONSTANTS.URLS.PROJECTS + _id + '/payments'
+
+            });
 
                 self.payCollection.unbind();
                 self.payCollection.bind('reset', createPayment);
@@ -1206,13 +1207,13 @@ define([
                     }
                 };
 
-                this.qCollection = new quotationCollection({
-                    count      : 100,
-                    viewType   : 'list',
-                    contentType: 'salesQuotation',
-                    url        : 'project/' + _id + '/quotations'
-                    //filter     : filter
-                });
+            this.qCollection = new quotationCollection({
+                count      : 100,
+                viewType   : 'list',
+                contentType: 'salesQuotation',
+                url        : CONSTANTS.URLS.PROJECTS + _id + '/quotations'
+                //filter     : filter
+            });
 
                 function createView() {
 
@@ -1257,13 +1258,13 @@ define([
                     }
                 };
 
-                this.ordersCollection = new quotationCollection({
-                    count      : 100,
-                    viewType   : 'list',
-                    contentType: 'salesOrder',
-                    url        : 'project/' + _id + '/orders'
-                    /*filter     : filter*/
-                });
+            this.ordersCollection = new quotationCollection({
+                count      : 100,
+                viewType   : 'list',
+                contentType: 'salesOrder',
+                url        : CONSTANTS.URLS.PROJECTS + _id + '/orders'
+                /*filter     : filter*/
+            });
 
                 function createView() {
                     if (cb) {

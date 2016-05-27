@@ -15,6 +15,7 @@ module.exports = function (models, event) {
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddlware, handler.getFilterValues);
     router.get('/OpportunitiesForMiniView', authStackMiddleware, accessStackMiddlware, handler.opportunitiesForMiniView);
     router.get('/getLengthByWorkflows', authStackMiddleware, accessStackMiddlware, handler.getLengthByWorkflows);
+    router.get('/priority', authStackMiddleware, accessStackMiddlware, handler.getLeadsPriority);
     router.get('/:viewType', authStackMiddleware, accessStackMiddlware, handler.getByViewType);
     router.post('/createLeadFromSite', handler.addNewLeadFromSite);
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);

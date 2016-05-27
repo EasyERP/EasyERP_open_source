@@ -8,6 +8,17 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
+var dbId = 'dendb';
+var admin = {
+    login: 'admin',
+    pass : 'tm2016',
+    dbId : dbId
+};
+var bannedUser = {
+    login: 'ArturMyhalko',
+    pass : 'thinkmobiles2015',
+    dbId : dbId
+};
 
 describe("Vacation Specs", function () {
     'use strict';
@@ -20,11 +31,7 @@ describe("Vacation Specs", function () {
 
             aggent
                 .post('users/login')
-                .send({
-                    login: 'admin',
-                    pass : '1q2w3eQWE',
-                    dbId : 'production'
-                })
+                .send(admin)
                 .expect(200, done);
         });
 
@@ -179,11 +186,7 @@ describe("Vacation Specs", function () {
 
             aggent
                 .post('users/login')
-                .send({
-                    login: 'ArturMyhalko',
-                    pass : 'thinkmobiles2015',
-                    dbId : 'production'
-                })
+                .send(bannedUser)
                 .expect(200, done);
         });
 
