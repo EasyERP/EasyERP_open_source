@@ -1032,316 +1032,306 @@ var Invoice = function (models, event) {
             moduleId = 64;
         }
 
-        if (req.session && req.session.loggedIn && db) {
-            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
-                var Invoice;
 
-                var query = req.query;
-                var queryObject = {};
-                var filter = query.filter;
-                var baseUrl = req.baseUrl;
+        var Invoice;
 
-                var optionsObject = {};
-                var sort = {};
-                var count;
-                var page;
-                var skip;
+        var query = req.query;
+        var queryObject = {};
+        var filter = query.filter;
+        var baseUrl = req.baseUrl;
 
-                var departmentSearcher;
-                var contentIdsSearcher;
-                var contentSearcher;
-                var waterfallTasks;
+        var optionsObject = {};
+        var sort = {};
+        var count;
+        var page;
+        var skip;
 
-                if (access) {
-
-                    if (contentType === 'salesProforma' || contentType === 'proforma') {
-                        Invoice = models.get(db, 'Proforma', ProformaSchema);
-                    } else if (contentType === 'ExpensesInvoice') {
-                        Invoice = models.get(db, 'expensesInvoice', ExpensesInvoiceSchema);
-                    } else if (contentType === 'DividendInvoice') {
-                        Invoice = models.get(db, 'dividendInvoice', DividendInvoiceSchema);
-                    } else {
-                        Invoice = models.get(db, 'Invoice', InvoiceSchema);
-                    }
-
-                    count = parseInt(query.count); //|| CONSTANTS.DEF_LIST_COUNT;
-                    page = parseInt(query.page);
-
-                    // count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
-                    skip = (page - 1) > 0 ? (page - 1) * count : 0;
-
-                    if (req.query.sort) {
-                        var key = Object.keys(req.query.sort)[0];
-                        req.query.sort[key] = parseInt(req.query.sort[key]);
-                        sort = req.query.sort;
-                    } else {
-                        sort = {"editedBy.date": -1};
-                    }
-
-                    departmentSearcher = function (waterfallCallback) {
-                        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-                            {
-                                $match: {
-                                    users: objectId(req.session.uId)
-                                }
-                            }, {
-                                $project: {
-                                    _id: 1
-                                }
-                            },
-                            waterfallCallback);
-                    };
-
-                    contentIdsSearcher = function (deps, waterfallCallback) {
-                        var everyOne = rewriteAccess.everyOne();
-                        var owner = rewriteAccess.owner(req.session.uId);
-                        var group = rewriteAccess.group(req.session.uId, deps);
-                        var whoCanRw = [everyOne, owner, group];
-                        var matchQuery = {
-                            $and: [
-                                queryObject,
-                                {
-                                    $or: whoCanRw
-                                }
-                            ]
-                        };
+        var departmentSearcher;
+        var contentIdsSearcher;
+        var contentSearcher;
+        var waterfallTasks;
 
 
-                        Invoice.aggregate([
-                                {
-                                    $match: matchQuery
-                                },
-                                {
-                                    $project: {
-                                        _id: 1
-                                    }
-                                }
-                            ],
-                            waterfallCallback
-                        );
-                    };
-
-                    contentSearcher = function (invoicesIds, waterfallCallback) {
-                        var salesManagerMatch = {
-                            $and: [
-                                {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]},
-                                {
-                                    $or: [{
-                                        $and: [{
-                                            $eq: ['$$projectMember.startDate', null]
-                                        }, {
-                                            $eq: ['$$projectMember.endDate', null]
-                                        }]
-                                    }, {
-                                        $and: [{
-                                            $lte: ['$$projectMember.startDate', '$quotation.orderDate']
-                                        }, {
-                                            $eq: ['$$projectMember.endDate', null]
-                                        }]
-                                    }, {
-                                        $and: [{
-                                            $eq: ['$$projectMember.startDate', null]
-                                        }, {
-                                            $gte: ['$$projectMember.endDate', '$quotation.orderDate']
-                                        }]
-                                    }, {
-                                        $and: [{
-                                            $lte: ['$$projectMember.startDate', '$quotation.orderDate']
-                                        }, {
-                                            $gte: ['$$projectMember.endDate', '$quotation.orderDate']
-                                        }]
-                                    }]
-                                }]
-                        };
-
-                        optionsObject.$and = [];
-
-                        if (filter && typeof filter === 'object') {
-                            if (filter.condition === 'or') {
-                                optionsObject['$or'] = caseFilter(filter);
-                            } else {
-                                optionsObject['$and'] = caseFilter(filter);
-                            }
-                        }
-
-                        optionsObject.$and.push({_id: {$in: _.pluck(invoicesIds, "_id")}});
-                        optionsObject.$and.push({expense: {$exists: false}});
-
-                        if (contentType === 'salesProforma' || contentType === 'proforma') {
-                            optionsObject.$and.push({_type: 'Proforma'});
-                        } else if (contentType === 'ExpensesInvoice') {
-                            optionsObject.$and.push({_type: 'expensesInvoice'});
-                        } else if (contentType === 'DividendInvoice') {
-                            optionsObject.$and.push({_type: 'dividendInvoice'});
-                        } else {
-                            optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}]});
-                        }
-
-                        Invoice
-                            .aggregate([{
-                                $lookup: {
-                                    from        : 'projectMembers',
-                                    localField  : 'project',
-                                    foreignField: 'projectId',
-                                    as          : 'projectMembers'
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'Customers',
-                                    localField  : 'supplier',
-                                    foreignField: '_id',
-                                    as          : 'supplier'
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'workflows',
-                                    localField  : 'workflow',
-                                    foreignField: '_id',
-                                    as          : 'workflow'
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'Users',
-                                    localField  : 'createdBy.user',
-                                    foreignField: '_id',
-                                    as          : 'createdBy.user'
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'Users',
-                                    localField  : 'editedBy.user',
-                                    foreignField: '_id',
-                                    as          : 'editedBy.user'
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'Quotation',
-                                    localField  : 'sourceDocument',
-                                    foreignField: '_id',
-                                    as          : 'sourceDocument'
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'Project',
-                                    localField  : 'project',
-                                    foreignField: '_id',
-                                    as          : 'project'
-                                }
-                            }, {
-                                $project: {
-                                    sourceDocument  : {$arrayElemAt: ["$sourceDocument", 0]},
-                                    workflow        : {$arrayElemAt: ["$workflow", 0]},
-                                    supplier        : {$arrayElemAt: ["$supplier", 0]},
-                                    'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
-                                    'editedBy.date' : 1,
-                                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                                    project         : {$arrayElemAt: ["$project", 0]},
-                                    salesmanagers   : {
-                                        $filter: {
-                                            input: '$projectMembers',
-                                            as   : 'projectMember',
-                                            cond : salesManagerMatch
-                                        }
-                                    },
-                                    expense         : 1,
-                                    forSales        : 1,
-                                    currency        : 1,
-                                    paymentInfo     : 1,
-                                    invoiceDate     : 1,
-                                    name            : 1,
-                                    paymentDate     : 1,
-                                    dueDate         : 1,
-                                    payments        : 1,
-                                    approved        : 1,
-                                    _type           : 1,
-                                    removable       : 1,
-                                    paid            : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
-                                }
-                            }, {
-                                $project: {
-                                    salesmanagers   : {$arrayElemAt: ["$salesmanagers", 0]},
-                                    sourceDocument  : 1,
-                                    workflow        : 1,
-                                    supplier        : 1,
-                                    'editedBy.user' : 1,
-                                    'createdBy.user': 1,
-                                    'editedBy.date' : 1,
-                                    project         : 1,
-                                    expense         : 1,
-                                    forSales        : 1,
-                                    currency        : 1,
-                                    paymentInfo     : 1,
-                                    invoiceDate     : 1,
-                                    name            : 1,
-                                    paymentDate     : 1,
-                                    dueDate         : 1,
-                                    payments        : 1,
-                                    approved        : 1,
-                                    _type           : 1,
-                                    removable       : 1,
-                                    paid            : 1
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'Employees',
-                                    localField  : 'salesmanagers.employeeId',
-                                    foreignField: '_id',
-                                    as          : 'salesmanagers'
-                                }
-                            }, {
-                                $project: {
-                                    salesPerson     : {$arrayElemAt: ['$salesmanagers', 0]},
-                                    sourceDocument  : 1,
-                                    workflow        : 1,
-                                    supplier        : 1,
-                                    'editedBy.user' : 1,
-                                    'createdBy.user': 1,
-                                    'editedBy.date' : 1,
-                                    project         : 1,
-                                    expense         : 1,
-                                    forSales        : 1,
-                                    currency        : 1,
-                                    paymentInfo     : 1,
-                                    invoiceDate     : 1,
-                                    name            : 1,
-                                    paymentDate     : 1,
-                                    dueDate         : 1,
-                                    payments        : 1,
-                                    approved        : 1,
-                                    _type           : 1,
-                                    removable       : 1,
-                                    paid            : 1
-                                }
-                            }, {
-                                $match: optionsObject
-                            }, {
-                                $sort: sort
-                            }, {
-                                $skip: skip
-                            }, {
-                                $limit: count
-                            }
-                            ], function (err, result) {
-                                waterfallCallback(null, result);
-                            });
-                    };
-
-                    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
-
-                    async.waterfall(waterfallTasks, function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-                        res.status(200).send(result);
-                    });
-                } else {
-                    res.status(403).send();
-                }
-            });
-
+        if (contentType === 'salesProforma' || contentType === 'proforma') {
+            Invoice = models.get(db, 'Proforma', ProformaSchema);
+        } else if (contentType === 'ExpensesInvoice') {
+            Invoice = models.get(db, 'expensesInvoice', ExpensesInvoiceSchema);
+        } else if (contentType === 'DividendInvoice') {
+            Invoice = models.get(db, 'dividendInvoice', DividendInvoiceSchema);
         } else {
-            res.status(401).send();
+            Invoice = models.get(db, 'Invoice', InvoiceSchema);
         }
+
+        count = parseInt(query.count); //|| CONSTANTS.DEF_LIST_COUNT;
+        page = parseInt(query.page);
+
+        // count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
+
+        if (req.query.sort) {
+            var key = Object.keys(req.query.sort)[0];
+            req.query.sort[key] = parseInt(req.query.sort[key]);
+            sort = req.query.sort;
+        } else {
+            sort = {"editedBy.date": -1};
+        }
+
+        departmentSearcher = function (waterfallCallback) {
+            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                {
+                    $match: {
+                        users: objectId(req.session.uId)
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                waterfallCallback);
+        };
+
+        contentIdsSearcher = function (deps, waterfallCallback) {
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $and: [
+                    queryObject,
+                    {
+                        $or: whoCanRw
+                    }
+                ]
+            };
+
+
+            Invoice.aggregate([
+                    {
+                        $match: matchQuery
+                    },
+                    {
+                        $project: {
+                            _id: 1
+                        }
+                    }
+                ],
+                waterfallCallback
+            );
+        };
+
+        contentSearcher = function (invoicesIds, waterfallCallback) {
+            var salesManagerMatch = {
+                $and: [
+                    {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]},
+                    {
+                        $or: [{
+                            $and: [{
+                                $eq: ['$$projectMember.startDate', null]
+                            }, {
+                                $eq: ['$$projectMember.endDate', null]
+                            }]
+                        }, {
+                            $and: [{
+                                $lte: ['$$projectMember.startDate', '$quotation.orderDate']
+                            }, {
+                                $eq: ['$$projectMember.endDate', null]
+                            }]
+                        }, {
+                            $and: [{
+                                $eq: ['$$projectMember.startDate', null]
+                            }, {
+                                $gte: ['$$projectMember.endDate', '$quotation.orderDate']
+                            }]
+                        }, {
+                            $and: [{
+                                $lte: ['$$projectMember.startDate', '$quotation.orderDate']
+                            }, {
+                                $gte: ['$$projectMember.endDate', '$quotation.orderDate']
+                            }]
+                        }]
+                    }]
+            };
+
+            optionsObject.$and = [];
+
+            if (filter && typeof filter === 'object') {
+                if (filter.condition === 'or') {
+                    optionsObject['$or'] = caseFilter(filter);
+                } else {
+                    optionsObject['$and'] = caseFilter(filter);
+                }
+            }
+
+            optionsObject.$and.push({_id: {$in: _.pluck(invoicesIds, "_id")}});
+            optionsObject.$and.push({expense: {$exists: false}});
+
+            if (contentType === 'salesProforma' || contentType === 'proforma') {
+                optionsObject.$and.push({_type: 'Proforma'});
+            } else if (contentType === 'ExpensesInvoice') {
+                optionsObject.$and.push({_type: 'expensesInvoice'});
+            } else if (contentType === 'DividendInvoice') {
+                optionsObject.$and.push({_type: 'dividendInvoice'});
+            } else {
+                optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}]});
+            }
+
+            Invoice
+                .aggregate([{
+                    $lookup: {
+                        from        : 'projectMembers',
+                        localField  : 'project',
+                        foreignField: 'projectId',
+                        as          : 'projectMembers'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Customers',
+                        localField  : 'supplier',
+                        foreignField: '_id',
+                        as          : 'supplier'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'workflows',
+                        localField  : 'workflow',
+                        foreignField: '_id',
+                        as          : 'workflow'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Users',
+                        localField  : 'createdBy.user',
+                        foreignField: '_id',
+                        as          : 'createdBy.user'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Users',
+                        localField  : 'editedBy.user',
+                        foreignField: '_id',
+                        as          : 'editedBy.user'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Quotation',
+                        localField  : 'sourceDocument',
+                        foreignField: '_id',
+                        as          : 'sourceDocument'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Project',
+                        localField  : 'project',
+                        foreignField: '_id',
+                        as          : 'project'
+                    }
+                }, {
+                    $project: {
+                        sourceDocument  : {$arrayElemAt: ["$sourceDocument", 0]},
+                        workflow        : {$arrayElemAt: ["$workflow", 0]},
+                        supplier        : {$arrayElemAt: ["$supplier", 0]},
+                        'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                        'editedBy.date' : 1,
+                        'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                        project         : {$arrayElemAt: ["$project", 0]},
+                        salesmanagers   : {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : salesManagerMatch
+                            }
+                        },
+                        expense         : 1,
+                        forSales        : 1,
+                        currency        : 1,
+                        paymentInfo     : 1,
+                        invoiceDate     : 1,
+                        name            : 1,
+                        paymentDate     : 1,
+                        dueDate         : 1,
+                        payments        : 1,
+                        approved        : 1,
+                        _type           : 1,
+                        removable       : 1,
+                        paid            : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
+                    }
+                }, {
+                    $project: {
+                        salesmanagers   : {$arrayElemAt: ["$salesmanagers", 0]},
+                        sourceDocument  : 1,
+                        workflow        : 1,
+                        supplier        : 1,
+                        'editedBy.user' : 1,
+                        'createdBy.user': 1,
+                        'editedBy.date' : 1,
+                        project         : 1,
+                        expense         : 1,
+                        forSales        : 1,
+                        currency        : 1,
+                        paymentInfo     : 1,
+                        invoiceDate     : 1,
+                        name            : 1,
+                        paymentDate     : 1,
+                        dueDate         : 1,
+                        payments        : 1,
+                        approved        : 1,
+                        _type           : 1,
+                        removable       : 1,
+                        paid            : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'salesmanagers.employeeId',
+                        foreignField: '_id',
+                        as          : 'salesmanagers'
+                    }
+                }, {
+                    $project: {
+                        salesPerson     : {$arrayElemAt: ['$salesmanagers', 0]},
+                        sourceDocument  : 1,
+                        workflow        : 1,
+                        supplier        : 1,
+                        'editedBy.user' : 1,
+                        'createdBy.user': 1,
+                        'editedBy.date' : 1,
+                        project         : 1,
+                        expense         : 1,
+                        forSales        : 1,
+                        currency        : 1,
+                        paymentInfo     : 1,
+                        invoiceDate     : 1,
+                        name            : 1,
+                        paymentDate     : 1,
+                        dueDate         : 1,
+                        payments        : 1,
+                        approved        : 1,
+                        _type           : 1,
+                        removable       : 1,
+                        paid            : 1
+                    }
+                }, {
+                    $match: optionsObject
+                }, {
+                    $sort: sort
+                }, {
+                    $skip: skip
+                }, {
+                    $limit: count
+                }
+                ], function (err, result) {
+                    waterfallCallback(null, result);
+                });
+        };
+
+        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
     };
 
     this.getInvoiceById = function (req, res, next) {
@@ -1353,133 +1343,122 @@ var Invoice = function (models, event) {
 
         forSales = data.forSales !== 'false';
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
-                var Invoice;
-                var optionsObject = {};
+        var Invoice;
+        var optionsObject = {};
 
-                var departmentSearcher;
-                var contentIdsSearcher;
-                var contentSearcher;
-                var waterfallTasks;
+        var departmentSearcher;
+        var contentIdsSearcher;
+        var contentSearcher;
+        var waterfallTasks;
 
-                if (access) {
-                    if ((contentType === 'DividendInvoice') || (contentType === 'dividendInvoice')) {
-                        Invoice = models.get(req.session.lastDb, 'dividendInvoice', DividendInvoiceSchema);
-                    } else if (forSales) {
-                        Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
-                    } else {
-                        Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
-                    }
-
-                    departmentSearcher = function (waterfallCallback) {
-                        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-                            {
-                                $match: {
-                                    users: objectId(req.session.uId)
-                                }
-                            }, {
-                                $project: {
-                                    _id: 1
-                                }
-                            },
-
-                            waterfallCallback);
-                    };
-
-                    contentIdsSearcher = function (deps, waterfallCallback) {
-                        var arrOfObjectId = deps.objectID();
-
-                        models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(
-                            {
-                                $match: {
-                                    $and: [
-                                        /*optionsObject,*/
-                                        {
-                                            $or: [
-                                                {
-                                                    $or: [
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.users': objectId(req.session.uId)}
-                                                            ]
-                                                        },
-                                                        {
-                                                            $and: [
-                                                                {whoCanRW: 'group'},
-                                                                {'groups.group': {$in: arrOfObjectId}}
-                                                            ]
-                                                        }
-                                                    ]
-                                                },
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'owner'},
-                                                        {'groups.owner': objectId(req.session.uId)}
-                                                    ]
-                                                },
-                                                {whoCanRW: "everyOne"}
-                                            ]
-                                        }
-                                    ]
-                                }
-                            },
-                            {
-                                $project: {
-                                    _id: 1
-                                }
-                            },
-                            waterfallCallback
-                        );
-                    };
-
-                    contentSearcher = function (invoicesIds, waterfallCallback) {
-                        var query;
-
-                        optionsObject = {
-                            _id     : id,
-                            forSales: forSales
-                        };
-
-                        query = Invoice.findOne(optionsObject);
-
-                        query.populate('products.product')
-                            .populate('products.jobs')
-                            .populate('currency._id')
-                            .populate('payments', '_id name date paymentRef paidAmount')
-                            .populate('department', '_id departmentName')
-                            .populate('paymentTerms', '_id name')
-                            .populate('createdBy.user')
-                            .populate('editedBy.user')
-                            .populate('groups.users')
-                            .populate('groups.group')
-                            .populate('groups.owner', '_id login')
-                            .populate('sourceDocument')
-                            .populate('workflow', '_id name status')
-                            .populate('project', '_id name paymentMethod paymentTerms')
-                            .populate('supplier', '_id name fullName');
-
-                        query.lean().exec(waterfallCallback);
-                    };
-
-                    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
-
-                    async.waterfall(waterfallTasks, function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        res.status(200).send(result);
-                    });
-                } else {
-                    res.send(403);
-                }
-            });
-
+        if ((contentType === 'DividendInvoice') || (contentType === 'dividendInvoice')) {
+            Invoice = models.get(req.session.lastDb, 'dividendInvoice', DividendInvoiceSchema);
+        } else if (forSales) {
+            Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         } else {
-            res.send(401);
+            Invoice = models.get(req.session.lastDb, 'Invoice', InvoiceSchema);
         }
+
+        departmentSearcher = function (waterfallCallback) {
+            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                {
+                    $match: {
+                        users: objectId(req.session.uId)
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                },
+
+                waterfallCallback);
+        };
+
+        contentIdsSearcher = function (deps, waterfallCallback) {
+            var arrOfObjectId = deps.objectID();
+
+            models.get(req.session.lastDb, "Invoice", InvoiceSchema).aggregate(
+                {
+                    $match: {
+                        $and: [
+                            /*optionsObject,*/
+                            {
+                                $or: [
+                                    {
+                                        $or: [
+                                            {
+                                                $and: [
+                                                    {whoCanRW: 'group'},
+                                                    {'groups.users': objectId(req.session.uId)}
+                                                ]
+                                            },
+                                            {
+                                                $and: [
+                                                    {whoCanRW: 'group'},
+                                                    {'groups.group': {$in: arrOfObjectId}}
+                                                ]
+                                            }
+                                        ]
+                                    },
+                                    {
+                                        $and: [
+                                            {whoCanRW: 'owner'},
+                                            {'groups.owner': objectId(req.session.uId)}
+                                        ]
+                                    },
+                                    {whoCanRW: "everyOne"}
+                                ]
+                            }
+                        ]
+                    }
+                },
+                {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                waterfallCallback
+            );
+        };
+
+        contentSearcher = function (invoicesIds, waterfallCallback) {
+            var query;
+
+            optionsObject = {
+                _id     : id,
+                forSales: forSales
+            };
+
+            query = Invoice.findOne(optionsObject);
+
+            query.populate('products.product')
+                .populate('products.jobs')
+                .populate('currency._id')
+                .populate('payments', '_id name date paymentRef paidAmount')
+                .populate('department', '_id departmentName')
+                .populate('paymentTerms', '_id name')
+                .populate('createdBy.user')
+                .populate('editedBy.user')
+                .populate('groups.users')
+                .populate('groups.group')
+                .populate('groups.owner', '_id login')
+                .populate('sourceDocument')
+                .populate('workflow', '_id name status')
+                .populate('project', '_id name paymentMethod paymentTerms')
+                .populate('supplier', '_id name fullName');
+
+            query.lean().exec(waterfallCallback);
+        };
+
+        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
     };
 
     this.removeInvoice = function (req, res, id, next) {
@@ -1507,263 +1486,251 @@ var Invoice = function (models, event) {
             }
         };
 
-        if (req.session && req.session.loggedIn && db) {
-            access.getDeleteAccess(req, req.session.uId, moduleId, function (access) {
-                if (access) {
 
-                    models.get(db, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
-                        var proformaBalance;
-                        var isProformaPaid;
+        models.get(db, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
+            var proformaBalance;
+            var isProformaPaid;
 
+            if (err) {
+                return next(err);
+            }
+
+            invoiceDeleted = result.toJSON();
+
+            orderId = invoiceDeleted.sourceDocument;
+
+            if (invoiceDeleted._type === 'Proforma') {
+                orderUpdateQuery['$inc'] = {
+                    proformaCounter: -1
+                };
+            }
+
+            Order.findByIdAndUpdate(objectId(orderId), orderUpdateQuery,
+                {new: true}, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+                });
+
+            async.each(invoiceDeleted.products, function (product) {
+                jobs.push(product.jobs);
+            });
+            async.each(invoiceDeleted.payments, function (payment) {
+                paymentIds.push(payment);
+            });
+
+            proformaBalance = result.get('paymentInfo').balance;
+            isProformaPaid = (proformaBalance === 0);
+
+            function proformaUpdate(parallelCb) {
+                var request = {
+                    query  : {
+                        wId   : 'Proforma',
+                        status: 'New'
+                    },
+                    session: req.session
+                };
+
+                workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                    Proforma.update(
+                        {
+                            sourceDocument: orderId,
+                            _type         : 'Proforma',
+                            payments      : []
+                        },
+                        {
+                            $set: {
+                                workflow: workflow._id,
+                                invoiced: false
+                            }
+                        },
+                        {
+                            multi: true
+                        },
+                        parallelCb);
+                });
+            }
+
+            function proformaCancelledUpdate(parallelCb) {
+                var request;
+
+                if (isProformaPaid) {
+                    request = {
+                        query  : {
+                            wId   : 'Proforma',
+                            status: 'Done',
+                            name  : 'Paid'
+                        },
+                        session: req.session
+                    };
+
+                } else {
+                    request = {
+                        query  : {
+                            wId   : 'Proforma',
+                            status: 'In Progress'
+                        },
+                        session: req.session
+                    };
+                }
+
+                workflowHandler.getFirstForConvert(request, function (err, workflow) {
+                    Proforma.update(
+                        {
+                            sourceDocument: orderId,
+                            _type         : 'Proforma',
+                            payments      : {$ne: []}
+                        },
+                        {
+                            $set: {
+                                workflow: workflow._id,
+                                invoiced: false
+                            }
+                        },
+                        {
+                            multi: true
+                        },
+                        parallelCb);
+                });
+            }
+
+            function paymentsRemove(parallelCb) {
+                async.each(paymentIds, function (pid, cb) {
+                    Payment.remove({invoice: id}, cb);
+                }, function () {
+                    parallelCb();
+                });
+            }
+
+            function folderRemove(parallelCb) {
+                var os = require("os");
+                var osType = (os.type().split('_')[0]);
+                var dir;
+                var _id = id;
+
+                switch (osType) {
+                    case "Windows":
+                    {
+                        var newDirname = __dirname.replace("handlers", "routes");
+                        while (newDirname.indexOf("\\") !== -1) {
+                            newDirname = newDirname.replace("\\", "\/");
+                        }
+                        dir = newDirname + "\/uploads\/" + _id;
+                    }
+                        break;
+                    case "Linux":
+                    {
+                        var newDirname = __dirname.replace("handlers", "routes");
+                        while (newDirname.indexOf("\\") !== -1) {
+                            newDirname = newDirname.replace("\\", "\/");
+                        }
+                        dir = newDirname + "\/uploads\/" + _id;
+                    }
+                }
+
+                fs.readdir(dir, function (err, files) {
+                    if (err) {
+                        return parallelCb();
+                    }
+                    async.each(files, function (file, cb) {
+                        var file = pathMod.join(dir, file);
+                        fs.unlink(file, function (err) {
+                            if (err) {
+                                return cb(err);
+                            }
+                            return cb();
+                        });
+                    }, function (err) {
                         if (err) {
                             return next(err);
                         }
-
-                        invoiceDeleted = result.toJSON();
-
-                        orderId = invoiceDeleted.sourceDocument;
-
-                        if (invoiceDeleted._type === 'Proforma') {
-                            orderUpdateQuery['$inc'] = {
-                                proformaCounter: -1
-                            };
-                        }
-
-                        Order.findByIdAndUpdate(objectId(orderId), orderUpdateQuery,
-                            {new: true}, function (err, result) {
-                                if (err) {
-                                    return next(err);
-                                }
-                            });
-
-                        async.each(invoiceDeleted.products, function (product) {
-                            jobs.push(product.jobs);
-                        });
-                        async.each(invoiceDeleted.payments, function (payment) {
-                            paymentIds.push(payment);
-                        });
-
-                        proformaBalance = result.get('paymentInfo').balance;
-                        isProformaPaid = (proformaBalance === 0);
-
-                        function proformaUpdate(parallelCb) {
-                            var request = {
-                                query  : {
-                                    wId   : 'Proforma',
-                                    status: 'New'
-                                },
-                                session: req.session
-                            };
-
-                            workflowHandler.getFirstForConvert(request, function (err, workflow) {
-                                Proforma.update(
-                                    {
-                                        sourceDocument: orderId,
-                                        _type         : 'Proforma',
-                                        payments      : []
-                                    },
-                                    {
-                                        $set: {
-                                            workflow: workflow._id,
-                                            invoiced: false
-                                        }
-                                    },
-                                    {
-                                        multi: true
-                                    },
-                                    parallelCb);
-                            });
-                        }
-
-                        function proformaCancelledUpdate(parallelCb) {
-                            var request;
-
-                            if (isProformaPaid) {
-                                request = {
-                                    query  : {
-                                        wId   : 'Proforma',
-                                        status: 'Done',
-                                        name  : 'Paid'
-                                    },
-                                    session: req.session
-                                };
-
-                            } else {
-                                request = {
-                                    query  : {
-                                        wId   : 'Proforma',
-                                        status: 'In Progress'
-                                    },
-                                    session: req.session
-                                };
-                            }
-
-                            workflowHandler.getFirstForConvert(request, function (err, workflow) {
-                                Proforma.update(
-                                    {
-                                        sourceDocument: orderId,
-                                        _type         : 'Proforma',
-                                        payments      : {$ne: []}
-                                    },
-                                    {
-                                        $set: {
-                                            workflow: workflow._id,
-                                            invoiced: false
-                                        }
-                                    },
-                                    {
-                                        multi: true
-                                    },
-                                    parallelCb);
-                            });
-                        }
-
-                        function paymentsRemove(parallelCb) {
-                            async.each(paymentIds, function (pid, cb) {
-                                Payment.remove({invoice: id}, cb);
-                            }, function () {
-                                parallelCb();
-                            });
-                        }
-
-                        function folderRemove(parallelCb) {
-                            var os = require("os");
-                            var osType = (os.type().split('_')[0]);
-                            var dir;
-                            var _id = id;
-
-                            switch (osType) {
-                                case "Windows":
-                                {
-                                    var newDirname = __dirname.replace("handlers", "routes");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
-                                    }
-                                    dir = newDirname + "\/uploads\/" + _id;
-                                }
-                                    break;
-                                case "Linux":
-                                {
-                                    var newDirname = __dirname.replace("handlers", "routes");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
-                                    }
-                                    dir = newDirname + "\/uploads\/" + _id;
-                                }
-                            }
-
-                            fs.readdir(dir, function (err, files) {
-                                if (err) {
-                                    return parallelCb();
-                                }
-                                async.each(files, function (file, cb) {
-                                    var file = pathMod.join(dir, file);
-                                    fs.unlink(file, function (err) {
-                                        if (err) {
-                                            return cb(err);
-                                        }
-                                        return cb();
-                                    });
-                                }, function (err) {
-                                    if (err) {
-                                        return next(err);
-                                    }
-                                    fs.rmdir(dir, function (err) {
-                                        if (err) {
-                                            return next(err);
-                                        }
-                                        parallelCb();
-                                    });
-                                });
-                            });
-
-
-                        }
-
-                        function journalEntryRemove(parallelCb) {
-                            _journalEntryHandler.removeByDocId(id, db, parallelCb);
-                        }
-
-                        function jobsUpdateAndWTracks(parallelCb) {
-                            var setData = {};
-                            var array;
-
-                            async.each(jobs, function (id, cb) {
-                                setData.editedBy = {
-                                    user: req.session.uId,
-                                    date: new Date().toISOString()
-                                };
-
-                                JobsModel.findByIdAndUpdate(id, {
-                                    type    : "Ordered",
-                                    invoice : null,
-                                    workflow: CONSTANTS.JOBSINPROGRESS,
-                                    editedBy: editedBy
-                                }, {new: true}, function (err, result) {
-                                    if (err) {
-                                        return console.log(err);
-                                    }
-
-                                    _journalEntryHandler.checkAndCreateForJob({
-                                        req     : req,
-                                        jobId   : id,
-                                        workflow: CONSTANTS.JOBSINPROGRESS,
-                                        wTracks : result ? result.wTracks : [],
-                                        date    : invoiceDeleted.invoiceDate
-                                    });
-
-                                    project = result ? result.project : null;
-                                    array = result ? result.wTracks : [];
-
-                                    async.each(array, function (id) {
-                                        setData.editedBy = {
-                                            user: req.session.uId,
-                                            date: new Date().toISOString()
-                                        };
-
-                                        setData.isPaid = false;
-                                        setData.amount = 0;
-
-                                        wTrack.findByIdAndUpdate(id, setData, {new: true}, function (err, result) {
-                                            if (err) {
-                                                return console.log(err);
-                                            }
-
-                                        });
-                                    });
-                                    cb();
-                                });
-                            }, function () {
-                                if (project) {
-                                    event.emit('fetchJobsCollection', {project: project});
-                                }
-                                parallelCb();
-                            });
-                        }
-
-                        if (result && result._type !== 'expensesInvoice') {
-                            parallelTasks = [proformaUpdate, proformaCancelledUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove];
-                        } else {
-                            parallelTasks = [proformaUpdate, proformaCancelledUpdate, paymentsRemove, journalEntryRemove, folderRemove]
-                        }
-
-                        async.parallel(parallelTasks, function (err, result) {
+                        fs.rmdir(dir, function (err) {
                             if (err) {
                                 return next(err);
                             }
+                            parallelCb();
+                        });
+                    });
+                });
+
+
+            }
+
+            function journalEntryRemove(parallelCb) {
+                _journalEntryHandler.removeByDocId(id, db, parallelCb);
+            }
+
+            function jobsUpdateAndWTracks(parallelCb) {
+                var setData = {};
+                var array;
+
+                async.each(jobs, function (id, cb) {
+                    setData.editedBy = {
+                        user: req.session.uId,
+                        date: new Date().toISOString()
+                    };
+
+                    JobsModel.findByIdAndUpdate(id, {
+                        type    : "Ordered",
+                        invoice : null,
+                        workflow: CONSTANTS.JOBSINPROGRESS,
+                        editedBy: editedBy
+                    }, {new: true}, function (err, result) {
+                        if (err) {
+                            return console.log(err);
+                        }
+
+                        _journalEntryHandler.checkAndCreateForJob({
+                            req     : req,
+                            jobId   : id,
+                            workflow: CONSTANTS.JOBSINPROGRESS,
+                            wTracks : result ? result.wTracks : [],
+                            date    : invoiceDeleted.invoiceDate
                         });
 
-                        res.status(200).send(result);
-                    });
+                        project = result ? result.project : null;
+                        array = result ? result.wTracks : [];
 
-                } else {
-                    res.status(403).send();
+                        async.each(array, function (id) {
+                            setData.editedBy = {
+                                user: req.session.uId,
+                                date: new Date().toISOString()
+                            };
+
+                            setData.isPaid = false;
+                            setData.amount = 0;
+
+                            wTrack.findByIdAndUpdate(id, setData, {new: true}, function (err, result) {
+                                if (err) {
+                                    return console.log(err);
+                                }
+
+                            });
+                        });
+                        cb();
+                    });
+                }, function () {
+                    if (project) {
+                        event.emit('fetchJobsCollection', {project: project});
+                    }
+                    parallelCb();
+                });
+            }
+
+            if (result && result._type !== 'expensesInvoice') {
+                parallelTasks = [proformaUpdate, proformaCancelledUpdate, paymentsRemove, journalEntryRemove, jobsUpdateAndWTracks, folderRemove];
+            } else {
+                parallelTasks = [proformaUpdate, proformaCancelledUpdate, paymentsRemove, journalEntryRemove, folderRemove]
+            }
+
+            async.parallel(parallelTasks, function (err, result) {
+                if (err) {
+                    return next(err);
                 }
             });
 
-        } else {
-            res.status(401).send();
-        }
+            res.status(200).send(result);
+        });
 
     };
 
@@ -1772,27 +1739,14 @@ var Invoice = function (models, event) {
         var moduleId = 64;
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
 
-        if (req.session && req.session.loggedIn && db) {
-            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
-                if (access) {
+        Invoice.findByIdAndUpdate(_id, data.invoice, {new: true}, function (err, result) {
 
-                    Invoice.findByIdAndUpdate(_id, data.invoice, {new: true}, function (err, result) {
-
-                        if (err) {
-                            next(err);
-                        } else {
-                            res.status(200).send(result);
-                        }
-                    });
-
-                } else {
-                    res.status(403).send();
-                }
-            });
-
-        } else {
-            res.status(401).send();
-        }
+            if (err) {
+                next(err);
+            } else {
+                res.status(200).send(result);
+            }
+        });
 
     };
 
@@ -2331,162 +2285,151 @@ var Invoice = function (models, event) {
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
         var baseUrl = req.baseUrl;
 
-        if (req.session && req.session.loggedIn && db) {
-            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
-                var query = req.query;
-                var queryObject = {};
-                var filter = query.filter;
+        var query = req.query;
+        var queryObject = {};
+        var filter = query.filter;
 
-                var optionsObject = {};
+        var optionsObject = {};
 
-                var departmentSearcher;
-                var contentIdsSearcher;
-                var contentSearcher;
-                var waterfallTasks;
+        var departmentSearcher;
+        var contentIdsSearcher;
+        var contentSearcher;
+        var waterfallTasks;
 
-                if (access) {
 
-                    departmentSearcher = function (waterfallCallback) {
-                        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-                            {
-                                $match: {
-                                    users: objectId(req.session.uId)
+        departmentSearcher = function (waterfallCallback) {
+            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+                {
+                    $match: {
+                        users: objectId(req.session.uId)
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                waterfallCallback);
+        };
+
+        contentIdsSearcher = function (deps, waterfallCallback) {
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $and: [
+                    queryObject,
+                    {
+                        $or: whoCanRw
+                    }
+                ]
+            };
+
+            Invoice.aggregate(
+                {
+                    $match: matchQuery
+                },
+                {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                waterfallCallback
+            );
+        };
+
+        contentSearcher = function (invoicesIds, waterfallCallback) {
+            var condition = '$and';
+
+            invoicesIds = _.pluck(invoicesIds, '_id');
+
+            if (filter && typeof filter === 'object') {
+                condition = filter.condition || 'and';
+                condition = '$' + condition;
+                optionsObject[condition] = caseFilter(filter);
+            }
+
+            optionsObject[condition].push({_id: {$in: invoicesIds}});
+            optionsObject[condition].push({expense: {$exists: false}});
+
+            if (baseUrl === '/proforma') {
+                optionsObject.$and.push({_type: 'Proforma'});
+            } else {
+                optionsObject.$and.push({_type: {$ne: 'Proforma'}});
+            }
+
+            Invoice
+                .aggregate([{
+                    $lookup: {
+                        from        : "Project",
+                        localField  : "project",
+                        foreignField: "_id",
+                        as          : "project"
+                    }
+                }, {
+                    $lookup: {
+                        from        : "workflows",
+                        localField  : "workflow",
+                        foreignField: "_id",
+                        as          : "workflow"
+                    }
+                }, {
+                    $project: {
+                        project    : {$arrayElemAt: ["$project", 0]},
+                        name       : 1,
+                        paymentInfo: 1,
+                        status     : {$arrayElemAt: ["$workflow", 0]},
+                        ammount    : {$divide: ['$paymentInfo.total', 100]},
+                        paid       : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]},
+                        balance    : {$divide: ['$paymentInfo.balance', 100]},
+                        currency   : 1,
+                        _type      : 1
+                    }
+                }, {
+                    $match: optionsObject
+                }, {
+                    $project: {
+                        project    : 1,
+                        name       : 1,
+                        paymentInfo: 1,
+                        status     : '$status.name',
+                        ammount    : 1,
+                        currency   : 1,
+                        paid       : 1,
+                        balance    : 1
+                    }
+                }, {
+                    $group: {
+                        _id     : null,
+                        invoices: {
+                            $push: {
+                                _id        : '$_id',
+                                name       : '$name',
+                                status     : '$status',
+                                currency   : '$currency',
+                                paymentInfo: {
+                                    ammount: '$ammount',
+                                    paid   : '$paid',
+                                    balance: '$balance'
                                 }
-                            }, {
-                                $project: {
-                                    _id: 1
-                                }
-                            },
-                            waterfallCallback);
-                    };
+                            }
+                        },
+                        ammount : {$sum: {$divide: ['$ammount', '$currency.rate']}},
+                        paid    : {$sum: {$divide: ['$paid', '$currency.rate']}},
+                        balance : {$sum: {$divide: ['$balance', '$currency.rate']}}
+                    }
+                }])
+                .exec(waterfallCallback);
+        };
 
-                    contentIdsSearcher = function (deps, waterfallCallback) {
-                        var everyOne = rewriteAccess.everyOne();
-                        var owner = rewriteAccess.owner(req.session.uId);
-                        var group = rewriteAccess.group(req.session.uId, deps);
-                        var whoCanRw = [everyOne, owner, group];
-                        var matchQuery = {
-                            $and: [
-                                queryObject,
-                                {
-                                    $or: whoCanRw
-                                }
-                            ]
-                        };
+        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
-                        Invoice.aggregate(
-                            {
-                                $match: matchQuery
-                            },
-                            {
-                                $project: {
-                                    _id: 1
-                                }
-                            },
-                            waterfallCallback
-                        );
-                    };
-
-                    contentSearcher = function (invoicesIds, waterfallCallback) {
-                        var condition = '$and';
-
-                        invoicesIds = _.pluck(invoicesIds, '_id');
-
-                        if (filter && typeof filter === 'object') {
-                            condition = filter.condition || 'and';
-                            condition = '$' + condition;
-                            optionsObject[condition] = caseFilter(filter);
-                        }
-
-                        optionsObject[condition].push({_id: {$in: invoicesIds}});
-                        optionsObject[condition].push({expense: {$exists: false}});
-
-                        if (baseUrl === '/proforma') {
-                            optionsObject.$and.push({_type: 'Proforma'});
-                        } else {
-                            optionsObject.$and.push({_type: {$ne: 'Proforma'}});
-                        }
-
-                        Invoice
-                            .aggregate([{
-                                $lookup: {
-                                    from        : "Project",
-                                    localField  : "project",
-                                    foreignField: "_id",
-                                    as          : "project"
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : "workflows",
-                                    localField  : "workflow",
-                                    foreignField: "_id",
-                                    as          : "workflow"
-                                }
-                            }, {
-                                $project: {
-                                    project    : {$arrayElemAt: ["$project", 0]},
-                                    name       : 1,
-                                    paymentInfo: 1,
-                                    status     : {$arrayElemAt: ["$workflow", 0]},
-                                    ammount    : {$divide: ['$paymentInfo.total', 100]},
-                                    paid       : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]},
-                                    balance    : {$divide: ['$paymentInfo.balance', 100]},
-                                    currency   : 1,
-                                    _type      : 1
-                                }
-                            }, {
-                                $match: optionsObject
-                            }, {
-                                $project: {
-                                    project    : 1,
-                                    name       : 1,
-                                    paymentInfo: 1,
-                                    status     : '$status.name',
-                                    ammount    : 1,
-                                    currency   : 1,
-                                    paid       : 1,
-                                    balance    : 1
-                                }
-                            }, {
-                                $group: {
-                                    _id     : null,
-                                    invoices: {
-                                        $push: {
-                                            _id        : '$_id',
-                                            name       : '$name',
-                                            status     : '$status',
-                                            currency   : '$currency',
-                                            paymentInfo: {
-                                                ammount: '$ammount',
-                                                paid   : '$paid',
-                                                balance: '$balance'
-                                            }
-                                        }
-                                    },
-                                    ammount : {$sum: {$divide: ['$ammount', '$currency.rate']}},
-                                    paid    : {$sum: {$divide: ['$paid', '$currency.rate']}},
-                                    balance : {$sum: {$divide: ['$balance', '$currency.rate']}}
-                                }
-                            }])
-                            .exec(waterfallCallback);
-                    };
-
-                    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
-
-                    async.waterfall(waterfallTasks, function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-                        res.status(200).send({success: result[0]});
-                    });
-                } else {
-                    res.status(403).send();
-                }
-            });
-
-        } else {
-            res.status(401).send();
-        }
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({success: result[0]});
+        });
     };
 
     this.getForProject = function (req, res, next) {
@@ -2509,304 +2452,293 @@ var Invoice = function (models, event) {
             moduleId = 64;
         }
 
-        if (req.session && req.session.loggedIn && db) {
-            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
-                var query = req.query;
-                var queryObject = {};
-                var optionsObject = {};
-                var sort = {};
-                var Invoice;
-                var count;
-                var page;
-                var skip;
-                var key;
+        var query = req.query;
+        var queryObject = {};
+        var optionsObject = {};
+        var sort = {};
+        var Invoice;
+        var count;
+        var page;
+        var skip;
+        var key;
 
-                var departmentSearcher;
-                var contentIdsSearcher;
-                var contentSearcher;
-                var waterfallTasks;
+        var departmentSearcher;
+        var contentIdsSearcher;
+        var contentSearcher;
+        var waterfallTasks;
 
-                if (projectId) {
-                    queryObject.project = projectId;
-                }
-
-                if (access) {
-
-                    if (contentType === 'salesProforma' || contentType === 'proforma') {
-                        Invoice = models.get(db, 'Proforma', ProformaSchema);
-                    } else if (contentType === 'ExpensesInvoice') {
-                        Invoice = models.get(db, 'expensesInvoice', ExpensesInvoiceSchema);
-                    } else if (contentType === 'DividendInvoice') {
-                        Invoice = models.get(db, 'dividendInvoice', DividendInvoiceSchema);
-                    } else {
-                        Invoice = models.get(db, 'Invoice', InvoiceSchema);
-                    }
-
-                    count = parseInt(query.count) || CONSTANTS.DEF_LIST_COUNT;
-                    page = parseInt(query.page);
-
-                    count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
-                    skip = (page - 1) > 0 ? (page - 1) * count : 0;
-
-                    if (req.query.sort) {
-                        key = Object.keys(req.query.sort)[0];
-                        req.query.sort[key] = parseInt(req.query.sort[key]);
-                        sort = req.query.sort;
-                    } else {
-                        sort = {workflow: -1};
-                    }
-
-                    departmentSearcher = function (waterfallCallback) {
-                        models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(
-                            {
-                                $match: {
-                                    users: objectId(req.session.uId)
-                                }
-                            }, {
-                                $project: {
-                                    _id: 1
-                                }
-                            },
-                            waterfallCallback);
-                    };
-
-                    contentIdsSearcher = function (deps, waterfallCallback) {
-                        var everyOne = rewriteAccess.everyOne();
-                        var owner = rewriteAccess.owner(req.session.uId);
-                        var group = rewriteAccess.group(req.session.uId, deps);
-                        var whoCanRw = [everyOne, owner, group];
-                        var matchQuery = {
-                            $and: [
-                                queryObject,
-                                {
-                                    $or: whoCanRw
-                                }
-                            ]
-                        };
-
-
-                        Invoice.aggregate([
-                                {
-                                    $match: matchQuery
-                                },
-                                {
-                                    $project: {
-                                        _id: 1
-                                    }
-                                }
-                            ],
-                            waterfallCallback
-                        );
-                    };
-
-                    contentSearcher = function (invoicesIds, waterfallCallback) {
-                        var salesManagerMatch = {
-                            $and: [
-                                {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]},
-                                {
-                                    $or: [{
-                                        $and: [{
-                                            $eq: ['$$projectMember.startDate', null]
-                                        }, {
-                                            $eq: ['$$projectMember.endDate', null]
-                                        }]
-                                    }, {
-                                        $and: [{
-                                            $lte: ['$$projectMember.startDate', '$quotation.orderDate']
-                                        }, {
-                                            $eq: ['$$projectMember.endDate', null]
-                                        }]
-                                    }, {
-                                        $and: [{
-                                            $eq: ['$$projectMember.startDate', null]
-                                        }, {
-                                            $gte: ['$$projectMember.endDate', '$quotation.orderDate']
-                                        }]
-                                    }, {
-                                        $and: [{
-                                            $lte: ['$$projectMember.startDate', '$quotation.orderDate']
-                                        }, {
-                                            $gte: ['$$projectMember.endDate', '$quotation.orderDate']
-                                        }]
-                                    }]
-                                }]
-                        };
-
-                        optionsObject.$and = [];
-
-                        /* if (filter && typeof filter === 'object') {
-                         if (filter.condition === 'or') {
-                         optionsObject['$or'] = caseFilter(filter);
-                         } else {
-                         optionsObject['$and'] = caseFilter(filter);
-                         }
-                         }*/
-
-                        optionsObject.$and.push({_id: {$in: _.pluck(invoicesIds, '_id')}});
-                        optionsObject.$and.push({expense: {$exists: false}});
-
-                        if (contentType === 'salesProforma' || contentType === 'proforma') {
-                            optionsObject.$and.push({_type: 'Proforma'});
-                        } else if (contentType === 'ExpensesInvoice') {
-                            optionsObject.$and.push({_type: 'expensesInvoice'});
-                        } else if (contentType === 'DividendInvoice') {
-                            optionsObject.$and.push({_type: 'dividendInvoice'});
-                        } else {
-                            optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}]});
-                        }
-
-                        Invoice
-                            .aggregate([{
-                                $match: queryObject
-                            }, {
-                                $lookup: {
-                                    from        : 'projectMembers',
-                                    localField  : 'project',
-                                    foreignField: 'projectId',
-                                    as          : 'projectMembers'
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'Customers',
-                                    localField  : 'supplier',
-                                    foreignField: '_id',
-                                    as          : 'supplier'
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'workflows',
-                                    localField  : 'workflow',
-                                    foreignField: '_id',
-                                    as          : 'workflow'
-                                }
-                            }, {
-                                $project: {
-                                    workflow     : {$arrayElemAt: ['$workflow', 0]},
-                                    supplier     : {$arrayElemAt: ['$supplier', 0]},
-                                    salesmanagers: {
-                                        $filter: {
-                                            input: '$projectMembers',
-                                            as   : 'projectMember',
-                                            cond : salesManagerMatch
-                                        }
-                                    },
-                                    expense      : 1,
-                                    forSales     : 1,
-                                    currency     : 1,
-                                    paymentInfo  : 1,
-                                    invoiceDate  : 1,
-                                    name         : 1,
-                                    paymentDate  : 1,
-                                    dueDate      : 1,
-                                    payments     : 1,
-                                    approved     : 1,
-                                    _type        : 1,
-                                    removable    : 1,
-                                    paid         : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
-                                }
-                            }, {
-                                $project: {
-                                    salesmanagers: {$arrayElemAt: ['$salesmanagers', 0]},
-                                    supplier     : {
-                                        _id : '$supplier._id',
-                                        name: '$supplier.name'
-                                    },
-                                    workflow     : {
-                                        status: '$workflow.status',
-                                        name  : '$workflow.name'
-                                    },
-                                    expense      : 1,
-                                    forSales     : 1,
-                                    currency     : 1,
-                                    paymentInfo  : 1,
-                                    invoiceDate  : 1,
-                                    name         : 1,
-                                    paymentDate  : 1,
-                                    dueDate      : 1,
-                                    payments     : 1,
-                                    approved     : 1,
-                                    _type        : 1,
-                                    removable    : 1,
-                                    paid         : 1
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'Employees',
-                                    localField  : 'salesmanagers.employeeId',
-                                    foreignField: '_id',
-                                    as          : 'salesmanagers'
-                                }
-                            }, {
-                                $project: {
-                                    salesPerson: {$arrayElemAt: ['$salesmanagers', 0]},
-                                    workflow   : 1,
-                                    supplier   : 1,
-                                    expense    : 1,
-                                    forSales   : 1,
-                                    currency   : 1,
-                                    paymentInfo: 1,
-                                    invoiceDate: 1,
-                                    name       : 1,
-                                    paymentDate: 1,
-                                    dueDate    : 1,
-                                    payments   : 1,
-                                    approved   : 1,
-                                    _type      : 1,
-                                    removable  : 1,
-                                    paid       : 1
-                                }
-                            }, {
-                                $project: {
-                                    salesPerson: {
-                                        _id : '$salesPerson._id',
-                                        name: '$salesPerson.name'
-                                    },
-                                    workflow   : 1,
-                                    supplier   : 1,
-                                    expense    : 1,
-                                    forSales   : 1,
-                                    currency   : 1,
-                                    paymentInfo: 1,
-                                    invoiceDate: 1,
-                                    name       : 1,
-                                    paymentDate: 1,
-                                    dueDate    : 1,
-                                    payments   : 1,
-                                    approved   : 1,
-                                    _type      : 1,
-                                    removable  : 1,
-                                    paid       : 1
-                                }
-                            }, {
-                                $match: optionsObject
-                            }, {
-                                $sort: sort
-                            }, {
-                                $skip: skip
-                            }, {
-                                $limit: count
-                            }], function (err, result) {
-                                waterfallCallback(null, result);
-                            });
-                    };
-
-                    waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
-
-                    async.waterfall(waterfallTasks, function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-                        res.status(200).send(result);
-                    });
-                } else {
-                    res.status(403).send();
-                }
-            });
-
-        } else {
-            res.status(401).send();
+        if (projectId) {
+            queryObject.project = projectId;
         }
-    };
+
+
+        if (contentType === 'salesProforma' || contentType === 'proforma') {
+            Invoice = models.get(db, 'Proforma', ProformaSchema);
+        } else if (contentType === 'ExpensesInvoice') {
+            Invoice = models.get(db, 'expensesInvoice', ExpensesInvoiceSchema);
+        } else if (contentType === 'DividendInvoice') {
+            Invoice = models.get(db, 'dividendInvoice', DividendInvoiceSchema);
+        } else {
+            Invoice = models.get(db, 'Invoice', InvoiceSchema);
+        }
+
+        count = parseInt(query.count) || CONSTANTS.DEF_LIST_COUNT;
+        page = parseInt(query.page);
+
+        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+        skip = (page - 1) > 0 ? (page - 1) * count : 0;
+
+        if (req.query.sort) {
+            key = Object.keys(req.query.sort)[0];
+            req.query.sort[key] = parseInt(req.query.sort[key]);
+            sort = req.query.sort;
+        } else {
+            sort = {workflow: -1};
+        }
+
+        departmentSearcher = function (waterfallCallback) {
+            models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(
+                {
+                    $match: {
+                        users: objectId(req.session.uId)
+                    }
+                }, {
+                    $project: {
+                        _id: 1
+                    }
+                },
+                waterfallCallback);
+        };
+
+        contentIdsSearcher = function (deps, waterfallCallback) {
+            var everyOne = rewriteAccess.everyOne();
+            var owner = rewriteAccess.owner(req.session.uId);
+            var group = rewriteAccess.group(req.session.uId, deps);
+            var whoCanRw = [everyOne, owner, group];
+            var matchQuery = {
+                $and: [
+                    queryObject,
+                    {
+                        $or: whoCanRw
+                    }
+                ]
+            };
+
+
+            Invoice.aggregate([
+                    {
+                        $match: matchQuery
+                    },
+                    {
+                        $project: {
+                            _id: 1
+                        }
+                    }
+                ],
+                waterfallCallback
+            );
+        };
+
+        contentSearcher = function (invoicesIds, waterfallCallback) {
+            var salesManagerMatch = {
+                $and: [
+                    {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]},
+                    {
+                        $or: [{
+                            $and: [{
+                                $eq: ['$$projectMember.startDate', null]
+                            }, {
+                                $eq: ['$$projectMember.endDate', null]
+                            }]
+                        }, {
+                            $and: [{
+                                $lte: ['$$projectMember.startDate', '$quotation.orderDate']
+                            }, {
+                                $eq: ['$$projectMember.endDate', null]
+                            }]
+                        }, {
+                            $and: [{
+                                $eq: ['$$projectMember.startDate', null]
+                            }, {
+                                $gte: ['$$projectMember.endDate', '$quotation.orderDate']
+                            }]
+                        }, {
+                            $and: [{
+                                $lte: ['$$projectMember.startDate', '$quotation.orderDate']
+                            }, {
+                                $gte: ['$$projectMember.endDate', '$quotation.orderDate']
+                            }]
+                        }]
+                    }]
+            };
+
+            optionsObject.$and = [];
+
+            /* if (filter && typeof filter === 'object') {
+             if (filter.condition === 'or') {
+             optionsObject['$or'] = caseFilter(filter);
+             } else {
+             optionsObject['$and'] = caseFilter(filter);
+             }
+             }*/
+
+            optionsObject.$and.push({_id: {$in: _.pluck(invoicesIds, '_id')}});
+            optionsObject.$and.push({expense: {$exists: false}});
+
+            if (contentType === 'salesProforma' || contentType === 'proforma') {
+                optionsObject.$and.push({_type: 'Proforma'});
+            } else if (contentType === 'ExpensesInvoice') {
+                optionsObject.$and.push({_type: 'expensesInvoice'});
+            } else if (contentType === 'DividendInvoice') {
+                optionsObject.$and.push({_type: 'dividendInvoice'});
+            } else {
+                optionsObject.$and.push({$and: [{_type: {$ne: 'Proforma'}}, {_type: {$ne: 'expensesInvoice'}}]});
+            }
+
+            Invoice
+                .aggregate([{
+                    $match: queryObject
+                }, {
+                    $lookup: {
+                        from        : 'projectMembers',
+                        localField  : 'project',
+                        foreignField: 'projectId',
+                        as          : 'projectMembers'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Customers',
+                        localField  : 'supplier',
+                        foreignField: '_id',
+                        as          : 'supplier'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'workflows',
+                        localField  : 'workflow',
+                        foreignField: '_id',
+                        as          : 'workflow'
+                    }
+                }, {
+                    $project: {
+                        workflow     : {$arrayElemAt: ['$workflow', 0]},
+                        supplier     : {$arrayElemAt: ['$supplier', 0]},
+                        salesmanagers: {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : salesManagerMatch
+                            }
+                        },
+                        expense      : 1,
+                        forSales     : 1,
+                        currency     : 1,
+                        paymentInfo  : 1,
+                        invoiceDate  : 1,
+                        name         : 1,
+                        paymentDate  : 1,
+                        dueDate      : 1,
+                        payments     : 1,
+                        approved     : 1,
+                        _type        : 1,
+                        removable    : 1,
+                        paid         : {$divide: [{$subtract: ['$paymentInfo.total', '$paymentInfo.balance']}, 100]}
+                    }
+                }, {
+                    $project: {
+                        salesmanagers: {$arrayElemAt: ['$salesmanagers', 0]},
+                        supplier     : {
+                            _id : '$supplier._id',
+                            name: '$supplier.name'
+                        },
+                        workflow     : {
+                            status: '$workflow.status',
+                            name  : '$workflow.name'
+                        },
+                        expense      : 1,
+                        forSales     : 1,
+                        currency     : 1,
+                        paymentInfo  : 1,
+                        invoiceDate  : 1,
+                        name         : 1,
+                        paymentDate  : 1,
+                        dueDate      : 1,
+                        payments     : 1,
+                        approved     : 1,
+                        _type        : 1,
+                        removable    : 1,
+                        paid         : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'salesmanagers.employeeId',
+                        foreignField: '_id',
+                        as          : 'salesmanagers'
+                    }
+                }, {
+                    $project: {
+                        salesPerson: {$arrayElemAt: ['$salesmanagers', 0]},
+                        workflow   : 1,
+                        supplier   : 1,
+                        expense    : 1,
+                        forSales   : 1,
+                        currency   : 1,
+                        paymentInfo: 1,
+                        invoiceDate: 1,
+                        name       : 1,
+                        paymentDate: 1,
+                        dueDate    : 1,
+                        payments   : 1,
+                        approved   : 1,
+                        _type      : 1,
+                        removable  : 1,
+                        paid       : 1
+                    }
+                }, {
+                    $project: {
+                        salesPerson: {
+                            _id : '$salesPerson._id',
+                            name: '$salesPerson.name'
+                        },
+                        workflow   : 1,
+                        supplier   : 1,
+                        expense    : 1,
+                        forSales   : 1,
+                        currency   : 1,
+                        paymentInfo: 1,
+                        invoiceDate: 1,
+                        name       : 1,
+                        paymentDate: 1,
+                        dueDate    : 1,
+                        payments   : 1,
+                        approved   : 1,
+                        _type      : 1,
+                        removable  : 1,
+                        paid       : 1
+                    }
+                }, {
+                    $match: optionsObject
+                }, {
+                    $sort: sort
+                }, {
+                    $skip: skip
+                }, {
+                    $limit: count
+                }], function (err, result) {
+                    waterfallCallback(null, result);
+                });
+        };
+
+        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
+    }
 };
 
 module.exports = Invoice;

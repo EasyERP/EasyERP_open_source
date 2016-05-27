@@ -17,7 +17,7 @@ describe("Invoice Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -144,7 +144,7 @@ describe("Invoice Specs", function () {
                             .and.to.have.property('owner', CONSTANTS.OWNER);
                         expect(body)
                             .to.have.property('paymentInfo')
-                            .and.to.have.property('total', 50000);
+                            .and.to.have.property('total', 500);
                         expect(body)
                             .to.have.property('currency')
                             .and.to.have.property( "_id", CONSTANTS.DOLLAR);
@@ -757,7 +757,7 @@ describe("Invoice Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
