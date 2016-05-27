@@ -98,6 +98,7 @@ define([
         App.ownContentType = true;
 
         Backbone.history.navigate(url, {trigger: true});
+        console.log(window.location.hash);
     };
 
     var getCurrentVT = function (option) {

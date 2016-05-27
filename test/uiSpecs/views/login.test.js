@@ -4142,6 +4142,110 @@ define([
                     name: "Foxtrapp "
                 }
             ]
+        },
+        journalEntry: {
+            journalName: [
+                {
+                    _id: "Retained Earnings Journal",
+                    name: "Retained Earnings Journal"
+                },
+                {
+                    _id: "Income Summary Journal",
+                    name: "Income Summary Journal"
+                }
+            ],
+            sourceDocument: [
+                {
+                    _id: "55bf45cf65cda0810b00000a",
+                    name: "Liliya Shustur"
+                },
+                {
+                    _id: "5614d4c7ab24a83b1dc1a7a8",
+                    name: "Dmytro Babilia"
+                },
+                {
+                    _id: "5684ec1a1fec73d05393a2a4",
+                    name: "Maria Zaitseva"
+                },
+                {
+                    _id: "56813fe29cceae182b907755",
+                    name: "Taras Ukrainskiy"
+                },
+                {
+                    _id: "566ada96a74aaf316eaea69d",
+                    name: "Maxim Gladovskyy"
+                },
+                {
+                    _id: "566add9aa74aaf316eaea6fc",
+                    name: "Denis Saranyuk"
+                },
+                {
+                    _id: "566fe2348453e8b464b70ba6",
+                    name: "Andriy Lukashchuk"
+                },
+                {
+                    _id: "565c66633410ae512364dc00",
+                    name: "Alona Timochchenko"
+                },
+                {
+                    _id: "564da59f9b85f8b16b574fe9",
+                    name: "Andriy Chuprov"
+                },
+                {
+                    _id: "5637710e5d23a8eb04e80aed",
+                    name: "Viktoria Kovalenko"
+                },
+                {
+                    _id: "564dac3e9b85f8b16b574fea",
+                    name: "Alex Filchak"
+                },
+                {
+                    _id: "5649b8ccad4bc9e53f1f6192",
+                    name: "Sergiy Gevelev"
+                },
+                {
+                    _id: "564a0186ad4bc9e53f1f6193",
+                    name: "Liliya Orlenko"
+                },
+                {
+                    _id: "561ba7039ebb48212ea838c3",
+                    name: "Oleksandra Maliavska"
+                },
+                {
+                    _id: "5626278d750d38934bfa1313",
+                    name: "Viktoria Rogachenko"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f0000ad",
+                    name: "Stepan Krovspey"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f0000c3",
+                    name: "Olesia Prokoshkina"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f00008f",
+                    name: "Yuriy Holovatskyi"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f000060",
+                    name: "Roman Buchuk"
+                },
+                {
+                    _id: "55b92ad221e4b7c40f000069",
+                    name: "Michael Afendikov"
+                }
+            ],
+            creditAccount: [
+                {
+                    _id: "565eb53a6aa50532e5df0bd2",
+                    name: "101500 Cash USD"
+                },
+                {
+                    _id: "565eb53a6aa50532e5df0bf3",
+                    name: "300200 Retained Earnings"
+                }
+            ]
         }
     };
 

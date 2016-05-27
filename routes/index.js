@@ -1420,8 +1420,7 @@ module.exports = function (app, mainDb) {
 //    });
     /*app.get('/LeadsForChart', function (req, res) {
         var data = {};
-        data.source = req.param('source');
-        data.sales = req.param('sales');
+        data.type = req.param('type');
         data.dataRange = req.param('dataRange');
         data.dataItem = req.param('dataItem');
         requestHandler.getLeadsForChart(req, res, data);
@@ -1468,28 +1467,35 @@ module.exports = function (app, mainDb) {
     //});
 
 //---------------------Opportunities---------------------
-//    app.post('/Opportunities', function (req, res) {
-//        var data = {};
-//        data.opportunitie = req.body;
-//        requestHandler.createOpportunitie(req, res, data);
-//    });
-//    app.get('/Opportunities/:viewType', function (req, res) {
-//        var data = {};
-//        for (var i in req.query) {
-//            data[i] = req.query[i];
-//        }
-//        var viewType = req.params.viewType;
-//        switch (viewType) {
-//            case "form":
-//                requestHandler.getOpportunityById(req, res, data);
-//                break;
-//            case "kanban":
-//                requestHandler.getFilterOpportunitiesForKanban(req, res, data);
-//                break;
-//            default:
-//                requestHandler.getFilterOpportunities(req, res);
-//        }
-//    });
+    /*app.post('/Opportunities', function (req, res) {
+        var data = {};
+        data.opportunitie = req.body;
+        requestHandler.createOpportunitie(req, res, data);
+    });
+    app.get('/OpportunitiesForChart', function (req, res) {
+        var data = {};
+        data.source = req.param('source');
+        data.dataRange = req.param('dataRange');
+        data.dataItem = req.param('dataItem');
+        requestHandler.getOpportunitiesForChart(req, res, data);
+    });
+    app.get('/Opportunities/:viewType', function (req, res) {
+        var data = {};
+        for (var i in req.query) {
+            data[i] = req.query[i];
+        }
+        var viewType = req.params.viewType;
+        switch (viewType) {
+            case "form":
+                requestHandler.getOpportunityById(req, res, data);
+                break;
+            case "kanban":
+                requestHandler.getFilterOpportunitiesForKanban(req, res, data);
+                break;
+            default:
+                requestHandler.getFilterOpportunities(req, res);
+        }
+    });*/
 
     //app.get('/OpportunitiesForMiniView', function (req, res) {
     //    var data = {};

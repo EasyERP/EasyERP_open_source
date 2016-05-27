@@ -513,228 +513,20 @@ define([
     }];
     var fakeVacations = [
         {
-            _id: "56eed169ce4bd3e35766cb61",
-            month: 3,
+            _id: "5710d14004850cef78c94928",
+            month: 5,
             year: 2016,
             vacations: {
-                201611: 1
+                201618: 3
             },
-            monthTotal: 1,
+            monthTotal: 3,
             vacArray: [
                 null,
                 null,
                 null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "V",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            ],
-            department: {
-                departmentName: "iOS"
-            },
-            employee: {
-                _id: "55b92ad221e4b7c40f000059",
-                name: {
-                    last: "Dalekorey",
-                    first: "Anatoliy"
-                }
-            }
-        },
-        {
-            _id: "56e6875e3d5bc25541857e34",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201611: 1
-            },
-            monthTotal: 1,
-            vacArray: [
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "P",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            ],
-            department: {
-                departmentName: "QA"
-            },
-            employee: {
-                _id: "56dd4d8eea0939141336783f",
-                name: {
-                    last: "Vasyliev",
-                    first: "Andriy"
-                }
-            }
-        },
-        {
-            _id: "56ebeff429a0e48b253adcb7",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201612: 2
-            },
-            monthTotal: 2,
-            vacArray: [
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "V",
-                "V",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            ],
-            department: {
-                departmentName: ".NET/WP"
-            },
-            employee: {
-                _id: "55b92ad221e4b7c40f000098",
-                name: {
-                    last: "Krupka",
-                    first: "Andriy"
-                }
-            }
-        },
-        {
-            _id: "56e85c2749e358ee4d7139a2",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201612: 1
-            },
-            monthTotal: 1,
-            vacArray: [
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "V",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            ],
-            department: {
-                departmentName: "HR"
-            },
-            employee: {
-                _id: "55b92ad221e4b7c40f0000b8",
-                name: {
-                    last: "Lobas",
-                    first: "Anna"
-                }
-            }
-        },
-        {
-            _id: "56aa24aab4dc0d09232bd7a7",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201609: 4
-            },
-            monthTotal: 4,
-            vacArray: [
                 "V",
                 "V",
                 "V",
-                "V",
-                null,
-                null,
                 null,
                 null,
                 null,
@@ -765,36 +557,36 @@ define([
                 departmentName: "Android"
             },
             employee: {
-                _id: "55b92ad221e4b7c40f0000c6",
+                _id: "55b92ad221e4b7c40f0000a7",
                 name: {
-                    last: "Kramarenko",
-                    first: "Illia"
+                    last: "Ryabcev",
+                    first: "Alex"
                 }
             }
         },
         {
-            _id: "56e03fa77e101f9873feca2c",
-            month: 3,
+            _id: "5720b952d4761c212289b7eb",
+            month: 5,
             year: 2016,
             vacations: {
-                201609: 4,
-                201610: 2
+                201618: 3,
+                201619: 5
             },
             monthTotal: 8,
             vacArray: [
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                null,
-                "V",
                 null,
                 null,
                 null,
-                null,
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
                 null,
                 null,
                 null,
@@ -818,290 +610,26 @@ define([
                 departmentName: "iOS"
             },
             employee: {
-                _id: "55b92ad221e4b7c40f000047",
+                _id: "55b92ad221e4b7c40f000031",
                 name: {
-                    last: "Khymych",
-                    first: "Ilya"
+                    last: "Gleba",
+                    first: "Alex"
                 }
             }
         },
         {
-            _id: "56e16aa2fb994ad62e017922",
-            month: 3,
+            _id: "5729a327dce306912118af8b",
+            month: 5,
             year: 2016,
             vacations: {
-                201609: 4
-            },
-            monthTotal: 4,
-            vacArray: [
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            ],
-            department: {
-                departmentName: "Web"
-            },
-            employee: {
-                _id: "55b92ad221e4b7c40f000034",
-                name: {
-                    last: "Nazarovich",
-                    first: "Ishtvan"
-                }
-            }
-        },
-        {
-            _id: "56b4a66a99ce8d706a81b2de",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201610: 3,
-                201611: 5,
-                201612: 1
-            },
-            monthTotal: 9,
-            vacArray: [
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            ],
-            department: {
-                departmentName: "Android"
-            },
-            employee: {
-                _id: "55b92ad221e4b7c40f00009c",
-                name: {
-                    last: "Feltsan",
-                    first: "Ivan"
-                }
-            }
-        },
-        {
-            _id: "56cc374f541812c071973562",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201609: 4
-            },
-            monthTotal: 4,
-            vacArray: [
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            ],
-            department: {
-                departmentName: "iOS"
-            },
-            employee: {
-                _id: "55b92ad221e4b7c40f00008e",
-                name: {
-                    last: "Grab",
-                    first: "Ivan"
-                }
-            }
-        },
-        {
-            _id: "56e02ebd86cb5f6c1eafc847",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201610: 2,
-                201611: 5
-            },
-            monthTotal: 7,
-            vacArray: [
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            ],
-            department: {
-                departmentName: "iOS"
-            },
-            employee: {
-                _id: "55b92ad221e4b7c40f000076",
-                name: {
-                    last: "Glagola",
-                    first: "Michael"
-                }
-            }
-        },
-        {
-            _id: "56e7219c0d773c634e918b6d",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201613: 4
-            },
-            monthTotal: 4,
-            vacArray: [
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "V",
-                "V",
-                "V",
-                "V"
-            ],
-            department: {
-                departmentName: "Unity"
-            },
-            employee: {
-                _id: "55b92ad221e4b7c40f00005e",
-                name: {
-                    last: "Didenko",
-                    first: "Michael"
-                }
-            }
-        },
-        {
-            _id: "56d8119218488d9d0e65ae67",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201609: 1,
-                201611: 2
+                201618: 1
             },
             monthTotal: 1,
             vacArray: [
                 null,
                 null,
                 null,
-                "V",
+                "S",
                 null,
                 null,
                 null,
@@ -1111,8 +639,8 @@ define([
                 null,
                 null,
                 null,
-                "V",
-                "V",
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -1131,240 +659,31 @@ define([
                 null
             ],
             department: {
-                departmentName: ".NET/WP"
+                departmentName: "PHP/WordPress"
             },
             employee: {
-                _id: "55b92ad221e4b7c40f0000c9",
+                _id: "55b92ad221e4b7c40f0000ce",
                 name: {
-                    first: "Oleksiy",
-                    last: "Fedosov"
+                    last: "Storojenko",
+                    first: "Alex"
                 }
             }
         },
         {
-            _id: "56e92206c7c1d1bd5e205714",
-            month: 3,
+            _id: "571740dc1eca60707afbc9d1",
+            month: 5,
             year: 2016,
             vacations: {
-                201611: 3
+                201618: 3
             },
             monthTotal: 3,
             vacArray: [
                 null,
                 null,
                 null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "S",
-                "S",
-                "S",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            ],
-            department: {
-                departmentName: "QA"
-            },
-            employee: {
-                _id: "56e298ab5def9136621b7803",
-                name: {
-                    last: "Shinkovych",
-                    first: "Rikhard"
-                }
-            }
-        },
-        {
-            _id: "56e14906bd479a9206f90ba5",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201609: 2
-            },
-            monthTotal: 2,
-            vacArray: [
-                null,
-                null,
                 "V",
                 "V",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            ],
-            department: {
-                departmentName: "iOS"
-            },
-            employee: {
-                _id: "55b92ad221e4b7c40f00007b",
-                name: {
-                    last: "Guti",
-                    first: "Roman"
-                }
-            }
-        },
-        {
-            _id: "56e72276c64e96844ef3d6a1",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201611: 2
-            },
-            monthTotal: 1,
-            vacArray: [
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                "S",
-                "S",
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null
-            ],
-            department: {
-                departmentName: "Android"
-            },
-            employee: {
-                _id: "55eef3fd6dceaee10b000020",
-                name: {
-                    last: "Saldan",
-                    first: "Roman"
-                }
-            }
-        },
-        {
-            _id: "56eab274b3a49e363c47bede",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201612: 2,
-                201613: 1
-            },
-            monthTotal: 3,
-            vacArray: [
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
-                null,
                 "V",
-                "V",
-                null,
-                null,
-                "V",
-                null,
-                null,
-                null
-            ],
-            department: {
-                departmentName: "Unity"
-            },
-            employee: {
-                _id: "55b92ad221e4b7c40f0000ae",
-                name: {
-                    last: "Dolottseva",
-                    first: "Tamara"
-                }
-            }
-        },
-        {
-            _id: "56d722a462de7bde64f58f9d",
-            month: 3,
-            year: 2016,
-            vacations: {
-                201609: 2
-            },
-            monthTotal: 2,
-            vacArray: [
-                null,
-                null,
-                "V",
-                "V",
-                null,
-                null,
                 null,
                 null,
                 null,
@@ -1395,28 +714,81 @@ define([
                 departmentName: "Design"
             },
             employee: {
-                _id: "56011186536bd29228000005",
+                _id: "564da59f9b85f8b16b574fe9",
                 name: {
-                    last: "Khruslov",
-                    first: "Valentyn"
+                    last: "Chuprov",
+                    first: "Andriy"
                 }
             }
         },
         {
-            _id: "56d6fbed805eb08d2b93d95a",
-            month: 3,
+            _id: "56e85c7fd4cfab3c4eae5997",
+            month: 5,
             year: 2016,
             vacations: {
-                201609: 1
+                201618: 5,
+                201619: 5
             },
-            monthTotal: 1,
+            monthTotal: 10,
             vacArray: [
-                "S",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
                 null,
                 null,
                 null,
                 null,
                 null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ],
+            department: {
+                departmentName: "HR"
+            },
+            employee: {
+                _id: "55b92ad221e4b7c40f0000b8",
+                name: {
+                    last: "Lobas",
+                    first: "Anna"
+                }
+            }
+        },
+        {
+            _id: "57174052a7cd810d7a134ad1",
+            month: 5,
+            year: 2016,
+            vacations: {
+                201618: 3
+            },
+            monthTotal: 3,
+            vacArray: [
+                null,
+                null,
+                null,
+                "V",
+                "V",
+                "V",
                 null,
                 null,
                 null,
@@ -1444,43 +816,93 @@ define([
                 null
             ],
             department: {
-                departmentName: "QA"
+                departmentName: "Design"
             },
             employee: {
-                _id: "55b92ad221e4b7c40f00007f",
+                _id: "56090fae86e2435a33000008",
                 name: {
-                    last: "Klimchenko",
-                    first: "Vasilisa"
+                    last: "Nukhova",
+                    first: "Inna"
                 }
             }
         },
         {
-            _id: "56b20c0bb5afbd282183a673",
-            month: 3,
+            _id: "5719f9f54b42b0d775e26e06",
+            month: 5,
             year: 2016,
             vacations: {
-                201609: 4,
-                201610: 5,
-                201611: 3
+                201621: 5
             },
-            monthTotal: 11,
+            monthTotal: 5,
             vacArray: [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 "V",
                 "V",
                 "V",
                 "V",
                 "V",
+                null,
+                null,
+                null,
+                null
+            ],
+            department: {
+                departmentName: "CSS/FrontEnd"
+            },
+            employee: {
+                _id: "55dd71eaf09cc2ec0b000007",
+                name: {
+                    last: "Khartov",
+                    first: "Ivan"
+                }
+            }
+        },
+        {
+            _id: "5717406fc6efb4847a5bc789",
+            month: 5,
+            year: 2016,
+            vacations: {
+                201618: 3
+            },
+            monthTotal: 3,
+            vacArray: [
+                null,
+                null,
+                null,
                 "V",
                 "V",
                 "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
-                "V",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
                 null,
                 null,
                 null,
@@ -1498,31 +920,31 @@ define([
                 null
             ],
             department: {
-                departmentName: "Android"
+                departmentName: "Design"
             },
             employee: {
-                _id: "55b92ad221e4b7c40f0000b4",
+                _id: "5684ec1a1fec73d05393a2a4",
                 name: {
-                    last: "Prokopyshyn",
-                    first: "Vasiliy"
+                    last: "Zaitseva",
+                    first: "Maria"
                 }
             }
         },
         {
-            _id: "56c34049dfd8a81466e2f755",
-            month: 3,
+            _id: "571e0698a132c10022d39b46",
+            month: 5,
             year: 2016,
             vacations: {
-                201609: 4
+                201618: 3
             },
-            monthTotal: 4,
+            monthTotal: 3,
             vacArray: [
+                null,
+                null,
+                null,
                 "V",
-                "P",
-                "P",
-                "P",
-                null,
-                null,
+                "V",
+                "V",
                 null,
                 null,
                 null,
@@ -1553,37 +975,38 @@ define([
                 departmentName: "iOS"
             },
             employee: {
-                _id: "55b92ad221e4b7c40f00008f",
+                _id: "55c06411d011746b0b000005",
                 name: {
-                    last: "Holovatskyi",
-                    first: "Yuriy"
+                    last: "Rachytskyy",
+                    first: "Maxim"
                 }
             }
         },
         {
-            _id: "56e7c2e7d4cfab3c4eae5991",
-            month: 3,
+            _id: "5729d622dce306912118af9f",
+            month: 5,
             year: 2016,
             vacations: {
-                201611: 2
+                201618: 2,
+                201619: 2
             },
-            monthTotal: 1,
+            monthTotal: 3,
             vacArray: [
                 null,
                 null,
                 null,
                 null,
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
                 null,
                 null,
                 null,
                 null,
                 null,
-                null,
-                null,
-                null,
-                null,
-                "S",
-                "S",
                 null,
                 null,
                 null,
@@ -1602,13 +1025,222 @@ define([
                 null
             ],
             department: {
+                departmentName: "iOS"
+            },
+            employee: {
+                _id: "55b92ad221e4b7c40f0000b7",
+                name: {
+                    last: "Polovka",
+                    first: "Myroslava"
+                }
+            }
+        },
+        {
+            _id: "5719fa3db629a41976c9ac92",
+            month: 5,
+            year: 2016,
+            vacations: {
+                201618: 3
+            },
+            monthTotal: 3,
+            vacArray: [
+                null,
+                null,
+                null,
+                "P",
+                "P",
+                "P",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ],
+            department: {
+                departmentName: "Web"
+            },
+            employee: {
+                _id: "569e3a73044ae38173244cfb",
+                name: {
+                    last: "Martyniuk",
+                    first: "Roman"
+                }
+            }
+        },
+        {
+            _id: "57174121c6efb4847a5bc78a",
+            month: 5,
+            year: 2016,
+            vacations: {
+                201618: 3
+            },
+            monthTotal: 3,
+            vacArray: [
+                null,
+                null,
+                null,
+                "V",
+                "V",
+                "V",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            ],
+            department: {
+                departmentName: "Design"
+            },
+            employee: {
+                _id: "568cdd375527d6691cb68b22",
+                name: {
+                    last: "Melnik",
+                    first: "Sergey"
+                }
+            }
+        },
+        {
+            _id: "570dfce948518bf55f3ef1d5",
+            month: 5,
+            year: 2016,
+            vacations: {
+                201621: 5,
+                201622: 2
+            },
+            monthTotal: 7,
+            vacArray: [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V",
+                "V"
+            ],
+            department: {
+                departmentName: "Web"
+            },
+            employee: {
+                _id: "55b92ad221e4b7c40f000062",
+                name: {
+                    last: "Cheypesh",
+                    first: "Vasiliy"
+                }
+            }
+        },
+        {
+            _id: "5729cbe9a132c10022d39b70",
+            month: 5,
+            year: 2016,
+            vacations: {
+                201622: 2
+            },
+            monthTotal: 2,
+            vacArray: [
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                "V",
+                "V"
+            ],
+            department: {
                 departmentName: "QA"
             },
             employee: {
-                _id: "56090d77066d979a33000009",
+                _id: "55b92ad221e4b7c40f000063",
                 name: {
-                    first: "Yuriy",
-                    last: "Bysaha"
+                    last: "Gusti",
+                    first: "Yana"
                 }
             }
         }
@@ -4971,10 +4603,11 @@ define([
                     var $thSortEl = listView.$el.find('th[data-sort="employee.name"]');
 
                     $thSortEl.click();
-                    expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('56e7219c0d773c634e918b6d');
+                    $thSortEl.click();
+                    expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('5717406fc6efb4847a5bc789');
 
                     $thSortEl.click();
-                    expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('56e6875e3d5bc25541857e34');  //todo find out how it sort
+                    expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('570dfce948518bf55f3ef1d5');  //todo find out how it sort
                 });
 
                 it('Try to create vacation item', function () {
@@ -5051,29 +4684,6 @@ define([
 
                     expect(listView.$el.find('#listTable > tr:nth-child(2) > td.editable:nth-child(3)')).to.not.have.class('P');
                 });
-
-                it('Try to delete last item in row', function () {
-                    var $emptyEl;
-                    var $needGrid = listView.$el.find('#listTable > tr:nth-child(5) > td.editable.V.selectedType');
-                    var vacationUrl = new RegExp('\/vacation\/', 'i');
-                    var vacationListUrl = new RegExp('\/vacation\/list', 'i');
-
-                    windowConfirmStub.returns(true);
-                    server.respondWith('DELETE', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-
-                    $needGrid.click();
-                    $emptyEl = listView.$el.find('#content > ul > li:nth-child(1)');
-                    server.respondWith('GET', vacationListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
-                    $emptyEl.click();
-                    server.respond();
-                    server.respond();
-
-                    expect(deleteSpy.calledOnce).to.be.true;
-                });
-
-                //it('Try to delete employee row', function(){
-                //    var
-                //});
 
                 it('Try to show more with error', function(){
                     var vacationUrl = new RegExp('\/vacation\/list', 'i');

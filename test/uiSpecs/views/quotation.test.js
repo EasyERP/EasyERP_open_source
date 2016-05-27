@@ -1240,17 +1240,7 @@ define([
                 });
 
                 expect(topBarView.$el.find('#createBtnHolder')).to.exist;
-                expect(topBarView.$el.find('#template-switcher')).to.exist;
             });
-
-            it('Try to switch view type', function(){
-                var $listTemplateBtn = topBarView.$el.find('#listBtn');
-
-                $listTemplateBtn.click();
-
-                expect(window.location.hash).to.be.equals('#easyErp/Quotation/list');
-            });
-
         });
 
         describe('List View', function () {

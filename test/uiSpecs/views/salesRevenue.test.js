@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'views/main/MainView',
@@ -3175,7 +3174,7 @@ define([
                     done();
                 });
 
-                /!*it('Try to go to EditDialog', function(){
+                /*it('Try to go to EditDialog', function(){
                     var $needTd = $thisEl.find('#weeklyScheduler tr:nth-child(1) > td:nth-child(2)');
 
                     $needTd.click();
@@ -3606,8 +3605,8 @@ define([
 
                     $cancelBtn.click();
                     expect($('.ui-dialog')).to.not.exist;
-                });*!/
+                });*/
             });
         });
     });
-});*/
+});

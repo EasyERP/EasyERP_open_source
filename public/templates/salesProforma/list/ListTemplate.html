@@ -27,7 +27,9 @@
     <%if(invoice.workflow){%>
         <%if(invoice.workflow.status === 'In Progress'){%>
             <span class="<%=invoice.workflow.status.toLowerCase().replace(' ', '')%>"><%=invoice.workflow.name%></span>
-        <% } else {%>
+        <% } else if (invoice.workflow.status === 'New') {%>
+            <span class="<%=invoice.workflow.name.toLowerCase()%>"><%= invoice.approved ? invoice.workflow.name : 'Not Approved' %></span>
+        <% } else { %>
             <span class="<%=invoice.workflow.name.toLowerCase()%>"><%=invoice.workflow.name%></span>
         <%}%>
     <% } else {%>
