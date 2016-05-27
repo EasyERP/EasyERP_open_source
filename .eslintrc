@@ -28,6 +28,7 @@
       {
         "props": false
       }
-    ]
+    ],
+    "default-case": ["error", { "commentPattern": "^skip\\sdefault" }]
   }
 }

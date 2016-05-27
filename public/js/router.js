@@ -787,13 +787,13 @@ define([
 
         buildCollectionRoute: function (contentType) {
             if (!contentType) {
-                throw new Error("Error building collection route. ContentType is undefined");
+                throw new Error('Error building collection route. ContentType is undefined');
             }
             switch (contentType) {
                 case 'Birthdays':
-                    return "collections/" + contentType + "/filterCollection";
+                    return 'collections/' + contentType + '/filterCollection';
                 default:
-                    return "collections/" + contentType + "/filterCollection";
+                    return 'collections/' + contentType + '/filterCollection';
             }
         },
 
@@ -1175,20 +1175,23 @@ define([
                 } else {
                     context.mainView.updateMenu(contentType);
                 }
-                contentViewUrl = "views/" + contentType + "/thumbnails/ThumbnailsView";
+                contentViewUrl = 'views/' + contentType + '/thumbnails/ThumbnailsView';
                 collectionUrl = context.buildCollectionRoute(contentType);
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
+                    var collection;
 
-                    var collection = (contentType !== 'Calendar') && (contentType !== 'Workflows')
-                        ? new contentCollection({
-                        viewType     : 'thumbnails',
-                        //page: 1,
-                        count        : count,
-                        filter       : filter,
-                        contentType  : contentType,
-                        newCollection: newCollection
-                    })
-                        : new contentCollection();
+                    if (contentType !== 'Calendar' && contentType !== 'Workflows') {
+                        collection = new contentCollection({
+                            viewType     : 'thumbnails',
+                            //page: 1,
+                            count        : count,
+                            filter       : filter,
+                            contentType  : contentType,
+                            newCollection: newCollection
+                        });
+                    } else {
+                        collection = new contentCollection();
+                    }
 
                     collection.bind('reset', _.bind(createViews, self));
                     custom.setCurrentVT('thumbnails');
@@ -1201,6 +1204,7 @@ define([
                             newCollection: newCollection
                         });
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
+
                         collection.unbind('reset');
                         //var url = '#easyErp/' + contentType + '/thumbnails';
                         topbarView.bind('createEvent', contentview.createItem, contentview);

@@ -6,8 +6,11 @@ var WeTrackHandler = require('../handlers/wTrack');
 var JobsHandler = require('../handlers/jobs');
 var QuotationHandler = require('../handlers/quotation');
 var PaymentsHandler = require('../handlers/payment');
+var authStackMiddleware = require('../helpers/checkAuth');
+var MODULES = require('../constants/modules');
 
 module.exports = function (models) {
+    'use strict';
     var handler = new ProjectHandler(models);
     var invoiceHandler = new InvoiceHandler(models);
     var wTrackHandler = new WeTrackHandler(null, models);
@@ -15,8 +18,12 @@ module.exports = function (models) {
     var quotationHandler = new QuotationHandler(models);
     var paymentsHandler = new PaymentsHandler(models);
 
-    router.post('/updateAllProjects', handler.updateAllProjects);
-    router.post('/sendInvoice', handler.sendInvoice);
+    var moduleId = MODULES.PROJECT;
+    var accessStackMiddlWare = require('../helpers/access')(moduleId, models);
+    
+    router.use(authStackMiddleware);
+    
+    router.get('/', accessStackMiddlWare, handler.getByViewType);
     router.get('/getProjectPMForDashboard', handler.getProjectPMForDashboard);
     router.get('/getForQuotation', handler.getForQuotation);
     router.get('/projectType', handler.getProjectType);
@@ -32,6 +39,9 @@ module.exports = function (models) {
     router.get('/:id/quotations', quotationHandler.getForProject);
     router.get('/:id/orders', quotationHandler.getForProject);
     router.get('/:id/payments', paymentsHandler.getForProject);
+    
+    router.post('/updateAllProjects', handler.updateAllProjects);
+    router.post('/sendInvoice', handler.sendInvoice);
 
     return router;
 };

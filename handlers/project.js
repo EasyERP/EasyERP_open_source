@@ -1,7 +1,8 @@
 var mongoose = require('mongoose');
-var Project = function (models) {
+
+module.exports = function (models) {
     var access = require('../Modules/additions/access.js')(models);
-    var accessRoll = require("../helpers/accessRollHelper.js")(models);
+    var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var ProjectSchema = mongoose.Schemas.Project;
     var wTrackSchema = mongoose.Schemas.wTrack;
     var MonthHoursSchema = mongoose.Schemas.MonthHours;
@@ -15,7 +16,261 @@ var Project = function (models) {
     var CONSTANTS = require('../constants/mainConstants.js');
     var Mailer = require('../helpers/mailer');
     var mailer = new Mailer();
-    var pathMod = require("path");
+    var pathMod = require('path');
+
+    function caseFilter(filter) {
+        var condition = [];
+        var keys = Object.keys(filter);
+        var key;
+        var i;
+
+        for (i = keys.length - 1; i >= 0; i--) {
+            key = keys[i]; // added correct fields for Tasks and one new field Summary
+
+            switch (key) {
+                case 'workflow':
+                    condition.push({'workflow._id': {$in: filter.workflow.value.objectID()}});
+                    break;
+                case 'project':
+                    condition.push({'project._id': {$in: filter.project.value.objectID()}});
+                    break;
+                case 'customer':
+                    condition.push({'customer._id': {$in: filter.customer.value.objectID()}});
+                    break;
+                case 'projectmanager':
+                    if (filter.projectmanager && filter.projectmanager.value) {
+                        condition.push({'projectmanager._id': {$in: filter.projectmanager.value.objectID()}});
+                    }
+                    break;
+                case 'salesmanager':
+                    condition.push({'salesmanager._id': {$in: filter.salesmanager.value.objectID()}});
+                    break;
+                case 'name':
+                    condition.push({_id: {$in: filter.name.value.objectID()}});
+                    break;
+                case 'summary':
+                    condition.push({_id: {$in: filter.summary.value.objectID()}});
+                    break;
+                case 'type':
+                    condition.push({type: {$in: filter.type.value}});
+                    break;
+                case 'assignedTo':
+                    condition.push({'assignedTo._id': {$in: filter.assignedTo.value.objectID()}});
+                    break;
+                // skip default case
+            }
+        }
+
+        return condition;
+    };
+
+    this.getByViewType = function (req, res, next) {
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var data = req.query;
+        var contentType = data.contentType;
+        var optionsObject = {};
+        var filter = data.filter || {};
+        var waterfallTasks;
+        var accessRollSearcher;
+        var contentSearcher;
+        var project;
+        var projectSecond;
+        var response = {};
+
+        response.showMore = false;
+
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                optionsObject.$or = caseFilter(filter);
+            } else {
+                optionsObject.$and = caseFilter(filter);
+            }
+        }
+
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Project, cb);
+        };
+
+        contentSearcher = function (ids, cb) {
+            var queryObject = {};
+
+            queryObject.$and = [];
+
+            if (optionsObject.$and.length) {
+                queryObject.$and.push(optionsObject);
+            }
+
+            if (contentType === 'Employees') {
+                queryObject.$and.push({isEmployee: true});
+            } else if (contentType === 'Applications') {
+                queryObject.$and.push({isEmployee: false});
+            }
+
+            queryObject.$and.push({_id: {$in: ids}});
+
+            switch (contentType) {
+                case ('Employees'):
+
+                    project = {
+                        manager         : {$arrayElemAt: ["$manager", 0]},
+                        jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+                        department      : {$arrayElemAt: ["$department", 0]},
+                        'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                        'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                        name            : 1,
+                        'editedBy.date' : 1,
+                        'createdBy.date': 1,
+                        dateBirth       : 1,
+                        skype           : 1,
+                        workEmail       : 1,
+                        workPhones      : 1,
+                        jobType         : 1,
+                        isEmployee      : 1
+                    };
+
+                    projectSecond = {
+                        manager         : 1,
+                        jobPosition     : 1,
+                        department      : 1,
+                        'createdBy.user': 1,
+                        'editedBy.user' : 1,
+                        'editedBy.date' : 1,
+                        'createdBy.date': 1,
+                        name            : 1,
+                        dateBirth       : 1,
+                        skype           : 1,
+                        workEmail       : 1,
+                        workPhones      : 1,
+                        jobType         : 1,
+                        isEmployee      : 1
+                    };
+                    break;
+                case ('Applications'):
+
+                    if (data && data.filter && data.filter.workflow) {
+                        data.filter.workflow = data.filter.workflow.map(function (item) {
+                            return item === "null" ? null : item;
+                        });
+                    }
+
+                    project = {
+                        manager         : {$arrayElemAt: ["$manager", 0]},
+                        jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
+                        department      : {$arrayElemAt: ["$department", 0]},
+                        'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
+                        'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                        name            : 1,
+                        'editedBy.date' : 1,
+                        'createdBy.date': 1,
+                        dateBirth       : 1,
+                        skype           : 1,
+                        workEmail       : 1,
+                        workPhones      : 1,
+                        jobType         : 1,
+                        isEmployee      : 1,
+                        creationDate    : 1,
+                        workflow        : {$arrayElemAt: ["$workflow", 0]},
+                        personalEmail   : 1,
+                        sequence        : 1,
+                        hire            : 1,
+                        fire            : 1
+                    };
+
+                    projectSecond = {
+                        manager         : 1,
+                        jobPosition     : 1,
+                        department      : 1,
+                        'createdBy.user': 1,
+                        'editedBy.user' : 1,
+                        'editedBy.date' : 1,
+                        'createdBy.date': 1,
+                        name            : 1,
+                        dateBirth       : 1,
+                        skype           : 1,
+                        workEmail       : 1,
+                        workPhones      : 1,
+                        jobType         : 1,
+                        isEmployee      : 1,
+                        creationDate    : 1,
+                        workflow        : 1,
+                        personalEmail   : 1,
+                        sequence        : 1,
+                        hire            : 1,
+                        fire            : 1
+                    };
+                    break;
+            }
+
+            Employee.aggregate([{
+                $lookup: {
+                    from        : "Employees",
+                    localField  : "manager",
+                    foreignField: "_id", as: "manager"
+                }
+            }, {
+                $lookup: {
+                    from        : "JobPosition",
+                    localField  : "jobPosition",
+                    foreignField: "_id", as: "jobPosition"
+                }
+            }, {
+                $lookup: {
+                    from        : "Department",
+                    localField  : "department",
+                    foreignField: "_id", as: "department"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "relatedUser",
+                    foreignField: "_id", as: "relatedUser"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "createdBy.user",
+                    foreignField: "_id", as: "createdBy.user"
+                }
+            }, {
+                $lookup: {
+                    from        : "Users",
+                    localField  : "editedBy.user",
+                    foreignField: "_id", as: "editedBy.user"
+                }
+            }, {
+                $lookup: {
+                    from        : "workflows",
+                    localField  : "workflow",
+                    foreignField: "_id", as: "workflow"
+                }
+            }, {
+                $project: project
+            }, {
+                $project: projectSecond
+            }, {
+                $match: queryObject
+            }], function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        waterfallTasks = [accessRollSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            if (data.currentNumber && data.currentNumber < result.length) {
+                response.showMore = true;
+            }
+            response.count = result.length;
+            res.status(200).send(response);
+        });
+    };
 
     this.getForWtrack = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -76,7 +331,7 @@ var Project = function (models) {
 
         data.attachments = JSON.parse(data.attachments);
 
-        attachments = data.attachments.map(function(att) {
+        attachments = data.attachments.map(function (att) {
             return {
                 path: pathMod.join(__dirname, '../routes', decodeURIComponent(att))
             };
@@ -89,18 +344,18 @@ var Project = function (models) {
             attachments: attachments
         };
 
-        mailer.sendInvoice(mailOptions, function(err, result) {
+        mailer.sendInvoice(mailOptions, function (err, result) {
             if (err) {
                 return next(err);
             }
-            Invoice.findByIdAndUpdate(data.id, {$set: {emailed: true}}, function(err, result) {
+            Invoice.findByIdAndUpdate(data.id, {$set: {emailed: true}}, function (err, result) {
                 res.status(200).send({});
             });
         });
     };
 
     this.getEmails = function (req, res, next) {
-        var projectId =  req.params.id;
+        var projectId = req.params.id;
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
 
         Project.aggregate([
@@ -152,7 +407,7 @@ var Project = function (models) {
                     customerPersons: '$customerPersons.email'
                 }
             }
-        ], function(err, result) {
+        ], function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -225,7 +480,6 @@ var Project = function (models) {
             });
     };
 
-
     this.getForDd = function (req, res, next) {
         var project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var waterfallTasks;
@@ -235,7 +489,7 @@ var Project = function (models) {
 
         var contentSearcher = function (result, cb) {
 
-            project.find({_id : {$in : result}}, {projectName : 1, projectShortDesc : 1})
+            project.find({_id: {$in: result}}, {projectName: 1, projectShortDesc: 1})
                 .lean()
                 .sort({'projectName': 1})
                 .exec(function (err, _res) {
@@ -259,9 +513,6 @@ var Project = function (models) {
         });
 
     };
-
-
-
 
     this.updateAllProjects = function (req, res, next) {
         /* var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -769,37 +1020,37 @@ var Project = function (models) {
         }, {
             $project: {
                 'budget.projectTeam': {$arrayElemAt: ['$budget.projectTeam', 0]},
-                salesmanager      : {$arrayElemAt: ['$salesmanager', 0]},
+                salesmanager        : {$arrayElemAt: ['$salesmanager', 0]},
                 'budget.budgetTotal': 1,
                 projectName         : 1
             }
         }, {
             $project: {
-                salesmanager      : 1,
+                salesmanager        : 1,
                 projectName         : 1,
                 'budget.projectTeam': 1,
                 'budget.budgetTotal': 1
             }
         }, {
             $group: {
-                _id           : '$_id',
+                _id         : '$_id',
                 salesmanager: {
                     $addToSet: '$salesmanager'
                 },
-                projectTeam   : {
+                projectTeam : {
                     $push: '$budget.projectTeam'
                 },
-                budgetTotal   : {
+                budgetTotal : {
                     $addToSet: '$budget.budgetTotal'
                 },
-                projectName   : {
+                projectName : {
                     $addToSet: '$projectName'
                 }
             }
         }, {
             $project: {
                 _id                 : 1,
-                salesmanager      : {$arrayElemAt: ['$salesmanager', 0]},
+                salesmanager        : {$arrayElemAt: ['$salesmanager', 0]},
                 projectName         : {$arrayElemAt: ['$projectName', 0]},
                 'budget.projectTeam': '$projectTeam',
                 'budget.budgetTotal': '$budgetTotal'
@@ -1036,4 +1287,3 @@ var Project = function (models) {
     };
 };
 
-module.exports = Project;

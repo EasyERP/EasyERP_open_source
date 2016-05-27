@@ -1,19 +1,18 @@
 module.exports = function (moduleId, models) {
-    "use strict";
+    'use strict';
     return function (req, res, next) {
-        var access = require("../Modules/additions/access.js")(models);
+        var access = require('../Modules/additions/access.js')(models);
         var method = req.method;
         var err;
 
-        function sender(access) {
-            if (access) {
-                next();
-            } else {
-                err = new Error();
-                err.status = 403;
-
-                next(err);
+        function sender(_access) {
+            if (_access) {
+                return next();
             }
+
+            err = new Error();
+            err.status = 403;
+            next(err);
         }
 
         method = method ? method.toUpperCase() : '';
@@ -37,7 +36,7 @@ module.exports = function (moduleId, models) {
             case 'DELETE':
                 access.getReadAccess(req, req.session.uId, moduleId, sender);
                 break;
+            // skip default case
         }
-
     };
 };

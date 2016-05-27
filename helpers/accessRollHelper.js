@@ -1,7 +1,3 @@
-/**
- * Created by liliy on 22.01.2016.
- */
-
 module.exports = function (models) {
     'use strict';
     var mongoose = require('mongoose');
@@ -17,7 +13,7 @@ module.exports = function (models) {
 
     return function (req, Model, waterfallCb) {
         departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
+            models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(
                 {
                     $match: {
                         users: objectId(req.session.uId)
@@ -27,7 +23,6 @@ module.exports = function (models) {
                         _id: 1
                     }
                 },
-
                 waterfallCallback);
         };
 
@@ -37,11 +32,7 @@ module.exports = function (models) {
             var group = rewriteAccess.group(req.session.uId, deps);
             var whoCanRw = [everyOne, owner, group];
             var matchQuery = {
-                $and: [
-                    {
-                        $or: whoCanRw
-                    }
-                ]
+                $or: whoCanRw
             };
 
             Model.aggregate(

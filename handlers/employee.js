@@ -123,38 +123,38 @@ var Employee = function (event, models) {
     };
 
     /*this.getSalaryByMonth = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-        var query = req.query;
-        var _id = query._id;
-        var month = query.month;
-        var year = query.year;
-        var date = moment().year(year).month(month - 1).date(1);
+     var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+     var query = req.query;
+     var _id = query._id;
+     var month = query.month;
+     var year = query.year;
+     var date = moment().year(year).month(month - 1).date(1);
 
-        Employee.findById(_id, {transfer: 1}, function (err, result) {
-            var salary = 0;
-            var hire;
-            var i;
-            var length;
+     Employee.findById(_id, {transfer: 1}, function (err, result) {
+     var salary = 0;
+     var hire;
+     var i;
+     var length;
 
-            if (err) {
-                return next(err);
-            }
+     if (err) {
+     return next(err);
+     }
 
-            if (result) {
-                hire = result.transfer;
-                length = hire.length;
+     if (result) {
+     hire = result.transfer;
+     length = hire.length;
 
-                for (i = length - 1; i >= 0; i--) {
-                    if (date >= hire[i].date) {
-                        salary = hire[i].salary;
-                        break;
-                    }
-                }
-            }
+     for (i = length - 1; i >= 0; i--) {
+     if (date >= hire[i].date) {
+     salary = hire[i].salary;
+     break;
+     }
+     }
+     }
 
-            res.status(200).send({data: salary});
-        });
-    };*/
+     res.status(200).send({data: salary});
+     });
+     };*/
 
     this.getYears = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -344,32 +344,30 @@ var Employee = function (event, models) {
 
             employee.sequence = sequence;
 
-            Department.findById(employee.department,
-                function (error, dep) {
+            Department.findById(employee.department, function (error, dep) {
+                if (employee.transfer && employee.transfer[0]) {
+                    if (dep && dep.parentDepartment && dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
+                        employee.transfer[0].isDeveloper = true;
+                    } else if (employee.transfer && employee.transfer[0]) {
+                        employee.transfer[0].isDeveloper = false;
+                    }
+                }
 
-                    if(employee.transfer && employee.transfer[0]) {
-                        if (dep && dep.parentDepartment && dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
-                            employee.transfer[0].isDeveloper = true;
-                        } else if (employee.transfer && employee.transfer[0]) {
-                            employee.transfer[0].isDeveloper = false;
-                        }
+                employee.save(function (err, result) {
+                    if (err) {
+                        return next(err);
                     }
 
-                    employee.save(function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
+                    res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
 
-                        res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
+                    if (result.isEmployee) {
+                        event.emit('recalculate', req, res, next);
+                    }
 
-                        if (result.isEmployee) {
-                            event.emit('recalculate', req, res, next);
-                        }
-
-                        event.emit('dropHoursCashes', req);
-                        event.emit('recollectVacationDash');
-                    });
+                    event.emit('dropHoursCashes', req);
+                    event.emit('recollectVacationDash');
                 });
+            });
 
         });
     };
@@ -417,7 +415,8 @@ var Employee = function (event, models) {
         var project = {};
         for (var i in req.query) {
             data[i] = req.query[i];
-        };
+        }
+        ;
 
         if (ids.indexOf(req.session.uId) === -1) {
             project = {'transfer.salary': 0};
@@ -1141,7 +1140,7 @@ var Employee = function (event, models) {
             filterObj.$and = [];
             filterObj.$and.push({isEmployee: false});
             filterObj.$and.push({workflow: objectId(data.workflowId)});
-            filterObj.$and.push({_id: {$in : responseApplications}});
+            filterObj.$and.push({_id: {$in: responseApplications}});
 
 
             Employee
@@ -1379,32 +1378,32 @@ var Employee = function (event, models) {
     };
 
     /*this.getSalaryByMonth = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-        var query = req.query;
-        var _id = query._id;
-        var month = query.month;
-        var year = query.year;
-        var date = moment().year(year).month(month - 1).date(1);
+     var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+     var query = req.query;
+     var _id = query._id;
+     var month = query.month;
+     var year = query.year;
+     var date = moment().year(year).month(month - 1).date(1);
 
-        Employee.findById(_id, {hire: 1, fire: 1}, function (err, result) {
-            if (err){
-                return next(err);
-            }
-            var hire = result.hire;
-            var salary = 0;
-            var i;
-            var length = hire.length;
+     Employee.findById(_id, {hire: 1, fire: 1}, function (err, result) {
+     if (err){
+     return next(err);
+     }
+     var hire = result.hire;
+     var salary = 0;
+     var i;
+     var length = hire.length;
 
-            for (i = length - 1; i >= 0; i--){
-                if (date >= hire[i].date){
-                    salary = hire[i].salary;
-                    break;
-                }
-            }
+     for (i = length - 1; i >= 0; i--){
+     if (date >= hire[i].date){
+     salary = hire[i].salary;
+     break;
+     }
+     }
 
-            return res.status(200).send({data: salary});
-        });
-    };*/
+     return res.status(200).send({data: salary});
+     });
+     };*/
 
     this.uploadEmployeesFiles = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);

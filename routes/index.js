@@ -763,9 +763,9 @@ module.exports = function (app, mainDb) {
             //case ('ownCompanies'):
             //    requestHandler.customerTotalCollectionLength(req, res);
             //    break;
-            case ('Projects'):
+            /*case ('Projects'):
                 requestHandler.projectsTotalCollectionLength(req, res);
-                break;
+                break;*/
             case ('Tasks'):
                 requestHandler.projectsTotalCollectionLength(req, res);
                 break;
