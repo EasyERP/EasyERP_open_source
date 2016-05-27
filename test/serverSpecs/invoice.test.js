@@ -157,6 +157,33 @@ describe("Invoice Specs", function () {
 
                         invoiceId = body._id;
 
+                        it("should approve invoice", function (done) {
+                            var body = {
+                                invoiceId: invoiceId,
+                                invoiceDate: '1 Feb, 2016'
+                            };
+
+                            aggent
+                                .patch('invoice/approve')
+                                .send(body)
+                                .expect(200)
+                                .end(function (err, res) {
+                                    var body = res.body;
+
+                                    if (err) {
+                                        return done(err);
+                                    }
+                                    expect(body)
+                                        .to.be.instanceOf(Object);
+                                    expect(body)
+                                        .to.have.property('_id');
+
+                                    done();
+                                });
+
+                        });
+
+
                         done();
                     });
             });
