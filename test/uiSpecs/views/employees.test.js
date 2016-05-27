@@ -1,4 +1,3 @@
-/*
 define([
     'text!fixtures/index.html',
     'models/EmployeesModel',
@@ -5991,7 +5990,7 @@ define([
                 expect(formView.$el.find('.chart-tabs li:nth-child(2) > a')).to.have.class('active');
             });
 
-            /!*it('Try to click end contract with Error status', function () {
+            /*it('Try to click end contract with Error status', function () {
                 var $newSelectEl;
                 var employeeUrl = new RegExp('/employees/', 'i');
                 var $endContractArrowEl = formView.$el.find('ul > li.right.withEndContract > span.arrow');
@@ -6022,7 +6021,7 @@ define([
 
                 expect(window.location.hash).to.be.equals('#easyErp/Applications/kanban');
 
-            });*!/
+            });*/
 
             it('Try to open EditForm form Form', function(){
                 formView.editItem();
@@ -6252,7 +6251,7 @@ define([
                 expect($dialogEl.find('#fire1')).to.exist;
             });
 
-            /!*it('Try to save item with fired (must be redirected to kanban)', function(){
+            /*it('Try to save item with fired (must be redirected to kanban)', function(){
                 var $saveBtn = $dialogEl.find('button:nth-child(1)');
                 var employeeUrl = new RegExp('\/employees\/', 'i');
 
@@ -6266,7 +6265,7 @@ define([
 
                 expect(window.location.hash).to.equals('#easyErp/Applications/kanban');
 
-            });*!/
+            });*/
 
             it('Try to save item', function(){
                 window.location.hash = '#easyErp/Employees/thumbnails';
@@ -6479,4 +6478,3 @@ define([
     });
 
 });
-*/

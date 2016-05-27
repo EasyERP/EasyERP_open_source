@@ -682,18 +682,23 @@ define([
                     done();
                 });
 
-                it('Try to change week', function () {
-                    var $spinnerBtn = indexView.$el.find('.ui-spinner-button');
+                it('Try to change week', function (done) {
                     var revenueUrl = new RegExp('\/revenue\/getFromCash', 'i');
+
+                    this.timeout(5000);
 
                     server.respondWith('GET', revenueUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeRevenue)]);
                     indexView.updateWeek();
                     server.respond();
 
+                    clock.tick(4000);
+
                     expect(indexView.$el.find('.chartContainer')).to.have.exist;
                     expect(indexView.$el.find('#totalTotalHours')).to.have.exist;
                     expect(indexView.$el.find('#totalHoursSold')).to.have.exist;
                     expect(indexView.$el.find('#totalHoursUnsold')).to.have.exist;
+
+                    done();
                 });
 
                 it('Try to open department', function () {

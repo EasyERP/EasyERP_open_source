@@ -4170,16 +4170,13 @@ define([
 
         describe('TopBarView', function () {
             var server;
-            var mainSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
-                mainSpy = sinon.spy(App, 'render');
             });
 
             after(function () {
                 server.restore();
-                mainSpy.restore();
             });
 
             it('Try to fetch collection with error', function () {
