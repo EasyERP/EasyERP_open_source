@@ -6,11 +6,12 @@ module.exports = function (moduleId, models) {
         var method = req.method;
         var type = req.headers.type;
         var baseUrl = req.baseUrl;
+        var urlStr;
         var err;
 
         if (type === 'sales'){
-            baseUrl.substr(1);
-            moduleId = MODULES['SALES' + baseUrl.toUpperCase()] || moduleId;
+            urlStr = baseUrl.substr(1);
+            moduleId = MODULES['SALES' + urlStr.toUpperCase()] || moduleId;
         }
 
         function sender(access) {

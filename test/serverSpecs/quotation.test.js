@@ -196,7 +196,7 @@ describe("Quotation Specs", function () {
         it("should get quotation by id", function (done) {
             var query = {
                 forSales : true
-            }
+            };
 
             aggent
                 .get('quotation/form/' + id)

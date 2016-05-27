@@ -1123,7 +1123,7 @@ var Quotation = function (models, event) {
     };
 
     this.getById = function (req, res, next) {
-        var id = req.params.id;
+        var id = objectId(req.params.id) || null;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var departmentSearcher;
         var contentIdsSearcher;
@@ -1173,7 +1173,7 @@ var Quotation = function (models, event) {
         };
 
         contentSearcher = function (quotationsIds, waterfallCallback) {
-            var queryObject = {_id: objectId(id)};
+            var queryObject = {_id: id};
             var query;
 
             //queryObject.isOrder = isOrder;
