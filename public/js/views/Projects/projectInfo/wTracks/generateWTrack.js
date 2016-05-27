@@ -482,7 +482,6 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                 },
 
                 generateItems: function (e) {
-
                     var self = this;
                     var once = _.once(generateOnce);
 
@@ -550,7 +549,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                                     App.projectInfo = App.projectInfo || {};
                                     App.projectInfo.currentTab = 'timesheet';
 
-                                    tabs = $(".chart-tabs");
+                                    tabs = $('.chart-tabs');
                                     activeTab = tabs.find('.active');
 
                                     activeTab.removeClass('active');
@@ -707,19 +706,19 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                     }
 
                     this.$el = $(dialog).dialog({
-                        dialogClass: "wTrackDialog",
+                        dialogClass: 'wTrackDialog',
                         width      : 1200,
-                        title      : "Generate weTrack",
+                        title      : 'Generate weTrack',
                         buttons    : {
                             save  : {
-                                text : "Generate",
-                                class: "btn",
-                                id   : "generateBtn",
+                                text : 'Generate',
+                                class: 'btn',
+                                id   : 'generateBtn',
                                 click: self.generateItems
                             },
                             cancel: {
-                                text : "Cancel",
-                                class: "btn",
+                                text : 'Cancel',
+                                class: 'btn',
                                 click: function () {
                                     self.hideDialog();
                                 }
@@ -727,7 +726,10 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         }
                     });
 
-                    dataService.getData("/employee/getForDD", {isEmployee: true, devDepartments: true}, function (employees) {
+                    dataService.getData("/employee/getForDD", {
+                        isEmployee    : true,
+                        devDepartments: true
+                    }, function (employees) {
                         employees = _.map(employees.data, function (employee) {
                             employee.name = employee.name.first + ' ' + employee.name.last;
 
@@ -737,7 +739,7 @@ define(["text!templates/Projects/projectInfo/wTracks/generate.html",
                         self.responseObj['#employee'] = employees;
                     });
 
-                    dataService.getData("/department/getForDD", {devDepartments : true}, function (departments) {
+                    dataService.getData("/department/getForDD", {devDepartments: true}, function (departments) {
                         departments = _.map(departments.data, function (department) {
                             department.name = department.departmentName;
 

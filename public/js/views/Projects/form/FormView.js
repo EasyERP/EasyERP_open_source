@@ -45,7 +45,8 @@ define([
         'custom',
         'dataService',
         'async',
-        'helpers'],
+        'helpers',
+        'constants'],
     function (Backbone,
               $,
               _,
@@ -89,7 +90,8 @@ define([
               custom,
               dataService,
               async,
-              helpers) {
+              helpers,
+              CONSTANTS) {
         'use strict';
 
         var View = Backbone.View.extend({
@@ -577,6 +579,7 @@ define([
 
                 var whoCanRW = thisEl.find("[name='whoCanRW']:checked").val();
                 var health = thisEl.find('#health a').data('value');
+                var customerName;
                 //var _targetEndDate = $.trim(thisEl.find('#EndDateTarget').val());
                 var description = $.trim(thisEl.find('#description').val());
                 var data = {
@@ -605,7 +608,20 @@ define([
                 };
 
                 customer._id = thisEl.find('#customerDd').data('id');
-                customer.name = thisEl.find('#customerDd').text();
+                customerName = thisEl.find('#customerDd').text();
+                customerName = customerName.split(' ');
+
+                if (customerName.length) {
+                    customer.name = {
+                        first: customerName[0] || '',
+                        last : customerName[1] || ''
+                    };
+                } else {
+                    customer.name = {
+                        first: '',
+                        last : ''
+                    };
+                }
 
                 workflow._id = thisEl.find('#workflowsDd').data('id');
                 workflow.name = thisEl.find('#workflowsDd').text();
@@ -847,9 +863,16 @@ define([
 
                 function createView() {
                     var gridStart = $('#grid-start').text();
-                    var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
-                    var itemsNumber = parseInt($('.selectedItemsNumber').text(), 10) || 'all';
-                    var defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
+                    var selectedDefaultItemNumber = self.$el.find('.selectedItemsNumber').text();
+                    var startNumber;
+                    var itemsNumber;
+                    var defaultItemsNumber;
+
+                    startNumber = parseInt(gridStart, 10);
+                    startNumber = !isNaN(startNumber) && startNumber > 1 ? startNumber : 1;
+                    itemsNumber = parseInt(selectedDefaultItemNumber, 10);
+                    itemsNumber = !isNaN(itemsNumber) ? itemsNumber : CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
+                    defaultItemsNumber = itemsNumber || self.wCollection.namberToShow;
 
                     callback();
 

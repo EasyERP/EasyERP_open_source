@@ -1484,7 +1484,7 @@ var Project = function (models, event) {
                     event.emit('updateProjectDetails', {req: req, _id: project._id});
                 }
 
-                res.send(200, project);
+                res.status(200).send({success: 'updated'});
                 //event.emit('recollectProjectInfo');
                 //event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectName', project.projectName);
                 //event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer._id', project.customer._id);
