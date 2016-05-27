@@ -503,14 +503,19 @@ var Customers = function (models) {
             }
                 break;
         }
+        if (data && data.ids){
+            Customers.find(optionsObject, {_id: 1, imageSrc: 1}, function (err, response) {
+                if (err) {
+                    return next(err);
+                }
 
-        Customers.find(optionsObject, {_id: 1, imageSrc: 1}, function (err, response) {
-            if (err) {
-                return next(err);
-            }
+                res.send(200, {data: response});
+            });
+        } else {
+            res.send(200, {data: []});
+        }
 
-            res.send(200, {data: response});
-        });
+
     };
 
     this.create = function (req, res, next) {
