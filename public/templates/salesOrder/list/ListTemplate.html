@@ -3,7 +3,9 @@
 <%if (order.workflow && order.workflow.status !== 'New') { %>
 class="notEditable"
 <% } %>>
-<td class="notForm centerCell"><input type="checkbox" value="<%=order._id%>" class="checkbox"/></td>
+<td class="notForm centerCell"><input type="checkbox" value="<%=order._id%>" class="checkbox <%if (order.proformaCounter || (order.workflow && order.workflow.name !== 'Not Invoiced')) { %>
+                notRemovable
+                <% } %>"/></td>
 <td class="centerCell"><%=startNumber + index + 1%></td>
 <td><%=order.name%></td>
 <td><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : ''%></td>

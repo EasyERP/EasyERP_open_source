@@ -150,9 +150,9 @@ var Quotation = function (models, event) {
 
                     products = quotation.toJSON().products;
 
-                async.each(products, function (product, cb) {
-                    var jobs = product.jobs;
-                    var _type = quotation.toJSON().isOrder ? 'Ordered' : 'Quoted';
+                    async.each(products, function (product, cb) {
+                        var jobs = product.jobs;
+                        var _type = quotation.toJSON().isOrder ? 'Ordered' : 'Quoted';
 
                         var index = indexOfBinary(oldProducts, jobs.id);
 
@@ -366,112 +366,112 @@ var Quotation = function (models, event) {
                     optionsObject.$and.push({isOrder: true});
                 }
 
-                        Quotation
-                            .aggregate([{
-                                $match: queryObject
-                            }, {
-                                $lookup: {
-                                    from        : 'projectMembers',
-                                    localField  : 'project',
-                                    foreignField: 'projectId',
-                                    as          : 'projectMembers'
+                Quotation
+                    .aggregate([{
+                        $match: queryObject
+                    }, {
+                        $lookup: {
+                            from        : 'projectMembers',
+                            localField  : 'project',
+                            foreignField: 'projectId',
+                            as          : 'projectMembers'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Customers',
+                            localField  : 'supplier',
+                            foreignField: '_id',
+                            as          : 'supplier'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'workflows',
+                            localField  : 'workflow',
+                            foreignField: '_id',
+                            as          : 'workflow'
+                        }
+                    }, {
+                        $project: {
+                            workflow       : {$arrayElemAt: ['$workflow', 0]},
+                            supplier       : {$arrayElemAt: ['$supplier', 0]},
+                            salesmanagers  : {
+                                $filter: {
+                                    input: '$projectMembers',
+                                    as   : 'projectMember',
+                                    cond : salesManagerMatch
                                 }
-                            }, {
-                                $lookup: {
-                                    from        : 'Customers',
-                                    localField  : 'supplier',
-                                    foreignField: '_id',
-                                    as          : 'supplier'
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'workflows',
-                                    localField  : 'workflow',
-                                    foreignField: '_id',
-                                    as          : 'workflow'
-                                }
-                            }, {
-                                $project: {
-                                    workflow     : {$arrayElemAt: ['$workflow', 0]},
-                                    supplier     : {$arrayElemAt: ['$supplier', 0]},
-                                    salesmanagers: {
-                                        $filter: {
-                                            input: '$projectMembers',
-                                            as   : 'projectMember',
-                                            cond : salesManagerMatch
-                                        }
-                                    },
-                                    currency     : 1,
-                                    paymentInfo  : 1,
-                                    orderDate    : 1,
-                                    name         : 1,
-                                    isOrder      : 1,
-                                    proformaCounter:1
-                                }
-                            }, {
-                                $project: {
-                                    salesmanagers: {$arrayElemAt: ['$salesmanagers', 0]},
-                                    supplier     : {
-                                        _id : '$supplier._id',
-                                        name: '$supplier.name'
-                                    },
-                                    workflow     : {
-                                        status: '$workflow.status',
-                                        name  : '$workflow.name'
-                                    },
-                                    currency     : 1,
-                                    paymentInfo  : 1,
-                                    orderDate    : 1,
-                                    name         : 1,
-                                    isOrder      : 1,
-                                    proformaCounter: 1
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'Employees',
-                                    localField  : 'salesmanagers.employeeId',
-                                    foreignField: '_id',
-                                    as          : 'salesmanagers'
-                                }
-                            }, {
-                                $project: {
-                                    salesPerson: {$arrayElemAt: ['$salesmanagers', 0]},
-                                    workflow   : 1,
-                                    supplier   : 1,
-                                    currency   : 1,
-                                    paymentInfo: 1,
-                                    orderDate  : 1,
-                                    name       : 1,
-                                    isOrder    : 1,
-                                    proformaCounter: 1
-                                }
-                            }, {
-                                $project: {
-                                    salesPerson: {
-                                        _id : '$salesPerson._id',
-                                        name: '$salesPerson.name'
-                                    },
-                                    workflow   : 1,
-                                    supplier   : 1,
-                                    currency   : 1,
-                                    paymentInfo: 1,
-                                    orderDate  : 1,
-                                    name       : 1,
-                                    isOrder    : 1,
-                                    proformaCounter: 1
-                                }
-                            }, {
-                                $match: optionsObject
-                            }, {
-                                $sort: sort
-                            }, {
-                                $skip: skip
-                            }, {
-                                $limit: count
-                            }], function (err, result) {
-                                waterfallCallback(null, result);
-                            });
-                    };
+                            },
+                            currency       : 1,
+                            paymentInfo    : 1,
+                            orderDate      : 1,
+                            name           : 1,
+                            isOrder        : 1,
+                            proformaCounter: 1
+                        }
+                    }, {
+                        $project: {
+                            salesmanagers  : {$arrayElemAt: ['$salesmanagers', 0]},
+                            supplier       : {
+                                _id : '$supplier._id',
+                                name: '$supplier.name'
+                            },
+                            workflow       : {
+                                status: '$workflow.status',
+                                name  : '$workflow.name'
+                            },
+                            currency       : 1,
+                            paymentInfo    : 1,
+                            orderDate      : 1,
+                            name           : 1,
+                            isOrder        : 1,
+                            proformaCounter: 1
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'salesmanagers.employeeId',
+                            foreignField: '_id',
+                            as          : 'salesmanagers'
+                        }
+                    }, {
+                        $project: {
+                            salesPerson    : {$arrayElemAt: ['$salesmanagers', 0]},
+                            workflow       : 1,
+                            supplier       : 1,
+                            currency       : 1,
+                            paymentInfo    : 1,
+                            orderDate      : 1,
+                            name           : 1,
+                            isOrder        : 1,
+                            proformaCounter: 1
+                        }
+                    }, {
+                        $project: {
+                            salesPerson    : {
+                                _id : '$salesPerson._id',
+                                name: '$salesPerson.name'
+                            },
+                            workflow       : 1,
+                            supplier       : 1,
+                            currency       : 1,
+                            paymentInfo    : 1,
+                            orderDate      : 1,
+                            name           : 1,
+                            isOrder        : 1,
+                            proformaCounter: 1
+                        }
+                    }, {
+                        $match: optionsObject
+                    }, {
+                        $sort: sort
+                    }, {
+                        $skip: skip
+                    }, {
+                        $limit: count
+                    }], function (err, result) {
+                        waterfallCallback(null, result);
+                    });
+            };
 
             waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
