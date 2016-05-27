@@ -64,7 +64,7 @@ module.exports = function (config) {
 
         logLevel: config.LOG_INFO,
 
-        autoWatch: false,
+        /*autoWatch: true,*/
 
         browsers: ['Chrome', 'Firefox', /*'Safari',*/ 'IE', 'PhantomJS'],
 
