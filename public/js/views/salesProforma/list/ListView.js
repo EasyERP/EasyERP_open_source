@@ -1,37 +1,39 @@
 define([
-    'jQuery',
-    'Underscore',
-    'Backbone',
-    'views/listViewBase',
-    'text!templates/salesProforma/list/ListHeader.html',
-    'text!templates/stages.html',
-    'views/salesInvoice/CreateView',
-    'views/Proforma/EditView',
-    'models/InvoiceModel',
-    'views/salesProforma/list/ListItemView',
-    'views/salesProforma/list/ListTotalView',
-    'collections/salesProforma/filterCollection',
-    'views/Filter/FilterView',
-    'common',
-    'dataService',
-    'constants'
-],
-    function ($,
-              _,
-              Backbone,
-              listViewBase,
-              listTemplate,
-              stagesTemplate,
-              CreateView,
-              editView,
-              invoiceModel,
-              listItemView,
-              listTotalView,
-              contentCollection,
-              filterView,
-              common,
-              dataService,
-              CONSTANTS) {
+        'jQuery',
+        'Underscore',
+        'Backbone',
+        'views/listViewBase',
+        'text!templates/salesProforma/list/ListHeader.html',
+        'text!templates/stages.html',
+        'views/salesInvoice/CreateView',
+        'views/Proforma/EditView',
+        'models/InvoiceModel',
+        'views/salesProforma/list/ListItemView',
+        'views/salesProforma/list/ListTotalView',
+        'collections/salesProforma/filterCollection',
+        'views/Filter/FilterView',
+        'common',
+        'dataService',
+        'constants'
+    ],
+    function (
+        $,
+        _,
+        Backbone,
+        listViewBase,
+        listTemplate,
+        stagesTemplate,
+        CreateView,
+        editView,
+        invoiceModel,
+        listItemView,
+        listTotalView,
+        contentCollection,
+        filterView,
+        common,
+        dataService,
+        CONSTANTS
+    ) {
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
@@ -60,7 +62,6 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
-                this.filterView;
             },
 
             events: {
@@ -105,7 +106,6 @@ define([
             },
 
             chooseOption: function (e) {
-                var self = this;
                 var target$ = $(e.target);
                 var targetElement = target$.parents("td");
                 var targetTr = target$.parents("tr");
@@ -143,31 +143,45 @@ define([
                 $(".newSelectList").remove();
             },
 
+            currentEllistRenderer: function (self) {
+                var $currentEl = self.$el;
+
+                $currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
+                var itemView = new listItemView({
+                    collection : self.collection,
+                    page       : self.page,
+                    itemsNumber: self.collection.namberToShow
+                });
+                itemView.bind('incomingStages', self.pushStages, self);
+
+                $currentEl.append(itemView.render());
+
+            },
+
             render: function () {
-                var self;
+                var self = this;
                 var $currentEl;
 
                 $('.ui-dialog ').remove();
 
-                self = this;
+
                 $currentEl = this.$el;
 
                 $currentEl.html('');
 
-                if (!App || !App.currentDb) {
+                this.currentEllistRenderer(self);
+
+                /*if (!App || !App.currentDb) {
                     dataService.getData('/currentDb', null, function (response) {
                         if (response && !response.error) {
                             App.currentDb = response;
                             App.weTrack = true;
                         }
 
-                        currentEllistRenderer(self);
-                        //$currentEl.append(itemView.render());
+                        this.currentEllistRenderer(self);
                     });
                 } else {
-                    currentEllistRenderer(self);
-                    //$currentEl.append(itemView.render());
-                }
+                }*/
 
                 $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
 
@@ -175,7 +189,7 @@ define([
                 self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
-                dataService.getData("/workflow/fetch", {
+                dataService.getData(CONSTANTS.WORKFLOWS_FETCH, {
                     wId         : 'Sales Invoice',
                     source      : 'purchase',
                     targetSource: 'invoice'
@@ -185,20 +199,6 @@ define([
 
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
-                function currentEllistRenderer(self) {
-                    $currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
-                    var itemView = new listItemView({
-                        collection : self.collection,
-                        page       : self.page,
-                        itemsNumber: self.collection.namberToShow
-                    });
-                    itemView.bind('incomingStages', self.pushStages, self);
-
-                    $currentEl.append(itemView.render());
-
-                }
-
             },
 
             goToEditDialog: function (e) {

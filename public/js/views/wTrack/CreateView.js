@@ -2,8 +2,9 @@ define([
     'Backbone',
     'Underscore',
     'text!templates/wTrack/CreateTemplate.html',
-    'dataService'
-], function (Backbone, _, CreateTemplate, dataService) {
+    'dataService',
+    'constants'
+], function (Backbone, _, CreateTemplate, dataService, CONSTANTS) {
     var CreateView = Backbone.View.extend({
         el      : '#listTable',
         template: _.template(CreateTemplate),
@@ -17,7 +18,7 @@ define([
                 responseObj = options.mainWtrackView.responseObj;
                 responseObj = responseObj || {};
                 
-                dataService.getData('/project/getForWtrack', null, function (projects) {
+                dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (projects) {
                     projects = _.map(projects.data, function (project) {
                         project.name = project.projectName;
 

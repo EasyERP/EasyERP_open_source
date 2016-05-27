@@ -398,7 +398,7 @@ define([
                     populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
                 }
 
-                dataService.getData("/project/getForWtrack", null, function (projects) {
+                dataService.getData("/projects/getForWtrack", null, function (projects) {
                     projects = _.map(projects.data, function (project) {
                         project.name = project.projectName;
 

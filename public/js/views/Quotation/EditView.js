@@ -747,7 +747,7 @@ define([
                 new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
             );
 
-            dataService.getData('/project/getForWtrack', null, function (projects) {
+            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (projects) {
                 projects = _.map(projects.data, function (project) {
                     project.name = project.projectName;
 

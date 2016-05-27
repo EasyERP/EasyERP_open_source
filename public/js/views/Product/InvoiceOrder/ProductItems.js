@@ -106,7 +106,7 @@ define([
                     quotationDialog     : this
                 });
             } else {
-                dataService.getData('/project/getForWtrack', {_id: projectId}, function (project) {
+                dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, {_id: projectId}, function (project) {
                     self.projectModel = project && project.data ? project.data[0] : {};
 
                     if (self.generatedView) {
@@ -197,7 +197,7 @@ define([
                     }
 
                     if (!self.projectModel) {
-                        dataService.getData('/project/getForQuotation', {projectId: project}, function (project) {
+                        dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_QUOTATION, {projectId: project}, function (project) {
                             self.projectModel = project;
                         });
                     }

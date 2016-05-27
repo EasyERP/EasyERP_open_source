@@ -183,7 +183,7 @@ define([
                 self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 
-                dataService.getData("/workflow/fetch", {
+                dataService.getData(CONSTANTS.WORKFLOWS_FETCH, {
                     wId         : 'Sales Invoice',
                     source      : 'purchase',
                     targetSource: 'invoice'

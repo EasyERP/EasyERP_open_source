@@ -654,7 +654,7 @@ define([
             data.wTrack = data.wTrack.toJSON();
             formString = this.template(data);
 
-            dataService.getData('/project/getForWtrack', {inProgress: true}, function (projects) {
+            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, {inProgress: true}, function (projects) {
                 projects = _.map(projects.data, function (project) {
                     project.name = project.projectName;
 
