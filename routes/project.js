@@ -19,10 +19,13 @@ module.exports = function (models) {
     router.post('/sendInvoice', handler.sendInvoice);
     router.get('/getProjectPMForDashboard', handler.getProjectPMForDashboard);
     router.get('/getForQuotation', handler.getForQuotation);
+    router.get('/projectType', handler.getProjectType);
+    router.get('/getForDd', handler.getForDd);
     // router.get('/getForDashboard', handler.getForDashboard);
     router.get('/getForWtrack', handler.getForWtrack);
     router.get('/getFilterValues', handler.getFilterValues);
     router.get('/emails/:id', handler.getEmails);
+    router.get('/:id', handler.getById);
     router.get('/:id/invoices', invoiceHandler.getForProject);
     router.get('/:id/weTracks', wTrackHandler.getForProject);
     router.get('/:id/info', jobsHandler.getForOverview);

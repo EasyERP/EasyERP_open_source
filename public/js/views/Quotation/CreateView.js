@@ -366,7 +366,7 @@ define([
 
                 if (this.forSales) {
                     this.$el.find('#supplierDd').removeClass('current-selected');
-                    populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
+                    populate.get('#projectDd', '/projects/getForDd', {}, 'projectName', this, false, false);
                     //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
                 } else {
                     populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);

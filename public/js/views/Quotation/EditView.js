@@ -725,7 +725,7 @@ define([
             if (this.forSales) {
                 populate.get("#supplierDd", CONSTANTS.URLS.CUSTOMERS, {}, "fullName", this, false, false);
 
-                populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false);
+                populate.get('#projectDd', '/projects/getForDd', {}, 'projectName', this, false, false);
 
             } else {
                 populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
