@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var Project = function (models) {
     var access = require('../Modules/additions/access.js')(models);
+    var accessRoll = require("../helpers/accessRollHelper.js")(models);
     var ProjectSchema = mongoose.Schemas.Project;
     var wTrackSchema = mongoose.Schemas.wTrack;
     var MonthHoursSchema = mongoose.Schemas.MonthHours;
@@ -41,6 +42,17 @@ var Project = function (models) {
                 }
                 res.status(200).send({data: projects});
             });
+    };
+
+    this.getProjectType = function (req, res, next) {
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+
+        Project.find({}, function (err, projectType) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({data: projectType});
+        });
     };
 
     this.getForQuotation = function (req, res, next) {
@@ -186,6 +198,70 @@ var Project = function (models) {
             res.status(200).send(result);
         });
     };
+
+    this.getById = function (req, res, next) {
+        var id = req.params.id;
+        var project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+
+        project.findById(id)
+            .populate('bonus.employeeId', '_id name')
+            .populate('groups.owner', '_id name')
+            .populate('groups.users', '_id login')
+            .populate('groups.group', '_id departmentName')
+            .populate('groups.owner', '_id login')
+            .populate('projectmanager', '_id name fullName')
+            .populate('salesmanager', '_id name fullName')
+            .populate('customer', '_id name fullName')
+            .populate('workflow', '_id name')
+            .populate('paymentMethod', '_id name')
+            .populate('paymentTerms', '_id name')
+            .exec(function (err, project) {
+
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(project);
+            });
+    };
+
+
+    this.getForDd = function (req, res, next) {
+        var project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var waterfallTasks;
+        var accessRollSearcher = function (cb) {
+            accessRoll(req, project, cb);
+        };
+
+        var contentSearcher = function (result, cb) {
+
+            project.find({_id : {$in : result}}, {projectName : 1, projectShortDesc : 1})
+                .lean()
+                .sort({'projectName': 1})
+                .exec(function (err, _res) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, _res);
+                });
+
+        }
+
+        waterfallTasks = [accessRollSearcher, contentSearcher];
+
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({data: result});
+        });
+
+    };
+
+
+
 
     this.updateAllProjects = function (req, res, next) {
         /* var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
