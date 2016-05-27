@@ -1127,6 +1127,7 @@ var Employee = function (event, models) {
         var accessRollSearcher;
         var contentSearcher;
         var waterfallTasks;
+        var filterObj = {};
 
         response.data = [];
         response.workflowId = data.workflowId;
@@ -1135,10 +1136,16 @@ var Employee = function (event, models) {
             accessRoll(req, Employee, cb);
         };
 
+
         contentSearcher = function (responseApplications, cb) {
+            filterObj.$and = [];
+            filterObj.$and.push({isEmployee: false});
+            filterObj.$and.push({workflow: objectId(data.workflowId)});
+            filterObj.$and.push({_id: {$in : responseApplications}});
+
 
             Employee
-                .where('_id').in(responseApplications)
+                .find(filterObj)
                 .select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired")
                 .populate('workflow', '_id')
                 .populate('jobPosition', '_id name')

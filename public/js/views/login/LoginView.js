@@ -17,38 +17,38 @@ define([
                 this.render();
             }
         },
-        events    : {
-            "submit #loginForm"  : "login",
-            "click .login-button": "login",
-            "focus #ulogin"      : "usernameFocus",
-            "focus #upass"       : "passwordFocus",
-            "blur #ulogin"   : "usernameFocus",
-            "blur #upass"    : "passwordFocus"
+
+        events: {
+            'submit #loginForm'  : 'login',
+            'click .login-button': 'login',
+            'focus #ulogin'      : 'usernameFocus',
+            'focus #upass'       : 'passwordFocus',
+            'blur #ulogin'       : 'usernameFocus',
+            'blur #upass'        : 'passwordFocus'
         },
 
         usernameFocus: function () {
-            this.$el.find(".icon-login").toggleClass("active");
+            this.$el.find('.icon-login').toggleClass('active');
         },
         passwordFocus: function () {
-            this.$el.find(".icon-pass").toggleClass("active");
+            this.$el.find('.icon-pass').toggleClass('active');
         },
 
         login: function (event) {
-            event.preventDefault();
-
-            var err = "";
-            var currentDb = this.$el.find("#dbs :selected").data("id");
-            var $loginForm = this.$el.find("#loginForm");
+            var $thisEl = this.$el;
+            var currentDb = $thisEl.find('#dbs :selected').data('id');
+            var $loginForm = $thisEl.find('#loginForm');
             var $errorContainer = $loginForm.find('.error');
-            var login = this.$("#ulogin").val() || '';
-            var pass = this.$("#upass").val() || '';
+            var login = $thisEl.find('#ulogin').val() || '';
+            var pass = $thisEl.find('#upass').val() || '';
+            var err = '';
             var data;
 
+            event.preventDefault();
             App.currentDb = currentDb;
-            //App.weTrack = !!((currentDb === "weTrack") || (currentDb === "production") || (currentDb === "development"));
             App.weTrack = true;
 
-            $loginForm.removeClass("notRegister");
+            $loginForm.removeClass('notRegister');
 
             data = {
                 login: login,
@@ -57,7 +57,7 @@ define([
             };
 
             if (!data.login || !data.pass) {
-                $loginForm.addClass("notRegister");
+                $loginForm.addClass('notRegister');
             }
 
             if (data.login.length < 3) {
@@ -68,21 +68,22 @@ define([
             }
             if (err) {
                 $errorContainer.html(err);
-                $loginForm.addClass("notRegister");
+                $loginForm.addClass('notRegister');
 
                 return;
             }
 
             $.ajax({
-                url : "/users/login",
-                type: "POST",
+                url : '/users/login',
+                type: 'POST',
                 data: data,
 
                 success: function () {
                     Custom.runApplication(true);
                 },
-                error  : function () {
-                    $loginForm.addClass("notRegister");
+
+                error: function () {
+                    $loginForm.addClass('notRegister');
                     $errorContainer.text("Wrong Password or such user doesn't registered");
                 }
             });
@@ -95,7 +96,7 @@ define([
                 this.$el.html(_.template(LoginTemplate, {options: options.dbs}));
             } else {
                 this.$el.html(LoginTemplate);
-                this.$el.find("#loginForm").addClass("notRegister");
+                this.$el.find('#loginForm').addClass('notRegister');
             }
 
             return this;
