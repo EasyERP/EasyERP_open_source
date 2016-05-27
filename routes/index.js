@@ -115,7 +115,7 @@ module.exports = function (app, mainDb) {
     //app.use('/importData', importDataRouter);
     app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
-    app.use('/project', projectRouter);
+    app.use('/projects', projectRouter);
     app.use('/employees', employeeRouter);
     app.use('/applications', applicationRouter);
     app.use('/departments', departmentRouter);
@@ -873,28 +873,28 @@ module.exports = function (app, mainDb) {
 
 //---------------------------Projects--------------------------------------------------------
 
-    app.get('/projectType', function (req, res) {
+    /*app.get('/projectType', function (req, res) {
         requestHandler.getProjectType(req, res);
-    });
+    });*/
 
-    app.get('/Projects/form/:_id', function (req, res) {
+    /*app.get('/Projects/form/:_id', function (req, res) {
         var data = {};
         data.id = req.params._id;
         requestHandler.getProjectsById(req, res, data);
-    });
+    });*/
 
-    app.get('/getProjectsForDd', requestHandler.getProjectsForDd);
+    /*app.get('/getProjectsForDd', requestHandler.getProjectsForDd);*/
 
     //app.get('/getProjectPMForDashboard', function (req, res) {
     //    requestHandler.getProjectPMForDashboard(req, res);
     //});
-    app.get('/getProjectStatusCountForDashboard', function (req, res) {
+   /* app.get('/getProjectStatusCountForDashboard', function (req, res) {
         requestHandler.getProjectStatusCountForDashboard(req, res);
-    });
+    });*/
 
-    app.get('/getProjectByEndDateForDashboard', function (req, res) {
+   /* app.get('/getProjectByEndDateForDashboard', function (req, res) {
         requestHandler.getProjectByEndDateForDashboard(req, res);
-    });
+    });*/
 
     app.post('/Projects', function (req, res) {
         var data = {};
