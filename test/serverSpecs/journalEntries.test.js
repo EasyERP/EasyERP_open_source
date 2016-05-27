@@ -7,7 +7,6 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var CONSTANTS = require('../../constants/mainConstants.js');
-var journalEntryHandler = require('../../handlers/journalEntry.js');
 
 var host = process.env.HOST;
 var aggent;
@@ -555,7 +554,7 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should create JE", function (done) {
+        /*it("should create JE", function (done) {
             var body = {};
             body.date = '1 Jan, 2015';
             body.journal = CONSTANTS.INVOICE_JOURNAL;
@@ -565,10 +564,8 @@ describe("journalEntries Specs", function () {
             body.sourceDocument._id = '55b92ad621e4b7c40f00064a';
             body.sourceDocument.model = 'Invoice';
 
-            journalEntryHandler
-
             
-        });
+        });*/
 
 
 
