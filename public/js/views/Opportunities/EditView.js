@@ -523,7 +523,7 @@
                     self.responseObj['#priorityDd'] = priorities;
                 });
                 populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, false, true);
-                dataService.getData('/employee/getForDD', {isEmployee: true}, function (employees) {
+                dataService.getData('/employees/getForDD', {isEmployee: true}, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 

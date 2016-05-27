@@ -74,6 +74,27 @@ describe("Opportunity Specs", function () {
                 .expect(404, done);
         });
 
+        it('should get opportunity Priority', function (done) {
+            aggent
+                .get('opportunities/priority')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+                    expect(body.data)
+                        .to.be.instanceOf(Array);
+                    done();
+                });
+        });
+
         it('should get opportunity totalCount', function (done) {
             aggent
                 .get('opportunities/totalCollectionLength')
@@ -158,8 +179,11 @@ describe("Opportunity Specs", function () {
 
         it('should get opportunity for viewType list', function (done) {
             var query = {
-                viewType   : 'list',
-                contentType: 'Opportunities'
+                viewType     : 'list',
+                contentType  : 'Opportunities',
+                page         : 1,
+                count        : 100,
+                newCollection: false
             };
 
             aggent
