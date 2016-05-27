@@ -3702,18 +3702,21 @@ define([
             var userModel;
             var windowConfirmStub;
             var mainSpy;
+            var alertSpy;
 
             before(function () {
                 mainSpy = sinon.spy(App, 'render');
                 server = sinon.fakeServer.create();
                 windowConfirmStub = sinon.stub(window, 'confirm');
                 windowConfirmStub.returns(true);
+                alertSpy = sinon.spy(window, 'alert');
             });
 
             after(function () {
                 server.restore();
                 windowConfirmStub.restore();
                 mainSpy.restore();
+                alertSpy.restore();
             });
 
             it('Try to create UserFormView', function (done) {
@@ -3809,7 +3812,8 @@ define([
                 var $saveBtn;
                 var userUrl = new RegExp('\/users\/', 'i');
                 var profileUrl = new RegExp('\/profiles\/forDd', 'i');
-                var alertSpy = sinon.spy(window, 'alert');
+
+                alertSpy.reset();
 
                 server.respondWith('GET', profileUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfileForDD)]);
                 formView.editItem();
@@ -3821,15 +3825,14 @@ define([
                 $saveBtn.click();
                 server.respond();
                 expect(alertSpy.called).to.be.true;
-
-                alertSpy.restore();
             });
 
             it('Try to delete item with error', function(){
                 var $deleteBtn;
                 var userUrl = new RegExp('\/users\/', 'i');
                 var profileUrl = new RegExp('\/profiles\/forDd', 'i');
-                var alertSpy = sinon.spy(window, 'alert');
+
+                alertSpy.reset();
 
                 server.respondWith('GET', profileUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfileForDD)]);
                 formView.editItem();
@@ -3841,8 +3844,6 @@ define([
                 $deleteBtn.click();
                 server.respond();
                 expect(alertSpy.called).to.be.true;
-
-                alertSpy.restore();
             });
 
             it('Try to delete item', function(){

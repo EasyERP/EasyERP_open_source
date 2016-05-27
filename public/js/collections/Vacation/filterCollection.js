@@ -34,6 +34,18 @@ define([
             }
 
             if (nameA && nameB) {
+
+                if (self.sortSubKey) {
+                    if (nameA.last > nameB.last) {
+                        return self.sortOrder;
+                    }
+                    if (nameA.last < nameB.last) {
+                        return self.sortOrder * (-1);
+                    }
+
+                    return 0;
+                }
+
                 if (nameA > nameB) {
                     return self.sortOrder;
                 }
