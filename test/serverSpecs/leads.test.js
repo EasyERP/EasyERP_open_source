@@ -1,6 +1,3 @@
-/**
- * Created by den on 08.02.16.
- */
 require('../../config/development');
 
 var request = require('supertest');
@@ -20,12 +17,11 @@ var bannedUser = {
     dbId : dbId
 };
 
-describe("Workflow Specs", function () {
-
+describe('Leads Specs', function () {
     'use strict';
     var id;
 
-    describe("Workflow with admin", function () {
+    describe('Leads with admin', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -42,16 +38,13 @@ describe("Workflow Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create workflow", function (done) {
+        it('should create lead', function (done) {
             var body = {
-                name    : "testWorkflow_10",
-                "status": "New",
-                "_id"   : "testCreateWF",
-                "wName" : "testCreateWF",
-                visible : true
+                name: 'Subject'
             };
+
             aggent
-                .post('workflows')
+                .post('leads')
                 .send(body)
                 .expect(201)
                 .end(function (err, res) {
@@ -65,44 +58,25 @@ describe("Workflow Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('success');
-                    expect(body)
-                        .to.have.property('createdModel');
-                    id = body.createdModel._id;
-                    done();
-                });
-        });
 
-        it("should get workflow", function (done) {
-            var body = {
-                id: "testCreateWF"
-            };
-
-            aggent
-                .get('workflows')
-                .query(body)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('data');
+                    id = body.id;
 
                     done();
                 });
         });
 
-        it("should get relatedStatus", function (done) {
+        it('should fail create Lead', function (done) {
             var body = {};
 
             aggent
-                .get('workflows/relatedStatus')
+                .post('leads')
                 .send(body)
+                .expect(404, done);
+        });
+
+        it('should get Leads Priority', function (done) {
+            aggent
+                .get('leads/priority')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -115,19 +89,36 @@ describe("Workflow Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
-
+                    expect(body.data)
+                        .to.be.instanceOf(Array);
                     done();
                 });
         });
 
-        it("should get getWorkflowsForDd", function (done) {
-            var body = {
-                id: "testCreateWF"
-            };
-
+        it('should get Leads totalCollectionLength', function (done) {
             aggent
-                .get('workflows/getWorkflowsForDd')
-                .query(body)
+                .get('leads/totalCollectionLength')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('count');
+                    expect(body)
+                        .to.have.property('showMore');
+                    done();
+                });
+        });
+
+        it('should get Lead For Chart', function (done) {
+            aggent
+                .get('leads/getLeadsForChart')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -140,19 +131,23 @@ describe("Workflow Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
-
                     done();
                 });
         });
 
-        it("should get getFirstForConvert", function (done) {
-            var body = {
-                wId: "testCreateWF"
+        it('should get Leads for viewType list', function (done) {
+
+            var query = {
+                viewType     : 'list',
+                contentType  : 'Leads',
+                page         : 1,
+                count        : 100,
+                newCollection: false
             };
 
             aggent
-                .get('workflows/getFirstForConvert')
-                .query(body)
+                .get('leads/list')
+                .query(query)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -160,45 +155,74 @@ describe("Workflow Specs", function () {
                     if (err) {
                         return done(err);
                     }
-
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('_id');
-
-                    done();
-                });
-        });
-
-        it("should fetch", function (done) {
-            var body = {
-                wId: "testCreateWF"
-            };
-
-            aggent
-                .get('workflows/fetch')
-                .query(body)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
+                        .to.have.property('data');
+                    expect(body.data)
                         .to.be.instanceOf(Array);
 
                     done();
                 });
         });
 
-        it("should update workflow", function (done) {
+        it('should get Lead for viewType form', function (done) {
+            var query = {
+                id: id
+            };
+
+            aggent
+                .get('leads/form')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object)
+                        .and.to.have.property('_id');
+
+                    done();
+                });
+        });
+
+        //it('should get Lead for viewType kanban', function (done) {
+        //
+        //    var query = {
+        //        workflowId: '528ce5e3f3f67bc40b000018'
+        //    };
+        //
+        //    aggent
+        //        .get('leads/kanban')
+        //        .query(query)
+        //        .expect(200)
+        //        .end(function (err, res) {
+        //            var body = res.body;
+        //
+        //            if (err) {
+        //                return done(err);
+        //            }
+        //
+        //            expect(body)
+        //                .to.be.instanceOf(Object);
+        //            expect(body)
+        //                .to.have.property('data');
+        //            expect(body)
+        //                .to.have.property('workflowId');
+        //            done();
+        //        });
+        //});
+
+        it('should partially update Lead', function (done) {
             var body = {
-                name: "testWorkflow_updated"
+                name: 'test'
             };
             aggent
-                .put('workflows/' + id)
+                .patch('leads/' + id)
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {
@@ -212,21 +236,19 @@ describe("Workflow Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('success');
+                    expect(body)
+                        .to.have.property('result');
 
                     done();
                 });
         });
 
-        it("should update only selected fields", function (done) {
+        it('should Lead update', function (done) {
             var body = {
-                color        : '#2C3E51',
-                sequenceStart: 1,
-                sequence     : 2,
-                wId          : id
+                _id: id
             };
-
             aggent
-                .patch('workflows/' + id)
+                .put('leads/' + id)
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {
@@ -240,19 +262,22 @@ describe("Workflow Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('success');
+                    expect(body)
+                        .to.have.property('result');
 
                     done();
                 });
         });
 
-        it("should delete workflow", function (done) {
+        it('should remove Lead', function (done) {
             aggent
-                .delete('workflows/' + id)
+                .delete('leads/' + id)
                 .expect(200, done);
         });
+
     });
 
-    describe("Workflow with user without a license", function () {
+    describe('Leads with user without a license', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -269,19 +294,15 @@ describe("Workflow Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create workflow", function (done) {
+        it('should fail create Leads', function (done) {
             var body = {
-                name    : "testWorkflow_10",
-                "status": "New",
-                "_id"   : "testCreateWF",
-                "wName" : "testCreateWF",
-                visible : true
+                name: 'Subject'
             };
+
             aggent
-                .post('workflows')
+                .post('leads')
                 .send(body)
                 .expect(403, done);
-
         });
     });
 });

@@ -5,6 +5,17 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
+var dbId = 'dendb';
+var admin = {
+    login: 'admin',
+    pass : 'tm2016',
+    dbId : dbId
+};
+var failUser = {
+    login: 'ArturMyhalko',
+    pass : 'thinkmobiles2015',
+    dbId : dbId
+};
 
 describe("Opportunity Specs", function () {
     'use strict';
@@ -17,11 +28,7 @@ describe("Opportunity Specs", function () {
 
             aggent
                 .post('users/login')
-                .send({
-                    login: 'admin',
-                    pass : '1q2w3eQWE',
-                    dbId : 'production'
-                })
+                .send(admin)
                 .expect(200, done);
         });
 
@@ -65,6 +72,27 @@ describe("Opportunity Specs", function () {
                 .post('opportunities')
                 .send(body)
                 .expect(404, done);
+        });
+
+        it('should get opportunity Priority', function (done) {
+            aggent
+                .get('opportunities/priority')
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+                    expect(body.data)
+                        .to.be.instanceOf(Array);
+                    done();
+                });
         });
 
         it('should get opportunity totalCount', function (done) {
@@ -151,8 +179,11 @@ describe("Opportunity Specs", function () {
 
         it('should get opportunity for viewType list', function (done) {
             var query = {
-                viewType   : 'list',
-                contentType: 'Opportunities'
+                viewType     : 'list',
+                contentType  : 'Opportunities',
+                page         : 1,
+                count        : 100,
+                newCollection: false
             };
 
             aggent
@@ -286,7 +317,9 @@ describe("Opportunity Specs", function () {
 
         it('should create opportunity createLeadFromSite', function (done) {
             var body = {
-                email: "test@example.com"
+                email  : 'test@example.com',
+                name   : 'testName',
+                company: 'testCompany'
             };
 
             aggent
@@ -332,11 +365,7 @@ describe("Opportunity Specs", function () {
 
             aggent
                 .post('users/login')
-                .send({
-                    login: 'ArturMyhalko',
-                    pass : 'thinkmobiles2015',
-                    dbId : 'production'
-                })
+                .send(failUser)
                 .expect(200, done);
         });
 
