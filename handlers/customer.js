@@ -42,7 +42,7 @@ var Customers = function (models) {
                     resArray.push(filtrElement);
                     break;
                 case 'letter':
-                    filtrElement['name.first'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
+                    filtrElement['name.first'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
                     resArray.push(filtrElement);
                     break;
                 case 'services':
@@ -504,7 +504,7 @@ var Customers = function (models) {
                 break;
         }
 
-        Customers.  find(optionsObject, {_id: 1, imageSrc: 1}, function (err, response) {
+        Customers.find(optionsObject, {_id: 1, imageSrc: 1}, function (err, response) {
             if (err) {
                 return next(err);
             }
@@ -916,11 +916,11 @@ var Customers = function (models) {
                     }, {
                         $project: {
                             _id: 1,
-                            letter: {$substr: [searchName, 0, 1]}
+                            later: {$substr: [searchName, 0, 1]}
                         }
                     },
                     {
-                        $group: {_id: "$letter"}
+                        $group: {_id: "$later"}
                     }], cb);
 
         };
@@ -951,105 +951,6 @@ var Customers = function (models) {
 
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
-
-    function caseFilter(data, contentType, optionsObject) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-
-        switch (contentType) {
-            case ('Persons'):
-            {
-                for (var filterName in data.filter) {
-                    condition = data.filter[filterName]['value'];
-                    key = data.filter[filterName]['key'];
-
-                    switch (filterName) {
-                        case 'country':
-                            filtrElement[key] = {$in: condition};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'name':
-                            filtrElement[key] = {$in: condition.objectID()};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'letter':
-                            filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
-                            resArray.push(filtrElement);
-                            break;
-                        case 'services':
-                            if (condition.indexOf('isCustomer') !== -1) {
-                                filtrElement['salesPurchases.isCustomer'] = true;
-                                resArray.push(filtrElement);
-                            }
-                            if (condition.indexOf('isSupplier') !== -1) {
-                                filtrElement['salesPurchases.isSupplier'] = true;
-                                resArray.push(filtrElement);
-                            }
-                            break;
-                    }
-                }
-
-                resArray.push({'type': 'Person'});
-
-                if (resArray.length) {
-
-                    if (data && data.filter && data.filter.condition === 'or') {
-                        optionsObject['$or'] = resArray;
-                    } else {
-                        optionsObject['$and'] = resArray;
-                    }
-                }
-            }
-                break;
-            case ('Companies'):
-            {
-                for (var filterName in data.filter) {
-                    condition = data.filter[filterName]['value'];
-                    key = data.filter[filterName]['key'];
-
-                    switch (filterName) {
-                        case 'country':
-                            filtrElement[key] = {$in: condition};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'name':
-                            filtrElement[key] = {$in: condition.objectID()};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'letter':
-                            filtrElement['name.first'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
-                            resArray.push(filtrElement);
-                            break;
-                        case 'services':
-                            if (condition.indexOf('isCustomer') !== -1) {
-                                filtrElement['salesPurchases.isCustomer'] = true;
-                                resArray.push(filtrElement);
-                            }
-                            if (condition.indexOf('isSupplier') !== -1) {
-                                filtrElement['salesPurchases.isSupplier'] = true;
-                                resArray.push(filtrElement);
-                            }
-                            break;
-                    }
-                }
-
-                resArray.push({'type': 'Company'});
-
-                if (resArray.length) {
-
-                    if (data && data.filter && data.filter.condition === 'or') {
-                        optionsObject['$or'] = resArray;
-                    } else {
-                        optionsObject['$and'] = resArray;
-                    }
-                }
-            }
-                break;
-        }
-        return optionsObject;
-    }
 
     var projectCustomer = {
         type                            : 1,
