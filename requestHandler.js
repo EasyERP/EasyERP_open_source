@@ -2055,66 +2055,14 @@ var requestHandler = function (app, event, mainDb) {
         getProjectStatusCountForDashboard: getProjectStatusCountForDashboard,
         getProjectByEndDateForDashboard  : getProjectByEndDateForDashboard,
         updateOnlySelectedFields         : updateOnlySelectedFields,
-        taskUpdateOnlySelectedFields     : taskUpdateOnlySelectedFields,
         getProjectType                   : getProjectType,
 
-        createTask               : createTask,
-        getTasksLengthByWorkflows: getTasksLengthByWorkflows,
-        getTaskById              : getTaskById,
-        getTasksForList          : getTasksForList,
-        getTasksForKanban        : getTasksForKanban,
-        updateTask               : updateTask,
         uploadTasksFiles         : uploadTasksFiles,
-        removeTask               : removeTask,
-        getTasksPriority         : getTasksPriority,
         getLeadsPriority         : getLeadsPriority,
-
-        getCompaniesForDd              : getCompaniesForDd,
-        getCompanyById                 : getCompanyById,
-        removeCompany                  : removeCompany,
-        createCompany                  : createCompany,
-        updateCompany                  : updateCompany,
-        companyUpdateOnlySelectedFields: companyUpdateOnlySelectedFields,
-        getFilterCustomers             : getFilterCustomers,
-        getCustomersImages             : getCustomersImages,
-        getCustomersAlphabet           : getCustomersAlphabet,
-
-        getRelatedStatus               : getRelatedStatus,
-        getWorkflow                    : getWorkflow,
-        createWorkflow                 : createWorkflow,
-        updateWorkflow                 : updateWorkflow,
-        getWorkflowsForDd              : getWorkflowsForDd,
-        removeWorkflow                 : removeWorkflow,
-        updateWorkflowOnlySelectedField: updateWorkflowOnlySelectedField,
-
-        jobPositionsTotalCollectionLength: jobPositionsTotalCollectionLength,
-        createJobPosition                : createJobPosition,
-        updateJobPosition                : updateJobPosition,
-        removeJobPosition                : removeJobPosition,
-        getJobPositionById               : getJobPositionById,
-        getJobPositionForDd              : getJobPositionForDd,
-
-        createEmployee       : createEmployee,
-        getFilterJobPosition : getFilterJobPosition,
-        getForDdByRelatedUser: getForDdByRelatedUser,
-        getEmployeesById     : getEmployeesById,
-        removeEmployees      : removeEmployees,
-        updateEmployees      : updateEmployees,
-        getEmployeesAlphabet : getEmployeesAlphabet,
-        getEmployeesImages   : getEmployeesImages,
-
-        Birthdays: Birthdays,
-
-        getPersonsForDd   : getPersonsForDd,
         getDepartmentForDd: getDepartmentForDd,
-
-        getApplicationsLengthByWorkflows  : getApplicationsLengthByWorkflows,
-        createApplication                 : createApplication,
         removeApplication                 : removeApplication,
-        updateApplication                 : updateApplication,
         uploadApplicationFile             : uploadApplicationFile,
         aplicationUpdateOnlySelectedFields: aplicationUpdateOnlySelectedFields,
-        employeesUpdateOnlySelectedFields : employeesUpdateOnlySelectedFields,
 
         getDepartment         : getDepartment,
         createDepartment      : createDepartment,
@@ -2129,11 +2077,6 @@ var requestHandler = function (app, event, mainDb) {
         removeDegree          : removeDegree,
 
         getCampaigns                  : getCampaigns,
-        employeesTotalCollectionLength: employeesTotalCollectionLength,
-        getEmployeesFilter            : getEmployeesFilter,
-        uploadEmployeesFile           : uploadEmployeesFile,
-        getApplicationById            : getApplicationById,
-        getApplicationsForKanban      : getApplicationsForKanban,
 
         createLead      : createLead,
         updateLead      : updateLead,
@@ -2154,12 +2097,6 @@ var requestHandler = function (app, event, mainDb) {
         opportunitieUpdateOnlySelectedFields: opportunitieUpdateOnlySelectedFields,
         uploadOpportunitiesFiles            : uploadOpportunitiesFiles,
         uploadInvoiceFiles                  : uploadInvoiceFiles,
-
-        getSources                   : getSources,
-        getLanguages                 : getLanguages,
-        getJobType                   : getJobType,
-        getNationality               : getNationality,
-        customerTotalCollectionLength: customerTotalCollectionLength,
 
         initScheduler: initScheduler
     };
