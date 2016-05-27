@@ -320,6 +320,10 @@ var Employee = function (event, models) {
             body.age = getAge(body.dateBirth);
         }
 
+        if (body.transfer && body.transfer.length) {
+            body.transfer[0].salary = body.transfer[0].salary || 0;
+        }
+
         if (!validatorEmployee.validEmployeeBody(body)) {
             err = new Error();
             err.status = 404;
@@ -334,24 +338,39 @@ var Employee = function (event, models) {
         employee.createdBy.date = new Date();
         employee.editedBy.date = new Date();
 
-        event.emit('updateSequence', Employee, "sequence", 0, 0, employee.workflow, employee.workflow, true, false, function (sequence) {
+        event.emit('updateSequence', models.get(req.session.lastDb, "Employees", EmployeeSchema), "sequence", 0, 0, employee.workflow, employee.workflow, true, false, function (sequence) {
+            var DepartmentSchema = mongoose.Schemas.Department;
+            var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
+
             employee.sequence = sequence;
 
-            employee.save(function (err, employee) {
-                if (err) {
-                    return next(err);
-                }
+            Department.findById(employee.department,
+                function (error, dep) {
 
-                res.send(201, {success: 'A new Employees create success', result: employee, id: employee._id});
+                    if(employee.transfer && employee.transfer[0]) {
+                        if (dep && dep.parentDepartment && dep.parentDepartment.toString() !== CONSTANTS.ADMIN_DEPARTMENTS) {
+                            employee.transfer[0].isDeveloper = true;
+                        } else if (employee.transfer && employee.transfer[0]) {
+                            employee.transfer[0].isDeveloper = false;
+                        }
+                    }
 
-                if (employee.isEmployee) {
-                    event.emit('recalculate', req, res, next);
-                }
+                    employee.save(function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
 
-                event.emit('dropHoursCashes', req);
-                event.emit('recollectVacationDash');
+                        res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
 
-            });
+                        if (result.isEmployee) {
+                            event.emit('recalculate', req, res, next);
+                        }
+
+                        event.emit('dropHoursCashes', req);
+                        event.emit('recollectVacationDash');
+                    });
+                });
+
         });
     };
 
@@ -393,10 +412,19 @@ var Employee = function (event, models) {
         return resArray;
     }
 
-    function getById(req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-        var id = req.params.id;
-        var query = Employee.findById(id);
+    function getById(req, response) {
+        var data = {};
+        var project = {};
+        for (var i in req.query) {
+            data[i] = req.query[i];
+        };
+
+        if (ids.indexOf(req.session.uId) === -1) {
+            project = {'transfer.salary': 0};
+        }
+
+        var query = models.get(req.session.lastDb, "Employees", EmployeeSchema)
+            .findById(data.id, project);
 
         query.populate('coach', 'name _id')
             .populate('relatedUser', 'login _id')
@@ -406,27 +434,26 @@ var Employee = function (event, models) {
             .populate('groups.users')
             .populate('manager', '_id name')
             .populate('jobPosition', '_id name fullName')
+            .populate('weeklyScheduler', '_id name')
             .populate('department', '_id departmentName')
             .populate('groups.group')
-            .populate('hire.department', '_id departmentName')
-            .populate('hire.jobPosition', '_id name')
-            .populate('hire.manager', '_id name')
-            .populate('fire.department', '_id departmentName')
-            .populate('fire.jobPosition', '_id name')
-            .populate('fire.manager', '_id name')
+            .populate('transfer.department', '_id departmentName')
+            .populate('transfer.jobPosition', '_id name')
+            .populate('transfer.manager', '_id name')
+            .populate('transfer.weeklyScheduler', '_id name')
             .populate('groups.owner', '_id login');
 
-        query.exec(function (err, employee) {
+        query.exec(function (err, findedEmployee) {
             if (err) {
-                return next(err);
-            }
+                logWriter.log("Employees.js getById employee.find " + err);
+                response.send(500, {error: "Can't find Employee"});
+            } else {
 
-            if (ids.indexOf(req.session.uId) !== -1) {
-                employee._doc.enableView = true;
-            }
 
-            res.status(200).send(employee);
+                response.send(findedEmployee);
+            }
         });
+
     }
 
     this.totalCollectionLength = function (req, res, next) {
@@ -906,17 +933,17 @@ var Employee = function (event, models) {
         var UsersSchema = mongoose.Schemas.User;
         var UsersModel = models.get(dbName, 'Users', UsersSchema);
         var Department = models.get(dbName, 'Department', DepartmentSchema);
-        var JobPosition = models.get(dbName, 'jobPosition', jobPositionSchema);
         var data = req.body;
         var fileName = data.fileName;
-        var updateObject = data;
-        var dataObj = {};
         var query = {};
 
-        updateObject.editedBy = {
+        data.editedBy = {
             user: req.session.uId,
             date: new Date().toISOString()
         };
+
+        delete data.depForTransfer;
+        delete data.fileName;
 
         if (data.workflow && data.sequenceStart && data.workflowStart) {
             if (data.sequence === -1) {
@@ -927,23 +954,7 @@ var Employee = function (event, models) {
                             data.sequence -= 1;
                         }
 
-                        if (data.fired) {
-                            dataObj = {
-                                'fire': data.fired
-                            };
-                        } else if (data.hired) {
-                            dataObj = {
-                                'hire': data.hired
-                            };
-                        }
-
-                        if (dataObj.hire || dataObj.fire) {
-                            query = {$set: updateObject, $push: dataObj};
-                        } else {
-                            query = {$set: updateObject};
-                        }
-
-                        Employee.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
+                        Employee.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
                             if (err) {
                                 return next(err);
                             }
@@ -968,183 +979,121 @@ var Employee = function (event, models) {
                 });
             }
         } else {
-            if (updateObject.dateBirth) {
-                updateObject.age = getAge(updateObject.dateBirth);
+            if (data.dateBirth) {
+                data.age = getAge(data.dateBirth);
             }
 
-            if (data.fired) {
-                dataObj = {
-                    'fire': data.fired
-                };
-
-            } else if (data.hired) {
-                dataObj = {
-                    'hire': data.hired
-                };
-            }
-
-            if (dataObj.hire || dataObj.fire) {
-                query = {$set: updateObject, $push: dataObj};
-            } else if (data.relatedUser) {
-                query = {$set: updateObject};
+            if (data.relatedUser) {
                 event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee', _id);
-            } else if (data.currentUser) {
-                event.emit('updateName', data.currentUser, UsersModel, '_id', 'RelatedEmployee', null);
-                delete data.currentUser;
-                query = {$set: updateObject};
-            } else {
-                query = {$set: updateObject};
             }
-
-            Employee.findByIdAndUpdate(_id, query, {new: true}, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                if (updateObject.dateBirth || updateObject.contractEnd || updateObject.hired) {
-                    event.emit('recalculate', req, res, next);
-                }
-                if (fileName) {
-                    var os = require("os");
-                    var osType = (os.type().split('_')[0]);
-                    var path;
-                    var dir;
-                    var newDirname;
-
-                    switch (osType) {
-                        case "Windows":
-                        {
-                            newDirname = __dirname.replace("\\Modules", "");
-                            while (newDirname.indexOf("\\") !== -1) {
-                                newDirname = newDirname.replace("\\", "\/");
-                            }
-                            path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                            dir = newDirname + "\/uploads\/" + _id;
-                        }
-                            break;
-                        case "Linux":
-                        {
-                            newDirname = __dirname.replace("/Modules", "");
-                            while (newDirname.indexOf("\\") !== -1) {
-                                newDirname = newDirname.replace("\\", "\/");
-                            }
-                            path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                            dir = newDirname + "\/uploads\/" + _id;
-                        }
-                            break;
+            Department.aggregate([
+                {
+                    $match: {
+                        parentDepartment: {$ne: null}
                     }
-
-                    fs.unlink(path, function (err) {
-                        console.log(err);
-                        fs.readdir(dir, function (err, files) {
-                            if (files && files.length === 0) {
-                                fs.rmdir(dir, function () {
-                                });
-                            }
-                        });
-                    });
-
+                },
+                {
+                    $group: {
+                        _id        : '$parentDepartment',
+                        sublingDeps: {$push: '$_id'}
+                    }
                 }
-                event.emit('dropHoursCashes', req);
-                event.emit('recollectVacationDash');
+            ], function (error, deps) {
+                var adminDeps;
 
-                function populateEmployee(cb) {
-                    Employee.populate(result, {
-                        'path'  : 'manager',
-                        'select': 'name _id'
-                    }, cb);
+                if (error) {
+                    return console.dir(error);
                 }
 
-                function populateGroupsUsers(cb) {
-                    UsersModel.populate(result, {
-                        'path'  : 'groups.users',
-                        'select': 'login _id'
-                    }, cb);
-                }
-
-                function populateGroupsOwner(cb) {
-                    UsersModel.populate(result, {
-                        'path'  : 'groups.owner',
-                        'select': 'login _id'
-                    }, cb);
-                }
-
-                function populateGroups(cb) {
-                    Department.populate(result, {
-                        'path'  : 'groups.group',
-                        'select': 'departmentName _id'
-                    }, cb);
-                }
-
-                function populateEmployeeHire(cb) {
-                    Employee.populate(result, {
-                        'path'  : 'hire.manager',
-                        'select': 'name _id'
-                    }, cb);
-                }
-
-                function populateEmployeeFire(cb) {
-                    Employee.populate(result, {
-                        'path'  : 'fire.manager',
-                        'select': 'name _id'
-                    }, cb);
-                }
-
-                function populateDepartment(cb) {
-                    Department.populate(result, {
-                        'path'  : 'department',
-                        'select': 'departmentName _id'
-                    }, cb);
-                }
-
-                function populateDepartmentFire(cb) {
-                    Department.populate(result, {
-                        'path'  : 'fire.department',
-                        'select': 'departmentName _id'
-                    }, cb);
-                }
-
-                function populateDepartmentHire(cb) {
-                    Department.populate(result, {
-                        'path'  : 'hire.department',
-                        'select': 'departmentName _id'
-                    }, cb);
-                }
-
-                function populateJobPosition(cb) {
-                    JobPosition.populate(result, {
-                        'path'  : 'jobPosition',
-                        'select': 'name _id'
-                    }, cb);
-                }
-
-                function populateJobPositionFire(cb) {
-                    JobPosition.populate(result, {
-                        'path'  : 'fire.jobPosition',
-                        'select': 'name _id'
-                    }, cb);
-                }
-
-                function populateJobPositionHire(cb) {
-                    JobPosition.populate(result, {
-                        'path'  : 'hire.jobPosition',
-                        'select': 'name _id'
-                    }, cb);
-                }
-
-                function populateRelatedUser(cb) {
-                    UsersModel.populate(result, {
-                        'path'  : 'relatedUser',
-                        'select': 'login _id'
-                    }, cb);
-                }
-
-                async.parallel([populateRelatedUser, populateGroupsUsers, populateGroupsOwner, populateGroups, populateEmployee, populateEmployeeFire, populateDepartment, populateJobPosition, populateEmployeeHire, populateDepartmentHire, populateJobPositionHire, populateDepartmentFire, populateJobPositionFire], function () {
-                    res.status(200).send(result);
+                adminDeps = deps[0]._id.toString === objectId(CONSTANTS.ADMIN_DEPARTMENTS) ? deps[0].sublingDeps : deps[1].sublingDeps;
+                adminDeps = adminDeps.map(function (depId) {
+                    return depId.toString();
                 });
 
-                payrollHandler.composeSalaryReport(req);
+                if (data.transfer) {
+                    data.transfer = data.transfer.map(function (tr) {
+                        if (adminDeps.indexOf(tr.department.toString()) !== -1) {
+                            tr.isDeveloper = false;
+                        } else {
+                            tr.isDeveloper = true;
+                        }
+                        return tr;
+                    });
+                }
 
+                Employee.findById(_id, query, {new: true}, function (err, emp) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (ids.indexOf(req.session.uId) === -1) {
+                        data.transfer = data.transfer.map(function (tr, i) {
+                            if (i !== 0) {
+                                tr.salary = (emp.transfer[i] && emp.transfer[i].salary) || emp.transfer[i - 1].salary;
+                            } else {
+                                tr.salary = 0;
+                            }
+                            return tr;
+                        });
+                    }
+
+                    Employee.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+                        if (err) {
+                            return next(err);
+                        }
+
+                        if (data.dateBirth || data.hired) {
+                            event.emit('recalculate', req, res, next);
+                        }
+                        if (fileName) {
+                            var os = require("os");
+                            var osType = (os.type().split('_')[0]);
+                            var path;
+                            var dir;
+                            var newDirname;
+
+                            switch (osType) {
+                                case "Windows":
+                                {
+                                    newDirname = __dirname.replace("\\Modules", "");
+                                    while (newDirname.indexOf("\\") !== -1) {
+                                        newDirname = newDirname.replace("\\", "\/");
+                                    }
+                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                    dir = newDirname + "\/uploads\/" + _id;
+                                }
+                                    break;
+                                case "Linux":
+                                {
+                                    newDirname = __dirname.replace("/Modules", "");
+                                    while (newDirname.indexOf("\\") !== -1) {
+                                        newDirname = newDirname.replace("\\", "\/");
+                                    }
+                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                                    dir = newDirname + "\/uploads\/" + _id;
+                                }
+                                    break;
+                            }
+
+                            fs.unlink(path, function (err) {
+                                console.log(err);
+                                fs.readdir(dir, function (err, files) {
+                                    if (files && files.length === 0) {
+                                        fs.rmdir(dir, function () {
+                                        });
+                                    }
+                                });
+                            });
+
+                        }
+                        event.emit('dropHoursCashes', req);
+                        event.emit('recollectVacationDash');
+
+                        res.status(200).send(result);
+
+                        payrollHandler.composeSalaryReport(req);
+                    });
+                });
             });
         }
     };
@@ -1174,120 +1123,51 @@ var Employee = function (event, models) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var response = {};
         var startTime = new Date();
-        var filterObj = {};
-        var condition;
         var data = req.query;
+        var accessRollSearcher;
+        var contentSearcher;
+        var waterfallTasks;
 
         response.data = [];
         response.workflowId = data.workflowId;
-        models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-            {
-                $match: {
-                    users: objectId(req.session.uId)
-                }
-            }, {
-                $project: {
-                    _id: 1
-                }
-            },
-            function (err, deps) {
-                if (err) {
-                    return next(err);
-                }
 
-                var arrOfObjectId = deps.objectID();
-                filterObj.$and = [];
-                filterObj.$and.push({isEmployee: false});
-                filterObj.$and.push({workflow: objectId(data.workflowId)});
-                /*filterObj['$and'].push({$or: []});
-                 or = filterObj['$and'][2]['$or'];*/
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Employee, cb);
+        };
 
-                if (data && data.filter) {
-                    if (data.filter.condition === 'or') {
-                        filterObj.$and.push({$or: []});
-                        condition = filterObj.$and[2].$or;
-                    } else {
-                        filterObj.$and.push({$and: []});
-                        condition = filterObj.$and[2].$and;
+        contentSearcher = function (responseApplications, cb) {
+
+            Employee
+                .where('_id').in(responseApplications)
+                .select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired")
+                .populate('workflow', '_id')
+                .populate('jobPosition', '_id name')
+                .sort({lastFire: -1, 'sequence': -1})
+                .limit(req.session.kanbanSettings.applications.countPerPage)
+                .exec(function (err, result) {
+                    if (err) {
+                        return next(err);
                     }
+                    cb(null, result);
+                });
+        }
 
-                    if (data.filter && data.filter.Name) {
-                        condition.push({'name.last': {$in: data.filter.Name}});
-                    }
-                    if (data.filter && data.filter.Email) {
-                        condition.push({'workEmail': {$in: data.filter.Email}});
-                    }
-                    if (!condition.length) {
-                        filterObj.$and.pop();
-                    }
-                }
-                Employee.aggregate(
-                    {
-                        $match: {
-                            $and: [
-                                filterObj,
-                                {
-                                    $or: [
-                                        {
-                                            $or: [
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'group'},
-                                                        {'groups.users': objectId(req.session.uId)}
-                                                    ]
-                                                },
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'group'},
-                                                        {'groups.group': {$in: arrOfObjectId}}
-                                                    ]
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            $and: [
-                                                {whoCanRW: 'owner'},
-                                                {'groups.owner': objectId(req.session.uId)}
-                                            ]
-                                        },
-                                        {whoCanRW: "everyOne"}
-                                    ]
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        $project: {
-                            _id: 1
-                        }
-                    },
-                    function (err, responseApplications) {
-                        if (err) {
-                            return next(err);
-                        }
+        waterfallTasks = [accessRollSearcher, contentSearcher];
 
-                        Employee
-                            .where('_id').in(responseApplications)
-                            .select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired")
-                            .populate('workflow', '_id')
-                            .populate('jobPosition', '_id name')
-                            .sort({lastFire: -1, 'sequence': -1})
-                            .limit(req.session.kanbanSettings.applications.countPerPage)
-                            .exec(function (err, result) {
-                                if (err) {
-                                    return next(err);
-                                }
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
 
-                                response.data = result;
-                                response.time = (new Date() - startTime);
-                                response.workflowId = data.workflowId;
-                                response.fold = (req.session.kanbanSettings.applications.foldWorkflows && req.session.kanbanSettings.applications.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
+            response.data = result;
+            response.time = (new Date() - startTime);
+            response.workflowId = data.workflowId;
+            response.fold = (req.session.kanbanSettings.applications.foldWorkflows && req.session.kanbanSettings.applications.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
 
-                                res.status(200).send(response);
-                            });
-                    });
-            });
+            res.status(200).send(response);
+        });
     }
+
 
     this.getForDdByRelatedUser = function (req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -1307,14 +1187,10 @@ var Employee = function (event, models) {
         });
     };
 
-    this.getByViewTpe = function (req, res, next) {
+    this.getByViewTpe = function (req, res, next) { // toDO refactor id only by params or query
         var query = req.query;
         var viewType = query.viewType;
         var id = req.params.id;
-
-        if (viewType === id) {
-            viewType = id;
-        }
 
         if (id && id.length >= 24) {
             getById(req, res, next);

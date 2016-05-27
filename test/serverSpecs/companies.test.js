@@ -22,8 +22,8 @@ describe("Person Specs", function () {
                 .post('users/login')
                 .send({
                     login: 'admin',
-                    pass : '1q2w3eQWE',
-                    dbId : 'production'
+                    pass : 'tm2016',
+                    dbId : 'lilyadb'
                 })
                 .expect(200, done);
         });
@@ -298,7 +298,7 @@ describe("Person Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'lilyadb'
                 })
                 .expect(200, done);
         });

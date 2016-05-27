@@ -756,17 +756,17 @@ define([
                         model: this.currentModel
                     }).render().el
                 );
-                common.getWorkflowContractEnd("Applications", null, null, CONSTANTS.URLS.WORKFLOWS, null, "Contract End", function (workflow) {
+                common.getWorkflowContractEnd("Applications", null, null, constants.URLS.WORKFLOWS, null, "Contract End", function (workflow) {
                     $('.endContractReasonList').attr('data-id', workflow[0]._id);
                 });
-                populate.get('#departmentManagers', '/DepartmentsForDd', {}, 'departmentManager', this);
+                populate.get('#departmentManagers', constants.URLS.DEPARTMENTS_FORDD, {}, 'departmentManager', this);
                 populate.get("#weeklySchedulerDd", "/weeklyScheduler/forDd", {}, "name", this);
-                populate.get("#jobTypeDd", CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, "name", this);
-                populate.get("#nationality", CONSTANTS.URLS.EMPLOYEES_NATIONALITY, {}, "_id", this);
-                populate.get2name("#projectManagerDD", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
-                populate.get("#jobPositionDd", CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, "name", this, false, false);
-                populate.get("#relatedUsersDd",  CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, false, true);
-                populate.get("#departmentsDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this);
+                populate.get("#jobTypeDd", constants.URLS.JOBPOSITIONS_JOBTYPE, {}, "name", this);
+                populate.get("#nationality", constants.URLS.EMPLOYEES_NATIONALITY, {}, "_id", this);
+                populate.get2name("#projectManagerDD", constants.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
+                populate.get("#jobPositionDd", constants.URLS.JOBPOSITIONS_FORDD, {}, "name", this, false, false);
+                populate.get("#relatedUsersDd",  constants.URLS.USERS_FOR_DD, {}, "login", this, false, true);
+                populate.get("#departmentsDd", constants.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this);
                 common.canvasDraw({model: this.currentModel.toJSON()}, this);
 
                 $('#dateBirth').datepicker({
