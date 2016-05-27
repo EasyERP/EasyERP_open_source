@@ -138,6 +138,10 @@ var Invoice = function (models, event) {
             user: req.session.uId,
             date: new Date()
         };
+        
+        if (id.length < 24){
+            return res.status(400).send();
+        }
 
         function getRates(callback) {
             oxr.historical(date, function () {
@@ -602,37 +606,22 @@ var Invoice = function (models, event) {
     };
 
     function uploadFile(req, res, id, file) {
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 63, function (access) {
-                if (access) {
-                    models.get(req.session.lastDb, "Quotation", OrderSchema).findByIdAndUpdate(id, {$set: {attachments: file}}, {new: true}, function (err, response) {
-                        if (err) {
-                            res.send(401);
-                        } else {
-                            res.send(200, {success: 'Order update success', data: response});
-                        }
-                    });
-                } else {
-                    res.send(403);
-                }
-            });
-        } else {
-            res.send(401);
-        }
+        models.get(req.session.lastDb, "Quotation", OrderSchema).findByIdAndUpdate(id, {$set: {attachments: file}}, {new: true}, function (err, response) {
+            if (err) {
+                res.send(401);
+            } else {
+                res.send(200, {success: 'Order update success', data: response});
+            }
+        });
     };
 
     this.updateOnlySelected = function (req, res, next) {
         var db = req.session.lastDb;
         var id = req.params.id;
         var data = req.body;
-        var isProforma;
         var journalId = data.journal;
-        var moduleId = 64;
         var Invoice = models.get(db, 'wTrackInvoice', wTrackInvoiceSchema);
         var date;
-        var updateName = false;
-        var JobsModel = models.get(db, 'jobs', JobsSchema);
-        var PaymentModel = models.get(db, 'Payment', PaymentSchema);
         var Customer = models.get(db, 'Customers', CustomerSchema);
         var query;
         var queryForClosed;
@@ -649,6 +638,10 @@ var Invoice = function (models, event) {
         var invoiceProducts;
         var invoiceJobs;
 
+        if (id.length < 24){
+           return res.status(400).send();
+        }
+
         delete data.salesPerson;
 
         date = moment(new Date(data.invoiceDate));
@@ -658,169 +651,157 @@ var Invoice = function (models, event) {
 
         delete data.journal;
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
-                if (access) {
+        if (data.fileName) {
 
-                    if (data.fileName) {
+            fileName = data.fileName;
+            os = require("os");
+            osType = (os.type().split('_')[0]);
+            path;
+            dir;
 
-                        fileName = data.fileName;
-                        os = require("os");
-                        osType = (os.type().split('_')[0]);
-                        path;
-                        dir;
+            _id = id;
 
-                        _id = id;
+            switch (osType) {
+                case "Windows":
+                {
+                    var newDirname = __dirname.replace("handlers", "routes");
+                    while (newDirname.indexOf("\\") !== -1) {
+                        newDirname = newDirname.replace("\\", "\/");
+                    }
+                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                    dir = newDirname + "\/uploads\/" + _id;
+                }
+                    break;
+                case "Linux":
+                {
+                    var newDirname = __dirname.replace("handlers", "routes");
+                    while (newDirname.indexOf("\\") !== -1) {
+                        newDirname = newDirname.replace("\\", "\/");
+                    }
+                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                    dir = newDirname + "\/uploads\/" + _id;
+                }
+            }
 
-                        switch (osType) {
-                            case "Windows":
-                            {
-                                var newDirname = __dirname.replace("handlers", "routes");
-                                while (newDirname.indexOf("\\") !== -1) {
-                                    newDirname = newDirname.replace("\\", "\/");
-                                }
-                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                dir = newDirname + "\/uploads\/" + _id;
-                            }
-                                break;
-                            case "Linux":
-                            {
-                                var newDirname = __dirname.replace("handlers", "routes");
-                                while (newDirname.indexOf("\\") !== -1) {
-                                    newDirname = newDirname.replace("\\", "\/");
-                                }
-                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                dir = newDirname + "\/uploads\/" + _id;
-                            }
-                        }
+            fs.unlink(path, function (err) {
+                console.log(err);
+                fs.readdir(dir, function (err, files) {
+                    if (data.attachments && data.attachments.length === 0) {
+                        fs.rmdir(dir, function () {
+                        });
+                    }
+                });
+            });
 
-                        fs.unlink(path, function (err) {
-                            console.log(err);
-                            fs.readdir(dir, function (err, files) {
-                                if (data.attachments && data.attachments.length === 0) {
-                                    fs.rmdir(dir, function () {
-                                    });
-                                }
-                            });
+            delete data.fileName;
+
+            Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
+                if (err) {
+                    return next(err);
+                }
+
+                res.status(200).send(invoice);
+
+            });
+
+        } else {
+
+            data.editedBy = {
+                user: req.session.uId,
+                date: new Date().toISOString()
+            };
+
+            oxr.historical(date, function () {
+                fx.rates = oxr.rates;
+                fx.base = oxr.base;
+
+                data.currency.rate = oxr.rates[data.currency.name];
+
+                Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    if (invoice._type === 'Proforma') {
+                        model = "Proforma";
+
+                        query = {
+                            "sourceDocument.model": model,
+                            "sourceDocument._id"  : id,
+                            journal               : CONSTANTS.BEFORE_INVOICE
+                        };
+                        _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
                         });
 
-                        delete data.fileName;
+                        journal = CONSTANTS.PROFORMA_JOURNAL;
+                    } else {
+                        model = "Invoice";
+                        journal = CONSTANTS.INVOICE_JOURNAL;
 
-                        Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
+                        dateForJobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
+                        dateForJobsFinished = moment(new Date(data.invoiceDate)).subtract(2, 'seconds');
+
+                        invoiceProducts = invoice.products;
+
+                        invoiceJobs = [];
+
+                        invoiceProducts.forEach(function (prod) {
+                            invoiceJobs.push(prod.jobs);
+                        });
+
+                        query = {
+                            "sourceDocument.model": 'jobs',
+                            "sourceDocument._id"  : {$in: invoiceJobs},
+                            journal               : CONSTANTS.JOB_FINISHED
+                        };
+                        _journalEntryHandler.changeDate(query, dateForJobs, req.session.lastDb, function () {
+                        });
+
+                        queryForClosed = {
+                            "sourceDocument.model": 'jobs',
+                            "sourceDocument._id"  : {$in: invoiceJobs},
+                            journal               : CONSTANTS.CLOSED_JOB
+                        };
+                        _journalEntryHandler.changeDate(query, dateForJobsFinished, req.session.lastDb, function () {
+                        });
+
+                        query = {"sourceDocument.model": model, "sourceDocument._id": id, journal: journal};
+                        _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
+                        });
+                    }
+
+
+                    if (!invoice.journal && journalId) { // todo in case of purchase invoice hasn't journalId
+                        Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
+                            if (err) {
+                                return next(err);
+                            }
+
+                            Customer.populate(invoice, {
+                                path  : 'supplier',
+                                select: '_id name fullName'
+                            }, function (err, resp) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                res.status(200).send(invoice);
+                            });
+                        });
+                    } else {
+                        Customer.populate(invoice, {
+                            path  : 'supplier',
+                            select: '_id name fullName'
+                        }, function (err, resp) {
                             if (err) {
                                 return next(err);
                             }
 
                             res.status(200).send(invoice);
-
-                        });
-
-                    } else {
-
-                        data.editedBy = {
-                            user: req.session.uId,
-                            date: new Date().toISOString()
-                        };
-
-                        oxr.historical(date, function () {
-                            fx.rates = oxr.rates;
-                            fx.base = oxr.base;
-
-                            data.currency.rate = oxr.rates[data.currency.name];
-
-                            Invoice.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, invoice) {
-                                if (err) {
-                                    return next(err);
-                                }
-
-                                if (invoice._type === 'Proforma') {
-                                    model = "Proforma";
-
-                                    query = {
-                                        "sourceDocument.model": model,
-                                        "sourceDocument._id"  : id,
-                                        journal               : CONSTANTS.BEFORE_INVOICE
-                                    };
-                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
-                                    });
-
-                                    journal = CONSTANTS.PROFORMA_JOURNAL;
-                                } else {
-                                    model = "Invoice";
-                                    journal = CONSTANTS.INVOICE_JOURNAL;
-
-                                    dateForJobs = moment(new Date(data.invoiceDate)).subtract(1, 'seconds');
-                                    dateForJobsFinished = moment(new Date(data.invoiceDate)).subtract(2, 'seconds');
-
-                                    invoiceProducts = invoice.products;
-
-                                    invoiceJobs = [];
-
-                                    invoiceProducts.forEach(function (prod) {
-                                        invoiceJobs.push(prod.jobs);
-                                    });
-
-                                    query = {
-                                        "sourceDocument.model": 'jobs',
-                                        "sourceDocument._id"  : {$in: invoiceJobs},
-                                        journal               : CONSTANTS.JOB_FINISHED
-                                    };
-                                    _journalEntryHandler.changeDate(query, dateForJobs, req.session.lastDb, function () {
-                                    });
-
-                                    queryForClosed = {
-                                        "sourceDocument.model": 'jobs',
-                                        "sourceDocument._id"  : {$in: invoiceJobs},
-                                        journal               : CONSTANTS.CLOSED_JOB
-                                    };
-                                    _journalEntryHandler.changeDate(query, dateForJobsFinished, req.session.lastDb, function () {
-                                    });
-
-                                    query = {"sourceDocument.model": model, "sourceDocument._id": id, journal: journal};
-                                    _journalEntryHandler.changeDate(query, data.invoiceDate, req.session.lastDb, function () {
-                                    });
-                                }
-
-
-                                if (!invoice.journal && journalId) { // todo in case of purchase invoice hasn't journalId
-                                    Invoice.findByIdAndUpdate(id, {$set: {journal: journalId}}, {new: true}, function (err, invoice) {
-                                        if (err) {
-                                            return next(err);
-                                        }
-
-                                        Customer.populate(invoice, {
-                                            path  : 'supplier',
-                                            select: '_id name fullName'
-                                        }, function (err, resp) {
-                                            if (err) {
-                                                return next(err);
-                                            }
-
-                                            res.status(200).send(invoice);
-                                        });
-                                    });
-                                } else {
-                                    Customer.populate(invoice, {
-                                        path  : 'supplier',
-                                        select: '_id name fullName'
-                                    }, function (err, resp) {
-                                        if (err) {
-                                            return next(err);
-                                        }
-
-                                        res.status(200).send(invoice);
-                                    });
-                                }
-                            });
                         });
                     }
-
-                } else {
-                    res.status(403).send();
-                }
+                });
             });
-        } else {
-            res.status(401).send();
         }
     };
 
@@ -1337,11 +1318,14 @@ var Invoice = function (models, event) {
     };
 
     this.getInvoiceById = function (req, res, next) {
-        var moduleId = 64;
         var data = req.query || {};
         var contentType = data.contentType;
         var id = data.id;
         var forSales;
+
+        if (id.length < 24){
+            return res.status(400).send();
+        }
 
         forSales = data.forSales !== 'false';
 
@@ -1465,10 +1449,8 @@ var Invoice = function (models, event) {
 
     this.removeInvoice = function (req, res, id, next) {
         var db = req.session.lastDb;
-        var moduleId = 64;
         var paymentIds = [];
         var jobs = [];
-        var wTrackIds = [];
         var project;
         var orderId;
         var invoiceDeleted;
@@ -1488,6 +1470,9 @@ var Invoice = function (models, event) {
             }
         };
 
+        if (id.length < 24){
+            return res.status(400).send();
+        }
 
         models.get(db, "Invoice", InvoiceSchema).findByIdAndRemove(id, function (err, result) {
             var proformaBalance;
@@ -1737,17 +1722,19 @@ var Invoice = function (models, event) {
     };
 
     this.updateInvoice = function (req, res, _id, data, next) {
-        var db = req.session.lastDb;
-        var moduleId = 64;
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);
+
+        if (_id.length < 24){
+            return res.status(400).send();
+        }
 
         Invoice.findByIdAndUpdate(_id, data.invoice, {new: true}, function (err, result) {
 
             if (err) {
-                next(err);
-            } else {
-                res.status(200).send(result);
+               return next(err);
             }
+
+            res.status(200).send(result);
         });
 
     };
@@ -2276,8 +2263,8 @@ var Invoice = function (models, event) {
         var now = moment();
 
         var query = req.query;
-        var startDate = query.startDate ? moment(query.startDate) : moment(now).subtract(1, 'month');
-        var endDate = query.endDate ? moment(query.endDate) : now;
+        var startDate = query.startDate ? moment(new Date(query.startDate)) : moment(now).subtract(1, 'month');
+        var endDate = query.endDate ? moment(new Date(query.endDate)) : now;
 
         startDate = startDate.toDate();
         endDate = endDate.toDate();

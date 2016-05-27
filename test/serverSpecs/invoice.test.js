@@ -170,7 +170,7 @@ describe("Invoice Specs", function () {
                 aggent
                     .post('invoice/receive')
                     .send(body)
-                    .expect(500, done);
+                    .expect(400, done);
 
             });
 
@@ -367,7 +367,7 @@ describe("Invoice Specs", function () {
                     .patch('invoice/123cba')
                     .send(body)
                     .set('type', 'sales')
-                    .expect(500, done);
+                    .expect(400, done);
 
             });
 
@@ -495,7 +495,7 @@ describe("Invoice Specs", function () {
                 aggent
                     .get('invoice/form')
                     .query(query)
-                    .expect(500, done);
+                    .expect(400, done);
             });
 
             it("should get invoices for View", function (done) {
@@ -545,7 +545,7 @@ describe("Invoice Specs", function () {
                 aggent
                     .delete('invoice/123cba')
                     .set('type', 'sales')
-                    .expect(500, done);
+                    .expect(400, done);
             });
 
             it("should delete quotation", function (done) {
@@ -626,7 +626,7 @@ describe("Invoice Specs", function () {
                             .and.to.have.property('owner', CONSTANTS.OWNER);
                         expect(body)
                             .to.have.property('paymentInfo')
-                            .and.to.have.property('total', 500000);
+                            .and.to.have.property('total', 5000);
 
 
                         id = body._id;
@@ -733,7 +733,7 @@ describe("Invoice Specs", function () {
                     .put('invoice/123cba')
                     .send(body)
                     .set('type', 'purchase')
-                    .expect(500, done);
+                    .expect(400, done);
             });
 
 

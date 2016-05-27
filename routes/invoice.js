@@ -10,7 +10,6 @@ module.exports = function (models, event) {
     var moduleId = MODULES.INVOICE;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
-
     router.get('/',  authStackMiddleware, accessStackMiddlware, handler.getAll);
     router.get('/totalCollectionLength',  authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddlware, handler.getFilterValues);

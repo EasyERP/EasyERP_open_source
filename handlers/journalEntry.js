@@ -861,26 +861,27 @@ var Module = function (models, event) {
                 return console.log(err);
             }
 
-            if (result.workflow.toString() !== CONSTANTS.JOB_FINISHED) {
-                remove = true;
-            }
+            if (result) {
+                if (result.workflow.toString() !== CONSTANTS.JOB_FINISHED) {
+                    remove = true;
+                }
 
-            if (remove) {
-                Model.remove({
-                    journal             : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB, CONSTANTS.SALARY_PAYABLE, CONSTANTS.OVERTIME_PAYABLE, CONSTANTS.OVERHEAD]},
-                    "sourceDocument._id": jobId
-                }, function (err, result) {
-                    if (err) {
-                        return console.log(err);
-                    }
-                })
-            } else {
+                if (remove) {
+                    Model.remove({
+                        journal             : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB, CONSTANTS.SALARY_PAYABLE, CONSTANTS.OVERTIME_PAYABLE, CONSTANTS.OVERHEAD]},
+                        "sourceDocument._id": jobId
+                    }, function (err, result) {
+                        if (err) {
+                            return console.log(err);
+                        }
+                    })
+                } else {
 
-                var date = result && result.invoice ? moment(result.invoice.date).subtract(1, 'seconds') : null;
+                    var date = result && result.invoice ? moment(result.invoice.date).subtract(1, 'seconds') : null;
 
-                if (date) {
-                    bodyFinishedJob.date = new Date(date);
-                    bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds'));
+                    if (date) {
+                        bodyFinishedJob.date = new Date(date);
+                        bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds'));
 
                         Model.aggregate([{
                             $match: {
@@ -911,10 +912,11 @@ var Module = function (models, event) {
 
                         });
 
+                    }
+
                 }
 
             }
-
         });
 
     };
