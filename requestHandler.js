@@ -1599,6 +1599,420 @@ var requestHandler = function (app, event, mainDb) {
             res.send(401);
         }
     };
+    function aplicationUpdateOnlySelectedFields(req, res, id, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getEditWritAccess(req, req.session.uId, 43, function (access) {
+                if (access) {
+                    data.editedBy = {
+                        user: req.session.uId,
+                        date: new Date().toISOString()
+                    };
+                    employee.updateOnlySelectedFields(req, id, data, res);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
+    function removeApplication(req, res, id) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getDeleteAccess(req, req.session.uId, 43, function (access) {
+                if (access) {
+                    employee.remove(req, id, res);
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+    };
+
+//---------------------Department--------------------------------
+    function createDepartment(req, res, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            data.department.uId = req.session.uId;
+            access.getEditWritAccess(req, req.session.uId, 15, function (access) {
+                if (access) {
+                    department.create(req, data.department, res);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
+    function getDepartment(req, res) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 15, function (access) {
+                if (access) {
+                    department.get(req, res);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
+    function updateDepartment(req, res, id, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            data.department.editedBy = {
+                user: req.session.uId,
+                date: new Date().toISOString()
+            }
+            access.getEditWritAccess(req, req.session.uId, 15, function (access) {
+                if (access) {
+                    department.update(req, id, data.department, res);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
+    function removeDepartment(req, res, id) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getDeleteAccess(req, req.session.uId, 15, function (access) {
+                if (access) {
+                    department.remove(req, id, res);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
+    function getDepartmentForDd(req, res) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            department.getForDd(req, res);
+        } else {
+            res.send(401);
+        }
+    }
+
+    function getDepartmentForEditDd(req, res, id) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            department.getForEditDd(req, id, res);
+        } else {
+            res.send(401);
+        }
+    }
+
+    function getCustomDepartment(req, res, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 15, function (access) {
+                if (access) {
+                    department.getCustomDepartment(req, data, res);
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+    };
+
+    function getDepartmentById(req, res, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 15, function (access) {
+                if (access) {
+                    department.getDepartmentById(req, data.id, res);
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+
+    };
+
+//---------------------Deegree--------------------------------
+    function createDegree(req, res, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            degrees.create(req, data.degree, res);
+        } else {
+            res.send(401);
+        }
+    }
+
+    function getDegrees(req, res) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            degrees.get(req, res);
+        } else {
+            res.send(401);
+        }
+    }
+
+    function updateDegree(req, res, id, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            degrees.update(req, id, data.degree, res);
+        } else {
+            res.send(401);
+        }
+    }
+
+    function removeDegree(req, res, id) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            degrees.remove(req, id, res);
+        } else {
+            res.send(401);
+        }
+    }
+
+//-----------------Campaigns--------------------------------------
+    function getCampaigns(req, res) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            campaigns.getForDd(req, res);
+        } else {
+            res.send(401);
+        }
+    }
+
+    function getLeadsById(req, res, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 24, function (access) {
+                if (access) {
+                    opportunities.getById(req, data.id, res);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
+    function createLead(req, res, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            data.lead.uId = req.session.uId;
+            access.getEditWritAccess(req, req.session.uId, 24, function (access) {
+                if (access) {
+                    opportunities.create(req, data.lead, res);
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+    }
+
+    function updateLead(req, res, id, data) {
+        var date = Date.now();
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            data.lead['editedBy'] = {
+                user: req.session.uId,
+                date: date
+            };
+            access.getEditWritAccess(req, req.session.uId, 24, function (access) {
+                if (access) {
+                    opportunities.updateLead(req, id, data.lead, res);
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+    }
+
+    function removeLead(req, res, id) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getDeleteAccess(req, req.session.uId, 24, function (access) {
+                if (access) {
+                    opportunities.remove(req, id, res);
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+    }
+
+    function getLeadsForChart(req, res, data) {
+        if (req.session && req.session.loggedIn) {
+            access.getReadAccess(req, req.session.uId, 24, function (access) {
+                if (access) {
+                    opportunities.getLeadsForChart(req, res, data);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
+    function getOpportunitiesForChart(req, res, data) {
+        if (req.session && req.session.loggedIn) {
+            access.getReadAccess(req, req.session.uId, 24, function (access) {
+                if (access) {
+                    opportunities.getOpportunitiesForChart(req, res, data);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
+//-------------------Opportunities---------------------------
+
+// Get  Leads or Opportunities for List
+    function getFilterOpportunities(req, res) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 24, function (access) {
+                if (access) {
+                    opportunities.getFilter(req, res);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
+// Get  Leads or Opportunities total count
+    function opportunitiesTotalCollectionLength(req, res) {
+        opportunities.getTotalCount(req, res);
+    }
+
+    function getOpportunitiesLengthByWorkflows(req, res) {
+        opportunities.getCollectionLengthByWorkflows(req, res);
+    }
+
+    function createOpportunitie(req, res, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            data.opportunitie.uId = req.session.uId;
+            access.getEditWritAccess(req, req.session.uId, 25, function (access) {
+                if (access) {
+                    opportunities.create(req, data.opportunitie, res);
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+    }
+
+    function getOpportunityById(req, res, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 25, function (access) {
+                if (access) {
+                    opportunities.getById(req, data.id, res);
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+    }
+
+    function getFilterOpportunitiesForMiniView(req, res, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 25, function (access) {
+                if (access) {
+                    opportunities.getFilterOpportunitiesForMiniView(req, data, res);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    };
+
+    function getFilterOpportunitiesForKanban(req, res, data) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getReadAccess(req, req.session.uId, 25, function (access) {
+                if (access) {
+                    opportunities.getFilterOpportunitiesForKanban(req, data, res);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    };
+
+    function updateOpportunitie(req, res, id, data) {
+        var date = Date.now();
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            data.opportunitie['editedBy'] = {
+                user: req.session.uId,
+                date: date
+            };
+            access.getEditWritAccess(req, req.session.uId, 25, function (access) {
+                if (access) {
+                    opportunities.update(req, id, data.opportunitie, res);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
+    function opportunitieUpdateOnlySelectedFields(req, res, id, data) {
+        data = data.opportunitie;
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getEditWritAccess(req, req.session.uId, 25, function (access) {
+                if (access) {
+                    data.editedBy = {
+                        user: req.session.uId,
+                        date: new Date().toISOString()
+                    };
+                    opportunities.updateOnlySelectedFields(req, id, data, res);
+                } else {
+                    res.send(403);
+                }
+            });
+        } else {
+            res.send(401);
+        }
+    }
+
+    function removeOpportunitie(req, res, id) {
+        if (req.session && req.session.loggedIn && req.session.lastDb) {
+            access.getDeleteAccess(req, req.session.uId, 25, function (access) {
+                if (access) {
+                    opportunities.remove(req, id, res);
+                } else {
+                    res.send(403);
+                }
+            });
+
+        } else {
+            res.send(401);
+        }
+    }
 
     function uploadOpportunitiesFiles(req, res, id, file) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1639,14 +2053,114 @@ var requestHandler = function (app, event, mainDb) {
         uploadProjectsFiles: uploadProjectsFiles,
         removeProject: removeProject,
         getProjectStatusCountForDashboard: getProjectStatusCountForDashboard,
-        getProjectByEndDateForDashboard: getProjectByEndDateForDashboard,
-        updateOnlySelectedFields: updateOnlySelectedFields,
-        getProjectType: getProjectType,
-        uploadTasksFiles: uploadTasksFiles,
-        getLeadsPriority: getLeadsPriority,
-        uploadApplicationFile: uploadApplicationFile,
-        uploadOpportunitiesFiles: uploadOpportunitiesFiles,
-        uploadInvoiceFiles: uploadInvoiceFiles,
+        getProjectByEndDateForDashboard  : getProjectByEndDateForDashboard,
+        updateOnlySelectedFields         : updateOnlySelectedFields,
+        taskUpdateOnlySelectedFields     : taskUpdateOnlySelectedFields,
+        getProjectType                   : getProjectType,
+
+        createTask               : createTask,
+        getTasksLengthByWorkflows: getTasksLengthByWorkflows,
+        getTaskById              : getTaskById,
+        getTasksForList          : getTasksForList,
+        getTasksForKanban        : getTasksForKanban,
+        updateTask               : updateTask,
+        uploadTasksFiles         : uploadTasksFiles,
+        removeTask               : removeTask,
+        getTasksPriority         : getTasksPriority,
+        getLeadsPriority         : getLeadsPriority,
+
+        getCompaniesForDd              : getCompaniesForDd,
+        getCompanyById                 : getCompanyById,
+        removeCompany                  : removeCompany,
+        createCompany                  : createCompany,
+        updateCompany                  : updateCompany,
+        companyUpdateOnlySelectedFields: companyUpdateOnlySelectedFields,
+        getFilterCustomers             : getFilterCustomers,
+        getCustomersImages             : getCustomersImages,
+        getCustomersAlphabet           : getCustomersAlphabet,
+
+        getRelatedStatus               : getRelatedStatus,
+        getWorkflow                    : getWorkflow,
+        createWorkflow                 : createWorkflow,
+        updateWorkflow                 : updateWorkflow,
+        getWorkflowsForDd              : getWorkflowsForDd,
+        removeWorkflow                 : removeWorkflow,
+        updateWorkflowOnlySelectedField: updateWorkflowOnlySelectedField,
+
+        jobPositionsTotalCollectionLength: jobPositionsTotalCollectionLength,
+        createJobPosition                : createJobPosition,
+        updateJobPosition                : updateJobPosition,
+        removeJobPosition                : removeJobPosition,
+        getJobPositionById               : getJobPositionById,
+        getJobPositionForDd              : getJobPositionForDd,
+
+        createEmployee       : createEmployee,
+        getFilterJobPosition : getFilterJobPosition,
+        getForDdByRelatedUser: getForDdByRelatedUser,
+        getEmployeesById     : getEmployeesById,
+        removeEmployees      : removeEmployees,
+        updateEmployees      : updateEmployees,
+        getEmployeesAlphabet : getEmployeesAlphabet,
+        getEmployeesImages   : getEmployeesImages,
+
+        Birthdays: Birthdays,
+
+        getPersonsForDd   : getPersonsForDd,
+        getDepartmentForDd: getDepartmentForDd,
+
+        getApplicationsLengthByWorkflows  : getApplicationsLengthByWorkflows,
+        createApplication                 : createApplication,
+        removeApplication                 : removeApplication,
+        updateApplication                 : updateApplication,
+        uploadApplicationFile             : uploadApplicationFile,
+        aplicationUpdateOnlySelectedFields: aplicationUpdateOnlySelectedFields,
+        employeesUpdateOnlySelectedFields : employeesUpdateOnlySelectedFields,
+
+        getDepartment         : getDepartment,
+        createDepartment      : createDepartment,
+        updateDepartment      : updateDepartment,
+        removeDepartment      : removeDepartment,
+        getDepartmentById     : getDepartmentById,
+        getCustomDepartment   : getCustomDepartment,
+        getDepartmentForEditDd: getDepartmentForEditDd,
+        createDegree          : createDegree,
+        getDegrees            : getDegrees,
+        updateDegree          : updateDegree,
+        removeDegree          : removeDegree,
+
+        getCampaigns                  : getCampaigns,
+        employeesTotalCollectionLength: employeesTotalCollectionLength,
+        getEmployeesFilter            : getEmployeesFilter,
+        uploadEmployeesFile           : uploadEmployeesFile,
+        getApplicationById            : getApplicationById,
+        getApplicationsForKanban      : getApplicationsForKanban,
+
+        createLead      : createLead,
+        updateLead      : updateLead,
+        removeLead      : removeLead,
+        getLeadsById    : getLeadsById,
+        getLeadsForChart: getLeadsForChart,
+        getOpportunitiesForChart: getOpportunitiesForChart,
+
+        opportunitiesTotalCollectionLength  : opportunitiesTotalCollectionLength,
+        getOpportunitiesLengthByWorkflows   : getOpportunitiesLengthByWorkflows,
+        createOpportunitie                  : createOpportunitie,
+        getFilterOpportunities              : getFilterOpportunities,
+        getFilterOpportunitiesForMiniView   : getFilterOpportunitiesForMiniView,
+        getFilterOpportunitiesForKanban     : getFilterOpportunitiesForKanban,
+        getOpportunityById                  : getOpportunityById,
+        updateOpportunitie                  : updateOpportunitie,
+        removeOpportunitie                  : removeOpportunitie,
+        opportunitieUpdateOnlySelectedFields: opportunitieUpdateOnlySelectedFields,
+        uploadOpportunitiesFiles            : uploadOpportunitiesFiles,
+        uploadInvoiceFiles                  : uploadInvoiceFiles,
+
+        getSources                   : getSources,
+        getLanguages                 : getLanguages,
+        getJobType                   : getJobType,
+        getNationality               : getNationality,
+        customerTotalCollectionLength: customerTotalCollectionLength,
+
         initScheduler: initScheduler
     };
 }
