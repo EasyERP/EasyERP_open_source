@@ -121,6 +121,9 @@ define([
                     },
 
                     success: function (data) {
+                        var res;
+                        var attachments;
+
                         if (self.isCreate) {
                             status.hide();
                             self.hideDialog();
@@ -130,10 +133,10 @@ define([
                             Backbone.history.fragment = '';
                             Backbone.history.navigate(window.location.hash, {trigger: true});
                         } else {
-                            var attachments = currentModel.get('attachments') || {};
+                            attachments = currentModel.get('attachments') || {};
                             attachments.length = 0;
                             $('.attachContainer').empty();
-                            var res = (data.data) ? data.data : data.result;
+                            res = (data.data) ? data.data : data.result;
                             if (!res) {
                                 res = data;
                             }
