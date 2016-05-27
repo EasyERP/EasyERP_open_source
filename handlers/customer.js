@@ -10,6 +10,7 @@ var Customers = function (models) {
     var CustomerSchema = mongoose.Schemas.Customer;
     var _ = require('../node_modules/underscore');
     var CONSTANTS = require('../constants/mainConstants');
+    var objectId = mongoose.Types.ObjectId;
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
     var accessRoll = require("../helpers/accessRollHelper.js")(models);
@@ -371,6 +372,26 @@ var Customers = function (models) {
 
                 res.status(200).send({data: customers});
             });
+
+    };
+
+    this.getCustomers = function (req, res, next) {
+        var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+
+        var data = req.query;
+
+        var query = Customers.find();
+        if (data && data.id) {
+            query.where({_id: objectId(data.id)});
+        }
+
+        query.sort({"name.first": 1});
+        query.exec(function (err, customers) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({data: customers});
+        });
 
     };
 
@@ -894,10 +915,11 @@ var Customers = function (models) {
                         $match: queryObject
                     }, {
                         $project: {
-                            _id   : 1,
+                            _id: 1,
                             letter: {$substr: [searchName, 0, 1]}
                         }
-                    }, {
+                    },
+                    {
                         $group: {_id: "$letter"}
                     }], cb);
 
