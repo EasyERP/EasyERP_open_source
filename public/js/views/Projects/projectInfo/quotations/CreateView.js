@@ -235,9 +235,9 @@ define([
 
                 if (projectID) {
 
-                    populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, false, false, projectID);
+                    populate.get('#projectDd', '/projects/getForDd', {}, 'projectName', this, false, false, projectID);
                 } else {
-                    populate.get("#projectDd", "/getProjectsForDd", {}, "projectName", this, true, true);
+                    populate.get('#projectDd', '/projects/getForDd', {}, 'projectName', this, true, true);
                 }
             },
 

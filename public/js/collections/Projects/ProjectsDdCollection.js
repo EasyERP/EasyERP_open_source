@@ -10,7 +10,7 @@
         model: ProjectModelDd,
         url  : function () {
             var mid = 39;
-            return "/getProjectsForDd?mid=" + mid;
+            return '/projects/getForDd?mid=' + mid;
         },
 
         initialize: function () {

@@ -11,7 +11,18 @@ define([
     'models/LeadsModel',
     'collections/Leads/filterCollection',
     'common'
-], function ($, _, listViewBase, listTemplate, stagesTamplate, createView, ListItemView, EditView, FilterView, CurrentModel, contentCollection, common) {
+], function ($,
+             _,
+             listViewBase,
+             listTemplate,
+             stagesTemplate,
+             createView,
+             ListItemView,
+             EditView,
+             FilterView,
+             CurrentModel,
+             contentCollection,
+             common) {
     'use strict';
 
     var LeadsListView = listViewBase.extend({
@@ -21,18 +32,18 @@ define([
         contentCollection       : contentCollection,
         filterView              : FilterView,
         totalCollectionLengthUrl: '/leads/totalCollectionLength',
-        formUrl                 : "#easyErp/Leads/form/",
-        contentType             : 'Leads',//needs in view.prototype.changeLocationHash
+        formUrl                 : '#easyErp/Leads/form/',
+        contentType             : 'Leads', // needs in view.prototype.changeLocationHash
 
         events: {
-            "click .list td:not(.notForm)": "goToEditDialog",
-            "click #convertToOpportunity" : "openDialog",
-            "click .stageSelect"          : "showNewSelect",
-            "click .newSelectList li"     : "chooseOption"
+            'click .list td:not(.notForm)': 'goToEditDialog',
+            'click #convertToOpportunity' : 'openDialog',
+            'click .stageSelect'          : 'showNewSelect',
+            'click .newSelectList li'     : 'chooseOption'
         },
 
         initialize: function (options) {
-            $(document).off("click");
+            $(document).off('click');
             this.startTime = options.startTime;
             this.collection = options.collection;
             _.bind(this.collection.showMore, this.collection);
@@ -54,10 +65,10 @@ define([
 
         chooseOption: function (e) {
             var self = this;
-            var targetElement = $(e.target).parents("td");
-            var id = targetElement.attr("id");
+            var targetElement = $(e.target).parents('td');
+            var id = targetElement.attr('id');
             var obj = this.collection.get(id);
-            obj.set({workflow: $(e.target).attr("id")});
+            obj.set({workflow: $(e.target).attr('id')});
             obj.save(obj.changed, {
                 headers: {
                     mid: 39
@@ -77,24 +88,22 @@ define([
         },
 
         openDialog: function () {
-            $("#dialog-form").dialog("open");
+            $('#dialog-form').dialog('open');
         },
 
         render: function () {
-            var self;
+            var self = this;
             var $currentEl;
+            var itemView;
 
             $('.ui-dialog ').remove();
 
-            self = this;
             $currentEl = this.$el;
-
-            var itemView;
 
             $currentEl.html('');
             $currentEl.append(_.template(listTemplate));
 
-            var itemView = new this.listItemView({
+            itemView = new this.listItemView({
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
@@ -102,10 +111,8 @@ define([
 
             itemView.bind('incomingStages', this.pushStages, this);
 
-            this.renderCheckboxes();
-
-            common.populateWorkflowsList("Leads", ".drop-down-filter", "", "/Workflows", null, function (stages) {
-                self.stages = stages;
+            common.populateWorkflowsList('Leads', '.filter-check-list', '', '/Workflows', null, function (stages) {
+                self.stages = (self.filter) ? self.filter.workflow : null;
                 itemView.trigger('incomingStages', stages);
             });
 
@@ -117,28 +124,29 @@ define([
 
             this.renderPagination($currentEl, this);
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").remove();
+            $('.newSelectList').hide();
         },
 
         showNewSelect: function (e) {
-            if ($(".newSelectList").is(":visible")) {
+            if ($('.newSelectList').is(':visible')) {
                 this.hideNewSelect();
                 return false;
-            } else {
-                $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
-                return false;
             }
-
+            $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
+            return false;
         },
 
         goToEditDialog: function (e) {
+            var id;
+            var model;
+
             e.preventDefault();
-            var id = $(e.target).closest('tr').data("id");
-            var model = new CurrentModel({validate: false});
+            id = $(e.target).closest('tr').data('id');
+            model = new CurrentModel({validate: false});
             model.urlRoot = '/Leads/form';
             model.fetch({
                 data   : {id: id},
