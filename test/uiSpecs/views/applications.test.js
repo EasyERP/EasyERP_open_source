@@ -5628,7 +5628,7 @@ define([
     var workflowCollection;
     var applicationCollection;
 
-    describe('DashboardVacation', function () {
+    describe('ApplicationsView', function () {
 
         var $fixture;
         var $elFixture;

@@ -9,19 +9,20 @@ module.exports = function (models) {
     var handler = new jobPositionHandler(models);
     var moduleId = MODULES.JOBPOSITIONS;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    router.use(authStackMiddleware);
 
-    router.get('/getFilterValues', authStackMiddleware, accessStackMiddlware, handler.getFilterValues);
-    router.get('/getForDd', authStackMiddleware, handler.getForDd);
-    router.get('/jobType', authStackMiddleware, handler.jobType);
-    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
-    router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getByViewType);
+    router.get('/getFilterValues', accessStackMiddlware, handler.getFilterValues);
+    router.get('/getForDd', handler.getForDd);
+    router.get('/jobType', handler.jobType);
+    router.get('/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
+    router.get('/:id', accessStackMiddlware, handler.getByViewType);
 
-    router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
-    router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.update);
-    router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.update);
-    router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
+    router.post('/', accessStackMiddlware, handler.create);
+    router.patch('/:id', accessStackMiddlware, handler.update);
+    router.put('/:id', accessStackMiddlware, handler.update);
+    router.delete('/:id', accessStackMiddlware, handler.remove);
 
-    //router.get('/form', authStackMiddleware, accessStackMiddlware, handler.getById);
-    //router.get('/list', authStackMiddleware, accessStackMiddlware, handler.getFilterJobPositions);
+    //router.get('/form', accessStackMiddlware, handler.getById);
+    //router.get('/list', accessStackMiddlware, handler.getFilterJobPositions);
     return router;
 };

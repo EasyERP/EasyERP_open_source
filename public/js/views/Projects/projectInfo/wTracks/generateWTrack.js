@@ -484,7 +484,6 @@ define([
                 },
 
                 generateItems: function (e) {
-
                     var self = this;
                     var once = _.once(generateOnce);
 
@@ -552,7 +551,7 @@ define([
                                     App.projectInfo = App.projectInfo || {};
                                     App.projectInfo.currentTab = 'timesheet';
 
-                                    tabs = $(".chart-tabs");
+                                    tabs = $('.chart-tabs');
                                     activeTab = tabs.find('.active');
 
                                     activeTab.removeClass('active');
@@ -709,19 +708,19 @@ define([
                     }
 
                     this.$el = $(dialog).dialog({
-                        dialogClass: "wTrackDialog",
+                        dialogClass: 'wTrackDialog',
                         width      : 1200,
-                        title      : "Generate weTrack",
+                        title      : 'Generate weTrack',
                         buttons    : {
                             save  : {
-                                text : "Generate",
-                                class: "btn",
-                                id   : "generateBtn",
+                                text : 'Generate',
+                                class: 'btn',
+                                id   : 'generateBtn',
                                 click: self.generateItems
                             },
                             cancel: {
-                                text : "Cancel",
-                                class: "btn",
+                                text : 'Cancel',
+                                class: 'btn',
                                 click: function () {
                                     self.hideDialog();
                                 }
@@ -729,7 +728,10 @@ define([
                         }
                     });
 
-                    dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, {isEmployee: true, devDepartments: true}, function (employees) {
+                    dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, {
+                        isEmployee    : true,
+                        devDepartments: true
+                    }, function (employees) {
                         employees = _.map(employees.data, function (employee) {
                             employee.name = employee.name.first + ' ' + employee.name.last;
 

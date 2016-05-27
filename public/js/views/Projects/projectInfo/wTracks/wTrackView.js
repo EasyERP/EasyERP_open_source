@@ -543,7 +543,7 @@ define([
 
             this.defaultItemsNumber = itemsNumber;
 
-            this.getTotalLength(null, itemsNumber, this.filter);
+            // this.getTotalLength(null, itemsNumber, this.filter); //this event fire when view is initialize
 
             this.collection.showMore({
                 count        : itemsNumber,

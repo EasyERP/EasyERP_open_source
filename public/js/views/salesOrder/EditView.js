@@ -81,9 +81,9 @@ define([
             return false;
         },
 
-        notHide: function () {
-            return false;
-        },
+            notHide: function () {
+                return false;
+            },
 
         hideNewSelect: function () {
             $('.newSelectList').hide();
@@ -95,9 +95,9 @@ define([
             $targetEl.parents('dd').find('.current-selected').text($targetEl.text()).attr('data-id', $targetEl.attr('id'));
         },
 
-        nextSelect: function (e) {
-            this.showNewSelect(e, false, true);
-        },
+            nextSelect: function (e) {
+                this.showNewSelect(e, false, true);
+            },
 
         prevSelect: function (e) {
             this.showNewSelect(e, true, false);
@@ -565,12 +565,13 @@ define([
                 changeYear : true
             });
 
-            this.$el.find('#orderDate').datepicker({
-                dateFormat : 'd M, yy',
-                changeMonth: true,
-                changeYear : true,
-                maxDate    : 0
-            });
+                this.$el.find('#orderDate').datepicker({
+                    dateFormat : "d M, yy",
+                    changeMonth: true,
+                    changeYear : true,
+                    maxDate    : 0,
+                    minDate    : model.orderDate
+                });
 
             productItemContainer = this.$el.find('#productItemsHolder');
 

@@ -453,16 +453,24 @@
                 }
             });
         };
-        var getLeadsForChart = function (source, sales, dataRange, dataItem, callback) {
-            dataService.getData("/leads/getLeadsForChart", {
-                source   : source,
+        var getLeadsForChart = function (type, dataRange, dataItem, callback) {
+            dataService.getData('/leads/getLeadsForChart', {
+                type   : type,
                 dataRange: dataRange,
-                sales: sales,
                 dataItem : dataItem
             }, function (response) {
                 callback(response.data);
             });
-        }
+        };
+        var getOpportunitiesForChart = function (source, dataRange, dataItem, callback) {
+            dataService.getData('/opportinities/OpportunitiesForChart', {
+                source   : source,
+                dataRange: dataRange,
+                dataItem : dataItem
+            }, function (response) {
+                callback(response.data);
+            });
+        };
         var populateDepartmentsList = function (selectId, targetId, url, model, page, callback) {
             var selectList = $(selectId);
             var targetList = $(targetId);
@@ -1093,47 +1101,48 @@
         });
     };
 
-    return {
-        deleteFromLocalStorage          : deleteFromLocalStorage,
-        populateProfilesDd              : populateProfilesDd,
-        buildAllAphabeticArray          : buildAllAphabeticArray,
-        buildAphabeticArray             : buildAphabeticArray,
-        buildPagination                 : buildPagination,
-        getListLength                   : getListLength,
-        populateDegrees                 : populateDegrees,
-        populateSourceApplicants        : populateSourceApplicants,
-        populateSourceDd                : populateSourceDd,
-        populateJobTypeDd               : populateJobTypeDd,
-        populateJobPositions            : populateJobPositions,
-        populateUsers                   : populateUsers,
-        utcDateToLocaleFullDateTime     : utcDateToLocaleFullDateTime,
-        utcDateToLocaleDateTime         : utcDateToLocaleDateTime,
-        utcDateToLocaleDate             : utcDateToLocaleDate,
-        populateProjectsDd              : populateProjectsDd,
-        populatePriority                : populatePriority,
-        populateDepartments             : populateDepartments,
-        populateCompanies               : populateCompanies,
-        populateWorkflows               : populateWorkflows,
-        populateWorkflowsList           : populateWorkflowsList,
-        getWorkflowContractEnd          : getWorkflowContractEnd,
-        populateCustomers               : populateCustomers,
-        populateEmployeesDd             : populateEmployeesDd,
-        populateCoachDd                 : populateCoachDd,
-        populateRelatedStatuses         : populateRelatedStatuses,
-        checkBackboneFragment           : checkBackboneFragment,
-        displayControlBtnsByActionType  : displayControlBtnsByActionType,
-        ISODateToDate                   : ISODateToDate,
-        hexToRgb                        : hexToRgb,
-        deleteEvent                     : deleteEvent,
-        canvasDraw                      : canvasDraw,
-        saveToLocalStorage              : saveToLocalStorage,
-        getFromLocalStorage             : getFromLocalStorage,
-        populateUsersForGroups          : populateUsersForGroups,
-        populateParentDepartments       : populateParentDepartments,
-        populateDepartmentsList         : populateDepartmentsList,
-        getLeadsForChart                : getLeadsForChart,
-        getImages                       : getImages,
-        getImagesPM                     : getImagesPM,
-        populateOpportunitiesForMiniView: populateOpportunitiesForMiniView
-    }
-});
+        return {
+            deleteFromLocalStorage          : deleteFromLocalStorage,
+            populateProfilesDd              : populateProfilesDd,
+            buildAllAphabeticArray          : buildAllAphabeticArray,
+            buildAphabeticArray             : buildAphabeticArray,
+            buildPagination                 : buildPagination,
+            getListLength                   : getListLength,
+            populateDegrees                 : populateDegrees,
+            populateSourceApplicants        : populateSourceApplicants,
+            populateSourceDd                : populateSourceDd,
+            populateJobTypeDd               : populateJobTypeDd,
+            populateJobPositions            : populateJobPositions,
+            populateUsers                   : populateUsers,
+            utcDateToLocaleFullDateTime     : utcDateToLocaleFullDateTime,
+            utcDateToLocaleDateTime         : utcDateToLocaleDateTime,
+            utcDateToLocaleDate             : utcDateToLocaleDate,
+            populateProjectsDd              : populateProjectsDd,
+            populatePriority                : populatePriority,
+            populateDepartments             : populateDepartments,
+            populateCompanies               : populateCompanies,
+            populateWorkflows               : populateWorkflows,
+            populateWorkflowsList           : populateWorkflowsList,
+            getWorkflowContractEnd          : getWorkflowContractEnd,
+            populateCustomers               : populateCustomers,
+            populateEmployeesDd             : populateEmployeesDd,
+            populateCoachDd                 : populateCoachDd,
+            populateRelatedStatuses         : populateRelatedStatuses,
+            checkBackboneFragment           : checkBackboneFragment,
+            displayControlBtnsByActionType  : displayControlBtnsByActionType,
+            ISODateToDate                   : ISODateToDate,
+            hexToRgb                        : hexToRgb,
+            deleteEvent                     : deleteEvent,
+            canvasDraw                      : canvasDraw,
+            saveToLocalStorage              : saveToLocalStorage,
+            getFromLocalStorage             : getFromLocalStorage,
+            populateUsersForGroups          : populateUsersForGroups,
+            populateParentDepartments       : populateParentDepartments,
+            populateDepartmentsList         : populateDepartmentsList,
+            getLeadsForChart                : getLeadsForChart,
+            getOpportunitiesForChart        : getOpportunitiesForChart,
+            getImages                       : getImages,
+            getImagesPM                     : getImagesPM,
+            populateOpportunitiesForMiniView: populateOpportunitiesForMiniView
+        }
+    });

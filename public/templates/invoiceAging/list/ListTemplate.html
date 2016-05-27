@@ -6,32 +6,44 @@
     <td><%=(invoiceAging.salesPerson) ? invoiceAging.salesPerson.name : ''%></td>
     <td><%=(invoiceAging.supplier) ? invoiceAging.supplier.name : ''%></td>
     <td><%=(invoiceAging.project) ? invoiceAging.project.projectName : ''%></td>
-    <td data-content="zeroTotal"><%=invoiceAging.diffStatus === -1 ? currencySplitter(invoiceAging.paymentInfo.balance)
+    <%var currencyClass1;%>
+    <%var currencyClass2;%>
+    <%var currencyClass3;%>
+    <%var currencyClass4;%>
+    <%var currencyClass5;%>
+    <%var currencyClass6;%>
+    <%=invoiceAging.diffStatus === -1 ? currencyClass1 = 'money' : '&nbsp;'%>
+    <%=invoiceAging.diffStatus === 0 ? currencyClass2 = 'money' : '&nbsp;'%>
+    <%=invoiceAging.diffStatus === 1 ? currencyClass3 = 'money' : '&nbsp;'%>
+    <%=invoiceAging.diffStatus === 2 ? currencyClass4 = 'money' : '&nbsp;'%>
+    <%=invoiceAging.diffStatus === 3 ? currencyClass5 = 'money' : '&nbsp;'%>
+    <%=invoiceAging.diffStatus === 4 ? currencyClass6 = 'money' : '&nbsp;'%>
+    <td data-content="zeroTotal" class="<%=currencyClass1%>"><%=invoiceAging.diffStatus === -1 ? currencySplitter(invoiceAging.paymentInfo.balance)
         : '&nbsp;'%>
     </td>
-    <td data-content="fifteenTotal"><%=invoiceAging.diffStatus === 0 ?
+    <td data-content="fifteenTotal" class="<%=currencyClass2%>"><%=invoiceAging.diffStatus === 0 ?
         currencySplitter(invoiceAging.paymentInfo.balance) : '&nbsp;'%>
     </td>
-    <td data-content="thirtyTotal"><%=invoiceAging.diffStatus === 1 ? currencySplitter(invoiceAging.paymentInfo.balance)
+    <td data-content="thirtyTotal" class="<%=currencyClass3%>"><%=invoiceAging.diffStatus === 1 ? currencySplitter(invoiceAging.paymentInfo.balance)
         : '&nbsp;'%>
     </td>
-    <td data-content="sixtyTotal"><%=invoiceAging.diffStatus === 2 ? currencySplitter(invoiceAging.paymentInfo.balance)
+    <td data-content="sixtyTotal" class="<%=currencyClass4%>"><%=invoiceAging.diffStatus === 2 ? currencySplitter(invoiceAging.paymentInfo.balance)
         : '&nbsp;'%>
     </td>
-    <td data-content="ninetyTotal"><%=invoiceAging.diffStatus === 3 ? currencySplitter(invoiceAging.paymentInfo.balance)
+    <td data-content="ninetyTotal" class="<%=currencyClass5%>"><%=invoiceAging.diffStatus === 3 ? currencySplitter(invoiceAging.paymentInfo.balance)
         : '&nbsp;'%>
     </td>
-    <td data-content="moreTotal"><%=invoiceAging.diffStatus === 4 ? currencySplitter(invoiceAging.paymentInfo.balance) :
+    <td data-content="moreTotal" class="<%=currencyClass6%>"><%=invoiceAging.diffStatus === 4 ? currencySplitter(invoiceAging.paymentInfo.balance) :
         '&nbsp;'%>
     </td>
 </tr>
 <% }) %>
 <tr>
     <td colspan="6">Total</td>
-    <td id="zeroTotal">&nbsp;</td>
-    <td id="fifteenTotal">&nbsp;</td>
-    <td id="thirtyTotal">&nbsp;</td>
-    <td id="sixtyTotal">&nbsp;</td>
-    <td id="ninetyTotal">&nbsp;</td>
-    <td id="moreTotal">&nbsp;</td>
+    <td id="zeroTotal" class="money">&nbsp;</td>
+    <td id="fifteenTotal" class="money">&nbsp;</td>
+    <td id="thirtyTotal" class="money">&nbsp;</td>
+    <td id="sixtyTotal" class="money">&nbsp;</td>
+    <td id="ninetyTotal" class="money">&nbsp;</td>
+    <td id="moreTotal" class="money">&nbsp;</td>
 </tr>

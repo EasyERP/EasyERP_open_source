@@ -10,6 +10,7 @@ var Customers = function (models) {
     var CustomerSchema = mongoose.Schemas.Customer;
     var _ = require('../node_modules/underscore');
     var CONSTANTS = require('../constants/mainConstants');
+    var objectId = mongoose.Types.ObjectId;
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
     var accessRoll = require("../helpers/accessRollHelper.js")(models);
@@ -41,7 +42,7 @@ var Customers = function (models) {
                     resArray.push(filtrElement);
                     break;
                 case 'letter':
-                    filtrElement['name.first'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
+                    filtrElement['name.first'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
                     resArray.push(filtrElement);
                     break;
                 case 'services':
@@ -117,7 +118,7 @@ var Customers = function (models) {
 
             queryObject.$and = [];
 
-            if (optionsObject.$and.length) {
+            if (optionsObject.$and && optionsObject.$and.length) {
                 queryObject.$and.push(optionsObject);
             }
 
@@ -374,6 +375,26 @@ var Customers = function (models) {
 
     };
 
+    this.getCustomers = function (req, res, next) {
+        var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+
+        var data = req.query;
+
+        var query = Customers.find();
+        if (data && data.id) {
+            query.where({_id: objectId(data.id)});
+        }
+
+        query.sort({"name.first": 1});
+        query.exec(function (err, customers) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({data: customers});
+        });
+
+    };
+
     this.getFilterPersonsForMiniView = function (req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var optionsObject = {};
@@ -482,14 +503,19 @@ var Customers = function (models) {
             }
                 break;
         }
+        if (data && data.ids){
+            Customers.find(optionsObject, {_id: 1, imageSrc: 1}, function (err, response) {
+                if (err) {
+                    return next(err);
+                }
 
-        Customers.find(optionsObject, {_id: 1, imageSrc: 1}, function (err, response) {
-            if (err) {
-                return next(err);
-            }
+                res.send(200, {data: response});
+            });
+        } else {
+            res.send(200, {data: []});
+        }
 
-            res.send(200, {data: response});
-        });
+
     };
 
     this.create = function (req, res, next) {
@@ -601,7 +627,7 @@ var Customers = function (models) {
 
             queryObject.$and = [];
 
-            if (optionsObject.$and.length) {
+            if (optionsObject.$and && optionsObject.$and.length) {
                 queryObject.$and.push(optionsObject);
             }
 
@@ -894,11 +920,12 @@ var Customers = function (models) {
                         $match: queryObject
                     }, {
                         $project: {
-                            _id   : 1,
-                            letter: {$substr: [searchName, 0, 1]}
+                            _id: 1,
+                            later: {$substr: [searchName, 0, 1]}
                         }
-                    }, {
-                        $group: {_id: "$letter"}
+                    },
+                    {
+                        $group: {_id: "$later"}
                     }], cb);
 
         };
@@ -929,105 +956,6 @@ var Customers = function (models) {
 
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
-
-    function caseFilter(data, contentType, optionsObject) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-
-        switch (contentType) {
-            case ('Persons'):
-            {
-                for (var filterName in data.filter) {
-                    condition = data.filter[filterName]['value'];
-                    key = data.filter[filterName]['key'];
-
-                    switch (filterName) {
-                        case 'country':
-                            filtrElement[key] = {$in: condition};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'name':
-                            filtrElement[key] = {$in: condition.objectID()};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'letter':
-                            filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
-                            resArray.push(filtrElement);
-                            break;
-                        case 'services':
-                            if (condition.indexOf('isCustomer') !== -1) {
-                                filtrElement['salesPurchases.isCustomer'] = true;
-                                resArray.push(filtrElement);
-                            }
-                            if (condition.indexOf('isSupplier') !== -1) {
-                                filtrElement['salesPurchases.isSupplier'] = true;
-                                resArray.push(filtrElement);
-                            }
-                            break;
-                    }
-                }
-
-                resArray.push({'type': 'Person'});
-
-                if (resArray.length) {
-
-                    if (data && data.filter && data.filter.condition === 'or') {
-                        optionsObject['$or'] = resArray;
-                    } else {
-                        optionsObject['$and'] = resArray;
-                    }
-                }
-            }
-                break;
-            case ('Companies'):
-            {
-                for (var filterName in data.filter) {
-                    condition = data.filter[filterName]['value'];
-                    key = data.filter[filterName]['key'];
-
-                    switch (filterName) {
-                        case 'country':
-                            filtrElement[key] = {$in: condition};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'name':
-                            filtrElement[key] = {$in: condition.objectID()};
-                            resArray.push(filtrElement);
-                            break;
-                        case 'letter':
-                            filtrElement['name.first'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
-                            resArray.push(filtrElement);
-                            break;
-                        case 'services':
-                            if (condition.indexOf('isCustomer') !== -1) {
-                                filtrElement['salesPurchases.isCustomer'] = true;
-                                resArray.push(filtrElement);
-                            }
-                            if (condition.indexOf('isSupplier') !== -1) {
-                                filtrElement['salesPurchases.isSupplier'] = true;
-                                resArray.push(filtrElement);
-                            }
-                            break;
-                    }
-                }
-
-                resArray.push({'type': 'Company'});
-
-                if (resArray.length) {
-
-                    if (data && data.filter && data.filter.condition === 'or') {
-                        optionsObject['$or'] = resArray;
-                    } else {
-                        optionsObject['$and'] = resArray;
-                    }
-                }
-            }
-                break;
-        }
-        return optionsObject;
-    }
 
     var projectCustomer = {
         type                            : 1,

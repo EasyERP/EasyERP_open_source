@@ -1900,7 +1900,7 @@ var Payment = function (models, event) {
 
                                                 request.query.wId = wId;
 
-                                                isNotFullPaid = paymentInfo.total > (paymentInfo.balance + paid);
+                                                isNotFullPaid = paymentInfo.total > parseInt(paymentInfo.balance + paid);
 
                                                 if (isNotFullPaid) {
                                                     request.query.status = 'In Progress';
@@ -1928,10 +1928,10 @@ var Payment = function (models, event) {
                                                     paymentInfoNew.taxes = paymentInfo.taxes;
                                                     paymentInfoNew.unTaxed = paymentInfoNew.total;
 
-                                                    if (paymentInfo.total !== paymentInfo.balance) {
-                                                        paymentInfoNew.balance = paymentInfo.balance + paid;
+                                                    if (paymentInfo.total !== parseInt(paymentInfo.balance)) {
+                                                        paymentInfoNew.balance = parseInt(paymentInfo.balance + paid);
                                                     } else {
-                                                        paymentInfoNew.balance = paymentInfo.balance;
+                                                        paymentInfoNew.balance = parseInt(paymentInfo.balance);
                                                     }
 
                                                     query.paymentInfo = paymentInfoNew;

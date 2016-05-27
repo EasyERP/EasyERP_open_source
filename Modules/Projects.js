@@ -1484,7 +1484,7 @@ var Project = function (models, event) {
                     event.emit('updateProjectDetails', {req: req, _id: project._id});
                 }
 
-                res.send(200, project);
+                res.status(200).send({success: 'updated'});
                 //event.emit('recollectProjectInfo');
                 //event.emit('updateName', _id, wTrackModel, 'project._id', 'project.projectName', project.projectName);
                 //event.emit('updateName', _id, wTrackModel, 'project._id', 'project.customer._id', project.customer._id);
@@ -1737,10 +1737,7 @@ var Project = function (models, event) {
         });
     };
 
-    function createTask(req, res) {
-        var data = {};
-        data = req.body;
-        data.uId = req.session.uId;
+    function createTask(req, data, res) {
         try {
             if (!data.summary || !data.project) {
                 logWriter.log('Task.create Incorrect Incoming Data');
@@ -1847,9 +1844,6 @@ var Project = function (models, event) {
                         _task.EndDate = calculateTaskEndDate(StartDate, data.estimated);
                         _task.duration = returnDuration(StartDate, _task.EndDate);
                     }
-
-                    console.log(req.session.lastDb, 'Tasks', tasksSchema);
-
                     event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", 0, 0, _task.workflow._id, _task.workflow._id, true, false, function (sequence) {
                         _task.sequence = sequence;
                         _task.save(function (err, _task) {
@@ -2042,7 +2036,7 @@ var Project = function (models, event) {
 
                                 query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").
                                     populate('assignedTo', 'name').
-                                    populate('project', 'projectShortDesc').
+                                    populate('project', 'projectName').
                                     sort({'sequence': -1}).
                                     limit(req.session.kanbanSettings.tasks.countPerPage).
                                     exec(function (err, result) {

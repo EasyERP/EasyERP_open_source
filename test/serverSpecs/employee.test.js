@@ -99,8 +99,13 @@ describe("Employee Specs", function () {
         });
 
         it("should getById employee", function (done) {
+            var query = {
+                viewType: "form",
+                id : id
+            };
             aggent
                 .get('employees/' + id)
+                .query(query)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -120,7 +125,8 @@ describe("Employee Specs", function () {
 
         it("should get by viewType form employee", function (done) {
             var query = {
-                viewType: "form"
+                viewType: "form",
+                id      : id
             };
             aggent
                 .get('employees/' + id)

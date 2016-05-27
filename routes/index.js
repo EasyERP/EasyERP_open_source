@@ -115,7 +115,7 @@ module.exports = function (app, mainDb) {
     //app.use('/importData', importDataRouter);
     app.use('/importFile', importFileRouter);
     app.use('/wTrack', wTrackRouter);
-    app.use('/project', projectRouter);
+    app.use('/projects', projectRouter);
     app.use('/employees', employeeRouter);
     app.use('/applications', applicationRouter);
     app.use('/departments', departmentRouter);
@@ -873,28 +873,28 @@ module.exports = function (app, mainDb) {
 
 //---------------------------Projects--------------------------------------------------------
 
-    app.get('/projectType', function (req, res) {
+    /*app.get('/projectType', function (req, res) {
         requestHandler.getProjectType(req, res);
-    });
+    });*/
 
-    app.get('/Projects/form/:_id', function (req, res) {
+    /*app.get('/Projects/form/:_id', function (req, res) {
         var data = {};
         data.id = req.params._id;
         requestHandler.getProjectsById(req, res, data);
-    });
+    });*/
 
-    app.get('/getProjectsForDd', requestHandler.getProjectsForDd);
+    /*app.get('/getProjectsForDd', requestHandler.getProjectsForDd);*/
 
     //app.get('/getProjectPMForDashboard', function (req, res) {
     //    requestHandler.getProjectPMForDashboard(req, res);
     //});
-    app.get('/getProjectStatusCountForDashboard', function (req, res) {
+   /* app.get('/getProjectStatusCountForDashboard', function (req, res) {
         requestHandler.getProjectStatusCountForDashboard(req, res);
-    });
+    });*/
 
-    app.get('/getProjectByEndDateForDashboard', function (req, res) {
+   /* app.get('/getProjectByEndDateForDashboard', function (req, res) {
         requestHandler.getProjectByEndDateForDashboard(req, res);
-    });
+    });*/
 
     app.post('/Projects', function (req, res) {
         var data = {};
@@ -1420,8 +1420,7 @@ module.exports = function (app, mainDb) {
 //    });
     /*app.get('/LeadsForChart', function (req, res) {
         var data = {};
-        data.source = req.param('source');
-        data.sales = req.param('sales');
+        data.type = req.param('type');
         data.dataRange = req.param('dataRange');
         data.dataItem = req.param('dataItem');
         requestHandler.getLeadsForChart(req, res, data);
@@ -1468,28 +1467,35 @@ module.exports = function (app, mainDb) {
     //});
 
 //---------------------Opportunities---------------------
-//    app.post('/Opportunities', function (req, res) {
-//        var data = {};
-//        data.opportunitie = req.body;
-//        requestHandler.createOpportunitie(req, res, data);
-//    });
-//    app.get('/Opportunities/:viewType', function (req, res) {
-//        var data = {};
-//        for (var i in req.query) {
-//            data[i] = req.query[i];
-//        }
-//        var viewType = req.params.viewType;
-//        switch (viewType) {
-//            case "form":
-//                requestHandler.getOpportunityById(req, res, data);
-//                break;
-//            case "kanban":
-//                requestHandler.getFilterOpportunitiesForKanban(req, res, data);
-//                break;
-//            default:
-//                requestHandler.getFilterOpportunities(req, res);
-//        }
-//    });
+    /*app.post('/Opportunities', function (req, res) {
+        var data = {};
+        data.opportunitie = req.body;
+        requestHandler.createOpportunitie(req, res, data);
+    });
+    app.get('/OpportunitiesForChart', function (req, res) {
+        var data = {};
+        data.source = req.param('source');
+        data.dataRange = req.param('dataRange');
+        data.dataItem = req.param('dataItem');
+        requestHandler.getOpportunitiesForChart(req, res, data);
+    });
+    app.get('/Opportunities/:viewType', function (req, res) {
+        var data = {};
+        for (var i in req.query) {
+            data[i] = req.query[i];
+        }
+        var viewType = req.params.viewType;
+        switch (viewType) {
+            case "form":
+                requestHandler.getOpportunityById(req, res, data);
+                break;
+            case "kanban":
+                requestHandler.getFilterOpportunitiesForKanban(req, res, data);
+                break;
+            default:
+                requestHandler.getFilterOpportunities(req, res);
+        }
+    });*/
 
     //app.get('/OpportunitiesForMiniView', function (req, res) {
     //    var data = {};
