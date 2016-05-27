@@ -674,7 +674,7 @@ define([
                     }).render().el
                 );
 
-                if (model.approved) {
+                if (model.approved || model.workflow.status === 'Done') {
                     self.$el.find('.input-file').remove();
                     self.$el.find('a.deleteAttach').remove();
                 }
