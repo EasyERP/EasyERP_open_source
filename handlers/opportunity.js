@@ -14,6 +14,13 @@ var Opportunity = function (models, event) {
         var validator = require('validator');
         var CONSTANTS = require('../constants/mainConstants.js');
         var fs = require('fs');
+        var objectId = mongoose.Types.ObjectId;
+
+        var Mailer = require('../helpers/mailer');
+        var mailer = new Mailer();
+        var EmployeeSchema = mongoose.Schemas.Employee;
+        var HistoryWriter = require('../helpers/historyWriter.js');
+        var historyWriter = new HistoryWriter(models);
 
         var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
@@ -23,6 +30,53 @@ var Opportunity = function (models, event) {
             }
 
             return false;
+        }
+
+        function sendEmailToAssigned(req, opportunity) {
+
+            var mailOptions;
+            var Employee;
+
+            Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+            Employee.findById(opportunity.salesPerson, {}, function (err, modelEmployee) {
+
+                var workEmail;
+                var employee;
+                var opportunityName;
+                var opportunityDescription;
+                var isOpportunity;
+
+                if (err) {
+                    res.send(500, {error: 'email send to assigned error'});
+                }
+
+                workEmail = modelEmployee.get('workEmail');
+                employee = modelEmployee.get('name');
+
+                opportunityName = opportunity.name || '';
+                opportunityDescription = opportunity.internalNotes || '';
+                isOpportunity = opportunity.isOpportunitie ? 'Opportunity' : 'Lead';
+
+                if (workEmail) {
+                    mailOptions = {
+                        to                    : workEmail,
+                        isOpportunity         : isOpportunity,
+                        employee              : employee,
+                        opportunityName       : opportunityName,
+                        opportunityDescription: opportunityDescription
+                    };
+
+                    mailer.sendAssignedToLead(mailOptions, function (err, result) {
+                        if (err) {
+                            console.log(err);
+                        }
+                        console.log('email was send to ' + workEmail);
+                    });
+                } else {
+                    console.log('employee have not work email');
+                }
+            });
         }
 
         this.addNewLeadFromSite = function (req, res, next) {
@@ -145,16 +199,16 @@ var Opportunity = function (models, event) {
                     source = result.source._id;
                 }
 
-            saveObject = {
-                name          : name,
-                email         : email,
-                contactName   : contactName,
-                campaign      : campaign,
-                source        : source,
-                internalNotes : internalNotes,
-                isOpportunitie: false,
-                workflow      : CONSTANTS.LEAD_DRAFT
-            };
+                saveObject = {
+                    name          : name,
+                    email         : email,
+                    contactName   : contactName,
+                    campaign      : campaign,
+                    source        : source,
+                    internalNotes : internalNotes,
+                    isOpportunitie: false,
+                    workflow      : CONSTANTS.LEAD_DRAFT
+                };
 
                 leadModel = new Opportunity(saveObject);
 
@@ -543,39 +597,254 @@ var Opportunity = function (models, event) {
         };
 
         this.create = function (req, res, next) {
-            var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
-            var body = req.body;
-            var opportunity;
-            var err;
+            try {
+                var data = req.body;
+                var err;
 
-            if (!validBody(body)) {
-                err = new Error();
-                err.status = 404;
+                var savetoDb = function (data) {
+                    try {
+                        var _opportunitie = new models.get(req.session.lastDb, "Opportunities", opportunitiesSchema)();
+                        _opportunitie.isOpportunitie = data.isOpportunitie || false;
+                        if (data.name) {
+                            _opportunitie.name = data.name;
+                        }
+                        if (data.jobkey) {
+                            _opportunitie.jobkey = data.jobkey;
+                        }
+                        if (data.color) {
+                            _opportunitie.color = data.color;
+                        }
+                        if (data.expectedRevenue) {
+                            if (data.expectedRevenue.value) {
+                                _opportunitie.expectedRevenue.value = data.expectedRevenue.value;
+                            }
+                            if (data.expectedRevenue.progress) {
+                                _opportunitie.expectedRevenue.progress = data.expectedRevenue.progress;
+                            }
+                            if (data.expectedRevenue.currency) {
+                                _opportunitie.expectedRevenue.currency = data.expectedRevenue.currency;
+                            }
+                        }
+                        if (data.creationDate) {
+                            _opportunitie.creationDate = data.creationDate;
+                        }
+                        if (data.company) {
+                            if (data.company.id) {
+                                _opportunitie.company = data.company.id;
+                            } else if (data.company.name) {
+                                _opportunitie.tempCompanyField = data.company.name;
+                            }
+                        }
+                        if (data.customer) {
+                            _opportunitie.customer = data.customer;
+                        }
+                        if (data.address) {
+                            if (data.address.street) {
+                                _opportunitie.address.street = data.address.street;
+                            }
+                            if (data.address.city) {
+                                _opportunitie.address.city = data.address.city;
+                            }
+                            if (data.address.state) {
+                                _opportunitie.address.state = data.address.state;
+                            }
+                            if (data.address.zip) {
+                                _opportunitie.address.zip = data.address.zip;
+                            }
+                            if (data.address.country) {
+                                _opportunitie.address.country = data.address.country;
+                            }
+                        }
+                        if (data.contactName) {
+                            if (data.contactName.first) {
+                                _opportunitie.contactName.first = data.contactName.first;
+                            }
+                            if (data.contactName.last) {
+                                _opportunitie.contactName.last = data.contactName.last;
+                            }
+                        }
+                        if (data.email) {
+                            _opportunitie.email = data.email;
+                        }
+                        if (data.phones) {
+                            if (data.phones.phone) {
+                                _opportunitie.phones.phone = data.phones.phone;
+                            }
+                            if (data.phones.mobile) {
+                                _opportunitie.phones.mobile = data.phones.mobile;
+                            }
+                            if (data.fax) {
+                                _opportunitie.phones.fax = data.phones.fax;
+                            }
+                        }
+                        if (data.func) {
+                            _opportunitie.func = data.func;
+                        }
+                        if (data.salesPerson) {
+                            _opportunitie.salesPerson = data.salesPerson;
+                        }
+                        if (data.salesTeam) {
+                            _opportunitie.salesTeam = data.salesTeam;
+                        }
+                        if (data.internalNotes) {
+                            _opportunitie.internalNotes = data.internalNotes;
+                        }
+                        if (data.nextAction) {
+                            if (data.nextAction.desc) {
+                                _opportunitie.nextAction.desc = data.nextAction.desc;
+                            }
+                            if (data.nextAction.date) {
+                                _opportunitie.nextAction.date = new Date(data.nextAction.date);
+                            }
+                        }
+                        if (data.expectedClosing) {
+                            _opportunitie.expectedClosing = new Date(data.expectedClosing);
+                        }
+                        if (data.priority) {
+                            if (data.priority) {
+                                _opportunitie.priority = data.priority;
+                            }
+                        }
+                        if (data.categories) {
+                            if (data.categories._id) {
+                                _opportunitie.categories.id = data.categories._id;
+                            }
+                            if (data.categories.name) {
+                                _opportunitie.categories.name = data.categories.name;
+                            }
+                        }
+                        if (data.groups) {
+                            _opportunitie.groups = data.groups;
+                        }
+                        if (data.whoCanRW) {
+                            _opportunitie.whoCanRW = data.whoCanRW;
+                        }
+                        if (data.info) {
+                            if (data.StartDate) {
+                                _opportunitie.StartDate = data.StartDate;
+                            }
+                            if (data.EndDate) {
+                                _opportunitie.EndDate = data.EndDate;
+                            }
+                            if (data.sequence) {
+                                _opportunitie.sequence = data.sequence;
+                            }
+                            if (data.parent) {
+                                _opportunitie.parent = data.parent;
+                            }
 
-                return next(err);
-            }
-            if (body.company) {
-                if (body.company.id) {
-                    body.company = body.company.id;
-                } else if (body.company.name) {
-                    body.tempCompanyField = body.company.name;
-                    body.company = null;
-                }
-            }
-            opportunity = new Opportunity(body);
+                        }
+                        if (data.workflow) {
+                            _opportunitie.workflow = data.workflow;
+                        }
+                        if (data.active) {
+                            _opportunitie.active = data.active;
+                        }
+                        if (data.optout) {
+                            _opportunitie.optout = data.optout;
+                        }
+                        if (data.reffered) {
+                            _opportunitie.reffered = data.reffered;
+                        }
+                        if (data.uId) {
+                            _opportunitie.createdBy.user = data.uId;
+                            //uId for edited by field on creation
+                            _opportunitie.editedBy.user = data.uId;
+                        }
+                        if (data.campaign) {
+                            _opportunitie.campaign = data.campaign;
+                        }
+                        if (data.source) {
+                            _opportunitie.source = data.source;
+                        }
+                        event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
+                            _opportunitie.sequence = sequence;
+                            _opportunitie.save(function (err, result) {
+                                var historyOptions;
+                                if (err) {
+                                    return next(err);
+                                } else {
 
-            event.emit('updateSequence', Opportunity, "sequence", 0, 0, opportunity.workflow, opportunity.workflow, true, false, function (sequence) {
-                opportunity.sequence = sequence;
+                                    historyOptions = {
+                                        contentType: result.isOpportunitie ? 'opportunitie' : 'lead',
+                                        data       : data,
+                                        req        : req,
+                                        contentId  : result._id
+                                    };
 
-                opportunity.save(function (err, result) {
-                    if (err) {
+                                    historyWriter.addEntry(historyOptions);
+
+                                    res.status(201).send({
+                                        success: "A new Opportunities create success",
+                                        id     : result._id
+                                    });
+
+                                    // send email to _opportunitie.salesPerson
+                                    if (_opportunitie.salesPerson) {
+                                        sendEmailToAssigned(req, _opportunitie);
+                                    }
+                                }
+                            });
+                        });
+                    } catch (error) {
                         return next(err);
                     }
+                };
 
-                    res.status(201).send({success: "A new Opportunities create success", id: result._id});
-                });
-            });
+                if (!validBody(data)) {
+                    err = new Error();
+                    err.status = 404;
+
+                    return next(err);
+                }
+
+                if (!data) {
+                    logWriter.log('Opprtunities.create Incorrect Incoming Data');
+                    res.status(400).send({error: 'Opprtunities.create Incorrect Incoming Data'});
+                    return;
+                }
+                savetoDb(data);
+
+            } catch (exception) {
+                return next(exception);
+            }
+
         };
+
+        /*  this.create = function (req, res, next) {
+         var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
+         var body = req.body;
+         var opportunity;
+         var err;
+
+         if (!validBody(body)) {
+         err = new Error();
+         err.status = 404;
+
+         return next(err);
+         }
+         if (body.company) {
+         if (body.company.id) {
+         body.company = body.company.id;
+         } else if (body.company.name) {
+         body.tempCompanyField = body.company.name;
+         body.company = null;
+         }
+         }
+         opportunity = new Opportunity(body);
+
+         event.emit('updateSequence', Opportunity, "sequence", 0, 0, opportunity.workflow, opportunity.workflow, true, false, function (sequence) {
+         opportunity.sequence = sequence;
+
+         opportunity.save(function (err, result) {
+         if (err) {
+         return next(err);
+         }
+
+         res.status(201).send({success: "A new Opportunities create success", id: result._id});
+         });
+         });
+         };*/
 
         this.getLeadsForChart = function (req, res, next) {
             var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
@@ -702,6 +971,15 @@ var Opportunity = function (models, event) {
             var data = req.body;
             var _id = req.params.id;
 
+            var historyOptions = {
+                contentType: 'lead',
+                data       : data,
+                req        : req,
+                contentId  : _id
+            };
+
+            historyWriter.addEntry(historyOptions);
+
             function updateOpp() {
                 var createPersonCustomer = function (company) {
                     if (data.contactName && (data.contactName.first || data.contactName.last)) {
@@ -768,67 +1046,82 @@ var Opportunity = function (models, event) {
 
                 event.emit('updateSequence', Opportunity, "sequence", 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
                     data.sequence = sequence;
-                    Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
 
-                        if (data.createCustomer) {
-                            if (data.tempCompanyField) {
-                                var _company = {
-                                    name          : {
-                                        first: data.tempCompanyField,
-                                        last : ''
-                                    },
-                                    address       : data.address,
-                                    salesPurchases: {
-                                        isCustomer : true,
-                                        salesPerson: data.salesPerson
-                                    },
-                                    type          : 'Company',
-                                    createdBy     : {user: req.session.uId}
-                                };
+                    Opportunity.findById(_id, function (err, oldOpportunity) {
+                        Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+                            if (err) {
+                                return next(err);
+                            }
 
-                                Customer.find({'name.first': data.tempCompanyField}, function (err, companies) {
-                                    if (err) {
-                                        return next(err);
-                                    }
+                            if (data.createCustomer) {
+                                if (data.tempCompanyField) {
+                                    var _company = {
+                                        name          : {
+                                            first: data.tempCompanyField,
+                                            last : ''
+                                        },
+                                        address       : data.address,
+                                        salesPurchases: {
+                                            isCustomer : true,
+                                            salesPerson: data.salesPerson
+                                        },
+                                        type          : 'Company',
+                                        createdBy     : {user: req.session.uId}
+                                    };
 
-                                    if (companies.length > 0) {
-                                        if (companies[0].salesPurchases && !companies[0].salesPurchases.isCustomer) {
-                                            Customer.update({_id: companies[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err, success) {
-                                                if (success) {
-                                                    createPersonCustomer(companies[0]);
+                                    Customer.find({'name.first': data.tempCompanyField}, function (err, companies) {
+                                        if (err) {
+                                            return next(err);
+                                        }
+
+                                        if (companies.length > 0) {
+                                            if (companies[0].salesPurchases && !companies[0].salesPurchases.isCustomer) {
+                                                Customer.update({_id: companies[0]._id}, {$set: {'salesPurchases.isCustomer': true}}, function (err, success) {
+                                                    if (success) {
+                                                        createPersonCustomer(companies[0]);
+                                                    }
+                                                });
+                                            }
+                                        } else {
+                                            var _Company = new Customer(_company);
+                                            _Company.save(function (err, _res) {
+                                                if (err) {
+                                                    return next(err);
                                                 }
+
+                                                Opportunity.update({_id: _id}, {
+                                                    $set: {
+                                                        company : _res._id,
+                                                        customer: _res._id
+                                                    }
+                                                }, function (err) {
+                                                    if (err) {
+                                                        console.log(err);
+                                                    }
+                                                });
+                                                createPersonCustomer(_res);
                                             });
                                         }
-                                    } else {
-                                        var _Company = new Customer(_company);
-                                        _Company.save(function (err, _res) {
-                                            if (err) {
-                                                return next(err);
-                                            }
+                                    });
 
-                                            Opportunity.update({_id: _id}, {
-                                                $set: {
-                                                    company : _res._id,
-                                                    customer: _res._id
-                                                }
-                                            }, function (err) {
-                                                if (err) {
-                                                    console.log(err);
-                                                }
-                                            });
-                                            createPersonCustomer(_res);
-                                        });
-                                    }
-                                });
-
-                            } else {
-                                createPersonCustomer({});
+                                } else {
+                                    createPersonCustomer({});
+                                }
                             }
-                        }
-                        res.status(200).send({success: 'Opportunities updated success', result: result});
+
+                            // send email to assigned when update Lead
+                            if (result.salesPerson) {
+                                if (oldOpportunity.salesPerson) {
+                                    if (result.salesPerson.toString() !== oldOpportunity.salesPerson.toString()) {
+                                        sendEmailToAssigned(req, result);
+                                    }
+                                } else {
+                                    sendEmailToAssigned(req, result);
+                                }
+                            }
+
+                            res.status(200).send({success: 'Opportunities updated success', result: result});
+                        });
                     });
                 });
             }
@@ -1050,6 +1343,60 @@ var Opportunity = function (models, event) {
          * @instance
          */
 
+        function caseFilterOpp(data) {
+
+            var filter = {};
+            var tempObj = {};
+            var query = {};
+            var ids;
+
+            query['$or'] = [];
+            filter['$and'] = [];
+
+            for (var key in data) {
+                ids = [];
+
+                if (key !== 'workflowId') {
+
+                    if (key === 'contactName') {
+
+                        tempObj.contactName = {$in: data[key].value};
+
+                    } else if (key === 'source') {
+
+                        tempObj.source = {$in: data[key].value};
+
+                    } else {
+
+                        data[key].value.forEach(function (id) {
+                            if (id !== 'Empty') {
+                                ids.push(objectId(id));
+                            } else {
+                                tempObj[data[key].key] = {$exists: false};
+                                query['$or'].push(tempObj);
+                                tempObj = {};
+                            }
+                        });
+
+                        tempObj[data[key].key] = {$in: ids};
+                    }
+
+                    query['$or'].push(tempObj);
+                    tempObj = {};
+                }
+
+                if (query['$or'].length) {
+                    filter['$and'].push(query);
+
+                    query = {};
+                    query['$or'] = [];
+                }
+
+            }
+
+            return filter;
+        }
+
         function getFilter(req, res, next) {
             var Opportunities = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
             var accessRollSearcher;
@@ -1057,90 +1404,249 @@ var Opportunity = function (models, event) {
             var waterfallTasks;
 
             var filterObj = {};
-            var optionsObject = {};
+            var optionsObject = [];
             var data = req.query;
-            var filter = data.filter;
+            var filter = data.filter || {};
             var query;
             var sort;
             var mid;
+            var key;
 
-        var count = parseInt(data.count, 10) || CONSTANTS.DEF_LIST_COUNT;
-        var page = data.page;
-        var skip;
-
-        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
-        skip = (page - 1) > 0 ? (page - 1) * count : 0;
-
-            if (data.sort) {
-                sort = data.sort;
-            } else {
-                sort = {"editedBy.date": -1};
+            if (filter) {
+                filterObj = caseFilterOpp(filter);
             }
-
-            optionsObject['$and'] = [];
-            filterObj['$and'] = [];
-
-            filterObj['$and'].push(caseFilter(filter));
 
             switch (data.contentType) {
-                case ('Opportunities'):
-                    mid = 25;
-                    optionsObject['$and'].push({'isOpportunitie': true});
 
+                case ('Opportunities'):
+                    optionsObject.push({'isOpportunitie': true});
                     if (data && data.filter) {
-                        optionsObject['$and'].push(filterObj);
+                        optionsObject.push(filterObj);
                     }
                     break;
-                case ('Leads'):
-                    mid = 24;
-                    optionsObject['$and'].push({'isOpportunitie': false});
 
-                    if (data.filter && data.filter.isConverted) {
-                        optionsObject['isConverted'] = true;
-                        optionsObject['isOpportunitie'] = true;
-                    }
-                    if (filterObj['$and'].length) {
-                        optionsObject['$and'].push(filterObj);
+                case ('Leads'):
+                    optionsObject.push({'isOpportunitie': false});
+                    if (data && data.filter) {
+                        optionsObject.push(filterObj);
                     }
                     break;
             }
+
+            /* var count = parseInt(data.count, 10) || CONSTANTS.DEF_LIST_COUNT;
+             var page = data.page;
+             var skip;
+
+             count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
+             skip = (page - 1) > 0 ? (page - 1) * count : 0;
+
+             if (data.sort) {
+             sort = data.sort;
+             } else {
+             sort = {"editedBy.date": -1};
+             }
+
+             optionsObject['$and'] = [];
+             filterObj['$and'] = [];
+
+             filterObj['$and'].push(caseFilter(filter));
+
+             switch (data.contentType) {
+             case ('Opportunities'):
+             mid = 25;
+             optionsObject['$and'].push({'isOpportunitie': true});
+
+             if (data && data.filter) {
+             optionsObject['$and'].push(filterObj);
+             }
+             break;
+             case ('Leads'):
+             mid = 24;
+             optionsObject['$and'].push({'isOpportunitie': false});
+
+             if (data.filter && data.filter.isConverted) {
+             optionsObject['isConverted'] = true;
+             optionsObject['isOpportunitie'] = true;
+             }
+             if (filterObj['$and'].length) {
+             optionsObject['$and'].push(filterObj);
+             }
+             break;
+             }*/
 
             accessRollSearcher = function (cb) {
                 accessRoll(req, Opportunities, cb);
             };
 
             contentSearcher = function (opportunitiesIds, waterfallCallback) {
-                var queryObject = {_id: {$in: opportunitiesIds}};
+                /*                var queryObject = {_id: {$in: opportunitiesIds}};
 
-                query = Opportunities
-                    .find(queryObject)
-                    .limit(count)
-                    .skip(skip)
-                    .sort(sort)
-                    .lean();
+                 query = Opportunities
+                 .find(queryObject)
+                 .limit(count)
+                 .skip(skip)
+                 .sort(sort)
+                 .lean();
 
-            switch (data.contentType) {
-                case ('Opportunities'):
-                {
-                    query.populate('customer', 'name').
-                    populate('workflow', '_id name status').
-                    populate('salesPerson', 'name').
-                    populate('createdBy.user', 'login').
-                    populate('editedBy.user', 'login');
+                 switch (data.contentType) {
+                 case ('Opportunities'):
+                 {
+                 query.populate('customer', 'name').
+                 populate('workflow', '_id name status').
+                 populate('salesPerson', 'name').
+                 populate('createdBy.user', 'login').
+                 populate('editedBy.user', 'login');
+                 }
+                 break;
+                 case ('Leads'):
+                 {
+                 query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName").
+                 populate('company', 'name').
+                 populate('workflow', "name status").
+                 populate('createdBy.user', 'login').
+                 populate('editedBy.user', 'login');
+                 }
+                 break;
+                 }
+
+                 query.exec(waterfallCallback);*/
+                var aggregateQuery = [
+                    {
+                        $match: {
+                            $or: [{_id: {$in: opportunitiesIds}}]
+                        }
+                    }];
+
+                var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
+
+
+                switch (data.contentType) {
+
+                    case ('Opportunities'):
+                    {
+                        aggregateQuery.push({
+                            $lookup: {
+                                from        : 'Customers',
+                                localField  : 'customer',
+                                foreignField: '_id',
+                                as          : 'customer'
+                            }
+                        });
+
+                    }
+                        break;
+                    case ('Leads'):
+                    {
+
+                        aggregateQuery.push({
+                            $lookup: {
+                                from        : 'Customers',
+                                localField  : 'company',
+                                foreignField: '_id',
+                                as          : 'customer'
+                            }
+                        });
+
+                    }
+                        break;
                 }
-                    break;
-                case ('Leads'):
-                {
-                    query.select("_id createdBy editedBy name workflow contactName phones campaign source email contactName").
-                    populate('company', 'name').
-                    populate('workflow', "name status").
-                    populate('createdBy.user', 'login').
-                    populate('editedBy.user', 'login');
-                }
-                    break;
-            }
 
-                query.exec(waterfallCallback);
+                aggregateQuery.push({
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'salesPerson',
+                            foreignField: '_id',
+                            as          : 'salesPerson'
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from        : 'workflows',
+                            localField  : 'workflow',
+                            foreignField: '_id',
+                            as          : 'workflow'
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from        : 'Users',
+                            localField  : 'createdBy.user',
+                            foreignField: '_id',
+                            as          : 'createdBy.user'
+                        }
+                    },
+                    {
+                        $lookup: {
+                            from        : 'Users',
+                            localField  : 'editedBy.user',
+                            foreignField: '_id',
+                            as          : 'editedBy.user'
+                        }
+                    },
+                    {
+                        $project: {
+                            "contactName"    : {$concat: ['$contactName.first', " ", '$contactName.last']},
+                            "customer"       : {$arrayElemAt: ["$customer", 0]},
+                            "salesPerson"    : {$arrayElemAt: ["$salesPerson", 0]},
+                            "workflow"       : {$arrayElemAt: ["$workflow", 0]},
+                            "createdBy.user" : {$arrayElemAt: ["$createdBy.user", 0]},
+                            "editedBy.user"  : {$arrayElemAt: ["$editedBy.user", 0]},
+                            "createdBy.date" : 1,
+                            "editedBy.date"  : 1,
+                            "creationDate"   : 1,
+                            "isOpportunitie" : 1,
+                            "name"           : 1,
+                            "expectedRevenue": 1,
+                            "attachments"    : 1,
+                            "notes"          : 1,
+                            "convertedDate"  : 1,
+                            "isConverted"    : 1,
+                            "source"         : 1,
+                            "campaign"       : 1,
+                            "sequence"       : 1,
+                            "reffered"       : 1,
+                            "optout"         : 1,
+                            "active"         : 1,
+                            "color"          : 1,
+                            "categories"     : 1,
+                            "priority"       : 1,
+                            "expectedClosing": 1,
+                            "nextAction"     : 1,
+                            "internalNotes"  : 1,
+                            "phones"         : 1,
+                            "email"          : 1,
+                            "address"        : 1,
+                            "company"        : 1
+                        }
+                    },
+                    {
+                        $match: {
+                            $and: optionsObject
+                        }
+                    });
+
+                if (data.sort) {
+                    key = Object.keys(data.sort)[0];
+                    req.query.sort[key] = parseInt(data.sort[key], 10);
+
+                    aggregateQuery.push({
+                        $sort: data.sort
+                    });
+                } else {
+                    aggregateQuery.push({
+                        $sort: {"editedBy.date": -1}
+                    });
+                }
+
+                aggregateQuery.push({
+                        $skip: (data.page - 1) * data.count
+                    },
+                    {
+                        $limit: parseInt(data.count)
+                    });
+
+                query.aggregate(aggregateQuery).exec(waterfallCallback);
+
             };
 
             waterfallTasks = [accessRollSearcher, contentSearcher];
@@ -1150,7 +1656,7 @@ var Opportunity = function (models, event) {
                     return next(err);
                 }
 
-                res.status(200).send({ data: result });
+                res.status(200).send({data: result});
             });
         }
 
@@ -1279,7 +1785,7 @@ var Opportunity = function (models, event) {
             var Opportunities = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
             var query;
 
-            query = Opportunities.findOne({_id: id});
+            query = Opportunities.findById({_id: id});
 
             query.populate('company customer salesPerson salesTeam workflow')
                 .populate('groups.users')
@@ -1289,13 +1795,26 @@ var Opportunity = function (models, event) {
                 .populate('groups.owner', '_id login');
 
             query.exec(function (err, result) {
+                var historyOptions = {
+                    req: req,
+                    id : result._id
+                };
+
                 if (err) {
                     return next(err);
                 }
 
-                res.status(200).send(result);
+                historyWriter.getHistoryForTrackedObject(historyOptions, function (err, history) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    result = result.toJSON();
+                    result.history = history;
+                    res.status(200).send(result);
+                });
+
             });
-        };
+        }
 
         /**
          * @module Leads

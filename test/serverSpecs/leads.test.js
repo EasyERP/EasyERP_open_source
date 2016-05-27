@@ -74,7 +74,7 @@ describe('Leads Specs', function () {
                 .expect(404, done);
         });
 
-        it('should get Leads totalCount', function (done) {
+        it('should get Leads totalCollectionLength', function (done) {
             aggent
                 .get('leads/totalCollectionLength')
                 .expect(200)
@@ -169,34 +169,34 @@ describe('Leads Specs', function () {
                 });
         });
 
-        it('should get Lead for viewType kanban', function (done) {
+        //it('should get Lead for viewType kanban', function (done) {
+        //
+        //    var query = {
+        //        workflowId: '528ce5e3f3f67bc40b000018'
+        //    };
+        //
+        //    aggent
+        //        .get('leads/kanban')
+        //        .query(query)
+        //        .expect(200)
+        //        .end(function (err, res) {
+        //            var body = res.body;
+        //
+        //            if (err) {
+        //                return done(err);
+        //            }
+        //
+        //            expect(body)
+        //                .to.be.instanceOf(Object);
+        //            expect(body)
+        //                .to.have.property('data');
+        //            expect(body)
+        //                .to.have.property('workflowId');
+        //            done();
+        //        });
+        //});
 
-            var query = {
-                workflowId: '528ce5e3f3f67bc40b000018'
-            };
-
-            aggent
-                .get('leads/kanban')
-                .query(query)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('data');
-                    expect(body)
-                        .to.have.property('workflowId');
-                    done();
-                });
-        });
-
-        it('should update Lead', function (done) {
+        it('should partially update Lead', function (done) {
             var body = {
                 name: 'test'
             };
