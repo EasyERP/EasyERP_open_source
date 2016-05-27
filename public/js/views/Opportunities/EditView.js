@@ -323,8 +323,6 @@
                                 break;
                             case 'kanban':
                             {
-
-                                console.log(JSON.stringify(result));
                                 var kanban_holder = $("#" + model._id);
                                 var expectedRevenueHolder = kanban_holder.find('.opportunity-header h3');
                                 kanban_holder.find(".opportunity-header h4").text(name);
@@ -516,7 +514,7 @@
                 $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
 
-                dataService.getData('/Priority/leads', {}, function (priorities) {
+                dataService.getData('/opportunities/priority', {}, function (priorities) {
                     priorities = _.map(priorities.data, function (priority) {
                         priority.name = priority.priority;
 

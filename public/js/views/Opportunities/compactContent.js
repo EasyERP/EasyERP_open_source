@@ -44,13 +44,13 @@
                 });
             },
 
-            /*gotoOpportunitieForm: function (e) {
+            gotoOpportunitieForm: function (e) {
                 var itemIndex = $(e.target).closest("a").attr("id");
 
                 e.preventDefault();
 
                 window.location.hash = "#easyErp/Opportunities/form/" + itemIndex;
-            },*/
+            },
 
             render: function (options) {
                 this.$el.html(this.template({

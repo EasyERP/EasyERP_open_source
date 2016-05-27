@@ -323,7 +323,7 @@ define([
 
                 $('#nextActionDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
                 $('#expectedClosing').datepicker({dateFormat: "d M, yy", minDate: new Date()});
-                dataService.getData('/Priority/leads', {}, function (priorities) {
+                dataService.getData('/opportunities/priority', {}, function (priorities) {
                     priorities = _.map(priorities.data, function (priority) {
                         priority.name = priority.priority;
 

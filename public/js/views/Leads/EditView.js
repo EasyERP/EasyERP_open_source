@@ -382,7 +382,7 @@ define([
                     });
                     self.responseObj['#priorityDd'] = priorities;
                 });
-                populate.getWorkflow("#workflowsDd", "", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Leads"}, "name", this, null);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Leads"}, "name", this, null);
                 populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, null, true);
                 dataService.getData('/employees/getForDD', {isEmployee : true}, function (employees) {
                     employees = _.map(employees.data, function (employee) {
