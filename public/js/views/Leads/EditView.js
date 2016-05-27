@@ -19,7 +19,7 @@ define([
             contentType: 'Leads',
             template   : _.template(EditTemplate),
             historyTemplate: _.template(historyTemplate),
-            
+
             initialize : function (options) {
                 _.bindAll(this, 'render', 'saveItem');
                 _.bindAll(this, 'render', 'deleteItem');
@@ -52,7 +52,7 @@ define([
                 var $target = $(e.target);
                 var dialogHolder;
                 var n;
-                
+
                 $target.closest('.dialog-tabs').find('a.active').removeClass('active');
                 $target.addClass('active');
                 n = $target.parents('.dialog-tabs').find('li').index($(e.target).parent());
@@ -81,9 +81,9 @@ define([
                 var thisEl = this.$el;
                 var link = thisEl.find('#tabList a');
                 var index;
-                
+
                 e.preventDefault();
-                
+
                 if (link.hasClass('selected')) {
                     link.removeClass('selected');
                 }
@@ -94,7 +94,7 @@ define([
             getWorkflowValue: function (value) {
                 var workflows = [];
                 var i;
-                
+
                 for (i = 0; i < value.length; i++) {
                     workflows.push({name: value[i].name, status: value[i].status});
                 }
@@ -109,7 +109,7 @@ define([
                 var idCustomer = $('#customerDd').attr('data-id');
                 var currentCustomer = this.currentModel.get('customer');
                 var address = {};
-                
+
                 var salesPersonId = this.$("#salesPerson").data("id");
                 var currentSalesPerson = this.currentModel.get('salesPerson');
                 //salesPersonId = salesPersonId ? salesPersonId : null;
@@ -189,7 +189,7 @@ define([
                     var el = $(this);
                     address[el.attr("name")] = $.trim(el.val());
                 });
-                
+
                 if (currentWorkflow && currentWorkflow._id && workflow && (currentWorkflow._id !== workflow)) {
                     data['workflow'] = workflow;
                 }
@@ -374,7 +374,7 @@ define([
                         model: this.currentModel
                     }).render().el
                 );
-                dataService.getData('/Priority/leads', {}, function (priorities) {
+                dataService.getData('/leads/priority', {}, function (priorities) {
                     priorities = _.map(priorities.data, function (priority) {
                         priority.name = priority.priority;
 
@@ -382,8 +382,8 @@ define([
                     });
                     self.responseObj['#priorityDd'] = priorities;
                 });
-                populate.getWorkflow("#workflowsDd", "", "/WorkflowsForDd", {id: "Leads"}, "name", this, null);
-                populate.get2name("#customerDd", "/Customer", {}, this, null, true);
+                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Leads"}, "name", this, null);
+                populate.get2name("#customerDd", CONSTANTS.URLS.CUSTOMERS, {}, this, null, true);
                 dataService.getData('/employees/getForDD', {isEmployee : true}, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;

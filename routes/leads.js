@@ -16,6 +16,7 @@ module.exports = function (models, event) {
 
     router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
     router.get('/getLeadsForChart', authStackMiddleware, accessStackMiddlware, handler.getLeadsForChart);
+    router.get('/priority', authStackMiddleware, accessStackMiddlware, handler.getLeadsPriority);
     router.get('/:viewType', authStackMiddleware, accessStackMiddlware, handler.getByViewType);
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateLead);
