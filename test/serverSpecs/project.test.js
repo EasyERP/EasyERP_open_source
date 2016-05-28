@@ -4,7 +4,7 @@ var CONSTANTS = require('../../constants/constantsTest');
 var url = 'http://localhost:8089/';
 var aggent;
 
-describe('Quotation Specs', function () {
+describe('Project Specs', function () {
     'use strict';
     var id;
 
@@ -48,17 +48,22 @@ describe('Quotation Specs', function () {
                     }
 
                     expect(body)
-                        .to.be.instanceOf(Array);
-                    expect(body.length)
-                        .to.be.lte(4);
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('showMore');
+                    expect(body)
+                        .to.have.property('count');
+                    expect(body)
+                        .to.have.property('data')
+                        .and.to.be.instanceOf(Array);
 
-                    firstProject = body[0];
+                    firstProject = body.data[0];
 
                     expect(firstProject)
                         .and.to.have.property('_id')
                         .and.to.have.lengthOf(24);
                     expect(firstProject)
-                        .and.to.have.property('projectName')
+                        .and.to.have.property('name')
                         .and.to.be.a('string');
                     expect(firstProject)
                         .and.to.have.property('health');
@@ -77,12 +82,16 @@ describe('Quotation Specs', function () {
                         .and.to.have.property('name')
                         .and.to.have.property('first')
                         .and.to.be.a('string');
+                    expect(Object.keys(firstProject.customer))
+                        .to.have.lengthOf(1);
 
-                    if (firstProject.salesmanager) {
+                    if (firstProject.salesManager) {
                         expect(firstProject)
-                            .and.to.have.property('salesmanager')
+                            .and.to.have.property('salesManager')
                             .and.to.have.property('_id')
                             .and.to.have.lengthOf(24);
+                        expect(Object.keys(firstProject.salesManager))
+                            .to.have.lengthOf(1);
                     }
 
                     done();

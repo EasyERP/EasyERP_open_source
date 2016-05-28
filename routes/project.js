@@ -18,7 +18,7 @@ module.exports = function (models) {
     var quotationHandler = new QuotationHandler(models);
     var paymentsHandler = new PaymentsHandler(models);
 
-    var moduleId = MODULES.PROJECT;
+    var moduleId = MODULES.PROJECTS;
     var accessStackMiddlWare = require('../helpers/access')(moduleId, models);
     
     router.use(authStackMiddleware);
