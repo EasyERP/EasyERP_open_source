@@ -3,20 +3,40 @@ var mongoose = require('mongoose');
 module.exports = function (models) {
     var access = require('../Modules/additions/access.js')(models);
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
+    var _ = require('../node_modules/underscore');
+    var moment = require('../public/js/libs/moment/moment');
+    var async = require('async');
+    var CONSTANTS = require('../constants/mainConstants.js');
+    var PUBLIC_CONST = require('../public/js/constants');
+    var Mailer = require('../helpers/mailer');
+    var pathMod = require('path');
+
     var ProjectSchema = mongoose.Schemas.Project;
     var wTrackSchema = mongoose.Schemas.wTrack;
     var MonthHoursSchema = mongoose.Schemas.MonthHours;
     var EmployeeSchema = mongoose.Schemas.Employee;
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
     var jobsSchema = mongoose.Schemas.jobs;
-    var _ = require('../node_modules/underscore');
-    var moment = require('../public/js/libs/moment/moment');
-    var async = require('async');
     var objectId = mongoose.Types.ObjectId;
-    var CONSTANTS = require('../constants/mainConstants.js');
-    var Mailer = require('../helpers/mailer');
+
     var mailer = new Mailer();
-    var pathMod = require('path');
+
+    function pageHelper(data) {
+        var count = data.count;
+        var page = data.page || 1;
+        var skip;
+
+        count = parseInt(count, 10);
+        count = !isNaN(count) ? count : PUBLIC_CONST.DEFAULT_ELEMENTS_PER_PAGE;
+        page = parseInt(page, 10);
+        page = !isNaN(page) && page ? page : 1;
+        skip = (page - 1) * count;
+
+        return {
+            skip : skip,
+            limit: count
+        };
+    }
 
     function caseFilter(filter) {
         var condition = [];
@@ -67,15 +87,19 @@ module.exports = function (models) {
     this.getByViewType = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var data = req.query;
+        var paginationObject = pageHelper(data);
+        var limit = paginationObject.limit;
+        var skip = paginationObject.skip;
         var contentType = data.contentType;
         var optionsObject = {};
         var filter = data.filter || {};
+        var response = {};
+
         var waterfallTasks;
         var accessRollSearcher;
         var contentSearcher;
         var project;
         var projectSecond;
-        var response = {};
 
         response.showMore = false;
 
