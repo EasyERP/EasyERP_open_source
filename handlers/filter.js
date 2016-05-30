@@ -165,13 +165,6 @@ var Filters = function (models) {
         function getWtrackFiltersValues(callback) {
             WTrack.aggregate([{
                 $lookup: {
-                    from        : "projectMembers",
-                    localField  : "project",
-                    foreignField: "projectId",
-                    as: "salesmanagers"
-                }
-            }, {
-                $lookup: {
                     from        : "Project",
                     localField  : "project",
                     foreignField: "_id", as: "project"
@@ -197,14 +190,7 @@ var Filters = function (models) {
                     year         : 1,
                     week         : 1,
                     isPaid       : 1,
-                    _type     : 1,
-                    salesmanagers: {
-                        $filter: {
-                            input: '$salesmanagers',
-                            as   : 'projectMember',
-                            cond : {$eq: ["$$projectMember.projectPositionId", objectId(CONSTANTS.SALESMANAGER)]}
-                        }
-                    }
+                    _type        : 1
                 }
             }, {
                 $lookup: {
@@ -214,20 +200,7 @@ var Filters = function (models) {
                     as: "customer"
                 }
             }, {
-                $unwind: {
-                    path                      : '$salesmanagers',
-                    preserveNullAndEmptyArrays: true
-                }
-            }, {
-                $lookup: {
-                    from        : "Employees",
-                    localField  : "salesmanagers.employeeId",
-                    foreignField: "_id",
-                    as: "salesmanager"
-                }
-            }, {
                 $project: {
-                    salesmanager  : {$arrayElemAt: ["$salesmanager", 0]},
                     customer      : {$arrayElemAt: ["$customer", 0]},
                     project       : 1,
                     employee      : 1,
@@ -245,14 +218,6 @@ var Filters = function (models) {
                         $addToSet: {
                             _id : '$jobs._id',
                             name: '$jobs.name'
-                        }
-                    },
-                    'salesManager': {
-                        $addToSet: {
-                            _id : '$salesmanager._id',
-                            name: {
-                                $concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']
-                            }
                         }
                     },
                     'projectName'   : {
