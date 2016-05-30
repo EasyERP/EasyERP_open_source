@@ -124,7 +124,7 @@ var Tasks = function (models, event) {
     }
 
     this.taskUpdateOnlySelectedFields = function (req, res, next) {
-        var _id = req.param('_id');
+        var _id = req.params._id;
         var data = req.body;
         var fileName = data.fileName;
         var obj;
