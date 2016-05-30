@@ -10,18 +10,21 @@ module.exports = function (models, event) {
     var moduleId = MODULES.TASKS;
     var handler = new TasksHandler(models, event);
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    
+    router.use(authStackMiddleware);
+    router.use(accessStackMiddlware);
 
-    router.post('/', authStackMiddleware, accessStackMiddlware, handler.createTask);
+    router.post('/', handler.createTask);
 
-    router.get('/priority', authStackMiddleware, accessStackMiddlware, handler.getTasksPriority);
+    router.get('/priority', handler.getTasksPriority);
 
-    router.get('/getLengthByWorkflows', authStackMiddleware, accessStackMiddlware, handler.getLengthByWorkflows);
+    router.get('/getLengthByWorkflows', handler.getLengthByWorkflows);
 
-    router.get('/:viewType', authStackMiddleware, accessStackMiddlware, handler.getTasks);
+    router.get('/:viewType', handler.getTasks);
 
-    router.patch('/:_id', authStackMiddleware, accessStackMiddlware, handler.taskUpdateOnlySelectedFields);
+    router.patch('/:_id', handler.taskUpdateOnlySelectedFields);
 
-    router.delete('/:_id', authStackMiddleware, accessStackMiddlware, handler.removeTask);
+    router.delete('/:_id', handler.removeTask);
 
     return router;
 };
