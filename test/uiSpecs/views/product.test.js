@@ -21,579 +21,579 @@ define([
 
     var modules = [
         {
-            "_id": 19,
+            "_id"        : 19,
             "attachments": [],
-            "link": false,
-            "mname": "Sales",
-            "parrent": null,
-            "sequence": 1,
-            "visible": true,
-            "ancestors": [],
-            "href": "Sales"
+            "link"       : false,
+            "mname"      : "Sales",
+            "parrent"    : null,
+            "sequence"   : 1,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Sales"
         }, {
-            "_id": 36,
+            "_id"        : 36,
             "attachments": [],
-            "link": false,
-            "mname": "Project",
-            "parrent": null,
-            "sequence": 2,
-            "visible": true,
-            "ancestors": [],
-            "href": "Project"
+            "link"       : false,
+            "mname"      : "Project",
+            "parrent"    : null,
+            "sequence"   : 2,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Project"
         }, {
-            "_id": 9,
+            "_id"        : 9,
             "attachments": [],
-            "link": false,
-            "mname": "HR",
-            "parrent": null,
-            "sequence": 3,
-            "visible": true,
-            "ancestors": [],
-            "href": "HR"
+            "link"       : false,
+            "mname"      : "HR",
+            "parrent"    : null,
+            "sequence"   : 3,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "HR"
         }, {
-            "_id": 49,
+            "_id"        : 49,
             "attachments": [],
-            "htref": "persons",
-            "link": true,
-            "mname": "Persons",
-            "parrent": 19,
-            "sequence": 7,
-            "visible": true,
-            "ancestors": [],
-            "href": "Persons"
+            "htref"      : "persons",
+            "link"       : true,
+            "mname"      : "Persons",
+            "parrent"    : 19,
+            "sequence"   : 7,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Persons"
         }, {
-            "_id": 50,
+            "_id"        : 50,
             "attachments": [],
-            "htref": "persons",
-            "link": true,
-            "mname": "Companies",
-            "parrent": 19,
-            "sequence": 8,
-            "visible": true,
-            "ancestors": [],
-            "href": "Companies"
+            "htref"      : "persons",
+            "link"       : true,
+            "mname"      : "Companies",
+            "parrent"    : 19,
+            "sequence"   : 8,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Companies"
         }, {
-            "_id": 24,
+            "_id"        : 24,
             "attachments": [],
-            "link": true,
-            "mname": "Leads",
-            "parrent": 19,
-            "sequence": 9,
-            "visible": true,
-            "ancestors": [],
-            "href": "Leads"
+            "link"       : true,
+            "mname"      : "Leads",
+            "parrent"    : 19,
+            "sequence"   : 9,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Leads"
         }, {
-            "_id": 25,
+            "_id"        : 25,
             "attachments": [],
-            "link": true,
-            "mname": "Opportunities",
-            "parrent": 19,
-            "sequence": 10,
-            "visible": true,
-            "ancestors": [],
-            "href": "Opportunities"
+            "link"       : true,
+            "mname"      : "Opportunities",
+            "parrent"    : 19,
+            "sequence"   : 10,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Opportunities"
         }, {
-            "_id": 39,
+            "_id"        : 39,
             "attachments": [],
-            "link": true,
-            "mname": "Projects",
-            "parrent": 36,
-            "sequence": 23,
-            "visible": true,
-            "ancestors": [],
-            "href": "Projects"
+            "link"       : true,
+            "mname"      : "Projects",
+            "parrent"    : 36,
+            "sequence"   : 23,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Projects"
         }, {
-            "_id": 40,
+            "_id"        : 40,
             "attachments": [],
-            "link": true,
-            "mname": "Tasks",
-            "parrent": 36,
-            "sequence": 24,
-            "visible": true,
-            "ancestors": [],
-            "href": "Tasks"
+            "link"       : true,
+            "mname"      : "Tasks",
+            "parrent"    : 36,
+            "sequence"   : 24,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Tasks"
         }, {
-            "_id": 29,
+            "_id"        : 29,
             "attachments": [],
-            "link": true,
-            "mname": "Dashboard",
-            "parrent": 19,
-            "sequence": 29,
-            "visible": true,
-            "ancestors": [],
-            "href": "Dashboard"
+            "link"       : true,
+            "mname"      : "Dashboard",
+            "parrent"    : 19,
+            "sequence"   : 29,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Dashboard"
         }, {
-            "_id": 42,
+            "_id"        : 42,
             "attachments": [],
-            "link": true,
-            "mname": "Employees",
-            "parrent": 9,
-            "sequence": 29,
-            "visible": true,
-            "ancestors": [],
-            "href": "Employees"
+            "link"       : true,
+            "mname"      : "Employees",
+            "parrent"    : 9,
+            "sequence"   : 29,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Employees"
         }, {
-            "_id": 43,
+            "_id"        : 43,
             "attachments": [],
-            "link": true,
-            "mname": "Applications",
-            "parrent": 9,
-            "sequence": 30,
-            "visible": true,
-            "ancestors": [],
-            "href": "Applications"
+            "link"       : true,
+            "mname"      : "Applications",
+            "parrent"    : 9,
+            "sequence"   : 30,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Applications"
         }, {
-            "_id": 14,
+            "_id"        : 14,
             "attachments": [],
-            "link": true,
-            "mname": "Job Positions",
-            "parrent": 9,
-            "sequence": 32,
-            "visible": true,
-            "ancestors": [],
-            "href": "JobPositions"
+            "link"       : true,
+            "mname"      : "Job Positions",
+            "parrent"    : 9,
+            "sequence"   : 32,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "JobPositions"
         }, {
-            "_id": 15,
+            "_id"        : 15,
             "attachments": [],
-            "link": true,
-            "mname": "Groups",
-            "parrent": 1,
-            "sequence": 33,
-            "visible": true,
-            "ancestors": [],
-            "href": "Departments"
+            "link"       : true,
+            "mname"      : "Groups",
+            "parrent"    : 1,
+            "sequence"   : 33,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Departments"
         }, {
-            "_id": 7,
-            "__v": 0,
+            "_id"        : 7,
+            "__v"        : 0,
             "attachments": [],
-            "link": true,
-            "mname": "Users",
-            "parrent": 1,
-            "sequence": 42,
-            "visible": true,
-            "ancestors": [],
-            "href": "Users"
+            "link"       : true,
+            "mname"      : "Users",
+            "parrent"    : 1,
+            "sequence"   : 42,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Users"
         }, {
-            "_id": 44,
+            "_id"        : 44,
             "attachments": [],
-            "link": true,
-            "mname": "Workflows",
-            "parrent": 1,
-            "sequence": 44,
-            "visible": true,
-            "ancestors": [],
-            "href": "Workflows"
+            "link"       : true,
+            "mname"      : "Workflows",
+            "parrent"    : 1,
+            "sequence"   : 44,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Workflows"
         }, {
-            "_id": 51,
+            "_id"        : 51,
             "attachments": [],
-            "link": true,
-            "mname": "Profiles",
-            "parrent": 1,
-            "sequence": 51,
-            "visible": true,
-            "ancestors": [],
-            "href": "Profiles"
+            "link"       : true,
+            "mname"      : "Profiles",
+            "parrent"    : 1,
+            "sequence"   : 51,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Profiles"
         }, {
-            "_id": 52,
+            "_id"        : 52,
             "attachments": [],
-            "link": true,
-            "mname": "Birthdays",
-            "parrent": 9,
-            "sequence": 52,
-            "visible": true,
-            "ancestors": [],
-            "href": "Birthdays"
+            "link"       : true,
+            "mname"      : "Birthdays",
+            "parrent"    : 9,
+            "sequence"   : 52,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Birthdays"
         }, {
-            "_id": 53,
+            "_id"        : 53,
             "attachments": [],
-            "link": true,
-            "mname": "Dashboard",
-            "parrent": 36,
-            "sequence": 53,
-            "visible": true,
-            "ancestors": [],
-            "href": "projectDashboard"
+            "link"       : true,
+            "mname"      : "Dashboard",
+            "parrent"    : 36,
+            "sequence"   : 53,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "projectDashboard"
         }, {
-            "_id": 54,
-            "mname": "Purchases",
-            "sequence": 54,
-            "parrent": null,
-            "link": false,
-            "visible": true,
+            "_id"      : 54,
+            "mname"    : "Purchases",
+            "sequence" : 54,
+            "parrent"  : null,
+            "link"     : false,
+            "visible"  : true,
             "ancestors": [],
-            "href": "Purchases"
+            "href"     : "Purchases"
         }, {
-            "_id": 80,
-            "mname": "Jobs Dashboard",
-            "sequence": 54,
-            "parrent": 36,
-            "link": true,
-            "visible": true,
+            "_id"      : 80,
+            "mname"    : "Jobs Dashboard",
+            "sequence" : 54,
+            "parrent"  : 36,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "jobsDashboard"
+            "href"     : "jobsDashboard"
         }, {
-            "_id": 55,
-            "mname": "Quotation",
-            "sequence": 55,
-            "parrent": 54,
-            "link": true,
-            "visible": true,
+            "_id"      : 55,
+            "mname"    : "Quotation",
+            "sequence" : 55,
+            "parrent"  : 54,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "Quotation"
+            "href"     : "Quotation"
         }, {
-            "_id": 57,
-            "mname": "Order",
-            "sequence": 56,
-            "parrent": 54,
-            "link": true,
-            "visible": true,
+            "_id"      : 57,
+            "mname"    : "Order",
+            "sequence" : 56,
+            "parrent"  : 54,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "Order"
+            "href"     : "Order"
         }, {
-            "_id": 56,
-            "mname": "Invoice",
-            "sequence": 57,
-            "parrent": 54,
-            "link": true,
-            "visible": true,
+            "_id"      : 56,
+            "mname"    : "Invoice",
+            "sequence" : 57,
+            "parrent"  : 54,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "Invoice"
+            "href"     : "Invoice"
         }, {
-            "_id": 58,
-            "mname": "Product",
-            "sequence": 58,
-            "parrent": 54,
-            "link": true,
-            "visible": true,
+            "_id"      : 58,
+            "mname"    : "Product",
+            "sequence" : 58,
+            "parrent"  : 54,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "Product"
+            "href"     : "Product"
         }, {
-            "_id": 59,
-            "mname": "Accounting",
-            "sequence": 59,
-            "parrent": null,
-            "link": false,
-            "visible": true,
+            "_id"      : 59,
+            "mname"    : "Accounting",
+            "sequence" : 59,
+            "parrent"  : null,
+            "link"     : false,
+            "visible"  : true,
             "ancestors": [],
-            "href": "Accounting"
+            "href"     : "Accounting"
         }, {
-            "_id": 60,
-            "mname": "Supplier Payments",
-            "sequence": 60,
-            "parrent": 59,
-            "link": true,
-            "visible": true,
+            "_id"      : 60,
+            "mname"    : "Supplier Payments",
+            "sequence" : 60,
+            "parrent"  : 59,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "supplierPayments"
+            "href"     : "supplierPayments"
         }, {
-            "_id": 61,
-            "mname": "Customer Payments",
-            "sequence": 61,
-            "parrent": 59,
-            "link": true,
-            "visible": true,
+            "_id"      : 61,
+            "mname"    : "Customer Payments",
+            "sequence" : 61,
+            "parrent"  : 59,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "customerPayments"
+            "href"     : "customerPayments"
         }, {
-            "_id": 62,
-            "mname": "Quotation",
-            "sequence": 62,
-            "parrent": 19,
-            "link": true,
-            "visible": true,
+            "_id"      : 62,
+            "mname"    : "Quotation",
+            "sequence" : 62,
+            "parrent"  : 19,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "salesQuotation"
+            "href"     : "salesQuotation"
         }, {
-            "_id": 63,
-            "mname": "Order",
-            "sequence": 63,
-            "parrent": 19,
-            "link": true,
-            "visible": true,
+            "_id"      : 63,
+            "mname"    : "Order",
+            "sequence" : 63,
+            "parrent"  : 19,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "salesOrder"
+            "href"     : "salesOrder"
         }, {
-            "_id": 64,
-            "mname": "Invoice",
-            "sequence": 64,
-            "parrent": 19,
-            "link": true,
-            "visible": true,
+            "_id"      : 64,
+            "mname"    : "Invoice",
+            "sequence" : 64,
+            "parrent"  : 19,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "salesInvoice"
+            "href"     : "salesInvoice"
         }, {
-            "_id": 68,
-            "mname": "MonthHours",
-            "sequence": 68,
-            "parrent": 78,
-            "link": true,
-            "visible": true,
+            "_id"      : 68,
+            "mname"    : "MonthHours",
+            "sequence" : 68,
+            "parrent"  : 78,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "monthHours"
+            "href"     : "monthHours"
         }, {
-            "_id": 69,
-            "mname": "Holidays",
-            "sequence": 69,
-            "parrent": 78,
-            "link": true,
-            "visible": true,
+            "_id"      : 69,
+            "mname"    : "Holidays",
+            "sequence" : 69,
+            "parrent"  : 78,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "Holiday"
+            "href"     : "Holiday"
         }, {
-            "_id": 77,
-            "mname": "Capacity",
-            "sequence": 69,
-            "parrent": 9,
-            "link": true,
-            "visible": true,
+            "_id"      : 77,
+            "mname"    : "Capacity",
+            "sequence" : 69,
+            "parrent"  : 9,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "Capacity"
+            "href"     : "Capacity"
         }, {
-            "_id": 88,
-            "mname": "Salary Report",
-            "sequence": 69,
-            "parrent": 59,
-            "link": true,
-            "visible": true,
+            "_id"      : 88,
+            "mname"    : "Salary Report",
+            "sequence" : 69,
+            "parrent"  : 59,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "salaryReport"
+            "href"     : "salaryReport"
         }, {
-            "_id": 70,
-            "mname": "Vacation",
-            "sequence": 70,
-            "parrent": 9,
-            "link": true,
-            "visible": true,
+            "_id"      : 70,
+            "mname"    : "Vacation",
+            "sequence" : 70,
+            "parrent"  : 9,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "Vacation"
+            "href"     : "Vacation"
         }, {
-            "_id": 71,
-            "mname": "Attendance",
-            "sequence": 71,
-            "parrent": 9,
-            "link": true,
-            "visible": true,
+            "_id"      : 71,
+            "mname"    : "Attendance",
+            "sequence" : 71,
+            "parrent"  : 9,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "Attendance"
+            "href"     : "Attendance"
         }, {
-            "_id": 76,
-            "mname": "Efficiency",
-            "sequence": 72,
-            "parrent": 78,
-            "link": true,
-            "visible": true,
+            "_id"      : 76,
+            "mname"    : "Efficiency",
+            "sequence" : 72,
+            "parrent"  : 78,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "Efficiency"
+            "href"     : "Efficiency"
         }, {
-            "_id": 72,
-            "mname": "BonusType",
-            "sequence": 73,
-            "parrent": 78,
-            "link": true,
-            "visible": true,
+            "_id"      : 72,
+            "mname"    : "BonusType",
+            "sequence" : 73,
+            "parrent"  : 78,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "bonusType"
+            "href"     : "bonusType"
         }, {
-            "_id": 74,
-            "mname": "HrDashboard",
-            "sequence": 74,
-            "parrent": 9,
-            "link": true,
-            "visible": true,
+            "_id"      : 74,
+            "mname"    : "HrDashboard",
+            "sequence" : 74,
+            "parrent"  : 9,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "HrDashboard"
+            "href"     : "HrDashboard"
         }, {
-            "_id": 66,
-            "mname": "Payroll Expenses",
-            "sequence": 77,
-            "parrent": 78,
-            "link": true,
-            "visible": true,
+            "_id"      : 66,
+            "mname"    : "Payroll Expenses",
+            "sequence" : 77,
+            "parrent"  : 78,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "PayrollExpenses"
+            "href"     : "PayrollExpenses"
         }, {
-            "_id": 78,
-            "mname": "Payroll",
-            "sequence": 78,
-            "parrent": null,
-            "link": false,
-            "visible": true,
+            "_id"      : 78,
+            "mname"    : "Payroll",
+            "sequence" : 78,
+            "parrent"  : null,
+            "link"     : false,
+            "visible"  : true,
             "ancestors": [],
-            "href": "Payroll"
+            "href"     : "Payroll"
         }, {
-            "_id": 79,
-            "mname": "Payroll Payments",
-            "sequence": 79,
-            "parrent": 78,
-            "link": true,
-            "visible": true,
+            "_id"      : 79,
+            "mname"    : "Payroll Payments",
+            "sequence" : 79,
+            "parrent"  : 78,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "PayrollPayments"
+            "href"     : "PayrollPayments"
         }, {
-            "_id": 82,
-            "mname": "Invoice Aging",
-            "sequence": 82,
-            "parrent": 59,
-            "link": true,
-            "visible": true,
+            "_id"      : 82,
+            "mname"    : "Invoice Aging",
+            "sequence" : 82,
+            "parrent"  : 59,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "invoiceAging"
+            "href"     : "invoiceAging"
         }, {
-            "_id": 83,
-            "mname": "ChartOfAccount",
-            "sequence": 83,
-            "parrent": 59,
-            "link": true,
-            "visible": true,
+            "_id"      : 83,
+            "mname"    : "ChartOfAccount",
+            "sequence" : 83,
+            "parrent"  : 59,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "ChartOfAccount"
+            "href"     : "ChartOfAccount"
         }, {
-            "_id": 85,
-            "mname": "Journal",
-            "sequence": 85,
-            "parrent": 59,
-            "link": true,
-            "visible": true,
+            "_id"      : 85,
+            "mname"    : "Journal",
+            "sequence" : 85,
+            "parrent"  : 59,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "journal"
+            "href"     : "journal"
         }, {
-            "_id": 86,
-            "mname": "Journal Entry",
-            "sequence": 86,
-            "parrent": 59,
-            "link": true,
-            "visible": true,
+            "_id"      : 86,
+            "mname"    : "Journal Entry",
+            "sequence" : 86,
+            "parrent"  : 59,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "journalEntry"
+            "href"     : "journalEntry"
         }, {
-            "_id": 87,
-            "mname": "Invoice Charts",
-            "sequence": 87,
-            "parrent": 59,
-            "link": true,
-            "visible": true,
+            "_id"      : 87,
+            "mname"    : "Invoice Charts",
+            "sequence" : 87,
+            "parrent"  : 59,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "invoiceCharts"
+            "href"     : "invoiceCharts"
         }, {
-            "_id": 1,
-            "__v": 0,
+            "_id"        : 1,
+            "__v"        : 0,
             "attachments": [],
-            "link": false,
-            "mname": "Settings",
-            "parrent": null,
-            "sequence": 1000,
-            "visible": true,
-            "ancestors": [],
-            "href": "Settings"
+            "link"       : false,
+            "mname"      : "Settings",
+            "parrent"    : null,
+            "sequence"   : 1000,
+            "visible"    : true,
+            "ancestors"  : [],
+            "href"       : "Settings"
         }, {
-            "_id": 75,
-            "mname": "tCard",
-            "sequence": 1000,
-            "parrent": 36,
-            "link": true,
-            "visible": true,
+            "_id"      : 75,
+            "mname"    : "tCard",
+            "sequence" : 1000,
+            "parrent"  : 36,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "wTrack"
+            "href"     : "wTrack"
         }, {
-            "_id": 84,
-            "mname": "Categories",
-            "sequence": 1000,
-            "parrent": 1,
-            "link": true,
-            "visible": true,
+            "_id"      : 84,
+            "mname"    : "Categories",
+            "sequence" : 1000,
+            "parrent"  : 1,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "productSettings"
+            "href"     : "productSettings"
         }, {
-            "_id": 73,
-            "mname": "DashBoardVacation",
-            "sequence": 1001,
-            "parrent": 36,
-            "link": true,
-            "visible": true,
+            "_id"      : 73,
+            "mname"    : "DashBoardVacation",
+            "sequence" : 1001,
+            "parrent"  : 36,
+            "link"     : true,
+            "visible"  : true,
             "ancestors": [],
-            "href": "DashBoardVacation"
+            "href"     : "DashBoardVacation"
         }];
     var fakeProducts = {
         success: [
             {
-                _id: "55c0e4a30343b37542000005",
-                __v: 0,
-                editedBy: {
+                _id              : "55c0e4a30343b37542000005",
+                __v              : 0,
+                editedBy         : {
                     date: "2015-08-04T16:13:23.246Z",
                     user: "52203e707d4dba8813000003"
                 },
-                createdBy: {
+                createdBy        : {
                     date: "2015-08-04T16:13:23.246Z",
                     user: "52203e707d4dba8813000003"
                 },
-                creationDate: "2015-08-04T16:13:23.246Z",
-                groups: {
+                creationDate     : "2015-08-04T16:13:23.246Z",
+                groups           : {
                     group: [],
                     users: [],
                     owner: "55ba28c8d79a3a3439000016"
                 },
-                whoCanRW: "everyOne",
-                workflow: null,
-                accounting: {
+                whoCanRW         : "everyOne",
+                workflow         : null,
+                accounting       : {
                     category: {
                         name: "",
-                        _id: null
+                        _id : null
                     }
                 },
-                info: {
+                info             : {
                     description: "",
-                    barcode: "",
-                    isActive: true,
-                    salePrice: 0,
+                    barcode    : "",
+                    isActive   : true,
+                    salePrice  : 0,
                     productType: "Service"
                 },
-                name: "Bank expenses",
-                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                canBePurchased: true,
+                name             : "Bank expenses",
+                imageSrc         : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                canBePurchased   : true,
                 eventSubscription: true,
-                canBeExpensed: true,
-                canBeSold: false,
-                wTrack: null
+                canBeExpensed    : true,
+                canBeSold        : false,
+                wTrack           : null
             },
             {
-                _id: "5540d528dacb551c24000003",
-                __v: 0,
-                editedBy: {
+                _id              : "5540d528dacb551c24000003",
+                __v              : 0,
+                editedBy         : {
                     date: "2015-10-30T14:18:42.379Z",
                     user: "52203e707d4dba8813000003"
                 },
-                createdBy: {
+                createdBy        : {
                     date: "2015-04-29T12:57:12.785Z",
                     user: null
                 },
-                creationDate: "2015-04-29T12:57:12.785Z",
-                groups: {
+                creationDate     : "2015-04-29T12:57:12.785Z",
+                groups           : {
                     group: [],
                     users: [],
                     owner: "560c099da5d4a2e20ba5068b"
                 },
-                whoCanRW: "everyOne",
-                workflow: null,
-                accounting: {
+                whoCanRW         : "everyOne",
+                workflow         : null,
+                accounting       : {
                     category: {
                         name: "",
-                        _id: null
+                        _id : null
                     }
                 },
-                info: {
+                info             : {
                     description: "",
-                    barcode: "",
-                    isActive: true,
-                    salePrice: 0,
+                    barcode    : "",
+                    isActive   : true,
+                    salePrice  : 0,
                     productType: "Service"
                 },
-                name: "IT services",
-                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                canBePurchased: true,
+                name             : "IT services",
+                imageSrc         : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                canBePurchased   : true,
                 eventSubscription: true,
-                canBeExpensed: true,
-                canBeSold: true,
-                wTrack: null
+                canBeExpensed    : true,
+                canBeSold        : true,
+                wTrack           : null
             }
         ]
     };
@@ -610,254 +610,254 @@ define([
     var fakeProductByLetter = {
         success: [
             {
-                _id: "55c0e4a30343b37542000005",
-                __v: 0,
-                editedBy: {
+                _id              : "55c0e4a30343b37542000005",
+                __v              : 0,
+                editedBy         : {
                     date: "2015-08-04T16:13:23.246Z",
                     user: "52203e707d4dba8813000003"
                 },
-                createdBy: {
+                createdBy        : {
                     date: "2015-08-04T16:13:23.246Z",
                     user: "52203e707d4dba8813000003"
                 },
-                creationDate: "2015-08-04T16:13:23.246Z",
-                groups: {
+                creationDate     : "2015-08-04T16:13:23.246Z",
+                groups           : {
                     group: [],
                     users: [],
                     owner: "55ba28c8d79a3a3439000016"
                 },
-                whoCanRW: "everyOne",
-                workflow: null,
-                accounting: {
+                whoCanRW         : "everyOne",
+                workflow         : null,
+                accounting       : {
                     category: {
                         name: "",
-                        _id: null
+                        _id : null
                     }
                 },
-                info: {
+                info             : {
                     description: "",
-                    barcode: "",
-                    isActive: true,
-                    salePrice: 0,
+                    barcode    : "",
+                    isActive   : true,
+                    salePrice  : 0,
                     productType: "Service"
                 },
-                name: "Bank expenses",
-                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                canBePurchased: true,
+                name             : "Bank expenses",
+                imageSrc         : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                canBePurchased   : true,
                 eventSubscription: true,
-                canBeExpensed: true,
-                canBeSold: false,
-                wTrack: null
+                canBeExpensed    : true,
+                canBeSold        : false,
+                wTrack           : null
             }
         ]
     };
     var fakeProductById = {
-        _id: "5540d528dacb551c24000003",
-        __v: 0,
-        editedBy: {
+        _id              : "5540d528dacb551c24000003",
+        __v              : 0,
+        editedBy         : {
             date: "2015-10-30T14:18:42.379Z",
             user: {
-                _id: "52203e707d4dba8813000003",
-                __v: 0,
-                attachments: [ ],
-                lastAccess: "2016-04-18T06:14:22.257Z",
-                profile: 1387275598000,
+                _id            : "52203e707d4dba8813000003",
+                __v            : 0,
+                attachments    : [],
+                lastAccess     : "2016-04-18T06:14:22.257Z",
+                profile        : 1387275598000,
                 relatedEmployee: "55b92ad221e4b7c40f00004f",
-                savedFilters: [
+                savedFilters   : [
                     {
-                        _id: "56213057c558b13c1bbf874d",
-                        viewType: "",
+                        _id      : "56213057c558b13c1bbf874d",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "5621307bc558b13c1bbf874f",
-                        viewType: "",
+                        _id      : "5621307bc558b13c1bbf874f",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "56213103c558b13c1bbf8750",
-                        viewType: "",
+                        _id      : "56213103c558b13c1bbf8750",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "56213197c558b13c1bbf8751",
-                        viewType: "",
+                        _id      : "56213197c558b13c1bbf8751",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "56215e86c558b13c1bbf8755",
-                        viewType: "",
+                        _id      : "56215e86c558b13c1bbf8755",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "56229009184ec5a427913306",
-                        viewType: "",
+                        _id      : "56229009184ec5a427913306",
+                        viewType : "",
                         byDefault: "salesInvoice"
                     },
                     {
-                        _id: "562506bb19a2ecca01ca84b3",
-                        viewType: "",
+                        _id      : "562506bb19a2ecca01ca84b3",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "56265005d53978de6e9ea440",
-                        viewType: "",
+                        _id      : "56265005d53978de6e9ea440",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "562b83ccb4677e225aa31df6",
-                        viewType: "",
+                        _id      : "562b83ccb4677e225aa31df6",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "564dd4ce9fb8bc3f2195662c",
-                        viewType: "",
+                        _id      : "564dd4ce9fb8bc3f2195662c",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "56570d714d96962262fd4b55",
-                        viewType: "",
+                        _id      : "56570d714d96962262fd4b55",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "56572368bfd103f108eb4a24",
-                        viewType: "",
+                        _id      : "56572368bfd103f108eb4a24",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "56604795ccc590f32c577ece",
-                        viewType: "",
+                        _id      : "56604795ccc590f32c577ece",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "566047c6ccc590f32c577ed1",
-                        viewType: "",
+                        _id      : "566047c6ccc590f32c577ed1",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "5661a7bf7d284423697e34a8",
-                        viewType: "",
+                        _id      : "5661a7bf7d284423697e34a8",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "5665429e9294f4d728bcafaa",
-                        viewType: "",
+                        _id      : "5665429e9294f4d728bcafaa",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "566eba768453e8b464b70a40",
-                        viewType: "",
+                        _id      : "566eba768453e8b464b70a40",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "56c711ab0769bba2647ae710",
-                        viewType: "",
+                        _id      : "56c711ab0769bba2647ae710",
+                        viewType : "",
                         byDefault: "Projects"
                     },
                     {
-                        _id: "56daf5322e7b62c613ff2552",
-                        viewType: "",
+                        _id      : "56daf5322e7b62c613ff2552",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "56dd69d991cb620c19ff60c2",
-                        viewType: "",
+                        _id      : "56dd69d991cb620c19ff60c2",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "56dd6af71e6cb7131892b2ba",
-                        viewType: "",
+                        _id      : "56dd6af71e6cb7131892b2ba",
+                        viewType : "",
                         byDefault: ""
                     },
                     {
-                        _id: "56dfe8e56e2877d85455a6bb",
-                        viewType: "",
+                        _id      : "56dfe8e56e2877d85455a6bb",
+                        viewType : "",
                         byDefault: "Leads"
                     },
                     {
-                        _id: "56f3d039c1785edc507e81ea",
-                        viewType: "",
+                        _id      : "56f3d039c1785edc507e81ea",
+                        viewType : "",
                         byDefault: ""
                     }
                 ],
-                kanbanSettings: {
-                    tasks: {
+                kanbanSettings : {
+                    tasks        : {
                         foldWorkflows: [
                             "528ce3caf3f67bc40b000013",
                             "528ce3acf3f67bc40b000012",
                             "528ce30cf3f67bc40b00000f",
                             "528ce35af3f67bc40b000010"
                         ],
-                        countPerPage: 10
+                        countPerPage : 10
                     },
-                    applications: {
+                    applications : {
                         foldWorkflows: [
                             "Empty"
                         ],
-                        countPerPage: 10
+                        countPerPage : 10
                     },
                     opportunities: {
-                        foldWorkflows: [ ],
-                        countPerPage: 10
+                        foldWorkflows: [],
+                        countPerPage : 10
                     }
                 },
-                credentials: {
-                    access_token: "",
+                credentials    : {
+                    access_token : "",
                     refresh_token: ""
                 },
-                pass: "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
-                email: "info@thinkmobiles.com",
-                login: "admin",
-                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"
+                pass           : "082cb718fc4389d4cf192d972530f918e78b77f71c4063f48601551dff5d86a9",
+                email          : "info@thinkmobiles.com",
+                login          : "admin",
+                imageSrc       : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC"
             }
         },
-        createdBy: {
+        createdBy        : {
             date: "2015-04-29T12:57:12.785Z",
             user: null
         },
-        creationDate: "2015-04-29T12:57:12.785Z",
-        groups: {
-            group: [ ],
-            users: [ ],
+        creationDate     : "2015-04-29T12:57:12.785Z",
+        groups           : {
+            group: [],
+            users: [],
             owner: {
-                _id: "560c099da5d4a2e20ba5068b",
+                _id  : "560c099da5d4a2e20ba5068b",
                 login: "AlexSvatuk"
             }
         },
-        whoCanRW: "everyOne",
-        workflow: null,
-        accounting: {
+        whoCanRW         : "everyOne",
+        workflow         : null,
+        accounting       : {
             category: {
                 name: "",
-                _id: null
+                _id : null
             }
         },
-        info: {
+        info             : {
             description: "",
-            barcode: "",
-            isActive: true,
-            salePrice: 0,
+            barcode    : "",
+            isActive   : true,
+            salePrice  : 0,
             productType: {
-                _id: "Service",
+                _id : "Service",
                 name: "Service"
             }
         },
-        name: "IT services",
-        imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-        canBePurchased: true,
+        name             : "IT services",
+        imageSrc         : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+        canBePurchased   : true,
         eventSubscription: true,
-        canBeExpensed: true,
-        canBeSold: true,
-        wTrack: null
+        canBeExpensed    : true,
+        canBeSold        : true,
+        wTrack           : null
     };
     var fakeProductTypeForDD = {
         data: [
             {
-                _id: "Stock",
+                _id : "Stock",
                 name: "Product"
             },
             {
-                _id: "Service",
+                _id : "Service",
                 name: "Service"
             }
         ]
@@ -865,227 +865,227 @@ define([
     var fakeUsersForDD = {
         data: [
             {
-                _id: "560c099da5d4a2e20ba5068b",
+                _id  : "560c099da5d4a2e20ba5068b",
                 login: "AlexSvatuk"
             },
             {
-                _id: "55ba28c8d79a3a3439000016",
+                _id  : "55ba28c8d79a3a3439000016",
                 login: "AndrianaLemko"
             },
             {
-                _id: "55ba2ef1d79a3a343900001c",
+                _id  : "55ba2ef1d79a3a343900001c",
                 login: "AnnaLobas"
             },
             {
-                _id: "55c1e1276708490b0b000035",
+                _id  : "55c1e1276708490b0b000035",
                 login: "ArturMyhalko"
             },
             {
-                _id: "55b9fbcdd79a3a3439000007",
+                _id  : "55b9fbcdd79a3a3439000007",
                 login: "Igor Stan"
             },
             {
-                _id: "55b8cb7d0ce4affc2a0015cb",
+                _id  : "55b8cb7d0ce4affc2a0015cb",
                 login: "Irina.Grab"
             },
             {
-                _id: "56224c43c558b13c1bbf8756",
+                _id  : "56224c43c558b13c1bbf8756",
                 login: "Kodenko"
             },
             {
-                _id: "55ba2f3ed79a3a343900001d",
+                _id  : "55ba2f3ed79a3a343900001d",
                 login: "MariaZasukhina"
             },
             {
-                _id: "55c1e1aa6708490b0b000037",
+                _id  : "55c1e1aa6708490b0b000037",
                 login: "OksanaKordas"
             },
             {
-                _id: "55cb7302fea413b50b000007",
+                _id  : "55cb7302fea413b50b000007",
                 login: "OlegOstroverkh"
             },
             {
-                _id: "55bb1d7ecb76ca630b000005",
+                _id  : "55bb1d7ecb76ca630b000005",
                 login: "Stas.Volskiy"
             },
             {
-                _id: "560d0c46963ba3087363de94",
+                _id  : "560d0c46963ba3087363de94",
                 login: "Vitaliy.Shuba"
             },
             {
-                _id: "52203e707d4dba8813000003",
+                _id  : "52203e707d4dba8813000003",
                 login: "admin"
             },
             {
-                _id: "563f673270bbc2b740ce89ae",
+                _id  : "563f673270bbc2b740ce89ae",
                 login: "alex.sokhanych"
             },
             {
-                _id: "5631dc18bf9592df04c55106",
+                _id  : "5631dc18bf9592df04c55106",
                 login: "alina.yurenko"
             },
             {
-                _id: "569f5d8c62d172544baf0d52",
+                _id  : "569f5d8c62d172544baf0d52",
                 login: "alona.yelahina"
             },
             {
-                _id: "56d6fff1805eb08d2b93d95b",
+                _id  : "56d6fff1805eb08d2b93d95b",
                 login: "anastas.lyakh"
             },
             {
-                _id: "56c44e38b81fd51e19207f40",
+                _id  : "56c44e38b81fd51e19207f40",
                 login: "anatoliy.dalekorey"
             },
             {
-                _id: "56bda2e0dfd8a81466e2f4e2",
+                _id  : "56bda2e0dfd8a81466e2f4e2",
                 login: "andriy.hanchak"
             },
             {
-                _id: "56dd3dd92e7b62c613ff2553",
+                _id  : "56dd3dd92e7b62c613ff2553",
                 login: "andriy.merentsov"
             },
             {
-                _id: "56dda0599fb95fbe18e3f8ed",
+                _id  : "56dda0599fb95fbe18e3f8ed",
                 login: "anton.nizhegorodov"
             },
             {
-                _id: "56a72b95aa157ca50f21fb21",
+                _id  : "56a72b95aa157ca50f21fb21",
                 login: "anton.yarosh"
             },
             {
-                _id: "56f105f5f504b2b550af0103",
+                _id  : "56f105f5f504b2b550af0103",
                 login: "bohdana.stets"
             },
             {
-                _id: "56a72df2aa157ca50f21fb23",
+                _id  : "56a72df2aa157ca50f21fb23",
                 login: "dmytro.babilia"
             },
             {
-                _id: "56d704f1805eb08d2b93d95f",
+                _id  : "56d704f1805eb08d2b93d95f",
                 login: "eugen.lendyel"
             },
             {
-                _id: "563b58c2ab9698be7c9df6b6",
+                _id  : "563b58c2ab9698be7c9df6b6",
                 login: "gabriella.shterr"
             },
             {
-                _id: "56dfef269100b25c05819305",
+                _id  : "56dfef269100b25c05819305",
                 login: "igor.shepinka"
             },
             {
-                _id: "55ba0c01d79a3a3439000014",
+                _id  : "55ba0c01d79a3a3439000014",
                 login: "ivan.bilak"
             },
             {
-                _id: "56b2e83b39df50996ae2f07e",
+                _id  : "56b2e83b39df50996ae2f07e",
                 login: "katerina.pasichnyuk"
             },
             {
-                _id: "56239dcce9576d1728a9ed1c",
+                _id  : "56239dcce9576d1728a9ed1c",
                 login: "kristian.rimar"
             },
             {
-                _id: "55b9dd7a7a3632120b000006",
+                _id  : "55b9dd7a7a3632120b000006",
                 login: "larysa.popp"
             },
             {
-                _id: "56239e0ce9576d1728a9ed1d",
+                _id  : "56239e0ce9576d1728a9ed1d",
                 login: "liliya.shustur"
             },
             {
-                _id: "56239f14e9576d1728a9ed23",
+                _id  : "56239f14e9576d1728a9ed23",
                 login: "michael"
             },
             {
-                _id: "56c47f1ed2b48ede4ba42201",
+                _id  : "56c47f1ed2b48ede4ba42201",
                 login: "nadiya.shishko"
             },
             {
-                _id: "561e37f7d6c741e8235f42cb",
+                _id  : "561e37f7d6c741e8235f42cb",
                 login: "natalia.yartysh"
             },
             {
-                _id: "56cc3dcf541812c071973563",
+                _id  : "56cc3dcf541812c071973563",
                 login: "nelia.plovaiko"
             },
             {
-                _id: "569e1e8eea21e2ac7d729e2b",
+                _id  : "569e1e8eea21e2ac7d729e2b",
                 login: "office.manager"
             },
             {
-                _id: "567181ae8453e8b464b70c19",
+                _id  : "567181ae8453e8b464b70c19",
                 login: "oles.pavliuk"
             },
             {
-                _id: "56239e58e9576d1728a9ed1f",
+                _id  : "56239e58e9576d1728a9ed1f",
                 login: "olga.sikora"
             },
             {
-                _id: "55b9fc0fd79a3a3439000008",
+                _id  : "55b9fc0fd79a3a3439000008",
                 login: "peter.volosh"
             },
             {
-                _id: "55b9dd237a3632120b000005",
+                _id  : "55b9dd237a3632120b000005",
                 login: "roland.katona"
             },
             {
-                _id: "56ddac991e6cb7131892b2be",
+                _id  : "56ddac991e6cb7131892b2be",
                 login: "roman.babunych"
             },
             {
-                _id: "56a72af2aa157ca50f21fb20",
+                _id  : "56a72af2aa157ca50f21fb20",
                 login: "roman.kubichka"
             },
             {
-                _id: "56cf238d541812c0719735a4",
+                _id  : "56cf238d541812c0719735a4",
                 login: "sergey.melnik"
             },
             {
-                _id: "56dd6b7986cd133418c45ada",
+                _id  : "56dd6b7986cd133418c45ada",
                 login: "sergiy.ihnatko"
             },
             {
-                _id: "56a72cafaa157ca50f21fb22",
+                _id  : "56a72cafaa157ca50f21fb22",
                 login: "stanislav.romanyuk"
             },
             {
-                _id: "56dd6bb5cc599b9718529137",
+                _id  : "56dd6bb5cc599b9718529137",
                 login: "tamara.dolottseva"
             },
             {
-                _id: "56d7e73eae35cc4f0e72105b",
+                _id  : "56d7e73eae35cc4f0e72105b",
                 login: "testuser"
             },
             {
-                _id: "56d83d0f32e6cca40d256674",
+                _id  : "56d83d0f32e6cca40d256674",
                 login: "tetiana.shepitko"
             },
             {
-                _id: "55ba00e9d79a3a343900000c",
+                _id  : "55ba00e9d79a3a343900000c",
                 login: "vasiliy.almashi"
             },
             {
-                _id: "56239efae9576d1728a9ed22",
+                _id  : "56239efae9576d1728a9ed22",
                 login: "vladyslav."
             },
             {
-                _id: "56d70560805eb08d2b93d960",
+                _id  : "56d70560805eb08d2b93d960",
                 login: "yana.dufynets"
             },
             {
-                _id: "55bf144765cda0810b000005",
+                _id  : "55bf144765cda0810b000005",
                 login: "yana.gusti"
             },
             {
-                _id: "56dfd31116ff2db10581fa0e",
+                _id  : "56dfd31116ff2db10581fa0e",
                 login: "yana.vengerova"
             },
             {
-                _id: "560255d1638625cf32000005",
+                _id  : "560255d1638625cf32000005",
                 login: "yevgenia.bezyk"
             },
             {
-                _id: "56e92c7a52252ef45d219264",
+                _id  : "56e92c7a52252ef45d219264",
                 login: "yevgenia.melnyk"
             }
         ]
@@ -1093,270 +1093,270 @@ define([
     var fakeCategories = {
         data: [
             {
-                _id: "564591f9624e48551dfe3b23",
-                __v: 0,
-                sequence: 0,
+                _id         : "564591f9624e48551dfe3b23",
+                __v         : 0,
+                sequence    : 0,
                 nestingLevel: null,
-                editedBy: {
+                editedBy    : {
                     user: "52203e707d4dba8813000003"
                 },
-                createdBy: {
+                createdBy   : {
                     date: "2015-11-13T07:32:09.792Z",
                     user: "52203e707d4dba8813000003"
                 },
-                users: [ ],
-                parent: null,
-                fullName: "All",
-                name: "All"
+                users       : [],
+                parent      : null,
+                fullName    : "All",
+                name        : "All"
             },
             {
-                _id: "56459202624e48551dfe3b24",
-                __v: 0,
-                sequence: 0,
+                _id         : "56459202624e48551dfe3b24",
+                __v         : 0,
+                sequence    : 0,
                 nestingLevel: null,
-                editedBy: {
+                editedBy    : {
                     user: "52203e707d4dba8813000003"
                 },
-                createdBy: {
+                createdBy   : {
                     date: "2015-11-13T07:32:18.495Z",
                     user: "52203e707d4dba8813000003"
                 },
-                users: [ ],
-                parent: {
-                    _id: "564591f9624e48551dfe3b23",
-                    __v: 0,
-                    sequence: 0,
+                users       : [],
+                parent      : {
+                    _id         : "564591f9624e48551dfe3b23",
+                    __v         : 0,
+                    sequence    : 0,
                     nestingLevel: null,
-                    editedBy: {
+                    editedBy    : {
                         user: "52203e707d4dba8813000003"
                     },
-                    createdBy: {
+                    createdBy   : {
                         date: "2015-11-13T07:32:09.792Z",
                         user: "52203e707d4dba8813000003"
                     },
-                    users: [ ],
-                    parent: null,
-                    fullName: "All",
-                    name: "All"
+                    users       : [],
+                    parent      : null,
+                    fullName    : "All",
+                    name        : "All"
                 },
-                fullName: "All / Expenses",
-                name: "Expenses"
+                fullName    : "All / Expenses",
+                name        : "Expenses"
             },
             {
-                _id: "5645925f624e48551dfe3b26",
-                __v: 0,
-                sequence: 4,
+                _id         : "5645925f624e48551dfe3b26",
+                __v         : 0,
+                sequence    : 4,
                 nestingLevel: 1,
-                editedBy: {
+                editedBy    : {
                     user: "52203e707d4dba8813000003"
                 },
-                createdBy: {
+                createdBy   : {
                     date: "2015-11-13T07:33:51.900Z",
                     user: "52203e707d4dba8813000003"
                 },
-                users: [ ],
-                parent: {
-                    _id: "56459202624e48551dfe3b24",
-                    __v: 0,
-                    sequence: 0,
+                users       : [],
+                parent      : {
+                    _id         : "56459202624e48551dfe3b24",
+                    __v         : 0,
+                    sequence    : 0,
                     nestingLevel: null,
-                    editedBy: {
+                    editedBy    : {
                         user: "52203e707d4dba8813000003"
                     },
-                    createdBy: {
+                    createdBy   : {
                         date: "2015-11-13T07:32:18.495Z",
                         user: "52203e707d4dba8813000003"
                     },
-                    users: [ ],
-                    parent: "564591f9624e48551dfe3b23",
-                    fullName: "All / Expenses",
-                    name: "Expenses"
+                    users       : [],
+                    parent      : "564591f9624e48551dfe3b23",
+                    fullName    : "All / Expenses",
+                    name        : "Expenses"
                 },
-                fullName: "All / Expenses / Bonus Card",
-                name: "Bonus Card"
+                fullName    : "All / Expenses / Bonus Card",
+                name        : "Bonus Card"
             },
             {
-                _id: "5645920f624e48551dfe3b25",
-                __v: 0,
-                sequence: 0,
+                _id         : "5645920f624e48551dfe3b25",
+                __v         : 0,
+                sequence    : 0,
                 nestingLevel: 1,
-                editedBy: {
+                editedBy    : {
                     user: "52203e707d4dba8813000003"
                 },
-                createdBy: {
+                createdBy   : {
                     date: "2015-11-13T07:32:31.085Z",
                     user: "52203e707d4dba8813000003"
                 },
-                users: [ ],
-                parent: {
-                    _id: "56459202624e48551dfe3b24",
-                    __v: 0,
-                    sequence: 0,
+                users       : [],
+                parent      : {
+                    _id         : "56459202624e48551dfe3b24",
+                    __v         : 0,
+                    sequence    : 0,
                     nestingLevel: null,
-                    editedBy: {
+                    editedBy    : {
                         user: "52203e707d4dba8813000003"
                     },
-                    createdBy: {
+                    createdBy   : {
                         date: "2015-11-13T07:32:18.495Z",
                         user: "52203e707d4dba8813000003"
                     },
-                    users: [ ],
-                    parent: "564591f9624e48551dfe3b23",
-                    fullName: "All / Expenses",
-                    name: "Expenses"
+                    users       : [],
+                    parent      : "564591f9624e48551dfe3b23",
+                    fullName    : "All / Expenses",
+                    name        : "Expenses"
                 },
-                fullName: "All / Expenses / Bonus Cash",
-                name: "Bonus Cash"
+                fullName    : "All / Expenses / Bonus Cash",
+                name        : "Bonus Cash"
             },
             {
-                _id: "56459308abb1c35728ad7d10",
-                __v: 0,
-                sequence: 5,
+                _id         : "56459308abb1c35728ad7d10",
+                __v         : 0,
+                sequence    : 5,
                 nestingLevel: 2,
-                editedBy: {
+                editedBy    : {
                     user: "52203e707d4dba8813000003"
                 },
-                createdBy: {
+                createdBy   : {
                     date: "2015-11-13T07:36:40.347Z",
                     user: "52203e707d4dba8813000003"
                 },
-                users: [ ],
-                parent: {
-                    _id: "56459202624e48551dfe3b24",
-                    __v: 0,
-                    sequence: 0,
+                users       : [],
+                parent      : {
+                    _id         : "56459202624e48551dfe3b24",
+                    __v         : 0,
+                    sequence    : 0,
                     nestingLevel: null,
-                    editedBy: {
+                    editedBy    : {
                         user: "52203e707d4dba8813000003"
                     },
-                    createdBy: {
+                    createdBy   : {
                         date: "2015-11-13T07:32:18.495Z",
                         user: "52203e707d4dba8813000003"
                     },
-                    users: [ ],
-                    parent: "564591f9624e48551dfe3b23",
-                    fullName: "All / Expenses",
-                    name: "Expenses"
+                    users       : [],
+                    parent      : "564591f9624e48551dfe3b23",
+                    fullName    : "All / Expenses",
+                    name        : "Expenses"
                 },
-                fullName: "All / Expenses / Salary Card",
-                name: "Salary Card"
+                fullName    : "All / Expenses / Salary Card",
+                name        : "Salary Card"
             },
             {
-                _id: "564592fbabb1c35728ad7d0f",
-                __v: 0,
-                sequence: 0,
+                _id         : "564592fbabb1c35728ad7d0f",
+                __v         : 0,
+                sequence    : 0,
                 nestingLevel: 1,
-                editedBy: {
+                editedBy    : {
                     user: "52203e707d4dba8813000003"
                 },
-                createdBy: {
+                createdBy   : {
                     date: "2015-11-13T07:36:27.099Z",
                     user: "52203e707d4dba8813000003"
                 },
-                users: [ ],
-                parent: {
-                    _id: "56459202624e48551dfe3b24",
-                    __v: 0,
-                    sequence: 0,
+                users       : [],
+                parent      : {
+                    _id         : "56459202624e48551dfe3b24",
+                    __v         : 0,
+                    sequence    : 0,
                     nestingLevel: null,
-                    editedBy: {
+                    editedBy    : {
                         user: "52203e707d4dba8813000003"
                     },
-                    createdBy: {
+                    createdBy   : {
                         date: "2015-11-13T07:32:18.495Z",
                         user: "52203e707d4dba8813000003"
                     },
-                    users: [ ],
-                    parent: "564591f9624e48551dfe3b23",
-                    fullName: "All / Expenses",
-                    name: "Expenses"
+                    users       : [],
+                    parent      : "564591f9624e48551dfe3b23",
+                    fullName    : "All / Expenses",
+                    name        : "Expenses"
                 },
-                fullName: "All / Expenses / Salary Cash",
-                name: "Salary Cash"
+                fullName    : "All / Expenses / Salary Cash",
+                name        : "Salary Cash"
             }
         ]
     };
     var fakeProductsList = {
         success: [
             {
-                _id: "55c0e4a30343b37542000005",
-                __v: 0,
-                editedBy: {
+                _id              : "55c0e4a30343b37542000005",
+                __v              : 0,
+                editedBy         : {
                     date: "2016-04-18T14:50:39.186Z",
                     user: "52203e707d4dba8813000003"
                 },
-                createdBy: {
+                createdBy        : {
                     date: "2015-08-04T16:13:23.246Z",
                     user: "52203e707d4dba8813000003"
                 },
-                creationDate: "2015-08-04T16:13:23.246Z",
-                groups: {
-                    group: [ ],
-                    users: [ ],
+                creationDate     : "2015-08-04T16:13:23.246Z",
+                groups           : {
+                    group: [],
+                    users: [],
                     owner: "55ba28c8d79a3a3439000016"
                 },
-                whoCanRW: "everyOne",
-                workflow: null,
-                accounting: {
+                whoCanRW         : "everyOne",
+                workflow         : null,
+                accounting       : {
                     category: {
                         name: "",
-                        _id: null
+                        _id : null
                     }
                 },
-                info: {
+                info             : {
                     description: "",
-                    barcode: "",
-                    isActive: true,
-                    salePrice: 0,
+                    barcode    : "",
+                    isActive   : true,
+                    salePrice  : 0,
                     productType: "Service"
                 },
-                name: "Bank expenses",
-                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                canBePurchased: true,
+                name             : "Bank expenses",
+                imageSrc         : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                canBePurchased   : true,
                 eventSubscription: true,
-                canBeExpensed: true,
-                canBeSold: true,
-                wTrack: null
+                canBeExpensed    : true,
+                canBeSold        : true,
+                wTrack           : null
             },
             {
-                _id: "5540d528dacb551c24000003",
-                __v: 0,
-                editedBy: {
+                _id              : "5540d528dacb551c24000003",
+                __v              : 0,
+                editedBy         : {
                     date: "2015-10-30T14:18:42.379Z",
                     user: "52203e707d4dba8813000003"
                 },
-                createdBy: {
+                createdBy        : {
                     date: "2015-04-29T12:57:12.785Z",
                     user: null
                 },
-                creationDate: "2015-04-29T12:57:12.785Z",
-                groups: {
-                    group: [ ],
-                    users: [ ],
+                creationDate     : "2015-04-29T12:57:12.785Z",
+                groups           : {
+                    group: [],
+                    users: [],
                     owner: "560c099da5d4a2e20ba5068b"
                 },
-                whoCanRW: "everyOne",
-                workflow: null,
-                accounting: {
+                whoCanRW         : "everyOne",
+                workflow         : null,
+                accounting       : {
                     category: {
                         name: "",
-                        _id: null
+                        _id : null
                     }
                 },
-                info: {
+                info             : {
                     description: "",
-                    barcode: "",
-                    isActive: true,
-                    salePrice: 0,
+                    barcode    : "",
+                    isActive   : true,
+                    salePrice  : 0,
                     productType: "Service"
                 },
-                name: "IT services",
-                imageSrc: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                canBePurchased: true,
+                name             : "IT services",
+                imageSrc         : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                canBePurchased   : true,
                 eventSubscription: true,
-                canBeExpensed: true,
-                canBeSold: true,
-                wTrack: null
+                canBeExpensed    : true,
+                canBeSold        : true,
+                wTrack           : null
             }
         ]
     };
@@ -1399,7 +1399,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
                 view = new MainView({el: $elFixture, contentType: 'Product'});
                 server.respond();
 
@@ -1439,14 +1439,14 @@ define([
                 server.restore();
             });
 
-            it('Try to fetch collection with error', function(){
+            it('Try to fetch collection with error', function () {
                 var productUrl = new RegExp('\/product\/thumbnails', 'i');
-                server.respondWith('GET', productUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeProducts)]);
+                server.respondWith('GET', productUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify(fakeProducts)]);
 
                 productCollection = new ProductCollection({
-                    viewType: 'thumbnails',
+                    viewType   : 'thumbnails',
                     contentType: 'Product',
-                    page: 1
+                    page       : 1
                 });
                 server.respond();
 
@@ -1457,16 +1457,16 @@ define([
                 var productUrl = new RegExp('\/product\/thumbnails', 'i');
                 var productTotal = new RegExp('\/product\/totalCollectionLength', 'i');
 
-                server.respondWith('GET', productTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                server.respondWith('GET', productTotal, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                     showMore: false,
-                    count: 2
+                    count   : 2
                 })]);
-                server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProducts)]);
+                server.respondWith('GET', productUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProducts)]);
 
                 productCollection = new ProductCollection({
-                    viewType: 'thumbnails',
+                    viewType   : 'thumbnails',
                     contentType: 'Product',
-                    page: 1
+                    page       : 1
                 });
                 server.respond();
                 server.respond();
@@ -1510,26 +1510,29 @@ define([
 
             describe('INITIALIZE', function () {
 
-                it('Try to application ThumbnailsView', function (done) {
+                it('Try to product ThumbnailsView', function (done) {
 
                     var productAlphabetUrl = new RegExp('/product/getProductsAlphabet', 'i');
                     var productTotal = new RegExp('\/product\/totalCollectionLength', 'i');
 
-                    server.respondWith('GET', productAlphabetUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAlphabet)]);
-                    server.respondWith('GET', productTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    server.respondWith('GET', productAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlphabet)]);
+                    server.respondWith('GET', productTotal, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         showMore: false,
-                        count: 2
+                        count   : 2
                     })]);
 
                     thumbnailsView = new ThumbnailsView({
                         collection: productCollection,
-                        startTime: new Date()
+                        startTime : new Date()
                     });
 
                     server.respond();
                     server.respond();
+                    clock.tick(200);
 
-                    clock.tick(100);
+                    $thisEl = thumbnailsView.$el;
+
+                    expect($thisEl.find('.thumbnailwithavatar').length).to.be.not.equals(0);
 
                     // bind events to topBarView from thumbnails view
                     topBarView.bind('createEvent', thumbnailsView.createItem, thumbnailsView);
@@ -1537,13 +1540,12 @@ define([
                     topBarView.bind('deleteEvent', thumbnailsView.deleteItems, thumbnailsView);
                     topBarView.bind('exportToCsv', thumbnailsView.exportToCsv, thumbnailsView);
                     topBarView.bind('exportToXlsx', thumbnailsView.exportToXlsx, thumbnailsView);
-                    topBarView.bind('importEvent', thumbnailsView.importFiles, thumbnailsView);
 
+                    topBarView.bind('importEvent', thumbnailsView.importFiles, thumbnailsView);
                     // bind events to productCollection from thumbnails view
                     productCollection.bind('showmoreAlphabet', thumbnailsView.showMoreAlphabet, thumbnailsView);
-                    productCollection.bind('showmore', thumbnailsView.showMoreContent, thumbnailsView);
 
-                    $thisEl = thumbnailsView.$el;
+                    productCollection.bind('showmore', thumbnailsView.showMoreContent, thumbnailsView);
 
                     expect($thisEl.find('#searchContainer')).to.exist;
                     expect($thisEl.find('.product')).to.exist;
@@ -1558,8 +1560,8 @@ define([
                     var $searchContentArrow = $thisEl.find('.search-content');
                     var productUrl = new RegExp('\/product\/thumbnails', 'i');
 
-                    server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: [fakeProducts.success[1]]})]);
-                    $searchContentArrow.mouseover();
+                    server.respondWith('GET', productUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: [fakeProducts.success[1]]})]);
+                    $searchContentArrow.click();
 
                     expect($thisEl.find('.search-options')).to.have.not.class('hidden');
 
@@ -1574,7 +1576,7 @@ define([
                     expect($thisEl.find('.product')).to.exist;
                     expect($thisEl.find('.product').length).to.equals(1);
 
-                    $searchContentArrow.mouseover();
+                    $searchContentArrow.click();
                     expect($thisEl.find('.search-options')).to.have.class('hidden');
                 });
 
@@ -1585,12 +1587,12 @@ define([
                     var productTotal = new RegExp('\/product\/totalCollectionLength', 'i');
                     var productUrl = new RegExp('\/product\/thumbnails', 'i');
 
-                    server.respondWith('GET', productAlphabetUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAlphabet)]);
-                    server.respondWith('GET', productTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    server.respondWith('GET', productAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlphabet)]);
+                    server.respondWith('GET', productTotal, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         showMore: true,
-                        count: 1
+                        count   : 1
                     })]);
-                    server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProductByLetter)]);
+                    server.respondWith('GET', productUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProductByLetter)]);
                     $needLetter.click();
                     server.respond();
                     server.respond();
@@ -1601,16 +1603,16 @@ define([
 
                 });
 
-                it('Try to show more content', function(){
+                it('Try to show more content', function () {
                     var $showMoreBtn = $thisEl.find('#showMore');
                     var productUrl = new RegExp('\/product\/thumbnails', 'i');
                     var productTotal = new RegExp('\/product\/totalCollectionLength', 'i');
 
-                    server.respondWith('GET', productTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    server.respondWith('GET', productTotal, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         showMore: false,
-                        count: 2
+                        count   : 2
                     })]);
-                    server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProducts)]);
+                    server.respondWith('GET', productUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProducts)]);
                     $showMoreBtn.click();
                     server.respond();
                     server.respond();
@@ -1619,12 +1621,12 @@ define([
                     expect($thisEl.find('.product').length).to.equals(3);
                 });
 
-                it('Try to open editView with error', function(){
+                it('Try to open editView with error', function () {
                     var spyResponse;
                     var $needItem = $thisEl.find('#5540d528dacb551c24000003');
                     var productFormUrl = new RegExp('\/Product\/form\/', 'i');
 
-                    server.respondWith('GET', productFormUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                    server.respondWith('GET', productFormUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     $needItem.click();
                     server.respond();
 
@@ -1634,17 +1636,17 @@ define([
 
                 });
 
-                it('Try to open editView', function(){
+                it('Try to open editView', function () {
                     var $needItem = $thisEl.find('#5540d528dacb551c24000003');
                     var productFormUrl = new RegExp('\/Product\/form\/', 'i');
                     var productUrl = '/product/getProductsTypeForDd';
                     var usersForDDUrl = '/users/forDd';
                     var categoryUrl = '/category';
 
-                    server.respondWith('GET', productFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProductById)]);
-                    server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProductTypeForDD)]);
-                    server.respondWith('GET', usersForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
-                    server.respondWith('GET', categoryUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCategories)]);
+                    server.respondWith('GET', productFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProductById)]);
+                    server.respondWith('GET', productUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProductTypeForDD)]);
+                    server.respondWith('GET', usersForDDUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
+                    server.respondWith('GET', categoryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCategories)]);
                     $needItem.click();
                     server.respond();
                     server.respond();
@@ -1668,7 +1670,7 @@ define([
                     expect($($dialog.find('.dialog-tabs > li:nth-child(2) > a')[0])).to.have.class('active');
                 });
 
-                it('Try to edit product with error', function(){
+                it('Try to edit product with error', function () {
                     var firefoxPattern = new RegExp('firefox', 'i');
                     var userAgent = navigator.userAgent;
                     var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)')
@@ -1677,19 +1679,19 @@ define([
 
                     windowAlertStub.returns(true);
 
-                    server.respondWith('PATCH', productUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+                    server.respondWith('PATCH', productUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Updated success'})]);
                     $saveBtn.click();
                     server.respond();
 
                     if (firefoxPattern.test(userAgent)) {
                         expect(hashUrlProduct.test(window.location.hash)).to.be.true;
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Product/thumbnails/c=100/filter=%7B%22letter%22%3A%22B%22%7D');
+                        expect(window.location.hash).to.be.equals('#easyErp/Product/thumbnails/c=100/filter=%7B%22name%22%3A%7B%22key%22%3A%22_id%22%2C%22value%22%3A%5B%225540d528dacb551c24000003%22%5D%2C%22type%22%3Anull%2C%22sort%22%3A%7B%22order%22%3A1%7D%7D%2C%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22B%22%2C%22type%22%3Anull%7D%7D');
                     }
 
                 });
 
-                it('Try to edit product item', function(){
+                it('Try to edit product item', function () {
                     var $productType;
                     var $selectedItem;
                     var $dialog = $('.ui-dialog');
@@ -1714,20 +1716,20 @@ define([
                     $selectedItem = $dialog.find('li#Stock');
                     $selectedItem.click();
 
-                    server.respondWith('PATCH', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+                    server.respondWith('PATCH', productUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Updated success'})]);
                     $saveBtn.click();
                     server.respond();
 
                     expect($('.ui-dialog')).to.not.exist;
 
-                    if (firefoxPattern.test(userAgent)){
+                    if (firefoxPattern.test(userAgent)) {
                         expect(hashUrlProduct.test(window.location.hash)).to.be.true;
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Product/thumbnails/c=100/filter=%7B%22letter%22%3A%22B%22%7D');
+                        expect(window.location.hash).to.be.equals('#easyErp/Product/thumbnails/c=100/filter=%7B%22name%22%3A%7B%22key%22%3A%22_id%22%2C%22value%22%3A%5B%225540d528dacb551c24000003%22%5D%2C%22type%22%3Anull%2C%22sort%22%3A%7B%22order%22%3A1%7D%7D%2C%22letter%22%3A%7B%22key%22%3A%22letter%22%2C%22value%22%3A%22B%22%2C%22type%22%3Anull%7D%7D');
                     }
                 });
 
-                /*it('Try to delete item for EditView with 403 error', function(){
+                it('Try to delete item for EditView with 403 error', function () {
                     var $deleteBtn;
                     var spyResponse;
                     var productFormUrl = new RegExp('\/Product\/form\/', 'i');
@@ -1736,22 +1738,22 @@ define([
 
                     windowConfirmStub.returns(true);
 
-                    server.respondWith('GET', productFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProductById)]);
+                    server.respondWith('GET', productFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProductById)]);
                     $needItem.click();
                     server.respond();
 
                     $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
 
-                    server.respondWith('DELETE', productUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
+                    server.respondWith('DELETE', productUrl, [403, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Deleted success'})]);
                     $deleteBtn.click();
                     server.respond();
 
                     spyResponse = mainSpy.args[1][0];
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
-                });*/
+                });
 
-                it('Try to delete item for EditView', function(){
+                it('Try to delete item for EditView', function () {
                     var $deleteBtn;
                     var productUrl = new RegExp('\/product\/', 'i');
                     var firefoxPattern = new RegExp('firefox', 'i');
@@ -1762,29 +1764,29 @@ define([
 
                     $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable.ui-resizable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
 
-                    server.respondWith('DELETE', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
+                    server.respondWith('DELETE', productUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Deleted success'})]);
                     $deleteBtn.click();
                     server.respond();
 
                     expect($('.ui-dialog')).to.not.exist;
 
-                    if (firefoxPattern.test(userAgent)){
+                    if (firefoxPattern.test(userAgent)) {
                         expect(hashProductUrl.test(window.location.hash)).to.be.true;
 
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Product/thumbnails/c=100/filter=%7B%22letter%22%3A%22B%22%7D');
+                        expect(window.location.hash).to.be.equals('#easyErp/Product');
                     }
                 });
 
-                it('Try to open CreateView', function(){
+                it('Try to open CreateView', function () {
                     var productUrl = '/product/getProductsTypeForDd';
                     var usersForDDUrl = '/users/forDd';
                     var categoryUrl = '/category';
                     var $createBtn = topBarView.$el.find('#top-bar-createBtn');
 
-                    server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProductTypeForDD)]);
-                    server.respondWith('GET', usersForDDUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
-                    server.respondWith('GET', categoryUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCategories)]);
+                    server.respondWith('GET', productUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProductTypeForDD)]);
+                    server.respondWith('GET', usersForDDUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
+                    server.respondWith('GET', categoryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCategories)]);
                     $createBtn.click();
                     server.respond();
                     server.respond();
@@ -1807,7 +1809,7 @@ define([
                     expect($($dialog.find('.dialog-tabs > li:nth-child(2) > a')[0])).to.have.class('active');
                 });
 
-                it('Try to showEdit|hideEdit', function(done){
+                it('Try to showEdit|hideEdit', function (done) {
                     var $dialog = $('.ui-dialog');
                     var $firsTab = $($dialog.find('.dialog-tabs > li:nth-child(1) > a')[0]);
                     var $dialog = $('.ui-dialog');
@@ -1830,7 +1832,7 @@ define([
                     done();
                 });
 
-                it('Try to set correct data for creating item', function(){
+                it('Try to set correct data for creating item', function () {
                     var $productType;
                     var $selectedItem;
                     var $productCategory;
@@ -1868,14 +1870,14 @@ define([
                     $selectedItem.click();
 
 
-                    server.respondWith('POST', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
+                    server.respondWith('POST', productUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Created success'})]);
                     $saveBtn.click();
                     server.respond();
 
-                    if(firefoxPattern.test(userAgent)){
+                    if (firefoxPattern.test(userAgent)) {
                         expect(hashProductUrl.test(window.location.hash)).to.be.true;
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Product/thumbnails/c=100/filter=%7B%22letter%22%3A%22B%22%7D');
+                        expect(window.location.hash).to.be.equals('#easyErp/Product');
                     }
 
                     $cancelBtn.click();
@@ -1911,22 +1913,22 @@ define([
                     var productAlphabetUrl = new RegExp('/product/getProductsAlphabet', 'i');
                     var productTotal = new RegExp('\/product\/totalCollectionLength', 'i');
 
-                    server.respondWith('GET', productListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProductsList)]);
+                    server.respondWith('GET', productListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProductsList)]);
                     productListCollection = new ProductCollection({
-                        viewType: 'list',
+                        viewType   : 'list',
                         contentType: 'Product',
-                        page: 1
+                        page       : 1
                     });
                     server.respond();
 
-                    server.respondWith('GET', productAlphabetUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAlphabet)]);
-                    server.respondWith('GET', productTotal, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    server.respondWith('GET', productAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlphabet)]);
+                    server.respondWith('GET', productTotal, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         showMore: false,
-                        count: 2
+                        count   : 2
                     })]);
                     listView = new ListView({
                         collection: productListCollection,
-                        startTime: new Date()
+                        startTime : new Date()
                     });
                     server.respond();
                     server.respond();
@@ -1951,89 +1953,12 @@ define([
                     expect($thisEl.find('#listTable > tr').length).to.equals(2);
                 });
 
-                it('Try to filter listView by ProductName', function () {
-                    var $productName;
-                    var $selectedItem;
-                    var $searchContentArrow = $thisEl.find('.search-content');
-                    var productUrl = new RegExp('\/product\/list', 'i');
-
-                    server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: [fakeProductsList.success[1]]})]);
-                    $searchContentArrow.mouseover();
-
-                    expect($thisEl.find('.search-options')).to.have.not.class('hidden');
-
-                    $productName = $thisEl.find('#nameFullContainer > .groupName');
-                    $productName.click();
-                    $selectedItem = $thisEl.find('#nameUl > li[data-value="5540d528dacb551c24000003"]');
-                    $selectedItem.click();
-
-                    server.respond();
-
-                    expect($thisEl.find('#searchContainer')).to.exist;
-                    expect($thisEl.find('.list')).to.exist;
-                    expect($thisEl.find('#listTable')).to.exist;
-                    expect($thisEl.find('#listTable > tr').length).to.equals(1);
-
-                    $searchContentArrow.mouseover();
-                    expect($thisEl.find('.search-options')).to.have.class('hidden');
-                });
-
-                it('Try to remove filter', function(){
-                    var $searchContainer = $thisEl.find('#searchGlobalContainer');
-                    var $closeFilterBtn =  $searchContainer.find('span[data-value="name"]').next();
-                    var productUrl = new RegExp('\/product\/list', 'i');
-
-                    server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProductsList)]);
-                    $closeFilterBtn.click();
-                    server.respond();
-
-                    expect($thisEl.find('#searchContainer')).to.exist;
-                    expect($thisEl.find('.list')).to.exist;
-                    expect($thisEl.find('#listTable')).to.exist;
-                    expect($thisEl.find('#listTable > tr').length).to.equals(2);
-
-                });
-
-                it('Try to filter list by product type', function(){
-                    var $productType;
-                    var $selectedItem;
-                    var $searchContentArrow = $thisEl.find('.search-content');
-                    var productUrl = new RegExp('\/product\/list', 'i');
-
-                    server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: [fakeProductsList.success[1]]})]);
-                    $searchContentArrow.mouseover();
-
-                    expect($thisEl.find('.search-options')).to.have.not.class('hidden');
-
-                    $productType = $thisEl.find('#productTypeFullContainer > .groupName');
-                    $productType.click();
-                    $selectedItem = $thisEl.find('#productTypeUl > li[data-value="Service"]');
-                    $selectedItem.click();
-
-                    server.respond();
-
-                    expect($thisEl.find('#searchContainer')).to.exist;
-                    expect($thisEl.find('.list')).to.exist;
-                    expect($thisEl.find('#listTable')).to.exist;
-                    expect($thisEl.find('#listTable > tr').length).to.equals(1);
-
-                    server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProductsList)]);
-                    $selectedItem.click();
-                    server.respond();
-
-                    expect($thisEl.find('#searchContainer')).to.exist;
-                    expect($thisEl.find('.list')).to.exist;
-                    expect($thisEl.find('#listTable')).to.exist;
-                    expect($thisEl.find('#listTable > tr').length).to.equals(2);
-
-                });
-
-                it('Try to open EditView with error', function(){
+                it('Try to open EditView with error', function () {
                     var spyResponse;
                     var $needItem = $thisEl.find('#listTable > tr[data-id="5540d528dacb551c24000003"] > td:nth-child(3)');
                     var productUrl = new RegExp('\/Product\/form');
 
-                    server.respondWith('GET', productUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeProductById)]);
+                    server.respondWith('GET', productUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeProductById)]);
                     $needItem.click();
                     server.respond();
 
@@ -2042,12 +1967,12 @@ define([
                     expect(spyResponse).to.have.property('message', 'Please refresh browser');
                 });
 
-                it('Try to open EditView', function(){
+                it('Try to open EditView', function () {
                     var $cancelBtn;
                     var $needItem = $thisEl.find('#listTable > tr[data-id="5540d528dacb551c24000003"] > td:nth-child(3)');
                     var productUrl = new RegExp('\/Product\/form');
 
-                    server.respondWith('GET', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProductById)]);
+                    server.respondWith('GET', productUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProductById)]);
                     $needItem.click();
                     server.respond();
 
@@ -2069,14 +1994,14 @@ define([
                     windowConfirmStub.returns(true);
                     $needCheckBox.click();
 
-                    server.respondWith('DELETE', productUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
+                    server.respondWith('DELETE', productUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Deleted success'})]);
                     $topBarDelBtn.click();
                     server.respond();
 
-                    if (firefoxPattern.test(userAgent)){
+                    if (firefoxPattern.test(userAgent)) {
                         expect(hashUrlProduct.test(window.location.hash)).to.be.true;
                     } else {
-                        expect(window.location.hash).to.be.equals('#easyErp/Product/list/p=1/c=100/filter=%7B%22letter%22%3A%22B%22%7D');
+                        expect(window.location.hash).to.be.equals('#easyErp/Product/list/p=1/c=100');
                     }
                 });
 

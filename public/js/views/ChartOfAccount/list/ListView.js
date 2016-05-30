@@ -305,6 +305,8 @@ define([
                 var el = $(e.target);
                 var tr = $(e.target).closest('tr');
                 var trId = tr.data('id');
+                var colType = el.data('type');
+                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
                 var tempContainer;
                 var width;
 

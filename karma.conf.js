@@ -9,7 +9,7 @@ module.exports = function (config) {
             'test/uiSpecs/testMain.js',
             'public/css/*.css',
 
-            {pattern: 'test/uiSpecs/fixtures/**/*'/*, included: false*/},
+            {pattern: 'test/uiSpecs/fixtures/**/*' /*, included: false*/},
 
             {pattern: 'public/js/libs/*.js', included: false, watching: false},
             {pattern: 'public/js/libs/**/*.js', included: false, watching: false},
@@ -24,6 +24,7 @@ module.exports = function (config) {
             {pattern: 'node_modules/sinon-chai/lib/sinon-chai.js', included: false, watching: false},
 
             {pattern: 'constants/test/modules.js', included: false, watching: false},
+            {pattern: 'constants/test/dashboardVacation.js', included: false, watching: false},
 
             {pattern: 'public/js/Validation.js', included: false, watching: false},
             {pattern: 'public/js/collections/**/*.js', included: false, watching: false},
@@ -35,12 +36,12 @@ module.exports = function (config) {
             {pattern: 'public/templates/**/*.html', included: false, watching: false},
             {pattern: 'public/js/*.js', included: false, watching: false},
 
-            /*{pattern: 'test/uiSpecs/collection/!*.test.js', included: false, watching: true},
-            {pattern: 'test/uiSpecs/models/!*.test.js', included: false, watching: true},*/
-            {pattern: 'test/uiSpecs/views/login.test.js', included: false, watching: true},
-            {pattern: 'test/uiSpecs/views/projects.test.js', included: false, watching: true}
+            //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
+            //{pattern: 'test/uiSpecs/models/!*.test.js', included: false, watching: true},
+            //{pattern: 'test/uiSpecs/views/workflows.test.js', included: false, watching: true},
+            //{pattern: 'test/uiSpecs/views/login.test.js', included: false, watching: true}
 
-            // {pattern: 'test/uiSpecs/**/*.test.js', included: false/*, watching: true*/}
+            {pattern: 'test/uiSpecs/**/*.test.js', included: false/*, watching: true*/}
         ],
 
         exclude: [],
@@ -66,7 +67,7 @@ module.exports = function (config) {
 
         /*autoWatch: true,*/
 
-        browsers: ['Chrome', 'Firefox', /*'Safari',*/ 'IE', 'PhantomJS'],
+        browsers: ['Chrome', 'Firefox', /*'Safari','IE', */'PhantomJS'],
 
         singleRun: false,
 
@@ -76,8 +77,6 @@ module.exports = function (config) {
             }
         },
 
-        concurrency: Infinity,
-
-        browserNoActivityTimeout: 100000
+        concurrency: Infinity
     });
 };

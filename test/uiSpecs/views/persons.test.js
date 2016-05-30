@@ -1,6 +1,6 @@
 define([
+    'modules',
     'text!fixtures/index.html',
-    'router',
     'models/PersonsModel',
     'collections/Persons/filterCollection',
     'views/main/MainView',
@@ -15,508 +15,24 @@ define([
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (fixtures, router, PersonModel, PersonsCollection, MainView, TopBarView, CreateView, EditView, FormView, ListView, ThumbnailsView, FilterView, $, chai, chaiJquery, sinonChai) {
+], function (modules,
+             fixtures,
+             PersonModel,
+             PersonsCollection,
+             MainView,
+             TopBarView,
+             CreateView,
+             EditView,
+             FormView,
+             ListView,
+             ThumbnailsView,
+             FilterView,
+             $,
+             chai,
+             chaiJquery,
+             sinonChai) {
     'use strict';
-    var expect;
 
-    chai.use(chaiJquery);
-    chai.use(sinonChai);
-    expect = chai.expect;
-
-    var modules = [
-        {
-            "_id"        : 19,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "Sales",
-            "parrent"    : null,
-            "sequence"   : 1,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Sales"
-        }, {
-            "_id"        : 36,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "Project",
-            "parrent"    : null,
-            "sequence"   : 2,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Project"
-        }, {
-            "_id"        : 9,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "HR",
-            "parrent"    : null,
-            "sequence"   : 3,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "HR"
-        }, {
-            "_id"        : 49,
-            "attachments": [],
-            "htref"      : "persons",
-            "link"       : true,
-            "mname"      : "Persons",
-            "parrent"    : 19,
-            "sequence"   : 7,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Persons"
-        }, {
-            "_id"        : 50,
-            "attachments": [],
-            "htref"      : "persons",
-            "link"       : true,
-            "mname"      : "Companies",
-            "parrent"    : 19,
-            "sequence"   : 8,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Companies"
-        }, {
-            "_id"        : 24,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Leads",
-            "parrent"    : 19,
-            "sequence"   : 9,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Leads"
-        }, {
-            "_id"        : 25,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Opportunities",
-            "parrent"    : 19,
-            "sequence"   : 10,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Opportunities"
-        }, {
-            "_id"        : 39,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Projects",
-            "parrent"    : 36,
-            "sequence"   : 23,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Projects"
-        }, {
-            "_id"        : 40,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Tasks",
-            "parrent"    : 36,
-            "sequence"   : 24,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Tasks"
-        }, {
-            "_id"        : 29,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Dashboard",
-            "parrent"    : 19,
-            "sequence"   : 29,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Dashboard"
-        }, {
-            "_id"        : 42,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Employees",
-            "parrent"    : 9,
-            "sequence"   : 29,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Employees"
-        }, {
-            "_id"        : 43,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Applications",
-            "parrent"    : 9,
-            "sequence"   : 30,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Applications"
-        }, {
-            "_id"        : 14,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Job Positions",
-            "parrent"    : 9,
-            "sequence"   : 32,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "JobPositions"
-        }, {
-            "_id"        : 15,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Groups",
-            "parrent"    : 1,
-            "sequence"   : 33,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Departments"
-        }, {
-            "_id"        : 7,
-            "__v"        : 0,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Users",
-            "parrent"    : 1,
-            "sequence"   : 42,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Users"
-        }, {
-            "_id"        : 44,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Workflows",
-            "parrent"    : 1,
-            "sequence"   : 44,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Workflows"
-        }, {
-            "_id"        : 51,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Profiles",
-            "parrent"    : 1,
-            "sequence"   : 51,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Profiles"
-        }, {
-            "_id"        : 52,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Birthdays",
-            "parrent"    : 9,
-            "sequence"   : 52,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Birthdays"
-        }, {
-            "_id"        : 53,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Dashboard",
-            "parrent"    : 36,
-            "sequence"   : 53,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "projectDashboard"
-        }, {
-            "_id"      : 54,
-            "mname"    : "Purchases",
-            "sequence" : 54,
-            "parrent"  : null,
-            "link"     : false,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Purchases"
-        }, {
-            "_id"      : 80,
-            "mname"    : "Jobs Dashboard",
-            "sequence" : 54,
-            "parrent"  : 36,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "jobsDashboard"
-        }, {
-            "_id"      : 55,
-            "mname"    : "Quotation",
-            "sequence" : 55,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Quotation"
-        }, {
-            "_id"      : 57,
-            "mname"    : "Order",
-            "sequence" : 56,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Order"
-        }, {
-            "_id"      : 56,
-            "mname"    : "Invoice",
-            "sequence" : 57,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Invoice"
-        }, {
-            "_id"      : 58,
-            "mname"    : "Product",
-            "sequence" : 58,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Product"
-        }, {
-            "_id"      : 59,
-            "mname"    : "Accounting",
-            "sequence" : 59,
-            "parrent"  : null,
-            "link"     : false,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Accounting"
-        }, {
-            "_id"      : 60,
-            "mname"    : "Supplier Payments",
-            "sequence" : 60,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "supplierPayments"
-        }, {
-            "_id"      : 61,
-            "mname"    : "Customer Payments",
-            "sequence" : 61,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "customerPayments"
-        }, {
-            "_id"      : 62,
-            "mname"    : "Quotation",
-            "sequence" : 62,
-            "parrent"  : 19,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salesQuotation"
-        }, {
-            "_id"      : 63,
-            "mname"    : "Order",
-            "sequence" : 63,
-            "parrent"  : 19,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salesOrder"
-        }, {
-            "_id"      : 64,
-            "mname"    : "Invoice",
-            "sequence" : 64,
-            "parrent"  : 19,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salesInvoice"
-        }, {
-            "_id"      : 68,
-            "mname"    : "MonthHours",
-            "sequence" : 68,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "monthHours"
-        }, {
-            "_id"      : 69,
-            "mname"    : "Holidays",
-            "sequence" : 69,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Holiday"
-        }, {
-            "_id"      : 77,
-            "mname"    : "Capacity",
-            "sequence" : 69,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Capacity"
-        }, {
-            "_id"      : 88,
-            "mname"    : "Salary Report",
-            "sequence" : 69,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salaryReport"
-        }, {
-            "_id"      : 70,
-            "mname"    : "Vacation",
-            "sequence" : 70,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Vacation"
-        }, {
-            "_id"      : 71,
-            "mname"    : "Attendance",
-            "sequence" : 71,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Attendance"
-        }, {
-            "_id"      : 76,
-            "mname"    : "Efficiency",
-            "sequence" : 72,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Efficiency"
-        }, {
-            "_id"      : 72,
-            "mname"    : "BonusType",
-            "sequence" : 73,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "bonusType"
-        }, {
-            "_id"      : 74,
-            "mname"    : "HrDashboard",
-            "sequence" : 74,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "HrDashboard"
-        }, {
-            "_id"      : 66,
-            "mname"    : "Payroll Expenses",
-            "sequence" : 77,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "PayrollExpenses"
-        }, {
-            "_id"      : 78,
-            "mname"    : "Payroll",
-            "sequence" : 78,
-            "parrent"  : null,
-            "link"     : false,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Payroll"
-        }, {
-            "_id"      : 79,
-            "mname"    : "Payroll Payments",
-            "sequence" : 79,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "PayrollPayments"
-        }, {
-            "_id"      : 82,
-            "mname"    : "Invoice Aging",
-            "sequence" : 82,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "invoiceAging"
-        }, {
-            "_id"      : 83,
-            "mname"    : "ChartOfAccount",
-            "sequence" : 83,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "ChartOfAccount"
-        }, {
-            "_id"      : 85,
-            "mname"    : "Journal",
-            "sequence" : 85,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "journal"
-        }, {
-            "_id"      : 86,
-            "mname"    : "Journal Entry",
-            "sequence" : 86,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "journalEntry"
-        }, {
-            "_id"      : 87,
-            "mname"    : "Invoice Charts",
-            "sequence" : 87,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "invoiceCharts"
-        }, {
-            "_id"        : 1,
-            "__v"        : 0,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "Settings",
-            "parrent"    : null,
-            "sequence"   : 1000,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Settings"
-        }, {
-            "_id"      : 75,
-            "mname"    : "tCard",
-            "sequence" : 1000,
-            "parrent"  : 36,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "wTrack"
-        }, {
-            "_id"      : 84,
-            "mname"    : "Categories",
-            "sequence" : 1000,
-            "parrent"  : 1,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "productSettings"
-        }, {
-            "_id"      : 73,
-            "mname"    : "DashBoardVacation",
-            "sequence" : 1001,
-            "parrent"  : 36,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "DashBoardVacation"
-        }];
     var fakePersons = {
         data: [
             {
@@ -11729,13 +11245,17 @@ define([
             }
         ]
     };
-
+    var expect;
     var view;
     var listView;
     var topBarView;
     var thumbnailsView;
     var formView;
     var editView;
+
+    chai.use(chaiJquery);
+    chai.use(sinonChai);
+    expect = chai.expect;
 
     describe('PersonsView', function () {
         var $fixture;
@@ -11752,6 +11272,7 @@ define([
             topBarView.remove();
             formView.remove();
             thumbnailsView.remove();
+            listView.remove();
             editView.remove();
             selectSpy.restore();
         });
@@ -11774,7 +11295,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
 
                 view = new MainView({el: $elFixture, contentType: 'Persons'});
 
@@ -11821,7 +11342,7 @@ define([
                 var $createBtnEl;
                 var personUrl = new RegExp('\/persons\/list', 'i');
 
-                server.respondWith('GET', personUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePersonsForList)]);
+                server.respondWith('GET', personUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersonsForList)]);
 
                 personCollection = new PersonsCollection({
                     contentType  : 'Persons',
@@ -11856,7 +11377,7 @@ define([
 
                 $thumbnailsBtn.click();
 
-                expect(window.location.hash).to.equals('#easyErp/Persons/thumbnails')
+                expect(window.location.hash).to.equals('#easyErp/Persons/thumbnails');
             });
         });
 
@@ -11877,7 +11398,6 @@ define([
             after(function () {
                 clock.restore();
                 server.restore();
-                listView.remove();
                 windowConfirmStub.restore();
             });
 
@@ -11888,9 +11408,8 @@ define([
                 var personsTotalCollUrl = new RegExp('\/persons\/totalCollectionLength', 'i');
                 var personsAlphabetUrl = new RegExp('\/persons\/getPersonAlphabet', 'i');
 
-                server.respondWith('GET', personsListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePersonsForList)]);
-                server.respondWith('GET', personsTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCollectionTotal)]);
-
+                server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersonsForList)]);
+                server.respondWith('GET', personsTotalCollUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCollectionTotal)]);
                 personsCollections = new PersonsCollection({
                     contentType  : 'Persons',
                     count        : 100,
@@ -11899,10 +11418,9 @@ define([
                     viewType     : 'list',
                     page         : 1
                 });
-
                 server.respond();
-
-                server.respondWith('GET', personsAlphabetUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAlfabetic)]);
+                server.respond();
+                server.respondWith('GET', personsAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlfabetic)]);
 
                 listView = new ListView({
                     collection: personsCollections,
@@ -11915,6 +11433,13 @@ define([
                 $thisEl = listView.$el;
                 $searchContainerEl = $thisEl.find('.search-view');
                 $alphabetEl = $thisEl.find('#startLetter');
+
+                expect($thisEl).to.exist;
+                expect($searchContainerEl).to.exist;
+                expect($alphabetEl).to.exist;
+                expect($thisEl.find('table')).to.exist;
+                expect($thisEl.find('table')).to.have.class('list');
+                expect($thisEl.find('#listTable > tr').length).to.be.not.equals(0);
 
                 topBarView.bind('copyEvent', listView.copy, listView);
                 topBarView.bind('generateEvent', listView.generate, listView);
@@ -11931,12 +11456,6 @@ define([
                 topBarView.bind('changeDateRange', listView.changeDateRange, listView);
 
                 personsCollections.bind('showmore', listView.showMoreContent, listView);
-
-                expect($thisEl).to.exist;
-                expect($searchContainerEl).to.exist;
-                expect($alphabetEl).to.exist;
-                expect($thisEl.find('table')).to.exist;
-                expect($thisEl.find('table')).to.have.class('list');
 
                 done();
             });
@@ -11965,8 +11484,8 @@ define([
                 $prev.click();
                 $selectedItem = $searchContainer.find('li[data-value="55b92ad621e4b7c40f000635"]');
 
-                server.respondWith('GET', personsTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({count: 2})]);
-                server.respondWith('GET', personsListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakePersonsForList.data[0], fakePersonsForList.data[1]]})]);
+                server.respondWith('GET', personsTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({count: 2})]);
+                server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakePersonsForList.data[0], fakePersonsForList.data[1]]})]);
                 $selectedItem.click();
                 server.respond();
                 server.respond();
@@ -11983,8 +11502,10 @@ define([
                 $prev.click();
                 $selectedItem = $searchContainer.find('li[data-value="Australia"]');
 
-                server.respondWith('GET', personsTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({count: 1})]);
-                server.respondWith('GET', personsListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakePersonsForList.data[0]]})]);
+                server.respondWith('GET', personsTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({count: 1})]);
+                server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                    data: [fakePersonsForList.data[0]]
+                })]);
                 $selectedItem.click();
                 server.respond();
                 server.respond();
@@ -11993,8 +11514,8 @@ define([
                 expect(selectSpy.calledTwice).to.be.true;
 
                 // uncheck Country filter
-                server.respondWith('GET', personsTotalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({count: 2})]);
-                server.respondWith('GET', personsListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakePersonsForList.data[0], fakePersonsForList.data[1]]})]);
+                server.respondWith('GET', personsTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({count: 2})]);
+                server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakePersonsForList.data[0], fakePersonsForList.data[1]]})]);
                 $selectedItem.click();
                 server.respond();
                 server.respond();
@@ -12013,7 +11534,7 @@ define([
                 var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
                 var personsListUrl = new RegExp('\/persons\/list', 'i');
 
-                server.respondWith('GET', personsListUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePersonsForList)]);
+                server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersonsForList)]);
                 $closeBtn.click();
                 server.respond();
 
@@ -12049,8 +11570,8 @@ define([
                 var personsAlphabetUrl = new RegExp('\/persons\/getPersonAlphabet', 'i');
                 var personsTotalCollUrl = new RegExp('\/persons\/totalCollectionLength', 'i');
 
-                server.respondWith('GET', personsThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePersons)]);
-                server.respondWith('GET', personsTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCollectionTotal)]);
+                server.respondWith('GET', personsThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersons)]);
+                server.respondWith('GET', personsTotalCollUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCollectionTotal)]);
                 personsCollection = new PersonsCollection({
                     contentType  : 'Persons',
                     count        : 100,
@@ -12063,7 +11584,7 @@ define([
 
                 clock.tick(200);
 
-                server.respondWith('GET', personsAlphabetUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAlfabetic)]);
+                server.respondWith('GET', personsAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlfabetic)]);
 
                 thumbnailsView = new ThumbnailsView({
                     collection: personsCollection,
@@ -12120,7 +11641,7 @@ define([
                 $prev.click();
                 $selectedItem = $searchContainer.find('li[data-value="55b92ad621e4b7c40f000635"]');
 
-                server.respondWith('GET', personsThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakePersons.data[0], fakePersons.data[1]]})]);
+                server.respondWith('GET', personsThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakePersons.data[0], fakePersons.data[1]]})]);
                 $selectedItem.click();
                 server.respond();
 
@@ -12133,7 +11654,7 @@ define([
                 $prev.click();
                 $selectedItem = $searchContainer.find('li[data-value="Australia"]');
 
-                server.respondWith('GET', personsThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakePersons.data[0]]})]);
+                server.respondWith('GET', personsThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakePersons.data[0]]})]);
                 $selectedItem.click();
                 server.respond();
 
@@ -12141,7 +11662,7 @@ define([
                 expect($thisEl.find('.thumbnailwithavatar').length).to.equals(1);
 
                 // uncheck Country filter
-                server.respondWith('GET', personsThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakePersons.data[0], fakePersons.data[1]]})]);
+                server.respondWith('GET', personsThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakePersons.data[0], fakePersons.data[1]]})]);
                 $selectedItem.click();
                 server.respond();
 
@@ -12158,7 +11679,7 @@ define([
                 var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
                 var personThumbUrl = new RegExp('\/persons\/thumbnails', 'i');
 
-                server.respondWith('GET', personThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePersons)]);
+                server.respondWith('GET', personThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersons)]);
                 $closeBtn.click();
                 server.respond();
 
@@ -12173,8 +11694,8 @@ define([
                 var personsThumbUrl = new RegExp('\/persons\/thumbnails', 'i');
                 var personsTotalCollUrl = new RegExp('\/persons\/totalCollectionLength', 'i');
 
-                server.respondWith('GET', personsThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakePersons.data[0]]})]);
-                server.respondWith('GET', personsTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                server.respondWith('GET', personsThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakePersons.data[0]]})]);
+                server.respondWith('GET', personsTotalCollUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                     showMore: true,
                     count   : 1
                 })]);
@@ -12196,8 +11717,8 @@ define([
                 var personsThumbUrl = new RegExp('\/persons\/thumbnails', 'i');
                 var personsTotalCollUrl = new RegExp('\/persons\/totalCollectionLength', 'i');
 
-                server.respondWith('GET', personsThumbUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakePersons.data[2]]})]);
-                server.respondWith('GET', personsTotalCollUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                server.respondWith('GET', personsThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakePersons.data[2]]})]);
+                server.respondWith('GET', personsTotalCollUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                     showMore: true,
                     count   : 1
                 })]);
@@ -12211,14 +11732,14 @@ define([
 
             // need custmer with company
             /*it('Try to go to CompanyForm', function () {
-                var $firsEl = $thisEl.find('.thumbnailwithavatar').first();
-                var $companyBtn = $firsEl.find('.company');
-                var id = $companyBtn.attr('data-id');
-                var expectedUrl = '#easyErp/Companies/form/' + id;
+             var $firsEl = $thisEl.find('.thumbnailwithavatar').first();
+             var $companyBtn = $firsEl.find('.company');
+             var id = $companyBtn.attr('data-id');
+             var expectedUrl = '#easyErp/Companies/form/' + id;
 
-                $companyBtn.click();
-                expect(window.location.hash).to.be.equals(expectedUrl);
-            });*/
+             $companyBtn.click();
+             expect(window.location.hash).to.be.equals(expectedUrl);
+             });*/
 
             it('Try to go to PersonForm', function () {
                 var $firsEl = $($thisEl.find('.thumbnailwithavatar')[0]);
@@ -12260,12 +11781,12 @@ define([
 
                 personModel.urlRoot = personModel.url() + '55b92ad521e4b7c40f00060c';
 
-                server.respondWith('GET', personIdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePersonWithId)]);
+                server.respondWith('GET', personIdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersonWithId)]);
 
                 personModel.fetch({
                     success: function (model) {
-                        server.respondWith('GET', '/opportunities/OpportunitiesForMiniView?person=55b92ad521e4b7c40f00060c&company=&page=1&count=4&onlyCount=true', [200, {"Content-Type": "application/json"}, JSON.stringify({listLength: 0})]);
-                        server.respondWith('GET', '/opportunities/OpportunitiesForMiniView?person=55b92ad521e4b7c40f00060c&company=&page=1&count=4&onlyCount=false', [200, {"Content-Type": "application/json"}, JSON.stringify({
+                        server.respondWith('GET', '/opportunities/OpportunitiesForMiniView?person=55b92ad521e4b7c40f00060c&company=&page=1&count=4&onlyCount=true', [200, {'Content-Type': 'application/json'}, JSON.stringify({listLength: 0})]);
+                        server.respondWith('GET', '/opportunities/OpportunitiesForMiniView?person=55b92ad521e4b7c40f00060c&company=&page=1&count=4&onlyCount=false', [200, {'Content-Type': 'application/json'}, JSON.stringify({
                             listLength: 0,
                             data      : []
                         })]);
@@ -12313,7 +11834,7 @@ define([
 
                 $editInput.val('vvsdas'); // not valid email
 
-                server.respondWith('PATCH', companyIdUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(new Error())]);
+                server.respondWith('PATCH', companyIdUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(new Error())]);
 
                 $saveSpan.click();
 
@@ -12342,7 +11863,7 @@ define([
 
                 $editInput.val('test@test.com');
 
-                server.respondWith('PATCH', companyIdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                server.respondWith('PATCH', companyIdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                     success: 'Customer updated'
                 })]);
 
@@ -12362,12 +11883,12 @@ define([
                 var workflowUrl = new RegExp('\/workflows\/getWorkflowsForDd', 'i');
                 var taskUrl = new RegExp('\/tasks\/priority', 'i');
 
-                server.respondWith('GET', userForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
-                server.respondWith('GET', depsForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
-                server.respondWith('GET', emplRelUserUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplRelUser)]);
-                server.respondWith('GET', customersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
-                server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflowForDD)]);
-                server.respondWith('GET', taskUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeTaskPriority)]);
+                server.respondWith('GET', userForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
+                server.respondWith('GET', depsForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepsForDD)]);
+                server.respondWith('GET', emplRelUserUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmplRelUser)]);
+                server.respondWith('GET', customersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomers)]);
+                server.respondWith('GET', workflowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWorkflowForDD)]);
+                server.respondWith('GET', taskUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTaskPriority)]);
 
                 $createOppBtn.click();
 
@@ -12396,7 +11917,7 @@ define([
                 $form.find('#internalNotes').val('test');
                 $form.find('#expectedRevenueValue').val('50000');
 
-                server.respondWith('POST', '/Opportunities/', [200, {"Content-Type": "application/json"}, JSON.stringify({
+                server.respondWith('POST', '/Opportunities/', [200, {'Content-Type': 'application/json'}, JSON.stringify({
                     success: "A new Opportunities create success",
                     id     : '123'
                 })]);
@@ -12421,12 +11942,12 @@ define([
                 var customersUrl = new RegExp('\/customers\/', 'i');
                 var companiesForDdUrl = new RegExp('\/customers\/', 'i');
 
-                server.respondWith('GET', userForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
-                server.respondWith('GET', depsForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
-                server.respondWith('GET', emplLangUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplLang)]);
-                server.respondWith('GET', emplRelUserUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplRelUser)]);
-                server.respondWith('GET', customersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
-                server.respondWith('GET', companiesForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCompaniesForDD)]);
+                server.respondWith('GET', userForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
+                server.respondWith('GET', depsForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepsForDD)]);
+                server.respondWith('GET', emplLangUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmplLang)]);
+                server.respondWith('GET', emplRelUserUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmplRelUser)]);
+                server.respondWith('GET', customersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomers)]);
+                server.respondWith('GET', companiesForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCompaniesForDD)]);
 
                 editView = new EditView({
                     model: personModel
@@ -12464,7 +11985,7 @@ define([
 
                 $form.find('#firstName').val('');
 
-                server.respondWith('PUT', personsUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(new Error())]);
+                server.respondWith('PUT', personsUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(new Error())]);
 
                 editBtn.click();
 
@@ -12480,7 +12001,7 @@ define([
                 var personsUrl = new RegExp('\/Persons\/', 'i');
                 var spyResponse;
 
-                server.respondWith('DELETE', personsUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(new Error())]);
+                server.respondWith('DELETE', personsUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(new Error())]);
 
                 deleteBtn.click();
 
@@ -12494,7 +12015,7 @@ define([
                 var deleteBtn = $('.ui-button')[3];
                 var personsUrl = new RegExp('\/Persons\/', 'i');
 
-                server.respondWith('DELETE', personsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'customer removed'})]);
+                server.respondWith('DELETE', personsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'customer removed'})]);
 
                 deleteBtn.click();
 
@@ -12515,11 +12036,11 @@ define([
                 var emplRelUserUrl = new RegExp('\/employees\/getForDdByRelatedUser', 'i');
                 var customersUrl = new RegExp('\/customers\/', 'i');
 
-                server.respondWith('GET', userForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
-                server.respondWith('GET', depsForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
-                server.respondWith('GET', emplLangUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplLang)]);
-                server.respondWith('GET', emplRelUserUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplRelUser)]);
-                server.respondWith('GET', customersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
+                server.respondWith('GET', userForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
+                server.respondWith('GET', depsForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepsForDD)]);
+                server.respondWith('GET', emplLangUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmplLang)]);
+                server.respondWith('GET', emplRelUserUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmplRelUser)]);
+                server.respondWith('GET', customersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomers)]);
 
                 editView = new EditView({
                     model: personModel
@@ -12539,7 +12060,7 @@ define([
 
                 $salesTeam.click();
 
-                server.respondWith('PUT', personsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                server.respondWith('PUT', personsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                     id: '123'
                 })]);
 
@@ -12559,11 +12080,11 @@ define([
                 var emplRelUserUrl = new RegExp('\/employees\/getForDdByRelatedUser', 'i');
                 var customersUrl = new RegExp('\/customers\/', 'i');
 
-                server.respondWith('GET', userForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
-                server.respondWith('GET', depsForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
-                server.respondWith('GET', emplLangUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplLang)]);
-                server.respondWith('GET', emplRelUserUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplRelUser)]);
-                server.respondWith('GET', customersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
+                server.respondWith('GET', userForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
+                server.respondWith('GET', depsForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepsForDD)]);
+                server.respondWith('GET', emplLangUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmplLang)]);
+                server.respondWith('GET', emplRelUserUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmplRelUser)]);
+                server.respondWith('GET', customersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomers)]);
 
                 editView = new EditView({
                     model: personModel
@@ -12588,7 +12109,7 @@ define([
                 var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                 var personUrl = new RegExp('\/Persons\/', 'i');
 
-                server.respondWith('DELETE', personUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'customer removed'})]);
+                server.respondWith('DELETE', personUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'customer removed'})]);
 
                 $deleteBtn.click();
 
@@ -12621,11 +12142,11 @@ define([
                 var customersUrl = new RegExp('\/customers\/', 'i');
                 var $createBtn = topBarView.$el.find('#top-bar-createBtn');
 
-                server.respondWith('GET', userForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
-                server.respondWith('GET', depsForDdUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepsForDD)]);
-                server.respondWith('GET', emplLangUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplLang)]);
-                server.respondWith('GET', emplRelUserUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmplRelUser)]);
-                server.respondWith('GET', customersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
+                server.respondWith('GET', userForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
+                server.respondWith('GET', depsForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepsForDD)]);
+                server.respondWith('GET', emplLangUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmplLang)]);
+                server.respondWith('GET', emplRelUserUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmplRelUser)]);
+                server.respondWith('GET', customersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomers)]);
                 expect($('#dialogContainer')).to.empty;
                 $createBtn.click();
                 server.respond();
@@ -12682,7 +12203,7 @@ define([
             it('Try to save person with server error', function () {
                 var createBtn = $('.ui-button')[0];
 
-                server.respondWith('POST', '/persons/', [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('POST', '/persons/', [400, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 createBtn.click();
                 server.respond();
 
@@ -12717,7 +12238,7 @@ define([
 
                 $salesTeam.click();
 
-                server.respondWith('POST', '/persons/', [201, {"Content-Type": "application/json"}, JSON.stringify({
+                server.respondWith('POST', '/persons/', [201, {'Content-Type': 'application/json'}, JSON.stringify({
                     success: 'A new Person crate success',
                     id     : '123'
                 })]);

@@ -1,4 +1,5 @@
 define([
+    'modules',
     'text!fixtures/index.html',
     'collections/Quotation/filterCollection',
     'views/main/MainView',
@@ -11,1154 +12,759 @@ define([
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai',
-    'custom',
-    'async'
-], function (fixtures, QuotationCollection, MainView, ListView, ThumbnailsView, FormView, TopBarView, CreateView, EditView, $, chai, chaiJquery, sinonChai, Custom, async) {
+    'sinon-chai'
+], function (modules,
+             fixtures,
+             QuotationCollection,
+             MainView,
+             ListView,
+             ThumbnailsView,
+             FormView,
+             TopBarView,
+             CreateView,
+             EditView,
+             $,
+             chai,
+             chaiJquery,
+             sinonChai) {
     'use strict';
-    var expect;
 
-    chai.use(chaiJquery);
-    chai.use(sinonChai);
-    expect = chai.expect;
-
-    var modules = [
-        {
-        "_id": 19,
-        "attachments": [],
-        "link": false,
-        "mname": "Sales",
-        "parrent": null,
-        "sequence": 1,
-        "visible": true,
-        "ancestors": [],
-        "href": "Sales"
-    }, {
-        "_id": 36,
-        "attachments": [],
-        "link": false,
-        "mname": "Project",
-        "parrent": null,
-        "sequence": 2,
-        "visible": true,
-        "ancestors": [],
-        "href": "Project"
-    }, {
-        "_id": 9,
-        "attachments": [],
-        "link": false,
-        "mname": "HR",
-        "parrent": null,
-        "sequence": 3,
-        "visible": true,
-        "ancestors": [],
-        "href": "HR"
-    }, {
-        "_id": 49,
-        "attachments": [],
-        "htref": "persons",
-        "link": true,
-        "mname": "Persons",
-        "parrent": 19,
-        "sequence": 7,
-        "visible": true,
-        "ancestors": [],
-        "href": "Persons"
-    }, {
-        "_id": 50,
-        "attachments": [],
-        "htref": "persons",
-        "link": true,
-        "mname": "Companies",
-        "parrent": 19,
-        "sequence": 8,
-        "visible": true,
-        "ancestors": [],
-        "href": "Companies"
-    }, {
-        "_id": 24,
-        "attachments": [],
-        "link": true,
-        "mname": "Leads",
-        "parrent": 19,
-        "sequence": 9,
-        "visible": true,
-        "ancestors": [],
-        "href": "Leads"
-    }, {
-        "_id": 25,
-        "attachments": [],
-        "link": true,
-        "mname": "Opportunities",
-        "parrent": 19,
-        "sequence": 10,
-        "visible": true,
-        "ancestors": [],
-        "href": "Opportunities"
-    }, {
-        "_id": 39,
-        "attachments": [],
-        "link": true,
-        "mname": "Projects",
-        "parrent": 36,
-        "sequence": 23,
-        "visible": true,
-        "ancestors": [],
-        "href": "Projects"
-    }, {
-        "_id": 40,
-        "attachments": [],
-        "link": true,
-        "mname": "Tasks",
-        "parrent": 36,
-        "sequence": 24,
-        "visible": true,
-        "ancestors": [],
-        "href": "Tasks"
-    }, {
-        "_id": 29,
-        "attachments": [],
-        "link": true,
-        "mname": "Dashboard",
-        "parrent": 19,
-        "sequence": 29,
-        "visible": true,
-        "ancestors": [],
-        "href": "Dashboard"
-    }, {
-        "_id": 42,
-        "attachments": [],
-        "link": true,
-        "mname": "Employees",
-        "parrent": 9,
-        "sequence": 29,
-        "visible": true,
-        "ancestors": [],
-        "href": "Employees"
-    }, {
-        "_id": 43,
-        "attachments": [],
-        "link": true,
-        "mname": "Applications",
-        "parrent": 9,
-        "sequence": 30,
-        "visible": true,
-        "ancestors": [],
-        "href": "Applications"
-    }, {
-        "_id": 14,
-        "attachments": [],
-        "link": true,
-        "mname": "Job Positions",
-        "parrent": 9,
-        "sequence": 32,
-        "visible": true,
-        "ancestors": [],
-        "href": "JobPositions"
-    }, {
-        "_id": 15,
-        "attachments": [],
-        "link": true,
-        "mname": "Groups",
-        "parrent": 1,
-        "sequence": 33,
-        "visible": true,
-        "ancestors": [],
-        "href": "Departments"
-    }, {
-        "_id": 7,
-        "__v": 0,
-        "attachments": [],
-        "link": true,
-        "mname": "Users",
-        "parrent": 1,
-        "sequence": 42,
-        "visible": true,
-        "ancestors": [],
-        "href": "Users"
-    }, {
-        "_id": 44,
-        "attachments": [],
-        "link": true,
-        "mname": "Workflows",
-        "parrent": 1,
-        "sequence": 44,
-        "visible": true,
-        "ancestors": [],
-        "href": "Workflows"
-    }, {
-        "_id": 51,
-        "attachments": [],
-        "link": true,
-        "mname": "Profiles",
-        "parrent": 1,
-        "sequence": 51,
-        "visible": true,
-        "ancestors": [],
-        "href": "Profiles"
-    }, {
-        "_id": 52,
-        "attachments": [],
-        "link": true,
-        "mname": "Birthdays",
-        "parrent": 9,
-        "sequence": 52,
-        "visible": true,
-        "ancestors": [],
-        "href": "Birthdays"
-    }, {
-        "_id": 53,
-        "attachments": [],
-        "link": true,
-        "mname": "Dashboard",
-        "parrent": 36,
-        "sequence": 53,
-        "visible": true,
-        "ancestors": [],
-        "href": "projectDashboard"
-    }, {
-        "_id": 54,
-        "mname": "Purchases",
-        "sequence": 54,
-        "parrent": null,
-        "link": false,
-        "visible": true,
-        "ancestors": [],
-        "href": "Purchases"
-    }, {
-        "_id": 80,
-        "mname": "Jobs Dashboard",
-        "sequence": 54,
-        "parrent": 36,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "jobsDashboard"
-    }, {
-        "_id": 55,
-        "mname": "Quotation",
-        "sequence": 55,
-        "parrent": 54,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Quotation"
-    }, {
-        "_id": 57,
-        "mname": "Order",
-        "sequence": 56,
-        "parrent": 54,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Order"
-    }, {
-        "_id": 56,
-        "mname": "Invoice",
-        "sequence": 57,
-        "parrent": 54,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Invoice"
-    }, {
-        "_id": 58,
-        "mname": "Product",
-        "sequence": 58,
-        "parrent": 54,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Product"
-    }, {
-        "_id": 59,
-        "mname": "Accounting",
-        "sequence": 59,
-        "parrent": null,
-        "link": false,
-        "visible": true,
-        "ancestors": [],
-        "href": "Accounting"
-    }, {
-        "_id": 60,
-        "mname": "Supplier Payments",
-        "sequence": 60,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "supplierPayments"
-    }, {
-        "_id": 61,
-        "mname": "Customer Payments",
-        "sequence": 61,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "customerPayments"
-    }, {
-        "_id": 62,
-        "mname": "Quotation",
-        "sequence": 62,
-        "parrent": 19,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "salesQuotation"
-    }, {
-        "_id": 63,
-        "mname": "Order",
-        "sequence": 63,
-        "parrent": 19,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "salesOrder"
-    }, {
-        "_id": 64,
-        "mname": "Invoice",
-        "sequence": 64,
-        "parrent": 19,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "salesInvoice"
-    }, {
-        "_id": 68,
-        "mname": "MonthHours",
-        "sequence": 68,
-        "parrent": 78,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "monthHours"
-    }, {
-        "_id": 69,
-        "mname": "Holidays",
-        "sequence": 69,
-        "parrent": 78,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Holiday"
-    }, {
-        "_id": 77,
-        "mname": "Capacity",
-        "sequence": 69,
-        "parrent": 9,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Capacity"
-    }, {
-        "_id": 88,
-        "mname": "Salary Report",
-        "sequence": 69,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "salaryReport"
-    }, {
-        "_id": 70,
-        "mname": "Vacation",
-        "sequence": 70,
-        "parrent": 9,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Vacation"
-    }, {
-        "_id": 71,
-        "mname": "Attendance",
-        "sequence": 71,
-        "parrent": 9,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Attendance"
-    }, {
-        "_id": 76,
-        "mname": "Efficiency",
-        "sequence": 72,
-        "parrent": 78,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "Efficiency"
-    }, {
-        "_id": 72,
-        "mname": "BonusType",
-        "sequence": 73,
-        "parrent": 78,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "bonusType"
-    }, {
-        "_id": 74,
-        "mname": "HrDashboard",
-        "sequence": 74,
-        "parrent": 9,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "HrDashboard"
-    }, {
-        "_id": 66,
-        "mname": "Payroll Expenses",
-        "sequence": 77,
-        "parrent": 78,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "PayrollExpenses"
-    }, {
-        "_id": 78,
-        "mname": "Payroll",
-        "sequence": 78,
-        "parrent": null,
-        "link": false,
-        "visible": true,
-        "ancestors": [],
-        "href": "Payroll"
-    }, {
-        "_id": 79,
-        "mname": "Payroll Payments",
-        "sequence": 79,
-        "parrent": 78,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "PayrollPayments"
-    }, {
-        "_id": 82,
-        "mname": "Invoice Aging",
-        "sequence": 82,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "invoiceAging"
-    }, {
-        "_id": 83,
-        "mname": "ChartOfAccount",
-        "sequence": 83,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "ChartOfAccount"
-    }, {
-        "_id": 85,
-        "mname": "Journal",
-        "sequence": 85,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "journal"
-    }, {
-        "_id": 86,
-        "mname": "Journal Entry",
-        "sequence": 86,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "journalEntry"
-    }, {
-        "_id": 87,
-        "mname": "Invoice Charts",
-        "sequence": 87,
-        "parrent": 59,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "invoiceCharts"
-    }, {
-        "_id": 1,
-        "__v": 0,
-        "attachments": [],
-        "link": false,
-        "mname": "Settings",
-        "parrent": null,
-        "sequence": 1000,
-        "visible": true,
-        "ancestors": [],
-        "href": "Settings"
-    }, {
-        "_id": 75,
-        "mname": "tCard",
-        "sequence": 1000,
-        "parrent": 36,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "wTrack"
-    }, {
-        "_id": 84,
-        "mname": "Categories",
-        "sequence": 1000,
-        "parrent": 1,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "productSettings"
-    }, {
-        "_id": 73,
-        "mname": "DashBoardVacation",
-        "sequence": 1001,
-        "parrent": 36,
-        "link": true,
-        "visible": true,
-        "ancestors": [],
-        "href": "DashBoardVacation"
-    }];
     var fakeQuotation = [
         {
-            _id: "56e7c1d6c64e96844ef3d6a6",
-            workflow: {
-                _id: "5555bf276a3f01acae0b5560",
-                color: "#2C3E50",
-                name: "Not Ordered",
-                sequence: 3,
-                status: "New",
-                wId: "Purchase Order",
-                wName: "order",
-                source: "purchase",
+            _id         : "572992e72d11557621505d05",
+            workflow    : {
+                _id         : "5555bf276a3f01acae0b5560",
+                color       : "#2C3E50",
+                name        : "Not Ordered",
+                sequence    : 3,
+                status      : "New",
+                wId         : "Purchase Order",
+                wName       : "order",
+                source      : "purchase",
                 targetSource: [
                     "quotation"
                 ],
-                visible: true
+                visible     : true
             },
-            paymentInfo: {
-                taxes: 0,
-                unTaxed: 1500,
-                total: 1500
+            paymentInfo : {
+                total  : 500000,
+                unTaxed: 500000,
+                taxes  : 0
             },
-            name: "PO899",
-            orderDate: "2016-03-15T00:00:00.000Z",
-            project: {
-                _id: "563295f6c928c61d052d5003",
-                StartDate: "2015-11-08T22:00:00.000Z",
-                budget: {
-                    bonus: [],
-                    projectTeam: [
-                        "56e7c174977124d34db582b3",
-                        "56e7bf95d4cfab3c4eae5990",
-                        "564cfdd06584412e618421c3"
-                    ]
+            name        : "PO1028",
+            orderDate   : "2016-05-03T22:00:00.000Z",
+            project     : {
+                _id             : "55b92ad621e4b7c40f0006d3",
+                EndDate         : null,
+                StartDate       : null,
+                ID              : 2105,
+                bonus           : [],
+                health          : 1,
+                editedBy        : {
+                    date: "2016-04-29T13:39:14.176Z",
+                    user: "55ba00e9d79a3a343900000c"
                 },
-                bonus: [],
-                health: 1,
-                editedBy: {
-                    date: "2016-03-15T08:40:22.631Z",
-                    user: "56239e0ce9576d1728a9ed1d"
+                attachments     : [],
+                notes           : [],
+                projecttype     : "",
+                createdBy       : {
+                    date: "2015-07-29T19:34:46.416Z",
+                    user: "52203e707d4dba8813000003"
                 },
-                attachments: [],
-                notes: [],
-                projecttype: "web",
-                createdBy: {
-                    date: "2015-10-29T21:56:06.723Z",
-                    user: "55cb7302fea413b50b000007"
-                },
-                progress: 0,
-                remaining: 0,
-                logged: 0,
-                estimated: 0,
-                workflow: "528ce7f2f3f67bc40b000023",
-                parent: null,
-                sequence: 0,
-                groups: {
+                progress        : 0,
+                remaining       : 0,
+                logged          : 0,
+                estimated       : 0,
+                workflow        : "528ce7f2f3f67bc40b000023",
+                parent          : null,
+                sequence        : 0,
+                groups          : {
                     group: [],
                     users: [],
                     owner: "560c099da5d4a2e20ba5068b"
                 },
-                whoCanRW: "everyOne",
-                projectmanager: "55b92ad221e4b7c40f00004a",
-                customer: "55cf4f834a91e37b0b000102",
-                task: [],
-                projectName: "WordPress Sites",
-                projectShortDesc: "Site Templates Business",
-                __v: 0,
-                TargetEndDate: "",
-                EndDate: "2016-03-09T22:00:00.000Z",
-                description: ""
+                whoCanRW        : "everyOne",
+                projectmanager  : null,
+                customer        : "55b92ad621e4b7c40f00062b",
+                task            : [],
+                projectName     : "HashPlay",
+                projectShortDesc: "emptyProject",
+                __v             : 0,
+                budget          : {
+                    bonus      : [],
+                    projectTeam: [
+                        "56ab56b374d57e0d56d6bd87",
+                        "569e98452208b3af4a5271c2",
+                        "5662165b25e5eb511510bf92",
+                        "5662134b25e5eb511510be6f",
+                        "569ea8b62208b3af4a5271cd",
+                        "5662125d25e5eb511510be16",
+                        "564cfdd06584412e618421b4",
+                        "564cfd8ba6e6390160c9ef59",
+                        "564cfd8ba6e6390160c9ef58",
+                        "572364027ddd4b42221d86e9"
+                    ]
+                },
+                TargetEndDate   : "",
+                description     : "",
+                salesmanager    : "55b92ad221e4b7c40f000040"
             },
-            supplier: {
-                _id: "55cf4f834a91e37b0b000102",
-                companyInfo: {
+            supplier    : {
+                _id           : "55b92ad621e4b7c40f00062b",
+                ID            : 1067,
+                companyInfo   : {
+                    size    : null,
                     industry: null
                 },
-                editedBy: {
-                    user: "55b9dd7a7a3632120b000006",
-                    date: "2015-08-18T19:13:00.284Z"
+                editedBy      : {
+                    date: "2015-07-29T19:34:46.003Z",
+                    user: "52203e707d4dba8813000003"
                 },
-                createdBy: {
-                    date: "2015-08-15T14:41:07.792Z",
-                    user: "55cb7302fea413b50b000007"
+                createdBy     : {
+                    date: "2015-07-29T19:34:46.003Z",
+                    user: "52203e707d4dba8813000003"
                 },
-                history: [],
-                attachments: [],
-                notes: [],
-                groups: {
-                    owner: "55ba28c8d79a3a3439000016",
+                history       : [],
+                attachments   : [],
+                notes         : [],
+                groups        : {
+                    group: [],
                     users: [],
-                    group: []
+                    owner: null
                 },
-                whoCanRW: "everyOne",
-                social: {
+                whoCanRW      : "everyOne",
+                social        : {
                     LI: "",
                     FB: ""
                 },
-                color: "#4d5a75",
+                color         : "#4d5a75",
+                relatedUser   : null,
                 salesPurchases: {
-                    isCustomer: false,
-                    isSupplier: false,
-                    active: false,
-                    salesPerson: null,
-                    reference: "",
-                    language: ""
+                    receiveMessages: 0,
+                    language       : "English",
+                    reference      : "",
+                    active         : true,
+                    implementedBy  : null,
+                    salesTeam      : null,
+                    salesPerson    : null,
+                    isSupplier     : false,
+                    isCustomer     : true
                 },
-                title: "",
-                internalNotes: "",
-                contacts: [],
-                phones: {
-                    phone: "902-489-0901",
-                    mobile: ""
+                title         : "",
+                internalNotes : "",
+                contacts      : [],
+                phones        : {
+                    fax   : "",
+                    mobile: "",
+                    phone : ""
                 },
-                skype: "",
-                jobPosition: "",
-                website: "http://www.sharperbuilds.com/",
-                address: {
-                    street: "61 Raddall Avenue",
-                    city: "Dartmouth",
-                    state: "NS",
-                    zip: "B3B 1T4",
-                    country: "Canada"
+                skype         : "",
+                jobPosition   : "",
+                website       : "",
+                address       : {
+                    country: "USA/Germany",
+                    zip    : "",
+                    state  : "",
+                    city   : "",
+                    street : ""
                 },
-                timezone: "UTC",
-                department: null,
-                company: null,
-                email: "",
-                imageSrc: "data:image/jpeg;base64,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",
-                name: {
-                    first: "SharperBuilds",
-                    last: ""
+                timezone      : "UTC",
+                department    : null,
+                company       : null,
+                email         : "",
+                imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                name          : {
+                    last : "",
+                    first: "HashPlay"
                 },
-                isOwn: false,
-                type: "Company",
-                __v: 0,
-                relatedUser: null
+                isOwn         : false,
+                type          : "Person",
+                __v           : 0
             },
-            isOrder: false,
-            forSales: true,
-            projectmanager: {
-                _id: "55b92ad221e4b7c40f00004a",
-                dateBirth: "1987-10-25T03:00:00.000Z",
-                ID: 34,
-                isLead: 2,
-                fire: [
-                    {
-                        date: "2014-05-25T21:00:00.000Z",
-                        info: "Update",
-                        salary: 600,
-                        jobType: "Select",
-                        manager: "55b92ad221e4b7c40f00004f",
-                        jobPosition: "55b92acf21e4b7c40f000024",
-                        department: "55b92ace21e4b7c40f000014"
-                    }
+            isOrder     : false,
+            forSales    : true,
+            currency    : {
+                rate: 1,
+                _id : "565eab29aeb95fa9c0f9df2d"
+            },
+            salesmanager: {
+                _id            : "55b92ad221e4b7c40f000040",
+                dateBirth      : "1992-01-10T22:00:00.000Z",
+                ID             : 85,
+                isLead         : 0,
+                fire           : [],
+                hire           : [
+                    "2015-01-18T22:00:00.000Z"
                 ],
-                hire: [
-                    {
-                        date: "2014-05-25T21:00:00.000Z",
-                        info: "",
-                        salary: 600,
-                        jobType: "Select",
-                        manager: "55b92ad221e4b7c40f00004f",
-                        jobPosition: "55b92acf21e4b7c40f000024",
-                        department: "55b92ace21e4b7c40f000014"
-                    },
-                    {
-                        date: "2014-07-31T21:00:00.000Z",
-                        info: "плюс %",
-                        salary: 450,
-                        jobType: "Select",
-                        manager: "55b92ad221e4b7c40f00004f",
-                        jobPosition: "55b92acf21e4b7c40f000024",
-                        department: "55b92ace21e4b7c40f000014"
-                    }
-                ],
-                social: {
+                social         : {
                     FB: "",
                     LI: ""
                 },
-                sequence: 0,
-                jobType: "Select",
-                gender: "male",
-                marital: "married",
-                contractEnd: {
-                    date: "2015-07-29T19:34:42.433Z",
+                sequence       : 0,
+                jobType        : "Full-time",
+                gender         : "male",
+                marital        : "unmarried",
+                contractEnd    : {
+                    date  : "2015-07-29T19:34:42.423Z",
                     reason: ""
                 },
-                attachments: [],
-                editedBy: {
-                    date: "2016-03-18T15:19:41.138Z",
-                    user: "55ba2f3ed79a3a343900001d"
+                attachments    : [],
+                editedBy       : {
+                    date: "2016-04-18T14:44:21.206Z",
+                    user: "55ba2ef1d79a3a343900001c"
                 },
-                createdBy: {
-                    date: "2015-07-29T19:34:42.433Z",
+                createdBy      : {
+                    date: "2015-07-29T19:34:42.423Z",
                     user: "52203e707d4dba8813000003"
                 },
-                creationDate: "2015-07-29T19:34:42.433Z",
-                color: "#4d5a75",
-                otherInfo: "",
-                groups: {
+                creationDate   : "2015-07-29T19:34:42.423Z",
+                color          : "#4d5a75",
+                otherInfo      : "",
+                groups         : {
                     group: [],
                     users: [],
                     owner: "55ba28c8d79a3a3439000016"
                 },
-                whoCanRW: "everyOne",
-                workflow: null,
-                active: false,
-                referredBy: "",
-                source: "",
-                age: 28,
-                homeAddress: {
+                whoCanRW       : "everyOne",
+                workflow       : null,
+                active         : false,
+                referredBy     : "",
+                source         : "",
+                age            : 24,
+                homeAddress    : {
                     country: "",
-                    zip: "",
-                    state: "",
-                    city: "",
-                    street: ""
+                    zip    : "",
+                    state  : "",
+                    city   : "",
+                    street : ""
                 },
-                otherId: "",
-                bankAccountNo: "",
-                nationality: "Ukrainian",
-                coach: null,
-                manager: "55b92ad221e4b7c40f00004f",
-                jobPosition: "55b92acf21e4b7c40f000024",
-                department: "55b92ace21e4b7c40f000014",
-                visibility: "Public",
-                relatedUser: null,
-                officeLocation: "",
-                skype: "bdm.mobilez365",
-                workPhones: {
-                    mobile: "+380951132334",
-                    phone: ""
+                otherId        : "",
+                bankAccountNo  : "",
+                nationality    : "",
+                coach          : null,
+                manager        : "55b92ad221e4b7c40f00004f",
+                jobPosition    : "55b92acf21e4b7c40f00002e",
+                department     : "55b92ace21e4b7c40f000014",
+                visibility     : "Public",
+                relatedUser    : "55ba00e9d79a3a343900000c",
+                officeLocation : "",
+                skype          : "almashij",
+                workPhones     : {
+                    phone : "",
+                    mobile: "+380502215999"
                 },
-                personalEmail: "OOstroverkh@gmail.com",
-                workEmail: "oleg.ostroverkh@thinkmobiles.com",
-                workAddress: {
+                personalEmail  : "shein_92@ukr.net",
+                workEmail      : "vasiliy.almashiy@thinkmobiles.com",
+                workAddress    : {
                     country: "",
-                    zip: "",
-                    state: "",
-                    city: "",
-                    street: ""
+                    zip    : "",
+                    state  : "",
+                    city   : "",
+                    street : ""
                 },
-                tags: [
+                tags           : [
                     ""
                 ],
-                name: {
-                    last: "Ostroverkh",
-                    first: "Oleg"
+                name           : {
+                    last : "Almashiy",
+                    first: "Vasiliy"
                 },
-                subject: "",
-                imageSrc: "data:image/jpeg;base64,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",
-                isEmployee: true,
-                __v: 0
+                subject        : "",
+                imageSrc       : "data:image/jpeg;base64,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",
+                isEmployee     : true,
+                __v            : 0,
+                transfer       : [
+                    {
+                        date           : "2015-01-19T02:00:00.000Z",
+                        isDeveloper    : false,
+                        info           : "1200 грн",
+                        salary         : 48,
+                        jobType        : "Full-time",
+                        manager        : "55b92ad221e4b7c40f00004a",
+                        jobPosition    : "55b92acf21e4b7c40f00002e",
+                        department     : "55b92ace21e4b7c40f000014",
+                        status         : "hired",
+                        weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                    },
+                    {
+                        date           : "2015-04-01T01:00:00.000Z",
+                        isDeveloper    : false,
+                        info           : "плюс %",
+                        salary         : 200,
+                        jobType        : "Full-time",
+                        manager        : "55b92ad221e4b7c40f00004a",
+                        jobPosition    : "55b92acf21e4b7c40f00002e",
+                        department     : "55b92ace21e4b7c40f000014",
+                        status         : "updated",
+                        weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                    },
+                    {
+                        date           : "2015-12-01T02:00:00.000Z",
+                        isDeveloper    : false,
+                        info           : "плюс %",
+                        salary         : 250,
+                        jobType        : "Full-time",
+                        manager        : "55b92ad221e4b7c40f00004a",
+                        jobPosition    : "55b92acf21e4b7c40f00002e",
+                        department     : "55b92ace21e4b7c40f000014",
+                        status         : "updated",
+                        weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                    },
+                    {
+                        date           : "2016-03-01T02:00:00.000Z",
+                        isDeveloper    : false,
+                        info           : "плюс %",
+                        salary         : 450,
+                        jobType        : "Full-time",
+                        manager        : "55b92ad221e4b7c40f00004a",
+                        jobPosition    : "55b92acf21e4b7c40f00002e",
+                        department     : "55b92ace21e4b7c40f000014",
+                        status         : "updated",
+                        weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                    },
+                    {
+                        date           : "2016-04-01T01:00:00.000Z",
+                        isDeveloper    : false,
+                        info           : "плюс %",
+                        salary         : 450,
+                        jobType        : "Full-time",
+                        manager        : "55b92ad221e4b7c40f00004f",
+                        jobPosition    : "55b92acf21e4b7c40f00002e",
+                        department     : "55b92ace21e4b7c40f000014",
+                        status         : "updated",
+                        weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                    }
+                ],
+                weeklyScheduler: "57332c3b94ee1140b6bb49e2"
             }
-        }, {
-            _id: "56e7c36bdae0bc904da269a9",
-            workflow: {
-                _id: "5555bf276a3f01acae0b5560",
-                color: "#2C3E50",
-                name: "Not Ordered",
-                sequence: 3,
-                status: "New",
-                wId: "Purchase Order",
-                wName: "order",
-                source: "purchase",
+        },
+        {
+            _id         : "5729a74ddce306912118af8c",
+            workflow    : {
+                _id         : "5555bf276a3f01acae0b5560",
+                color       : "#2C3E50",
+                name        : "Not Ordered",
+                sequence    : 3,
+                status      : "New",
+                wId         : "Purchase Order",
+                wName       : "order",
+                source      : "purchase",
                 targetSource: [
                     "quotation"
                 ],
-                visible: true
+                visible     : true
             },
-            paymentInfo: {
-                taxes: 0,
-                unTaxed: 600,
-                total: 600
+            paymentInfo : {
+                total  : 1400000,
+                unTaxed: 1400000,
+                taxes  : 0
             },
-            name: "PO900",
-            orderDate: "2016-03-15T00:00:00.000Z",
-            project: {
-                _id: "563295f6c928c61d052d5003",
-                StartDate: "2015-11-08T22:00:00.000Z",
-                budget: {
-                    bonus: [],
+            name        : "PO1029",
+            orderDate   : "2016-05-03T22:00:00.000Z",
+            project     : {
+                _id             : "571789282c8b789c7a0bb82f",
+                TargetEndDate   : "2016-05-19T22:00:00.000Z",
+                StartDate       : null,
+                description     : "AR/VR Store",
+                budget          : {
+                    bonus      : [],
                     projectTeam: [
-                        "56e7c174977124d34db582b3",
-                        "56e7bf95d4cfab3c4eae5990",
-                        "564cfdd06584412e618421c3"
+                        "5723501ed4761c212289b7f2"
                     ]
                 },
-                bonus: [],
-                health: 1,
-                editedBy: {
-                    date: "2016-03-15T08:40:22.631Z",
-                    user: "56239e0ce9576d1728a9ed1d"
+                bonus           : [],
+                health          : 1,
+                editedBy        : {
+                    date: "2016-04-29T12:33:33.343Z",
+                    user: "56d704f1805eb08d2b93d95f"
                 },
-                attachments: [],
-                notes: [],
-                projecttype: "web",
-                createdBy: {
-                    date: "2015-10-29T21:56:06.723Z",
-                    user: "55cb7302fea413b50b000007"
+                attachments     : [],
+                notes           : [],
+                projecttype     : ".net",
+                createdBy       : {
+                    date: "2016-04-20T13:50:32.223Z",
+                    user: "56d704f1805eb08d2b93d95f"
                 },
-                progress: 0,
-                remaining: 0,
-                logged: 0,
-                estimated: 0,
-                workflow: "528ce7f2f3f67bc40b000023",
-                parent: null,
-                sequence: 0,
-                groups: {
+                progress        : 0,
+                remaining       : 0,
+                logged          : 0,
+                estimated       : 0,
+                workflow        : "528ce7f2f3f67bc40b000023",
+                parent          : null,
+                sequence        : 0,
+                groups          : {
                     group: [],
                     users: [],
                     owner: "560c099da5d4a2e20ba5068b"
                 },
-                whoCanRW: "everyOne",
-                projectmanager: "55b92ad221e4b7c40f00004a",
-                customer: "55cf4f834a91e37b0b000102",
-                task: [],
-                projectName: "WordPress Sites",
-                projectShortDesc: "Site Templates Business",
-                __v: 0,
-                TargetEndDate: "",
-                EndDate: "2016-03-09T22:00:00.000Z",
-                description: ""
+                whoCanRW        : "everyOne",
+                projectMembers  : [],
+                projectmanager  : null,
+                customer        : "5717873cc6efb4847a5bc78c",
+                task            : [],
+                projectName     : "Richline Jewelry",
+                projectShortDesc: "AR/VR Store",
+                __v             : 0,
+                salesmanager    : "56029cc950de7f4138000005",
+                EndDate         : null
             },
-            supplier: {
-                _id: "55cf4f834a91e37b0b000102",
-                companyInfo: {
+            supplier    : {
+                _id           : "5717873cc6efb4847a5bc78c",
+                companyInfo   : {
                     industry: null
                 },
-                editedBy: {
-                    user: "55b9dd7a7a3632120b000006",
-                    date: "2015-08-18T19:13:00.284Z"
+                editedBy      : {
+                    date: "2016-04-20T13:42:20.311Z",
+                    user: "56d704f1805eb08d2b93d95f"
                 },
-                createdBy: {
-                    date: "2015-08-15T14:41:07.792Z",
-                    user: "55cb7302fea413b50b000007"
+                createdBy     : {
+                    date: "2016-04-20T13:42:20.311Z",
+                    user: "56d704f1805eb08d2b93d95f"
                 },
-                history: [],
-                attachments: [],
-                notes: [],
-                groups: {
-                    owner: "55ba28c8d79a3a3439000016",
+                history       : [],
+                attachments   : [],
+                notes         : [],
+                groups        : {
+                    owner: "560c099da5d4a2e20ba5068b",
                     users: [],
                     group: []
                 },
-                whoCanRW: "everyOne",
-                social: {
-                    LI: "",
+                whoCanRW      : "everyOne",
+                social        : {
+                    LI: "https://www.linkedin.com/in/maryspio",
                     FB: ""
                 },
-                color: "#4d5a75",
+                color         : "#4d5a75",
                 salesPurchases: {
-                    isCustomer: false,
-                    isSupplier: false,
-                    active: false,
-                    salesPerson: null,
-                    reference: "",
-                    language: ""
+                    receiveMessages: 0,
+                    language       : "English",
+                    reference      : "",
+                    active         : false,
+                    implementedBy  : null,
+                    salesPerson    : null,
+                    isSupplier     : false,
+                    isCustomer     : false
                 },
-                title: "",
-                internalNotes: "",
-                contacts: [],
-                phones: {
-                    phone: "902-489-0901",
-                    mobile: ""
+                title         : "",
+                internalNotes : "",
+                contacts      : [],
+                phones        : {
+                    fax   : "",
+                    mobile: "",
+                    phone : ""
                 },
-                skype: "",
-                jobPosition: "",
-                website: "http://www.sharperbuilds.com/",
-                address: {
-                    street: "61 Raddall Avenue",
-                    city: "Dartmouth",
-                    state: "NS",
-                    zip: "B3B 1T4",
-                    country: "Canada"
+                skype         : "",
+                jobPosition   : "",
+                website       : "ceek.com",
+                address       : {
+                    country: "USA",
+                    zip    : "",
+                    state  : "",
+                    city   : "Miami",
+                    street : ""
                 },
-                timezone: "UTC",
-                department: null,
-                company: null,
-                email: "",
-                imageSrc: "data:image/jpeg;base64,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",
-                name: {
-                    first: "SharperBuilds",
-                    last: ""
+                timezone      : "UTC",
+                department    : null,
+                company       : null,
+                email         : "support@ceek.com",
+                imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
+                name          : {
+                    last : "",
+                    first: "CEEK VR"
                 },
-                isOwn: false,
-                type: "Company",
-                __v: 0,
-                relatedUser: null
+                isOwn         : false,
+                type          : "Company",
+                __v           : 0
             },
-            isOrder: false,
-            forSales: true,
-            projectmanager: {
-                _id: "55b92ad221e4b7c40f00004a",
-                dateBirth: "1987-10-25T03:00:00.000Z",
-                ID: 34,
-                isLead: 2,
-                fire: [
-                    {
-                        date: "2014-05-25T21:00:00.000Z",
-                        info: "Update",
-                        salary: 600,
-                        jobType: "Select",
-                        manager: "55b92ad221e4b7c40f00004f",
-                        jobPosition: "55b92acf21e4b7c40f000024",
-                        department: "55b92ace21e4b7c40f000014"
-                    }
+            isOrder     : false,
+            forSales    : true,
+            currency    : {
+                rate: 1,
+                _id : "565eab29aeb95fa9c0f9df2d"
+            },
+            salesmanager: {
+                _id            : "56029cc950de7f4138000005",
+                dateBirth      : "1994-03-06T00:00:00.000Z",
+                transferred    : [],
+                lastFire       : null,
+                fire           : [],
+                hire           : [
+                    "2015-09-22T21:00:00.000Z"
                 ],
-                hire: [
-                    {
-                        date: "2014-05-25T21:00:00.000Z",
-                        info: "",
-                        salary: 600,
-                        jobType: "Select",
-                        manager: "55b92ad221e4b7c40f00004f",
-                        jobPosition: "55b92acf21e4b7c40f000024",
-                        department: "55b92ace21e4b7c40f000014"
-                    },
-                    {
-                        date: "2014-07-31T21:00:00.000Z",
-                        info: "плюс %",
-                        salary: 450,
-                        jobType: "Select",
-                        manager: "55b92ad221e4b7c40f00004f",
-                        jobPosition: "55b92acf21e4b7c40f000024",
-                        department: "55b92ace21e4b7c40f000014"
-                    }
-                ],
-                social: {
+                social         : {
                     FB: "",
                     LI: ""
                 },
-                sequence: 0,
-                jobType: "Select",
-                gender: "male",
-                marital: "married",
-                contractEnd: {
-                    date: "2015-07-29T19:34:42.433Z",
+                sequence       : 157,
+                jobType        : "fullTime",
+                gender         : "male",
+                marital        : "unmarried",
+                contractEnd    : {
+                    date  : "2015-09-23T12:36:25.361Z",
                     reason: ""
                 },
-                attachments: [],
-                editedBy: {
-                    date: "2016-03-18T15:19:41.138Z",
-                    user: "55ba2f3ed79a3a343900001d"
+                attachments    : [],
+                editedBy       : {
+                    date: "2016-04-18T12:27:13.523Z",
+                    user: "55ba2ef1d79a3a343900001c"
                 },
-                createdBy: {
-                    date: "2015-07-29T19:34:42.433Z",
-                    user: "52203e707d4dba8813000003"
+                createdBy      : {
+                    date: "2015-09-23T12:36:25.361Z",
+                    user: "55ba28c8d79a3a3439000016"
                 },
-                creationDate: "2015-07-29T19:34:42.433Z",
-                color: "#4d5a75",
-                otherInfo: "",
-                groups: {
+                creationDate   : "2015-09-23T12:36:25.360Z",
+                color          : "#4d5a75",
+                otherInfo      : "",
+                groups         : {
                     group: [],
                     users: [],
                     owner: "55ba28c8d79a3a3439000016"
                 },
-                whoCanRW: "everyOne",
-                workflow: null,
-                active: false,
-                referredBy: "",
-                source: "",
-                age: 28,
-                homeAddress: {
+                whoCanRW       : "everyOne",
+                workflow       : null,
+                active         : false,
+                referredBy     : "",
+                source         : "www.rabota.ua",
+                age            : 22,
+                homeAddress    : {
                     country: "",
-                    zip: "",
-                    state: "",
-                    city: "",
-                    street: ""
+                    zip    : "",
+                    state  : "",
+                    city   : "",
+                    street : ""
                 },
-                otherId: "",
-                bankAccountNo: "",
-                nationality: "Ukrainian",
-                coach: null,
-                manager: "55b92ad221e4b7c40f00004f",
-                jobPosition: "55b92acf21e4b7c40f000024",
-                department: "55b92ace21e4b7c40f000014",
-                visibility: "Public",
-                relatedUser: null,
-                officeLocation: "",
-                skype: "bdm.mobilez365",
-                workPhones: {
-                    mobile: "+380951132334",
-                    phone: ""
+                otherId        : "",
+                bankAccountNo  : "",
+                nationality    : "Ukrainian",
+                coach          : null,
+                manager        : "55b92ad221e4b7c40f00004f",
+                jobPosition    : "55b92acf21e4b7c40f00002e",
+                department     : "55b92ace21e4b7c40f000014",
+                visibility     : "Public",
+                relatedUser    : "56d704f1805eb08d2b93d95f",
+                officeLocation : "",
+                skype          : "zhenyalendel",
+                workPhones     : {
+                    phone : "",
+                    mobile: "+380950870448"
                 },
-                personalEmail: "OOstroverkh@gmail.com",
-                workEmail: "oleg.ostroverkh@thinkmobiles.com",
-                workAddress: {
+                personalEmail  : "zhenyalendel13@gmail.com",
+                workEmail      : "eugen.lendyel@thinkmobiles.com",
+                workAddress    : {
                     country: "",
-                    zip: "",
-                    state: "",
-                    city: "",
-                    street: ""
+                    zip    : "",
+                    state  : "",
+                    city   : "",
+                    street : ""
                 },
-                tags: [
+                tags           : [
                     ""
                 ],
-                name: {
-                    last: "Ostroverkh",
-                    first: "Oleg"
+                name           : {
+                    last : "Lendyel",
+                    first: "Eugen"
                 },
-                subject: "",
-                imageSrc: "data:image/jpeg;base64,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",
-                isEmployee: true,
-                __v: 0
+                subject        : "",
+                imageSrc       : "data:image/jpeg;base64,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",
+                isEmployee     : true,
+                __v            : 0,
+                transfer       : [
+                    {
+                        date           : "2015-09-23T01:00:00.000Z",
+                        isDeveloper    : false,
+                        info           : "2000 грн плюс %",
+                        salary         : 76,
+                        jobType        : "fullTime",
+                        manager        : "55b92ad221e4b7c40f00004a",
+                        jobPosition    : "55b92acf21e4b7c40f00002e",
+                        department     : "55b92ace21e4b7c40f000014",
+                        status         : "hired",
+                        weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                    },
+                    {
+                        date           : "2016-03-01T02:00:00.000Z",
+                        isDeveloper    : false,
+                        info           : "",
+                        salary         : 250,
+                        jobType        : "fullTime",
+                        manager        : "55b92ad221e4b7c40f00004a",
+                        jobPosition    : "55b92acf21e4b7c40f00002e",
+                        department     : "55b92ace21e4b7c40f000014",
+                        status         : "updated",
+                        weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                    },
+                    {
+                        date           : "2016-04-01T01:00:00.000Z",
+                        isDeveloper    : false,
+                        info           : "",
+                        salary         : 250,
+                        jobType        : "fullTime",
+                        manager        : "55b92ad221e4b7c40f00004f",
+                        jobPosition    : "55b92acf21e4b7c40f00002e",
+                        department     : "55b92ace21e4b7c40f000014",
+                        status         : "updated",
+                        weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                    },
+                    {
+                        date           : "2016-05-01T01:00:00.000Z",
+                        isDeveloper    : false,
+                        info           : "",
+                        salary         : 200,
+                        jobType        : "fullTime",
+                        manager        : "55b92ad221e4b7c40f00004f",
+                        jobPosition    : "55b92acf21e4b7c40f00002e",
+                        department     : "55b92ace21e4b7c40f000014",
+                        status         : "updated",
+                        weeklyScheduler: "57332c3b94ee1140b6bb49e2"
+                    }
+                ],
+                weeklyScheduler: "57332c3b94ee1140b6bb49e2"
             }
         }
     ];
     var fakeWorkflow = [
         {
-            _id: "55647b932e4aa3804a765ec5",
-            name: "Not Invoiced",
-            sequence: 3,
-            status: "New",
-            wId: "Sales Order",
-            wName: "order",
-            source: "purchase",
+            _id         : "55647b932e4aa3804a765ec5",
+            name        : "Not Invoiced",
+            sequence    : 3,
+            status      : "New",
+            wId         : "Sales Order",
+            wName       : "order",
+            source      : "purchase",
             targetSource: [
                 "quotation"
             ],
-            visible: true,
-            color: "#2C3E50"
+            visible     : true,
+            color       : "#2C3E50"
         }
     ];
     var fakeQuotationForm = {
-        _id: "56e7c1d6c64e96844ef3d6a6",
-        expectedDate: "2016-03-14T22:00:00.000Z",
-        __v: 0,
-        editedBy: {
+        _id           : "56e7c1d6c64e96844ef3d6a6",
+        expectedDate  : "2016-03-14T22:00:00.000Z",
+        __v           : 0,
+        editedBy      : {
             date: "2016-03-15T08:03:34.117Z",
             user: "56239e0ce9576d1728a9ed1d"
         },
-        createdBy: {
+        createdBy     : {
             date: "2016-03-15T08:03:34.117Z",
             user: "56239e0ce9576d1728a9ed1d"
         },
-        creationDate: "2016-03-15T08:03:34.117Z",
-        groups: {
-            group: [ ],
-            users: [ ],
+        creationDate  : "2016-03-15T08:03:34.117Z",
+        groups        : {
+            group: [],
+            users: [],
             owner: {
-                _id: "560c099da5d4a2e20ba5068b",
+                _id  : "560c099da5d4a2e20ba5068b",
                 login: "AlexSvatuk"
             }
         },
-        whoCanRW: "everyOne",
-        workflow: {
-            _id: "5555bf276a3f01acae0b5560",
-            name: "Not Ordered",
+        whoCanRW      : "everyOne",
+        workflow      : {
+            _id   : "5555bf276a3f01acae0b5560",
+            name  : "Not Ordered",
             status: "New"
         },
-        products: [
+        products      : [
             {
-                unitPrice: 1500,
+                unitPrice    : 1500,
                 scheduledDate: "2016-03-15T00:00:00.000Z",
-                taxes: 0,
-                subTotal: 1500,
-                jobs: {
-                    _id: "564cfdd06584412e618421c3",
+                taxes        : 0,
+                subTotal     : 1500,
+                jobs         : {
+                    _id : "564cfdd06584412e618421c3",
                     name: "02.11-21.01"
                 },
-                description: "",
-                product: {
-                    _id: "5540d528dacb551c24000003",
+                description  : "",
+                product      : {
+                    _id : "5540d528dacb551c24000003",
                     name: "IT services"
                 },
-                quantity: 409
+                quantity     : 409
             }
         ],
-        paymentInfo: {
-            taxes: 0,
+        paymentInfo   : {
+            taxes  : 0,
             unTaxed: 1500,
-            total: 1500
+            total  : 1500
         },
-        paymentTerm: null,
+        paymentTerm   : null,
         invoiceRecived: false,
         invoiceControl: null,
-        incoterm: null,
-        destination: null,
-        name: "PO899",
-        orderDate: "2016-03-15T00:00:00.000Z",
-        deliverTo: {
-            _id: "55543831d51bdef79ea0d58c",
+        incoterm      : null,
+        destination   : null,
+        name          : "PO899",
+        orderDate     : "2016-03-15T00:00:00.000Z",
+        deliverTo     : {
+            _id : "55543831d51bdef79ea0d58c",
             name: "YourCompany"
         },
-        project: {
-            _id: "563295f6c928c61d052d5003",
+        project       : {
+            _id        : "563295f6c928c61d052d5003",
             projectName: "WordPress Sites"
         },
-        supplier: {
-            _id: "55cf4f834a91e37b0b000102",
-            name: {
-                last: "",
+        supplier      : {
+            _id     : "55cf4f834a91e37b0b000102",
+            name    : {
+                last : "",
                 first: "SharperBuilds"
             },
             fullName: "SharperBuilds ",
-            id: "55cf4f834a91e37b0b000102"
+            id      : "55cf4f834a91e37b0b000102"
         },
-        isOrder: false,
-        type: "Not Ordered",
-        forSales: true,
-        currency: {
+        isOrder       : false,
+        type          : "Not Ordered",
+        forSales      : true,
+        currency      : {
             rate: 1,
-            _id: {
-                _id: "565eab29aeb95fa9c0f9df2d",
+            _id : {
+                _id     : "565eab29aeb95fa9c0f9df2d",
                 sequence: 0,
-                name: "USD"
+                name    : "USD"
             }
         }
     };
     var fakeCurrencies = {
         data: [
             {
-                _id: "565eab29aeb95fa9c0f9df2d",
+                _id     : "565eab29aeb95fa9c0f9df2d",
                 sequence: 0,
-                name: "USD"
+                name    : "USD"
             },
             {
-                _id: "565eab34aeb95fa9c0f9df2e",
+                _id     : "565eab34aeb95fa9c0f9df2e",
                 sequence: 1,
-                name: "EUR"
+                name    : "EUR"
             },
             {
-                _id: "565eab3faeb95fa9c0f9df2f",
+                _id     : "565eab3faeb95fa9c0f9df2f",
                 sequence: 2,
-                name: "UAH"
+                name    : "UAH"
             }
         ]
     };
-
+    var expect;
     var quotationCollection;
     var view;
     var topBarView;
     var listView;
 
+    chai.use(chaiJquery);
+    chai.use(sinonChai);
+    expect = chai.expect;
+
     describe('QuotationView', function () {
         var $fixture;
         var $elFixture;
 
-        after(function(){
+        after(function () {
             view.remove();
             topBarView.remove();
             listView.remove();
 
+            if ($('.ui-dialog').length) {
+                $('.ui-dialog').remove();
+            }
         });
 
         describe('#initialize()', function () {
@@ -1181,7 +787,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
 
                 view = new MainView({el: $elFixture, contentType: 'salesQuotation'});
 
@@ -1211,28 +817,26 @@ define([
 
         });
 
-        describe('TopBarView', function(){
+        describe('TopBarView', function () {
             var server;
 
-            before(function(){
+            before(function () {
                 server = sinon.fakeServer.create();
             });
 
-            after(function(){
+            after(function () {
                 server.restore();
             });
 
-            it('Try to create TopBarView', function(){
+            it('Try to create TopBarView', function () {
                 var quotationUrl = new RegExp('\/quotation\/list', 'i');
 
-                server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
-
+                server.respondWith('GET', quotationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeQuotation)]);
                 quotationCollection = new QuotationCollection({
-                    count: 100,
-                    viewType: 'list',
+                    count      : 100,
+                    viewType   : 'list',
                     contentType: 'salesQuotation'
                 });
-
                 server.respond();
 
                 topBarView = new TopBarView({
@@ -1247,41 +851,60 @@ define([
             var server;
             var mainSpy;
             var clock;
+            var $thisEl;
+            var sortSpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
                 clock = sinon.useFakeTimers();
+                sortSpy = sinon.spy(ListView.prototype, 'goSort');
             });
 
             after(function () {
                 server.restore();
                 mainSpy.restore();
                 clock.restore();
+                sortSpy.restore();
             });
 
             describe('INITIALIZE', function () {
 
                 it('Try to create listView', function (done) {
-                    var $listHolder;
                     var quotationUrl = new RegExp('\/quotation\/list', 'i');
                     var workflowUrl = new RegExp('\/workflows\/fetch', 'i');
 
-                    server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
-                    server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflow)]);
-
+                    server.respondWith('GET', quotationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeQuotation)]);
+                    server.respondWith('GET', workflowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWorkflow)]);
                     listView = new ListView({
                         collection: quotationCollection,
-                        startTime: new Date()
+                        startTime : new Date()
                     });
-
                     server.respond();
                     server.respond();
 
-                    clock.tick(100);
+                    clock.tick(200);
 
-                    $listHolder = listView.$el;
-                    expect($listHolder).to.exist;
+                    $thisEl = listView.$el;
+
+                    expect($thisEl).to.exist;
+                    expect($thisEl.find('#listTable > tr')).to.be.not.equals(0);
+
+                    topBarView.bind('copyEvent', listView.copy, listView);
+                    topBarView.bind('generateEvent', listView.generate, listView);
+                    topBarView.bind('createEvent', listView.createItem, listView);
+                    topBarView.bind('editEvent', listView.editItem, listView);
+                    topBarView.bind('saveEvent', listView.saveItem, listView);
+                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
+                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
+                    topBarView.bind('copyRow', listView.copyRow, listView);
+                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
+                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
+                    topBarView.bind('importEvent', listView.importFiles, listView);
+                    topBarView.bind('pay', listView.newPayment, listView);
+                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
+
+                    quotationCollection.bind('showmore', listView.showMoreContent, listView);
 
                     done();
                 });
@@ -1290,25 +913,29 @@ define([
                     var quotationUrl = new RegExp('\/quotation\/list', 'i');
                     var $thSortEl = listView.$el.find('table > thead > tr > th.oe_sortable');
 
-                    server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify([fakeQuotation[1], fakeQuotation[0]])]);
+                    sortSpy.reset();
+                    server.respondWith('GET', quotationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([fakeQuotation[1], fakeQuotation[0]])]);
                     $thSortEl.click();
                     server.respond();
-                    expect(listView.$el.find('tr:nth-child(1) > td.total').text()).to.be.equals('600.00');
+                    expect(listView.$el.find('tr:nth-child(1) > td.total').text()).to.be.equals('14 000.00');
+                    expect(sortSpy.called).to.be.true;
 
-                    server.respondWith('GET', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotation)]);
+                    sortSpy.reset();
+                    server.respondWith('GET', quotationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeQuotation)]);
                     $thSortEl.click();
                     server.respond();
-                    expect(listView.$el.find('tr:nth-child(1) > td.total').text()).to.be.equals('1 500.00');
+                    expect(sortSpy.called).to.be.true;
+                    expect(listView.$el.find('tr:nth-child(1) > td.total').text()).to.be.equals('5 000.00');
 
                 });
 
-                it('Try to go to edit form', function(){
+                it('Try to go to edit form', function () {
                     var quotationFormUrl = new RegExp('\/quotation\/form\/', 'i');
                     var currencyUrl = new RegExp('\/currency\/getForDd', 'i');
                     var $needTd = listView.$el.find('tr:nth-child(1) > td:nth-child(3)');
 
-                    server.respondWith('GET', quotationFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeQuotationForm)]);
-                    server.respondWith('GET', currencyUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCurrencies)]);
+                    server.respondWith('GET', quotationFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeQuotationForm)]);
+                    server.respondWith('GET', currencyUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCurrencies)]);
 
                     $needTd.click();
 
@@ -1318,7 +945,7 @@ define([
                     expect($('.ui-dialog')).to.exist;
                 });
 
-                it('Try to change tabs', function(){
+                it('Try to change tabs', function () {
                     var $dialogEl = $('.ui-dialog');
                     var $firstTab = $dialogEl.find('ul.dialog-tabs > li:nth-child(1) > a');
                     var $secondTab = $dialogEl.find('ul.dialog-tabs > li:nth-child(2) > a');
@@ -1334,117 +961,117 @@ define([
                 });
 
                 /*it('Try to confirm order', function(){
-                    var workflowUrl = new RegExp('\/workflows\/getFirstForConvert', 'i');
-                    var quotationUrl = new RegExp('\/quotation\/', 'i');
-                    var $dialogContainer = $('.ui-dialog');
-                    var $confirmOrderBtn = $dialogContainer.find('.confirmOrder');
+                 var workflowUrl = new RegExp('\/workflows\/getFirstForConvert', 'i');
+                 var quotationUrl = new RegExp('\/quotation\/', 'i');
+                 var $dialogContainer = $('.ui-dialog');
+                 var $confirmOrderBtn = $dialogContainer.find('.confirmOrder');
 
-                    server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        _id: "55647b932e4aa3804a765ec5",
-                        name: "Not Invoiced",
-                        sequence: 3,
-                        status: "New",
-                        wId: "Sales Order",
-                        wName: "order",
-                        source: "purchase",
-                        targetSource: [
-                            "quotation"
-                        ],
-                        visible: true,
-                        color: "#2C3E50"
-                    })]);
-                    //server.respondWith('PATCH', quotationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                 server.respondWith('GET', workflowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                 _id: "55647b932e4aa3804a765ec5",
+                 name: "Not Invoiced",
+                 sequence: 3,
+                 status: "New",
+                 wId: "Sales Order",
+                 wName: "order",
+                 source: "purchase",
+                 targetSource: [
+                 "quotation"
+                 ],
+                 visible: true,
+                 color: "#2C3E50"
+                 })]);
+                 //server.respondWith('PATCH', quotationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
 
-                    $confirmOrderBtn.click();
+                 $confirmOrderBtn.click();
 
-                    server.respond();
-                    //server.respond();
+                 server.respond();
+                 //server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Order/list');
-                });*/
+                 expect(window.location.hash).to.be.equals('#easyErp/Order/list');
+                 });*/
 
 
                 /*it('Try to create vacation item', function(){
-                    var createBtn = topBarView.$el.find('#top-bar-createBtn');
-                    var $listTableEl = listView.$el.find('#listTable');
+                 var createBtn = topBarView.$el.find('#top-bar-createBtn');
+                 var $listTableEl = listView.$el.find('#listTable');
 
-                    createBtn.click();
-                    listView.createItem();
+                 createBtn.click();
+                 listView.createItem();
 
-                    expect($listTableEl.find('tr:nth-child(1) > td:nth-child(1)').text()).to.be.equals('Select');
+                 expect($listTableEl.find('tr:nth-child(1) > td:nth-child(1)').text()).to.be.equals('Select');
 
-                });
+                 });
 
-                it ('Try to save item', function(){
-                    var $prevBtn;
-                    var $nextBtn;
-                    var $needEmployee;
-                    var $typeEl;
-                    var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
-                    var $needGrid = listView.$el.find('#false > td:nth-child(3)');
-                    var $employeeSelect = listView.$el.find('#false > td.editable.employee');
-                    var vacationUrl = new RegExp('\/vacation\/', 'i');
+                 it ('Try to save item', function(){
+                 var $prevBtn;
+                 var $nextBtn;
+                 var $needEmployee;
+                 var $typeEl;
+                 var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
+                 var $needGrid = listView.$el.find('#false > td:nth-child(3)');
+                 var $employeeSelect = listView.$el.find('#false > td.editable.employee');
+                 var vacationUrl = new RegExp('\/vacation\/', 'i');
 
-                    $employeeSelect.click();
+                 $employeeSelect.click();
 
-                    $nextBtn = listView.$el.find('a.next');
-                    $nextBtn.click();
+                 $nextBtn = listView.$el.find('a.next');
+                 $nextBtn.click();
 
-                    $prevBtn = listView.$el.find('a.prev');
-                    $prevBtn.click();
+                 $prevBtn = listView.$el.find('a.prev');
+                 $prevBtn.click();
 
-                    $needEmployee = listView.$el.find('#55b92ad221e4b7c40f000084');
-                    $needEmployee.click();
+                 $needEmployee = listView.$el.find('#55b92ad221e4b7c40f000084');
+                 $needEmployee.click();
 
-                    $needGrid.click();
-                    $typeEl = listView.$el.find('#E');
-                    $typeEl.click();
+                 $needGrid.click();
+                 $typeEl = listView.$el.find('#E');
+                 $typeEl.click();
 
-                    server.respondWith('POST', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                    $saveBtn.click();
-                    listView.saveItem();
-                    server.respond();
+                 server.respondWith('POST', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                 $saveBtn.click();
+                 listView.saveItem();
+                 server.respond();
 
-                    expect(listView.$el.find('#listTable > tr:nth-child(1) > td.editable.E.selectedType').text()).to.equals('E');
-                });
+                 expect(listView.$el.find('#listTable > tr:nth-child(1) > td.editable.E.selectedType').text()).to.equals('E');
+                 });
 
-                it('Try to edit item', function(){
-                    var $needType;
-                    var $saveBtn;
-                    var $needGrid = listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)');
-                    var vacationUrl = new RegExp('\/vacation\/', 'i');
+                 it('Try to edit item', function(){
+                 var $needType;
+                 var $saveBtn;
+                 var $needGrid = listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)');
+                 var vacationUrl = new RegExp('\/vacation\/', 'i');
 
-                    $needGrid.click();
-                    $needType = listView.$el.find('#P');
-                    $needType.click();
+                 $needGrid.click();
+                 $needType = listView.$el.find('#P');
+                 $needType.click();
 
-                    $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
+                 $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
 
-                    server.respondWith('PATCH', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                    $saveBtn.click();
-                    listView.saveItem();
-                    server.respond();
+                 server.respondWith('PATCH', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                 $saveBtn.click();
+                 listView.saveItem();
+                 server.respond();
 
-                    expect(listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)').text()).to.equals('P');
+                 expect(listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)').text()).to.equals('P');
 
-                });
+                 });
 
-                it('Try to delete item', function(){
-                    var $emptyEl;
-                    var $needGrid = listView.$el.find('#listTable > tr:nth-child(5) > td.editable.V.selectedType');
-                    var vacationUrl = new RegExp('\/vacation\/', 'i');
+                 it('Try to delete item', function(){
+                 var $emptyEl;
+                 var $needGrid = listView.$el.find('#listTable > tr:nth-child(5) > td.editable.V.selectedType');
+                 var vacationUrl = new RegExp('\/vacation\/', 'i');
 
-                    windowConfirmStub.returns(true);
+                 windowConfirmStub.returns(true);
 
-                    server.respondWith('DELETE', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
-                    $needGrid.click();
-                    $emptyEl = listView.$el.find('#content > ul > li:nth-child(1)');
-                    $emptyEl.click();
-                    server.respond();
+                 server.respondWith('DELETE', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                 $needGrid.click();
+                 $emptyEl = listView.$el.find('#content > ul > li:nth-child(1)');
+                 $emptyEl.click();
+                 server.respond();
 
-                    //expect(listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)').text()).to.equals('');
+                 //expect(listView.$el.find('#listTable > tr:nth-child(3) > td.editable:nth-child(3)').text()).to.equals('');
 
-                });*/
+                 });*/
 
             });
 

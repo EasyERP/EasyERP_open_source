@@ -1,3 +1,4 @@
+/*
 define([
     'text!fixtures/index.html',
     'collections/salaryReport/filterCollection',
@@ -892,13 +893,14 @@ define([
 
             describe('INITIALIZE', function () {
 
-                it('Try to application ListView', function () {
+                it('Try to create SalaryReportListView', function () {
 
                     listView = new ListView({
                         collection: salaryReportCollection
                     });
 
                     expect(listView.$el.find('table')).to.have.class('list');
+                    expect(listView.$el.find('#listTable > tr').length).to.not.be.equals(0);
                     
                     topBarView.bind('copyEvent', listView.copy, listView);
                     topBarView.bind('generateEvent', listView.generate, listView);
@@ -965,3 +967,4 @@ define([
 
 
 });
+*/

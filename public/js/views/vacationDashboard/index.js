@@ -13,8 +13,22 @@ define([
     'custom',
     'moment',
     'constants'
-], function (Backbone, $, _, mainTemplate, StatisticsView, VacationDashboard, VacationDashEdit, CreatewTrackView, FilterView, dataService, async, custom, moment, CONSTANTS) {
+], function (Backbone,
+             $,
+             _,
+             mainTemplate,
+             StatisticsView,
+             VacationDashboard,
+             VacationDashEdit,
+             CreatewTrackView,
+             FilterView,
+             dataService,
+             async,
+             custom,
+             moment,
+             CONSTANTS) {
     'use strict';
+
     var View = Backbone.View.extend({
         el: '#content-holder',
 
@@ -259,7 +273,7 @@ define([
             } else if (hours > 19) {
                 s += 'yellow ';
             } else if (hours > 8) {
-                s += week.hours ? 'pink ' : ((self.dateByWeek >= week.dateByWeek) ? "red " : "");
+                s += week.hours ? 'pink ' : ((self.dateByWeek >= week.dateByWeek) ? 'red ' : '');
             } else if (self.dateByWeek >= week.dateByWeek) {
                 s += 'red ';
             }

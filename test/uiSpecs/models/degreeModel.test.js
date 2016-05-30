@@ -17,7 +17,7 @@ define([
             server.restore();
         });
 
-        it('should be a Degre object', function () {
+        it('should be a Degree object', function () {
             degree = new DegreeModel();
 
             expect(degree).to.be.instanceOf(Object);

@@ -585,7 +585,7 @@ define([
             if (this.isWtrack || this.isPaid && dueDate.length) {
                 buttons = [
                     {
-                        text : this.isPaid ? "Close" : 'Cancel',
+                        text : this.isPaid ? 'Close' : 'Cancel',
                         click: function () {
                             self.hideDialog();
                         }
