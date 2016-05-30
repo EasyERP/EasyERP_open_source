@@ -1,9 +1,9 @@
 var mongoose = require('mongoose');
 var RESPONSES = require('../constants/responses');
-var tasksSchema = mongoose.Schemas['Task'];
-var department = mongoose.Schemas['Department'];
-var projectSchema = mongoose.Schemas['Project'];
-var prioritySchema = mongoose.Schemas['Priority'];
+var tasksSchema = mongoose.Schemas.Task;
+var department = mongoose.Schemas.Department;
+var projectSchema = mongoose.Schemas.Project;
+var prioritySchema = mongoose.Schemas.Priority;
 var objectId = mongoose.Types.ObjectId;
 var _ = require('underscore');
 
@@ -17,6 +17,7 @@ var Tasks = function (models, event) {
         var error;
         var projectId = body.project;
         var TasksModel = models.get(req.session.lastDb, 'Tasks', tasksSchema);
+
         body.uId = req.session.uId;
 
         if (!validator.validTaskBody(body)) {
@@ -43,7 +44,7 @@ var Tasks = function (models, event) {
 
                 task = new TasksModel(body);
 
-                event.emit('updateSequence', TasksModel, "sequence", 0, 0, task.workflow._id, task.workflow._id, true, false, function (sequence) {
+                event.emit('updateSequence', TasksModel,'sequence', 0, 0, task.workflow._id, task.workflow._id, true, false, function (sequence) {
                     task.sequence = sequence;
                     task.save(function (err, result) {
                         if (err) {
@@ -120,6 +121,7 @@ var Tasks = function (models, event) {
             realDays = (((tck / 1000) / 60) / 60) / 8;
             days = realDays.toFixed(1);
         }
+
         return days;
     }
 
@@ -146,7 +148,6 @@ var Tasks = function (models, event) {
                 if (err) {
                     next(err);
                 }
-
 
                 if (fileName) {
                     switch (osType) {
@@ -188,17 +189,17 @@ var Tasks = function (models, event) {
 
         function sequenceUpdate() {
             if (data.sequence === -1) {
-                event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function () {
-                    event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
+                event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function () {
+                    event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), 'sequence', data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
                         data.sequence = sequence;
-                        if (data.workflow == data.workflowStart) {
+                        if (data.workflow === data.workflowStart) {
                             data.sequence -= 1;
                         }
                         updateTask();
                     });
                 });
             } else {
-                event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
+                event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
                     delete data.sequenceStart;
                     delete data.workflowStart;
                     data.sequence = sequence;
@@ -207,7 +208,7 @@ var Tasks = function (models, event) {
             }
         }
 
-        if (data.notes && data.notes.length != 0) {
+        if (data.notes && data.notes.length !== 0) {
             obj = data.notes[data.notes.length - 1];
             if (!obj._id) {
                 obj._id = mongoose.Types.ObjectId();
