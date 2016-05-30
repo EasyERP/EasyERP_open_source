@@ -128,7 +128,7 @@ define([
         },
 
         hideNewSelect: function () {
-            $('.newSelectList').hide();
+            $('.newSelectList').remove();
         },
 
         showNewSelect: function (e) {

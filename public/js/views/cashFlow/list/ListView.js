@@ -103,7 +103,6 @@ define([
                         _id      : asyncId
                     }, function (result) {
                         var journalEntries = result.journalEntries;
-                        console.log('---------->' + journalEntries);
                         var mainTr = body.find("[data-id='" + asyncId + "']");
                         journalEntries.forEach(function (entry) {
                             mainTr.after("<tr data-main='" + asyncId + "' class='hidden'><td colspan='3' class='leftBorderNone'>" + common.utcDateToLocaleFullDateTime(entry._id) + "</td><td class='money'>" + (entry.debit ? helpers.currencySplitter((entry.debit / 100).toFixed(2)) : helpers.currencySplitter((entry.credit / 100).toFixed(2))) + "</td></tr>");
