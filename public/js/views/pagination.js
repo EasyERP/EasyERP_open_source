@@ -152,10 +152,10 @@ define([
             var contentType = options.contentType || null;
 
             /*$curEl.find('.scrollable').mCustomScrollbar();
-            $curEl.find('.tabs').tabs();
+             $curEl.find('.tabs').tabs();
 
-            this.runClickItem = _.debounce(this.clickItem, 300);
-            this.runClickThumbnail = _.debounce(this.clickThumbnail, 300);*/
+             this.runClickItem = _.debounce(this.clickItem, 300);
+             this.runClickThumbnail = _.debounce(this.clickThumbnail, 300);*/
         },
 
         appFiltersCollectionLoaded: function (options) {
@@ -284,17 +284,17 @@ define([
         },
 
         firstPage: function (options) {
-            var itemsNumber = $("#itemsNumber").text();
-            var currentShowPage = $("#currentShowPage");
+            var itemsNumber = $('#itemsNumber').text();
+            var currentShowPage = $('#currentShowPage');
             var page = 1;
-            var lastPage = $("#lastPage").text();
+            var lastPage = $('#lastPage').text();
             var i;
 
             currentShowPage.val(page);
 
-            $("#firstShowPage").prop("disabled", true);
+            $('#firstShowPage').prop('disabled', true);
 
-            $("#pageList").empty();
+            $('#pageList').empty();
 
             if (lastPage >= 7) {
                 for (i = 1;
@@ -594,173 +594,6 @@ define([
             }
         },
 
-        previewItem: function (id) {
-            var contentType = this.contentType;
-            var viewType = this.viewType;
-            var parentId = this.parentId;
-            var translation = this.translation;
-            var curentId = id ? id : this.$el.find('input[type="checkbox"]:checked').attr('id');
-            var model = this.collection.get(curentId);
-
-            new PreView({
-                model      : model,
-                contentType: contentType,
-                viewType   : viewType,
-                parentId   : parentId,
-                translation: translation
-            });
-        },
-
-        archiveItems: function (e, idsToArchive) {
-            var self = this;
-            var showPopUp = e.showPopUp;
-            var $el;
-            var value;
-            var action;
-
-            if (showPopUp === false) {
-                this.archiveItems_(e, idsToArchive);
-            } else {
-                $el = $(e.target);
-                value = $el.attr('id');
-
-                if (value === 'archiveBtn') {
-                    action = 'archive';
-                } else {
-                    action = 'unArchive';
-                }
-
-                App.showPopUp({
-                    contentType: this.contentType,
-                    action     : action,
-                    saveCb     : function () {
-                        self.archiveItems_(e, idsToArchive);
-                        $(this).dialog('destroy').remove();
-                    }
-                });
-            }
-        },
-
-        archiveItems_: function (e, idsToArchive) {
-            var checkboxes = (!e.notPushChecked) ? this.$el.find('input:checkbox:checked') : null;
-            var $el = $(e.target);
-            var data = {};
-            var self = this;
-            var value = $el.attr('id') === 'archiveBtn';
-            var contentType = this.contentType;
-            var url;
-
-            if (contentType === 'itemsPrices') {
-                contentType = 'item';
-            }
-
-            url = '/' + contentType + '/remove';
-
-            idsToArchive = idsToArchive || [];
-
-            if (!e.notPushChecked) {
-                checkboxes.each(function (i) {
-                    var id = $(checkboxes[i]).val();
-
-                    idsToArchive.push(id);
-                });
-
-                checkboxes.click();
-            }
-
-            data.ids = idsToArchive;
-            data.archived = value;
-            data.type = contentType;
-
-            if (this.domainsArray.indexOf(this.contentType) !== -1) {
-                data.filter = this.filter;
-            }
-
-            dataService.putData(url, data, function () {
-                var tabId = data.archived ? 'archived' : 'all';
-
-                self.trigger('changeTabs', tabId);
-            });
-
-        },
-
-        composeDomainFilter: function (domainType, parentId, subRegionId, retailSegmentId, outletId) {
-            if (parentId) {
-                parentId = parentId.split(',')[0];
-            }
-
-            if (subRegionId) {
-                subRegionId = subRegionId.split(',')[0];
-            }
-
-            if (retailSegmentId) {
-                retailSegmentId = retailSegmentId.split(',')[0];
-            }
-
-            if (outletId) {
-                outletId = outletId.split(',')[0];
-            }
-
-            switch (domainType) {
-                case CONSTANTS.COUNTRY:
-                    return {};
-                case CONSTANTS.REGION:
-                case CONSTANTS.SUBREGION:
-                    if (parentId) {
-                        return {parent: {values: [parentId], type: 'ObjectId'}};
-                    } else {
-                        return {};
-                    }
-                case CONSTANTS.RETAILSEGMENT:
-                    if (subRegionId) {
-                        return {subRegions: {values: [subRegionId], type: 'ObjectId'}};
-                    } else {
-                        return {};
-                    }
-                case CONSTANTS.OUTLET:
-                    if (subRegionId && retailSegmentId) {
-                        return {
-                            subRegions    : {values: [subRegionId], type: 'ObjectId'},
-                            retailSegments: {values: [retailSegmentId], type: 'ObjectId'}
-                        };
-                    } else {
-                        return {};
-                    }
-                case CONSTANTS.BRANCH:
-                    if (subRegionId && retailSegmentId && outletId) {
-                        return {
-                            subRegion    : {values: [subRegionId], type: 'ObjectId'},
-                            retailSegment: {values: [retailSegmentId], type: 'ObjectId'},
-                            outlet       : {values: [outletId], type: 'ObjectId'}
-                        };
-                    } else {
-                        return {};
-                    }
-            }
-        },
-
-        getFilterExtention: function () {
-            var location = window.location.hash;
-            var idLocation;
-            var regexp;
-            var ids = {};
-            var idsArchivedArray = [];
-            var idsArray = ['pId', 'oId', 'rId', 'sId'];
-            var filterExtension;
-
-            idsArray.forEach(function (idName) {
-                //regexp = new RegExp(idName + '=(.*?)\/?');
-                regexp = new RegExp(idName + '=(.*?)(\/|$)');
-                idLocation = regexp.exec(location);
-                ids[idName] = idLocation ? idLocation[1].split(',')[0] : '';
-                idsArchivedArray.push(idLocation ? idLocation[1].split(',')[1] : '');
-            });
-
-            filterExtension = this.composeDomainFilter(this.contentType, ids.pId, ids.sId, ids.rId, ids.oId);
-
-            return filterExtension;
-        },
-
         showFilteredContent: function (tabName) {
             var itemsNumber = $("#itemsNumber").text();
             var creationOptions;
@@ -826,7 +659,7 @@ define([
                 var property = $element.attr('data-translation');
 
                 $element.html(self.translation[property]);
-            })
+            });
 
         }
 

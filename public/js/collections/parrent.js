@@ -78,7 +78,7 @@ define([
 
             data = _opts.data;
             data.page = page;
-            data.count = data.count || this.pageSize;
+            data.count = data.count || self.pageSize;
             data.filter = data.filter || {};
 
             _opts.reset = reset;
@@ -92,10 +92,13 @@ define([
 
             _opts.success = options.success || function (models) {
                     if (!isNew) {
+                        if (models && models.lenght) {
+                            self.pageSize += models.length;
+                        }
                         self.trigger('showmore', models);
                     }
                 };
-            
+
             _opts.error = options.error || function (models, err) {
                     self.trigger('errorPagination', err);
                 };
@@ -236,7 +239,7 @@ define([
 
             this.totalRecords = response.total;
 
-            this.trigger('renderFinished', {
+            this.trigger('fetchFinished', {
                 length     : this.totalRecords,
                 currentPage: this.currentPage,
                 itemsNumber: this.pageSize

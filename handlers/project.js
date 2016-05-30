@@ -122,7 +122,7 @@ module.exports = function (models) {
             salesManager: '$root.salesManager',
             customer    : '$root.customer',
             health      : '$root.health',
-            count       : 1
+            total       : 1
         };
 
         response.showMore = false;
@@ -227,7 +227,7 @@ module.exports = function (models) {
                 }, {
                     $group: {
                         _id  : null,
-                        count: {$sum: 1},
+                        total: {$sum: 1},
                         root : {$push: '$$ROOT'}
                     }
                 }, {

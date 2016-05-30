@@ -2,12 +2,10 @@
     'Backbone',
     'jQuery',
     'Underscore',
-    'dataService',
-    'common',
-    'populate'
-], function (Backbone, $, _, dataService, common, populate) {
+    'pagination'
+], function (Backbone, $, _, Pagination) {
     'use strict';
-    var ProjectThumbnalView = Backbone.View.extend({
+    var View = Pagination.extend({
         el                : '#content-holder',
         countPerPage      : 0,
         newCollection     : true,
@@ -43,7 +41,7 @@
 
             return false;
         },
-
+        
         hide: function (e) {
             if (!$(e.target).closest('.filter-check-list').length) {
                 $('.allNumberPerPage').hide();
@@ -69,12 +67,12 @@
             this.changeLocationHash(null, this.defaultItemsNumber, filter);
             this.collection.showMore({count: this.defaultItemsNumber, page: 1, filter: filter});
         },
-        
+
         hideItemsNumber: function (e) {
             var el = e.target;
 
             this.$el.find('.allNumberPerPage, .newSelectList').hide();
-            
+
             if (!el.closest('.search-view')) {
                 $('.search-content').removeClass('fa-caret-up');
                 this.$el.find('.search-options').addClass('hidden');
@@ -83,66 +81,51 @@
 
         showMore: function (e) {
             e.preventDefault();
-            
-            this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
+
+            this.collection.getNextPage({filter: this.filter, newCollection: this.newCollection});
         },
 
         showMoreContent: function (newModels) {
-            var holder = this.$el;
-            var showMore = holder.find('#showMoreDiv');
-            var created = holder.find('#timeRecivingDataFromServer');
-            var content = holder.find('#thumbnailContent');
-
-            if (this.newCollection) {
-                this.defaultItemsNumber = 100;
-                this.newCollection = false;
-            } else {
-                this.defaultItemsNumber += newModels.length;
-
-                if (this.defaultItemsNumber < 100) {
-                    this.defaultItemsNumber = 100;
-                }
-            }
+            var $holder = this.$el;
+            var $showMore = $holder.find('#showMoreDiv');
+            var $created = $holder.find('#timeRecivingDataFromServer');
+            var $content = $holder.find('#thumbnailContent');
+            
 
             this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
             this.getTotalLength(this.defaultItemsNumber, this.filter);
 
-            if (showMore.length != 0) {
-                showMore.before(this.template({collection: this.collection.toJSON()}));
+            if ($showMore.length !== 0) {
+                $showMore.before(this.template({collection: this.collection.toJSON()}));
 
-                showMore.after(created);
+                $showMore.after($created);
             } else {
-                content.html(this.template({collection: this.collection.toJSON()}));
+                $content.html(this.template({collection: this.collection.toJSON()}));
             }
             this.asyncLoadImgs(newModels);
             // this.filterView.renderFilterContent();
         },
 
         createItem: function () {
-            //create editView in dialog here
-            new createView();
+            var CreateView = this.CreateView || Backbone.View.extend({});
+
+            return new CreateView();
         },
 
         editItem: function () {
-            //create editView in dialog here
-            new editView({collection: this.collection});
-        },
-
-        deleteItems: function () {
-            var mid = 39,
-                model;
-            model = this.collection.get(this.$el.attr("id"));
-            this.$el.fadeToggle(200, function () {
-                model.destroy({
-                    headers: {
-                        mid: mid
-                    }
-                });
-                $(this).remove();
-            });
-
+            var EditView = this.EditView || Backbone.View.extend({});
+            
+            return new EditView({collection: this.collection});
         }
     });
 
-    return ProjectThumbnalView;
+    View.extend = function (childView) {
+        var view = Backbone.View.extend.apply(this, arguments);
+
+        view.prototype.events = _.extend({}, this.prototype.events, childView.events);
+
+        return view;
+    };
+
+    return View;
 });

@@ -11,6 +11,13 @@ define([
 
 ], function (Backbone, _, $, mainView, loginView, dataService, custom, common, CONTENT_TYPES) {
     'use strict';
+    var subscribeCollectionEvents = function (collection, contentView, topBarView) {
+        collection.bind('showMore', contentView.showMoreContent, contentView);
+        collection.bind('add', contentView.addItem, contentView);
+        collection.bind('remove', contentView.removeRow, contentView);
+
+        collection.bind('renderFinished', topBarView.setPagination, topBarView);
+    };
     var appRouter = Backbone.Router.extend({
 
         wrapperView: null,
