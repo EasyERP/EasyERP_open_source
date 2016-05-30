@@ -23,8 +23,8 @@
             newCollection     : true,
             filter            : null,
             defaultItemsNumber: null,
-            contentType       : 'Projects',//needs in view.prototype.changeLocationHash
-            viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
+            contentType       : 'Projects', // needs in view.prototype.changeLocationHash
+            viewType          : 'thumbnails', // needs in view.prototype.changeLocationHash
 
             initialize: function (options) {
                 $(document).off("click");

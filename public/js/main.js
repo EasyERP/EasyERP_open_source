@@ -317,7 +317,8 @@ require(['app'], function (app) {
         }
 
         Backbone.history.navigate(url, {replace: true});
-
+        
+        console.log('--- Please inherit it from paginator ---');
     };
 
     Backbone.View.prototype.prevPProject = function (dataObject, disableChangeHash, context) {
