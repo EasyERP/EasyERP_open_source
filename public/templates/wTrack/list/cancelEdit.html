@@ -1,6 +1,7 @@
 <tr data-id="<%=model._id%>" class="<%= enable ? 'enableEdit' : ''%> <%=(model._type === 'overtime') ? 'overtime': ''%>">
     <td class="notForm"><input type="checkbox" value="<%=model._id%>" class="checkbox"/></td>
     <td data-content="number" class="centerCell"><%=model.startNumber%></td>
+    <td data-content="type" class="editable centerCell textUnderlineHover"><%=(model._type === 'overtime') ? 'OT': 'OR'%></td>
     <td class="editable <%= enable ? 'textUnderlineHover' : ''%> " data-content="jobs" data-id="<%=model.jobs ? model.jobs.name : '------'%>"><%=model.jobs ? model.jobs.name :
         '------'%>
     </td>
@@ -9,7 +10,7 @@
         ''%>
     </td>-->
     <td class="editable" data-content="project" data-id="<%= model.project._id%>"><%=model.project ? model.project.projectName : ''%></td>
-    <td data-content="workflow" data-id="<%= model.workflow ? model.workflow._id : ''%>"><%=model.project && model.workflow? model.workflow.name : ''%></td>
+   <!-- <td data-content="workflow" data-id="<%= model.workflow ? model.workflow._id : ''%>"><%=model.project && model.workflow? model.workflow.name : ''%></td>-->
     <td data-content="customer" data-id="<%= model.customer? model.customer.name.first + ' ' + model.customer.name.last : ''%>"><%= model.customer ? model.customer.name.first + ' ' + model.customer.name.last : ''%></td>
     <td class="editable <%= enable ? 'textUnderlineHover' : ''%> " data-content="employee" data-id="<%= model.employee._id%>"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last  : ''%></td>
     <td class="editable <%= enable ? 'textUnderlineHover' : ''%> " data-content="department"><%=model.department ? model.department.departmentName : ''%></td>

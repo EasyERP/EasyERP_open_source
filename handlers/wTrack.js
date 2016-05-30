@@ -2,11 +2,10 @@ var mongoose = require('mongoose');
 
 var TCard = function (event, models) {
     'use strict';
-    var access = require('../Modules/additions/access.js')(models);
-    var rewriteAccess = require('../helpers/rewriteAccess');
+
+    var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var _ = require('underscore');
     var wTrackSchema = mongoose.Schemas.wTrack;
-    var DepartmentSchema = mongoose.Schemas.Department;
     var MonthHoursSchema = mongoose.Schemas.MonthHours;
     var HolidaySchema = mongoose.Schemas.Holiday;
     var VacationSchema = mongoose.Schemas.Vacation;
@@ -24,9 +23,9 @@ var TCard = function (event, models) {
     var FilterMapper = require('../helpers/filterMapper');
     var filterMapper = new FilterMapper();
 
-    var exportDecorator = require('../helpers/exporter/exportDecorator');
+    // var exportDecorator = require('../helpers/exporter/exportDecorator');
     var overTimeHelper = require('../helpers/tCard');
-    var exportMap = require('../helpers/csvMap').wTrack;
+    // var exportMap = require('../helpers/csvMap').wTrack;
 
     var JournalEntryHandler = require('./journalEntry');
     var journalEntry = new JournalEntryHandler(models);
@@ -37,67 +36,58 @@ var TCard = function (event, models) {
     // }, exportMap, "wTrack");
 
     this.create = function (req, res, next) {
-        access.getEditWritAccess(req, req.session.uId, 75, function (success) {
-            var docs = [];
-            var wTracks = [];
-            var overTimeTcard;
-            var WTrack;
-            var body;
-            var wTrack;
-            var worked;
 
-            if (success) {
-                WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-                body = mapObject(req.body);
-                overTimeTcard = overTimeHelper(body);
-                worked = parseInt(body.worked, 10);
-                worked = isNaN(worked) ? 0 : worked;
+        var docs = [];
+        var wTracks = [];
+        var body = mapObject(req.body);
+        var overTimeTcard = overTimeHelper(body);
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var wTrack;
+        var worked = parseInt(body.worked, 10);
 
-                docs.push(body);
+        worked = isNaN(worked) ? 0 : worked;
 
-                if (overTimeTcard && overTimeTcard.worked) {
-                    docs.push(overTimeTcard);
+        docs.push(body);
+
+        if (overTimeTcard && overTimeTcard.worked) {
+            docs.push(overTimeTcard);
+        }
+
+        if (worked) {
+            async.each(docs, function (body, cb) {
+                wTrack = new WTrack(body);
+                wTrack.save(function (err, _wTrack) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    wTracks.push(_wTrack);
+                    cb();
+                    event.emit('setReconcileTimeCard', {req: req, jobs: _wTrack.jobs});
+                    // event.emit('updateRevenue', {wTrack: _wTrack, req: req});
+                    event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
+                    event.emit('dropHoursCashes', req);
+                    event.emit('recollectVacationDash');
+                    event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
+                    event.emit('recollectProjectInfo');
+                });
+            }, function (err) {
+                if (err) {
+                    return next(err);
                 }
 
-                if (worked) {
-                    async.each(docs, function (body, cb) {
-                        wTrack = new WTrack(body);
-                        wTrack.save(function (err, _wTrack) {
-                            if (err) {
-                                return cb(err);
-                            }
+                res.status(200).send(wTracks);
+            });
 
-                            wTracks.push(_wTrack);
-                            cb();
-                            event.emit('setReconcileTimeCard', {req: req, jobs: _wTrack.jobs});
-                            // event.emit('updateRevenue', {wTrack: _wTrack, req: req});
-                            event.emit('recalculateKeys', {req: req, wTrack: _wTrack});
-                            event.emit('dropHoursCashes', req);
-                            event.emit('recollectVacationDash');
-                            event.emit('updateProjectDetails', {req: req, _id: _wTrack.project});
-                            event.emit('recollectProjectInfo');
-                        });
-                    }, function (err) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        res.status(200).send(wTracks);
-                    });
-
-                } else {
-                    res.status(200).send({success: 'Empty tCard'});
-                }
-            } else {
-                res.status(403).send();
-            }
-        });
+        } else {
+            res.status(200).send({success: 'Empty tCard'});
+        }
     };
 
     this.putchModel = function (req, res, next) {
         var id = req.params.id;
         var data = mapObject(req.body) || {};
-        var overTimeTcard = overTimeHelper(data);
+       // var overTimeTcard = overTimeHelper(data);
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var needUpdateKeys = data.month || data.week || data.year || data.isoYear;
 
@@ -113,137 +103,116 @@ var TCard = function (event, models) {
             }
         }
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 75, function (success) {
-                function resultCb(err, tCard) {
-                    if (err) {
-                        return next(err);
-                    }
+        function resultCb(err, tCard) {
+            if (err) {
+                return next(err);
+            }
 
-                    if (tCard) {
-                        event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
-                        // event.emit('updateRevenue', {wTrack: tCard, req: req});
-                        event.emit('updateProjectDetails', {req: req, _id: tCard.project});
-                        event.emit('recollectProjectInfo');
-                        event.emit('dropHoursCashes', req);
-                        event.emit('recollectVacationDash');
+            if (tCard) {
+                event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
+                // event.emit('updateRevenue', {wTrack: tCard, req: req});
+                event.emit('updateProjectDetails', {req: req, _id: tCard.project});
+                event.emit('recollectProjectInfo');
+                event.emit('dropHoursCashes', req);
+                event.emit('recollectVacationDash');
 
-                        if (needUpdateKeys) {
-                            event.emit('recalculateKeys', {req: req, wTrack: tCard});
-                        }
-                    }
-                    res.status(200).send({success: 'updated'});
+                if (needUpdateKeys) {
+                    event.emit('recalculateKeys', {req: req, wTrack: tCard});
                 }
+            }
+            res.status(200).send({success: 'updated'});
+        }
 
-                if (!success) {
-                    return res.status(403).send();
-                }
+        data.editedBy = {
+            user: req.session.uId,
+            date: new Date()
+        };
 
-                data.editedBy = {
-                    user: req.session.uId,
-                    date: new Date()
-                };
-
-                if (isFinite(worked) && worked === 0) {
-                    WTrack.findByIdAndRemove(id, resultCb);
-                } else {
-                    if (isFinite(worked)) {
-                        data.worked = worked;
-                    }
-
-                    WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, resultCb);
-                }
-            });
+        if (isFinite(worked) && worked === 0) {
+            WTrack.findByIdAndRemove(id, resultCb);
         } else {
-            res.status(401).send();
+            if (isFinite(worked)) {
+                data.worked = worked;
+            }
+
+            WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, resultCb);
         }
     };
 
     this.putchBulk = function (req, res, next) {
         var body = req.body;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var uId;
+        var uId = req.session.uId;
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 75, function (success) {
-                if (!success) {
-                    return res.status(403).send();
+        function resultCb(err, tCard, needUpdateKeys, cb) {
+            if (err) {
+                return cb(err);
+            }
+
+            if (tCard) {
+                event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
+                // event.emit('updateRevenue', {wTrack: tCard, req: req});
+                event.emit('updateProjectDetails', {req: req, _id: tCard.project});
+                event.emit('recollectProjectInfo');
+                event.emit('dropHoursCashes', req);
+                event.emit('recollectVacationDash');
+
+                if (needUpdateKeys) {
+                    event.emit('recalculateKeys', {req: req, wTrack: tCard});
                 }
+            }
 
-                function resultCb(err, tCard, needUpdateKeys, cb) {
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    if (tCard) {
-                        event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
-                        // event.emit('updateRevenue', {wTrack: tCard, req: req});
-                        event.emit('updateProjectDetails', {req: req, _id: tCard.project});
-                        event.emit('recollectProjectInfo');
-                        event.emit('dropHoursCashes', req);
-                        event.emit('recollectVacationDash');
-
-                        if (needUpdateKeys) {
-                            event.emit('recalculateKeys', {req: req, wTrack: tCard});
-                        }
-                    }
-
-                    cb(null, tCard);
-                }
-
-                async.each(body, function (_data, cb) {
-                    var needUpdateKeys;
-                    var worked;
-                    var data;
-                    var id;
-
-                    data = _data || {};
-                    worked = data.worked;
-
-                    id = data._id;
-                    needUpdateKeys = data.month || data.week || data.year || data.isoYear;
-
-                    if (data.revenue) {
-                        data.revenue *= 100;
-                    }
-
-                    if (data.cost) {
-                        data.cost *= 100;
-                    }
-
-                    data.editedBy = {
-                        user: uId,
-                        date: new Date().toISOString()
-                    };
-
-                    delete data._id;
-
-                    if (isFinite(worked) && worked === 0) {
-                        WTrack.findByIdAndRemove(id, function (err, tCard) {
-                            resultCb(err, tCard, needUpdateKeys, cb);
-                        });
-                    } else {
-                        if (isFinite(worked)) {
-                            data.worked = worked;
-                        }
-
-                        WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, tCard) {
-                            resultCb(err, tCard, needUpdateKeys, cb);
-                        });
-                    }
-                }, function (err) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    event.emit('dropHoursCashes', req);
-                    res.status(200).send({success: 'updated'});
-                });
-            });
-        } else {
-            res.status(401).send();
+            cb(null, tCard);
         }
+
+        async.each(body, function (_data, cb) {
+            var needUpdateKeys;
+            var worked;
+            var data;
+            var id;
+
+            data = _data || {};
+            worked = data.worked;
+
+            id = data._id;
+            needUpdateKeys = data.month || data.week || data.year || data.isoYear;
+
+            if (data.revenue) {
+                data.revenue *= 100;
+            }
+
+            if (data.cost) {
+                data.cost *= 100;
+            }
+
+            data.editedBy = {
+                user: uId,
+                date: new Date().toISOString()
+            };
+
+            delete data._id;
+
+            if (isFinite(worked) && worked === 0) {
+                WTrack.findByIdAndRemove(id, function (err, tCard) {
+                    resultCb(err, tCard, needUpdateKeys, cb);
+                });
+            } else {
+                if (isFinite(worked)) {
+                    data.worked = worked;
+                }
+
+                WTrack.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, tCard) {
+                    resultCb(err, tCard, needUpdateKeys, cb);
+                });
+            }
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            event.emit('dropHoursCashes', req);
+            res.status(200).send({success: 'updated'});
+        });
     };
 
     function convertType(array, type) {
@@ -279,10 +248,6 @@ var TCard = function (event, models) {
                 key = filter[filterName].key;
 
                 switch (filterName) {
-                    case 'salesManager':
-                        filtrElement['salesmanager._id'] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                        break;
                     case 'projectName':
                         filtrElement['project._id'] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
@@ -338,58 +303,19 @@ var TCard = function (event, models) {
 
     this.totalCollectionLength = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
-        var departmentSearcher;
-        var contentIdsSearcher;
         var contentSearcher;
         var query = req.query;
         var filter = query.filter;
         var filterObj = {};
         var waterfallTasks;
 
+        var accessRollSearcher = function (cb) {
+            accessRoll(req, WTrack, cb);
+        };
+
         if (filter) {
             filterObj.$and = caseFilter(filter);
         }
-
-        departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(
-                {
-                    $match: {
-                        users: objectId(req.session.uId)
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                },
-
-                waterfallCallback);
-        };
-
-        contentIdsSearcher = function (deps, waterfallCallback) {
-            var everyOne = rewriteAccess.everyOne();
-            var owner = rewriteAccess.owner(req.session.uId);
-            var group = rewriteAccess.group(req.session.uId, deps);
-            var whoCanRw = [everyOne, owner, group];
-            var matchQuery = {
-                $and: [
-                    // queryObject,
-                    {
-                        $or: whoCanRw
-                    }
-                ]
-            };
-            WTrack.aggregate(
-                {
-                    $match: matchQuery
-                },
-                {
-                    $project: {
-                        _id: 1
-                    }
-                },
-                waterfallCallback
-            );
-        };
 
         contentSearcher = function (wTrackIDs, waterfallCallback) {
             var queryObject = {};
@@ -427,7 +353,7 @@ var TCard = function (event, models) {
                 queryObject.$and.push(filterObj);
             }
 
-            queryObject.$and.push({_id: {$in: _.pluck(wTrackIDs, '_id')}});
+            queryObject.$and.push({_id: {$in: wTrackIDs}});
 
             WTrack.aggregate([/*{
              $lookup: {
@@ -487,7 +413,7 @@ var TCard = function (event, models) {
                     year      : 1,
                     week      : 1,
                     isPaid    : 1,
-                    _type     : 1,
+                    _type     : 1
 
                     /*startDateWeek: {
                      $let: {
@@ -577,7 +503,7 @@ var TCard = function (event, models) {
             });
         };
 
-        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+        waterfallTasks = [accessRollSearcher, contentSearcher];
 
         async.waterfall(waterfallTasks, function (err, result) {
             if (err) {
@@ -593,8 +519,6 @@ var TCard = function (event, models) {
 
         var query = req.query;
         var filter = query.filter;
-        var departmentSearcher;
-        var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
         var key;
@@ -618,6 +542,10 @@ var TCard = function (event, models) {
         var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
         var page = parseInt(query.page, 10);
         var skip;
+
+        var accessRollSearcher = function (cb) {
+            accessRoll(req, WTrack, cb);
+        };
 
         count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
         skip = (page - 1) > 0 ? (page - 1) * count : 0;
@@ -649,53 +577,12 @@ var TCard = function (event, models) {
             sort = {'createdBy.date': -1};
         }
 
-        departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(
-                {
-                    $match: {
-                        users: objectId(req.session.uId)
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                },
-
-                waterfallCallback);
-        };
-
-        contentIdsSearcher = function (deps, waterfallCallback) {
-            var everyOne = rewriteAccess.everyOne();
-            var owner = rewriteAccess.owner(req.session.uId);
-            var group = rewriteAccess.group(req.session.uId, deps);
-            var whoCanRw = [everyOne, owner, group];
-            var matchQuery = {
-                $and: [
-                    // queryObject,
-                    {
-                        $or: whoCanRw
-                    }
-                ]
-            };
-            WTrack.aggregate(
-                {
-                    $match: matchQuery
-                },
-                {
-                    $project: {
-                        _id: 1
-                    }
-                },
-                waterfallCallback
-            );
-        };
-
         contentSearcher = function (wtrackIds, waterfallCallback) {
             var queryObject = {};
             var aggregation;
 
             queryObject.$and = [];
-            queryObject.$and.push({_id: {$in: _.pluck(wtrackIds, '_id')}});
+            queryObject.$and.push({_id: {$in: wtrackIds}});
 
             if (filterObj) {
                 queryObject.$and.push(filterObj);
@@ -764,8 +651,16 @@ var TCard = function (event, models) {
                     as          : 'customer'
                 }
             }, {
+                $lookup: {
+                    from        : 'workflows',
+                    localField  : 'project.workflow',
+                    foreignField: '_id',
+                    as          : 'workflow'
+                }
+            }, {
                 $project: {
                     customer  : {$arrayElemAt: ['$customer', 0]},
+                    workflow  : {$arrayElemAt: ['$workflow', 0]},
                     dateByWeek: 1,
                     createdBy : 1,
                     project   : 1,
@@ -792,6 +687,41 @@ var TCard = function (event, models) {
                     7         : 1
                 }
             }, {
+                $project: {
+                    'customer._id'             : '$customer._id',
+                    'customer.name'            : '$customer.name',
+                    'project._id'              : '$project._id',
+                    'project.projectName'      : '$project.projectName',
+                    'employee._id'             : '$employee._id',
+                    'employee.name'            : '$employee.name',
+                    'department._id'           : '$department._id',
+                    'department.departmentName': '$department.departmentName',
+                    'jobs._id'                 : '$jobs._id',
+                    'jobs.name'                : '$jobs.name',
+                    'workflow._id'             : '$workflow._id',
+                    'workflow.name'            : '$workflow.name',
+                    dateByWeek                 : 1,
+                    createdBy                  : 1,
+                    month                      : 1,
+                    year                       : 1,
+                    week                       : 1,
+                    revenue                    : 1,
+                    amount                     : 1,
+                    rate                       : 1,
+                    hours                      : 1,
+                    cost                       : 1,
+                    worked                     : 1,
+                    isPaid                     : 1,
+                    _type                      : 1,
+                    1                          : 1,
+                    2                          : 1,
+                    3                          : 1,
+                    4                          : 1,
+                    5                          : 1,
+                    6                          : 1,
+                    7                          : 1
+                }
+            }, {
                 $match: queryObject
             }, {
                 $sort: sort
@@ -808,20 +738,14 @@ var TCard = function (event, models) {
 
         };
 
-        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+        waterfallTasks = [accessRollSearcher, contentSearcher];
 
-        access.getReadAccess(req, req.session.uId, 75, function (success) {
-            if (!success) {
-                return res.status(403).send();
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
             }
 
-            async.waterfall(waterfallTasks, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send(result);
-            });
+            res.status(200).send(result);
         });
     };
 
@@ -829,47 +753,38 @@ var TCard = function (event, models) {
         var id = req.params.id;
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
 
-        access.getDeleteAccess(req, req.session.uId, 75, function (success) {
-            if (success) {
-                WTrack.findByIdAndRemove(id, function (err, tCard) {
-                    var projectId;
+        WTrack.findByIdAndRemove(id, function (err, tCard) {
+            var projectId;
 
-                    if (err) {
-                        return next(err);
-                    }
-
-                    projectId = tCard ? tCard.project : null;
-
-                    journalEntry.removeBySourceDocument(req, tCard._id);
-
-                    event.emit('dropHoursCashes', req);
-                    event.emit('recollectVacationDash');
-                    event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
-                    // event.emit('updateRevenue', {wTrack: tCard, req: req});
-
-                    if (projectId) {
-                        event.emit('updateProjectDetails', {req: req, _id: projectId});
-                    }
-
-                    event.emit('recollectProjectInfo');
-
-                    res.status(200).send({success: tCard});
-                });
-            } else {
-                res.status(403).send();
+            if (err) {
+                return next(err);
             }
+
+            projectId = tCard ? tCard.project : null;
+
+            journalEntry.removeBySourceDocument(req, tCard._id);
+
+            event.emit('dropHoursCashes', req);
+            event.emit('recollectVacationDash');
+            event.emit('setReconcileTimeCard', {req: req, jobs: tCard.jobs});
+            // event.emit('updateRevenue', {wTrack: tCard, req: req});
+
+            if (projectId) {
+                event.emit('updateProjectDetails', {req: req, _id: projectId});
+            }
+
+            event.emit('recollectProjectInfo');
+
+            res.status(200).send({success: tCard});
         });
     };
 
     this.getForProjects = function (req, res, next) {
         var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
         var monthHours = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
-
         var query = req.query;
         /* var queryObject = filter ? filterMapper.mapFilter(filter) : {};
          var filter = query.filter;*/
-        var departmentSearcher;
-        var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
         var key;
@@ -897,6 +812,10 @@ var TCard = function (event, models) {
         var page = query.page || 1;
 
         var skip;
+
+        var accessRollSearcher = function (cb) {
+            accessRoll(req, WTrack, cb);
+        };
 
         count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
         skip = (page - 1) > 0 ? (page - 1) * count : 0;
@@ -927,49 +846,8 @@ var TCard = function (event, models) {
             sort = {'project.projectName': 1, year: 1, month: 1, week: 1};
         }
 
-        departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(
-                {
-                    $match: {
-                        users: objectId(req.session.uId)
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                },
-
-                waterfallCallback);
-        };
-
-        contentIdsSearcher = function (deps, waterfallCallback) {
-            var everyOne = rewriteAccess.everyOne();
-            var owner = rewriteAccess.owner(req.session.uId);
-            var group = rewriteAccess.group(req.session.uId, deps);
-            var whoCanRw = [everyOne, owner, group];
-            var matchQuery = {
-                $and: [
-                    // queryObject,
-                    {
-                        $or: whoCanRw
-                    }
-                ]
-            };
-            WTrack.aggregate(
-                {
-                    $match: matchQuery
-                },
-                {
-                    $project: {
-                        _id: 1
-                    }
-                },
-                waterfallCallback
-            );
-        };
-
         contentSearcher = function (wtrackIds, waterfallCallback) {
-            var queryObject = {_id: {$in: _.pluck(wtrackIds, '_id')}};
+            var queryObject = {_id: {$in: wtrackIds}};
 
             WTrack
                 .find(queryObject)
@@ -980,49 +858,42 @@ var TCard = function (event, models) {
                 .exec(waterfallCallback);
         };
 
-        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+        waterfallTasks = [accessRollSearcher, contentSearcher];
 
-        access.getReadAccess(req, req.session.uId, 75, function (access) {
-            if (!access) {
-                return res.status(403).send();
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
             }
+            result.forEach(function (elem) {
+                months.push(elem.month);
+                years.push(elem.year);
+            });
 
-            async.waterfall(waterfallTasks, function (err, result) {
+            uMonth = _.uniq(months);
+            uYear = _.uniq(years);
+
+            monthHours.aggregate([{
+                $match: {
+                    year : {$in: uYear},
+                    month: {$in: uMonth}
+                }
+            }, {
+                $project: {
+                    date : {$add: [{$multiply: ['$year', 100]}, '$month']},
+                    hours: '$hours'
+
+                }
+            }, {
+                $group: {
+                    _id  : '$date',
+                    value: {$addToSet: '$hours'}
+                }
+            }], function (err, months) {
                 if (err) {
                     return next(err);
                 }
-                result.forEach(function (res) {
-                    months.push(res.month);
-                    years.push(res.year);
-                });
 
-                uMonth = _.uniq(months);
-                uYear = _.uniq(years);
-
-                monthHours.aggregate([{
-                    $match: {
-                        year : {$in: uYear},
-                        month: {$in: uMonth}
-                    }
-                }, {
-                    $project: {
-                        date : {$add: [{$multiply: ['$year', 100]}, '$month']},
-                        hours: '$hours'
-
-                    }
-                }, {
-                    $group: {
-                        _id  : '$date',
-                        value: {$addToSet: '$hours'}
-                    }
-                }], function (err, months) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    res.status(200).send({wTrack: result, monthHours: months});
-                });
-
+                res.status(200).send({wTrack: result, monthHours: months});
             });
         });
     };
@@ -1040,7 +911,7 @@ var TCard = function (event, models) {
 
         var tasks;
 
-        if (jobId.length >= 24) {
+        if (jobId && jobId.length >= 24) {
             jobId = objectId(jobId);
         }
 
@@ -1343,7 +1214,7 @@ var TCard = function (event, models) {
                     var j;
 
                     for (j = 7; j >= 1; j--) {
-                        options[j] = parseInt(options[j]);
+                        options[j] = parseInt(options[j], 10);
                     }
 
                     function getEmployee(parallelCb) {
@@ -1445,6 +1316,7 @@ var TCard = function (event, models) {
                 function taskRunner(vacationsHolidays, generateCb) {
                     var dayHours;
                     var dayNumber;
+                    var err;
 
                     if (!hours && endDate.toString() !== 'Invalid Date') {
                         calculateWeeks(startDate, endDate, vacationsHolidays, generateCb);
@@ -1482,7 +1354,7 @@ var TCard = function (event, models) {
                     var result = [];
 
                     datesArr.forEach(function (dateObject) {
-                        result.push(divider(dateObject.startDate, dateObject.endDate, holidays, vacations, options))
+                        result.push(divider(dateObject.startDate, dateObject.endDate, holidays, vacations, options));
                     });
 
                     result = _.flatten(result);
@@ -1500,7 +1372,7 @@ var TCard = function (event, models) {
                 async.waterfall([getVacationsHolidays, taskRunner], asyncCb);
             }, mainCb);
 
-        };
+        }
 
         tasks = [createJobFunc, generatewTracks];
 
@@ -1528,7 +1400,7 @@ var TCard = function (event, models) {
             dateByWeek: parseInt(query.dateByWeek, 10),
             employee  : objectId(query.employee)
         };
-        /*var salesManagerMatch = {
+        /* var salesManagerMatch = {
          $or: [{
          $and: [{
          $eq: ['$startDateWeek', null]
@@ -1555,7 +1427,6 @@ var TCard = function (event, models) {
          }]
          }]
          };*/
-
 
         WTrack.aggregate([{
             $match: mongoQuery
@@ -1608,7 +1479,7 @@ var TCard = function (event, models) {
                 foreignField: '_id',
                 as          : 'customer'
             }
-        }, /*{
+        }, /* {
          $lookup: {
          from        : 'projectMembers',
          localField  : 'project._id',
@@ -1661,7 +1532,7 @@ var TCard = function (event, models) {
                 employee   : {$arrayElemAt: ['$employee', 0]},
                 jobs       : {$arrayElemAt: ['$jobs', 0]},
 
-                /*salesmanagers: {
+                /* salesmanagers: {
                  $filter: {
                  input: '$projectMembers',
                  as   : 'projectMember',
@@ -1706,7 +1577,7 @@ var TCard = function (event, models) {
                     name: '$jobs.name'
                 }
             }
-        }/*{
+        }/* {
          $unwind: {
          path                      : '$salesmanagers',
          preserveNullAndEmptyArrays: true
@@ -1855,8 +1726,6 @@ var TCard = function (event, models) {
         var projectId = req.params.id;
         var query = req.query;
         // var filter = query.filter;
-        var departmentSearcher;
-        var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
         var key;
@@ -1881,6 +1750,10 @@ var TCard = function (event, models) {
         var page = parseInt(query.page, 10);
         var skip;
         var queryObject = {};
+
+        var accessRollSearcher = function (cb) {
+            accessRoll(req, WTrack, cb);
+        };
 
         count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
         skip = (page - 1) > 0 ? (page - 1) * count : 0;
@@ -1916,54 +1789,13 @@ var TCard = function (event, models) {
             sort = {'createdBy.date': -1};
         }
 
-        departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, 'Department', DepartmentSchema).aggregate(
-                {
-                    $match: {
-                        users: objectId(req.session.uId)
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                },
-
-                waterfallCallback);
-        };
-
-        contentIdsSearcher = function (deps, waterfallCallback) {
-            var everyOne = rewriteAccess.everyOne();
-            var owner = rewriteAccess.owner(req.session.uId);
-            var group = rewriteAccess.group(req.session.uId, deps);
-            var whoCanRw = [everyOne, owner, group];
-            var matchQuery = {
-                $and: [
-                    queryObject, {
-                        $or: whoCanRw
-                    }
-                ]
-            };
-            WTrack.aggregate(
-                {
-                    $match: matchQuery
-                },
-                {
-                    $project: {
-                        _id: 1
-                    }
-                },
-                waterfallCallback
-            );
-        };
-
         contentSearcher = function (wtrackIds, waterfallCallback) {
-            var queryObject = {};
             var aggregation;
 
             queryObject.$and = [];
-            queryObject.$and.push({_id: {$in: _.pluck(wtrackIds, '_id')}});
+            queryObject.$and.push({_id: {$in: wtrackIds}});
 
-            /*if (filterObj) {
+            /* if (filterObj) {
              queryObject.$and.push(filterObj);
              }*/
 
@@ -2060,20 +1892,14 @@ var TCard = function (event, models) {
 
         };
 
-        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+        waterfallTasks = [accessRollSearcher, contentSearcher];
 
-        access.getReadAccess(req, req.session.uId, 75, function (success) {
-            if (!success) {
-                return res.status(403).send();
+        async.waterfall(waterfallTasks, function (err, result) {
+            if (err) {
+                return next(err);
             }
 
-            async.waterfall(waterfallTasks, function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send(result);
-            });
+            res.status(200).send(result);
         });
     };
 

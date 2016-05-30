@@ -1,23 +1,28 @@
-
-
 var express = require('express');
 var router = express.Router();
-var wTrackHandler = require('../handlers/wTrack');
+var WTrackHandler = require('../handlers/wTrack');
+var authStackMiddleware = require('../helpers/checkAuth');
+var MODULES = require('../constants/modules');
 
 module.exports = function (event, models) {
-    var handler = new wTrackHandler(event, models);
+    'use strict';
+    var handler = new WTrackHandler(event, models);
+    var moduleId = MODULES.WTRACK;
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
-    router.get('/getForProjects', handler.getForProjects);
-    //router.get('/exportToXlsx',handler.exportToXlsx);
-    //router.get('/exportToCsv',handler.exportToCsv);
+    router.use(authStackMiddleware); // added generall check on auth
+
+    router.get('/getForProjects', accessStackMiddleware, handler.getForProjects);
+    // router.get('/exportToXlsx',handler.exportToXlsx);
+    // router.get('/exportToCsv',handler.exportToCsv);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/dash', handler.getForDashVacation);
-    router.get('/:viewType', handler.getByViewType);
-    router.post('/', handler.create);
-    router.post('/generateWTrack', handler.generateWTrack);
-    router.delete('/:id', handler.remove);
-    router.patch('/', handler.putchBulk);
-    router.patch('/:id', handler.putchModel);
+    router.get('/:viewType', accessStackMiddleware, handler.getByViewType);
+    router.post('/', accessStackMiddleware, handler.create);
+    router.post('/generateWTrack', accessStackMiddleware, handler.generateWTrack);
+    router.delete('/:id', accessStackMiddleware, handler.remove);
+    router.patch('/', accessStackMiddleware, handler.putchBulk);
+    router.patch('/:id', accessStackMiddleware, handler.putchModel);
    /* router.put('/:id', handler.updateModel);*/
 
     return router;
