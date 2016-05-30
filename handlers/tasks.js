@@ -211,8 +211,8 @@ var Tasks = function (models, event) {
     };
 
     this.getTasks = function (req, res, next) {
-        var data = req.query;
         var viewType = req.params.viewType;
+
         switch (viewType) {
             case 'form':
                 getTaskById(req, res, next);
@@ -221,7 +221,7 @@ var Tasks = function (models, event) {
                 getTasksForList(req, res, next);
                 break;
             case 'kanban':
-                getTasksForKanban(req, data, res);
+                getTasksForKanban(req, res, next);
                 break;
         }
 
@@ -441,18 +441,19 @@ var Tasks = function (models, event) {
         );
     };
 
-    function getTasksForKanban(req, data, response) {
-        var res = {};
+    function getTasksForKanban(req, res, next) {
         var startTime = new Date();
-
-        res['data'] = [];
-        res['workflowId'] = data.workflowId;
+        var data = req.query;
+        var responseData = {};
         var addObj = {};
+
+        responseData.workflowId = data.workflowId;
+
         if (data.parrentContentId) {
-            addObj['_id'] = objectId(data.parrentContentId);
+            addObj._id = objectId(data.parrentContentId);
         }
 
-        models.get(req.session.lastDb, "Department", department).aggregate(
+        models.get(req.session.lastDb, 'Department', department).aggregate(
             {
                 $match: {
                     users: objectId(req.session.uId)
@@ -463,118 +464,111 @@ var Tasks = function (models, event) {
                 }
             },
             function (err, deps) {
-                if (!err) {
-                    var arrOfObjectId = deps.objectID();
-                    models.get(req.session.lastDb, 'Project', projectSchema).aggregate(
-                        {
-                            $match: {
-                                $and: [
-                                    addObj,
-                                    {
-                                        $or: [
-                                            {
-                                                $or: [
-                                                    {
-                                                        $and: [
-                                                            {whoCanRW: 'group'},
-                                                            {'groups.users': objectId(req.session.uId)}
-                                                        ]
-                                                    },
-                                                    {
-                                                        $and: [
-                                                            {whoCanRW: 'group'},
-                                                            {'groups.group': {$in: arrOfObjectId}}
-                                                        ]
-                                                    }
-                                                ]
-                                            },
-                                            {
-                                                $and: [
-                                                    {whoCanRW: 'owner'},
-                                                    {'groups.owner': objectId(req.session.uId)}
-                                                ]
-                                            },
-                                            {whoCanRW: "everyOne"}
-                                        ]
-                                    }
-                                ]
-                            }
-                        },
-                        {
-                            $project: {
-                                _id: 1
-                            }
-                        },
-                        function (err, projectsId) {
-                            if (!err) {
-                                var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).where('project').in(projectsId.objectID()).where('workflow', objectId(data.workflowId));
-
-                                if (data.filter && data.filter.type) {
-                                    query.where('type').in(data.filter.type);
-                                }
-
-                                query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").populate('assignedTo', 'name').populate('project', 'projectShortDesc').sort({'sequence': -1}).limit(req.session.kanbanSettings.tasks.countPerPage).exec(function (err, result) {
-                                    if (!err) {
-                                        var localRemaining = 0;
-                                        result.forEach(function (value) {
-                                            localRemaining = localRemaining + value.remaining;
-                                        });
-                                        res['remaining'] = localRemaining;
-                                        res['data'] = result;
-                                        res['time'] = (new Date() - startTime);
-                                        res['fold'] = (req.session.kanbanSettings.tasks.foldWorkflows && req.session.kanbanSettings.tasks.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
-                                        response.send(res);
-                                    } else {
-                                        logWriter.log("Projects.js getTasksForKanban task.find" + err);
-                                        response.send(500, {error: "Can't find Tasks"});
-                                    }
-                                });
-                            } else {
-                                logWriter.log("Projects.js getTasksForKanban task.find " + err);
-                                response.send(500, {error: "Can't group Tasks"});
-                            }
-                        });
-                } else {
-                    console.log(err);
+                var arrOfObjectId;
+                if (err) {
+                    return next(err);
                 }
+
+                arrOfObjectId = deps.objectID();
+
+                models.get(req.session.lastDb, 'Project', projectSchema).aggregate(
+                    {
+                        $match: {
+                            $and: [
+                                addObj,
+                                {
+                                    $or: [
+                                        {
+                                            $or: [
+                                                {
+                                                    $and: [
+                                                        {whoCanRW: 'group'},
+                                                        {'groups.users': objectId(req.session.uId)}
+                                                    ]
+                                                },
+                                                {
+                                                    $and: [
+                                                        {whoCanRW: 'group'},
+                                                        {'groups.group': {$in: arrOfObjectId}}
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {whoCanRW: 'owner'},
+                                                {'groups.owner': objectId(req.session.uId)}
+                                            ]
+                                        },
+                                        {whoCanRW: "everyOne"}
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 1
+                        }
+                    },
+                    function (err, projectsId) {
+                        var query;
+
+                        if (err) {
+                            return next(err);
+                        }
+
+                        query = models.get(req.session.lastDb, 'Tasks', tasksSchema).where('project').in(projectsId.objectID()).where('workflow', objectId(data.workflowId));
+
+                        if (data.filter && data.filter.type) {
+                            query.where('type').in(data.filter.type);
+                        }
+
+                        query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").populate('assignedTo', 'name').populate('project', 'projectShortDesc').sort({'sequence': -1}).limit(req.session.kanbanSettings.tasks.countPerPage).exec(function (err, result) {
+                            var localRemaining = 0;
+
+                            if (err) {
+                                return next(err);
+                            }
+
+                            result.forEach(function (value) {
+                                localRemaining = localRemaining + value.remaining;
+                            });
+
+                            responseData.remaining = localRemaining;
+                            responseData.data = result;
+                            responseData.time = (new Date() - startTime);
+                            responseData.fold = (req.session.kanbanSettings.tasks.foldWorkflows && req.session.kanbanSettings.tasks.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
+                            res.send(responseData);
+
+                        });
+
+                    });
+
             });
-    };
+    }
 
     this.removeTask = function (req, res, next) {
-        var _id = req.param('_id');
-        models.get(req.session.lastDb, 'Tasks', tasksSchema).findById(_id, function (err, task) {
-            if (err) {
-                logWriter.log("Project.js remove task.remove " + err);
-                res.send(500, {error: "Can't remove Task"});
-            } else {
-                models.get(req.session.lastDb, 'Tasks', tasksSchema).findByIdAndRemove(_id, function (err) {
-                    if (err) {
-                        console.log(err);
-                        logWriter.log("Project.js remove task.remove " + err);
-                        res.send(500, {error: "Can't remove Task"});
-                    } else {
-                        event.emit('updateContent', req, res, task.project, "remove");
-                        event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", task.sequence, 0, task.workflow, task.workflow, false, true);
-                        res.send(200, {success: "Success removed"});
-                    }
-                });
+        var _id = req.params._id;
 
+        models.get(req.session.lastDb, 'Tasks', tasksSchema).findByIdAndRemove(_id, function (err, task) {
+            if (err) {
+                return next(err);
             }
+            event.emit('updateContent', req, res, task.project, 'remove');
+            event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), 'sequence', task.sequence, 0, task.workflow, task.workflow, false, true);
+            res.send(200, {success: 'Success removed'});
         });
     };
 
     this.getTasksPriority = function (req, res, next) {
-        var response = {};
-        response['data'] = [];
+
         models.get(req.session.lastDb, 'Priority', prioritySchema).find({}, function (err, _priority) {
             if (err) {
-                console.log(err);
-                logWriter.log("Project.js getTasksPriority priority.find " + err);
-                res.send(500, {error: "Can't find Priority"});
-            } else {
-                response['data'] = _priority;
-                res.send(response);
+                return next(err);
             }
+
+            res.send({data : _priority});
         });
     };
 
@@ -685,6 +679,7 @@ var Tasks = function (models, event) {
                                 if (err) {
                                     return next(err);
                                 }
+
                                 responseTasks.forEach(function (object) {
                                     if (object.count > req.session.kanbanSettings.tasks.countPerPage) {
                                         data.showMore = true;
@@ -692,7 +687,6 @@ var Tasks = function (models, event) {
                                 });
                                 data.arrayOfObjects = responseTasks;
                                 res.send(data);
-
                             }
                         );
 
@@ -704,18 +698,21 @@ var Tasks = function (models, event) {
     //ToDo refactor and move this to helpers (and pull out from everywhere)
     var calculateTaskEndDate = function (startDate, estimated) {
         var iWeeks, iDateDiff, iAdjust = 0;
+        var endDate;
+        var iWeekday1;
+        var iWeekday2;
 
         estimated = estimated * 1000 * 60 * 60;              // estimated in ticks
 
-        var endDate = startDate.getTime() + estimated;
+        endDate = startDate.getTime() + estimated;
         endDate = new Date(endDate);
 
         if (endDate < startDate) {
             return -1;
         }                 // error code if dates transposed
 
-        var iWeekday1 = startDate.getDay();                // day of week
-        var iWeekday2 = endDate.getDay();
+        iWeekday1 = startDate.getDay();                // day of week
+        iWeekday2 = endDate.getDay();
 
         iWeekday1 = (iWeekday1 == 0) ? 7 : iWeekday1;   // change Sunday from 0 to 7
         iWeekday2 = (iWeekday2 == 0) ? 7 : iWeekday2;
@@ -748,12 +745,14 @@ var Tasks = function (models, event) {
     //ToDo refactor and move this to helpers (and pull out from everywhere)
     var returnDuration = function (StartDate, EndDate) {
         var days = 0;
-        if (StartDate && EndDate) {
-            var startDate = new Date(StartDate);
-            var endDate = new Date(EndDate);
-            var tck = endDate - startDate;
-            var realDays = (((tck / 1000) / 60) / 60) / 8;
+        var tck;
+        var realDays;
 
+        if (StartDate && EndDate) {
+            StartDate = new Date(StartDate);
+            EndDate = new Date(EndDate);
+            tck = EndDate - StartDate;
+            realDays = (((tck / 1000) / 60) / 60) / 8;
             days = realDays.toFixed(1);
         }
         return days;
