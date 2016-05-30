@@ -20,10 +20,11 @@ module.exports = function (models) {
 
     var moduleId = MODULES.PROJECTS;
     var accessStackMiddlWare = require('../helpers/access')(moduleId, models);
-    
+
     router.use(authStackMiddleware);
-    
+
     router.get('/', accessStackMiddlWare, handler.getByViewType);
+    router.get('/test', accessStackMiddlWare, handler.getByViewTypeTest);
     router.get('/getProjectPMForDashboard', handler.getProjectPMForDashboard);
     router.get('/getForQuotation', handler.getForQuotation);
     router.get('/projectType', handler.getProjectType);
@@ -39,7 +40,7 @@ module.exports = function (models) {
     router.get('/:id/quotations', quotationHandler.getForProject);
     router.get('/:id/orders', quotationHandler.getForProject);
     router.get('/:id/payments', paymentsHandler.getForProject);
-    
+
     router.post('/updateAllProjects', handler.updateAllProjects);
     router.post('/sendInvoice', handler.sendInvoice);
 
