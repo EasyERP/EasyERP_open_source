@@ -8,9 +8,8 @@ var objectId = mongoose.Types.ObjectId;
 var _ = require('underscore');
 
 var Tasks = function (models, event) {
-    "use strict";
-    var access = require("../Modules/additions/access.js")(models);
-    var accessRoll = require("../helpers/accessRollHelper.js")(models);
+    'use strict';
+
     var validator = require('../helpers/validator');
 
     this.createTask = function (req, res, next) {
@@ -25,7 +24,7 @@ var Tasks = function (models, event) {
             error.status = 404;
             error.message = RESPONSES.PAGE_NOT_FOUND;
 
-            return next(err);
+            return next(error);
         }
 
         TasksModel.find({project: projectId})
@@ -50,6 +49,7 @@ var Tasks = function (models, event) {
                         if (err) {
                             return next(err);
                         }
+
                         event.emit('updateContent', req, res, result.project, 'create', result);
                         res.status(201).send({success: 'New Task created success', id: result._id});
                     });
@@ -58,61 +58,136 @@ var Tasks = function (models, event) {
 
     };
 
+    //ToDo refactor and move this to helpers (and pull out from everywhere)
+    function calculateTaskEndDate(startDate, estimated) {
+        var iWeeks = 0;
+        var iDateDiff = 0;
+        var iAdjust = 0;
+        var endDate;
+        var iWeekday1;
+        var iWeekday2;
+
+        estimated = estimated * 1000 * 60 * 60;              // estimated in ticks
+
+        endDate = startDate.getTime() + estimated;
+        endDate = new Date(endDate);
+
+        if (endDate < startDate) {
+            return -1;
+        }                 // error code if dates transposed
+
+        iWeekday1 = startDate.getDay();                // day of week
+        iWeekday2 = endDate.getDay();
+
+        iWeekday1 = (iWeekday1 === 0) ? 7 : iWeekday1;   // change Sunday from 0 to 7
+        iWeekday2 = (iWeekday2 === 0) ? 7 : iWeekday2;
+
+        if ((iWeekday1 <= 5) && (iWeekday2 <= 5) && (iWeekday1 > iWeekday2)) {
+            iAdjust = 1;
+        }  // adjustment if both days on weekend
+
+        iWeekday1 = (iWeekday1 <= 5) ? 0 : 1;    // only count weekdays
+        iWeekday2 = (iWeekday2 <= 5) ? 0 : 1;
+        // calculate differnece in weeks (1000mS * 60sec * 60min * 24hrs * 7 days = 604800000)
+        iWeeks = Math.floor((endDate.getTime() - startDate.getTime()) / 604800000);
+
+        if (iWeekday1 < iWeekday2) {
+            iDateDiff = (iWeeks * 2) + 2 * (iWeekday2 - iWeekday1);
+        } else if ((iWeekday1 === iWeekday2) && (iWeekday1 === 0)) {
+            iDateDiff = (iWeeks * 2) + 2 * iAdjust;
+        } else {
+            iDateDiff = (iWeeks * 2) + 2 * (iWeekday1 - iWeekday2);
+        }
+
+        //iDateDiff++;
+        iDateDiff = iDateDiff * 1000 * 60 * 60 * 24;
+        endDate = endDate.getTime() + iDateDiff;
+        endDate = new Date(endDate);
+
+        return endDate;
+    }
+
+    // ToDo refactor and move this to helpers (and pull out from everywhere)
+    function returnDuration(StartDate, EndDate) {
+        var days = 0;
+        var tck;
+        var realDays;
+
+        if (StartDate && EndDate) {
+            StartDate = new Date(StartDate);
+            EndDate = new Date(EndDate);
+            tck = EndDate - StartDate;
+            realDays = (((tck / 1000) / 60) / 60) / 8;
+            days = realDays.toFixed(1);
+        }
+        return days;
+    }
+
     this.taskUpdateOnlySelectedFields = function (req, res, next) {
         var _id = req.param('_id');
         var data = req.body;
         var fileName = data.fileName;
         var obj;
+        var StartDate;
 
         delete data._id;
         delete data.createdBy;
         delete data.fileName;
 
-        if (data.notes && data.notes.length != 0) {
-            obj = data.notes[data.notes.length - 1];
-            if (!obj._id) {
-                obj._id = mongoose.Types.ObjectId();
-            }
-            obj.date = new Date();
-            if (!obj.author) {
-                obj.author = req.session.uName;
-            }
-            data.notes[data.notes.length - 1] = obj;
-        }
-        if (data.estimated && data.logged) {
-            data['remaining'] = data.estimated - data.logged;
-        }
-        if (data && data.EndDate) {
-            data.duration = returnDuration(data.StartDate, data.EndDate);
-        }
-        if (data.estimated && data.estimated != 0) {
-            if (data.progress === 100) {
-                data.progress = 100;
-            } else {
-                data.progress = Math.round((data.logged / data.estimated) * 100);
-                var StartDate = (data.StartDate) ? new Date(data.StartDate) : new Date();
-                data.EndDate = calculateTaskEndDate(StartDate, data.estimated);
-                data.duration = returnDuration(data.StartDate, data.EndDate);
-            }
-        } else if (!data.estimated && data.logged) {
-            data.progress = 0;
+        function updateTask() {
+            models.get(req.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
+
+                var os = require('os');
+                var osType = (os.type().split('_')[0]);
+                var path;
+                var dir;
+                var newDirname;
+
+                if (err) {
+                    next(err);
+                }
+
+
+                if (fileName) {
+                    switch (osType) {
+                        case "Windows":
+                        {
+                            newDirname = __dirname.replace("\\Modules", "");
+                            while (newDirname.indexOf("\\") !== -1) {
+                                newDirname = newDirname.replace("\\", "\/");
+                            }
+                            path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                            dir = newDirname + "\/uploads\/" + _id;
+                        }
+                            break;
+                        case "Linux":
+                        {
+                            newDirname = __dirname.replace("/Modules", "");
+                            while (newDirname.indexOf("\\") !== -1) {
+                                newDirname = newDirname.replace("\\", "\/");
+                            }
+                            path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                            dir = newDirname + "\/uploads\/" + _id;
+                        }
+                    }
+
+                    fs.unlink(path, function (err) {
+                        console.log(err);
+                        fs.readdir(dir, function (err, files) {
+                            if (files && files.length === 0) {
+                                fs.rmdir(dir, function () {
+                                });
+                            }
+                        });
+                    });
+
+                }
+                res.send(200, {success: 'Tasks updated', notes: result.notes, sequence: result.sequence});
+            });
         }
 
-        if (data.assignedTo && typeof (data.assignedTo) == 'object') {
-            data.assignedTo = data.assignedTo._id;
-        }
-        if (data.customer && typeof (data.customer) == 'object') {
-            data.customer = data.customer._id;
-        }
-        if (data.project) {
-            event.emit('updateContent', req, res, data.project, 'update', _id, data);
-        } else if (data.workflow) {
-            sequenceUpdate();
-        } else {
-            updateTask();
-        }
         function sequenceUpdate() {
-            if (data.sequence == -1) {
+            if (data.sequence === -1) {
                 event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function () {
                     event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
                         data.sequence = sequence;
@@ -132,61 +207,53 @@ var Tasks = function (models, event) {
             }
         }
 
-        function updateTask() {
-            models.get(req.session.lastDb, 'Tasks', tasksSchema).findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
-                if (!err) {
-                    if (fileName) {
-                        var os = require("os");
-                        var osType = (os.type().split('_')[0]);
-                        var path;
-                        var dir;
-                        var newDirname;
-                        switch (osType) {
-                            case "Windows":
-                            {
-                                newDirname = __dirname.replace("\\Modules", "");
-                                while (newDirname.indexOf("\\") !== -1) {
-                                    newDirname = newDirname.replace("\\", "\/");
-                                }
-                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                dir = newDirname + "\/uploads\/" + _id;
-                            }
-                                break;
-                            case "Linux":
-                            {
-                                newDirname = __dirname.replace("/Modules", "");
-                                while (newDirname.indexOf("\\") !== -1) {
-                                    newDirname = newDirname.replace("\\", "\/");
-                                }
-                                path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                dir = newDirname + "\/uploads\/" + _id;
-                            }
-                        }
+        if (data.notes && data.notes.length != 0) {
+            obj = data.notes[data.notes.length - 1];
+            if (!obj._id) {
+                obj._id = mongoose.Types.ObjectId();
+            }
+            obj.date = new Date();
+            if (!obj.author) {
+                obj.author = req.session.uName;
+            }
+            data.notes[data.notes.length - 1] = obj;
+        }
+        if (data.estimated && data.logged) {
+            data.remaining = data.estimated - data.logged;
+        }
+        if (data && data.EndDate) {
+            data.duration = returnDuration(data.StartDate, data.EndDate);
+        }
+        if (data.estimated && data.estimated !== 0) {
+            if (data.progress !== 100) {
+                data.progress = Math.round((data.logged / data.estimated) * 100);
+                StartDate = (data.StartDate) ? new Date(data.StartDate) : new Date();
+                data.EndDate = calculateTaskEndDate(StartDate, data.estimated);
+                data.duration = returnDuration(data.StartDate, data.EndDate);
+            }
+        } else if (!data.estimated && data.logged) {
+            data.progress = 0;
+        }
 
-                        fs.unlink(path, function (err) {
-                            console.log(err);
-                            fs.readdir(dir, function (err, files) {
-                                if (files && files.length === 0) {
-                                    fs.rmdir(dir, function () {
-                                    });
-                                }
-                            });
-                        });
-
-                    }
-                    res.send(200, {success: 'Tasks updated', notes: result.notes, sequence: result.sequence});
-                } else {
-                    res.send(500, {error: "Can't update Tasks"});
-                    console.log(err);
-                }
-
-            });
+        if (data.assignedTo && typeof (data.assignedTo) === 'object') {
+            data.assignedTo = data.assignedTo._id;
+        }
+        if (data.customer && typeof (data.customer) === 'object') {
+            data.customer = data.customer._id;
+        }
+        if (data.project) {
+            event.emit('updateContent', req, res, data.project, 'update', _id, data);
+        } else if (data.workflow) {
+            sequenceUpdate();
+        } else {
+            updateTask();
         }
     };
 
     function caseFilter(filter) {
         var condition = [];
         var key;
+
         for (key in filter) {   // added correct fields for Tasks and one new field Summary
             switch (key) {
                 case 'workflow':
@@ -196,10 +263,10 @@ var Tasks = function (models, event) {
                     condition.push({'project._id': {$in: filter.project.value.objectID()}});
                     break;
                 case 'summary':
-                    condition.push({'_id': {$in: filter.summary.value.objectID()}});
+                    condition.push({_id: {$in: filter.summary.value.objectID()}});
                     break;
                 case 'type':
-                    condition.push({'type': {$in: filter.type.value}});
+                    condition.push({type: {$in: filter.type.value}});
                     break;
                 case 'assignedTo':
                     condition.push({'assignedTo._id': {$in: filter.assignedTo.value.objectID()}});
@@ -208,238 +275,7 @@ var Tasks = function (models, event) {
         }
 
         return condition;
-    };
-
-    this.getTasks = function (req, res, next) {
-        var viewType = req.params.viewType;
-
-        switch (viewType) {
-            case 'form':
-                getTaskById(req, res, next);
-                break;
-            case 'list':
-                getTasksForList(req, res, next);
-                break;
-            case 'kanban':
-                getTasksForKanban(req, res, next);
-                break;
-        }
-
-    };
-
-    function getTaskById (req, res, next) {
-        var data = req.query;
-        var Tasks = models.get(req.session.lastDb, 'Tasks', tasksSchema);
-
-        Tasks.findById(data.id)
-            .populate('project', '_id projectShortDesc projectName')
-            .populate(' assignedTo', '_id name imageSrc')
-            .populate('createdBy.user')
-            .populate('createdBy.user')
-            .populate('editedBy.user')
-            .populate('groups.users')
-            .populate('groups.group')
-            .populate('workflow')
-            .exec(function (err, task) {
-                if (err) {
-                    next(err);
-                }
-                res.status(200).send(task);
-            });
-    };
-
-    function getTasksForList(req, res, next) {
-        var data = req.query;
-        var limit = parseInt(data.count);
-        var skip = (parseInt(data.page ? data.page : 1) - 1) * limit;
-        var obj = {};
-        var addObj = {};
-        var Task = models.get(req.session.lastDb, 'Tasks', tasksSchema);
-
-        var keys;
-        var arrOfObjectId;
-        var sort;
-
-
-        if (data.parrentContentId) {
-            addObj['_id'] = objectId(data.parrentContentId);
-        }
-
-        models.get(req.session.lastDb, "Department", department).aggregate(
-            {
-                $match: {
-                    users: objectId(req.session.uId)
-                }
-            }, {
-                $project: {
-                    _id: 1
-                }
-            },
-            function (err, deps) {
-                if (err) {
-                    return next(err);
-                }
-
-                arrOfObjectId = deps.objectID();
-
-                models.get(req.session.lastDb, 'Project', projectSchema).aggregate(
-                    {
-                        $match: {
-                            $and: [
-                                addObj,
-                                {
-                                    $or: [
-                                        {
-                                            $or: [
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'group'},
-                                                        {'groups.users': objectId(req.session.uId)}
-                                                    ]
-                                                },
-                                                {
-                                                    $and: [
-                                                        {whoCanRW: 'group'},
-                                                        {'groups.group': {$in: arrOfObjectId}}
-                                                    ]
-                                                }
-                                            ]
-                                        },
-                                        {
-                                            $and: [
-                                                {whoCanRW: 'owner'},
-                                                {'groups.owner': objectId(req.session.uId)}
-                                            ]
-                                        },
-                                        {whoCanRW: "everyOne"}
-                                    ]
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        $project: {
-                            _id: 1
-                        }
-                    },
-                    function (err, result) { // added aggregate function for filtration, sort moved to aggregate
-                        if (err) {
-                            return next(err);
-                        }
-
-                        obj = {'$and': [{'project._id': {$in: _.pluck(result, '_id')}}]};
-
-                        if (data && data.filter) {
-                            obj['$and'].push({$and: caseFilter(data.filter)});
-                        }
-
-                        if (data.sort) {
-                            keys = Object.keys(data.sort)[0];
-                            data.sort[keys] = parseInt(data.sort[keys]);
-                            sort = data.sort;
-                        } else {
-                            sort = {"editedBy.date": -1};
-                        }
-
-                        Task
-                            .aggregate([{
-                                $lookup: {
-                                    from: "Employees",
-                                    localField: "assignedTo",
-                                    foreignField: "_id",
-                                    as: "assignedTo"
-                                }
-                            }, {
-                                $lookup: {
-                                    from: "Project",
-                                    localField: "project",
-                                    foreignField: "_id",
-                                    as: "project"
-                                }
-                            }, {
-                                $lookup: {
-                                    from: "Users",
-                                    localField: "createdBy.user",
-                                    foreignField: "_id",
-                                    as: "createdBy.user"
-                                }
-                            }, {
-                                $lookup: {
-                                    from: "Users",
-                                    localField: "editedBy.user",
-                                    foreignField: "_id",
-                                    as: "editedBy.user"
-                                }
-                            }, {
-                                $lookup: {
-                                    from: "workflows",
-                                    localField: "workflow",
-                                    foreignField: "_id",
-                                    as: "workflow"
-                                }
-                            }, {
-                                $project: {
-                                    _id: 1,
-                                    summary: 1,
-                                    type: 1,
-                                    workflow: {$arrayElemAt: ["$workflow", 0]},
-                                    assignedTo: {$arrayElemAt: ["$assignedTo", 0]},
-                                    project: {$arrayElemAt: ["$project", 0]},
-                                    'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                                    'editedBy.user': {$arrayElemAt: ["$editedBy.user", 0]},
-                                    'createdBy.date': 1,
-                                    'editedBy.date': 1,
-                                    StartDate: 1,
-                                    EndDate: 1,
-                                    logged: 1,
-                                    tags: 1,
-                                    progress: 1,
-                                    status: 1,
-                                    estimated: 1,
-                                    sequence: 1,
-                                    taskCount: 1
-                                }
-                            }, {
-                                $project: {
-                                    _id: 1,
-                                    summary: 1,
-                                    type: 1,
-                                    workflow: 1,
-                                    project: 1,
-                                    assignedTo: 1,
-                                    'createdBy.date': 1,
-                                    'editedBy.date': 1,
-                                    'createdBy.user': 1,
-                                    'editedBy.user': 1,
-                                    StartDate: 1,
-                                    EndDate: 1,
-                                    logged: 1,
-                                    tags: 1,
-                                    progress: 1,
-                                    status: 1,
-                                    estimated: 1,
-                                    sequence: 1,
-                                    taskCount: 1
-                                }
-                            }, {
-                                $match: obj
-                            }, {
-                                $sort: sort
-                            }, {
-                                $skip: skip
-                            }, {
-                                $limit: limit
-                            }], function (err, tasks) {
-                                if (err) {
-                                    return next(err);
-                                }
-
-                                res.send({data: tasks});
-                            });
-                    });
-            }
-        );
-    };
+    }
 
     function getTasksForKanban(req, res, next) {
         var startTime = new Date();
@@ -500,7 +336,7 @@ var Tasks = function (models, event) {
                                                 {'groups.owner': objectId(req.session.uId)}
                                             ]
                                         },
-                                        {whoCanRW: "everyOne"}
+                                        {whoCanRW: 'everyOne'}
                                     ]
                                 }
                             ]
@@ -524,29 +360,262 @@ var Tasks = function (models, event) {
                             query.where('type').in(data.filter.type);
                         }
 
-                        query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").populate('assignedTo', 'name').populate('project', 'projectShortDesc').sort({'sequence': -1}).limit(req.session.kanbanSettings.tasks.countPerPage).exec(function (err, result) {
-                            var localRemaining = 0;
+                        query.select('_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence')
+                            .populate('assignedTo', 'name')
+                            .populate('project', 'projectShortDesc')
+                            .sort({sequence: -1})
+                            .limit(req.session.kanbanSettings.tasks.countPerPage)
+                            .exec(function (err, result) {
+                                var localRemaining = 0;
 
-                            if (err) {
-                                return next(err);
-                            }
+                                if (err) {
+                                    return next(err);
+                                }
 
-                            result.forEach(function (value) {
-                                localRemaining = localRemaining + value.remaining;
+                                result.forEach(function (value) {
+                                    localRemaining = localRemaining + value.remaining;
+                                });
+
+                                responseData.remaining = localRemaining;
+                                responseData.data = result;
+                                responseData.time = (new Date() - startTime);
+                                responseData.fold = (req.session.kanbanSettings.tasks.foldWorkflows && req.session.kanbanSettings.tasks.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
+                                res.send(responseData);
                             });
-
-                            responseData.remaining = localRemaining;
-                            responseData.data = result;
-                            responseData.time = (new Date() - startTime);
-                            responseData.fold = (req.session.kanbanSettings.tasks.foldWorkflows && req.session.kanbanSettings.tasks.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
-                            res.send(responseData);
-
-                        });
-
                     });
 
             });
     }
+
+    function getTaskById(req, res, next) {
+        var data = req.query;
+        var Tasks = models.get(req.session.lastDb, 'Tasks', tasksSchema);
+
+        Tasks.findById(data.id)
+            .populate('project', '_id projectShortDesc projectName')
+            .populate(' assignedTo', '_id name imageSrc')
+            .populate('createdBy.user')
+            .populate('createdBy.user')
+            .populate('editedBy.user')
+            .populate('groups.users')
+            .populate('groups.group')
+            .populate('workflow')
+            .exec(function (err, task) {
+                if (err) {
+                    next(err);
+                }
+                res.status(200).send(task);
+            });
+    }
+
+    function getTasksForList(req, res, next) {
+        var data = req.query;
+        var limit = parseInt(data.count, 10);
+        var skip = (parseInt(data.page || 1, 10) - 1) * limit;
+        var obj = {};
+        var addObj = {};
+        var Task = models.get(req.session.lastDb, 'Tasks', tasksSchema);
+
+        var keys;
+        var arrOfObjectId;
+        var sort;
+
+        if (data.parrentContentId) {
+            addObj._id = objectId(data.parrentContentId);
+        }
+
+        models.get(req.session.lastDb, 'Department', department).aggregate(
+            {
+                $match: {
+                    users: objectId(req.session.uId)
+                }
+            }, {
+                $project: {
+                    _id: 1
+                }
+            },
+            function (err, deps) {
+                if (err) {
+                    return next(err);
+                }
+
+                arrOfObjectId = deps.objectID();
+
+                models.get(req.session.lastDb, 'Project', projectSchema).aggregate(
+                    {
+                        $match: {
+                            $and: [
+                                addObj,
+                                {
+                                    $or: [
+                                        {
+                                            $or: [
+                                                {
+                                                    $and: [
+                                                        {whoCanRW: 'group'},
+                                                        {'groups.users': objectId(req.session.uId)}
+                                                    ]
+                                                },
+                                                {
+                                                    $and: [
+                                                        {whoCanRW: 'group'},
+                                                        {'groups.group': {$in: arrOfObjectId}}
+                                                    ]
+                                                }
+                                            ]
+                                        },
+                                        {
+                                            $and: [
+                                                {whoCanRW: 'owner'},
+                                                {'groups.owner': objectId(req.session.uId)}
+                                            ]
+                                        },
+                                        {whoCanRW: 'everyOne'}
+                                    ]
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $project: {
+                            _id: 1
+                        }
+                    },
+                    function (err, result) { // added aggregate function for filtration, sort moved to aggregate
+                        if (err) {
+                            return next(err);
+                        }
+
+                        obj = {$and: [{'project._id': {$in: _.pluck(result, '_id')}}]};
+
+                        if (data && data.filter) {
+                            obj.$and.push({$and: caseFilter(data.filter)});
+                        }
+
+                        if (data.sort) {
+                            keys = Object.keys(data.sort)[0];
+                            data.sort[keys] = parseInt(data.sort[keys]);
+                            sort = data.sort;
+                        } else {
+                            sort = {'editedBy.date': -1};
+                        }
+
+                        Task
+                            .aggregate([{
+                                $lookup: {
+                                    from        : 'Employees',
+                                    localField  : 'assignedTo',
+                                    foreignField: '_id',
+                                    as          : 'assignedTo'
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : 'Project',
+                                    localField  : 'project',
+                                    foreignField: '_id',
+                                    as          : 'project'
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : 'Users',
+                                    localField  : 'createdBy.user',
+                                    foreignField: '_id',
+                                    as          : 'createdBy.user'
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : 'Users',
+                                    localField  : 'editedBy.user',
+                                    foreignField: '_id',
+                                    as          : 'editedBy.user'
+                                }
+                            }, {
+                                $lookup: {
+                                    from        : 'workflows',
+                                    localField  : 'workflow',
+                                    foreignField: '_id',
+                                    as          : 'workflow'
+                                }
+                            }, {
+                                $project: {
+                                    _id             : 1,
+                                    summary         : 1,
+                                    type            : 1,
+                                    workflow        : {$arrayElemAt: ['$workflow', 0]},
+                                    assignedTo      : {$arrayElemAt: ['$assignedTo', 0]},
+                                    project         : {$arrayElemAt: ['$project', 0]},
+                                    'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                                    'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
+                                    'createdBy.date': 1,
+                                    'editedBy.date' : 1,
+                                    StartDate       : 1,
+                                    EndDate         : 1,
+                                    logged          : 1,
+                                    tags            : 1,
+                                    progress        : 1,
+                                    status          : 1,
+                                    estimated       : 1,
+                                    sequence        : 1,
+                                    taskCount       : 1
+                                }
+                            }, {
+                                $project: {
+                                    _id             : 1,
+                                    summary         : 1,
+                                    type            : 1,
+                                    workflow        : 1,
+                                    project         : 1,
+                                    assignedTo      : 1,
+                                    'createdBy.date': 1,
+                                    'editedBy.date' : 1,
+                                    'createdBy.user': 1,
+                                    'editedBy.user' : 1,
+                                    StartDate       : 1,
+                                    EndDate         : 1,
+                                    logged          : 1,
+                                    tags            : 1,
+                                    progress        : 1,
+                                    status          : 1,
+                                    estimated       : 1,
+                                    sequence        : 1,
+                                    taskCount       : 1
+                                }
+                            }, {
+                                $match: obj
+                            }, {
+                                $sort: sort
+                            }, {
+                                $skip: skip
+                            }, {
+                                $limit: limit
+                            }], function (err, tasks) {
+                                if (err) {
+                                    return next(err);
+                                }
+
+                                res.send({data: tasks});
+                            });
+                    });
+            }
+        );
+    }
+
+    this.getTasks = function (req, res, next) {
+        var viewType = req.params.viewType;
+
+        switch (viewType) {
+            case 'form':
+                getTaskById(req, res, next);
+                break;
+            case 'list':
+                getTasksForList(req, res, next);
+                break;
+            default :
+                getTasksForKanban(req, res, next);
+                break;
+        }
+
+    };
 
     this.removeTask = function (req, res, next) {
         var _id = req.params._id;
@@ -555,6 +624,7 @@ var Tasks = function (models, event) {
             if (err) {
                 return next(err);
             }
+
             event.emit('updateContent', req, res, task.project, 'remove');
             event.emit('updateSequence', models.get(req.session.lastDb, 'Tasks', tasksSchema), 'sequence', task.sequence, 0, task.workflow, task.workflow, false, true);
             res.send(200, {success: 'Success removed'});
@@ -568,7 +638,7 @@ var Tasks = function (models, event) {
                 return next(err);
             }
 
-            res.send({data : _priority});
+            res.send({data: _priority});
         });
     };
 
@@ -584,7 +654,7 @@ var Tasks = function (models, event) {
             addObj._id = objectId(options.parrentContentId);
         }
 
-        models.get(req.session.lastDb, "Department", department).aggregate({ // toDo on accessRollHelper
+        models.get(req.session.lastDb, 'Department', department).aggregate({ // toDo on accessRollHelper
                 $match: {
                     users: objectId(req.session.uId)
                 }
@@ -630,7 +700,7 @@ var Tasks = function (models, event) {
                                                 {'groups.owner': objectId(req.session.uId)}
                                             ]
                                         },
-                                        {whoCanRW: "everyOne"}
+                                        {whoCanRW: 'everyOne'}
                                     ]
                                 }
                             ]
@@ -670,7 +740,7 @@ var Tasks = function (models, event) {
                             },
                             {
                                 $group: {
-                                    _id           : "$workflow",
+                                    _id           : '$workflow',
                                     count         : {$sum: 1},
                                     totalRemaining: {$sum: '$remaining'}
                                 }
@@ -693,70 +763,8 @@ var Tasks = function (models, event) {
                     });
 
             });
-    }
-
-    //ToDo refactor and move this to helpers (and pull out from everywhere)
-    var calculateTaskEndDate = function (startDate, estimated) {
-        var iWeeks, iDateDiff, iAdjust = 0;
-        var endDate;
-        var iWeekday1;
-        var iWeekday2;
-
-        estimated = estimated * 1000 * 60 * 60;              // estimated in ticks
-
-        endDate = startDate.getTime() + estimated;
-        endDate = new Date(endDate);
-
-        if (endDate < startDate) {
-            return -1;
-        }                 // error code if dates transposed
-
-        iWeekday1 = startDate.getDay();                // day of week
-        iWeekday2 = endDate.getDay();
-
-        iWeekday1 = (iWeekday1 == 0) ? 7 : iWeekday1;   // change Sunday from 0 to 7
-        iWeekday2 = (iWeekday2 == 0) ? 7 : iWeekday2;
-
-        if ((iWeekday1 <= 5) && (iWeekday2 <= 5) && (iWeekday1 > iWeekday2)) {
-            iAdjust = 1;
-        }  // adjustment if both days on weekend
-
-        iWeekday1 = (iWeekday1 <= 5) ? 0 : 1;    // only count weekdays
-        iWeekday2 = (iWeekday2 <= 5) ? 0 : 1;
-        // calculate differnece in weeks (1000mS * 60sec * 60min * 24hrs * 7 days = 604800000)
-        iWeeks = Math.floor((endDate.getTime() - startDate.getTime()) / 604800000);
-
-        if (iWeekday1 < iWeekday2) {
-            iDateDiff = (iWeeks * 2) + 2 * (iWeekday2 - iWeekday1);
-        } else if ((iWeekday1 == iWeekday2) && (iWeekday1 == 0)) {
-            iDateDiff = (iWeeks * 2) + 2 * iAdjust;
-        } else {
-            iDateDiff = (iWeeks * 2) + 2 * (iWeekday1 - iWeekday2);
-        }
-
-        //iDateDiff++;
-        iDateDiff = iDateDiff * 1000 * 60 * 60 * 24;
-        endDate = endDate.getTime() + iDateDiff;
-        endDate = new Date(endDate);
-
-        return endDate;
     };
 
-    //ToDo refactor and move this to helpers (and pull out from everywhere)
-    var returnDuration = function (StartDate, EndDate) {
-        var days = 0;
-        var tck;
-        var realDays;
-
-        if (StartDate && EndDate) {
-            StartDate = new Date(StartDate);
-            EndDate = new Date(EndDate);
-            tck = EndDate - StartDate;
-            realDays = (((tck / 1000) / 60) / 60) / 8;
-            days = realDays.toFixed(1);
-        }
-        return days;
-    };
 };
 
 module.exports = Tasks;

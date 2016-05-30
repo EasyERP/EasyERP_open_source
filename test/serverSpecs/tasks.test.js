@@ -122,7 +122,7 @@ describe("Tasks Specs", function () {
             aggent
                 .post('tasks')
                 .send(body)
-                .expect(404, done);
+                .expect(500, done);
         });
 
         it('should return all tasks with details', function (done) {
