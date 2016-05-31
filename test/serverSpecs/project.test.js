@@ -147,6 +147,8 @@ describe('Project Specs', function () {
                     expect(firstProject)
                         .and.to.have.property('TargetEndDate');
                     expect(firstProject)
+                        .and.to.have.property('notRemovable');
+                    expect(firstProject)
                         .and.to.have.property('workflow')
                         .and.to.have.property('_id');
                     expect(firstProject)

@@ -221,7 +221,7 @@ var Project = function (models, event) {
         return endDate;
     };
 
-    function create(req, data, res) {
+  /*  function create(req, data, res) {
         try {
             if (!data.projectName || !data.projectShortDesc) {
                 logWriter.log('Project.create Incorrect Incoming Data');
@@ -357,7 +357,7 @@ var Project = function (models, event) {
             logWriter.log("Project.js  " + Exception);
             res.send(500, {error: 'Project.save  error'});
         }
-    };
+    };*/
 
     function getProjectStatusCountForDashboard(req, response) {
         models.get(req.session.lastDb, "Workflows", workflow).find({"wId": "Projects"}).select("_id name").exec(function (error, resWorkflow) {
@@ -2279,7 +2279,7 @@ var Project = function (models, event) {
     };
 
     return {
-        create: create,//End create
+        //create: create,//End create
 
         getForDd: getForDd,
 
@@ -2301,11 +2301,11 @@ var Project = function (models, event) {
 
         update: update,
 
-        updateOnlySelectedFields: updateOnlySelectedFields,//Project Patch method
+        //updateOnlySelectedFields: updateOnlySelectedFields,//Project Patch method
 
         taskUpdateOnlySelectedFields: taskUpdateOnlySelectedFields,//Tasks Patch Method
 
-        remove: remove,
+        //remove: remove,
 
         getLeadsPriority : getLeadsPriority,
 
