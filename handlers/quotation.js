@@ -639,21 +639,11 @@ var Quotation = function (models, event) {
         var data = mapObject(req.body);
         var mid = parseInt(req.headers.mid, 10);
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, mid, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    updateOnlySelectedFields(req, res, next, id, data);
-                } else {
-                    res.status(403).send();
-                }
-            });
-        } else {
-            res.status(401).send();
-        }
+        data.editedBy = {
+            user: req.session.uId,
+            date: new Date().toISOString()
+        };
+        updateOnlySelectedFields(req, res, next, id, data);
     };
 
     this.updateModel = function (req, res, next) {
@@ -894,6 +884,26 @@ var Quotation = function (models, event) {
     };
 
     this.getByViewType = function (req, res, next) {
+        var query = req.query;
+        var viewType = query.viewType;
+        var id = req.query.id;
+
+        if (id && id.length >= 24) {
+            getById(req, res, next);
+            return false;
+        }
+
+        switch (viewType) {
+            case "form":
+                getById(req, res, next);
+                break;
+            default:
+                getByViewType(req, res, next);
+                break;
+        }
+    };
+
+    function getByViewType(req, res, next) {
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var data = req.query;
         var paginationObject = pageHelper(data);
@@ -1110,15 +1120,23 @@ var Quotation = function (models, event) {
             response.data = result;
             res.status(200).send(response);
         });
-    };
+    }
 
     this.getById = function (req, res, next) {
-        var id = req.params.id;
+        getById(req, res, next);
+    };
+
+    function getById(req, res, next) {
+        var id = req.query.id;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
+
+        if (id.length < 24) {
+            return res.status(400).send();
+        }
 
         /*var contentType = req.query.contentType;
          var isOrder = ((contentType === 'Order') || (contentType === 'salesOrder'));*/

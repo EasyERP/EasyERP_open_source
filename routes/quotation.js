@@ -9,14 +9,15 @@ module.exports = function (models, event) {
     var moduleId = MODULES.QUOTATION;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
-    router.get('/', handler.getByViewType);
-    router.get('/totalCollectionLength', handler.totalCollectionLength);
-    router.get('/getFilterValues', handler.getFilterValues);
-    router.get('/form/:id', handler.getById);
-    router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
-    router.delete('/:id', handler.remove);
-    router.patch('/:id', handler.putchModel);
-    router.put('/:id', handler.updateModel);
+    router.use(authStackMiddleware);
+
+    router.get('/', accessStackMiddlware, handler.getByViewType);
+    router.get('/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
+    router.get('/getFilterValues', accessStackMiddlware, handler.getFilterValues);
+    router.post('/', accessStackMiddlware, handler.create);
+    router.delete('/:id', accessStackMiddlware, handler.remove);
+    router.patch('/:id', accessStackMiddlware, handler.putchModel);
+    router.put('/:id', accessStackMiddlware, handler.updateModel);
 
     return router;
 };

@@ -116,19 +116,14 @@ describe("Quotation Specs", function () {
             var query = {
                 page       : 1,
                 count      : 4,
-                contentType: 'list',
-                filter     : {
-                    project: {
-                        key: "project._id"
-                    }
-                },
+                viewType: 'list',
+                contentType: 'salesQuotation',
                 forSales   : true
             };
 
             aggent
                 .get('quotation')
                 .query(query)
-                .query({"filter[project][value][0]": CONSTANTS.PROJECT})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -137,14 +132,13 @@ describe("Quotation Specs", function () {
                         return done(err);
                     }
                     expect(body)
-                        .to.be.instanceOf(Array);
+                        .to.be.instanceOf(Object);
 
-                    expect(body.length)
+                    expect(body.data.length)
                         .to.be.lte(4);
                     expect(body)
-                        .to.have.deep.property('[0]')
-                        .and.to.have.property("project")
-                        .and.to.have.property("_id", CONSTANTS.PROJECT);
+                        .to.have.property('total')
+
 
                     done();
                 });
@@ -196,11 +190,13 @@ describe("Quotation Specs", function () {
 
         it("should get quotation by id", function (done) {
             var query = {
-                forSales: true
-            }
+                forSales: true,
+                viewType: 'form',
+                id: id
+            };
 
             aggent
-                .get('quotation/form/' + id)
+                .get('quotation/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -251,8 +247,9 @@ describe("Quotation Specs", function () {
         it("should fail get quotation by id", function (done) {
 
             aggent
-                .get('quotation/form/123cba')
-                .expect(500, done);
+                .get('quotation')
+                .query({id: '111', viewType: 'form'})
+                .expect(400, done);
         });
 
         it("should update quotation", function (done) {
@@ -465,9 +462,13 @@ describe("Quotation Specs", function () {
     describe('Quotation with no authorise', function () {
 
         it("should fail get Quotation for View", function (done) {
+            var query = {
+                viewType: 'list'
+            };
 
             aggent
-                .get('quotation/list')
+                .get('quotation')
+                .query(query)
                 .expect(404, done);
         });
 
