@@ -52,7 +52,7 @@ describe('Project Specs', function () {
                     expect(body)
                         .to.have.property('showMore');
                     expect(body)
-                        .to.have.property('count');
+                        .to.have.property('total');
                     expect(body)
                         .to.have.property('data')
                         .and.to.be.instanceOf(Array);
@@ -77,6 +77,101 @@ describe('Project Specs', function () {
                     expect(firstProject)
                         .and.to.have.property('customer')
                         .and.not.to.have.property('_id');
+                    expect(firstProject)
+                        .and.to.have.property('customer')
+                        .and.to.have.property('name')
+                        .and.to.have.property('first')
+                        .and.to.be.a('string');
+                    expect(Object.keys(firstProject.customer))
+                        .to.have.lengthOf(1);
+
+                    if (firstProject.salesManager) {
+                        expect(firstProject)
+                            .and.to.have.property('salesManager')
+                            .and.to.have.property('_id')
+                            .and.to.have.lengthOf(24);
+                        expect(Object.keys(firstProject.salesManager))
+                            .to.have.lengthOf(1);
+                    }
+
+                    done();
+                });
+        });
+
+
+        it('should get projects for list', function (done) {
+            var query = {
+                page    : 1,
+                count   : 4,
+                viewType: 'list'
+            };
+
+            aggent
+                .get('projects/')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+                    var firstProject;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('showMore');
+                    expect(body)
+                        .to.have.property('total');
+                    expect(body)
+                        .to.have.property('data')
+                        .and.to.be.instanceOf(Array);
+
+                    firstProject = body.data[0];
+
+                    expect(firstProject)
+                        .and.to.have.property('_id')
+                        .and.to.have.lengthOf(24);
+                    expect(firstProject)
+                        .and.to.have.property('name')
+                        .and.to.be.a('string');
+                    expect(firstProject)
+                        .and.to.have.property('health');
+                    expect(firstProject)
+                        .and.to.have.property('progress');
+                    expect(firstProject)
+                        .and.to.have.property('StartDate');
+                    expect(firstProject)
+                        .and.to.have.property('EndDate');
+                    expect(firstProject)
+                        .and.to.have.property('TargetEndDate');
+                    expect(firstProject)
+                        .and.to.have.property('workflow')
+                        .and.to.have.property('_id');
+                    expect(firstProject)
+                        .and.to.have.property('workflow')
+                        .and.to.have.property('name')
+                        .and.to.be.a('string');
+                    expect(firstProject)
+                        .and.to.have.property('customer')
+                        .and.not.to.have.property('_id');
+                    expect(firstProject)
+                        .and.to.have.property('createdBy')
+                        .and.to.have.property('date')
+                        .and.to.be.a('string');
+                    expect(firstProject)
+                        .and.to.have.property('createdBy')
+                        .and.to.have.property('user')
+                        .and.to.be.a('string');
+                    expect(firstProject)
+                        .and.to.have.property('editedBy')
+                        .and.to.have.property('date')
+                        .and.to.be.a('string');
+                    expect(firstProject)
+                        .and.to.have.property('editedBy')
+                        .and.to.have.property('user')
+                        .and.to.be.a('string');
                     expect(firstProject)
                         .and.to.have.property('customer')
                         .and.to.have.property('name')
