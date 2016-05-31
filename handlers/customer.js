@@ -739,11 +739,7 @@ var Customers = function (models) {
     this.getByViewType = function (req, res, next) {
         var query = req.query;
         var viewType = query.viewType;
-        var id = req.params.id;
-
-        if (viewType === id) {
-            viewType = id;
-        }
+        var id = req.query.id;
 
         if (id.length >= 24) {
             getById(req, res, next);

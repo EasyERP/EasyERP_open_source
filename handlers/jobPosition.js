@@ -9,6 +9,7 @@ var JobPosition = function (models) {
     var objectId = mongoose.Types.ObjectId;
 
     var _ = require('../node_modules/underscore');
+    var pageHelper = require('../helpers/pageHelper');
 
     this.getFilterValues = function (req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
@@ -93,13 +94,9 @@ var JobPosition = function (models) {
     this.getByViewType = function (req, res, next) {
         var query = req.query;
         var viewType = query.viewType;
-        var id = req.params.id;
+        var id = query.id;
 
-        if (viewType === id) {
-            viewType = id;
-        }
-
-        if (id.length >= 24) {
+        if (id && id.length >= 24) {
             getById(req, res, next);
             return false;
         }
@@ -117,7 +114,7 @@ var JobPosition = function (models) {
     function getById(req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
-        var id = req.params.id;
+        var id = req.query.id;
 
         JobPosition
             .findById(id)
@@ -159,6 +156,11 @@ var JobPosition = function (models) {
         var sort = req.query.sort;
         var data = req.query;
         var i;
+        var parallelTasks;
+        var paginationObject = pageHelper(data);
+        var limit = paginationObject.limit;
+        var skip = paginationObject.skip;
+
 
         function compareSort(personA, personB) {
             if (sort[i] === 1) {
@@ -168,43 +170,79 @@ var JobPosition = function (models) {
             return personB[i] - personA[i];
         }
 
-        JobPosition
-            .find({})
-            .populate('createdBy.user')
-            .populate('editedBy.user')
-            .populate('department', '_id departmentName')
-            .populate('workflow', 'name _id status')
-            .sort(sort)
-            .skip((data.page - 1) * data.count)
-            .limit(data.count)
-            .lean()
-            .exec(function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-                async.each(result, function (jp, cb) {
-                    Employee.find({"jobPosition": jp._id}).count(function (err, count) {
-                        if (err) {
-                            return cb(err);
-                        }
-                        jp.numberOfEmployees = count;
-                        jp.totalForecastedEmployees = count + jp.expectedRecruitment;
-                        cb();
-                    });
-                }, function (err) {
+        var getCount = function (pCb) {
+            JobPosition
+                .find({})
+                .populate('createdBy.user')
+                .populate('editedBy.user')
+                .populate('department', '_id departmentName')
+                .populate('workflow', 'name _id status')
+                .count(function (err, result) {
                     if (err) {
-                        return next(err);
+                        return pCb(err);
                     }
 
-                    for (i in sort) {
-                        if (typeof result[0][i] === 'number') {
-                            result.sort(compareSort);
-                        }
-                    }
-
-                    res.status(200).send({data: result});
+                    pCb(null, result);
                 });
-            });
+        };
+
+        var getData = function (pCb) {
+            JobPosition
+                .find({})
+                .populate('createdBy.user')
+                .populate('editedBy.user')
+                .populate('department', '_id departmentName')
+                .populate('workflow', 'name _id status')
+                .sort(sort)
+                .skip(skip)
+                .limit(limit)
+                .lean()
+                .exec(function (err, result) {
+                    if (err) {
+                        return pCb(err);
+                    }
+                    async.each(result, function (jp, cb) {
+                        Employee.find({"jobPosition": jp._id}).count(function (err, count) {
+                            if (err) {
+                                return cb(err);
+                            }
+                            jp.numberOfEmployees = count;
+                            jp.totalForecastedEmployees = count + jp.expectedRecruitment;
+                            cb();
+                        });
+                    }, function (err) {
+                        if (err) {
+                            return pCb(err);
+                        }
+
+                        for (i in sort) {
+                            if (typeof result[0][i] === 'number') {
+                                result.sort(compareSort);
+                            }
+                        }
+
+                        pCb(null, result);
+                    });
+                });
+        };
+
+        parallelTasks = [getCount, getData];
+
+        async.parallel(parallelTasks, function (err, result) {
+            var count;
+            var response = {};
+
+            if (err) {
+                return next(err);
+            }
+
+            count = result[0] || 0;
+
+            response.total = count;
+            response.data = result[1];
+
+            res.status(200).send(response);
+        });
     }
 
     this.create = function (req, res, next) {
