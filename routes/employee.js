@@ -1,4 +1,3 @@
-
 var express = require('express');
 var router = express.Router();
 var EmployeeHandler = require('../handlers/employee');
@@ -13,33 +12,34 @@ module.exports = function (event, models) {
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
 
-    router.get('/getForProjectDetails', authStackMiddleware, handler.getForProjectDetails);
-    router.get('/getForDD', authStackMiddleware, handler.getForDD);
-    router.get('/bySales', authStackMiddleware, handler.getBySales);
-    router.get('/byDepartment', authStackMiddleware, handler.byDepartment);
-    router.get('/exportToXlsx', authStackMiddleware, handler.exportToXlsx);
-    // router.get('/exportToCsv', authStackMiddleware, handler.exportToCsv);
-    // router.get('/getMinHireDate', authStackMiddleware, handler.getMinHireDate);
-    router.get('/getForDdByRelatedUser', authStackMiddleware, handler.getForDdByRelatedUser);
-    router.get('/getPersonsForDd', authStackMiddleware, handler.getSalesPerson);
-    router.get('/getEmployeesAlphabet', authStackMiddleware, handler.getEmployeesAlphabet);
-    router.get('/getEmployeesImages', authStackMiddleware, handler.getEmployeesImages);
-    router.get('/totalCollectionLength', authStackMiddleware, handler.totalCollectionLength);
-    router.get('/nationality', authStackMiddleware, handler.getNationality);
-    router.get('/languages', authStackMiddleware, handler.getLanguages);
-    router.get('/sources', authStackMiddleware, handler.getSources);
-    /*router.get('/getByMonth', authStackMiddleware, handler.getSalaryByMonth);*/
+    router.use(authStackMiddleware);
 
-    router.get('/birthdays', authStackMiddleware, handler.getBirthdays);
+    router.get('/', accessStackMiddlware, handler.getByViewTpe);
+    router.get('/getForProjectDetails', accessStackMiddlware, handler.getForProjectDetails);
+    router.get('/getForDD', accessStackMiddlware, handler.getForDD);
+    router.get('/bySales', accessStackMiddlware, handler.getBySales);
+    router.get('/byDepartment', accessStackMiddlware, handler.byDepartment);
+    router.get('/exportToXlsx', accessStackMiddlware, handler.exportToXlsx);
+    // router.get('/exportToCsv', accessStackMiddlware, handler.exportToCsv);
+    // router.get('/getMinHireDate', accessStackMiddlware, handler.getMinHireDate);
+    router.get('/getForDdByRelatedUser', accessStackMiddlware, handler.getForDdByRelatedUser);
+    router.get('/getPersonsForDd', accessStackMiddlware, handler.getSalesPerson);
+    router.get('/getEmployeesAlphabet', accessStackMiddlware, handler.getEmployeesAlphabet);
+    router.get('/getEmployeesImages', accessStackMiddlware, handler.getEmployeesImages);
+    router.get('/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
+    router.get('/nationality', accessStackMiddlware, handler.getNationality);
+    router.get('/languages', accessStackMiddlware, handler.getLanguages);
+    router.get('/sources', accessStackMiddlware, handler.getSources);
+    /*router.get('/getByMonth', accessStackMiddlware, handler.getSalaryByMonth);*/
+
+    router.get('/birthdays', accessStackMiddlware, handler.getBirthdays);
     router.get('/getYears', handler.getYears);
     router.get('/getEmployeesCount', handler.getEmployeesCount);
-    router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getByViewTpe);
 
-    
-    router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
-    router.post('/uploadEmployeesFiles', authStackMiddleware, accessStackMiddlware, multipartMiddleware, handler.uploadEmployeesFiles);
-    router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateOnlySelectedFields);
-    router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
+    router.post('/', accessStackMiddlware, handler.create);
+    router.post('/uploadEmployeesFiles', accessStackMiddlware, multipartMiddleware, handler.uploadEmployeesFiles);
+    router.patch('/:id', accessStackMiddlware, handler.updateOnlySelectedFields);
+    router.delete('/:id', accessStackMiddlware, handler.remove);
 
     return router;
 };

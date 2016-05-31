@@ -22,7 +22,7 @@ describe("Application Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'lilyadb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -100,7 +100,7 @@ describe("Application Specs", function () {
                 contentType  : 'Applications'
             };
             aggent
-                .get('applications/list')
+                .get('applications/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -114,6 +114,8 @@ describe("Application Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
+                    expect(body)
+                        .to.have.property('total');
 
                     done();
                 });
@@ -241,7 +243,7 @@ describe("Application Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'lilyadb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });

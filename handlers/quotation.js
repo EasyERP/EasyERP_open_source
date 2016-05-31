@@ -6,6 +6,7 @@ var Quotation = function (models, event) {
 
     var access = require("../Modules/additions/access.js")(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
+    var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var QuotationSchema = mongoose.Schemas.Quotation;
     var CustomerSchema = mongoose.Schemas.Customer;
     var WorkflowSchema = mongoose.Schemas.workflow;
@@ -20,6 +21,7 @@ var Quotation = function (models, event) {
     var _ = require('../node_modules/underscore');
     var currencyHalper = require('../helpers/currency');
     var CONSTANTS = require('../constants/mainConstants.js');
+    var pageHelper = require('../helpers/pageHelper');
 
     function convertType(array, type) {
         var i;
@@ -395,38 +397,38 @@ var Quotation = function (models, event) {
                                 }
                             }, {
                                 $project: {
-                                    workflow     : {$arrayElemAt: ['$workflow', 0]},
-                                    supplier     : {$arrayElemAt: ['$supplier', 0]},
-                                    salesmanagers: {
+                                    workflow       : {$arrayElemAt: ['$workflow', 0]},
+                                    supplier       : {$arrayElemAt: ['$supplier', 0]},
+                                    salesmanagers  : {
                                         $filter: {
                                             input: '$projectMembers',
                                             as   : 'projectMember',
                                             cond : salesManagerMatch
                                         }
                                     },
-                                    currency     : 1,
-                                    paymentInfo  : 1,
-                                    orderDate    : 1,
-                                    name         : 1,
-                                    isOrder      : 1,
-                                    proformaCounter:1
+                                    currency       : 1,
+                                    paymentInfo    : 1,
+                                    orderDate      : 1,
+                                    name           : 1,
+                                    isOrder        : 1,
+                                    proformaCounter: 1
                                 }
                             }, {
                                 $project: {
-                                    salesmanagers: {$arrayElemAt: ['$salesmanagers', 0]},
-                                    supplier     : {
+                                    salesmanagers  : {$arrayElemAt: ['$salesmanagers', 0]},
+                                    supplier       : {
                                         _id : '$supplier._id',
                                         name: '$supplier.name'
                                     },
-                                    workflow     : {
+                                    workflow       : {
                                         status: '$workflow.status',
                                         name  : '$workflow.name'
                                     },
-                                    currency     : 1,
-                                    paymentInfo  : 1,
-                                    orderDate    : 1,
-                                    name         : 1,
-                                    isOrder      : 1,
+                                    currency       : 1,
+                                    paymentInfo    : 1,
+                                    orderDate      : 1,
+                                    name           : 1,
+                                    isOrder        : 1,
                                     proformaCounter: 1
                                 }
                             }, {
@@ -438,29 +440,29 @@ var Quotation = function (models, event) {
                                 }
                             }, {
                                 $project: {
-                                    salesPerson: {$arrayElemAt: ['$salesmanagers', 0]},
-                                    workflow   : 1,
-                                    supplier   : 1,
-                                    currency   : 1,
-                                    paymentInfo: 1,
-                                    orderDate  : 1,
-                                    name       : 1,
-                                    isOrder    : 1,
+                                    salesPerson    : {$arrayElemAt: ['$salesmanagers', 0]},
+                                    workflow       : 1,
+                                    supplier       : 1,
+                                    currency       : 1,
+                                    paymentInfo    : 1,
+                                    orderDate      : 1,
+                                    name           : 1,
+                                    isOrder        : 1,
                                     proformaCounter: 1
                                 }
                             }, {
                                 $project: {
-                                    salesPerson: {
+                                    salesPerson    : {
                                         _id : '$salesPerson._id',
                                         name: '$salesPerson.name'
                                     },
-                                    workflow   : 1,
-                                    supplier   : 1,
-                                    currency   : 1,
-                                    paymentInfo: 1,
-                                    orderDate  : 1,
-                                    name       : 1,
-                                    isOrder    : 1,
+                                    workflow       : 1,
+                                    supplier       : 1,
+                                    currency       : 1,
+                                    paymentInfo    : 1,
+                                    orderDate      : 1,
+                                    name           : 1,
+                                    isOrder        : 1,
                                     proformaCounter: 1
                                 }
                             }, {
@@ -637,21 +639,11 @@ var Quotation = function (models, event) {
         var data = mapObject(req.body);
         var mid = parseInt(req.headers.mid, 10);
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, mid, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
-                    updateOnlySelectedFields(req, res, next, id, data);
-                } else {
-                    res.status(403).send();
-                }
-            });
-        } else {
-            res.status(401).send();
-        }
+        data.editedBy = {
+            user: req.session.uId,
+            date: new Date().toISOString()
+        };
+        updateOnlySelectedFields(req, res, next, id, data);
     };
 
     this.updateModel = function (req, res, next) {
@@ -892,24 +884,40 @@ var Quotation = function (models, event) {
     };
 
     this.getByViewType = function (req, res, next) {
-        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var query = req.query;
-        var queryObject = {};
-        var departmentSearcher;
-        var contentIdsSearcher;
+        var viewType = query.viewType;
+        var id = req.query.id;
+
+        if (id && id.length >= 24) {
+            getById(req, res, next);
+            return false;
+        }
+
+        switch (viewType) {
+            case "form":
+                getById(req, res, next);
+                break;
+            default:
+                getByViewType(req, res, next);
+                break;
+        }
+    };
+
+    function getByViewType(req, res, next) {
+        var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
+        var data = req.query;
+        var paginationObject = pageHelper(data);
+        var limit = paginationObject.limit;
+        var skip = paginationObject.skip;
+        var accessRollSearcher;
         var contentSearcher;
         var waterfallTasks;
-        var contentType = query.contentType;
+        var contentType = data.contentType;
         var isOrder = (contentType === 'Order' || contentType === 'salesOrder');
         var sort = {};
-        var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
-        var page = parseInt(query.page, 10);
-        var skip;
-        var filter = query.filter || {};
+        var filter = data.filter || {};
         var key;
-
-        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
-        skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var queryObject = {};
 
         if (isOrder) {
             filter.isOrder = {
@@ -931,58 +939,19 @@ var Quotation = function (models, event) {
             }
         }
 
-        if (query.sort) {
-            key = Object.keys(query.sort)[0];
-            query.sort[key] = parseInt(query.sort[key], 10);
-            sort = query.sort;
+        if (data.sort) {
+            key = Object.keys(data.sort)[0];
+            data.sort[key] = parseInt(data.sort[key], 10);
+            sort = data.sort;
         } else {
             sort = {"orderDate": -1};
         }
 
-        departmentSearcher = function (waterfallCallback) {
-            models.get(req.session.lastDb, "Department", DepartmentSchema).aggregate(
-                {
-                    $match: {
-                        users: objectId(req.session.uId)
-                    }
-                }, {
-                    $project: {
-                        _id: 1
-                    }
-                },
-
-                waterfallCallback);
+        accessRollSearcher = function (cb) {
+            accessRoll(req, Quotation, cb);
         };
 
-        contentIdsSearcher = function (deps, waterfallCallback) {
-            var everyOne = rewriteAccess.everyOne();
-            var owner = rewriteAccess.owner(req.session.uId);
-            var group = rewriteAccess.group(req.session.uId, deps);
-            var whoCanRw = [everyOne, owner, group];
-            var matchQuery = {
-                $and: [
-                    // queryObject,
-                    {
-                        $or: whoCanRw
-                    }
-                ]
-            };
-            var Model = models.get(req.session.lastDb, "Quotation", QuotationSchema);
-
-            Model.aggregate(
-                {
-                    $match: matchQuery
-                },
-                {
-                    $project: {
-                        _id: 1
-                    }
-                },
-                waterfallCallback
-            );
-        };
-
-        contentSearcher = function (quotationsIds, waterfallCallback) {
+        contentSearcher = function (ids, cb) {
             var newQueryObj = {};
             var salesManagerMatch = {
                 $and: [
@@ -1018,7 +987,7 @@ var Quotation = function (models, event) {
 
             newQueryObj.$and = [];
             newQueryObj.$and.push(queryObject);
-            newQueryObj.$and.push({_id: {$in: _.pluck(quotationsIds, '_id')}});
+            newQueryObj.$and.push({_id: {$in: ids}});
 
             Quotation.aggregate([{
                 $lookup: {
@@ -1052,7 +1021,6 @@ var Quotation = function (models, event) {
                 $project: {
                     workflow       : {$arrayElemAt: ["$workflow", 0]},
                     supplier       : {$arrayElemAt: ["$supplier", 0]},
-                    project        : {$arrayElemAt: ["$project", 0]},
                     salesmanagers  : {
                         $filter: {
                             input: '$projectMembers',
@@ -1070,17 +1038,17 @@ var Quotation = function (models, event) {
                 }
             }, {
                 $project: {
-                    salesmanagers  : {$arrayElemAt: ["$salesmanagers", 0]},
-                    name           : 1,
-                    paymentInfo    : 1,
-                    orderDate      : 1,
-                    forSales       : 1,
-                    workflow       : 1,
-                    supplier       : 1,
-                    project        : 1,
-                    isOrder        : 1,
-                    currency       : 1,
-                    proformaCounter: 1
+                    salesmanagers    : {$arrayElemAt: ["$salesmanagers", 0]},
+                    name             : 1,
+                    paymentInfo      : 1,
+                    orderDate        : 1,
+                    forSales         : 1,
+                    'workflow.status': '$workflow.status',
+                    'workflow.name'  : '$workflow.name',
+                    'supplier.name'  : '$supplier.name',
+                    isOrder          : 1,
+                    currency         : 1,
+                    proformaCounter  : 1
                 }
             }, {
                 $lookup: {
@@ -1098,7 +1066,6 @@ var Quotation = function (models, event) {
                     forSales       : 1,
                     workflow       : 1,
                     supplier       : 1,
-                    project        : 1,
                     isOrder        : 1,
                     currency       : 1,
                     proformaCounter: 1
@@ -1106,33 +1073,70 @@ var Quotation = function (models, event) {
             }, {
                 $match: newQueryObj
             }, {
+                $group: {
+                    _id  : null,
+                    total: {$sum: 1},
+                    root : {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    _id                : '$root._id',
+                    'salesmanager.name': '$root.salesmanager.name',
+                    name               : '$root.name',
+                    paymentInfo        : '$root.paymentInfo',
+                    orderDate          : '$root.orderDate',
+                    forSales           : '$root.forSales',
+                    workflow           : '$root.workflow',
+                    supplier           : '$root.supplier',
+                    isOrder            : '$root.isOrder',
+                    currency           : '$root.currency',
+                    proformaCounter    : '$root.proformaCounter',
+                    total              : 1
+                }
+            }, {
                 $sort: sort
             }, {
                 $skip: skip
             }, {
-                $limit: count
-            }
-            ], waterfallCallback);
+                $limit: limit
+            }], cb);
         };
 
-        waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
+        waterfallTasks = [accessRollSearcher, contentSearcher];
 
         async.waterfall(waterfallTasks, function (err, result) {
+            var count;
+            var response = {};
+
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send(result);
+            count = result[0].total || 0;
+
+            response.total = count;
+            response.data = result;
+            res.status(200).send(response);
         });
-    };
+    }
 
     this.getById = function (req, res, next) {
-        var id = req.params.id;
+        getById(req, res, next);
+    };
+
+    function getById(req, res, next) {
+        var id = req.query.id;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
         var departmentSearcher;
         var contentIdsSearcher;
         var contentSearcher;
         var waterfallTasks;
+
+        if (id.length < 24) {
+            return res.status(400).send();
+        }
 
         /*var contentType = req.query.contentType;
          var isOrder = ((contentType === 'Order') || (contentType === 'salesOrder'));*/

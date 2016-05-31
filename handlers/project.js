@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-module.exports = function (models) {
+module.exports = function (models, event) {
     var access = require('../Modules/additions/access.js')(models);
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var _ = require('../node_modules/underscore');
@@ -15,6 +15,7 @@ module.exports = function (models) {
     var MonthHoursSchema = mongoose.Schemas.MonthHours;
     var EmployeeSchema = mongoose.Schemas.Employee;
     var wTrackInvoiceSchema = mongoose.Schemas.wTrackInvoice;
+    var tasksSchema = mongoose.Schemas.Task;
     var jobsSchema = mongoose.Schemas.jobs;
     var objectId = mongoose.Types.ObjectId;
 
@@ -83,6 +84,134 @@ module.exports = function (models) {
         return condition;
     }
 
+    this.create = function (req, res, next) {
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var body = req.body;
+        var newProject;
+
+        body.createdBy = {
+            date: new Date(),
+            user: req.session.uId
+        };
+
+        newProject = new Project(body);
+
+        newProject.save(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            if (result._id) {
+                event.emit('updateProjectDetails', {req: req, _id: result._id});
+            }
+
+            event.emit('recollectProjectInfo');
+            res.status(201).send({success: 'A new Project crate success', result: result, id: result._id});
+        });
+    };
+
+    this.updateOnlySelectedFields = function (req, res, next) {
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var data = req.body;
+        var _id = req.params.id;
+        var obj;
+        var fileName = data.fileName;
+
+        delete data._id;
+
+        delete data.fileName;
+
+        if (data.notes && data.notes.length != 0) {
+            obj = data.notes[data.notes.length - 1];
+            if (!obj._id) {
+                obj._id = mongoose.Types.ObjectId();
+            }
+            obj.date = new Date();
+            obj.author = req.session.uName;
+            data.notes[data.notes.length - 1] = obj;
+        }
+
+        Project.findByIdAndUpdate({_id: _id}, {$set: data}, {new: true}, function (err, project) {
+            var os = require("os");
+            var osType = (os.type().split('_')[0]);
+            var path;
+            var dir;
+            var newDirname;
+
+            if (err) {
+                return next(err);
+            }
+
+            if (fileName) {
+
+                switch (osType) {
+                    case "Windows":
+                    {
+                        newDirname = __dirname.replace("\\Modules", "");
+                        while (newDirname.indexOf("\\") !== -1) {
+                            newDirname = newDirname.replace("\\", "\/");
+                        }
+                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                        dir = newDirname + "\/uploads\/" + _id;
+                    }
+                        break;
+                    case "Linux":
+                    {
+                        newDirname = __dirname.replace("/Modules", "");
+                        while (newDirname.indexOf("\\") !== -1) {
+                            newDirname = newDirname.replace("\\", "\/");
+                        }
+                        path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
+                        dir = newDirname + "\/uploads\/" + _id;
+                    }
+                }
+
+                fs.unlink(path, function (err) {
+                    console.log(err);
+                    fs.readdir(dir, function (err, files) {
+                        if (files && files.length === 0) {
+                            fs.rmdir(dir, function () {
+                            });
+                        }
+                    });
+                });
+
+            }
+
+            if (project._id) {
+                event.emit('updateProjectDetails', {req: req, _id: project._id});
+            }
+            event.emit('recollectProjectInfo');
+            res.status(200).send(project);
+        });
+    };
+
+    function removeTasksByPorjectID(req, _id) {
+        var TasksModel = models.get(req.session.lastDb, 'Tasks', tasksSchema);
+
+        TasksModel.remove({project: _id}, function (err) {
+            if (err) {
+                return console.log(err);
+            }
+        });
+    }
+
+    this.remove = function (req, res, next) {
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var _id = req.params.id;
+
+        Project.findByIdAndRemove(_id, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            removeTasksByPorjectID(req, _id);
+
+            res.status(200).send({success: 'Remove all tasks Starting...'});
+        });
+    };
+
+
     this.getByViewType = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var data = req.query;
@@ -93,24 +222,168 @@ module.exports = function (models) {
         var optionsObject = {};
         var filter = data.filter || {};
         var response = {};
-
         var waterfallTasks;
         var accessRollSearcher;
         var contentSearcher;
-        var projectionOptions = {
-            name  : 1,
-            task  : 1,
-            health: 1,
+        var mainPipeline;
+        var lookupPipeline = [{
+            $lookup: {
+                from        : 'projectMembers',
+                localField  : '_id',
+                foreignField: 'projectId',
+                as          : 'projectMembers'
+            }
+        }, {
+            $lookup: {
+                from        : 'Customers',
+                localField  : 'customer',
+                foreignField: '_id',
+                as          : 'customer'
+            }
+        }, {
+            $lookup: {
+                from        : 'workflows',
+                localField  : 'workflow',
+                foreignField: '_id',
+                as          : 'workflow'
+            }
+        }];
 
-            workflow: {
+        var projectThumbPipeline = [{
+            $project: {
+                name         : 1,
+                workflow     : {$arrayElemAt: ['$workflow', 0]},
+                task         : 1,
+                customer     : {$arrayElemAt: ['$customer', 0]},
+                health       : 1,
+                salesmanagers: {
+                    $filter: {
+                        input: '$projectMembers',
+                        as   : 'projectMember',
+                        cond : {
+                            $and: [{
+                                $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
+                            }, {
+                                $eq: ['$$projectMember.endDate', null]
+                            }]
+                        }
+                    }
+                }
+            }
+        }, {
+            $project: {
+                _id         : 1,
+                name        : 1,
+                task        : 1,
+                workflow    : 1,
+                salesManager: {$arrayElemAt: ['$salesmanagers', 0]},
+                customer    : 1,
+                health      : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'salesManager.employeeId',
+                foreignField: '_id',
+                as          : 'salesManager'
+            }
+        }, {
+            $project: {
+                _id         : 1,
+                name        : 1,
+                task        : 1,
+                workflow    : 1,
+                salesManager: {$arrayElemAt: ['$salesManager', 0]},
+                customer    : 1,
+                health      : 1
+            }
+        }];
+
+        var projectListPipeline = [{
+            $project: {
+                name            : 1,
+                workflow        : {$arrayElemAt: ['$workflow', 0]},
+                'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
+                'createdBy.date': 1,
+                'editedBy.date' : 1,
+                notRemovable    : {
+                    $size: {"$ifNull": ["$budget.projectTeam", []]} // added check on field value null
+                },
+                progress        : 1,
+                customer        : {$arrayElemAt: ['$customer', 0]},
+                StartDate       : 1,
+                EndDate         : 1,
+                TargetEndDate   : 1,
+                health          : 1,
+                salesmanagers   : {
+                    $filter: {
+                        input: '$projectMembers',
+                        as   : 'projectMember',
+                        cond : {
+                            $and: [{
+                                $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
+                            }, {
+                                $eq: ['$$projectMember.endDate', null]
+                            }]
+                        }
+                    }
+                }
+            }
+        }, {
+            $project: {
+                _id             : 1,
+                'createdBy.date': 1,
+                'editedBy.date' : 1,
+                'createdBy.user': '$createdBy.user.login',
+                'editedBy.user' : '$editedBy.user.login',
+                notRemovable    : 1,
+                progress        : 1,
+                StartDate       : 1,
+                EndDate         : 1,
+                TargetEndDate   : 1,
+                name            : 1,
+                workflow        : 1,
+                salesManager    : {$arrayElemAt: ['$salesmanagers', 0]},
+                customer        : 1,
+                health          : 1
+            }
+        }, {
+            $lookup: {
+                from        : 'Employees',
+                localField  : 'salesManager.employeeId',
+                foreignField: '_id',
+                as          : 'salesManager'
+            }
+        }, {
+            $project: {
+                _id          : 1,
+                name         : 1,
+                createdBy    : 1,
+                editedBy     : 1,
+                notRemovable : 1,
+                progress     : 1,
+                workflow     : 1,
+                StartDate    : 1,
+                EndDate      : 1,
+                TargetEndDate: 1,
+                salesManager : {$arrayElemAt: ['$salesManager', 0]},
+                customer     : 1,
+                health       : 1
+            }
+        }];
+
+        var projectionOptions = {
+            name        : 1,
+            task        : 1,
+            health      : 1,
+            workflow    : {
                 name: '$workflow.name'
             },
-
             salesManager: {
                 _id: '$salesManager._id'
             },
-
-            customer: {
+            customer    : {
                 name: '$customer.name'
             }
         };
@@ -124,6 +397,54 @@ module.exports = function (models) {
             health      : '$root.health',
             total       : 1
         };
+
+        if (viewType === 'list') {
+            lookupPipeline.push({
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'createdBy.user',
+                    foreignField: '_id',
+                    as          : 'createdBy.user'
+                }
+            });
+
+            lookupPipeline.push({
+                $lookup: {
+                    from        : 'Users',
+                    localField  : 'editedBy.user',
+                    foreignField: '_id',
+                    as          : 'editedBy.user'
+                }
+            });
+
+            projectionOptions.StartDate = 1;
+            projectionOptions.EndDate = 1;
+            projectionOptions.TargetEndDate = 1;
+            projectionOptions.createdBy = 1;
+            projectionOptions.editedBy = 1;
+            projectionOptions.progress = 1;
+            projectionOptions.notRemovable = 1;
+            projectionOptions.workflow = {
+                _id : '$workflow._id',
+                name: '$workflow.name'
+            };
+
+            delete projectionOptions.task;
+
+            projectionLastStepOptions.StartDate = '$root.StartDate';
+            projectionLastStepOptions.EndDate = '$root.EndDate';
+            projectionLastStepOptions.TargetEndDate = '$root.TargetEndDate';
+            projectionLastStepOptions.progress = '$root.TargetEndDate';
+            projectionLastStepOptions.notRemovable = '$root.notRemovable';
+            projectionLastStepOptions.createdBy = '$root.createdBy';
+            projectionLastStepOptions.editedBy = '$root.editedBy';
+
+            delete projectionLastStepOptions.task;
+
+            mainPipeline = _.union(lookupPipeline, projectListPipeline);
+        } else if (viewType === 'thumbnails') {
+            mainPipeline = _.union(lookupPipeline, projectThumbPipeline);
+        }
 
         response.showMore = false;
 
@@ -150,101 +471,35 @@ module.exports = function (models) {
 
             queryObject.$and.push({_id: {$in: ids}});
 
-            Project
-                .aggregate([{
-                    $lookup: {
-                        from        : 'projectMembers',
-                        localField  : '_id',
-                        foreignField: 'projectId',
-                        as          : 'projectMembers'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Customers',
-                        localField  : 'customer',
-                        foreignField: '_id',
-                        as          : 'customer'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'workflows',
-                        localField  : 'workflow',
-                        foreignField: '_id',
-                        as          : 'workflow'
-                    }
-                }, {
-                    $project: {
-                        name         : 1,
-                        workflow     : {$arrayElemAt: ['$workflow', 0]},
-                        task         : 1,
-                        customer     : {$arrayElemAt: ['$customer', 0]},
-                        health       : 1,
-                        salesmanagers: {
-                            $filter: {
-                                input: '$projectMembers',
-                                as   : 'projectMember',
-                                cond : {
-                                    $and: [{
-                                        $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
-                                    }, {
-                                        $eq: ['$$projectMember.endDate', null]
-                                    }]
-                                }
-                            }
-                        }
-                    }
-                }, {
-                    $project: {
-                        _id         : 1,
-                        name        : 1,
-                        task        : 1,
-                        workflow    : 1,
-                        salesManager: {$arrayElemAt: ['$salesmanagers', 0]},
-                        customer    : 1,
-                        health      : 1
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Employees',
-                        localField  : 'salesManager.employeeId',
-                        foreignField: '_id',
-                        as          : 'salesManager'
-                    }
-                }, {
-                    $project: {
-                        _id         : 1,
-                        name        : 1,
-                        task        : 1,
-                        workflow    : 1,
-                        salesManager: {$arrayElemAt: ['$salesManager', 0]},
-                        customer    : 1,
-                        health      : 1
-                    }
-                }, {
-                    $match: queryObject
-                }, {
-                    $project: projectionOptions
-                }, {
-                    $group: {
-                        _id  : null,
-                        total: {$sum: 1},
-                        root : {$push: '$$ROOT'}
-                    }
-                }, {
-                    $unwind: '$root'
-                }, {
-                    $project: projectionLastStepOptions
-                }, {
-                    $skip: skip
-                }, {
-                    $limit: limit
-                }], function (err, result) {
-                    if (err) {
-                        return cb(err);
-                    }
+            mainPipeline.push({
+                $match: queryObject
+            }, {
+                $project: projectionOptions
+            }, {
+                $group: {
+                    _id  : null,
+                    total: {$sum: 1},
+                    root : {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: projectionLastStepOptions
+            }, {
+                $skip: skip
+            }, {
+                $limit: limit
+            });
 
-                    cb(null, result);
-                });
+            Project
+                .aggregate(mainPipeline, function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
+
+                        cb(null, result);
+                    }
+                )
         };
 
         waterfallTasks = [accessRollSearcher, contentSearcher];
@@ -331,171 +586,175 @@ module.exports = function (models) {
 
             queryObject.$and.push({_id: {$in: ids}});
 
-            async.parallel([function(cb){Project
-                .aggregate([{
-                    $lookup: {
-                        from        : 'projectMembers',
-                        localField  : '_id',
-                        foreignField: 'projectId',
-                        as          : 'projectMembers'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Customers',
-                        localField  : 'customer',
-                        foreignField: '_id',
-                        as          : 'customer'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'workflows',
-                        localField  : 'workflow',
-                        foreignField: '_id',
-                        as          : 'workflow'
-                    }
-                }, {
-                    $project: {
-                        name         : 1,
-                        workflow     : {$arrayElemAt: ['$workflow', 0]},
-                        task         : 1,
-                        customer     : {$arrayElemAt: ['$customer', 0]},
-                        health       : 1,
-                        salesmanagers: {
-                            $filter: {
-                                input: '$projectMembers',
-                                as   : 'projectMember',
-                                cond : {
-                                    $and: [{
-                                        $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
-                                    }, {
-                                        $eq: ['$$projectMember.endDate', null]
-                                    }]
+            async.parallel([function (cb) {
+                Project
+                    .aggregate([{
+                        $lookup: {
+                            from        : 'projectMembers',
+                            localField  : '_id',
+                            foreignField: 'projectId',
+                            as          : 'projectMembers'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Customers',
+                            localField  : 'customer',
+                            foreignField: '_id',
+                            as          : 'customer'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'workflows',
+                            localField  : 'workflow',
+                            foreignField: '_id',
+                            as          : 'workflow'
+                        }
+                    }, {
+                        $project: {
+                            name         : 1,
+                            workflow     : {$arrayElemAt: ['$workflow', 0]},
+                            task         : 1,
+                            customer     : {$arrayElemAt: ['$customer', 0]},
+                            health       : 1,
+                            salesmanagers: {
+                                $filter: {
+                                    input: '$projectMembers',
+                                    as   : 'projectMember',
+                                    cond : {
+                                        $and: [{
+                                            $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
+                                        }, {
+                                            $eq: ['$$projectMember.endDate', null]
+                                        }]
+                                    }
                                 }
                             }
                         }
-                    }
-                }, {
-                    $project: {
-                        _id         : 1,
-                        name        : 1,
-                        task        : 1,
-                        workflow    : 1,
-                        salesManager: {$arrayElemAt: ['$salesmanagers', 0]},
-                        customer    : 1,
-                        health      : 1
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Employees',
-                        localField  : 'salesManager.employeeId',
-                        foreignField: '_id',
-                        as          : 'salesManager'
-                    }
-                }, {
-                    $project: {
-                        _id         : 1,
-                        name        : 1,
-                        task        : 1,
-                        workflow    : 1,
-                        salesManager: {$arrayElemAt: ['$salesManager', 0]},
-                        customer    : 1,
-                        health      : 1
-                    }
-                }, {
-                    $match: queryObject
-                }, {
-                    $project: {_id: 1}
-                }], function (err, result) {
-                    if (err) {
-                        return cb(err);
-                    }
+                    }, {
+                        $project: {
+                            _id         : 1,
+                            name        : 1,
+                            task        : 1,
+                            workflow    : 1,
+                            salesManager: {$arrayElemAt: ['$salesmanagers', 0]},
+                            customer    : 1,
+                            health      : 1
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'salesManager.employeeId',
+                            foreignField: '_id',
+                            as          : 'salesManager'
+                        }
+                    }, {
+                        $project: {
+                            _id         : 1,
+                            name        : 1,
+                            task        : 1,
+                            workflow    : 1,
+                            salesManager: {$arrayElemAt: ['$salesManager', 0]},
+                            customer    : 1,
+                            health      : 1
+                        }
+                    }, {
+                        $match: queryObject
+                    }, {
+                        $project: {_id: 1}
+                    }], function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
 
-                    cb(null, result);
-                })}, function(cb){Project
-                .aggregate([{
-                    $lookup: {
-                        from        : 'projectMembers',
-                        localField  : '_id',
-                        foreignField: 'projectId',
-                        as          : 'projectMembers'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Customers',
-                        localField  : 'customer',
-                        foreignField: '_id',
-                        as          : 'customer'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'workflows',
-                        localField  : 'workflow',
-                        foreignField: '_id',
-                        as          : 'workflow'
-                    }
-                }, {
-                    $project: {
-                        name         : 1,
-                        workflow     : {$arrayElemAt: ['$workflow', 0]},
-                        task         : 1,
-                        customer     : {$arrayElemAt: ['$customer', 0]},
-                        health       : 1,
-                        salesmanagers: {
-                            $filter: {
-                                input: '$projectMembers',
-                                as   : 'projectMember',
-                                cond : {
-                                    $and: [{
-                                        $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
-                                    }, {
-                                        $eq: ['$$projectMember.endDate', null]
-                                    }]
+                        cb(null, result);
+                    })
+            }, function (cb) {
+                Project
+                    .aggregate([{
+                        $lookup: {
+                            from        : 'projectMembers',
+                            localField  : '_id',
+                            foreignField: 'projectId',
+                            as          : 'projectMembers'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Customers',
+                            localField  : 'customer',
+                            foreignField: '_id',
+                            as          : 'customer'
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'workflows',
+                            localField  : 'workflow',
+                            foreignField: '_id',
+                            as          : 'workflow'
+                        }
+                    }, {
+                        $project: {
+                            name         : 1,
+                            workflow     : {$arrayElemAt: ['$workflow', 0]},
+                            task         : 1,
+                            customer     : {$arrayElemAt: ['$customer', 0]},
+                            health       : 1,
+                            salesmanagers: {
+                                $filter: {
+                                    input: '$projectMembers',
+                                    as   : 'projectMember',
+                                    cond : {
+                                        $and: [{
+                                            $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
+                                        }, {
+                                            $eq: ['$$projectMember.endDate', null]
+                                        }]
+                                    }
                                 }
                             }
                         }
-                    }
-                }, {
-                    $project: {
-                        _id         : 1,
-                        name        : 1,
-                        task        : 1,
-                        workflow    : 1,
-                        salesManager: {$arrayElemAt: ['$salesmanagers', 0]},
-                        customer    : 1,
-                        health      : 1
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Employees',
-                        localField  : 'salesManager.employeeId',
-                        foreignField: '_id',
-                        as          : 'salesManager'
-                    }
-                }, {
-                    $project: {
-                        _id         : 1,
-                        name        : 1,
-                        task        : 1,
-                        workflow    : 1,
-                        salesManager: {$arrayElemAt: ['$salesManager', 0]},
-                        customer    : 1,
-                        health      : 1
-                    }
-                }, {
-                    $match: queryObject
-                }, {
-                    $project: projectionOptions
-                }, {
-                    $skip: skip
-                }, {
-                    $limit: limit
-                }], function (err, result) {
-                    if (err) {
-                        return cb(err);
-                    }
+                    }, {
+                        $project: {
+                            _id         : 1,
+                            name        : 1,
+                            task        : 1,
+                            workflow    : 1,
+                            salesManager: {$arrayElemAt: ['$salesmanagers', 0]},
+                            customer    : 1,
+                            health      : 1
+                        }
+                    }, {
+                        $lookup: {
+                            from        : 'Employees',
+                            localField  : 'salesManager.employeeId',
+                            foreignField: '_id',
+                            as          : 'salesManager'
+                        }
+                    }, {
+                        $project: {
+                            _id         : 1,
+                            name        : 1,
+                            task        : 1,
+                            workflow    : 1,
+                            salesManager: {$arrayElemAt: ['$salesManager', 0]},
+                            customer    : 1,
+                            health      : 1
+                        }
+                    }, {
+                        $match: queryObject
+                    }, {
+                        $project: projectionOptions
+                    }, {
+                        $skip: skip
+                    }, {
+                        $limit: limit
+                    }], function (err, result) {
+                        if (err) {
+                            return cb(err);
+                        }
 
-                    cb(null, result);
-                })}], cb);
+                        cb(null, result);
+                    })
+            }], cb);
         };
 
         waterfallTasks = [accessRollSearcher, contentSearcher];
@@ -718,7 +977,6 @@ module.exports = function (models) {
             .populate('paymentMethod', '_id name')
             .populate('paymentTerms', '_id name')
             .exec(function (err, project) {
-
                 if (err) {
                     return next(err);
                 }

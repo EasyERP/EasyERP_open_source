@@ -33,7 +33,7 @@ module.exports = function (app, mainDb) {
     var paymentMethodRouter = require('./paymentMethod')(models);
     var periodRouter = require('./period')(models);
     //var importDataRouter = require('./importData')(models);
-    var projectRouter = require('./project')(models);
+    var projectRouter = require('./project')(models, event);
     var employeeRouter = require('./employee')(event, models);
     var applicationRouter = require('./application')(event, models);
     var projectMemberRouter = require('./projectMember')(models, event);
@@ -896,30 +896,30 @@ module.exports = function (app, mainDb) {
         requestHandler.getProjectByEndDateForDashboard(req, res);
     });*/
 
-    app.post('/Projects', function (req, res) {
+   /* app.post('/Projects', function (req, res) {
         var data = {};
         data.project = req.body;
         requestHandler.createProject(req, res, data);
-    });
+    });*/
 
-    app.patch('/Projects/:_id', function (req, res) {
+   /* app.patch('/Projects/:_id', function (req, res) {
         var id = req.param('_id');
         requestHandler.updateOnlySelectedFields(req, res, id, req.body);
-    });
+    });*/
 
-    app.put('/Projects/:_id', function (req, res) {
+    /*app.put('/Projects/:_id', function (req, res) {
         var data = {};
         var id = req.param('_id');
         var remove = req.headers.remove;
         data.project = req.body;
         requestHandler.updateProject(req, res, id, data, remove);
-    });
-    app.delete('/Projects/:_id', function (req, res) {
+    });*/
+   /* app.delete('/Projects/:_id', function (req, res) {
         var id = req.params._id;
         requestHandler.removeProject(req, res, id);
-    });
+    });*/
 
-    app.get('/Projects/:viewType', function (req, res, next) {
+    /*app.get('/Projects/:viewType', function (req, res, next) {
         var data = {};
         for (var i in req.query) {
             data[i] = req.query[i];
@@ -936,7 +936,7 @@ module.exports = function (app, mainDb) {
                 requestHandler.getProjects(req, res, data, next);
                 break;
         }
-    });
+    });*/
 
 //--------------Tasks----------------------------------------------------------
 

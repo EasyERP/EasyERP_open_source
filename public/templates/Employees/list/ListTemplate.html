@@ -12,10 +12,10 @@
     <td><%=(employee.jobPosition) ? employee.jobPosition.name : ''%></td>
     <td><%=(employee.manager && employee.manager.name) ? employee.manager.name.first + ' ' + employee.manager.name.last : ''%></td>
     <td><%=(employee.createdBy&&employee.createdBy.date)?( employee.createdBy.date + ((employee.createdBy.user) ?(' (' +
-        employee.createdBy.user.login + ')') : '')):''%>
+        employee.createdBy.user + ')') : '')):''%>
     </td>
     <td><%=(employee.editedBy&&employee.editedBy.date)?( employee.editedBy.date + ((employee.editedBy.user) ?(' (' +
-        employee.editedBy.user.login + ')') : '')):''%>
+        employee.editedBy.user + ')') : '')):''%>
     </td>
 
 </tr>
