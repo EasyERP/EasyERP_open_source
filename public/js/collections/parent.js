@@ -1,7 +1,8 @@
 define([
     'Backbone',
+    'Underscore',
     'constants'
-], function (Backbone, Cookies, CONSTANTS) {
+], function (Backbone, _, CONSTANTS) {
     /**
      * Drop-in replacement for Backbone.Collection. Encapsulate main pagination logic
      * @see {@link http://backbonejs.org/#Collection|Backbone.Collection }
@@ -53,6 +54,9 @@ define([
             var wait;
             var reset;
             var isNew;
+            var showMore;
+            var success;
+            var error;
 
             page = page || this.currentPage;
 
@@ -60,12 +64,12 @@ define([
                 page = this.currentPage = 1;
             }
 
-            this.direction = (page <= this.currentPage) ? 0 : 1;
 
             options = options || {wait: true, reset: true};
 
             wait = !!options.wait;
             reset = !!options.reset;
+            showMore = !!options.showMore;
             isNew = !!options.newCollection;
 
             if (isNew || !options.data) {
@@ -90,18 +94,28 @@ define([
             self.pageSize = data.count;
             self.currentPage = data.page;
 
-            _opts.success = options.success || function (models) {
-                    if (!isNew) {
-                        if (models && models.lenght) {
-                            self.pageSize += models.length;
-                        }
-                        self.trigger('showmore', models);
-                    }
-                };
+            success = options.success;
+            error = options.error;
 
-            _opts.error = options.error || function (models, err) {
-                    self.trigger('errorPagination', err);
-                };
+            _opts.success = function (models, xhr) {
+                if (success) {
+                    success.call(success.context, models, xhr);
+                }
+                if (showMore) {
+                    self.trigger('showmore', models);
+                }
+            };
+
+            _opts.error = function (models, xhr) {
+                self.trigger('errorPagination', xhr);
+
+                if (error) {
+                    error.call(error.context, models, xhr);
+                }
+            };
+
+            delete data.success;
+            delete data.error;
 
             return _opts;
         },
@@ -238,11 +252,12 @@ define([
             }
 
             this.totalRecords = response.total;
+            this.totalPages = Math.ceil(this.totalRecords / this.pageSize);
 
             this.trigger('fetchFinished', {
-                length     : this.totalRecords,
-                currentPage: this.currentPage,
-                itemsNumber: this.pageSize
+                totalRecords: this.totalRecords,
+                currentPage : this.currentPage,
+                pageSize    : this.pageSize
             });
 
             return response.data;

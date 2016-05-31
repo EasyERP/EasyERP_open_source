@@ -14,9 +14,9 @@
     'constants',
     'populate',
     'custom'
-], function (Backbone, $, _, thumbnailsItemTemplate, stagesTamplate, BaseView, EditView, CreateView, formView, dataService, filterView, common, CONSTANTS, populate, custom) {
+], function (Backbone, $, _, thumbnailsItemTemplate, stagesTamplate, BaseView, EditView, CreateView, formView, filterView, dataService, common, CONSTANTS, populate, custom) {
     'use strict';
-    var ProjectThumbnalView = Backbone.View.extend({
+    var ProjectThumbnalView = BaseView.extend({
         el                : '#content-holder',
         countPerPage      : 0,
         template          : _.template(thumbnailsItemTemplate),
@@ -32,19 +32,10 @@
             this.EditView = EditView;
             this.CreateView = CreateView;
 
-            this.startTime = options.startTime;
-            this.collection = options.collection || Backbone.Collection.extend();
-            this.responseObj = {};
             this.asyncLoadImgs(this.collection);
-            _.bind(this.collection.showMore, this.collection);
-            this.countPerPage = options.collection.length;
             this.stages = [];
-            this.filter = options.filter;
-            this.defaultItemsNumber = this.collection.namberToShow || 100;
-            this.newCollection = options.newCollection;
-            this.deleteCounter = 0;
 
-            this.render();
+            BaseView.prototype.initialize.call(this, options);
         },
 
         events: {
@@ -158,55 +149,6 @@
             this.stages = stages;
         },
 
-        render: function () {
-            var self = this;
-            var $currentEl = this.$el;
-            var createdInTag;
-
-            $currentEl.html('');
-            $currentEl.append(this.template({collection: this.collection.toJSON()}));
-
-            this.bind('incomingStages', this.pushStages, this);
-
-            common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
-                var stage = (self.filter) ? self.filter.workflow || [] : [];
-                self.trigger('incomingStages', stages);
-            });
-
-            self.filterView = new filterView({contentType: self.contentType});
-
-            self.filterView.bind('filter', function (filter) {
-                self.showFilteredPage(filter)
-            });
-            self.filterView.bind('defaultFilter', function () {
-                self.showFilteredPage({});
-            });
-
-            self.filterView.render();
-
-            $('#check_all').click(function () {
-                $(':checkbox').prop('checked', this.checked);
-                if ($("input.checkbox:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
-                } else {
-                    $("#top-bar-deleteBtn").hide();
-                }
-            });
-
-            $(document).on("click", function (e) {
-                self.hide(e);
-                self.hideHealth(e);
-                self.hideItemsNumber(e);
-            });
-
-            populate.getPriority("#priority", this);
-
-            createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
-            $currentEl.append(createdInTag);
-
-            return this;
-        },
-
         gotoEditForm: function (e) {
             var id;
 
@@ -220,47 +162,10 @@
             App.projectInfo.currentTab = 'overview';
         },
 
-        showMore: function (event) {
-            event.preventDefault();
-            this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
-        },
-
-        showMoreContent: function (newModels) {
-            var holder = this.$el;
-            var showMore = holder.find('#showMoreDiv');
-            var created = holder.find('#timeRecivingDataFromServer');
-            var content = holder.find("#thumbnailContent");
-            var numberToShow;
-
-            if (this.newCollection) {
-                this.defaultItemsNumber = 100;
-                this.newCollection = false;
-            } else {
-                this.defaultItemsNumber += newModels.length;
-
-                if (this.defaultItemsNumber < 100) {
-                    this.defaultItemsNumber = 100;
-                }
-            }
-
-            this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-            this.getTotalLength(this.defaultItemsNumber, this.filter);
-
-            if (showMore.length != 0) {
-                showMore.before(this.template({collection: this.collection.toJSON()}));
-
-                showMore.after(created);
-            } else {
-                content.html(this.template({collection: this.collection.toJSON()}));
-            }
-            this.asyncLoadImgs(newModels);
-            // this.filterView.renderFilterContent();
-        },
-
         deleteItems: function () {
-            var mid = 39,
-                model;
-            model = this.collection.get(this.$el.attr("id"));
+            var mid = 39;
+            var model = this.collection.get(this.$el.attr('id'));
+
             this.$el.fadeToggle(200, function () {
                 model.destroy({
                     headers: {
@@ -270,7 +175,42 @@
                 $(this).remove();
             });
 
-        }
+        },
+
+        render: function () {
+            var self = this;
+            var $currentEl = this.$el;
+            var createdInTag;
+
+            $currentEl.html('');
+            $currentEl.append(this.template({collection: this.collection.toJSON()}));
+
+            this.bind('incomingStages', this.pushStages, this);
+
+            common.populateWorkflowsList('Projects', '.filter-check-list', '', '/workflows', null, function (stages) {
+                var stage = (self.filter) ? self.filter.workflow || [] : [];
+
+                self.trigger('incomingStages', stages);
+            });
+
+            self.filterView = new filterView({contentType: self.contentType});
+
+            self.filterView.bind('filter', function (filter) {
+                self.showFilteredPage(filter);
+            });
+            self.filterView.bind('defaultFilter', function () {
+                self.showFilteredPage({});
+            });
+
+            self.filterView.render();
+
+            populate.getPriority('#priority', this);
+
+            createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>';
+            $currentEl.append(createdInTag);
+
+            return this;
+        },
     });
 
     return ProjectThumbnalView;

@@ -1079,14 +1079,13 @@ var Project = function (models, event) {
 
         query.exec(function (err, project) {
             if (err) {
-                logWriter.log("Project.js getProjectById project.find " + err);
+                logWriter.log('Project.js getProjectById project.find ' + err);
                 response.send(500, {error: "Can't find Project"});
-
             } else {
                 response.status(200).send(project);
             }
         });
-    };
+    }
 
     function getTotalCount(req, response) {
         var query;

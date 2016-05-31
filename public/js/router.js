@@ -11,13 +11,66 @@ define([
 
 ], function (Backbone, _, $, mainView, loginView, dataService, custom, common, CONTENT_TYPES) {
     'use strict';
-    var subscribeCollectionEvents = function (collection, contentView, topBarView) {
-        collection.bind('showMore', contentView.showMoreContent, contentView);
-        collection.bind('add', contentView.addItem, contentView);
-        collection.bind('remove', contentView.removeRow, contentView);
-
-        collection.bind('renderFinished', topBarView.setPagination, topBarView);
+    var subscribeCollectionEvents = function (collection, contentView) {
+        collection.bind('showmore', contentView.showMoreContent, contentView);
+        /* collection.bind('add', contentView.addItem, contentView);
+         collection.bind('remove', contentView.removeRow, contentView); */
+        collection.bind('showmoreAlphabet', contentView.showMoreAlphabet, contentView);
+        collection.bind('fetchFinished', contentView.setPagination, contentView);
     };
+    var subscribeTopBarEvents = function (topBarView, contentView) {
+        topBarView.bind('createEvent', contentView.createItem, contentView);
+        topBarView.bind('editEvent', contentView.editItem, contentView);
+        topBarView.bind('deleteEvent', contentView.deleteItems, contentView);
+        topBarView.bind('exportToCsv', contentView.exportToCsv, contentView);
+        topBarView.bind('exportToXlsx', contentView.exportToXlsx, contentView);
+        topBarView.bind('importEvent', contentView.importFiles, contentView);
+
+        // topBarView.bind('showFilteredContent', contentView.showFilteredContent, contentView);
+    };
+    var bindDefaultUIListeners = function () {
+        $(document).on('keydown', '.ui-dialog', function (e) {
+            if ($(e.target).get(0).tagName.toLowerCase() === 'textarea') {
+                return;
+            }
+            switch (e.which) {
+                case 27:
+                    $('.edit-dialog').remove();
+                    break;
+                case 13:
+                    $('.ui-dialog-buttonset .ui-button').eq(0).trigger('click');
+                    break;
+                default:
+                    break;
+            }
+        });
+        $(document).on('keypress', '.onlyNumber', function (e) {
+            var charCode = (e.which) ? e.which : e.keyCode;
+
+            if (charCode > 31 && (charCode < 48 || charCode > 57)) {
+                return false;
+            }
+
+            return true;
+        });
+
+        $(window).on('resize', function (e) {
+            $('#ui-datepicker-div').hide();
+        });
+
+        $(document).on('paste', '.onlyNumber', function (e) {
+            return false;
+        });
+
+        $(document).on('click', function () {
+            var currentContentType = self.contentType ? self.contentType.toUpperCase() : '';
+            var contentTypes = {QUOTATION: 'Quotation', ORDER: 'Order', INVOICE: 'Invoice'};
+
+            if (contentTypes[currentContentType]) {
+                $('.list2 tbody').find('[data-id="false"]').remove();
+            }
+        });
+    }
     var appRouter = Backbone.Router.extend({
 
         wrapperView: null,
@@ -26,76 +79,40 @@ define([
         view       : null,
 
         routes: {
-            "home"                                                                                          : "any",
-            "login"                                                                                         : "login",
-            "easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)"                              : "goToKanban",
-            "easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)"                            : "goToThumbnails",
-            "easyErp/:contentType/form(/:modelId)"                                                          : "goToForm", //FixMe chenge to required Id after test
-            "easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)": "goToList",
-            "easyErp/Revenue(/filter=:filter)"                                                              : "revenue",
-            "easyErp/settingsEmployee(/filter=:filter)"                                                     : "settingsEmployee",
-            "easyErp/Efficiency"                                                                            : "hours",
-            "easyErp/Attendance"                                                                            : "attendance",
-            "easyErp/Profiles"                                                                              : "goToProfiles",
-            "easyErp/productSettings"                                                                       : "productSettings",
-            "easyErp/myProfile"                                                                             : "goToUserPages",
-            "easyErp/Workflows"                                                                             : "goToWorkflows",
-            "easyErp/Accounts"                                                                              : "goToAccounts",
-            "easyErp/Dashboard"                                                                             : "goToDashboard",
-            "easyErp/DashBoardVacation(/filter=:filter)"                                                    : "dashBoardVacation",
-            "easyErp/invoiceCharts(/filter=:filter)"                                                        : "invoiceCharts",
-            "easyErp/HrDashboard"                                                                           : "hrDashboard",
-            "easyErp/projectDashboard"                                                                      : "goToProjectDashboard",
-            //"easyErp/jobsDashboard(/filter=:filter)"                                                        : "goToJobsDashboard",
-            "easyErp/:contentType"                                                                          : "getList",
-
-            "*any": "any"
+            home                                                                                            : 'any',
+            login                                                                                           : 'login',
+            'easyErp/:contentType/kanban(/:parrentContentId)(/filter=:filter)'                              : 'goToKanban',
+            'easyErp/:contentType/thumbnails(/c=:countPerPage)(/filter=:filter)'                            : 'goToThumbnails',
+            'easyErp/:contentType/form(/:modelId)'                                                          : 'goToForm', // FixMe chenge to required Id after test
+            'easyErp/:contentType/list(/pId=:parrentContentId)(/p=:page)(/c=:countPerPage)(/filter=:filter)': 'goToList',
+            'easyErp/Revenue(/filter=:filter)'                                                              : 'revenue',
+            'easyErp/settingsEmployee(/filter=:filter)'                                                     : 'settingsEmployee',
+            'easyErp/Efficiency'                                                                            : 'hours',
+            'easyErp/Attendance'                                                                            : 'attendance',
+            'easyErp/Profiles'                                                                              : 'goToProfiles',
+            'easyErp/productSettings'                                                                       : 'productSettings',
+            'easyErp/myProfile'                                                                             : 'goToUserPages',
+            'easyErp/Workflows'                                                                             : 'goToWorkflows',
+            'easyErp/Accounts'                                                                              : 'goToAccounts',
+            'easyErp/Dashboard'                                                                             : 'goToDashboard',
+            'easyErp/DashBoardVacation(/filter=:filter)'                                                    : 'dashBoardVacation',
+            'easyErp/invoiceCharts(/filter=:filter)'                                                        : 'invoiceCharts',
+            'easyErp/HrDashboard'                                                                           : 'hrDashboard',
+            'easyErp/projectDashboard'                                                                      : 'goToProjectDashboard',
+            // "easyErp/jobsDashboard(/filter=:filter)"                                                        : "goToJobsDashboard",
+            'easyErp/:contentType'                                                                          : 'getList',
+            '*any'                                                                                          : 'any'
         },
 
         initialize: function () {
             var self = this;
 
             this.on('all', function () {
-                $(".ui-dialog").remove();
-                $("#ui-datepicker-div").hide().remove();
+                $('.ui-dialog').remove();
+                $('#ui-datepicker-div').hide().remove();
             });
 
-            $(document).on("keydown", ".ui-dialog", function (e) {
-                if ($(e.target).get(0).tagName.toLowerCase() == "textarea") {
-                    return;
-                }
-                switch (e.which) {
-                    case 27:
-                        $(".edit-dialog").remove();
-                        break;
-                    case 13:
-                        $(".ui-dialog-buttonset .ui-button").eq(0).trigger("click");
-                        break;
-                    default:
-                        break;
-                }
-            });
-            $(document).on("keypress", ".onlyNumber", function (e) {
-                var charCode = (e.which) ? e.which : e.keyCode;
-                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                    return false;
-                }
-                return true;
-            });
-            $(window).on("resize", function (e) {
-                $("#ui-datepicker-div").hide();
-            });
-            $(document).on("paste", ".onlyNumber", function (e) {
-                return false;
-            });
-
-            $(document).on("click", function () {
-                var currentContentType = self.contentType ? self.contentType.toUpperCase() : '';
-                var contentTypes = {QUOTATION: 'Quotation', ORDER: 'Order', INVOICE: 'Invoice'};
-                if (contentTypes[currentContentType]) {
-                    $(".list2 tbody").find("[data-id='false']").remove();
-                }
-            });
+            bindDefaultUIListeners();
 
             if (!App || !App.currentUser) {
                 dataService.getData(CONTENT_TYPES.URLS.CURRENT_USER, null, function (response) {
@@ -103,7 +120,10 @@ define([
                         App.currentUser = response.user;
                         App.savedFilters = response.savedFilters;
                     } else {
-                        console.log('can\'t fetch currentUser');
+                        App.render({
+                            type   : 'error',
+                            message: 'can\'t fetch currentUser'
+                        });
                     }
                 });
             }
@@ -1110,6 +1130,7 @@ define([
 
         goToThumbnails: function (contentType, countPerPage, filter) {
             var self = this;
+
             this.checkLogin(function (success) {
                 if (success) {
                     if (!App || !App.currentDb) {
@@ -1131,43 +1152,56 @@ define([
             });
 
             function goThumbnails(context) {
+                var self = context;
+                var location = window.location.hash;
                 var currentContentType = context.testContent(contentType);
-                var viewType = custom.getCurrentVT({contentType: contentType}); //for default filter && defaultViewType
+                var newCollection = true;
+                var startTime = new Date();
+                var viewType = custom.getCurrentVT({contentType: contentType}); // for default filter && defaultViewType
+                var count;
+                var topBarViewUrl;
+                var contentViewUrl;
+                var collectionUrl;
+                var savedFilter;
+                var url;
+
+                if (count) {
+                    count = parseInt(countPerPage, 10);
+                    if (isNaN(count)) {
+                        count = 0;
+                    }
+                }
 
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
-                    var url = '#easyErp/' + contentType + '/' + viewType;
+                    url = '#easyErp/' + contentType + '/' + viewType;
+
                     Backbone.history.navigate(url, {replace: true});
                 }
-                var newCollection = true;
-                var startTime = new Date();
-                var self = context;
-                var contentViewUrl;
-                var topBarViewUrl = "views/" + contentType + "/TopBarView";
-                var collectionUrl;
-                var savedFilter;
-                var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
-                var location = window.location.hash;
+
+                topBarViewUrl = 'views/' + contentType + '/TopBarView';
 
                 if (!filter) {
                     newCollection = false;
 
                     if (contentType === 'salesProduct') {
                         filter = {
-                            'canBeSold': {
+                            canBeSold: {
                                 key  : 'canBeSold',
                                 value: ['true']
                             }
                         };
+
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     } else if (contentType === 'Product') {
                         filter = {
-                            'canBePurchased': {
+                            canBePurchased: {
                                 key  : 'canBePurchased',
                                 value: ['true']
                             }
                         };
+
                         Backbone.history.fragment = '';
                         Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     }
@@ -1175,26 +1209,27 @@ define([
                     filter = JSON.parse(filter);
                 }
 
-                //savedFilter = custom.savedFilters(contentType, filter);
+                // savedFilter = custom.savedFilters(contentType, filter);
 
                 if (context.mainView === null) {
                     context.main(contentType);
                 } else {
                     context.mainView.updateMenu(contentType);
                 }
+
                 contentViewUrl = 'views/' + contentType + '/thumbnails/ThumbnailsView';
                 collectionUrl = context.buildCollectionRoute(contentType);
+
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
                     var collection;
 
-                    if (contentType !== 'Calendar' && contentType !== 'Workflows') {
+                    if (contentType !== 'Workflows') {
                         collection = new contentCollection({
-                            viewType     : 'thumbnails',
-                            //page: 1,
-                            count        : count,
-                            filter       : filter,
-                            contentType  : contentType,
-                            newCollection: newCollection
+                            viewType   : 'thumbnails',
+                            reset      : true,
+                            count      : count,
+                            filter     : filter,
+                            contentType: contentType,
                         });
                     } else {
                         collection = new contentCollection();
@@ -1205,28 +1240,26 @@ define([
 
                     function createViews() {
                         var contentview = new contentView({
-                            collection   : collection,
-                            startTime    : startTime,
-                            filter       : filter,
-                            newCollection: newCollection
+                            collection: collection,
+                            startTime : startTime,
+                            filter    : filter
                         });
                         var topbarView = new topBarView({actionType: "Content", collection: collection});
 
                         collection.unbind('reset');
-                        //var url = '#easyErp/' + contentType + '/thumbnails';
-                        topbarView.bind('createEvent', contentview.createItem, contentview);
-                        topbarView.bind('editEvent', contentview.editItem, contentview);
-                        topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
-                        topbarView.bind('exportToCsv', contentview.exportToCsv, contentview);
-                        topbarView.bind('exportToXlsx', contentview.exportToXlsx, contentview);
-                        topbarView.bind('importEvent', contentview.importFiles, contentview);
-                        collection.bind('showmore', contentview.showMoreContent, contentview);
-                        collection.bind('showmoreAlphabet', contentview.showMoreAlphabet, contentview);
+                        // var url = '#easyErp/' + contentType + '/thumbnails';
+                        subscribeCollectionEvents(collection, contentview);
+                        subscribeTopBarEvents(topbarView, contentview);
 
                         context.changeView(contentview);
-                        this.changeTopBarView(topbarView);
-
-                        //Backbone.history.navigate(url, { replace: true });
+                        context.changeTopBarView(topbarView);
+                        // just for add showMore button if needed
+                        collection.trigger('fetchFinished', {
+                            totalRecords: collection.totalRecords,
+                            currentPage : collection.currentPage,
+                            pageSize    : collection.pageSize,
+                        });
+                        // Backbone.history.navigate(url, { replace: true });
                     }
                 });
             }
@@ -1275,7 +1308,9 @@ define([
             if (this.view) {
                 this.view.undelegateEvents();
             }
-            $(document).trigger("resize");
+
+            $(document).trigger('resize');
+
             this.view = view;
         },
 

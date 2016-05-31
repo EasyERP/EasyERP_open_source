@@ -1,82 +1,36 @@
 ﻿define([
     'Backbone',
+    'collections/parent',
     'models/ProjectsModel',
     'constants'
-], function (Backbone, ProjectModel, CONSTANTS) {
+], function (Backbone, Parent, ProjectModel, CONSTANTS) {
     'use strict';
 
-    var ProjectsCollection = Backbone.Collection.extend({
-        model       : ProjectModel,
-        url         : CONSTANTS.URLS.PROJECTS,
-        page        : null,
-        namberToShow: null,
-        viewType    : null,
-        contentType : null,
+    var ProjectsCollection = Parent.extend({
+        model   : ProjectModel,
+        url     : CONSTANTS.URLS.PROJECTS,
+        pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
 
         initialize: function (options) {
-            var that = this;
+            var page;
 
-            this.startTime = new Date();
-            this.contentType = options.contentType;
-
-            if (options && options.count) {
-                this.namberToShow = options.count;
-                this.count = options.count;
-                this.page = options.page || 1;
-            }
-            
-            this.fetch({
-                data : options,
-                reset: true,
-
-                success: function () {
-                    that.page++;
-                },
-
-                error: function (models, xhr) {
-                    if (xhr.status === 401) {
-                        Backbone.history.navigate('#login', {trigger: true});
-                    }
+            function _errHandler(models, xhr) {
+                if (xhr.status === 401) {
+                    Backbone.history.navigate('#login', {trigger: true});
                 }
-            });
-        },
-
-        showMore: function (options) {
-            var that = this;
+            }
 
             options = options || {};
+            options.error = options.error || _errHandler;
+            page = options.page;
 
-            if (options && options.page) {
-                this.page = options.page;
+            this.startTime = new Date();
+
+            if (page) {
+                return this.getPage(page, options);
             }
-            if (options && options.count) {
-                this.namberToShow = options.count;
-            }
 
-            options.page = this.page;
-            options.count = this.namberToShow;
-            options.filter = options.filter || {};
-
-            this.fetch({
-                data : options,
-                waite: true,
-
-                success: function (models) {
-                    that.page += 1;
-                    that.trigger('showmore', models);
-                },
-
-                error: function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Some Error.'
-                    });
-                }
-            });
-        },
-
-        parse: function (response) {
-            return response.data;
+            this.getFirstPage(options);
         }
     });
 

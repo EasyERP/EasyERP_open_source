@@ -256,13 +256,9 @@ module.exports = function (models) {
                 return next(err);
             }
 
-            count = result[0].count || 0;
-
-            if (data.currentNumber && data.currentNumber < count) {
-                response.showMore = true;
-            }
-
-            response.count = count;
+            count = result[0].total || 0;
+            
+            response.total = count;
             response.data = result;
             res.status(200).send(response);
         });

@@ -14,7 +14,8 @@ define([
 
         events: {
             'click .oe_sortable': 'sort',
-            'click #check_all'  : 'checkAll'
+            'click #check_all'  : 'checkAll',
+            click               : 'hide'
         },
 
         checkAll: function (e) {

@@ -2,16 +2,13 @@
     'Backbone',
     'jQuery',
     'Underscore',
-    'pagination'
+    'views/pagination'
 ], function (Backbone, $, _, Pagination) {
     'use strict';
     var View = Pagination.extend({
-        el                : '#content-holder',
-        countPerPage      : 0,
-        newCollection     : true,
-        filter            : null,
-        defaultItemsNumber: null,
-        viewType          : 'thumbnails', // needs in view.prototype.changeLocationHash
+        el           : '#content-holder',
+        filter       : null,
+        viewType     : 'thumbnails', // needs in view.prototype.changeLocationHash
 
         events: {
             'click #showMore'            : 'showMore',
@@ -19,11 +16,20 @@
             'click .dropDown'            : 'dropDown',
             'click .filterButton'        : 'showfilter',
             'click .newSelectList li'    : 'chooseOption',
-            click                        : 'hide',
             'click .filter-check-list li': 'checkCheckbox'
         },
 
+        initialize: function (options) {
+            $(document).off('click');
+            
+            this.startTime = options.startTime;
+            this.collection = options.collection || Backbone.Collection.extend();
+            this.responseObj = {};
+            this.filter = options.filter;
 
+            this.render();
+        },
+        
         dropDown: function (e) {
             e.stopPropagation();
         },
@@ -41,7 +47,7 @@
 
             return false;
         },
-        
+
         hide: function (e) {
             if (!$(e.target).closest('.filter-check-list').length) {
                 $('.allNumberPerPage').hide();
@@ -56,7 +62,6 @@
         showFilteredPage: function (filter) {
             this.$el.find('.thumbnail').remove();
             this.startTime = new Date();
-            this.newCollection = true;
 
             this.filter = filter;
 
@@ -82,7 +87,7 @@
         showMore: function (e) {
             e.preventDefault();
 
-            this.collection.getNextPage({filter: this.filter, newCollection: this.newCollection});
+            this.collection.getNextPage({filter: this.filter, showMore: true});
         },
 
         showMoreContent: function (newModels) {
@@ -90,10 +95,9 @@
             var $showMore = $holder.find('#showMoreDiv');
             var $created = $holder.find('#timeRecivingDataFromServer');
             var $content = $holder.find('#thumbnailContent');
-            
+
 
             this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-            this.getTotalLength(this.defaultItemsNumber, this.filter);
 
             if ($showMore.length !== 0) {
                 $showMore.before(this.template({collection: this.collection.toJSON()}));
@@ -114,8 +118,26 @@
 
         editItem: function () {
             var EditView = this.EditView || Backbone.View.extend({});
-            
+
             return new EditView({collection: this.collection});
+        },
+
+        setPagination: function () {
+            var $thisEl = this.$el;
+            var $showMore = $thisEl.find('#showMoreDiv');
+            var $created = $thisEl.find('#timeRecivingDataFromServer');
+            var collection = this.collection;
+            var showMore = collection.currentPage < collection.totalPages
+
+            if (showMore) {
+                if ($showMore.length === 0) {
+                    $created.before('<div id="showMoreDiv"><input type="button" id="showMore" value="Show More"/></div>');
+                } else {
+                    $showMore.show();
+                }
+            } else {
+                $showMore.hide();
+            }
         }
     });
 

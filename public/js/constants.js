@@ -162,23 +162,23 @@ define([], function () {
                 backend: 'workflow._id'
             }
         },
-        ExpensesInvoice    : {
-            'Supplier'    : {
+        ExpensesInvoice : {
+            'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Status'      : {
+            'Status'  : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
-        DividendInvoice    : {
-            'Status'      : {
+        DividendInvoice : {
+            'Status': {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
-        salesProforma    : {
+        salesProforma   : {
             'Customer'    : {
                 view   : 'supplier',
                 backend: 'supplier._id'
@@ -198,19 +198,19 @@ define([], function () {
             }
         },
         Projects        : {
-            'Project Name' : {
+            'Project Name'   : {
                 view   : 'name',
                 backend: '_id'
             },
-            'Contact'      : {
+            'Contact'        : {
                 view   : 'customer',
                 backend: 'customer._id'
             },
-            'Status'       : {
+            'Status'         : {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
-            'Sales Manager': {
+            'Sales Manager'  : {
                 view   : 'salesmanager',
                 backend: 'salesmanager._id'
             },
@@ -314,33 +314,33 @@ define([], function () {
             }
         },
         ExpensesPayments: {
-            'Employee'  : {
+            'Employee': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Year'      : {
+            'Year'    : {
                 view   : 'year',
                 backend: 'year'
             },
-            'Month'     : {
+            'Month'   : {
                 view   : 'month',
                 backend: 'month'
             },
-            'Status'    : {
+            'Status'  : {
                 view   : 'workflow',
                 backend: 'workflow'
             }
         },
         DividendPayments: {
-            'Year'      : {
+            'Year'  : {
                 view   : 'year',
                 backend: 'year'
             },
-            'Month'     : {
+            'Month' : {
                 view   : 'month',
                 backend: 'month'
             },
-            'Status'    : {
+            'Status': {
                 view   : 'workflow',
                 backend: 'workflow'
             }
@@ -617,11 +617,12 @@ define([], function () {
         END_CONTRACT_WORKFLOW_ID: '52d2c1369b57890814000005',
         TRASH_BIN               : '<a class="fa fa-trash"></a>',
 
-        DASH_VAC_WEEK_BEFORE: 2,
-        DASH_VAC_WEEK_AFTER : 8,
-        DASH_VAC_RANGE_WEEKS_MIN : 6,
+        DASH_VAC_WEEK_BEFORE    : 2,
+        DASH_VAC_WEEK_AFTER     : 8,
+        DASH_VAC_RANGE_WEEKS_MIN: 6,
 
-        DEFAULT_ELEMENTS_PER_PAGE: 100,
+        DEFAULT_ELEMENTS_PER_PAGE  : 100,
+        DEFAULT_THUMBNAILS_PER_PAGE: 50,
 
         URLS: {
             PROFILES_FOR_DD       : '/profiles/forDd',
@@ -700,14 +701,14 @@ define([], function () {
             Companies   : 50
         },
 
-        MIN_DATE          : '2014-08-01',
+        MIN_DATE: '2014-08-01',
 
         INVOICE_JOURNAL : '565ef6ba270f53d02ee71d65',
         PROFORMA_JOURNAL: '57035e4321f9b0c4313d4146',
         PAYMENT_TERMS   : '55536e52475b7be475f335f6',
         PAYMENT_METHOD  : '565f2e05ab70d49024242e07',
         END_OF_PROJECT  : 'To end of project',
-        
+
         DEFAULT_SCREEN_WIDTH: 1349
     };
 });
