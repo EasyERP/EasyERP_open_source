@@ -14,6 +14,7 @@ var Customers = function (models) {
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
     var accessRoll = require("../helpers/accessRollHelper.js")(models);
+    var pageHelper = require('../helpers/pageHelper');
     var async = require('async');
     var fs = require('fs');
 
@@ -349,6 +350,10 @@ var Customers = function (models) {
     };
 
     this.getCustomers = function (req, res, next) {
+        getCustomers(req, res, next);
+    };
+
+    function getCustomers(req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var query = req.query;
         var type = query.type;
@@ -503,7 +508,7 @@ var Customers = function (models) {
             }
                 break;
         }
-        if (data && data.ids){
+        if (data && data.ids) {
             Customers.find(optionsObject, {_id: 1, imageSrc: 1}, function (err, response) {
                 if (err) {
                     return next(err);
@@ -563,7 +568,7 @@ var Customers = function (models) {
          * @instance
          */
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-        var id = req.params.id;
+        var id = req.query.id;
 
         Model
             .findById(id)
@@ -593,14 +598,17 @@ var Customers = function (models) {
         var viewType = data.viewType;
         var optionsObject = {};
         var filter = data.filter || {};
-        var skip = ((parseInt(data.page || 1, 10) - 1) * parseInt(data.count || 100, 10));
-        var limit = parseInt(data.count, 10) || 100;
+        var paginationObject = pageHelper(data);
+        var limit = paginationObject.limit;
+        var skip = paginationObject.skip;
         var waterfallTasks;
         var keySort;
         var sort;
         var accessRollSearcher;
         var contentSearcher;
+        var parallelTasks;
         var query = {};
+        var countQuery;
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
@@ -639,88 +647,126 @@ var Customers = function (models) {
 
             queryObject.$and.push({_id: {$in: ids}});
 
-            query = Model.find(queryObject);
+            function queryBuilder(contentType, viewType){
+                var query = Model.find(queryObject);
 
-            switch (contentType) {
-                case ('Persons'):
-                    switch (viewType) {
-                        case ('list'):
-                        {
-                            query.sort(sort);
+                switch (contentType) {
+                    case ('Persons'):
+                        switch (viewType) {
+                            case ('list'):
+                            {
+                                query.sort(sort);
 
-                            query
-                                .select("_id createdBy editedBy address.country email name phones.phone")
-                                .populate('createdBy.user', 'login')
-                                .populate('editedBy.user', 'login');
+                                query
+                                    .select("_id createdBy editedBy address.country email name phones.phone")
+                                    .populate('createdBy.user', 'login')
+                                    .populate('editedBy.user', 'login');
+                            }
+                                break;
+                            case ('thumbnails'):
+                            {
+                                query
+                                    .select("_id name email company")
+                                    .populate('company', '_id name')
+                                    .populate('department', '_id departmentName')
+                                    .populate('createdBy.user')
+                                    .populate('editedBy.user');
+                            }
+                                break;
                         }
-                            break;
-                        case ('thumbnails'):
-                        {
-                            query
-                                .select("_id name email company")
-                                .populate('company', '_id name')
-                                .populate('department', '_id departmentName')
-                                .populate('createdBy.user')
-                                .populate('editedBy.user');
-                        }
-                            break;
-                    }
-                    break;
-                case ('Companies'):
-                    switch (viewType) {
-                        case ('list'):
-                        {
-                            query.sort(sort);
+                        break;
+                    case ('Companies'):
+                        switch (viewType) {
+                            case ('list'):
+                            {
+                                query.sort(sort);
 
-                            query
-                                .select("_id editedBy createdBy salesPurchases name email phones.phone address.country")
-                                .populate('salesPurchases.salesPerson', '_id name')
-                                .populate('salesPurchases.salesTeam', '_id departmentName')
-                                .populate('createdBy.user', 'login')
-                                .populate('editedBy.user', 'login');
-                        }
-                            break;
-                        case ('thumbnails'):
-                        {
-                            query
-                                .select("_id name address")
-                                .populate('createdBy.user')
-                                .populate('editedBy.user');
-                        }
-                            break;
+                                query
+                                    .select("_id editedBy createdBy salesPurchases name email phones.phone address.country")
+                                    .populate('salesPurchases.salesPerson', '_id name')
+                                    .populate('salesPurchases.salesTeam', '_id departmentName')
+                                    .populate('createdBy.user', 'login')
+                                    .populate('editedBy.user', 'login');
+                            }
+                                break;
+                            case ('thumbnails'):
+                            {
+                                query
+                                    .select("_id name address")
+                                    .populate('createdBy.user')
+                                    .populate('editedBy.user');
+                            }
+                                break;
 
-                    }
-                    break;
-                case ('ownCompanies'):
-                    switch (viewType) {
-                        case ('list'):
-                        {
-                            query
-                                .populate('salesPurchases.salesPerson', '_id name')
-                                .populate('salesPurchases.salesTeam', '_id departmentName')
-                                .populate('createdBy.user')
-                                .populate('editedBy.user');
                         }
-                            break;
-                        case ('thumbnails'):
-                        {
-                            query
-                                .select("_id name")
-                                .populate('company', '_id name address')
-                                .populate('createdBy.user')
-                                .populate('editedBy.user');
+                        break;
+                    case ('ownCompanies'):
+                        switch (viewType) {
+                            case ('list'):
+                            {
+                                query
+                                    .populate('salesPurchases.salesPerson', '_id name')
+                                    .populate('salesPurchases.salesTeam', '_id departmentName')
+                                    .populate('createdBy.user')
+                                    .populate('editedBy.user');
+                            }
+                                break;
+                            case ('thumbnails'):
+                            {
+                                query
+                                    .select("_id name")
+                                    .populate('company', '_id name address')
+                                    .populate('createdBy.user')
+                                    .populate('editedBy.user');
+                            }
+                                break;
                         }
-                            break;
-                    }
-                    break;
+                        break;
+                }
+
+                return query;
             }
 
-            query.skip(skip).limit(limit).exec(function (err, _res) {
-                if (err) {
+            query = queryBuilder(contentType, viewType);
+            countQuery = queryBuilder(contentType, viewType);
+
+            var getTotal = function (pCb) {
+
+                countQuery.count(function (err, _res) {
+                    if (err) {
+                        return pCb(err);
+                    }
+
+                    pCb(null, _res);
+                });
+            };
+            
+            var getData = function (pCb) {
+                query.skip(skip).limit(limit).exec(function (err, _res) {
+                    if (err) {
+                        return pCb(err);
+                    }
+
+                    pCb(null, _res);
+                });
+            };
+
+            parallelTasks = [getTotal, getData];
+            
+            async.parallel(parallelTasks, function (err, result) {
+                var count;
+                var response = {};
+
+                if (err){
                     return cb(err);
                 }
 
-                cb(null, _res);
+                count = result[0] || 0;
+
+                response.total = count;
+                response.data = result[1];
+
+                cb(null, response);
             });
 
         };
@@ -731,7 +777,7 @@ var Customers = function (models) {
                 return next(err);
             }
 
-            res.status(200).send({data: result});
+            res.status(200).send(result);
         });
 
     }
@@ -741,7 +787,7 @@ var Customers = function (models) {
         var viewType = query.viewType;
         var id = req.query.id;
 
-        if (id.length >= 24) {
+        if (id && id.length >= 24) {
             getById(req, res, next);
             return false;
         }
@@ -749,6 +795,9 @@ var Customers = function (models) {
         switch (viewType) {
             case "form":
                 getById(req, res, next);
+                break;
+            case 'mobile':
+                getCustomers(req, res, next);
                 break;
             default:
                 getFilterCustomers(req, res, next);
@@ -916,7 +965,7 @@ var Customers = function (models) {
                         $match: queryObject
                     }, {
                         $project: {
-                            _id: 1,
+                            _id  : 1,
                             later: {$substr: [searchName, 0, 1]}
                         }
                     },
@@ -1010,7 +1059,7 @@ var Customers = function (models) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
         var filter = req.query.filter || JSON.stringify({});
-        var type  = req.query.type;
+        var type = req.query.type;
         var filterObj = {};
         var options;
         var matchObject = {};
@@ -1069,7 +1118,7 @@ var Customers = function (models) {
         var Model = models.get(req.session.lastDb, 'Customers', CustomerSchema);
 
         var filter = req.query.filter || JSON.stringify({});
-        var type  = req.query.type;
+        var type = req.query.type;
         var filterObj = {};
         var options;
         var matchObject = {};

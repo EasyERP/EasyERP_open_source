@@ -37,7 +37,7 @@ describe("Company Specs", function () {
         it("should create company", function (done) {
             var body = {
                 "name"       : {
-                    "first": "test",
+                    "first": "test11",
                     "last" : "testCompany"
                 }
             };
@@ -67,9 +67,14 @@ describe("Company Specs", function () {
         });
 
         it("should get by _id company", function (done) {
+            var query = {
+                id: id,
+                viewType: 'form'
+            };
+            
             aggent
-                .get('customers/' + id)
-                .query({id: '55b92ad521e4b7c40f00061d'})
+                .get('customers/')
+                .query(query)
                 .expect(200)
                 .end(function(err, res){
                     var body = res.body;
@@ -90,7 +95,7 @@ describe("Company Specs", function () {
         it("should get companies for mobile", function (done) {
             aggent
                 .get('customers')
-                .query({contentType: 'Companies'})
+                .query({contentType: 'Companies', viewType: 'mobile'})
                 .expect(200)
                 .end(function(err, res){
                     var body = res.body;
@@ -154,9 +159,14 @@ describe("Company Specs", function () {
         });
 
         it("should get companies for viewType", function (done) {
+            var query = {
+                viewType: 'thumbnails',
+                contentType: 'Companies'
+            };
+            
             aggent
-                .get('customers/thumbnails')
-                .query({contentType: 'Companies'})
+                .get('customers/')
+                .query(query)
                 .expect(200)
                 .end(function(err, res){
                     var body = res.body;
@@ -166,6 +176,8 @@ describe("Company Specs", function () {
                     }
                     expect(body)
                         .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('total');
                     expect(body)
                         .to.have.property('data');
                     expect(body.data)
@@ -278,7 +290,7 @@ describe("Company Specs", function () {
                 whoCanRW: "everyOne"
             };
             aggent
-                .put('customers/55b92ad521e4b7c40f00060f')
+                .put('customers/' + id)
                 .send(body)
                 .expect(200)
                 .end(function(err, res){
