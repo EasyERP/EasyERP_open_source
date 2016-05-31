@@ -113,7 +113,7 @@ module.exports = function (models, event) {
     this.updateOnlySelectedFields = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var data = req.body;
-        var _id = req.params._id;
+        var _id = req.params.id;
         var obj;
         var fileName = data.fileName;
 
@@ -198,7 +198,7 @@ module.exports = function (models, event) {
 
     this.remove = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
-        var _id = req.params._id;
+        var _id = req.params.id;
 
         Project.findByIdAndRemove(_id, function (err) {
             if (err) {

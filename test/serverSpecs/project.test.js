@@ -28,6 +28,94 @@ describe('Project Specs', function () {
                 .expect(302, done);
         });
 
+        it('should create Project', function (done) {
+            var body = {
+                "projectName"     : "testProject",
+                "projectShortDesc": "esttest",
+                "task"            : [],
+                "privacy"         : "All Users",
+                "customer"        : "55b92ad621e4b7c40f000635",
+                "projectmanager"  : {"_id": "", "name": ""},
+                "teams"           : {"users": [], "Teams": []},
+                "info"            : {
+                    "StartDate": null,
+                    "duration" : 0,
+                    "EndDate"  : null,
+                    "sequence" : 0,
+                    "parent"   : null
+                },
+                "estimated"       : 0,
+                "logged"          : 0,
+                "remaining"       : 0,
+                "progress"        : 0,
+                "notes"           : [],
+                "bonus"           : [],
+                "budget"          : {"bonus": [], "projectTeam": []},
+                "workflow"        : "528ce7d0f3f67bc40b000021",
+                "projecttype"     : "mixed",
+                "paymentMethod"   : "565f2e05ab70d49024242e07",
+                "paymentTerms"    : "55536e52475b7be475f335f6",
+                "description"     : "",
+                "groups"          : {"owner": "560c099da5d4a2e20ba5068b", "users": [], "group": []},
+                "whoCanRW"        : "everyOne",
+                "health"          : 1,
+                "StartDate"       : "",
+                "TargetEndDate"   : ""
+            };
+
+            aggent
+                .post('projects/')
+                .send(body)
+                .expect(201)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('success');
+                    expect(body)
+                        .to.have.property('result');
+                    expect(body)
+                        .to.have.property('id');
+
+                    id = body.id;
+
+                    done();
+                });
+
+        });
+
+        it('should update Project', function (done) {
+            var body = {"workflow": "528ce82df3f67bc40b000025"};
+
+            aggent
+                .patch('projects/' + id)
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('_id');
+                    expect(body)
+                        .to.have.property('workflow')
+                        .and.to.be.equal('528ce82df3f67bc40b000025');
+
+                    done();
+                });
+        });
+
         it('should get projects for thumbnails', function (done) {
             var query = {
                 page    : 1,
@@ -97,7 +185,6 @@ describe('Project Specs', function () {
                     done();
                 });
         });
-
 
         it('should get projects for list', function (done) {
             var query = {
@@ -193,6 +280,18 @@ describe('Project Specs', function () {
 
                     done();
                 });
+        });
+
+        it("should delete Project", function (done) {
+            aggent
+                .delete('projects/' + id)
+                .expect(200, done);
+        });
+
+        it("should not delete Project", function (done) {
+            aggent
+                .delete('projects/' + 'kkk')
+                .expect(500, done);
         });
 
     });
