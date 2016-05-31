@@ -14,7 +14,7 @@ define([
         'common'
     ],
 
-    function (Backbone, $, _, listViewBase, listTemplate, createView, listItemView, filterView, FormView, contentCollection, CurrentModel, common) {
+    function (Backbone, $, _, listViewBase, listTemplate, createView, EditView, listItemView, filterView, FormView, contentCollection, CurrentModel, common) {
         'use strict';
         var EmployeesListView = listViewBase.extend({
             createView              : createView,
@@ -24,14 +24,14 @@ define([
             filterView              : filterView,
             contentType             : "Employees",
             totalCollectionLengthUrl: '/employees/totalCollectionLength',
-            formUrl                 : "#easyErp/Employees/form/",
+            formUrl                 : "#easyErp/Employees/",
             formView                : FormView,
             exportToXlsxUrl         : '/employees/exportToXlsx',
             exportToCsvUrl          : '/employees/exportToCsv',
             events                  : {
-                "click"                              : "hideItemsNumber",
-                "click .letter:not(.empty)"          : "alpabeticalRender",
-                "click .list td:not(.notForm)"       : "gotoEditForm"
+                "click"                       : "hideItemsNumber",
+                "click .letter:not(.empty)"   : "alpabeticalRender",
+                "click .list td:not(.notForm)": "gotoEditForm"
             },
 
             initialize: function (options) {
@@ -54,11 +54,11 @@ define([
 
             gotoEditForm: function (e) {
                 var id = $(e.target).closest("tr").data("id");
-                var model = new currentModel({validate: false});
+                var model = new CurrentModel({validate: false});
 
                 e.preventDefault();
 
-                model.urlRoot = '/Employees/form';
+                model.urlRoot = '/Employees/';
                 model.fetch({
                     data   : {id: id},
                     success: function (model) {

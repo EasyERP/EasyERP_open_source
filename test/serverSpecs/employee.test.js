@@ -7,7 +7,6 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
-var moment = require('moment');
 var aggent;
 
 describe("Employee Specs", function () {
@@ -24,7 +23,7 @@ describe("Employee Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'lilyadb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -104,7 +103,7 @@ describe("Employee Specs", function () {
                 id : id
             };
             aggent
-                .get('employees/' + id)
+                .get('employees/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -129,7 +128,7 @@ describe("Employee Specs", function () {
                 id      : id
             };
             aggent
-                .get('employees/' + id)
+                .get('employees/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -181,7 +180,7 @@ describe("Employee Specs", function () {
                 newCollection: false
             };
             aggent
-                .get('employees/thumbnails')
+                .get('employees/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -195,6 +194,10 @@ describe("Employee Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
+                    expect(body)
+                        .to.have.property('total');
+                    expect(body)
+                        .to.have.property('showMore');
 
                     done();
                 });
@@ -579,7 +582,7 @@ describe("Employee Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'lilyadb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });

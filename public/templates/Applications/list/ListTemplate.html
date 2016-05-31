@@ -20,10 +20,10 @@
     </td>
     <td><%=application.jobType%></td>
     <td><%=(application.createdBy&&application.createdBy.date)?( application.createdBy.date +
-        ((application.createdBy.user) ?(' (' + application.createdBy.user.login + ')') : '')):''%>
+        ((application.createdBy.user) ?(' (' + application.createdBy.user + ')') : '')):''%>
     </td>
     <td><%=(application.editedBy&&application.editedBy.date)?( application.editedBy.date + ((application.editedBy.user)
-        ?(' (' + application.editedBy.user.login + ')') : '')):''%>
+        ?(' (' + application.editedBy.user + ')') : '')):''%>
     </td>
 
 </tr>

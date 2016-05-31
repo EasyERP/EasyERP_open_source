@@ -19,6 +19,7 @@ var Employee = function (event, models) {
     var moment = require('../public/js/libs/moment/moment');
     var validatorEmployee = require('../helpers/validator');
     var Payroll = require('../handlers/payroll');
+    var pageHelper = require('../helpers/pageHelper');
     var payrollHandler = new Payroll(models);
     var ids = ['52203e707d4dba8813000003', '563f673270bbc2b740ce89ae', '55b8cb7d0ce4affc2a0015cb', '55ba2ef1d79a3a343900001c', '560255d1638625cf32000005'];
     var CONSTANTS = require('../constants/mainConstants.js');
@@ -407,13 +408,9 @@ var Employee = function (event, models) {
         return resArray;
     }
 
-    function getById(req, response) {
-        var data = {};
+    function getById(req, res, next) {
         var project = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        ;
+        var data = req.query;
 
         if (ids.indexOf(req.session.uId) === -1) {
             project = {'transfer.salary': 0};
@@ -441,13 +438,10 @@ var Employee = function (event, models) {
 
         query.exec(function (err, findedEmployee) {
             if (err) {
-                logWriter.log("Employees.js getById employee.find " + err);
-                response.send(500, {error: "Can't find Employee"});
-            } else {
-
-
-                response.send(findedEmployee);
+                return next(err);
             }
+
+            res.status(200).send(findedEmployee);
         });
 
     }
@@ -663,6 +657,9 @@ var Employee = function (event, models) {
     function getFilter(req, res, next) {
         var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var data = req.query;
+        var paginationObject = pageHelper(data);
+        var limit = paginationObject.limit;
+        var skip = paginationObject.skip;
         var contentType = data.contentType;
         var viewType = data.viewType;
         var optionsObject = {};
@@ -674,9 +671,7 @@ var Employee = function (event, models) {
         var sort;
         var project;
         var projectSecond;
-
-        var skip = ((parseInt(data.page || 1, 10) - 1) * parseInt(data.count || 100, 10));
-        var limit = parseInt(data.count, 10) || 100;
+        var projectAfterRoot;
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
@@ -738,20 +733,39 @@ var Employee = function (event, models) {
                             };
 
                             projectSecond = {
-                                manager         : 1,
-                                jobPosition     : 1,
-                                department      : 1,
-                                'createdBy.user': 1,
-                                'editedBy.user' : 1,
-                                'editedBy.date' : 1,
-                                'createdBy.date': 1,
-                                name            : 1,
-                                dateBirth       : 1,
-                                skype           : 1,
-                                workEmail       : 1,
-                                workPhones      : 1,
-                                jobType         : 1,
-                                isEmployee      : 1
+                                'manager.name'             : '$manager.name',
+                                'jobPosition.name'         : '$jobPosition.name',
+                                'department.departmentName': '$department.departmentName',
+                                'createdBy.user'           : 1,
+                                'editedBy.user'            : 1,
+                                'editedBy.date'            : 1,
+                                'createdBy.date'           : 1,
+                                name                       : 1,
+                                dateBirth                  : 1,
+                                skype                      : 1,
+                                workEmail                  : 1,
+                                workPhones                 : 1,
+                                jobType                    : 1,
+                                isEmployee                 : 1
+                            };
+
+                            projectAfterRoot = {
+                                _id             : '$root._id',
+                                manager         : '$root.manager',
+                                jobPosition     : '$root.jobPosition',
+                                department      : '$root.department',
+                                'createdBy.user': '$root.createdBy.user.login',
+                                'editedBy.user' : '$root.editedBy.user.login',
+                                'editedBy.date' : '$root.editedBy.date',
+                                'createdBy.date': '$root.createdBy.date',
+                                name            : '$root.name',
+                                dateBirth       : '$root.dateBirth',
+                                skype           : '$root.skype',
+                                workEmail       : '$root.workEmail',
+                                workPhones      : '$root.workPhones',
+                                jobType         : '$root.jobType',
+                                isEmployee      : '$root.isEmployee',
+                                total           : 1
                             };
                         }
                             break;
@@ -759,8 +773,6 @@ var Employee = function (event, models) {
                         {
                             project = {
                                 jobPosition        : {$arrayElemAt: ["$jobPosition", 0]},
-                                department         : {$arrayElemAt: ["$department", 0]},
-                                manager            : {$arrayElemAt: ["$manager", 0]},
                                 age                : 1,
                                 relatedUser        : {$arrayElemAt: ["$relatedUser", 0]},
                                 'workPhones.mobile': 1,
@@ -770,15 +782,25 @@ var Employee = function (event, models) {
                             };
 
                             projectSecond = {
-                                jobPosition        : 1,
-                                department         : 1,
-                                manager            : 1,
+                                'jobPosition.name' : '$jobPosition.name',
                                 age                : 1,
-                                'relatedUser.login': 1,
-                                'workPhones.mobile': 1,
+                                'relatedUser.login': '$relatedUser.login',
+                                workPhones         : 1,
                                 name               : 1,
                                 dateBirth          : 1,
                                 isEmployee         : 1
+                            };
+
+                            projectAfterRoot = {
+                                _id        : '$root._id',
+                                jobPosition: '$root.jobPosition',
+                                age        : '$root.age',
+                                relatedUser: '$root.relatedUser',
+                                workPhones : '$root.workPhones',
+                                name       : '$root.name',
+                                dateBirth  : '$root.dateBirth',
+                                isEmployee : '$root.isEmployee',
+                                total      : 1
                             };
                         }
                             break;
@@ -796,9 +818,7 @@ var Employee = function (event, models) {
                             }
 
                             project = {
-                                manager         : {$arrayElemAt: ["$manager", 0]},
                                 jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
-                                department      : {$arrayElemAt: ["$department", 0]},
                                 'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
                                 'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
                                 name            : 1,
@@ -810,7 +830,6 @@ var Employee = function (event, models) {
                                 workPhones      : 1,
                                 jobType         : 1,
                                 isEmployee      : 1,
-                                creationDate    : 1,
                                 workflow        : {$arrayElemAt: ["$workflow", 0]},
                                 personalEmail   : 1,
                                 sequence        : 1,
@@ -819,9 +838,7 @@ var Employee = function (event, models) {
                             };
 
                             projectSecond = {
-                                manager         : 1,
                                 jobPosition     : 1,
-                                department      : 1,
                                 'createdBy.user': 1,
                                 'editedBy.user' : 1,
                                 'editedBy.date' : 1,
@@ -833,12 +850,33 @@ var Employee = function (event, models) {
                                 workPhones      : 1,
                                 jobType         : 1,
                                 isEmployee      : 1,
-                                creationDate    : 1,
                                 workflow        : 1,
                                 personalEmail   : 1,
                                 sequence        : 1,
                                 hire            : 1,
                                 fire            : 1
+                            };
+
+                            projectAfterRoot = {
+                                _id               : '$root._id',
+                                'jobPosition.name': '$root.jobPosition.name',
+                                'createdBy.user'  : '$root.createdBy.user.login',
+                                'editedBy.user'   : '$root.editedBy.user.login',
+                                'editedBy.date'   : '$root.editedBy.date',
+                                'createdBy.date'  : '$root.createdBy.createdBy',
+                                name              : '$root.name',
+                                dateBirth         : '$root.dateBirth',
+                                skype             : '$root.skype',
+                                workEmail         : '$root.workEmail',
+                                workPhones        : '$root.workPhones',
+                                jobType           : '$root.jobType',
+                                isEmployee        : '$root.isEmployee',
+                                workflow          : '$root.workflow',
+                                personalEmail     : '$root.personalEmail',
+                                sequence          : '$root.sequence',
+                                hire              : '$root.hire',
+                                fire              : '$root.fire',
+                                total             : 1
                             };
                         }
                             break;
@@ -895,7 +933,17 @@ var Employee = function (event, models) {
             }, {
                 $match: queryObject
             }, {
+                $group: {
+                    _id  : null,
+                    total: {$sum: 1},
+                    root : {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
                 $sort: sort
+            }, {
+                $project: projectAfterRoot
             }, {
                 $skip: skip
             }, {
@@ -913,11 +961,24 @@ var Employee = function (event, models) {
         waterfallTasks = [accessRollSearcher, contentSearcher];
 
         async.waterfall(waterfallTasks, function (err, result) {
+            var count;
+            var response = {};
+
+            response.showMore = false;
+
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send({data: result});
+            count = result[0].total || 0;
+
+            if (data.currentNumber && data.currentNumber < count) {
+                response.showMore = true;
+            }
+
+            response.total = count;
+            response.data = result;
+            res.status(200).send(response);
         });
 
     }
@@ -1149,11 +1210,12 @@ var Employee = function (event, models) {
                 .limit(req.session.kanbanSettings.applications.countPerPage)
                 .exec(function (err, result) {
                     if (err) {
-                        return next(err);
+                        return cb(err);
                     }
+
                     cb(null, result);
                 });
-        }
+        };
 
         waterfallTasks = [accessRollSearcher, contentSearcher];
 
@@ -1313,7 +1375,7 @@ var Employee = function (event, models) {
                     }
                 ], function (err, result) {
                     if (err) {
-                        cb(err);
+                        return cb(err);
                     }
 
                     cb(null, result);
@@ -1617,13 +1679,13 @@ var Employee = function (event, models) {
 
         Birthdays.findByIdAndUpdate({_id: 1}, data, {new: true, upsert: true}, function (err, birth) {
             if (err) {
-                if (res) {
-                    return next(err);
-                }
+                return next(err);
             }
+
             result.data = birth.currentEmployees;
+
             if (res) {
-                res.send(result);
+                res.status(200).send(result);
             }
         });
     };

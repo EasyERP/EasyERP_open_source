@@ -20,7 +20,7 @@ describe("Quotation Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -113,19 +113,20 @@ describe("Quotation Specs", function () {
         });
 
         it("should get quotations by viewType", function (done) {
-            var query ={
-                page : 1,
-                count: 4,
-                filter: {
+            var query = {
+                page       : 1,
+                count      : 4,
+                contentType: 'list',
+                filter     : {
                     project: {
-                        key  : "project._id"
+                        key: "project._id"
                     }
                 },
-                forSales : true
+                forSales   : true
             };
 
             aggent
-                .get('quotation/list')
+                .get('quotation')
                 .query(query)
                 .query({"filter[project][value][0]": CONSTANTS.PROJECT})
                 .expect(200)
@@ -148,7 +149,7 @@ describe("Quotation Specs", function () {
                     done();
                 });
         });
-        
+
         it("should get quotations totalCollectionLength", function (done) {
 
             aggent
@@ -195,7 +196,7 @@ describe("Quotation Specs", function () {
 
         it("should get quotation by id", function (done) {
             var query = {
-                forSales : true
+                forSales: true
             }
 
             aggent
@@ -294,7 +295,7 @@ describe("Quotation Specs", function () {
                 type          : 'Not Ordered',
                 forSales      : true,
                 currency      : {
-                    _id: CONSTANTS.DOLLAR,
+                    _id : CONSTANTS.DOLLAR,
                     name: 'USD'
                 }
             };
@@ -395,7 +396,7 @@ describe("Quotation Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });

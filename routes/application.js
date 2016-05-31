@@ -12,6 +12,8 @@ module.exports = function (event, models) {
 
     router.use(authStackMiddleware);
 
+    router.get('/', accessStackMiddlWare, handler.getByViewTpe);
+
     router.get('/getApplicationsLengthByWorkflows', handler.getCollectionLengthByWorkflows);
     router.get('/totalCollectionLength', accessStackMiddlWare, handler.totalCollectionLength);
 

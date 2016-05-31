@@ -1,5 +1,3 @@
-
-
 var express = require('express');
 var router = express.Router();
 var QuotationHandler = require('../handlers/quotation');
@@ -11,9 +9,9 @@ module.exports = function (models, event) {
     var moduleId = MODULES.QUOTATION;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
+    router.get('/', handler.getByViewType);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/getFilterValues', handler.getFilterValues);
-    router.get('/:viewType', handler.getByViewType);
     router.get('/form/:id', handler.getById);
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.delete('/:id', handler.remove);
