@@ -38,6 +38,10 @@ var MonthHours = function (event, models) {
         var dateByMonth = parseInt(body.year, 10) * 100 + parseInt(body.month, 10);
         var monthHours;
 
+        if (!body.month || !body.year){
+          return  res.status(404).send();
+        }
+
         body.dateByMonth = dateByMonth;
 
         monthHours = new MonthHoursModel(body);
@@ -62,7 +66,7 @@ var MonthHours = function (event, models) {
                 dateByMonth       : result.dateByMonth
             };
             event.emit('updateCost', params);
-            res.status(200).send({success: result});
+            res.status(200).send(result);
         });
     };
 

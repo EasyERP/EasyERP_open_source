@@ -31,11 +31,19 @@ describe('MonthHours Specs', function () {
 
         it('should create monthHours', function (done) {
             var body = {
-                'fixedExpense'      : 30,
-                'expenseCoefficient': 5,
-                'year'              : 2015,
-                'hours'             : 172,
-                'month'             : 8
+                actualHours       : 4937,
+                adminBudget       : 8435,
+                adminSalaryBudget : 2200,
+                dateByMonth       : 201410,
+                estimatedHours    : 0,
+                expenseCoefficient: 1.2,
+                fixedExpense      : 40,
+                hours             : 184,
+                idleBudget        : 17439.67,
+                month             : 10,
+                overheadRate      : 5.992615652878442,
+                vacationBudget    : 1510.87,
+                year              : 2014
             };
 
             aggent
@@ -67,7 +75,7 @@ describe('MonthHours Specs', function () {
         });
 
         it('should fail create monthHours', function (done) {
-            var body = '';
+            var body = {};
 
             aggent
                 .post('monthHours')
@@ -112,8 +120,10 @@ describe('MonthHours Specs', function () {
                         return done(err);
                     }
 
-                    expect(body.length)
-                        .to.be.gte(1);
+                    expect(body)
+                        .to.have.property('data');
+                    expect(body)
+                        .to.have.property('total');
 
                     done();
                 });
