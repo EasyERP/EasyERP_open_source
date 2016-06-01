@@ -3,7 +3,7 @@ var objectId = mongoose.Types.ObjectId;
 
 var getEveryOneOption = function () {
     return {
-        whoCanRW: "everyOne"
+        whoCanRW: 'everyOne'
     };
 };
 

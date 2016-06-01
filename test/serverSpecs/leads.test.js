@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
-var dbId = 'dendb';
+var dbId = 'production';
 var admin = {
     login: 'admin',
     pass : 'tm2016',
@@ -146,7 +146,7 @@ describe('Leads Specs', function () {
             };
 
             aggent
-                .get('leads/list')
+                .get('leads/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -159,6 +159,8 @@ describe('Leads Specs', function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
+                    expect(body)
+                        .to.have.property('total');
                     expect(body.data)
                         .to.be.instanceOf(Array);
 
@@ -168,11 +170,12 @@ describe('Leads Specs', function () {
 
         it('should get Lead for viewType form', function (done) {
             var query = {
-                id: id
+                id      : id,
+                viewType: 'form'
             };
 
             aggent
-                .get('leads/form')
+                .get('leads')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {

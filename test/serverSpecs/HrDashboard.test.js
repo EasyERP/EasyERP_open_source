@@ -1,6 +1,6 @@
 var request = require('supertest');
 var expect = require('chai').expect;
-var moment = require('moment');
+var moment = require('../../public/js/libs/moment/moment');
 var url = 'http://localhost:8089/';
 var CONSTANTS = require('../../constants/mainConstants');
 var aggent;
@@ -22,7 +22,7 @@ describe("Dashboard Vacation Specs", function () {
                 .send({
                     login: 'admin',
                     pass: 'tm2016',
-                    dbId: 'lilyadb'
+                    dbId: 'production'
                 })
                 .expect(200, done);
         });
@@ -124,7 +124,7 @@ describe("Dashboard Vacation Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass: 'thinkmobiles2015',
-                    dbId: 'lilyadb'
+                    dbId: 'production'
                 })
                 .expect(200, done);
         });

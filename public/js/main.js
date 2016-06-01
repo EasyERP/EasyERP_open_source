@@ -1,13 +1,10 @@
-var App = App ||
-    {
-        File        : {
-            MAXSIZE           : 10485760,  //size in kilobytes  = 3 MB
-            MaxFileSizeDisplay: "10 MB"
+var App = App || {
+        File: {
+            MAXSIZE           : 10485760,  // size in kilobytes  = 3 MB
+            MaxFileSizeDisplay: '10 MB'
         },
+
         requestedURL: null,
-        Calendar    : {
-            currentCalendarId: ""
-        },
         savedFilters: {}
     };
 
@@ -34,29 +31,33 @@ require.config({
         moment       : './libs/moment/moment',
         socketio     : '/socket.io/socket.io.js'
     },
-    shim : {
-        'Underscore': {
+
+    shim: {
+        Underscore: {
             exports: '_'
         },
-        'jQuery'    : {
+
+        jQuery: {
             exports: '$'
         },
-        'jqueryui'  : ['jQuery'],
-        'ajaxForm'  : ['jQuery'],
-        'imageCrop' : ['jQuery'],
-        'spinJs'    : ['jQuery'],
-        'Backbone'  : ['Underscore', 'jQuery'],
-        'app'       : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3'],
-        'd3'        : {
+
+        jqueryui : ['jQuery'],
+        ajaxForm : ['jQuery'],
+        imageCrop: ['jQuery'],
+        spinJs   : ['jQuery'],
+        Backbone : ['Underscore', 'jQuery'],
+        app      : ['Backbone', 'less', 'jqueryui', 'ajaxForm', 'imageCrop', 'd3'],
+        d3       : {
             exports: 'd3'
         },
-        'dateFormat': {
+
+        dateFormat: {
             exports: 'dateFormat'
         }
     }
 });
 
-require(['app'], function (app) {
+require(['Backbone', 'jQuery', 'app'], function (Backbone, $, app) {
 
     App.render = function (data) {
         var container = this.errorContainer || $('#errorHandler');
@@ -67,13 +68,13 @@ require(['app'], function (app) {
         container.append(renderEl);
 
         container.find('div.animate').delay(10).animate({
-            left   : "84%",
+            left   : '84%',
             opacity: 1
         }, 500, function () {
             var self = $(this);
 
             self.removeClass('animate').delay(5000).animate({
-                left   : "100%",
+                left   : '100%',
                 opacity: 0
             }, 1000, function () {
                 self.remove();
@@ -103,6 +104,7 @@ require(['app'], function (app) {
         }
 
     };
+
     Backbone.View.prototype.errorNotification = function (xhr) {
         if (xhr) {
             if (xhr.status === 401 || xhr.status === 403) {
@@ -123,6 +125,7 @@ require(['app'], function (app) {
             }
         }
     };
+
     Backbone.View.prototype.pageElementRender = function (totalCount, itemsNumber, currentPage) {
         var itemsNumber = this.defaultItemsNumber;
 
@@ -318,6 +321,7 @@ require(['app'], function (app) {
 
         Backbone.history.navigate(url, {replace: true});
 
+        console.log('--- Please inherit it from paginator ---');
     };
 
     Backbone.View.prototype.prevPProject = function (dataObject, disableChangeHash, context) {

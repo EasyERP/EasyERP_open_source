@@ -1378,7 +1378,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    function createProject(req, res, data) {
+   /* function createProject(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 39, function (access) {
                 if (access) {
@@ -1391,9 +1391,9 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    }
+    }*/
 
-    function updateOnlySelectedFields(req, res, id, data) {
+    /*function updateOnlySelectedFields(req, res, id, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 39, function (access) {
                 if (access) {
@@ -1409,7 +1409,7 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    }
+    }*/
 
     function getProjectType(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1419,7 +1419,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    function getProjects(req, res, data, next) {
+    /*function getProjects(req, res, data, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 39, function (access) {
                 if (access) {
@@ -1432,7 +1432,7 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    }
+    }*/
 
     function getProjectByEndDateForDashboard(req, res) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1462,7 +1462,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    function getProjectsForList(req, res, data) {
+    /*function getProjectsForList(req, res, data) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 39, function (access) {
                 if (access) {
@@ -1475,9 +1475,9 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    }
+    }*/
 
-    function getProjectsById(req, res, data) {
+   /* function getProjectsById(req, res, data) {
 
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getReadAccess(req, req.session.uId, 39, function (access) {
@@ -1490,7 +1490,7 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    }
+    }*/
 
     function getProjectsForDd(req, res, next) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1500,7 +1500,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    function updateProject(req, res, id, data, remove) {
+    /*function updateProject(req, res, id, data, remove) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getEditWritAccess(req, req.session.uId, 39, function (access) {
                 if (access) {
@@ -1516,7 +1516,7 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    }
+    }*/
 
     function uploadProjectsFiles(req, res, id, file) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -1549,7 +1549,7 @@ var requestHandler = function (app, event, mainDb) {
         }
     }
 
-    function removeProject(req, res, id) {
+    /*function removeProject(req, res, id) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
             access.getDeleteAccess(req, req.session.uId, 39, function (access) {
                 if (access) {
@@ -1561,7 +1561,7 @@ var requestHandler = function (app, event, mainDb) {
         } else {
             res.send(401);
         }
-    }
+    }*/
 
     function uploadTasksFiles(req, res, id, file) {
         if (req.session && req.session.loggedIn && req.session.lastDb) {
@@ -2044,17 +2044,17 @@ var requestHandler = function (app, event, mainDb) {
         updateCurrentUser: updateCurrentUser,
         uploadFile: uploadFile,
         projectsTotalCollectionLength: projectsTotalCollectionLength,
-        getProjects: getProjects,
-        getProjectsForList: getProjectsForList,
-        getProjectsById: getProjectsById,
+       // getProjects: getProjects,
+       // getProjectsForList: getProjectsForList,
+      //  getProjectsById: getProjectsById,
         getProjectsForDd: getProjectsForDd,
-        createProject: createProject,
-        updateProject: updateProject,
+       // createProject: createProject,
+        //updateProject: updateProject,
         uploadProjectsFiles: uploadProjectsFiles,
-        removeProject: removeProject,
+        //removeProject: removeProject,
         getProjectStatusCountForDashboard: getProjectStatusCountForDashboard,
         getProjectByEndDateForDashboard  : getProjectByEndDateForDashboard,
-        updateOnlySelectedFields         : updateOnlySelectedFields,
+       // updateOnlySelectedFields         : updateOnlySelectedFields,
         getProjectType                   : getProjectType,
 
         uploadTasksFiles         : uploadTasksFiles,

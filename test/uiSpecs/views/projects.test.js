@@ -16469,15 +16469,15 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create ThumbnailsView', function (done) {
-                    var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
-                    var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
+                    var projectsUrl = new RegExp('\/projects\/thumbnails', 'i');
+                    var totalUrl = new RegExp('\/projects\/totalCollectionLength', 'i');
                     var worlflowUrl = new RegExp('\/Workflows', 'i');
 
-                    server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    server.respondWith('GET', totalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         count   : 1,
                         showMore: true
                     })]);
-                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakeProjectsForThumbnails.data[0]]})]);
+                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakeProjectsForThumbnails.data[0]]})]);
                     projectsThumbCollection = new ProjectCollection({
                         viewType   : 'thumbnails',
                         contentType: 'Projects'
@@ -16485,7 +16485,7 @@ define([
                     server.respond();
                     server.respond();
 
-                    server.respondWith('GET', worlflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflows)]);
+                    server.respondWith('GET', worlflowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWorkflows)]);
                     thumbnailsView = new ThumbnailsView({
                         startTime : new Date(),
                         collection: projectsThumbCollection
@@ -16515,20 +16515,20 @@ define([
                     var $thisEl = thumbnailsView.$el;
                     var $showMoreBtn = $thisEl.find('#showMore');
 
-                    server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                    server.respondWith('GET', totalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         count   : 2,
                         showMore: false
                     })]);
-                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
+                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectsForThumbnails)]);
                     $showMoreBtn.click();
                     server.respond();
                     server.respond();
 
                     expect($thisEl.find('#thumbnailContent')).to.exist;
                     expect($thisEl.find('.thumbnail').length).to.be.equals(3);
-                });
+                });*/
 
-                it('Try to filtered projects', function () {
+               /* it('Try to filtered projects', function () {
                     var $selectedItem;
                     var $contactBtn;
                     var $projectNameBtn;
