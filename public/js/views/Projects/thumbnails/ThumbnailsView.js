@@ -209,7 +209,7 @@
             $currentEl.append(createdInTag);
 
             return this;
-        },
+        }
     });
 
     return ProjectThumbnalView;

@@ -92,11 +92,8 @@
                         callback(response.data);
                     }
                 });
-            },
-
-            parse: function (response) {
-                return response.data;
             }
         });
+        
         return EmployeesCollection;
     });

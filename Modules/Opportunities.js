@@ -213,9 +213,6 @@ var Opportunities = function (models, event) {
 
                                 query.aggregate(aggregateQuery, function (err, result) {
                                     if (!err) {
-                                        if (data.currentNumber && data.currentNumber < result.length) {
-                                            res.showMore = true;
-                                        }
                                         res.count = result.length;
                                         response.send(res);
                                     } else {

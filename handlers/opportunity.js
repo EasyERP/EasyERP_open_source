@@ -587,10 +587,6 @@ var Opportunity = function (models, event) {
                 return next(err);
             }
 
-            if (data.currentNumber && data.currentNumber < result) {
-                resp.showMore = true;
-            }
-
             resp.count = result;
 
             res.status(200).send(resp);

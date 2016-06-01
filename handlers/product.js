@@ -622,9 +622,7 @@ var Products = function (models) {
                 if (err) {
                     return next(err);
                 }
-                if (data.currentNumber && data.currentNumber < products.length) {
-                    result['showMore'] = true;
-                }
+               
                 result['count'] = products.length;
                 res.status(200).send(result);
 

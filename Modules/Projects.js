@@ -1294,17 +1294,11 @@ var Project = function (models, event) {
                                                             logWriter.log("Projects.js getListLength task.find" + err);
                                                             response.send(500, {error: "Can't find Tasks"});
                                                         }
-                                                        if (data.currentNumber && data.currentNumber < result.length) {
-                                                            res['showMore'] = true;
-                                                        }
 
                                                         res['count'] = tasks.length;
                                                         response.send(res);
                                                     });
                                             } else {
-                                                if (data.currentNumber && data.currentNumber < projects.length) {
-                                                    res['showMore'] = true;
-                                                }
                                                 res['count'] = projects.length;
                                                 response.send(res);
                                             }

@@ -148,9 +148,6 @@ var Customers = function (models) {
             if (err) {
                 return next(err);
             }
-            if (data.currentNumber && data.currentNumber < result) {
-                response.showMore = true;
-            }
 
             response.count = result;
 

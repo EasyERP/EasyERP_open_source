@@ -774,10 +774,6 @@ module.exports = function (models, event) {
 
             count = result[0].count || 0;
 
-            if (data.currentNumber && data.currentNumber < count) {
-                response.showMore = true;
-            }
-
             response.count = count;
             response.data = result;
             res.status(200).send(response);

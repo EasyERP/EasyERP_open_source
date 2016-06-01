@@ -1,15 +1,11 @@
-/**
- * Created by liliy on 22.01.2016.
- */
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent;
 
-describe("Employee Specs", function () {
+require('../../config/development');
+
+describe('Employee Specs', function () {
     'use strict';
     var id;
 
@@ -34,24 +30,24 @@ describe("Employee Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create employee", function (done) {
+        it('should create employee', function (done) {
             var body = {
-                "name"       : {
-                    "first": "test",
-                    "last" : "test"
+                name       : {
+                    first: 'test',
+                    last : 'test'
                 },
-                "department" : "55b92ace21e4b7c40f00000f",
-                "jobPosition": "55b92acf21e4b7c40f00001d",
-                "dateBirth"  : "28 Dec, 1990",
-                "hire"       : [ new Date()],
-                "transfer"       : [{
-                    status     : "hired",
+                department : '55b92ace21e4b7c40f00000f',
+                jobPosition: '55b92acf21e4b7c40f00001d',
+                dateBirth  : '28 Dec, 1990',
+                hire       : [new Date()],
+                transfer   : [{
+                    status     : 'hired',
                     isDeveloper: true,
-                    department : "55b92ace21e4b7c40f00000f",
-                    jobPosition: "55b92acf21e4b7c40f00001d",
-                    manager    : "56938d2cd87c9004552b639e",
+                    department : '55b92ace21e4b7c40f00000f',
+                    jobPosition: '55b92acf21e4b7c40f00001d',
+                    manager    : '56938d2cd87c9004552b639e',
                     jobType    : 'fullTime',
-                    info       : "Hired",
+                    info       : 'Hired',
                     salary     : 300,
                     date       : new Date()
                 }]
@@ -83,12 +79,12 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should not create employee", function (done) {
+        it('should not create employee', function (done) {
 
             var bodyError = {
-                "department" : "55b92ace21e4b7c40f00000f",
-                "jobPosition": "55b92acf21e4b7c40f00001d",
-                "dateBirth"  : "cccccc"
+                department : '55b92ace21e4b7c40f00000f',
+                jobPosition: '55b92acf21e4b7c40f00001d',
+                dateBirth  : 'cccccc'
             };
 
             aggent
@@ -97,34 +93,9 @@ describe("Employee Specs", function () {
                 .expect(404, done);
         });
 
-        it("should getById employee", function (done) {
+        it('should getById employee', function (done) {
             var query = {
-                viewType: "form",
-                id : id
-            };
-            aggent
-                .get('employees/')
-                .query(query)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('_id');
-
-                    done();
-                });
-        });
-
-        it("should get by viewType form employee", function (done) {
-            var query = {
-                viewType: "form",
+                viewType: 'form',
                 id      : id
             };
             aggent
@@ -147,11 +118,36 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get wTrack totalCollectionLength", function (done) {
+        it('should get by viewType form employee', function (done) {
+            var query = {
+                viewType: 'form',
+                id      : id
+            };
+            aggent
+                .get('employees/')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('_id');
+
+                    done();
+                });
+        });
+
+        it('should get wTrack totalCollectionLength', function (done) {
 
             aggent
                 .get('employees/totalCollectionLength')
-                .query({"contentType" : "Employees"})
+                .query({contentType: 'Employees'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -171,9 +167,9 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get by viewType thumbnails employee", function (done) {
+        it('should get by viewType thumbnails employee', function (done) {
             var query = {
-                viewType     : "thumbnails",
+                viewType     : 'thumbnails',
                 contentType  : 'Employees',
                 count        : 100,
                 page         : 1,
@@ -196,17 +192,15 @@ describe("Employee Specs", function () {
                         .to.have.property('data');
                     expect(body)
                         .to.have.property('total');
-                    expect(body)
-                        .to.have.property('showMore');
 
                     done();
                 });
         });
 
-        it("should get employee for project details", function (done) {
+        it('should get employee for project details', function (done) {
             var ids = [
-                "55b92ad221e4b7c40f000032",
-                "55b92ad221e4b7c40f000033"
+                '55b92ad221e4b7c40f000032',
+                '55b92ad221e4b7c40f000033'
             ];
             aggent
                 .get('employees/getForProjectDetails')
@@ -226,7 +220,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should not get employee for project details", function (done) {
+        it('should not get employee for project details', function (done) {
             var ids = 'dddd';
             aggent
                 .get('employees/getForProjectDetails')
@@ -248,7 +242,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get employees forDD", function (done) {
+        it('should get employees forDD', function (done) {
             aggent
                 .get('employees/getForDD')
                 .expect(200)
@@ -268,7 +262,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get Years", function (done) {
+        it('should get Years', function (done) {
 
             aggent
                 .get('employees/getYears')
@@ -290,7 +284,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get Employees count", function (done) {
+        it('should get Employees count', function (done) {
 
             aggent
                 .get('employees/getEmployeesCount')
@@ -312,7 +306,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get nationality forDD", function (done) {
+        it('should get nationality forDD', function (done) {
             aggent
                 .get('employees/nationality')
                 .expect(200)
@@ -332,7 +326,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get languages forDD", function (done) {
+        it('should get languages forDD', function (done) {
             aggent
                 .get('employees/languages')
                 .expect(200)
@@ -352,7 +346,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get sources forDD", function (done) {
+        it('should get sources forDD', function (done) {
             aggent
                 .get('employees/sources')
                 .expect(200)
@@ -372,7 +366,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get only employees forDD", function (done) {
+        it('should get only employees forDD', function (done) {
             aggent
                 .get('employees/getForDD')
                 .query({isEmployee: true})
@@ -393,7 +387,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get employees for salesManager", function (done) {
+        it('should get employees for salesManager', function (done) {
             aggent
                 .get('employees/bySales')
                 .expect(200)
@@ -411,7 +405,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get employees grouped by department", function (done) {
+        it('should get employees grouped by department', function (done) {
             aggent
                 .get('employees/byDepartment')
                 .expect(200)
@@ -423,34 +417,35 @@ describe("Employee Specs", function () {
                     }
 
                     expect(body)
-                        .to.be.instanceOf(Array)
-                        .and.to.be.not.empty;
+                        .to.be.instanceOf(Array);
+                    expect(body)
+                        .to.be.not.empty;
 
                     done();
                 });
         });
 
-      /*  it("should get employees min hire date of employees", function (done) {
-            aggent
-                .get('employees/getMinHireDate')
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
+        /*  it('should get employees min hire date of employees', function (done) {
+              aggent
+                  .get('employees/getMinHireDate')
+                  .expect(200)
+                  .end(function (err, res) {
+                      var body = res.body;
+  
+                      if (err) {
+                          return done(err);
+                      }
+  
+                      expect(body)
+                          .to.be.instanceOf(Object);
+                      expect(body)
+                          .to.have.property('min');
+  
+                      done();
+                  });
+          });*/
 
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('min');
-
-                    done();
-                });
-        });*/
-
-        it("should get employee for related user", function (done) {
+        it('should get employee for related user', function (done) {
             aggent
                 .get('employees/getForDdByRelatedUser')
                 .expect(200)
@@ -472,7 +467,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get employee as salesPerson for dropDown", function (done) {
+        it('should get employee as salesPerson for dropDown', function (done) {
             aggent
                 .get('employees/getPersonsForDd')
                 .expect(200)
@@ -494,7 +489,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get first letters of last name of employee", function (done) {
+        it('should get first letters of last name of employee', function (done) {
             aggent
                 .get('employees/getEmployeesAlphabet')
                 .expect(200)
@@ -516,7 +511,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should get employee birthdays", function(done){
+        it('should get employee birthdays', function (done) {
             aggent
                 .get('employees/birthdays')
                 .expect(200)
@@ -536,7 +531,7 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should update employee", function (done) {
+        it('should update employee', function (done) {
             var body = {
                 source: 'testSource'
             };
@@ -560,13 +555,13 @@ describe("Employee Specs", function () {
                 });
         });
 
-        it("should delete employee", function (done) {
+        it('should delete employee', function (done) {
             aggent
                 .delete('employees/' + id)
                 .expect(200, done);
         });
 
-        it("should not delete employee", function (done) {
+        it('should not delete employee', function (done) {
             aggent
                 .delete('employees/' + 'kkk')
                 .expect(500, done);
@@ -593,21 +588,21 @@ describe("Employee Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create Employee", function (done) {
+        it('should fail create Employee', function (done) {
             var body = {
-                "name"       : {
-                    "first": "test",
-                    "last" : "test"
+                name       : {
+                    first: 'test',
+                    last : 'test'
                 },
-                "department" : "55b92ace21e4b7c40f00000f",
-                "jobPosition": "55b92acf21e4b7c40f00001d",
-                "dateBirth"  : "28 Dec, 1990",
-                "hire"       : [{
-                    department : "55b92ace21e4b7c40f00000f",
-                    jobPosition: "55b92acf21e4b7c40f00001d",
-                    manager    : "56938d2cd87c9004552b639e",
+                department : '55b92ace21e4b7c40f00000f',
+                jobPosition: '55b92acf21e4b7c40f00001d',
+                dateBirth  : '28 Dec, 1990',
+                hire       : [{
+                    department : '55b92ace21e4b7c40f00000f',
+                    jobPosition: '55b92acf21e4b7c40f00001d',
+                    manager    : '56938d2cd87c9004552b639e',
                     jobType    : 'Full-time',
-                    info       : "Hired",
+                    info       : 'Hired',
                     date       : new Date()
                 }]
             };
@@ -618,4 +613,5 @@ describe("Employee Specs", function () {
                 .expect(403, done);
         });
     });
+
 });

@@ -657,9 +657,7 @@ var Employee = function (event, models) {
             if (err) {
                 return next(err);
             }
-            if (data.currentNumber && data.currentNumber < result.length) {
-                response.showMore = true;
-            }
+            
             response.count = result.length;
             res.status(200).send(response);
         });
@@ -701,7 +699,7 @@ var Employee = function (event, models) {
         }
 
         accessRollSearcher = function (cb) {
-            accessRoll(req, Employee, cb);
+            accessRoll(req, Model, cb);
         };
 
         contentSearcher = function (idsArray, cb) {
@@ -989,10 +987,6 @@ var Employee = function (event, models) {
             }
 
             count = result[0].total || 0;
-
-            if (data.currentNumber && data.currentNumber < count) {
-                response.showMore = true;
-            }
 
             response.total = count;
             response.data = result;
