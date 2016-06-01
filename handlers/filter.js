@@ -183,50 +183,50 @@ var Filters = function (models) {
                 }
             }, {
                 $project: {
-                    project      : {$arrayElemAt: ["$project", 0]},
-                    employee     : {$arrayElemAt: ["$employee", 0]},
-                    department   : {$arrayElemAt: ["$department", 0]},
-                    month        : 1,
-                    year         : 1,
-                    week         : 1,
-                    isPaid       : 1,
-                    _type        : 1
+                    project   : {$arrayElemAt: ["$project", 0]},
+                    employee  : {$arrayElemAt: ["$employee", 0]},
+                    department: {$arrayElemAt: ["$department", 0]},
+                    month     : 1,
+                    year      : 1,
+                    week      : 1,
+                    isPaid    : 1,
+                    _type     : 1
                 }
             }, {
                 $lookup: {
                     from        : "Customers",
                     localField  : "project.customer",
                     foreignField: "_id",
-                    as: "customer"
+                    as          : "customer"
                 }
             }, {
                 $project: {
-                    customer      : {$arrayElemAt: ["$customer", 0]},
-                    project       : 1,
-                    employee      : 1,
-                    department    : 1,
-                    month         : 1,
-                    year          : 1,
-                    week          : 1,
-                    isPaid        : 1,
-                    _type         : 1
+                    customer  : {$arrayElemAt: ["$customer", 0]},
+                    project   : 1,
+                    employee  : 1,
+                    department: 1,
+                    month     : 1,
+                    year      : 1,
+                    week      : 1,
+                    isPaid    : 1,
+                    _type     : 1
                 }
             }, {
                 $group: {
-                    _id             : null,
-                    'jobs'          : {
+                    _id          : null,
+                    'jobs'       : {
                         $addToSet: {
                             _id : '$jobs._id',
                             name: '$jobs.name'
                         }
                     },
-                    'projectName'   : {
+                    'projectName': {
                         $addToSet: {
                             _id : '$project._id',
                             name: '$project.projectName'
                         }
                     },
-                    'customer'      : {
+                    'customer'   : {
                         $addToSet: {
                             _id : '$customer._id',
                             name: {
@@ -234,7 +234,7 @@ var Filters = function (models) {
                             }
                         }
                     },
-                    'employee'      : {
+                    'employee'   : {
                         $addToSet: {
                             _id       : '$employee._id',
                             name      : {
@@ -243,31 +243,31 @@ var Filters = function (models) {
                             isEmployee: '$employee.isEmployee'
                         }
                     },
-                    'department'    : {
+                    'department' : {
                         $addToSet: {
                             _id : '$department._id',
                             name: '$department.departmentName'
                         }
                     },
-                    'year'          : {
+                    'year'       : {
                         $addToSet: {
                             _id : '$year',
                             name: '$year'
                         }
                     },
-                    'month'         : {
+                    'month'      : {
                         $addToSet: {
                             _id : '$month',
                             name: '$month'
                         }
                     },
-                    'week'          : {
+                    'week'       : {
                         $addToSet: {
                             _id : '$week',
                             name: '$week'
                         }
                     },
-                    '_type'          : {
+                    '_type'      : {
                         $addToSet: {
                             _id : '$_type',
                             name: '$_type'
@@ -617,84 +617,148 @@ var Filters = function (models) {
             Project
                 .aggregate([{
                     $lookup: {
-                        from        : "Employees",
-                        localField  : "projectmanager",
-                        foreignField: "_id",
-                        as          : "projectmanager"
+                        from        : 'Customers',
+                        localField  : 'customer',
+                        foreignField: '_id',
+                        as          : 'customer'
                     }
                 }, {
                     $lookup: {
-                        from        : "Employees",
-                        localField  : "salesmanager",
-                        foreignField: "_id",
-                        as          : "salesmanager"
+                        from        : 'workflows',
+                        localField  : 'workflow',
+                        foreignField: '_id',
+                        as          : 'workflow'
                     }
                 }, {
                     $lookup: {
-                        from        : "Customers",
-                        localField  : "customer",
-                        foreignField: "_id",
-                        as          : "customer"
-                    }
-                }, {
-                    $lookup: {
-                        from        : "workflows",
-                        localField  : "workflow",
-                        foreignField: "_id",
-                        as          : "workflow"
+                        from        : 'projectMembers',
+                        localField  : '_id',
+                        foreignField: 'projectId',
+                        as          : 'projectMembers'
                     }
                 }, {
                     $project: {
-                        projectName   : 1,
-                        workflow      : {$arrayElemAt: ["$workflow", 0]},
-                        customer      : {$arrayElemAt: ["$customer", 0]},
-                        projectmanager: {$arrayElemAt: ["$projectmanager", 0]},
-                        salesmanager  : {$arrayElemAt: ["$salesmanager", 0]}
+                        name           : 1,
+                        workflow       : {$arrayElemAt: ['$workflow', 0]},
+                        customer       : {$arrayElemAt: ['$customer', 0]},
+                        projectManagers: {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : {
+                                    $and: [{
+                                        $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.PROJECTSMANAGER)]
+                                    }]
+                                }
+                            }
+                        },
+
+                        salesManagers: {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : {
+                                    $and: [{
+                                        $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
+                                    }]
+                                }
+                            }
+                        }
+                    }
+                }, {
+                    $unwind: {
+                        path                      : '$projectManagers',
+                        preserveNullAndEmptyArrays: true
+                    }
+                }, {
+                    $unwind: {
+                        path                      : '$salesManagers',
+                        preserveNullAndEmptyArrays: true
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'salesManagers.employeeId',
+                        foreignField: '_id',
+                        as          : 'salesManager'
                     }
                 }, {
                     $project: {
-                        projectName   : 1,
+                        name           : 1,
+                        workflow       : 1,
+                        customer       : 1,
+                        projectManagers: 1,
+                        salesManager   : {$arrayElemAt: ['$salesManager', 0]}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'projectManagers.employeeId',
+                        foreignField: '_id',
+                        as          : 'projectManager'
+                    }
+                }, {
+                    $project: {
+                        name          : 1,
                         workflow      : 1,
                         customer      : 1,
-                        projectmanager: 1,
-                        salesmanager  : 1
+                        salesManager  : {
+                            _id : '$salesManager._id',
+                            name: '$salesManager.name'
+                        },
+                        projectManager: {$arrayElemAt: ['$projectManager', 0]}
+                    }
+                }, {
+                    $project: {
+                        name          : 1,
+                        workflow      : 1,
+                        customer      : 1,
+                        salesManager  : 1,
+                        projectManager: {
+                            _id : '$projectManager._id',
+                            name: '$projectManager.name'
+                        }
                     }
                 }, {
                     $group: {
-                        _id             : null,
-                        'workflow'      : {
+                        _id: null,
+
+                        workflow: {
                             $addToSet: {
                                 _id : '$workflow._id',
                                 name: '$workflow.name'
                             }
                         },
-                        'customer'      : {
+
+                        customer: {
                             $addToSet: {
                                 _id : '$customer._id',
                                 name: {$concat: ['$customer.name.first', ' ', '$customer.name.last']}
                             }
                         },
-                        'projectmanager': {
+
+                        projectManager: {
                             $addToSet: {
-                                _id : '$projectmanager._id',
-                                name: {$concat: ['$projectmanager.name.first', ' ', '$projectmanager.name.last']}
+                                _id : '$projectManager._id',
+                                name: {$concat: ['$projectManager.name.first', ' ', '$projectManager.name.last']}
                             }
                         },
-                        'salesmanager': {
+
+                        salesManager: {
                             $addToSet: {
-                                _id : '$salesmanager._id',
-                                name: {$concat: ['$salesmanager.name.first', ' ', '$salesmanager.name.last']}
+                                _id : '$salesManager._id',
+                                name: {$concat: ['$salesManager.name.first', ' ', '$salesManager.name.last']}
                             }
                         },
-                        'name'          : {
+
+                        name: {
                             $addToSet: {
                                 _id : '$_id',
-                                name: '$projectName'
+                                name: '$name'
                             }
                         }
                     }
-                }
-                ], function (err, result) {
+                }], function (err, result) {
                     if (err) {
                         return callback(err);
                     }
@@ -995,7 +1059,7 @@ var Filters = function (models) {
                 $match: {
                     _type: 'dividendInvoice'
                 }
-            } ,{
+            }, {
                 $lookup: {
                     from        : "workflows",
                     localField  : "workflow",
@@ -1036,7 +1100,7 @@ var Filters = function (models) {
                     forSales: true,
                     _type   : "wTrackInvoice"
                 }
-            },{
+            }, {
                 $lookup: {
                     from        : "projectMembers",
                     localField  : "project",
@@ -1049,7 +1113,7 @@ var Filters = function (models) {
                     localField  : "project",
                     foreignField: "_id", as: "project"
                 }
-            },  {
+            }, {
                 $lookup: {
                     from        : "workflows",
                     localField  : "workflow",
@@ -1063,9 +1127,9 @@ var Filters = function (models) {
                 }
             }, {
                 $project: {
-                    workflow   : {$arrayElemAt: ["$workflow", 0]},
-                    supplier   : {$arrayElemAt: ["$supplier", 0]},
-                    project    : {$arrayElemAt: ["$project", 0]},
+                    workflow     : {$arrayElemAt: ["$workflow", 0]},
+                    supplier     : {$arrayElemAt: ["$supplier", 0]},
+                    project      : {$arrayElemAt: ["$project", 0]},
                     salesmanagers: {
                         $filter: {
                             input: '$projectMembers',
@@ -1084,14 +1148,14 @@ var Filters = function (models) {
                     from        : "Employees",
                     localField  : "salesmanagers.employeeId",
                     foreignField: "_id",
-                    as: "salesmanagers"
+                    as          : "salesmanagers"
                 }
             }, {
                 $project: {
-                    workflow   : 1,
-                    supplier   : 1,
+                    workflow     : 1,
+                    supplier     : 1,
                     salesmanagers: {$arrayElemAt: ['$salesmanagers', 0]},
-                    project    : 1
+                    project      : 1
                 }
             }, {
                 $group: {
@@ -1179,9 +1243,9 @@ var Filters = function (models) {
                 }
             }, {
                 $project: {
-                    workflow   : {$arrayElemAt: ["$workflow", 0]},
-                    supplier   : {$arrayElemAt: ["$supplier", 0]},
-                    project    : {$arrayElemAt: ["$project", 0]},
+                    workflow     : {$arrayElemAt: ["$workflow", 0]},
+                    supplier     : {$arrayElemAt: ["$supplier", 0]},
+                    project      : {$arrayElemAt: ["$project", 0]},
                     salesmanagers: {
                         $filter: {
                             input: '$projectMembers',
@@ -1200,14 +1264,14 @@ var Filters = function (models) {
                     from        : "Employees",
                     localField  : "salesmanagers.employeeId",
                     foreignField: "_id",
-                    as: "salesmanagers"
+                    as          : "salesmanagers"
                 }
             }, {
                 $project: {
-                    workflow   : 1,
-                    supplier   : 1,
+                    workflow     : 1,
+                    supplier     : 1,
                     salesmanagers: {$arrayElemAt: ['$salesmanagers', 0]},
-                    project    : 1
+                    project      : 1
                 }
             }, {
                 $group: {
@@ -1296,16 +1360,16 @@ var Filters = function (models) {
                     }
                 }, {
                     $project: {
-                        supplier      : 1,
-                        salesmanagers:  {
+                        supplier     : 1,
+                        salesmanagers: {
                             $filter: {
                                 input: '$projectMembers',
                                 as   : 'projectMember',
                                 cond : {$eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]}
                             }
                         },
-                        name          : 1,
-                        paymentMethod : 1
+                        name         : 1,
+                        paymentMethod: 1
                     }
                 }, {
                     $unwind: {
@@ -1319,7 +1383,7 @@ var Filters = function (models) {
                         foreignField: "_id",
                         as          : "salesmanagers"
                     }
-                },{
+                }, {
                     $project: {
                         supplier     : 1,
                         salesmanager : {$arrayElemAt: ["$salesmanagers", 0]},
@@ -1778,9 +1842,9 @@ var Filters = function (models) {
                     }
                 }, {
                     $project: {
-                        workflow: {$arrayElemAt: ["$workflow", 0]},
-                        project : {$arrayElemAt: ["$project", 0]},
-                        supplier: {$arrayElemAt: ["$supplier", 0]},
+                        workflow     : {$arrayElemAt: ["$workflow", 0]},
+                        project      : {$arrayElemAt: ["$project", 0]},
+                        supplier     : {$arrayElemAt: ["$supplier", 0]},
                         salesmanagers: {
                             $filter: {
                                 input: '$projectMembers',
@@ -1799,25 +1863,25 @@ var Filters = function (models) {
                         from        : "Employees",
                         localField  : "salesmanagers.employeeId",
                         foreignField: "_id",
-                        as: "salesmanager"
+                        as          : "salesmanager"
                     }
                 }, {
                     $project: {
-                        workflow      : 1,
-                        project       : 1,
-                        supplier      : 1,
+                        workflow    : 1,
+                        project     : 1,
+                        supplier    : 1,
                         salesmanager: {$arrayElemAt: ["$salesmanager", 0]}
                     }
                 }, {
                     $group: {
-                        _id             : null,
-                        'projectName'   : {
+                        _id           : null,
+                        'projectName' : {
                             $addToSet: {
                                 _id : '$project._id',
                                 name: '$project.projectName'
                             }
                         },
-                        'supplier'      : {
+                        'supplier'    : {
                             $addToSet: {
                                 _id : '$supplier._id',
                                 name: {
@@ -1833,7 +1897,7 @@ var Filters = function (models) {
                                 }
                             }
                         },
-                        'workflow'      : {
+                        'workflow'    : {
                             $addToSet: {
                                 _id : '$workflow._id',
                                 name: '$workflow.name'
@@ -1890,9 +1954,9 @@ var Filters = function (models) {
                     }
                 }, {
                     $project: {
-                        workflow: {$arrayElemAt: ["$workflow", 0]},
-                        project : {$arrayElemAt: ["$project", 0]},
-                        supplier: {$arrayElemAt: ["$supplier", 0]},
+                        workflow     : {$arrayElemAt: ["$workflow", 0]},
+                        project      : {$arrayElemAt: ["$project", 0]},
+                        supplier     : {$arrayElemAt: ["$supplier", 0]},
                         salesmanagers: {
                             $filter: {
                                 input: '$projectMembers',
@@ -1911,25 +1975,25 @@ var Filters = function (models) {
                         from        : "Employees",
                         localField  : "salesmanagers.employeeId",
                         foreignField: "_id",
-                        as: "salesmanager"
+                        as          : "salesmanager"
                     }
                 }, {
                     $project: {
-                        workflow      : 1,
-                        project       : 1,
-                        supplier      : 1,
+                        workflow    : 1,
+                        project     : 1,
+                        supplier    : 1,
                         salesmanager: {$arrayElemAt: ["$salesmanager", 0]}
                     }
                 }, {
                     $group: {
-                        _id             : null,
-                        'projectName'   : {
+                        _id           : null,
+                        'projectName' : {
                             $addToSet: {
                                 _id : '$project._id',
                                 name: '$project.projectName'
                             }
                         },
-                        'supplier'      : {
+                        'supplier'    : {
                             $addToSet: {
                                 _id : '$supplier._id',
                                 name: {
@@ -1945,7 +2009,7 @@ var Filters = function (models) {
                                 }
                             }
                         },
-                        'workflow'      : {
+                        'workflow'    : {
                             $addToSet: {
                                 _id : '$workflow._id',
                                 name: '$workflow.name'
@@ -2006,14 +2070,14 @@ var Filters = function (models) {
                 }
             }, {
                 $project: {
-                    name     : 1,
-                    workflow : {$arrayElemAt: ["$workflow", 0]},
-                    type     : 1,
-                    wTracks  : 1,
-                    project  : {$arrayElemAt: ["$project", 0]},
-                    budget   : 1,
-                    quotation: {$arrayElemAt: ["$quotation", 0]},
-                    invoice  : {$arrayElemAt: ["$invoice", 0]},
+                    name         : 1,
+                    workflow     : {$arrayElemAt: ["$workflow", 0]},
+                    type         : 1,
+                    wTracks      : 1,
+                    project      : {$arrayElemAt: ["$project", 0]},
+                    budget       : 1,
+                    quotation    : {$arrayElemAt: ["$quotation", 0]},
+                    invoice      : {$arrayElemAt: ["$invoice", 0]},
                     salesmanagers: {
                         $filter: {
                             input: '$projectMembers',
@@ -2039,11 +2103,11 @@ var Filters = function (models) {
                     from        : "Employees",
                     localField  : "salesmanagers.employeeId",
                     foreignField: "_id",
-                    as: "salesmanager"
+                    as          : "salesmanager"
                 }
             }, {
                 $project: {
-                    order         : {
+                    order       : {
                         $cond: {
                             if  : {
                                 $eq: ['$type', 'Not Quoted']
@@ -2060,33 +2124,33 @@ var Filters = function (models) {
                             }
                         }
                     },
-                    name          : 1,
-                    workflow      : 1,
-                    type          : 1,
-                    wTracks       : 1,
-                    project       : 1,
-                    budget        : 1,
-                    quotation     : 1,
-                    invoice       : 1,
-                    salesmanager  : {$arrayElemAt: ["$salesmanager", 0]},
-                    payment       : {
+                    name        : 1,
+                    workflow    : 1,
+                    type        : 1,
+                    wTracks     : 1,
+                    project     : 1,
+                    budget      : 1,
+                    quotation   : 1,
+                    invoice     : 1,
+                    salesmanager: {$arrayElemAt: ["$salesmanager", 0]},
+                    payment     : {
                         paid : {$sum: '$payments.paidAmount'},
                         count: {$size: '$payments'}
                     }
                 }
             }, {
                 $project: {
-                    order         : 1,
-                    name          : 1,
-                    workflow      : 1,
-                    type          : 1,
-                    wTracks       : 1,
-                    project       : 1,
-                    budget        : 1,
-                    quotation     : 1,
-                    invoice       : 1,
-                    salesmanager  : 1,
-                    payment       : 1
+                    order       : 1,
+                    name        : 1,
+                    workflow    : 1,
+                    type        : 1,
+                    wTracks     : 1,
+                    project     : 1,
+                    budget      : 1,
+                    quotation   : 1,
+                    invoice     : 1,
+                    salesmanager: 1,
+                    payment     : 1
                 }
             }, {
                 $match: {
@@ -2098,26 +2162,26 @@ var Filters = function (models) {
                 }
             }, {
                 $group: {
-                    _id             : null,
-                    'type'          : {
+                    _id            : null,
+                    'type'         : {
                         $addToSet: {
                             _id : '$type',
                             name: '$type'
                         }
                     },
-                    'workflow'      : {
+                    'workflow'     : {
                         $addToSet: {
                             _id : '$workflow._id',
                             name: '$workflow.name'
                         }
                     },
-                    'project'       : {
+                    'project'      : {
                         $addToSet: {
                             _id : '$project._id',
                             name: '$project.projectName'
                         }
                     },
-                    'salesmanager': {
+                    'salesmanager' : {
                         $addToSet: {
                             _id : '$salesmanager._id',
                             name: {
@@ -2125,7 +2189,7 @@ var Filters = function (models) {
                             }
                         }
                     },
-                    'paymentsCount' : {
+                    'paymentsCount': {
                         $addToSet: {
                             _id : '$payment.count',
                             name: '$payment.count'
@@ -2595,7 +2659,7 @@ var Filters = function (models) {
                     }
                 }], function (err, result) {
                     if (err) {
-                       return callback(err);
+                        return callback(err);
                     }
 
                     if (result && result.length) {
@@ -2675,7 +2739,7 @@ var Filters = function (models) {
                     }
                 }], function (err, result) {
                     if (err) {
-                       return callback(err);
+                        return callback(err);
                     }
 
                     if (result && result.length) {
