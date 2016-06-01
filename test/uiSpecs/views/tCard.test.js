@@ -131,7 +131,7 @@ define([
         },
         workflow: {
             _id: "528ce7f2f3f67bc40b000023",
-            name: "In Progress"
+            name: "Closed"
         }
     }];
     var fakeProjectForWTrack = {
@@ -258,6 +258,77 @@ define([
                 EndDate         : "2016-03-30T21:00:00.000Z",
                 TargetEndDate   : "",
                 description     : ""
+            },{
+                _id: "562bba6e4a431b5a5a3111fe",
+                StartDate: null,
+                budget: {
+                    bonus: [ ],
+                    projectTeam: [
+                        "56e1b802aeb5e8b52e89d190",
+                        "56f39d42e7c600fe4fbae59a",
+                        "569eb11e2208b3af4a52723b",
+                        "56ab4d776d7173f43f96ad34",
+                        "56641a4308ed794128637bd3",
+                        "56641a6108ed794128637bd4",
+                        "56641a3908ed794128637bd2"
+                    ]
+                },
+                bonus: [ ],
+                health: 1,
+                editedBy: {
+                    date: "2016-05-17T13:40:58.188Z",
+                    user: "55ba00e9d79a3a343900000c"
+                },
+                attachments: [ ],
+                notes: [ ],
+                projecttype: "",
+                createdBy: {
+                    date: "2015-10-24T17:05:50.305Z",
+                    user: "55cb7302fea413b50b000007"
+                },
+                progress: 0,
+                remaining: 0,
+                logged: 0,
+                estimated: 0,
+                workflow: {
+                    _id: "528ce7f2f3f67bc40b000023",
+                    name: "Closed"
+                },
+                parent: null,
+                sequence: 0,
+                groups: {
+                    group: [ ],
+                    users: [ ],
+                    owner: "560c099da5d4a2e20ba5068b"
+                },
+                whoCanRW: "everyOne",
+                projectmanager: null,
+                customer: {
+                    _id: "5735a1a609f1f719488087ed",
+                    name: {
+                        last: "",
+                        first: "Social Media Wave, GmbH"
+                    }
+                },
+                task: [ ],
+                projectName: "Spark",
+                projectShortDesc: "App inspired by Snapchat",
+                __v: 0,
+                TargetEndDate: "",
+                EndDate: null,
+                description: "",
+                salesmanager: {
+                    _id: "55b92ad221e4b7c40f000040",
+                    name: {
+                        last: "Almashiy",
+                        first: "Vasiliy"
+                    }
+                },
+                paymentTerms: {
+                    _id: "55536e52475b7be475f335f6",
+                    name: "15 Days"
+                },
+                paymentMethod: "565f2e05ab70d49024242e07"
             }
         ]
     };
@@ -1016,7 +1087,7 @@ define([
 
                 it('Try to create ListView', function (done) {
                     var $listHolder;
-                    var projectsUrl = new RegExp('\/project\/getForWtrack', 'i');
+                    var projectsUrl = new RegExp('\/projects\/getForWtrack', 'i');
                     var employeeUrl = new RegExp('\/employees\/getForDD', 'i');
                     var depsUrl = new RegExp('\/departments\/getForDD', 'i');
                     var tCardTotal = new RegExp('\/wTrack\/totalCollectionLength', 'i');
@@ -1085,6 +1156,21 @@ define([
                     expect(deleteSpy.calledOnce).to.be.true;
                 });
 
+                it('Try to delete item with closed project error', function () {
+                    var spyResponse;
+                    var $needCheckBtn = listView.$el.find('#listTable > tr:nth-child(2) > td.notForm > input');
+                    var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
+                    var wTrackUrl = new RegExp('\/wTrack\/', 'i');
+
+                    $needCheckBtn.click();
+                    $deleteBtn.click();
+
+                    spyResponse = mainSpy.args[1][0];
+                    expect(spyResponse).to.have.property('type', 'error');
+                    expect(spyResponse).to.have.property('message', "You can't delete tCard with closed project.");
+                    expect(mainSpy.calledTwice).to.be.true;
+                });
+
                 it('Try to delete item', function () {
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var wTrackUrl = new RegExp('\/wTrack\/', 'i');
@@ -1093,7 +1179,7 @@ define([
                     $deleteBtn.click();
                     server.respond();
 
-                    expect(deleteSpy.calledTwice).to.be.true;
+                    expect(deleteSpy.calledThrice).to.be.true;
                 });
 
                 it('Try to go sort', function () {
@@ -1122,7 +1208,7 @@ define([
                     $needBtn.click();
                     server.respond();
 
-                    spyResponse = mainSpy.args[1][0];
+                    spyResponse = mainSpy.args[3][0];
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'Some Error.');
                 });
@@ -1160,12 +1246,15 @@ define([
 
                     $createBtn.click();
 
-                    $projectBtn = listView.$el.find('#listTable > tr.false > td:nth-child(5)');
-                    $projectBtn.click();
-                    $select = listView.$el.find('#56e689c75ec71b00429745a9');
-                    $select.click();
 
-                    $employeeBtn = listView.$el.find('#listTable > tr.false > td:nth-child(8)');
+                    $projectBtn = listView.$el.find('#listTable > tr:nth-child(1) > td[data-content="project"]');
+                    $projectBtn.click();
+
+                    $select = listView.$el.find('#562bba6e4a431b5a5a3111fe');
+                    server.respondWith('GET', jobUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsWithId)]);
+                    $select.click();
+                    server.respond();
+                    $employeeBtn = listView.$el.find('#listTable > tr:nth-child(1) > td[data-content="employee"]');
                     $employeeBtn.click();
                     $select = listView.$el.find('#55b92ad221e4b7c40f000030');
                     $select.click();
@@ -1182,7 +1271,7 @@ define([
                     $sprintBtn.removeClass(' errorContent');
                     $sprintBtn.text('March');
 
-                    server.respondWith('POST', wTrackUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({id: '56f9172a160c8d6315f0862f'})]);
+                    server.respondWith('POST', wTrackUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([{id: '56f9172a160c8d6315f0862f'}])]);
                     $saveBtn.click();
                     server.respond();
 
@@ -1278,9 +1367,9 @@ define([
 
                     generateBtn = $dialogEl.find('#generateBtn');
                     generateBtn.click();
-                    expect(mainSpy.calledThrice).to.be.true;
+                    expect(mainSpy.callCount).to.be.equal(5);
 
-                    spyResponse = mainSpy.args[2][0];
+                    spyResponse = mainSpy.args[4][0];
 
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'Please, enter correct Job name!');
@@ -1294,65 +1383,23 @@ define([
                     var $selectedItem;
                     var $input;
                     var spyResponse;
-                    var $yearBtn = listView.$el.find('#listTable > tr:nth-child(1) > td[data-content="year"]');
-                    var $jobsBtn = listView.$el.find('#listTable > tr:nth-child(1) > td[data-content="jobs"]');
-                    var $monthBtn = listView.$el.find('#listTable > tr:nth-child(1) > td[data-content="month"]');
-                    var $weekBtn = listView.$el.find('#listTable > tr:nth-child(1) > td[data-content="week"]');
-                    var $mondayBtn = listView.$el.find('#listTable > tr:nth-child(1) > td[data-content="1"]');
+                    var $yearBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="year"]');
+                    var $jobsBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="jobs"]');
+                    var $projectsBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="project"]');
+                    var $typeBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="type"]');
+                    var $employeeBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="employee"]');
+                    var $monthBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="month"]');
+                    var $weekBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="week"]');
+                    var $mondayBtn = listView.$el.find('#listTable > tr:nth-child(2) > td[data-content="1"]');
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var jobsUrl = new RegExp('\/jobs\/getForDD', 'i');
                     var vacationUrl = new RegExp('\/vacation\/list', 'i');
                     var holidaysUrl = new RegExp('\/holidays\/list', 'i');
                     var wTrackUrl = '/wTrack/';
+                    var keyDownEventEnter = $.Event('keydown', {keyCode   : 13});
                     var keyDownEvent = $.Event('keydown');
+
                     var keyUpEvent = $.Event('keyup');
-
-                    // change year
-
-                    $yearBtn.click();
-
-                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                    server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                    $selectedItem = $yearBtn.find('.newSelectList > li:nth-child(1)');
-                    $selectedItem.click();
-                    server.respond();
-                    server.respond();
-
-
-                    // change month
-                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                    server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                    $monthBtn.click();
-                    server.respond();
-                    server.respond();
-                    $input = $monthBtn.find('input');
-                    $input.trigger(keyDownEvent);
-                    $input.val('12');
-                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                    server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-
-                    $input.trigger('change');
-                    server.respond();
-                    server.respond();
-
-
-
-                    // change job
-                    server.respondWith('GET', jobsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsWithId)]);
-                    $jobsBtn.click();
-                    server.respond();
-                    $selectedItem = $jobsBtn.find('.newSelectList li:nth-child(2)');
-                    $selectedItem.click();
-
-                    // chang week
-                    $weekBtn.click();
-                    $selectedItem = $weekBtn.find('.newSelectList > li:nth-child(1)');
-                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-                    server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-
-                    $selectedItem.click();
-                    server.respond();
-                    server.respond();
 
                     // change monday hours
                     server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
@@ -1375,12 +1422,90 @@ define([
                     server.respond();
                     server.respond();
 
-                    expect(mainSpy.callCount).to.be.equal(4);
+                    expect(mainSpy.callCount).to.be.equal(6);
 
-                    spyResponse = mainSpy.args[3][0];
+                    spyResponse = mainSpy.args[5][0];
 
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'Сreate Overtime tCard for input more than 8 hours');
+
+
+                    // change year
+
+                    $yearBtn.click();
+
+                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $selectedItem = $yearBtn.find('.newSelectList > li:nth-child(1)');
+                    $selectedItem.click();
+                    server.respond();
+                    server.respond();
+
+
+                    // change month
+                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $monthBtn.click();
+                    server.respond();
+                    server.respond();
+                    $input = $monthBtn.find('input');
+                    $input.trigger(keyDownEventEnter);
+                    $input.val('12');
+                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+
+                    $input.trigger('change');
+                    server.respond();
+                    server.respond();
+
+
+
+                    // change job
+                    server.respondWith('GET', jobsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsWithId)]);
+                    $jobsBtn.click();
+                    server.respond();
+                    $selectedItem = $jobsBtn.find('.newSelectList li:nth-child(2)');
+                    $selectedItem.click();
+
+                    //change project
+
+                    $projectsBtn.click();
+
+                    $selectedItem = $projectsBtn.find('.newSelectList li:nth-child(2)');
+                    server.respondWith('GET', jobsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsWithId)]);
+                    $selectedItem.click();
+                    server.respond();
+
+
+
+
+                    //change employee
+
+                    $employeeBtn.click();
+
+                    $selectedItem = $employeeBtn.find('.newSelectList li:nth-child(2)');
+                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    $selectedItem.click();
+                    server.respond();
+                    server.respond();
+
+                    // chang week
+                    $weekBtn.click();
+                    $selectedItem = $weekBtn.find('.newSelectList > li:nth-child(1)');
+                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+
+                    $selectedItem.click();
+                    server.respond();
+                    server.respond();
+
+                    //change type
+
+                    $typeBtn.click();
+
+                    $selectedItem = $typeBtn.find('.newSelectList li:nth-child(2)');
+                    $selectedItem.click();
 
 
                     server.respondWith('PATCH', wTrackUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Updated success'})]);
