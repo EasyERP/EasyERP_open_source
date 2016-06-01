@@ -452,8 +452,6 @@ module.exports = function (models, event) {
             mainPipeline = lookupPipeline.concat(projectThumbPipeline);
         }
 
-        response.showMore = false;
-
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
                 optionsObject.$or = caseFilter(filter);
@@ -497,30 +495,31 @@ module.exports = function (models, event) {
                 $limit: limit
             });
 
-            Project
-                .aggregate(mainPipeline, function (err, result) {
-                        if (err) {
-                            return cb(err);
-                        }
-
-                        cb(null, result);
+            Project.aggregate(mainPipeline, function (err, result) {
+                    if (err) {
+                        return cb(err);
                     }
-                )
+
+                    cb(null, result);
+                }
+            )
         };
 
         waterfallTasks = [accessRollSearcher, contentSearcher];
 
         async.waterfall(waterfallTasks, function (err, result) {
             var count;
+            var firstElement;
 
             if (err) {
                 return next(err);
             }
 
-            count = result[0].total || 0;
-
+            firstElement = result[0];
+            count = firstElement && firstElement.total ? firstElement.total : 0;
             response.total = count;
             response.data = result;
+
             res.status(200).send(response);
         });
     };
