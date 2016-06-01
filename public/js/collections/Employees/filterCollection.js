@@ -1,45 +1,41 @@
 ﻿define([
         'Backbone',
+        'collections/parent',
         'models/EmployeesModel',
-        "dataService",
+        'dataService',
         'constants'
     ],
-    function (Backbone, EmployeeModel, dataService, CONSTANTS) {
+    function (Backbone, Parent, EmployeeModel, dataService, CONSTANTS) {
         'use strict';
 
-        var EmployeesCollection = Backbone.Collection.extend({
-            model       : EmployeeModel,
-            url         : CONSTANTS.URLS.EMPLOYEES,
-            page        : null,
-            namberToShow: null,
-            viewType    : null,
-            contentType : null,
-            initialize  : function (options) {
+        var EmployeesCollection = Parent.extend({
+            model   : EmployeeModel,
+            url     : CONSTANTS.URLS.EMPLOYEES,
+            pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
+
+            initialize: function (options) {
+                var page;
+
+                function _errHandler(models, xhr) {
+                    if (xhr.status === 401) {
+                        Backbone.history.navigate('#login', {trigger: true});
+                    }
+                }
+
+                options = options || {};
+                options.error = options.error || _errHandler;
+                page = options.page;
+
                 this.startTime = new Date();
 
-                var that = this;
-                this.namberToShow = options.count;
-                this.viewType = options.viewType;
-                this.contentType = options.contentType;
-                this.page = options.page || 1;
-                if (options && options.viewType) {
-                    this.url += options.viewType;
+                if (page) {
+                    return this.getPage(page, options);
                 }
-                this.fetch({
-                    data   : options,
-                    reset  : true,
-                    success: function () {
-                        that.page++;
-                    },
-                    error  : function (models, xhr) {
-                        if (xhr.status === 401) {
-                            Backbone.history.navigate('#login', {trigger: true});
-                        }
-                    }
-                });
+
+                this.getFirstPage(options);
             },
 
-            showMore: function (options) {
+            /*showMore: function (options) {
                 var that = this;
                 var filterObject = options || {};
                 filterObject.page = (options && options.page) ? options.page : this.page;
@@ -57,12 +53,12 @@
                     error  : function () {
                         App.render({
                             type   : 'error',
-                            message: "Some Error."
+                            message: 'Some Error.'
                         });
                     }
                 });
-            },
-            
+            },*/
+
             showMoreAlphabet: function (options) {
                 var that = this;
                 var filterObject = options || {};
@@ -84,7 +80,7 @@
                     error  : function () {
                         App.render({
                             type   : 'error',
-                            message: "Some Error."
+                            message: 'Some Error.'
                         });
                     }
                 });

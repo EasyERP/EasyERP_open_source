@@ -4,12 +4,11 @@ var objectId = mongoose.Types.ObjectId;
 
 var Employee = function (event, models) {
     'use strict';
-    var accessRoll = require("../helpers/accessRollHelper.js")(models);
-    var uploadFileArray = require("../helpers/uploadFileArray.js")();
+    var accessRoll = require('../helpers/accessRollHelper.js')(models);
+    var uploadFileArray = require('../helpers/uploadFileArray.js')();
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
     var DepartmentSchema = mongoose.Schemas.Department;
-    var jobPositionSchema = mongoose.Schemas.JobPosition;
     var nationalitySchema = mongoose.Schemas.nationality;
     var LanguageSchema = mongoose.Schemas.language;
     var SourceSchema = mongoose.Schemas.source;
@@ -26,9 +25,9 @@ var Employee = function (event, models) {
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
-    //exportDecorator.addExportFunctionsToHandler(this, function (req) {
-    //    return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
-    //}, exportMap, 'Employees');
+    /* exportDecorator.addExportFunctionsToHandler(this, function (req) {
+       return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
+    }, exportMap, 'Employees');*/
 
     this.exportToXlsx = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -56,7 +55,7 @@ var Employee = function (event, models) {
     this.getNameAndDepartment = getNameAndDepartment;
 
     function getNameAndDepartment(db, query, callback) {
-        var Employee = models.get(db, 'Employees', EmployeeSchema);
+        var Model = models.get(db, 'Employees', EmployeeSchema);
         var matchQuery = {};
 
         if (query) {
@@ -71,7 +70,7 @@ var Employee = function (event, models) {
             }
         }
 
-        Employee.aggregate([
+        Model.aggregate([
             {
                 $project: {
                     name      : 1,
@@ -110,8 +109,9 @@ var Employee = function (event, models) {
     }
 
     this.getEmployeesCount = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
-        Employee.find({isEmployee: true}).count(function (err, result) {
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+
+        Model.find({isEmployee: true}).count(function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -120,7 +120,7 @@ var Employee = function (event, models) {
         });
     };
 
-    /*this.getSalaryByMonth = function (req, res, next) {
+    /* this.getSalaryByMonth = function (req, res, next) {
      var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
      var query = req.query;
      var _id = query._id;
@@ -152,12 +152,12 @@ var Employee = function (event, models) {
 
      res.status(200).send({data: salary});
      });
-     };*/
+     }; */
 
     this.getYears = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
-        Employee.aggregate([{
+        Model.aggregate([{
             $project: {
                 hire: 1
             }
@@ -172,12 +172,15 @@ var Employee = function (event, models) {
                 _id: '$date'
             }
         }], function (err, result) {
+            var arr;
+            var min;
+
             if (err) {
                 return next(err);
             }
 
-            var arr = _.pluck(result, '_id');
-            var min = _.min(arr);
+            arr = _.pluck(result, '_id');
+            min = _.min(arr);
 
             res.status(200).send({min: min});
         });
@@ -197,7 +200,7 @@ var Employee = function (event, models) {
     };
 
     this.getBySales = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
 
         function assigneFinder(cb) {
@@ -215,7 +218,7 @@ var Employee = function (event, models) {
         }
 
         function employeeFinder(assignedArr, cb) {
-            Employee
+            Model
                 .find({_id: {$in: assignedArr}})
                 .select('_id name')
                 .sort({'name.first': 1, 'name.last': 1})
@@ -234,9 +237,9 @@ var Employee = function (event, models) {
     };
 
     this.byDepartment = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
-        Employee
+        Model
             .aggregate([{
                 $match: {isEmployee: true}
             }, {
@@ -266,9 +269,9 @@ var Employee = function (event, models) {
 
     this.getForProjectDetails = function (req, res, next) {
         var idsArray = req.query.data || [];
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
-        Employee
+        Model
             .find({_id: {$in: idsArray}})
             .populate('jobPosition', '_id name')
             .populate('department', '_id departmentName')
@@ -285,11 +288,11 @@ var Employee = function (event, models) {
     function getDate(date) {
         var _date = new Date(date);
         var currentTimeZoneOffsetInMiliseconds = -_date.getTimezoneOffset() * 60 * 1000;
-        var valaueOf_date = _date.valueOf();
+        var valueOfDate = _date.valueOf();
 
-        valaueOf_date += currentTimeZoneOffsetInMiliseconds;
+        valueOfDate += currentTimeZoneOffsetInMiliseconds;
 
-        return new Date(valaueOf_date);
+        return new Date(valueOfDate);
     }
 
     function getAge(birthday) {
@@ -304,12 +307,13 @@ var Employee = function (event, models) {
         if (today < birthday) {
             years--;
         }
+
         return (years < 0) ? 0 : years;
     }
 
     this.create = function (req, res, next) {
         var employee;
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var body = req.body;
         var err;
 
@@ -329,15 +333,14 @@ var Employee = function (event, models) {
             return next(err);
         }
 
-        employee = new Employee(body);
+        employee = new Model(body);
 
         employee.createdBy.user = req.session.uId;
         employee.editedBy.user = req.session.uId;
         employee.createdBy.date = new Date();
         employee.editedBy.date = new Date();
 
-        event.emit('updateSequence', models.get(req.session.lastDb, "Employees", EmployeeSchema), "sequence", 0, 0, employee.workflow, employee.workflow, true, false, function (sequence) {
-            var DepartmentSchema = mongoose.Schemas.Department;
+        event.emit('updateSequence', Model, 'sequence', 0, 0, employee.workflow, employee.workflow, true, false, function (sequence) {
             var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
 
             employee.sequence = sequence;
@@ -351,9 +354,9 @@ var Employee = function (event, models) {
                     }
                 }
 
-                employee.save(function (err, result) {
-                    if (err) {
-                        return next(err);
+                employee.save(function (error, result) {
+                    if (error) {
+                        return next(error);
                     }
 
                     res.send(201, {success: 'A new Employees create success', result: result, id: result._id});
@@ -411,12 +414,13 @@ var Employee = function (event, models) {
     function getById(req, res, next) {
         var project = {};
         var data = req.query;
+        var query;
 
         if (ids.indexOf(req.session.uId) === -1) {
             project = {'transfer.salary': 0};
         }
 
-        var query = models.get(req.session.lastDb, "Employees", EmployeeSchema)
+        query = models.get(req.session.lastDb, 'Employees', EmployeeSchema)
             .findById(data.id, project);
 
         query.populate('coach', 'name _id')
@@ -436,18 +440,18 @@ var Employee = function (event, models) {
             .populate('transfer.weeklyScheduler', '_id name')
             .populate('groups.owner', '_id login');
 
-        query.exec(function (err, findedEmployee) {
+        query.exec(function (err, foundEmployee) {
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send(findedEmployee);
+            res.status(200).send(foundEmployee);
         });
 
     }
 
     this.totalCollectionLength = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var data = req.query;
         var contentType = data.contentType;
         var optionsObject = {};
@@ -470,10 +474,10 @@ var Employee = function (event, models) {
         }
 
         accessRollSearcher = function (cb) {
-            accessRoll(req, Employee, cb);
+            accessRoll(req, Model, cb);
         };
 
-        contentSearcher = function (ids, cb) {
+        contentSearcher = function (idsArray, cb) {
             var queryObject = {};
 
             queryObject.$and = [];
@@ -488,17 +492,17 @@ var Employee = function (event, models) {
                 queryObject.$and.push({isEmployee: false});
             }
 
-            queryObject.$and.push({_id: {$in: ids}});
+            queryObject.$and.push({_id: {$in: idsArray}});
 
             switch (contentType) {
                 case ('Employees'):
 
                     project = {
-                        manager         : {$arrayElemAt: ["$manager", 0]},
-                        jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
-                        department      : {$arrayElemAt: ["$department", 0]},
-                        'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                        'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                        manager         : {$arrayElemAt: ['$manager', 0]},
+                        jobPosition     : {$arrayElemAt: ['$jobPosition', 0]},
+                        department      : {$arrayElemAt: ['$department', 0]},
+                        'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                        'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
                         name            : 1,
                         'editedBy.date' : 1,
                         'createdBy.date': 1,
@@ -531,16 +535,16 @@ var Employee = function (event, models) {
 
                     if (data && data.filter && data.filter.workflow) {
                         data.filter.workflow = data.filter.workflow.map(function (item) {
-                            return item === "null" ? null : item;
+                            return item === 'null' ? null : item;
                         });
                     }
 
                     project = {
-                        manager         : {$arrayElemAt: ["$manager", 0]},
-                        jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
-                        department      : {$arrayElemAt: ["$department", 0]},
-                        'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                        'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                        manager         : {$arrayElemAt: ['$manager', 0]},
+                        jobPosition     : {$arrayElemAt: ['$jobPosition', 0]},
+                        department      : {$arrayElemAt: ['$department', 0]},
+                        'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                        'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
                         name            : 1,
                         'editedBy.date' : 1,
                         'createdBy.date': 1,
@@ -551,7 +555,7 @@ var Employee = function (event, models) {
                         jobType         : 1,
                         isEmployee      : 1,
                         creationDate    : 1,
-                        workflow        : {$arrayElemAt: ["$workflow", 0]},
+                        workflow        : {$arrayElemAt: ['$workflow', 0]},
                         personalEmail   : 1,
                         sequence        : 1,
                         hire            : 1,
@@ -583,47 +587,54 @@ var Employee = function (event, models) {
                     break;
             }
 
-            Employee.aggregate([{
+            Model.aggregate([{
                 $lookup: {
-                    from        : "Employees",
-                    localField  : "manager",
-                    foreignField: "_id", as: "manager"
+                    from        : 'Employees',
+                    localField  : 'manager',
+                    foreignField: '_id',
+                    as          : 'manager'
                 }
             }, {
                 $lookup: {
-                    from        : "JobPosition",
-                    localField  : "jobPosition",
-                    foreignField: "_id", as: "jobPosition"
+                    from        : 'JobPosition',
+                    localField  : 'jobPosition',
+                    foreignField: '_id',
+                    as          : 'jobPosition'
                 }
             }, {
                 $lookup: {
-                    from        : "Department",
-                    localField  : "department",
-                    foreignField: "_id", as: "department"
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id',
+                    as          : 'department'
                 }
             }, {
                 $lookup: {
-                    from        : "Users",
-                    localField  : "relatedUser",
-                    foreignField: "_id", as: "relatedUser"
+                    from        : 'Users',
+                    localField  : 'relatedUser',
+                    foreignField: '_id',
+                    as          : 'relatedUser'
                 }
             }, {
                 $lookup: {
-                    from        : "Users",
-                    localField  : "createdBy.user",
-                    foreignField: "_id", as: "createdBy.user"
+                    from        : 'Users',
+                    localField  : 'createdBy.user',
+                    foreignField: '_id',
+                    as          : 'createdBy.user'
                 }
             }, {
                 $lookup: {
-                    from        : "Users",
-                    localField  : "editedBy.user",
-                    foreignField: "_id", as: "editedBy.user"
+                    from        : 'Users',
+                    localField  : 'editedBy.user',
+                    foreignField: '_id',
+                    as          : 'editedBy.user'
                 }
             }, {
                 $lookup: {
-                    from        : "workflows",
-                    localField  : "workflow",
-                    foreignField: "_id", as: "workflow"
+                    from        : 'workflows',
+                    localField  : 'workflow',
+                    foreignField: '_id',
+                    as          : 'workflow'
                 }
             }, {
                 $project: project
@@ -655,7 +666,7 @@ var Employee = function (event, models) {
     };
 
     function getFilter(req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var data = req.query;
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
@@ -686,14 +697,14 @@ var Employee = function (event, models) {
             data.sort[keySort] = parseInt(data.sort[keySort], 10);
             sort = data.sort;
         } else {
-            sort = {"editedBy.date": -1};
+            sort = {'editedBy.date': -1};
         }
 
         accessRollSearcher = function (cb) {
             accessRoll(req, Employee, cb);
         };
 
-        contentSearcher = function (ids, cb) {
+        contentSearcher = function (idsArray, cb) {
             var queryObject = {};
 
             queryObject.$and = [];
@@ -708,7 +719,7 @@ var Employee = function (event, models) {
                 queryObject.$and.push({isEmployee: false});
             }
 
-            queryObject.$and.push({_id: {$in: ids}});
+            queryObject.$and.push({_id: {$in: idsArray}});
 
             switch (contentType) {
                 case ('Employees'):
@@ -716,11 +727,11 @@ var Employee = function (event, models) {
                         case ('list'):
                         {
                             project = {
-                                manager         : {$arrayElemAt: ["$manager", 0]},
-                                jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
-                                department      : {$arrayElemAt: ["$department", 0]},
-                                'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                                'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                manager         : {$arrayElemAt: ['$manager', 0]},
+                                jobPosition     : {$arrayElemAt: ['$jobPosition', 0]},
+                                department      : {$arrayElemAt: ['$department', 0]},
+                                'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                                'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
                                 name            : 1,
                                 'editedBy.date' : 1,
                                 'createdBy.date': 1,
@@ -772,9 +783,9 @@ var Employee = function (event, models) {
                         case ('thumbnails'):
                         {
                             project = {
-                                jobPosition        : {$arrayElemAt: ["$jobPosition", 0]},
+                                jobPosition        : {$arrayElemAt: ['$jobPosition', 0]},
                                 age                : 1,
-                                relatedUser        : {$arrayElemAt: ["$relatedUser", 0]},
+                                relatedUser        : {$arrayElemAt: ['$relatedUser', 0]},
                                 'workPhones.mobile': 1,
                                 name               : 1,
                                 dateBirth          : 1,
@@ -813,14 +824,14 @@ var Employee = function (event, models) {
                         {
                             if (data && data.filter && data.filter.workflow) {
                                 data.filter.workflow = data.filter.workflow.map(function (item) {
-                                    return item === "null" ? null : item;
+                                    return item === 'null' ? null : item;
                                 });
                             }
 
                             project = {
-                                jobPosition     : {$arrayElemAt: ["$jobPosition", 0]},
-                                'createdBy.user': {$arrayElemAt: ["$createdBy.user", 0]},
-                                'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
+                                jobPosition     : {$arrayElemAt: ['$jobPosition', 0]},
+                                'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                                'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
                                 name            : 1,
                                 'editedBy.date' : 1,
                                 'createdBy.date': 1,
@@ -830,7 +841,7 @@ var Employee = function (event, models) {
                                 workPhones      : 1,
                                 jobType         : 1,
                                 isEmployee      : 1,
-                                workflow        : {$arrayElemAt: ["$workflow", 0]},
+                                workflow        : {$arrayElemAt: ['$workflow', 0]},
                                 personalEmail   : 1,
                                 sequence        : 1,
                                 hire            : 1,
@@ -884,47 +895,54 @@ var Employee = function (event, models) {
                     break;
             }
 
-            Employee.aggregate([{
+            Model.aggregate([{
                 $lookup: {
-                    from        : "Employees",
-                    localField  : "manager",
-                    foreignField: "_id", as: "manager"
+                    from        : 'Employees',
+                    localField  : 'manager',
+                    foreignField: '_id',
+                    as          : 'manager'
                 }
             }, {
                 $lookup: {
-                    from        : "JobPosition",
-                    localField  : "jobPosition",
-                    foreignField: "_id", as: "jobPosition"
+                    from        : 'JobPosition',
+                    localField  : 'jobPosition',
+                    foreignField: '_id',
+                    as          : 'jobPosition'
                 }
             }, {
                 $lookup: {
-                    from        : "Department",
-                    localField  : "department",
-                    foreignField: "_id", as: "department"
+                    from        : 'Department',
+                    localField  : 'department',
+                    foreignField: '_id',
+                    as          : 'department'
                 }
             }, {
                 $lookup: {
-                    from        : "Users",
-                    localField  : "relatedUser",
-                    foreignField: "_id", as: "relatedUser"
+                    from        : 'Users',
+                    localField  : 'relatedUser',
+                    foreignField: '_id',
+                    as          : 'relatedUser'
                 }
             }, {
                 $lookup: {
-                    from        : "Users",
-                    localField  : "createdBy.user",
-                    foreignField: "_id", as: "createdBy.user"
+                    from        : 'Users',
+                    localField  : 'createdBy.user',
+                    foreignField: '_id',
+                    as          : 'createdBy.user'
                 }
             }, {
                 $lookup: {
-                    from        : "Users",
-                    localField  : "editedBy.user",
-                    foreignField: "_id", as: "editedBy.user"
+                    from        : 'Users',
+                    localField  : 'editedBy.user',
+                    foreignField: '_id',
+                    as          : 'editedBy.user'
                 }
             }, {
                 $lookup: {
-                    from        : "workflows",
-                    localField  : "workflow",
-                    foreignField: "_id", as: "workflow"
+                    from        : 'workflows',
+                    localField  : 'workflow',
+                    foreignField: '_id',
+                    as          : 'workflow'
                 }
             }, {
                 $project: project
@@ -984,7 +1002,7 @@ var Employee = function (event, models) {
     }
 
     this.updateOnlySelectedFields = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var _id = req.params.id;
         var dbName = req.session.lastDb;
         var UsersSchema = mongoose.Schemas.User;
@@ -1004,14 +1022,14 @@ var Employee = function (event, models) {
 
         if (data.workflow && data.sequenceStart && data.workflowStart) {
             if (data.sequence === -1) {
-                event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function () {
-                    event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
+                event.emit('updateSequence', Model, 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function () {
+                    event.emit('updateSequence', Model, 'sequence', data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
                         data.sequence = sequence;
                         if (data.workflow === data.workflowStart) {
                             data.sequence -= 1;
                         }
 
-                        Employee.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+                        Model.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
                             if (err) {
                                 return next(err);
                             }
@@ -1021,12 +1039,12 @@ var Employee = function (event, models) {
                     });
                 });
             } else {
-                event.emit('updateSequence', Employee, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
+                event.emit('updateSequence', Model, 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
                     delete data.sequenceStart;
                     delete data.workflowStart;
                     data.sequence = sequence;
 
-                    Employee.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err) {
+                    Model.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err) {
                         if (err) {
                             return next(err);
                         }
@@ -1043,6 +1061,7 @@ var Employee = function (event, models) {
             if (data.relatedUser) {
                 event.emit('updateName', data.relatedUser, UsersModel, '_id', 'RelatedEmployee', _id);
             }
+
             Department.aggregate([
                 {
                     $match: {
@@ -1069,6 +1088,7 @@ var Employee = function (event, models) {
 
                 if (data.transfer) {
                     data.transfer = data.transfer.map(function (tr) {
+
                         if (adminDeps.indexOf(tr.department.toString()) !== -1) {
                             tr.isDeveloper = false;
                         } else {
@@ -1078,7 +1098,7 @@ var Employee = function (event, models) {
                     });
                 }
 
-                Employee.findById(_id, query, {new: true}, function (err, emp) {
+                Model.findById(_id, query, {new: true}, function (err, emp) {
                     if (err) {
                         return next(err);
                     }
@@ -1094,7 +1114,13 @@ var Employee = function (event, models) {
                         });
                     }
 
-                    Employee.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+                    Model.findByIdAndUpdate(_id, data, {new: true}, function (err, result) {
+                        var os = require('os');
+                        var osType = (os.type().split('_')[0]);
+                        var path;
+                        var dir;
+                        var newDirname;
+
                         if (err) {
                             return next(err);
                         }
@@ -1102,32 +1128,27 @@ var Employee = function (event, models) {
                         if (data.dateBirth || data.hired) {
                             event.emit('recalculate', req, res, next);
                         }
-                        if (fileName) {
-                            var os = require("os");
-                            var osType = (os.type().split('_')[0]);
-                            var path;
-                            var dir;
-                            var newDirname;
 
+                        if (fileName) {
                             switch (osType) {
-                                case "Windows":
+                                case 'Windows':
                                 {
-                                    newDirname = __dirname.replace("\\Modules", "");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
+                                    newDirname = __dirname.replace('\\Modules', '');
+                                    while (newDirname.indexOf('\\') !== -1) {
+                                        newDirname = newDirname.replace('\\', '\/');
                                     }
-                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                    dir = newDirname + "\/uploads\/" + _id;
+                                    path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                                    dir = newDirname + '\/uploads\/' + _id;
                                 }
                                     break;
-                                case "Linux":
+                                case 'Linux':
                                 {
-                                    newDirname = __dirname.replace("/Modules", "");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
+                                    newDirname = __dirname.replace('/Modules', '');
+                                    while (newDirname.indexOf('\\') !== -1) {
+                                        newDirname = newDirname.replace('\\', '\/');
                                     }
-                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                    dir = newDirname + "\/uploads\/" + _id;
+                                    path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                                    dir = newDirname + '\/uploads\/' + _id;
                                 }
                                     break;
                             }
@@ -1157,15 +1178,15 @@ var Employee = function (event, models) {
 
     this.remove = function (req, res, next) {
         var _id = req.params.id;
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
-        Employee.findByIdAndRemove(_id, function (err, result) {
+        Model.findByIdAndRemove(_id, function (err, result) {
             if (err) {
                 return next(err);
             }
 
             if (result && !result.isEmployee) {
-                event.emit('updateSequence', Employee, "sequence", result.sequence, 0, result.workflow, result.workflow, false, true);
+                event.emit('updateSequence', Model, 'sequence', result.sequence, 0, result.workflow, result.workflow, false, true);
             }
 
             event.emit('recalculate', req, res, next);
@@ -1177,7 +1198,7 @@ var Employee = function (event, models) {
     };
 
     function getApplicationsForKanban(req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var response = {};
         var startTime = new Date();
         var data = req.query;
@@ -1201,12 +1222,12 @@ var Employee = function (event, models) {
             filterObj.$and.push({_id: {$in: responseApplications}});
 
 
-            Employee
+            Model
                 .find(filterObj)
-                .select("_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired")
+                .select('_id name proposedSalary jobPosition nextAction workflow editedBy.date sequence fired')
                 .populate('workflow', '_id')
                 .populate('jobPosition', '_id name')
-                .sort({lastFire: -1, 'sequence': -1})
+                .sort({lastFire: -1, sequence: -1})
                 .limit(req.session.kanbanSettings.applications.countPerPage)
                 .exec(function (err, result) {
                     if (err) {
@@ -1235,11 +1256,11 @@ var Employee = function (event, models) {
 
 
     this.getForDdByRelatedUser = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var result = {};
         var uId = req.session.uId;
 
-        var query = Employee.find({relatedUser: uId, isEmployee: true}, {name: 1}).sort({'name.first': 1});
+        var query = Model.find({relatedUser: uId, isEmployee: true}, {name: 1}).sort({'name.first': 1});
 
         query.exec(function (err, user) {
             if (err) {
@@ -1255,7 +1276,7 @@ var Employee = function (event, models) {
     this.getByViewTpe = function (req, res, next) { // toDO refactor id only by params or query
         var query = req.query;
         var viewType = query.viewType;
-        var id = req.params.id;
+        var id = req.query.id;
 
         if (id && id.length >= 24) {
             getById(req, res, next);
@@ -1263,25 +1284,25 @@ var Employee = function (event, models) {
         }
 
         switch (viewType) {
-            case "form":
+            case 'form':
                 getById(req, res, next);
                 break;
-            case "kanban":
+            case 'kanban':
                 getApplicationsForKanban(req, res, next);
                 break;
-            case "thumbnails":
+            case 'thumbnails':
                 getFilter(req, res, next);
                 break;
-            case "list":
+            case 'list':
                 getFilter(req, res, next);
                 break;
         }
     };
 
     this.getSalesPerson = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var result = {};
-        var query = Employee.find(/*{'isEmployee': true}*/{}, {name: 1}).sort({'name.first': 1});
+        var query = Model.find(/* {'isEmployee': true}*/{}, {name: 1}).sort({'name.first': 1});
 
         query.exec(function (err, employees) {
             if (err) {
@@ -1295,20 +1316,20 @@ var Employee = function (event, models) {
     };
 
     this.getEmployeesAlphabet = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var response = {};
-        var query = Employee
+        var query = Model
             .aggregate([{
                 $match: {
                     isEmployee: true
                 }
             }, {
                 $project: {
-                    later: {$substr: ["$name.last", 0, 1]}
+                    later: {$substr: ['$name.last', 0, 1]}
                 }
             }, {
                 $group: {
-                    _id: "$later"
+                    _id: '$later'
                 }
             }]);
 
@@ -1323,15 +1344,16 @@ var Employee = function (event, models) {
     };
 
     this.getEmployeesImages = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var data = req.params;
-        var ids = data.ids || [];
+        var idsArray = data.ids || [];
+        var query;
 
-        if (!ids.length) {
-            ids = req.query.ids || [];
+        if (!idsArray.length) {
+            idsArray = req.query.ids || [];
         }
 
-        var query = Employee.find({isEmployee: true, _id: {$in: ids}}, {imageSrc: 1, name: 1});
+        query = Model.find({isEmployee: true, _id: {$in: idsArray}}, {imageSrc: 1, name: 1});
 
         query.exec(function (err, response) {
             if (err) {
@@ -1344,19 +1366,20 @@ var Employee = function (event, models) {
     };
 
     this.getCollectionLengthByWorkflows = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var accessRollSearcher;
         var contentSearcher;
         var waterfallTasks;
         var data = {};
+
         data.showMore = false;
 
         accessRollSearcher = function (cb) {
-            accessRoll(req, Employee, cb);
+            accessRoll(req, Model, cb);
         };
 
         contentSearcher = function (deps, cb) {
-            Employee
+            Model
                 .aggregate([{
                     $match: {
                         _id: {$in: deps}
@@ -1369,7 +1392,7 @@ var Employee = function (event, models) {
                 },
                     {
                         $group: {
-                            _id  : "$workflow",
+                            _id  : '$workflow',
                             count: {$sum: 1}
                         }
                     }
@@ -1436,7 +1459,7 @@ var Employee = function (event, models) {
         });
     };
 
-    /*this.getSalaryByMonth = function (req, res, next) {
+    /* this.getSalaryByMonth = function (req, res, next) {
      var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
      var query = req.query;
      var _id = query._id;
@@ -1465,34 +1488,35 @@ var Employee = function (event, models) {
      };*/
 
     this.uploadEmployeesFiles = function (req, res, next) {
-        var Employee = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
-        uploadFileArray(req, res, next, Employee);
+        uploadFileArray(req, res, next, Model);
     };
 
-    var check = function (req, callback) {
+    function check(req, callback) {
         var now = new Date();
         var dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-        var Birthdays = models.get(req.session.lastDb, "birthdays", birthdaysSchema);
+        var Birthdays = models.get(req.session.lastDb, 'birthdays', birthdaysSchema);
 
         Birthdays.find({}, function (err, birth) {
             if (err) {
-                callback(-1);
+                return callback(-1);
+            }
+
+            if (birth.length === 0) {
+                return callback(0);
+            }
+
+
+            if (birth[0].date < dateOnly) {
+                callback(0);
             } else {
-                if (birth.length === 0) {
-                    callback(0);
-                } else {
-                    if (birth[0].date < dateOnly) {
-                        callback(0);
-                    } else {
-                        callback(1, birth[0].currentEmployees);
-                    }
-                }
+                callback(1, birth[0].currentEmployees);
             }
         });
-    };
+    }
 
-    var getEmployeesInDateRange = function (req, res, next, callback) {
+    function getEmployeesInDateRange(req, res, next, callback) {
         var now = new Date();
         var day = 0;
         var _month = now.getMonth() + 1;
@@ -1500,20 +1524,7 @@ var Employee = function (event, models) {
         var tempMonthLength = _month + NUMBER_OF_MONTH;
         var realPart;
         var query;
-        var Employee = models.get(req.session.lastDb, "Employees", EmployeeSchema);
-
-        /*function getAge(birthday) {
-         birthday = new Date(birthday);
-         var today = new Date();
-         var years = today.getFullYear() - birthday.getFullYear();
-
-         birthday.setFullYear(today.getFullYear());
-
-         if (today < birthday) {
-         years--;
-         }
-         return (years < 0) ? 0 : years;
-         }*/
+        var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
 
         var separateWeklyAndMonthly = function (arrayOfEmployees) {
             var dateOnly = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -1550,23 +1561,33 @@ var Employee = function (event, models) {
             });
 
             currentEmployees.nextweek = currentEmployees.monthly.filter(function (employee) {
+                var birthday;
+                var valueOfBirthday;
+
                 if (employee.dateBirth) {
-                    var birthday = new Date(employee.dateBirth);
+                    birthday = new Date(employee.dateBirth);
                     birthday.setHours(0);
-                    var valueOfBirthday = birthday.valueOf();
+                    valueOfBirthday = birthday.valueOf();
+
                     if (valueOfBirthday >= FirstDateNxtWeek) {
                         if ((valueOfBirthday <= LastDateNxtWeek)) {
                             return true;
                         }
                     }
                 }
+
+                return false;
             });
 
             currentEmployees.weekly = currentEmployees.monthly.filter(function (employee) {
+                var birthday;
+                var valueOfBirthday;
+
                 if (employee.dateBirth) {
-                    var birthday = new Date(employee.dateBirth);
+                    birthday = new Date(employee.dateBirth);
                     birthday.setHours(0);
-                    var valueOfBirthday = birthday.valueOf();
+                    valueOfBirthday = birthday.valueOf();
+
                     if (valueOfBirthday >= FirstDateWeek) {
                         if ((valueOfBirthday <= LastDateWeek)) {
                             return true;
@@ -1574,23 +1595,30 @@ var Employee = function (event, models) {
                     }
 
                 }
+
+                return false;
             });
+
             currentEmployees.monthly.sort(function (a, b) {
                 if (a.daysForBirth > b.daysForBirth) {
                     return 1;
                 }
+
                 if (a.daysForBirth < b.daysForBirth) {
                     return -1;
                 }
+
                 return 0;
             });
             currentEmployees.weekly.sort(function (a, b) {
                 if (a.daysForBirth > b.daysForBirth) {
                     return 1;
                 }
+
                 if (a.daysForBirth < b.daysForBirth) {
                     return -1;
                 }
+
                 return 0;
             });
 
@@ -1598,9 +1626,11 @@ var Employee = function (event, models) {
                 if (a.daysForBirth > b.daysForBirth) {
                     return 1;
                 }
+
                 if (a.daysForBirth < b.daysForBirth) {
                     return -1;
                 }
+
                 return 0;
             });
             return currentEmployees;
@@ -1626,7 +1656,7 @@ var Employee = function (event, models) {
             };
         }
 
-        Employee.aggregate(
+        Model.aggregate(
             {
                 $match: {
                     $and: [
@@ -1650,7 +1680,7 @@ var Employee = function (event, models) {
                     return next(err);
                 }
 
-                Employee.find().where('_id').in(result)
+                Model.find().where('_id').in(result)
                     .select('_id name dateBirth age jobPosition workPhones.mobile department')
                     .populate('jobPosition', '_id name')
                     .populate('department', ' _id departmentName')
@@ -1659,20 +1689,22 @@ var Employee = function (event, models) {
                         if (err) {
                             return callback(req, res, next, separateWeklyAndMonthly([]));
                         }
+
                         resArray.map(function (employee) {
                             employee.age = getAge(employee.dateBirth);
                             return employee;
                         });
+
                         callback(req, res, next, separateWeklyAndMonthly(resArray));
                     });
             });
-    };
+    }
 
-    var set = function (req, res, next, currentEmployees) {
+    function set(req, res, next, currentEmployees) {
         var result = {};
         var data = {};
         var now = new Date();
-        var Birthdays = models.get(req.session.lastDb, "birthdays", birthdaysSchema);
+        var Birthdays = models.get(req.session.lastDb, 'birthdays', birthdaysSchema);
 
         data.date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
         data.currentEmployees = currentEmployees;
@@ -1688,7 +1720,7 @@ var Employee = function (event, models) {
                 res.status(200).send(result);
             }
         });
-    };
+    }
 
     this.getBirthdays = function (req, res, next) {
 
@@ -1719,9 +1751,9 @@ var Employee = function (event, models) {
         });
     };
 
-    var recalculate = function (req, res, next) {
+    function recalculate(req, res, next) {
         getEmployeesInDateRange(req, res, next, set);
-    };
+    }
 
     event.on('recalculate', recalculate);
 };
