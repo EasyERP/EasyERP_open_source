@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
+
 var Incoterm = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
-    var IncotermSchema = mongoose.Schemas['Incoterm'];
+    var IncotermSchema = mongoose.Schemas.Incoterm;
 
     this.getForDd = function (req, res, next) {
         var Incoterm = models.get(req.session.lastDb, 'Incoterm', IncotermSchema);
@@ -13,7 +13,8 @@ var Incoterm = function (models) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send({data: incoterms})
+
+                res.status(200).send({data: incoterms});
             });
     };
 

@@ -21,7 +21,7 @@ describe("Department Specs", function () {
                 .post('users/login')
                 .send({
                     login: 'admin',
-                    pass : '1q2w3eQWE',
+                    pass : 'tm2016',
                     dbId : 'production'
                 })
                 .expect(200, done);
@@ -77,7 +77,7 @@ describe("Department Specs", function () {
             };
 
             aggent
-                .get('departments/form')
+                .get('departments/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
