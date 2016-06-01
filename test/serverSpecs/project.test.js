@@ -214,7 +214,9 @@ describe('Project Specs', function () {
                         .and.to.be.instanceOf(Array);
 
                     firstProject = body.data[0];
-
+                    
+                    console.log(firstProject);
+                    
                     expect(firstProject)
                         .and.to.have.property('_id')
                         .and.to.have.lengthOf(24);
@@ -280,13 +282,13 @@ describe('Project Specs', function () {
                 });
         });
 
-        it("should delete Project", function (done) {
+        it('should delete Project', function (done) {
             aggent
                 .delete('projects/' + id)
                 .expect(200, done);
         });
 
-        it("should not delete Project", function (done) {
+        it('should not delete Project', function (done) {
             aggent
                 .delete('projects/' + 'kkk')
                 .expect(500, done);

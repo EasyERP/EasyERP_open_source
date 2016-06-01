@@ -136,10 +136,10 @@
 
         asyncLoadImgs: function (collection) {
             var arr = _.filter(collection.toJSON(), function (item) {
-                return item.salesmanager;
+                return item.salesManager;
             });
             var ids = _.map(arr, function (item) {
-                return item.salesmanager._id;
+                return item.salesManager._id;
             });
 
             common.getImages(ids, CONSTANTS.URLS.EMPLOYEES + 'getEmployeesImages');
