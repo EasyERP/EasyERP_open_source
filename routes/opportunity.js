@@ -18,6 +18,7 @@ module.exports = function (models, event) {
     router.get('/getLengthByWorkflows', authStackMiddleware, accessStackMiddlware, handler.getLengthByWorkflows);
     router.get('/priority', authStackMiddleware, accessStackMiddlware, handler.getLeadsPriority);
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
+    router.post('/createLeadFromSite', handler.addNewLeadFromSite);
     router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateOnlySelectedFields);
     router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.update);
     router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
