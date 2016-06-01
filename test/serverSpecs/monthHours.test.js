@@ -1,12 +1,11 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent;
 
-describe("MonthHours Specs", function () {
+require('../../config/development');
+
+describe('MonthHours Specs', function () {
     describe('MonthHours with admin', function () {
         var id;
         var month;
@@ -19,7 +18,7 @@ describe("MonthHours Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -30,13 +29,13 @@ describe("MonthHours Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create monthHours", function (done) {
+        it('should create monthHours', function (done) {
             var body = {
-                "fixedExpense"      : 30,
-                "expenseCoefficient": 5,
-                "year"              : 2015,
-                "hours"             : 172,
-                "month"             : 8
+                'fixedExpense'      : 30,
+                'expenseCoefficient': 5,
+                'year'              : 2015,
+                'hours'             : 172,
+                'month'             : 8
             };
 
             aggent
@@ -67,8 +66,8 @@ describe("MonthHours Specs", function () {
                 });
         });
 
-        it("should fail create monthHours", function (done) {
-            var body = "";
+        it('should fail create monthHours', function (done) {
+            var body = '';
 
             aggent
                 .post('monthHours')
@@ -76,11 +75,11 @@ describe("MonthHours Specs", function () {
                 .expect(404, done);
         });
 
-        it("should patch monthHours", function (done) {
+        it('should patch monthHours', function (done) {
             var body = [{
-                "_id"               : id,
-                "fixedExpense"      : 40,
-                "expenseCoefficient": 2.5
+                '_id'               : id,
+                'fixedExpense'      : 40,
+                'expenseCoefficient': 2.5
             }];
 
             aggent
@@ -90,9 +89,9 @@ describe("MonthHours Specs", function () {
 
         });
 
-        it("should fail patch monthHours", function (done) {
+        it('should fail patch monthHours', function (done) {
             var body = [{
-                "_id": "123cba"
+                '_id': '123cba'
             }];
 
             aggent
@@ -101,7 +100,7 @@ describe("MonthHours Specs", function () {
                 .expect(500, done);
         });
 
-        it("should get monthHours", function (done) {
+        it('should get monthHours', function (done) {
 
             aggent
                 .get('monthHours/')
@@ -120,7 +119,7 @@ describe("MonthHours Specs", function () {
                 });
         });
 
-        it("should get monthHours length", function (done) {
+        it('should get monthHours length', function (done) {
 
             aggent
                 .get('monthHours/list/totalCollectionLength')
@@ -142,7 +141,7 @@ describe("MonthHours Specs", function () {
                 });
         });
 
-        it("should get monthHours by month&year", function (done) {
+        it('should get monthHours by month&year', function (done) {
             var query = {
                 month: month,
                 year : year
@@ -170,7 +169,7 @@ describe("MonthHours Specs", function () {
                 });
         });
 
-        it("should fail get monthHours by month&year", function (done) {
+        it('should fail get monthHours by month&year', function (done) {
             var query = {
                 month: 13
             };
@@ -195,13 +194,13 @@ describe("MonthHours Specs", function () {
                 });
         });
 
-        it("should delete monthHours", function (done) {
+        it('should delete monthHours', function (done) {
             aggent
                 .delete('monthHours/' + id)
                 .expect(200, done);
         });
 
-        it("should fail delete monthHours", function (done) {
+        it('should fail delete monthHours', function (done) {
             aggent
                 .delete('monthHours/123cba')
                 .expect(500, done);
@@ -218,7 +217,7 @@ describe("MonthHours Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -229,14 +228,14 @@ describe("MonthHours Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create MonthHours", function (done) {
+        it('should fail create MonthHours', function (done) {
 
             var body = {
-                "fixedExpense"      : 30,
-                "expenseCoefficient": 5,
-                "year"              : 2015,
-                "hours"             : 172,
-                "month"             : 8
+                'fixedExpense'      : 30,
+                'expenseCoefficient': 5,
+                'year'              : 2015,
+                'hours'             : 172,
+                'month'             : 8
             };
 
             aggent
@@ -249,7 +248,7 @@ describe("MonthHours Specs", function () {
 
     describe('MonthHours with no authorise', function () {
 
-        it("should fail get MonthHours for View", function (done) {
+        it('should fail get MonthHours for View', function (done) {
 
             aggent
                 .get('monthHours/')

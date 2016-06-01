@@ -2,11 +2,17 @@
 var MonthHoursHandler = require('../handlers/monthHours');
 var express = require('express');
 var router = express.Router();
-
+var authStackMiddleware = require('../helpers/checkAuth');
+var MODULES = require('../constants/modules');
 
 module.exports = function (event, models) {
     var handler = new MonthHoursHandler(event, models);
+    var moduleId = MODULES.MONTHHOURS;
+    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
+    router.use(authStackMiddleware);
+    router.use(accessStackMiddlware);
+    
     router.get('/', function (req, res, next) {
         if (req.query.month) {
             handler.getData(req, res, next);
@@ -18,11 +24,7 @@ module.exports = function (event, models) {
     router.post('/', handler.create);
     router.patch('/', handler.patchM);
 
-    router.delete('/:_id', function (req, res) {
-        var id = req.param('_id');
-
-        handler.remove(req, res, id);
-    });
+    router.delete('/:_id', handler.remove);
 
     return router;
 };

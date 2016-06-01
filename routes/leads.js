@@ -1,6 +1,3 @@
-/**
- * Created by liliy on 05.02.2016.
- */
 var express = require('express');
 var router = express.Router();
 var OpportunityHandler = require('../handlers/opportunity');

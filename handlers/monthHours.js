@@ -5,10 +5,9 @@ var redisStore = require('../helpers/redisClient');
 var MonthHours = function (event, models) {
     'use strict';
 
-    var MonthHoursSchema = mongoose.Schemas['MonthHours'];
-    var access = require("../Modules/additions/access.js")(models);
-    var CONSTANTS = require('../constants/mainConstants.js');
-
+    var MonthHoursSchema = mongoose.Schemas.MonthHours;
+    var access = require('../Modules/additions/access.js')(models);
+    var pageHelper = require('../helpers/pageHelper');
     var JournalEntryHandler = require('./journalEntry');
     var journalEntry = new JournalEntryHandler(models);
 
@@ -18,11 +17,9 @@ var MonthHours = function (event, models) {
         MonthHoursModel.aggregate([{
                 $group: {
                     _id : {$sum: [{$multiply: ['$year', 100]}, '$month']},
-                    root: {$push: "$$ROOT"}
+                    root: {$push: '$$ROOT'}
                 }
-            }
-            ],
-            function (err, result) {
+            }], function (err, result) {
                 if (err) {
                     return console.log(err);
                 }
@@ -32,138 +29,137 @@ var MonthHours = function (event, models) {
                 });
 
             }
-        )
-        ;
-    };
+        );
+    }
 
     this.create = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var body = req.body;
         var dateByMonth = parseInt(body.year, 10) * 100 + parseInt(body.month, 10);
+        var monthHours;
 
         body.dateByMonth = dateByMonth;
 
-        var monthHours = new MonthHoursModel(body);
+        monthHours = new MonthHoursModel(body);
 
-        access.getEditWritAccess(req, req.session.uId, 68, function (access) {
-            if (access) {
+        monthHours.save(function (err, result) {
+            var params;
 
-                monthHours.save(function (err, monthHours) {
-                    if (err) {
-                        return next(err);
-                    }
-                    composeAndCash(req);
-                    event.emit('setReconcileTimeCard', {req: req, month: monthHours.month, year: monthHours.year});
-
-                    event.emit('dropHoursCashes', req);
-                    var params = {
-                        req               : req,
-                        year              : monthHours.year,
-                        month             : monthHours.month,
-                        fixedExpense      : monthHours.fixedExpense,
-                        expenseCoefficient: monthHours.expenseCoefficient,
-                        hours             : monthHours.hours,
-                        dateByMonth       : monthHours.dateByMonth
-                    };
-                    event.emit('updateCost', params);
-                    res.status(200).send({success: monthHours});
-                });
-            } else {
-                res.status(404);
+            if (err) {
+                return next(err);
             }
+            composeAndCash(req);
+            event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
+
+            event.emit('dropHoursCashes', req);
+            params = {
+                req               : req,
+                year              : result.year,
+                month             : result.month,
+                fixedExpense      : result.fixedExpense,
+                expenseCoefficient: result.expenseCoefficient,
+                hours             : result.hours,
+                dateByMonth       : result.dateByMonth
+            };
+            event.emit('updateCost', params);
+            res.status(200).send({success: result});
         });
     };
 
     this.patchM = function (req, res, next) {
         var body = req.body;
-        var uId;
         var monthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 68, function (access) {
-                if (access) {
-                    async.each(body, function (data, cb) {
-                        var id = data._id;
-                        delete data._id;
+        async.each(body, function (data, cb) {
+            var id = data._id;
+            var dateByMonth;
 
-                        if (data.year && data.month) {
-                            var dateByMonth = parseInt(data.year, 10) * 100 + parseInt(data.month, 10);
+            delete data._id;
 
-                            data.dateByMonth = dateByMonth;
-                        }
+            if (data.year && data.month) {
+                dateByMonth = parseInt(data.year, 10) * 100 + parseInt(data.month, 10);
 
-                        monthHoursModel.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, result) {
-                            if (err) {
-                                return cb(err);
-                            }
-                            var params = {
-                                req               : req,
-                                year              : result.year,
-                                month             : result.month,
-                                fixedExpense      : result.fixedExpense,
-                                expenseCoefficient: result.expenseCoefficient,
-                                hours             : result.hours,
-                                dateByMonth       : result.dateByMonth
-                            };
-                            event.emit('updateCost', params);
-                            event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
-                            cb(null, result);
-                        });
+                data.dateByMonth = dateByMonth;
+            }
 
-                    }, function (err) {
-                        if (err) {
-                            return next(err);
-                        }
+            monthHoursModel.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, result) {
+                var params;
 
-                        composeAndCash(req);
-                        event.emit('dropHoursCashes', req);
-                        res.status(200).send({success: 'updated'});
-                    });
-                } else {
-                    res.status(403).send();
+                if (err) {
+                    return cb(err);
                 }
+                params = {
+                    req               : req,
+                    year              : result.year,
+                    month             : result.month,
+                    fixedExpense      : result.fixedExpense,
+                    expenseCoefficient: result.expenseCoefficient,
+                    hours             : result.hours,
+                    dateByMonth       : result.dateByMonth
+                };
+                event.emit('updateCost', params);
+                event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
+                cb(null, result);
             });
-        } else {
-            res.status(401).send();
-        }
+
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            composeAndCash(req);
+            event.emit('dropHoursCashes', req);
+            res.status(200).send({success: 'updated'});
+        });
     };
 
     this.getList = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
-        var sort = {};
-        var count = parseInt(req.query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
-        var page = req.query.page;
-        var skip;
-        var query = req.query;
+        var sort = req.query.sort || {};
+        var paginationObject = pageHelper(req.query);
+        var limit = paginationObject.limit;
+        var skip = paginationObject.skip;
+        var parallelTasks;
 
-        count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count;
-        skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var getTotal = function (pCb) {
 
-        if (query.sort) {
-            sort = query.sort;
-        } else {
-            sort = {};
-        }
+            MonthHoursModel.count(function (err, _res) {
+                if (err) {
+                    return pCb(err);
+                }
 
-        access.getReadAccess(req, req.session.uId, 68, function (access) {
-            if (access) {
-                MonthHoursModel
-                    .find()
-                    .limit(count)
-                    .skip(skip)
-                    .sort(sort)
-                    .exec(function (err, data) {
-                        if (err) {
-                            return next(err);
-                        } else {
-                            res.status(200).send(data);
-                        }
-                    });
-            } else {
-                res.status(403).send();
+                pCb(null, _res);
+            });
+        };
+
+        var getData = function (pCb) {
+            MonthHoursModel.sort(sort).skip(skip).limit(limit).exec(function (err, _res) {
+                if (err) {
+                    return pCb(err);
+                }
+
+                pCb(null, _res);
+            });
+        };
+
+        parallelTasks = [getTotal, getData];
+
+        async.parallel(parallelTasks, function (err, result) {
+            var count;
+            var response = {};
+
+            if (err) {
+                return next(err);
             }
+
+            count = result[0] || 0;
+
+            response.total = count;
+            response.data = result[1];
+
+            res.status(200).send(response);
         });
+
     };
 
     this.getData = function (req, res, next) {
@@ -179,8 +175,6 @@ var MonthHours = function (event, models) {
             queryObj.year = Number(query.year);
         }
 
-        //access.getReadAccess(req, req.session.uId, 68, function (access) { // commented for PM profile for create wTracks
-        //    if (access) {
         MonthHoursModel
             .aggregate(
                 [{
@@ -190,47 +184,38 @@ var MonthHours = function (event, models) {
             .exec(function (err, data) {
                 if (err) {
                     return next(err);
-                } else {
-                    res.status(200).send(data);
                 }
+
+                res.status(200).send(data);
             });
-        //    } else {
-        //        res.status(403).send();
-        //    }
-        //});
     };
 
     this.totalCollectionLength = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
+        
         MonthHoursModel.find().count(function (err, count) {
             if (err) {
-                next(err)
+                return next(err);
             }
-            res.status(200).send({count: count});
 
+            res.status(200).send({count: count});
         });
     };
 
-    this.remove = function (req, res, id, next) {
-        var MonthHoursModel = models.get(req.session.lastDb, "MonthHours", MonthHoursSchema);
+    this.remove = function (req, res, next) {
+        var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
+        var id = req.params.id;
 
-        access.getDeleteAccess(req, req.session.uId, 68, function (access) {
-            if (access) {
-                MonthHoursModel.findByIdAndRemove(id, function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    composeAndCash(req);
-                    event.emit('dropHoursCashes', req);
-                    event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
-
-                    res.status(200).send({success: result});
-
-                });
-            } else {
-                res.status(403).send();
+        MonthHoursModel.findByIdAndRemove(id, function (err, result) {
+            if (err) {
+                return next(err);
             }
+
+            composeAndCash(req);
+            event.emit('dropHoursCashes', req);
+            event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
+
+            res.status(200).send({success: result});
         });
     };
 
