@@ -22,7 +22,6 @@
         template          : _.template(thumbnailsItemTemplate),
         newCollection     : true,
         filter            : null,
-        defaultItemsNumber: null,
         contentType       : 'Projects', // needs in view.prototype.changeLocationHash
         viewType          : 'thumbnails', // needs in view.prototype.changeLocationHash
 

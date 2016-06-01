@@ -90,9 +90,9 @@ define([
                 this.trigger('filter', App.filter);
             };
             /*  this.setDbOnce = _.debounce(
-                  function () {
-                      this.trigger('filter', App.filter);
-                  }, 500);*/
+             function () {
+             this.trigger('filter', App.filter);
+             }, 500);*/
         },
 
         useFilter: function (e) {
@@ -337,7 +337,7 @@ define([
 
                 groupNameElement.addClass('checkedGroup');
 
-                //var inputFilterValue = filterGroupElement.find('input').val();
+                // var inputFilterValue = filterGroupElement.find('input').val();
                 (_.debounce(
                     function () {
                         self.renderFilterContent();
