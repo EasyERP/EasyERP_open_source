@@ -4,21 +4,22 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
-var aggent;
+var aggent = request.agent(url);
 
-describe("Filter Specs", function () {
+describe('Filter Specs', function () {
     'use strict';
 
     describe('Filter with admin', function () {
+        this.timeout(5000);
 
         before(function (done) {
-            aggent = request.agent(url);
+
             aggent
                 .post('users/login')
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -30,12 +31,13 @@ describe("Filter Specs", function () {
         });
 
         it("should get Filter Values", function (done) {
-            var query ={
+            var query = {
                 filter: {
                     startDate: 201605,
-                    endDate: 201607
+                    endDate  : 201607
                 }
             };
+            var project;
 
             aggent
                 .get('filter/getFiltersValues')
@@ -54,12 +56,46 @@ describe("Filter Specs", function () {
                         .to.have.property('Persons')
                         .and.to.be.instanceOf(Object)
                         .and.to.have.property('name')
-                        .and.to.be.instanceOf(Array);// todo test other properties if its need
+                        .and.to.be.instanceOf(Array);
+
+                    project = body.Projects;
+
+                    expect(project).to.exist;
+
+                    expect(project).to.be.instanceOf(Object)
+                        .and.to.have.property('name')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(project)
+                        .to.have.property('workflow')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(project)
+                        .to.have.property('customer')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(project)
+                        .to.have.property('projectManager')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(project)
+                        .to.have.property('salesManager')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
 
                     done();
+                    // todo test other properties if its need
                 });
         });
-
     });
 
     describe('Filter with no authorise', function () {
@@ -68,7 +104,7 @@ describe("Filter Specs", function () {
 
             aggent
                 .get('filter/getFiltersValues')
-                .expect(404, done);
+                .expect(500, done);
         });
 
     });
