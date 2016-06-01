@@ -2,11 +2,19 @@ var express = require('express');
 var router = express.Router();
 var journalHandler = require('../handlers/journal');
 var journalEntryHandler = require('../handlers/journalEntry');
+var authStackMiddleware = require('../helpers/checkAuth');
+var MODULES = require('../constants/modules');
 
 module.exports = function (models, event) {
     var _journalHandler = new journalHandler(models, event);
     var _journalEntryHandler = new journalEntryHandler(models, event);
+    var moduleId = MODULES.JOURNALENTRY;
+    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
+    router.use(authStackMiddleware);
+    router.use(accessStackMiddlware);
+
+    router.get('/', _journalHandler.getForView);
     router.get('/getForDd', _journalHandler.getForDd);
     router.get('/getReconcileDate', _journalEntryHandler.getReconcileDate);
     router.get('/journalEntry/totalCollectionLength', _journalEntryHandler.totalCollectionLength);
@@ -26,7 +34,6 @@ module.exports = function (models, event) {
     router.get('/journalEntry/exportToXlsx/:filter', _journalEntryHandler.exportToXlsx);
     router.get('/journalEntry/exportToCsv/:filter', _journalEntryHandler.exportToCsv);
     router.get('/journalEntry/:viewType', _journalEntryHandler.getForView);
-    router.get('/:viewType', _journalHandler.getForView);
     router.post('/', _journalHandler.create);
     router.post('/journalEntry', _journalEntryHandler.create);
     router.post('/reconcile', _journalEntryHandler.reconcile);

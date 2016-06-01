@@ -1,17 +1,11 @@
-/**
- * Created by liliy on 27.01.2016.
- */
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var CONSTANTS = require('../../constants/mainConstants.js');
-
-var host = process.env.HOST;
 var aggent;
 
-describe("journalEntries Specs", function () {
+require('../../config/development');
+
+describe('journalEntries Specs', function () {
     'use strict';
     var id;
 
@@ -35,7 +29,7 @@ describe("journalEntries Specs", function () {
                 .expect(302, done);
         });
 
-        it("should get totalCount of InventoryReport", function (done) {
+        it('should get totalCount of InventoryReport', function (done) {
             var query = {
                 filter: {
                     startDate: {
@@ -71,7 +65,7 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should get async data for closeMonth view", function (done) {
+        it('should get async data for closeMonth view', function (done) {
             var query = {
                 date: '1 Aug, 2014'
             };
@@ -98,10 +92,10 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should get data for trialBalance view", function (done) {
+        it('should get data for trialBalance view', function (done) {
             var query = {
-                "startDate": '1 Feb, 2016',
-                "endDate"  : '28 Feb, 2016'
+                'startDate': '1 Feb, 2016',
+                'endDate'  : '28 Feb, 2016'
             };
 
             aggent
@@ -123,7 +117,7 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should get data for closeMonth view", function (done) {
+        it('should get data for closeMonth view', function (done) {
 
             aggent
                 .get('journal/journalEntry/getCloseMonth')
@@ -143,10 +137,10 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-           it("should get data for balanceSheet view", function (done) {
+           it('should get data for balanceSheet view', function (done) {
                var query = {
-                   "startDate": '1 Feb, 2016',
-                   "endDate"  : '28 Feb, 2016'
+                   'startDate': '1 Feb, 2016',
+                   'endDate'  : '28 Feb, 2016'
                };
 
             aggent
@@ -177,10 +171,10 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-          it("should get data for balanceSheet view", function (done) {
+          it('should get data for balanceSheet view', function (done) {
             var query = {
-                "startDate": '1 Feb, 2016',
-                "endDate"  : '28 Feb, 2016'
+                'startDate': '1 Feb, 2016',
+                'endDate'  : '28 Feb, 2016'
             };
 
             aggent
@@ -211,10 +205,10 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should get data for cashFlow view", function (done) {
+        it('should get data for cashFlow view', function (done) {
             var query = {
-                "startDate": '1 Feb, 2016',
-                "endDate"  : '28 Feb, 2016'
+                'startDate': '1 Feb, 2016',
+                'endDate'  : '28 Feb, 2016'
             };
 
             aggent
@@ -245,7 +239,7 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should get data for report in Payroll view", function (done) {
+        it('should get data for report in Payroll view', function (done) {
             var query = {
                 dataKey: '201512'
             };
@@ -271,7 +265,7 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should get JE for Report", function (done) {
+        it('should get JE for Report', function (done) {
             var query = {
                 _id: id
             };
@@ -299,10 +293,10 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should get data for Inventory Report view", function (done) {
+        it('should get data for Inventory Report view', function (done) {
             var query = {
-                "startDate": '1 Feb, 2016',
-                "endDate"  : '2 Feb, 2016'
+                'startDate': '1 Feb, 2016',
+                'endDate'  : '2 Feb, 2016'
             };
 
             aggent
@@ -323,7 +317,7 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should get data to export to Xlsx", function (done) {
+        it('should get data to export to Xlsx', function (done) {
             var query = {
                 filter: {
                     startDate: {
@@ -351,7 +345,7 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should get data to export to Csv", function (done) {
+        it('should get data to export to Csv', function (done) {
             var query = {
                 filter: {
                     startDate: {
@@ -379,7 +373,7 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should get JE async for reports", function (done) {
+        it('should get JE async for reports', function (done) {
             var query = {
                 date: '1 Aug, 2014'
             };
@@ -405,10 +399,10 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should async get JE for balanceSheet", function (done) {
+        it('should async get JE for balanceSheet', function (done) {
             var query = {
-                "startDate": '1 Feb, 2016',
-                "endDate"  : '28 Feb, 2016'
+                'startDate': '1 Feb, 2016',
+                'endDate'  : '28 Feb, 2016'
             };
 
             aggent
@@ -432,10 +426,10 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should get totalCount and total sum", function (done) {
+        it('should get totalCount and total sum', function (done) {
             var query = {
-                "startDate": '1 Feb, 2016',
-                "endDate"  : '28 Feb, 2016'
+                'startDate': '1 Feb, 2016',
+                'endDate'  : '28 Feb, 2016'
             };
 
             aggent
@@ -463,15 +457,15 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should get JE for list", function (done) {
+        it('should get JE for list', function (done) {
             var query = {
-                "startDate": '1 Feb, 2016',
-                "endDate"  : '28 Feb, 2016',
+                'startDate': '1 Feb, 2016',
+                'endDate'  : '28 Feb, 2016',
                 viewType: 'list'
             };
 
             aggent
-                .get('journal/journalEntry/')
+                .get('journal/journalEntry/list')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -488,7 +482,7 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should close month", function (done) {
+        it('should close month', function (done) {
             var query = {
                 year: 2016,
                 month: 4
@@ -513,7 +507,7 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should reclose month", function (done) {
+        it('should reclose month', function (done) {
             var query = ['1 Aug, 2016', '1 Jun, 2016'];
 
             aggent
@@ -535,7 +529,7 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        it("should reconcile all changed documents month", function (done) {
+        it('should reconcile all changed documents month', function (done) {
 
             aggent
                 .post('journal/reconcile')
@@ -555,7 +549,7 @@ describe("journalEntries Specs", function () {
                 });
         });
 
-        /*it("should create JE", function (done) {
+        /*it('should create JE', function (done) {
             var body = {};
             body.date = '1 Jan, 2015';
             body.journal = CONSTANTS.INVOICE_JOURNAL;

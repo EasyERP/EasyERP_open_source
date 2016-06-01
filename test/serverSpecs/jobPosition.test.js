@@ -1,15 +1,12 @@
-/**
- * Created by liliy on 04.02.2016.
- */
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-describe("jobPosition Specs", function () {
+require('../../config/development');
+
+describe('jobPosition Specs', function () {
     'use strict';
     var id;
 
@@ -34,7 +31,7 @@ describe("jobPosition Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create jobPosition", function (done) {
+        it('should create jobPosition', function (done) {
             var body = {
                 name: 'testJobPosition12'
             };
@@ -63,7 +60,7 @@ describe("jobPosition Specs", function () {
                 });
         });
 
-        it("should get jobPositions", function (done) {
+        it('should get jobPositions', function (done) {
             aggent
                 .get('jobPositions/getFilterValues')
                 .expect(200)
@@ -81,7 +78,7 @@ describe("jobPosition Specs", function () {
                 });
         });
 
-        it("should get jobPositions for dropDown", function (done) {
+        it('should get jobPositions for dropDown', function (done) {
             aggent
                 .get('jobPositions/getForDd')
                 .expect(200)
@@ -103,7 +100,7 @@ describe("jobPosition Specs", function () {
                 });
         });
 
-        it("should get jobType for dropDown", function (done) {
+        it('should get jobType for dropDown', function (done) {
             aggent
                 .get('jobPositions/jobType')
                 .expect(200)
@@ -125,7 +122,7 @@ describe("jobPosition Specs", function () {
                 });
         });
 
-        it("should getById jobPositions", function (done) {
+        it('should getById jobPositions', function (done) {
             var query = {
                 id: id
             };
@@ -151,7 +148,7 @@ describe("jobPosition Specs", function () {
                 });
         });
 
-        it("should get jobPositions for list", function (done) {
+        it('should get jobPositions for list', function (done) {
             var query = {
                 viewType: 'list'
             };
@@ -180,7 +177,7 @@ describe("jobPosition Specs", function () {
                 });
         });
 
-        it("should get jobPositions totalCount", function (done) {
+        it('should get jobPositions totalCount', function (done) {
             aggent
                 .get('jobPositions/totalCollectionLength')
                 .expect(200)
@@ -200,7 +197,7 @@ describe("jobPosition Specs", function () {
                 });
         });
 
-        it("should update jobPosition", function (done) {
+        it('should update jobPosition', function (done) {
             var body = {
                 name: 'ddddd'
             };
@@ -225,7 +222,7 @@ describe("jobPosition Specs", function () {
                 });
         });
 
-        it("should delete jobPositions", function (done) {
+        it('should delete jobPositions', function (done) {
             aggent
                 .delete('jobPositions/' + id)
                 .expect(200, done);
@@ -253,7 +250,7 @@ describe("jobPosition Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create jobPosition", function (done) {
+        it('should fail create jobPosition', function (done) {
             var body = {
                 name: 'fffffffxxfff'
             };

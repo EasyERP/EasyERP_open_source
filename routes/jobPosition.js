@@ -22,8 +22,6 @@ module.exports = function (models) {
     router.patch('/:id', accessStackMiddlware, handler.update);
     router.put('/:id', accessStackMiddlware, handler.update);
     router.delete('/:id', accessStackMiddlware, handler.remove);
-
-    //router.get('/form', accessStackMiddlware, handler.getById);
-    //router.get('/list', accessStackMiddlware, handler.getFilterJobPositions);
+    
     return router;
 };

@@ -70,7 +70,7 @@ describe("Journal Specs", function () {
             };
 
             aggent
-                .get('journal/')
+                .get('journal')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -131,7 +131,7 @@ describe("Journal Specs", function () {
 
             aggent
                 .get('journal/getForDd')
-                .expect(500, done);
+                .expect(404, done);
         });
 
     });
