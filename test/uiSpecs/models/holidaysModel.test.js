@@ -6,7 +6,6 @@ define([
     var expect = chai.expect;
 
     describe('HolidayModel', function () {
-        var mainSpy;
         var holiday;
         var server;
 

@@ -181,13 +181,13 @@ define([
                 it('Try to change week', function (done) {
                     var revenueUrl = new RegExp('\/revenue\/getFromCash', 'i');
 
-                    this.timeout(5000);
+                    this.timeout(6000);
 
                     server.respondWith('GET', revenueUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeRevenue)]);
                     indexView.updateWeek();
                     server.respond();
 
-                    clock.tick(4000);
+                    clock.tick(5500);
 
                     expect(indexView.$el.find('.chartContainer')).to.have.exist;
                     expect(indexView.$el.find('#totalTotalHours')).to.have.exist;

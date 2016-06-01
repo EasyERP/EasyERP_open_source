@@ -1,4 +1,5 @@
 define([
+    'modules',
     'text!fixtures/index.html',
     'router',
     'collections/Departments/filterCollection',
@@ -11,510 +12,23 @@ define([
     'jQuery',
     'chai',
     'chai-jquery',
-    'sinon-chai',
-    'custom'
-], function (fixtures, router, DepartmentsCollection, MainView, TopBarView, CreateUserView, EditView, FormView, ListView, $, chai, chaiJquery, sinonChai, Custom) {
+    'sinon-chai'
+], function (modules,
+             fixtures,
+             router,
+             DepartmentsCollection,
+             MainView,
+             TopBarView,
+             CreateUserView,
+             EditView,
+             FormView,
+             ListView,
+             $,
+             chai,
+             chaiJquery,
+             sinonChai) {
     'use strict';
-    var expect;
 
-    chai.use(chaiJquery);
-    chai.use(sinonChai);
-    expect = chai.expect;
-
-    var modules = [
-        {
-            "_id"        : 19,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "Sales",
-            "parrent"    : null,
-            "sequence"   : 1,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Sales"
-        }, {
-            "_id"        : 36,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "Project",
-            "parrent"    : null,
-            "sequence"   : 2,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Project"
-        }, {
-            "_id"        : 9,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "HR",
-            "parrent"    : null,
-            "sequence"   : 3,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "HR"
-        }, {
-            "_id"        : 49,
-            "attachments": [],
-            "htref"      : "persons",
-            "link"       : true,
-            "mname"      : "Persons",
-            "parrent"    : 19,
-            "sequence"   : 7,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Persons"
-        }, {
-            "_id"        : 50,
-            "attachments": [],
-            "htref"      : "persons",
-            "link"       : true,
-            "mname"      : "Companies",
-            "parrent"    : 19,
-            "sequence"   : 8,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Companies"
-        }, {
-            "_id"        : 24,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Leads",
-            "parrent"    : 19,
-            "sequence"   : 9,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Leads"
-        }, {
-            "_id"        : 25,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Opportunities",
-            "parrent"    : 19,
-            "sequence"   : 10,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Opportunities"
-        }, {
-            "_id"        : 39,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Projects",
-            "parrent"    : 36,
-            "sequence"   : 23,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Projects"
-        }, {
-            "_id"        : 40,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Tasks",
-            "parrent"    : 36,
-            "sequence"   : 24,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Tasks"
-        }, {
-            "_id"        : 29,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Dashboard",
-            "parrent"    : 19,
-            "sequence"   : 29,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Dashboard"
-        }, {
-            "_id"        : 42,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Employees",
-            "parrent"    : 9,
-            "sequence"   : 29,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Employees"
-        }, {
-            "_id"        : 43,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Applications",
-            "parrent"    : 9,
-            "sequence"   : 30,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Applications"
-        }, {
-            "_id"        : 14,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Job Positions",
-            "parrent"    : 9,
-            "sequence"   : 32,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "JobPositions"
-        }, {
-            "_id"        : 15,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Groups",
-            "parrent"    : 1,
-            "sequence"   : 33,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Departments"
-        }, {
-            "_id"        : 7,
-            "__v"        : 0,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Users",
-            "parrent"    : 1,
-            "sequence"   : 42,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Users"
-        }, {
-            "_id"        : 44,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Workflows",
-            "parrent"    : 1,
-            "sequence"   : 44,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Workflows"
-        }, {
-            "_id"        : 51,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Profiles",
-            "parrent"    : 1,
-            "sequence"   : 51,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Profiles"
-        }, {
-            "_id"        : 52,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Birthdays",
-            "parrent"    : 9,
-            "sequence"   : 52,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Birthdays"
-        }, {
-            "_id"        : 53,
-            "attachments": [],
-            "link"       : true,
-            "mname"      : "Dashboard",
-            "parrent"    : 36,
-            "sequence"   : 53,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "projectDashboard"
-        }, {
-            "_id"      : 54,
-            "mname"    : "Purchases",
-            "sequence" : 54,
-            "parrent"  : null,
-            "link"     : false,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Purchases"
-        }, {
-            "_id"      : 80,
-            "mname"    : "Jobs Dashboard",
-            "sequence" : 54,
-            "parrent"  : 36,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "jobsDashboard"
-        }, {
-            "_id"      : 55,
-            "mname"    : "Quotation",
-            "sequence" : 55,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Quotation"
-        }, {
-            "_id"      : 57,
-            "mname"    : "Order",
-            "sequence" : 56,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Order"
-        }, {
-            "_id"      : 56,
-            "mname"    : "Invoice",
-            "sequence" : 57,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Invoice"
-        }, {
-            "_id"      : 58,
-            "mname"    : "Product",
-            "sequence" : 58,
-            "parrent"  : 54,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Product"
-        }, {
-            "_id"      : 59,
-            "mname"    : "Accounting",
-            "sequence" : 59,
-            "parrent"  : null,
-            "link"     : false,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Accounting"
-        }, {
-            "_id"      : 60,
-            "mname"    : "Supplier Payments",
-            "sequence" : 60,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "supplierPayments"
-        }, {
-            "_id"      : 61,
-            "mname"    : "Customer Payments",
-            "sequence" : 61,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "customerPayments"
-        }, {
-            "_id"      : 62,
-            "mname"    : "Quotation",
-            "sequence" : 62,
-            "parrent"  : 19,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salesQuotation"
-        }, {
-            "_id"      : 63,
-            "mname"    : "Order",
-            "sequence" : 63,
-            "parrent"  : 19,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salesOrder"
-        }, {
-            "_id"      : 64,
-            "mname"    : "Invoice",
-            "sequence" : 64,
-            "parrent"  : 19,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salesInvoice"
-        }, {
-            "_id"      : 68,
-            "mname"    : "MonthHours",
-            "sequence" : 68,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "monthHours"
-        }, {
-            "_id"      : 69,
-            "mname"    : "Holidays",
-            "sequence" : 69,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Holiday"
-        }, {
-            "_id"      : 77,
-            "mname"    : "Capacity",
-            "sequence" : 69,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Capacity"
-        }, {
-            "_id"      : 88,
-            "mname"    : "Salary Report",
-            "sequence" : 69,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "salaryReport"
-        }, {
-            "_id"      : 70,
-            "mname"    : "Vacation",
-            "sequence" : 70,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Vacation"
-        }, {
-            "_id"      : 71,
-            "mname"    : "Attendance",
-            "sequence" : 71,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Attendance"
-        }, {
-            "_id"      : 76,
-            "mname"    : "Efficiency",
-            "sequence" : 72,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Efficiency"
-        }, {
-            "_id"      : 72,
-            "mname"    : "BonusType",
-            "sequence" : 73,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "bonusType"
-        }, {
-            "_id"      : 74,
-            "mname"    : "HrDashboard",
-            "sequence" : 74,
-            "parrent"  : 9,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "HrDashboard"
-        }, {
-            "_id"      : 66,
-            "mname"    : "Payroll Expenses",
-            "sequence" : 77,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "PayrollExpenses"
-        }, {
-            "_id"      : 78,
-            "mname"    : "Payroll",
-            "sequence" : 78,
-            "parrent"  : null,
-            "link"     : false,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "Payroll"
-        }, {
-            "_id"      : 79,
-            "mname"    : "Payroll Payments",
-            "sequence" : 79,
-            "parrent"  : 78,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "PayrollPayments"
-        }, {
-            "_id"      : 82,
-            "mname"    : "Invoice Aging",
-            "sequence" : 82,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "invoiceAging"
-        }, {
-            "_id"      : 83,
-            "mname"    : "ChartOfAccount",
-            "sequence" : 83,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "ChartOfAccount"
-        }, {
-            "_id"      : 85,
-            "mname"    : "Journal",
-            "sequence" : 85,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "journal"
-        }, {
-            "_id"      : 86,
-            "mname"    : "Journal Entry",
-            "sequence" : 86,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "journalEntry"
-        }, {
-            "_id"      : 87,
-            "mname"    : "Invoice Charts",
-            "sequence" : 87,
-            "parrent"  : 59,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "invoiceCharts"
-        }, {
-            "_id"        : 1,
-            "__v"        : 0,
-            "attachments": [],
-            "link"       : false,
-            "mname"      : "Settings",
-            "parrent"    : null,
-            "sequence"   : 1000,
-            "visible"    : true,
-            "ancestors"  : [],
-            "href"       : "Settings"
-        }, {
-            "_id"      : 75,
-            "mname"    : "tCard",
-            "sequence" : 1000,
-            "parrent"  : 36,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "wTrack"
-        }, {
-            "_id"      : 84,
-            "mname"    : "Categories",
-            "sequence" : 1000,
-            "parrent"  : 1,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "productSettings"
-        }, {
-            "_id"      : 73,
-            "mname"    : "DashBoardVacation",
-            "sequence" : 1001,
-            "parrent"  : 36,
-            "link"     : true,
-            "visible"  : true,
-            "ancestors": [],
-            "href"     : "DashBoardVacation"
-        }];
     var fakeDepartments = {
         data: [
             {
@@ -1098,158 +612,6 @@ define([
         departmentManager: null,
         parentDepartment : null,
         departmentName   : ".NET/WP"
-    };
-    var fakeDeps = {
-        data: [
-            {
-                _id           : "55b92ace21e4b7c40f000012",
-                departmentName: ".NET/WP"
-            },
-            {
-                _id           : "55b92ace21e4b7c40f000010",
-                departmentName: "Android"
-            },
-            {
-                _id           : "55b92ace21e4b7c40f000014",
-                departmentName: "BusinessDev"
-            },
-            {
-                _id           : "56802e9d1afe27f547b7ba51",
-                departmentName: "CSS/FrontEnd"
-            },
-            {
-                _id           : "55bb1f14cb76ca630b000006",
-                departmentName: "Design"
-            },
-            {
-                _id           : "560c0b83a5d4a2e20ba5068c",
-                departmentName: "Finance"
-            },
-            {
-                _id           : "55b92ace21e4b7c40f000015",
-                departmentName: "HR"
-            },
-            {
-                _id           : "56802eb31afe27f547b7ba52",
-                departmentName: "JS"
-            },
-            {
-                _id           : "55b92ace21e4b7c40f000013",
-                departmentName: "Marketing"
-            },
-            {
-                _id           : "56802ec21afe27f547b7ba53",
-                departmentName: "PHP/WordPress"
-            },
-            {
-                _id           : "55bb1f40cb76ca630b000007",
-                departmentName: "PM"
-            },
-            {
-                _id           : "55b92ace21e4b7c40f000011",
-                departmentName: "QA"
-            },
-            {
-                _id           : "566ee11b8453e8b464b70b73",
-                departmentName: "Ruby on Rails"
-            },
-            {
-                _id           : "55b92ace21e4b7c40f000016",
-                departmentName: "Web"
-            },
-            {
-                _id           : "55b92ace21e4b7c40f00000f",
-                departmentName: "iOS"
-            }
-        ]
-    };
-    var fakeDepsForDD = {
-        data: [
-            {
-                _id             : "55b92ace21e4b7c40f000010",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "Android"
-            },
-            {
-                _id             : "55b92ace21e4b7c40f000014",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "BusinessDev"
-            },
-            {
-                _id             : "56802e9d1afe27f547b7ba51",
-                nestingLevel    : 1,
-                parentDepartment: "55b92ace21e4b7c40f000016",
-                departmentName  : "CSS/FrontEnd"
-            },
-            {
-                _id             : "55bb1f14cb76ca630b000006",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "Design"
-            },
-            {
-                _id             : "560c0b83a5d4a2e20ba5068c",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "Finance"
-            },
-            {
-                _id             : "55b92ace21e4b7c40f000015",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "HR"
-            },
-            {
-                _id             : "56802eb31afe27f547b7ba52",
-                nestingLevel    : 1,
-                parentDepartment: "55b92ace21e4b7c40f000016",
-                departmentName  : "JS"
-            },
-            {
-                _id             : "55b92ace21e4b7c40f000013",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "Marketing"
-            },
-            {
-                _id             : "56802ec21afe27f547b7ba53",
-                nestingLevel    : 1,
-                parentDepartment: "55b92ace21e4b7c40f000016",
-                departmentName  : "PHP/WordPress"
-            },
-            {
-                _id             : "55bb1f40cb76ca630b000007",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "PM"
-            },
-            {
-                _id             : "55b92ace21e4b7c40f000011",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "QA"
-            },
-            {
-                _id             : "566ee11b8453e8b464b70b73",
-                nestingLevel    : 1,
-                parentDepartment: "55b92ace21e4b7c40f000016",
-                departmentName  : "Ruby on Rails"
-            },
-            {
-                _id             : "55b92ace21e4b7c40f000016",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "Web"
-            },
-            {
-                _id             : "55b92ace21e4b7c40f00000f",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "iOS"
-            }
-        ]
     };
     var fakePersonsForDD = {
         data: [
@@ -3764,113 +3126,36 @@ define([
             }
         ]
     };
-    var fakeDepsForEdit = {
-        data: [
-            {
-                _id             : "55b92ace21e4b7c40f000010",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "Android"
-            },
-            {
-                _id             : "55b92ace21e4b7c40f000014",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "BusinessDev"
-            },
-            {
-                _id             : "56802e9d1afe27f547b7ba51",
-                nestingLevel    : 1,
-                parentDepartment: "55b92ace21e4b7c40f000016",
-                departmentName  : "CSS/FrontEnd"
-            },
-            {
-                _id             : "55bb1f14cb76ca630b000006",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "Design"
-            },
-            {
-                _id             : "560c0b83a5d4a2e20ba5068c",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "Finance"
-            },
-            {
-                _id             : "55b92ace21e4b7c40f000015",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "HR"
-            },
-            {
-                _id             : "56802eb31afe27f547b7ba52",
-                nestingLevel    : 1,
-                parentDepartment: "55b92ace21e4b7c40f000016",
-                departmentName  : "JS"
-            },
-            {
-                _id             : "55b92ace21e4b7c40f000013",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "Marketing"
-            },
-            {
-                _id             : "56802ec21afe27f547b7ba53",
-                nestingLevel    : 1,
-                parentDepartment: "55b92ace21e4b7c40f000016",
-                departmentName  : "PHP/WordPress"
-            },
-            {
-                _id             : "55bb1f40cb76ca630b000007",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "PM"
-            },
-            {
-                _id             : "55b92ace21e4b7c40f000011",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "QA"
-            },
-            {
-                _id             : "566ee11b8453e8b464b70b73",
-                nestingLevel    : 1,
-                parentDepartment: "55b92ace21e4b7c40f000016",
-                departmentName  : "Ruby on Rails"
-            },
-            {
-                _id             : "55b92ace21e4b7c40f000016",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "Web"
-            },
-            {
-                _id             : "55b92ace21e4b7c40f00000f",
-                nestingLevel    : 0,
-                parentDepartment: null,
-                departmentName  : "iOS"
-            }
-        ]
-    };
-
     var view;
-    var server;
     var topBarView;
     var listView;
     var depsCollection;
-    var createView;
+    var expect;
 
+    chai.use(chaiJquery);
+    chai.use(sinonChai);
+    expect = chai.expect;
+    
     describe('Departments view', function () {
         var $fixture;
         var $elFixture;
+        var alertStub;
+
+        before(function(){
+            alertStub = sinon.stub(window, 'alert');
+            alertStub.returns(true);
+        });
 
         after(function () {
             view.remove();
             topBarView.remove();
             listView.remove();
+
+            alertStub.restore();
         });
 
         describe('#initialize()', function () {
+            var server;
 
             before(function () {
                 $fixture = $(fixtures);
@@ -3878,7 +3163,6 @@ define([
                 $elFixture = $fixture.find('#wrapper');
 
                 server = sinon.fakeServer.create();
-
             });
 
             after(function () {
@@ -3889,7 +3173,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
 
                 view = new MainView({el: $elFixture, contentType: 'Departments'});
 
@@ -3914,9 +3198,7 @@ define([
 
                 expect($expectedMenuEl).to.have.class('selected');
                 expect(window.location.hash).to.be.equals('#easyErp/Departments');
-
             });
-
         });
 
         describe('TopBarView', function () {
@@ -3933,7 +3215,7 @@ define([
             it('Try to create TopBarView', function () {
                 var depsUrl = new RegExp('\/Departments\/list', 'i');
 
-                server.respondWith('GET', depsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepartments)]);
+                server.respondWith('GET', depsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartments)]);
 
                 depsCollection = new DepartmentsCollection({
                     count      : 0,
@@ -3953,7 +3235,6 @@ define([
                 expect(topBarView.$el.find('h3').text()).to.be.equals('Groups');
                 expect(topBarView.$el.find('#template-switcher')).to.exist;
             });
-
         });
 
         describe('Department list view', function () {
@@ -3981,7 +3262,7 @@ define([
                 var $listContainerEl;
                 var depsUrl = new RegExp('\/Departments\/list', 'i');
 
-                server.respondWith('GET', depsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepartments)]);
+                server.respondWith('GET', depsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartments)]);
                 listView = new ListView({
                     collection   : depsCollection,
                     startTime    : new Date(),
@@ -3990,13 +3271,14 @@ define([
                 });
                 server.respond();
 
-                clock.tick(200);
+                clock.tick(500);
 
                 $contentHolderEl = view.$el.find('#content-holder');
                 $listContainerEl = $contentHolderEl.find('ul');
 
                 expect($contentHolderEl).to.exist;
                 expect($listContainerEl).to.exist;
+                expect($listContainerEl.find('li').length).to.be.not.equals(0);
                 expect($listContainerEl).to.have.class('ui-sortable');
                 expect($listContainerEl).to.have.id('groupList');
 
@@ -4019,25 +3301,13 @@ define([
                 done();
             });
 
-            it('Try to move item', function () {
-                var $sortable = listView.$el.find('#groupList');
-
-                $sortable.trigger('stop');
-            });
-
             it('Try to showmore collection with error', function () {
-                var $contentHolderEl;
-                var $listContainerEl;
-                var spyResponse;
                 var depsUrl = new RegExp('\/Departments\/list', 'i');
+                var spyResponse;
 
-                server.respondWith('GET', depsUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeDepartments)]);
-
+                server.respondWith('GET', depsUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartments)]);
                 depsCollection.showMore();
                 server.respond();
-
-                $contentHolderEl = view.$el.find('#content-holder');
-                $listContainerEl = $contentHolderEl.find('ul');
 
                 spyResponse = mainSpy.args[0][0];
                 expect(spyResponse).to.have.property('type', 'error');
@@ -4049,7 +3319,7 @@ define([
                 var $listContainerEl;
                 var depsUrl = new RegExp('\/Departments\/list', 'i');
 
-                server.respondWith('GET', depsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepartments)]);
+                server.respondWith('GET', depsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartments)]);
 
                 depsCollection.showMore({
                     page: 2
@@ -4070,7 +3340,7 @@ define([
                 var departmentsUrl = new RegExp('\/Departments\/', 'i');
 
                 windowConfirmStub.returns(true);
-                server.respondWith('DELETE', departmentsUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('DELETE', departmentsUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 $deleteBtn.click();
                 server.respond();
 
@@ -4083,7 +3353,7 @@ define([
                 var spyResponse;
 
                 windowConfirmStub.returns(true);
-                server.respondWith('DELETE', departmentsUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('DELETE', departmentsUrl, [403, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 $deleteBtn.click();
                 server.respond();
                 spyResponse = mainSpy.args[0][0];
@@ -4099,7 +3369,7 @@ define([
                 var departmentsUrl = new RegExp('\/Departments\/', 'i');
 
                 windowConfirmStub.returns(true);
-                server.respondWith('DELETE', departmentsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('DELETE', departmentsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 $deleteBtn.click();
                 server.respond();
 
@@ -4112,7 +3382,7 @@ define([
                 var spyResponse;
                 var $needLiEl = listView.$el.find('#groupList > li:nth-child(1)');
 
-                server.respondWith('GET', '/Departments/form/?id=55b92ace21e4b7c40f000012', [400, {"Content-Type": "application/json"}, JSON.stringify(new Error())]);
+                server.respondWith('GET', '/Departments/form/?id=55b92ace21e4b7c40f000012', [400, {'Content-Type': 'application/json'}, JSON.stringify(new Error())]);
                 $needLiEl.click();
 
                 server.respond();
@@ -4130,9 +3400,9 @@ define([
                 var usersUrl = new RegExp('\/users\/forDd', 'i');
                 var employeesUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
 
-                server.respondWith('GET', depFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepartmentForm)]);
-                server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
-                server.respondWith('GET', employeesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePersonsForDD)]);
+                server.respondWith('GET', depFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartmentForm)]);
+                server.respondWith('GET', usersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
+                server.respondWith('GET', employeesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersonsForDD)]);
                 $needLiEl.click();
                 server.respond();
                 server.respond();
@@ -4194,7 +3464,7 @@ define([
                 $deleteSelect.click();
 
 
-                server.respondWith('PUT', departmentUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+                server.respondWith('PUT', departmentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Updated success'})]);
                 $saveBtn.click();
                 server.respond();
 
@@ -4206,7 +3476,7 @@ define([
                 var departmentUrl = new RegExp('\/Departments\/', 'i');
                 var spyResponse;
 
-                server.respondWith('DELETE', departmentUrl, [400, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
+                server.respondWith('DELETE', departmentUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Deleted success'})]);
                 $deleteBtn.click();
                 server.respond();
                 spyResponse = mainSpy.args[2][0];
@@ -4221,7 +3491,7 @@ define([
 
                 windowConfirmStub.returns(true);
 
-                server.respondWith('DELETE', departmentUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
+                server.respondWith('DELETE', departmentUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Deleted success'})]);
                 $deleteBtn.click();
                 server.respond();
 
@@ -4254,9 +3524,9 @@ define([
                 var createBtn = topBarView.$el.find('#top-bar-createBtn');
                 var employeesUrl = new RegExp('\/employees\/getPersonsForDd', 'i');
 
-                server.respondWith('GET', depFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeDepartmentForm)]);
-                server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsersForDD)]);
-                server.respondWith('GET', employeesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakePersonsForDD)]);
+                server.respondWith('GET', depFormUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepartmentForm)]);
+                server.respondWith('GET', usersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
+                server.respondWith('GET', employeesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersonsForDD)]);
                 createBtn.click();
                 server.respond();
                 server.respond();
@@ -4292,7 +3562,7 @@ define([
                 var departmentUrl = new RegExp('\/Departments\/', 'i');
                 var spyResponse;
 
-                server.respondWith('POST', departmentUrl, [403, {"Content-Type": "application/json"}, JSON.stringify({})]);
+                server.respondWith('POST', departmentUrl, [403, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 $saveBtn.click();
                 server.respond();
 
@@ -4341,7 +3611,7 @@ define([
                 $deleteSelect.click();
 
 
-                server.respondWith('POST', departmentUrl, [201, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+                server.respondWith('POST', departmentUrl, [201, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Updated success'})]);
                 $saveBtn.click();
                 server.respond();
 

@@ -3438,6 +3438,13 @@ define([
                     var $needTd = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
                     var invoiceUrl = new RegExp('\/Invoice\/form', 'i');
 
+                    App.currentDb = 'michelDb';
+                    App.currentUser = {
+                        profile: {
+                            _id: '1387275598000'
+                        }
+                    };
+
                     server.respondWith('GET', '/currentDb', [200, {"Content-Type": "application/json"}, 'micheldb']);
                     server.respondWith('GET', invoiceUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeInvoiceById)]);
                     $needTd.click();
@@ -3446,7 +3453,7 @@ define([
 
                     clock.tick(200);
 
-                    //expect($('.ui-dialog')).to.exist;
+                    expect($('.ui-dialog')).to.exist;
 
                     done();
                 });
