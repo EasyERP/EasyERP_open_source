@@ -8,7 +8,7 @@
         </div>
         <div class="inner">
             <div class="project-text left">
-              <span class="bold blockLeft" title="<%=project.projectName%>"><%=project.projectName%></span>
+              <span class="bold blockLeft" title="<%=project.name%>"><%=project.name%></span>
 			  <div class="health-wrapper left">
 				<span class="health-container">
 				  <a href="javascript:;" data-value="<%=project.health%>" class="health<%=project.health%>"></a>
@@ -47,7 +47,7 @@
 <!--<span class="status <%=(project.workflow && project.workflow.status) ? project.workflow.status.toLowerCase().split(' ').join('') : ''%>"><%=(project.workflow) ? project.workflow.status : ''%></span>--></div>
             </div>
             <div class="half-block right">
-                <div class="avatar right" data-id="<%=(project.salesmanager && project.salesmanager._id) ? project.salesmanager._id: ''%>">
+                <div class="avatar right" data-id="<%=(project.salesManager && project.salesManager._id) ? project.salesManager._id: ''%>">
                     <img alt="" src=""/>
                 </div>
             </div>

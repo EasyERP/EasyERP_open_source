@@ -616,7 +616,8 @@ define([], function () {
         DASH_VAC_WEEK_AFTER     : 8,
         DASH_VAC_RANGE_WEEKS_MIN: 6,
 
-        DEFAULT_ELEMENTS_PER_PAGE: 100,
+        DEFAULT_ELEMENTS_PER_PAGE  : 100,
+        DEFAULT_THUMBNAILS_PER_PAGE: 50,
 
         URLS: {
             PROFILES_FOR_DD           : '/profiles/forDd',

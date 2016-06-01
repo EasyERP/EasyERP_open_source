@@ -2,10 +2,10 @@
     'use strict';
     var mongoose = require('mongoose');
     var profile = mongoose.Schemas.Profile;
-    var user = mongoose.Schemas.Users;
+    var userSchema = mongoose.Schemas.Users;
 
     var getAccess = function (req, uId, mid, callback) {
-        models.get(req.session.lastDb, 'Users', user).findById(uId, function (err, user) {
+        models.get(req.session.lastDb, 'Users', userSchema).findById(uId, function (err, user) {
             if (user) {
                 models.get(req.session.lastDb, 'Profile', profile).aggregate(
                     {
@@ -19,19 +19,18 @@
                         }
                     },
                     {
-                        $unwind: "$profileAccess"
+                        $unwind: '$profileAccess'
                     },
 
                     {
                         $match: {
                             'profileAccess.module': mid
                         }
-                    }, function (err, result) {
-                        return callback({error: err, result: result});
+                    }, function (_err, result) {
+                        return callback({error: _err, result: result});
                     }
                 );
             } else {
-                //logWriter.log('access.js users.findById error' + err);
                 callback({error: 'access.js users.findById error'});
             }
         });

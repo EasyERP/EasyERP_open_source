@@ -1,7 +1,3 @@
-/**
- * Created by liliy on 27.01.2016.
- */
-"use strict";
 var express = require('express');
 var router = express.Router();
 var EmployeeHandler = require('../handlers/employee');
@@ -9,19 +5,23 @@ var authStackMiddleware = require('../helpers/checkAuth');
 var MODULES = require('../constants/modules');
 
 module.exports = function (event, models) {
+    'use strict';
     var handler = new EmployeeHandler(event, models);
     var moduleId = MODULES.APPLICATIONS;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddlWare = require('../helpers/access')(moduleId, models);
+
     router.use(authStackMiddleware);
 
-    router.get('/getApplicationsLengthByWorkflows',  handler.getCollectionLengthByWorkflows);
-    router.get('/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
+    router.get('/', accessStackMiddlWare, handler.getByViewTpe);
 
-    router.get('/:id', accessStackMiddlware, handler.getByViewTpe);
+    router.get('/getApplicationsLengthByWorkflows', handler.getCollectionLengthByWorkflows);
+    router.get('/totalCollectionLength', accessStackMiddlWare, handler.totalCollectionLength);
 
-    router.post('/', accessStackMiddlware, handler.create);
-    router.patch('/:id', accessStackMiddlware, handler.updateOnlySelectedFields);
-    router.delete('/:id', accessStackMiddlware, handler.remove);
+    router.get('/:id', accessStackMiddlWare, handler.getByViewTpe);
+
+    router.post('/', accessStackMiddlWare, handler.create);
+    router.patch('/:id', accessStackMiddlWare, handler.updateOnlySelectedFields);
+    router.delete('/:id', accessStackMiddlWare, handler.remove);
 
     return router;
 };

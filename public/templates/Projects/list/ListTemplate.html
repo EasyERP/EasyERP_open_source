@@ -35,11 +35,11 @@
             </li>
         </ul>
     </td>
-    <td><%=project.createdBy.user?(project.createdBy.date + ' (' + project.createdBy.user.login +
+    <td><%=project.createdBy.user?(project.createdBy.date + ' (' + project.createdBy.user +
         ')'):(project.createdBy.date?project.createdBy.date:'')%>
     </td>
     <td><%=(project.editedBy&&project.editedBy.date)?( project.editedBy.date + ((project.editedBy.user) ?(' (' +
-        project.editedBy.user.login + ')') : '')):''%>
+        project.editedBy.user + ')') : '')):''%>
     </td>
 </tr>
 <% }) %>

@@ -1,36 +1,38 @@
 define([
-    'Backbone',
-    'jQuery',
-    'Underscore',
-    'views/listViewBase',
-    'text!templates/Employees/list/ListHeader.html',
-    'views/Employees/CreateView',
-    'views/Employees/EditView',
-    'views/Employees/list/ListItemView',
-    'views/Filter/FilterView',
-    'views/Employees/form/FormView',
-    'collections/Employees/filterCollection',
-    'models/EmployeesModel',
-    'common'
-], function (Backbone, $, _, listViewBase, listTemplate, createView, EditView, listItemView, filterView, FormView, contentCollection, CurrentModel, common) {
-    'use strict';
-    var EmployeesListView = listViewBase.extend({
-        createView              : createView,
-        listTemplate            : listTemplate,
-        listItemView            : listItemView,
-        contentCollection       : contentCollection,
-        filterView              : filterView,
-        contentType             : "Employees",
-        totalCollectionLengthUrl: '/employees/totalCollectionLength',
-        formUrl                 : "#easyErp/Employees/form/",
-        formView                : FormView,
-        exportToXlsxUrl         : '/employees/exportToXlsx',
-        exportToCsvUrl          : '/employees/exportToCsv',
-        events                  : {
-            "click"                       : "hideItemsNumber",
-            "click .letter:not(.empty)"   : "alpabeticalRender",
-            "click .list td:not(.notForm)": "gotoEditForm"
-        },
+        'Backbone',
+        'jQuery',
+        'Underscore',
+        'views/listViewBase',
+        'text!templates/Employees/list/ListHeader.html',
+        'views/Employees/CreateView',
+        'views/Employees/EditView',
+        'views/Employees/list/ListItemView',
+        'views/Filter/FilterView',
+        'views/Employees/form/FormView',
+        'collections/Employees/filterCollection',
+        'models/EmployeesModel',
+        'common'
+    ],
+
+    function (Backbone, $, _, listViewBase, listTemplate, createView, EditView, listItemView, filterView, FormView, contentCollection, CurrentModel, common) {
+        'use strict';
+        var EmployeesListView = listViewBase.extend({
+            createView              : createView,
+            listTemplate            : listTemplate,
+            listItemView            : listItemView,
+            contentCollection       : contentCollection,
+            filterView              : filterView,
+            contentType             : "Employees",
+            totalCollectionLengthUrl: '/employees/totalCollectionLength',
+            formUrl                 : "#easyErp/Employees/",
+            formView                : FormView,
+            exportToXlsxUrl         : '/employees/exportToXlsx',
+            exportToCsvUrl          : '/employees/exportToCsv',
+            events                  : {
+                "click"                       : "hideItemsNumber",
+                "click .letter:not(.empty)"   : "alpabeticalRender",
+                "click .list td:not(.notForm)": "gotoEditForm"
+            },
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -50,26 +52,26 @@ define([
             this.contentCollection = contentCollection;
         },
 
-        gotoEditForm: function (e) {
-            var id = $(e.target).closest("tr").data("id");
-            var model = new currentModel({validate: false});
+            gotoEditForm: function (e) {
+                var id = $(e.target).closest('tr').data('id');
+                var model = new CurrentModel({validate: false});
 
             e.preventDefault();
 
-            model.urlRoot = '/Employees/form';
-            model.fetch({
-                data   : {id: id},
-                success: function (model) {
-                    new EditView({model: model});
-                },
-                error  : function () {
-                    App.render({
-                        type   : 'error',
-                        message: 'Please refresh browser'
-                    });
-                }
-            });
-        },
+                model.urlRoot = '/employees/';
+                model.fetch({
+                    data   : {id: id},
+                    success: function (model) {
+                        new EditView({model: model});
+                    },
+                    error  : function () {
+                        App.render({
+                            type   : 'error',
+                            message: 'Please refresh browser'
+                        });
+                    }
+                });
+            },
 
         render: function () {
             var self;

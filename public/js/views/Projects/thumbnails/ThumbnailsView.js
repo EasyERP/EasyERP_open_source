@@ -1,373 +1,217 @@
 ﻿define([
-        'Backbone',
-        'jQuery',
-        'Underscore',
-        "text!templates/Projects/thumbnails/ThumbnailsItemTemplate.html",
-        'text!templates/stages.html',
-        'views/Projects/EditView',
-        'views/Projects/CreateView',
-        'views/Projects/form/FormView',
-        'dataService',
-        'models/ProjectsModel',
-        'views/Filter/FilterView',
-        'common',
-        'populate',
-        'custom'
-    ],
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/Projects/thumbnails/ThumbnailsItemTemplate.html',
+    'text!templates/stages.html',
+    'views/thumbnailsViewBase',
+    'views/Projects/EditView',
+    'views/Projects/CreateView',
+    'views/Projects/form/FormView',
+    'views/Filter/FilterView',
+    'dataService',
+    'common',
+    'constants',
+    'populate',
+    'custom'
+], function (Backbone, $, _, thumbnailsItemTemplate, stagesTamplate, BaseView, EditView, CreateView, formView, filterView, dataService, common, CONSTANTS, populate, custom) {
+    'use strict';
+    var ProjectThumbnalView = BaseView.extend({
+        el                : '#content-holder',
+        countPerPage      : 0,
+        template          : _.template(thumbnailsItemTemplate),
+        newCollection     : true,
+        filter            : null,
+        defaultItemsNumber: null,
+        contentType       : 'Projects', // needs in view.prototype.changeLocationHash
+        viewType          : 'thumbnails', // needs in view.prototype.changeLocationHash
 
-    function (Backbone, $, _, thumbnailsItemTemplate, stagesTamplate, editView, createView, formView, dataService, currentModel, filterView, common, populate, custom) {
-        var ProjectThumbnalView = Backbone.View.extend({
-            el                : '#content-holder',
-            countPerPage      : 0,
-            template          : _.template(thumbnailsItemTemplate),
-            newCollection     : true,
-            filter            : null,
-            defaultItemsNumber: null,
-            contentType       : 'Projects',//needs in view.prototype.changeLocationHash
-            viewType          : 'thumbnails',//needs in view.prototype.changeLocationHash
+        initialize: function (options) {
+            $(document).off('click');
 
-            initialize: function (options) {
-                $(document).off("click");
+            this.EditView = EditView;
+            this.CreateView = CreateView;
 
-                this.startTime = options.startTime;
-                this.collection = options.collection;
-                this.responseObj = {};
-                this.asyncLoadImgs(this.collection);
-                _.bind(this.collection.showMore, this.collection);
-                this.countPerPage = options.collection.length;
-                this.stages = [];
-                this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 100;
-                this.newCollection = options.newCollection;
-                this.deleteCounter = 0;
+            this.asyncLoadImgs(this.collection);
+            this.stages = [];
 
-                this.render();
+            BaseView.prototype.initialize.call(this, options);
+        },
 
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
-            },
+        events: {
+            'click .health-wrapper .health-container': 'showHealthDd',
+            'click .health-wrapper ul li div'        : 'chooseHealthDd',
+            'click .tasksByProject'                  : 'dropDown',
+            'click .stageSelect'                     : 'showNewSelect',
+            'click .project'                         : 'useProjectFilter'
+        },
 
-            events: {
-                "click #showMore"                        : "showMore",
-                "click .thumbnail"                       : "gotoEditForm",
-                "click .dropDown"                        : "dropDown",
-                "click .filterButton"                    : "showfilter",
-                "click .health-wrapper .health-container": "showHealthDd",
-                "click .health-wrapper ul li div"        : "chooseHealthDd",
-                "click .tasksByProject"                  : "dropDown",
-                "click .stageSelect"                     : "showNewSelect",
-                "click .newSelectList li"                : "chooseOption",
-                "click"                                  : "hideHealth",
-                "click .filter-check-list li"            : "checkCheckbox",
-                "click .project"                         : "useProjectFilter"
-            },
-
-            useProjectFilter: function (e) {
-                e.preventDefault();
-                var project = $(e.target).attr('id');
-                var filter = {
-                    project: {
-                        key  : 'project._id',
-                        value: [project]
-                    }
-                };
-
-                Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
-            },
-
-            dropDown: function (e) {
-                e.stopPropagation();
-            },
-
-            checkCheckbox: function (e) {
-                var target$ = $(e.target);
-                if (!target$.is("input")) {
-                    target$.closest("li").find("input").prop("checked", !target$.closest("li").find("input").prop("checked"));
+        useProjectFilter: function (e) {
+            var project = $(e.target).attr('id');
+            var filter = {
+                project: {
+                    key  : 'project._id',
+                    value: [project]
                 }
-            },
+            };
 
-            showNewSelect: function (e) {
-                if ($(".newSelectList").is(":visible")) {
-                    this.hideHealth();
-                    return false;
-                } else {
-                    $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
-                    return false;
-                }
-            },
+            e.preventDefault();
 
-            chooseOption: function (e) {
-                var self = this;
-                var targetElement = $(e.target).parents(".thumbnail");
-                var id = targetElement.attr("id");
-                var model = this.collection.get(id);
-                var filter;
+            Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
+        },
 
-                model.save({'workflow': $(e.target).attr("id")}, {
-                    headers : {
-                        mid: 39
-                    },
-                    patch   : true,
-                    validate: false,
-                    success : function () {
-                        var filter = window.location.hash.split('filter=')[1];
-                        var url = "#easyErp/Projects/thumbnails";
-                        if (filter) {
-                            url += '/filter=' + filter;
-                        }
-                        Backbone.history.fragment = "";
-                        Backbone.history.navigate(url, {trigger: true});
-                    }
-                });
-
+        showNewSelect: function (e) {
+            if ($('.newSelectList').is(':visible')) {
                 this.hideHealth();
                 return false;
-            },
-
-            chooseHealthDd: function (e) {
-                var target$ = $(e.target);
-                var target = target$.parents(".health-wrapper");
-                var currTargHelth = target$.attr("class").replace("health", "");
-                var id = target.parents(".thumbnail").attr("id");
-                var model = this.collection.get(id);
-                var helth = parseInt(currTargHelth);
-
-                target.find(".health-container a").attr("class", target$.attr("class")).attr("data-value", currTargHelth);
-
-                model.save({health: helth}, {
-                    headers : {
-                        mid: 39
-                    },
-                    patch   : true,
-                    validate: false,
-                    success : function () {
-                        $(".health-wrapper ul").hide();
-                    }
-                });
-            },
-
-            hideHealth: function () {
-                $(".health-wrapper ul").hide();
-                $(".newSelectList").hide();
-            },
-
-            showHealthDd: function (e) {
-                $(e.target).parents(".health-wrapper").find("ul").toggle();
-                return false;
-            },
-
-            showfilter: function (e) {
-                $(".filter-check-list").toggle();
-                return false;
-            },
-
-            hide: function (e) {
-                if (!$(e.target).closest(".filter-check-list").length) {
-                    $(".allNumberPerPage").hide();
-                    if ($(".filter-check-list").is(":visible")) {
-                        $(".filter-check-list").hide();
-                        this.showFilteredPage();
-                    }
-                }
-            },
-
-            showFilteredPage: function (filter) {
-                this.$el.find('.thumbnail').remove();
-                this.startTime = new Date();
-                this.newCollection = true;
-
-                this.filter = filter;
-
-                if (Object.keys(filter).length === 0) {
-                    this.filter = {};
-                }
-
-                this.changeLocationHash(null, this.defaultItemsNumber, filter);
-                this.collection.showMore({count: this.defaultItemsNumber, page: 1, filter: filter});
-            },
-
-            getTotalLength: function (currentNumber, filter, newCollection) {
-                dataService.getData('/totalCollectionLength/Projects', {
-                    currentNumber: currentNumber,
-                    filter       : filter,
-                    newCollection: this.newCollection
-                }, function (response, context) {
-                    var showMore = context.$el.find('#showMoreDiv');
-                    if (response.showMore) {
-                        if (showMore.length === 0) {
-                            var created = context.$el.find('#timeRecivingDataFromServer');
-                            created.before('<div id="showMoreDiv"><input type="button" id="showMore" value="Show More"/></div>');
-                        } else {
-                            showMore.show();
-                        }
-                    } else {
-                        showMore.hide();
-                    }
-                }, this);
-            },
-
-            asyncLoadImgs: function (collection) {
-                var arr = _.filter(collection.toJSON(), function (item) {
-                    return item.salesmanager;
-                });
-                var ids = _.map(arr, function (item) {
-                    return item.salesmanager._id;
-                });
-                common.getImages(ids, "/employees/getEmployeesImages");
-            },
-
-            pushStages: function (stages) {
-                this.stages = stages;
-            },
-
-            hideItemsNumber: function (e) {
-                var el = e.target;
-
-                this.$el.find(".allNumberPerPage, .newSelectList").hide();
-                if (!el.closest('.search-view')) {
-                    $('.search-content').removeClass('fa-caret-up');
-                    this.$el.find('.search-options').addClass('hidden');
-                }
-                ;
-            },
-
-            render: function () {
-                var self = this;
-                var $currentEl = this.$el;
-                var createdInTag;
-
-                $currentEl.html('');
-                $currentEl.append(this.template({collection: this.collection.toJSON()}));
-
-                this.bind('incomingStages', this.pushStages, this);
-
-                common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
-                    var stage = (self.filter) ? self.filter.workflow || [] : [];
-                    self.trigger('incomingStages', stages);
-                });
-
-                self.filterView = new filterView({contentType: self.contentType});
-
-                self.filterView.bind('filter', function (filter) {
-                    self.showFilteredPage(filter)
-                });
-                self.filterView.bind('defaultFilter', function () {
-                    self.showFilteredPage({});
-                });
-
-                self.filterView.render();
-
-                $('#check_all').click(function () {
-                    $(':checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0) {
-                        $("#top-bar-deleteBtn").show();
-                    } else {
-                        $("#top-bar-deleteBtn").hide();
-                    }
-                });
-
-                $(document).on("click", function (e) {
-                    self.hide(e);
-                    self.hideHealth(e);
-                    self.hideItemsNumber(e);
-                });
-
-                populate.getPriority("#priority", this);
-
-                createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>";
-                $currentEl.append(createdInTag);
-
-                return this;
-            },
-
-            gotoEditForm: function (e) {
-                e.preventDefault();
-                App.ownContentType = true;
-                var id = $(e.target).closest('.thumbnail').attr("id");
-                window.location.hash = "#easyErp/Projects/form/" + id;
-
-                App.projectInfo = App.projectInfo || {};
-                App.projectInfo.currentTab = 'overview';
-
-                /*var clas = $(e.target).parent().attr("class");
-                if ((clas === "dropDown") || (clas === "inner")) {
-                } else {
-                    e.preventDefault();
-                    var id = $(e.target).closest('.thumbnail').attr("id");
-                    var model = new currentModel({validate: false});
-                    model.urlRoot = '/Projects/form/' + id;
-                    model.fetch({
-                        success: function (model) {
-                            new editView({model: model});
-                        },
-                        error: function () {
-                            alert('Please refresh browser');
-                        }
-                    });
-                }*/
-            },
-
-            showMore: function (event) {
-                event.preventDefault();
-                this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
-            },
-
-            showMoreContent: function (newModels) {
-                var holder = this.$el;
-                var showMore = holder.find('#showMoreDiv');
-                var created = holder.find('#timeRecivingDataFromServer');
-                var content = holder.find("#thumbnailContent");
-                var numberToShow;
-
-                if (this.newCollection) {
-                    this.defaultItemsNumber = 100;
-                    this.newCollection = false;
-                } else {
-                    this.defaultItemsNumber += newModels.length;
-
-                    if (this.defaultItemsNumber < 100) {
-                        this.defaultItemsNumber = 100;
-                    }
-                }
-
-                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
-
-                if (showMore.length != 0) {
-                    showMore.before(this.template({collection: this.collection.toJSON()}));
-
-                    showMore.after(created);
-                } else {
-                    content.html(this.template({collection: this.collection.toJSON()}));
-                }
-                this.asyncLoadImgs(newModels);
-                // this.filterView.renderFilterContent();
-            },
-
-            createItem: function () {
-                //create editView in dialog here
-                new createView();
-            },
-
-            editItem: function () {
-                //create editView in dialog here
-                new editView({collection: this.collection});
-            },
-
-            deleteItems: function () {
-                var mid = 39,
-                    model;
-                model = this.collection.get(this.$el.attr("id"));
-                this.$el.fadeToggle(200, function () {
-                    model.destroy({
-                        headers: {
-                            mid: mid
-                        }
-                    });
-                    $(this).remove();
-                });
-
             }
-        });
+            $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
 
-        return ProjectThumbnalView;
+            return false;
+        },
+
+        chooseOption: function (e) {
+            var $targetElement = $(e.target);
+            var $thumbnail = $targetElement.parents('.thumbnail');
+            var id = $thumbnail.attr('id');
+            var model = this.collection.get(id);
+
+            model.save({workflow: $targetElement.attr('id')}, {
+                headers: {
+                    mid: 39
+                },
+
+                patch   : true,
+                validate: false,
+                success : function () {
+                    var filter = window.location.hash.split('filter=')[1];
+                    var url = '#easyErp/Projects/thumbnails';
+
+                    if (filter) {
+                        url += '/filter=' + filter;
+                    }
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate(url, {trigger: true});
+                }
+            });
+
+            this.hideHealth();
+            return false;
+        },
+
+        chooseHealthDd: function (e) {
+            var target$ = $(e.target);
+            var target = target$.parents('.health-wrapper');
+            var currTargetHealth = target$.attr('class').replace('health', '');
+            var id = target.parents('.thumbnail').attr('id');
+            var model = this.collection.get(id);
+            var health = parseInt(currTargetHealth, 10);
+
+            target.find('.health-container a').attr('class', target$.attr('class')).attr('data-value', currTargetHealth);
+
+            model.save({health: health}, {
+                headers: {
+                    mid: 39
+                },
+
+                patch   : true,
+                validate: false,
+                success : function () {
+                    $('.health-wrapper ul').hide();
+                }
+            });
+        },
+
+        hideHealth: function () {
+            var $thisEl = this.$el;
+
+            $thisEl.find('.health-wrapper ul').hide();
+            $thisEl.find('.newSelectList').hide();
+        },
+
+        showHealthDd: function (e) {
+            $(e.target).parents('.health-wrapper').find('ul').toggle();
+            return false;
+        },
+
+        asyncLoadImgs: function (collection) {
+            var arr = _.filter(collection.toJSON(), function (item) {
+                return item.salesmanager;
+            });
+            var ids = _.map(arr, function (item) {
+                return item.salesmanager._id;
+            });
+
+            common.getImages(ids, CONSTANTS.URLS.EMPLOYEES + 'getEmployeesImages');
+        },
+
+        pushStages: function (stages) {
+            this.stages = stages;
+        },
+
+        gotoEditForm: function (e) {
+            var id;
+
+            e.preventDefault();
+            App.ownContentType = true;
+            id = $(e.target).closest('.thumbnail').attr('id');
+
+            window.location.hash = '#easyErp/Projects/form/' + id;
+
+            App.projectInfo = App.projectInfo || {};
+            App.projectInfo.currentTab = 'overview';
+        },
+
+        deleteItems: function () {
+            var mid = 39;
+            var model = this.collection.get(this.$el.attr('id'));
+
+            this.$el.fadeToggle(200, function () {
+                model.destroy({
+                    headers: {
+                        mid: mid
+                    }
+                });
+                $(this).remove();
+            });
+
+        },
+
+        render: function () {
+            var self = this;
+            var $currentEl = this.$el;
+            var createdInTag;
+
+            $currentEl.html('');
+            $currentEl.append(this.template({collection: this.collection.toJSON()}));
+
+            this.bind('incomingStages', this.pushStages, this);
+
+            common.populateWorkflowsList('Projects', '.filter-check-list', '', '/workflows', null, function (stages) {
+                var stage = (self.filter) ? self.filter.workflow || [] : [];
+
+                self.trigger('incomingStages', stages);
+            });
+
+            self.filterView = new filterView({contentType: self.contentType});
+
+            self.filterView.bind('filter', function (filter) {
+                self.showFilteredPage(filter);
+            });
+            self.filterView.bind('defaultFilter', function () {
+                self.showFilteredPage({});
+            });
+
+            self.filterView.render();
+
+            populate.getPriority('#priority', this);
+
+            createdInTag = '<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>';
+            $currentEl.append(createdInTag);
+
+            return this;
+        },
     });
+
+    return ProjectThumbnalView;
+});

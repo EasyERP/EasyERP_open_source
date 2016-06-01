@@ -23,7 +23,7 @@ describe("jobPosition Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'lilyadb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -36,11 +36,11 @@ describe("jobPosition Specs", function () {
 
         it("should create jobPosition", function (done) {
             var body = {
-                name: 'testJobPosition'
+                name: 'testJobPosition12'
             };
 
             aggent
-                .post('jobPositions')
+                .post('jobPositions/')
                 .send(body)
                 .expect(201)
                 .end(function (err, res) {
@@ -130,7 +130,7 @@ describe("jobPosition Specs", function () {
                 id: id
             };
             aggent
-                .get('jobPositions/' + id)
+                .get('jobPositions/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -152,8 +152,13 @@ describe("jobPosition Specs", function () {
         });
 
         it("should get jobPositions for list", function (done) {
+            var query = {
+                viewType: 'list'
+            };
+
             aggent
-                .get('jobPositions/list')
+                .get('jobPositions/')
+                .query(query)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -166,6 +171,8 @@ describe("jobPosition Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
+                    expect(body)
+                        .to.have.property('total');
                     expect(body.data)
                         .to.be.instanceOf(Array);
 
@@ -235,7 +242,7 @@ describe("jobPosition Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'lilyadb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });

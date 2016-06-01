@@ -9,13 +9,14 @@ module.exports = function (models) {
     var handler = new jobPositionHandler(models);
     var moduleId = MODULES.JOBPOSITIONS;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+
     router.use(authStackMiddleware);
 
+    router.get('/', accessStackMiddlware, handler.getByViewType);
     router.get('/getFilterValues', accessStackMiddlware, handler.getFilterValues);
     router.get('/getForDd', handler.getForDd);
     router.get('/jobType', handler.jobType);
     router.get('/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
-    router.get('/:id', accessStackMiddlware, handler.getByViewType);
 
     router.post('/', accessStackMiddlware, handler.create);
     router.patch('/:id', accessStackMiddlware, handler.update);

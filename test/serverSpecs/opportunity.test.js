@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
-var dbId = 'dendb';
+var dbId = 'production';
 var admin = {
     login: 'admin',
     pass : 'tm2016',
@@ -187,7 +187,7 @@ describe("Opportunity Specs", function () {
             };
 
             aggent
-                .get('opportunities/list')
+                .get('opportunities/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -200,6 +200,8 @@ describe("Opportunity Specs", function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('data');
+                    expect(body)
+                        .to.have.property('total');
                     expect(body.data)
                         .to.be.instanceOf(Array);
 
@@ -209,11 +211,12 @@ describe("Opportunity Specs", function () {
 
         it('should get opportunity for viewType form', function (done) {
             var query = {
-                id: id
+                id      : id,
+                viewType: 'form'
             };
 
             aggent
-                .get('opportunities/form')
+                .get('opportunities/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -234,11 +237,12 @@ describe("Opportunity Specs", function () {
         it('should get opportunity for viewType kanban', function (done) {
 
             var query = {
-                workflowId: '528ce5e3f3f67bc40b000018'
+                workflowId: '528ce5e3f3f67bc40b000018',
+                viewType  : 'kanban'
             };
 
             aggent
-                .get('opportunities/kanban')
+                .get('opportunities/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {

@@ -41,7 +41,7 @@
                 "click .gotoForm"          : "gotoForm",
                 "click .company"           : "gotoCompanyForm"
             },
-//modified for filter Vasya
+
             getTotalLength: function (currentNumber, filter, newCollection) {
                 dataService.getData('/totalCollectionLength/Persons', {
                     currentNumber: currentNumber,
@@ -68,7 +68,7 @@
                 });
                 common.getImages(ids, "/customers/getCustomersImages");
             },
-            //modified for filter Vasya
+            
             alpabeticalRender: function (e) {
                 this.$el.find('.thumbnailwithavatar').remove();
                 this.startTime = new Date();

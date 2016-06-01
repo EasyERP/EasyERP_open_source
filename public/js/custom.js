@@ -83,7 +83,7 @@ define([
 
         if (id && (viewType === 'list') && (this.contentType === 'Tasks')) {
             filter = {
-                'project': {
+                project: {
                     key  : 'project._id',
                     value: [id]
                 }
@@ -91,13 +91,12 @@ define([
 
             url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
         } else if (kanbanFilter && (viewType === 'kanban') && (this.contentType === 'Tasks')) {
-            url = "#easyErp/" + this.contentType + "/" + viewType + "/" + kanbanFilter.project.value[0];
+            url = '#easyErp/' + this.contentType + '/' + viewType + '/' + kanbanFilter.project.value[0];
         }
 
         App.ownContentType = true;
 
         Backbone.history.navigate(url, {trigger: true});
-        console.log(window.location.hash);
     };
 
     var getCurrentVT = function (option) {
