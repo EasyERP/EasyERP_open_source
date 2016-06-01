@@ -72,6 +72,12 @@ define([
                     });
                 }
             });
+        },
+
+        parse: function (response) {
+            var bonusType = response.data;
+
+            return bonusType;
         }
     });
 

@@ -66,7 +66,7 @@ define([
         },
 
         parse: function (response) {
-            var holidays = response.success;
+            var holidays = response.data;
 
             return holidays;
         }
