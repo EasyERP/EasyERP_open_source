@@ -137,7 +137,7 @@ var MonthHours = function (event, models) {
         };
 
         var getData = function (pCb) {
-            MonthHoursModel.sort(sort).skip(skip).limit(limit).exec(function (err, _res) {
+            MonthHoursModel.find().sort(sort).skip(skip).limit(limit).exec(function (err, _res) {
                 if (err) {
                     return pCb(err);
                 }
@@ -210,16 +210,20 @@ var MonthHours = function (event, models) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var id = req.params.id;
 
+        if (!id || (id && id.length < 24)){
+           return res.status(404).send();
+        }
+
         MonthHoursModel.findByIdAndRemove(id, function (err, result) {
             if (err) {
                 return next(err);
             }
 
+            res.status(200).send({success: result});
+
             composeAndCash(req);
             event.emit('dropHoursCashes', req);
             event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
-
-            res.status(200).send({success: result});
         });
     };
 

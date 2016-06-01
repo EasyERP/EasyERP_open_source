@@ -213,7 +213,7 @@ describe('MonthHours Specs', function () {
         it('should fail delete monthHours', function (done) {
             aggent
                 .delete('monthHours/123cba')
-                .expect(500, done);
+                .expect(404, done);
         });
     });
 
