@@ -1,5 +1,3 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
@@ -7,7 +5,9 @@ var host = process.env.HOST;
 var CONSTANTS = require('../../constants/constantsTest');
 var aggent;
 
-describe("Capacity Specs", function () {
+require('../../config/development');
+
+describe('Capacity Specs', function () {
     'use strict';
 
     describe('Capacity with admin', function () {
@@ -17,7 +17,7 @@ describe("Capacity Specs", function () {
                 .post('users/login')
                 .send({
                     login: 'admin',
-                    pass : '1q2w3eQWE',
+                    pass : 'tm2016',
                     dbId : 'production'
                 })
                 .expect(200, done);
@@ -29,25 +29,27 @@ describe("Capacity Specs", function () {
                 .expect(302, done);
         });
 
-        describe ('Creating capacity', function (){
+        describe('Creating capacity', function () {
             var id;
 
-            it("should create Capacity", function (done) {
-                var capacityArray = [null, 8, 8, 8, 8, 8 ,null, null, 8, 8, 8, 8, 8 ,null, null, 8, 8, 8, 8, 8 ,null, null, 8, 8, 8, 8, 8 ,null];
+            it('should create Capacity', function (done) {
+                var capacityArray = [null, 8, 8, 8, 8, 8, null, null, 8, 8, 8, 8, 8, null, null, 8, 8, 8, 8, 8, null, null, 8, 8, 8, 8, 8, null];
                 var body = {
-                    "capacityArray"    : capacityArray,
-                    "capacityMonthTotal"        : 160,
-                    "daysCount": 28,
-                    "department"      : {
-                        "name" : "iOS",
-                        "_id" : CONSTANTS.DEPARTMENT
+                    capacityArray     : capacityArray,
+                    capacityMonthTotal: 160,
+                    daysCount         : 28,
+                    department        : {
+                        name: 'iOS',
+                        _id : CONSTANTS.DEPARTMENT
                     },
-                    "employee"    : {
-                        "name" : "Alex Gleba",
-                        "_id"  : CONSTANTS.EMPLOYEE
+
+                    employee: {
+                        name: 'Alex Gleba',
+                        _id : CONSTANTS.EMPLOYEE
                     },
-                    month : "2",
-                    year  : "2016"
+
+                    month: '2',
+                    year : '2016'
                 };
 
                 aggent
@@ -73,14 +75,14 @@ describe("Capacity Specs", function () {
                     });
             });
 
-            it("should patch Capacity bulk", function (done) {
-                var capacityArray = [null, 5, 2, 12, 8, 8 , null, null, 8, 8, 8, 8, 8 ,null, null, 8, 8, 8, 8, 8 ,null, null, 8, 8, 7, 3, 8 ,null];
+            it('should patch Capacity bulk', function (done) {
+                var capacityArray = [null, 5, 2, 12, 8, 8, null, null, 8, 8, 8, 8, 8, null, null, 8, 8, 8, 8, 8, null, null, 8, 8, 7, 3, 8, null];
                 var body = [{
-                    "_id"               : id,
-                    "capacityArray"     : capacityArray,
-                    "capacityMonthTotal": 149,
-                    month               : "3",
-                    year                : "2017"
+                    '_id'               : id,
+                    'capacityArray'     : capacityArray,
+                    'capacityMonthTotal': 149,
+                    month               : '3',
+                    year                : '2017'
                 }];
 
                 aggent
@@ -89,14 +91,14 @@ describe("Capacity Specs", function () {
                     .expect(200, done);
             });
 
-            it("should patch Capacity bulk", function (done) {
-                var capacityArray = [null, 5, 2, 12, 8, 8 , null, null, 8, 8, 8, 8, 8 ,null, null, 8, 8, 8, 8, 8 ,null, null, 8, 8, 7, 3, 8 ,null];
+            it('should patch Capacity bulk', function (done) {
+                var capacityArray = [null, 5, 2, 12, 8, 8, null, null, 8, 8, 8, 8, 8, null, null, 8, 8, 8, 8, 8, null, null, 8, 8, 7, 3, 8, null];
                 var body = [{
-                    "_id"               : "123cba",
-                    "capacityArray"     : capacityArray,
-                    "capacityMonthTotal": 149,
-                    month               : "3",
-                    year                : "2017"
+                    '_id'               : '123cba',
+                    'capacityArray'     : capacityArray,
+                    'capacityMonthTotal': 149,
+                    month               : '3',
+                    year                : '2017'
                 }];
 
                 aggent
@@ -105,13 +107,13 @@ describe("Capacity Specs", function () {
                     .expect(500, done);
             });
 
-            it("should patch Capacity", function (done) {
-                var capacityArray = [null, 5, 2, 8, 8, 8 , null, null, 7, 8, 8, 8, 8 ,null, null, 7, 8, 8, 8, 8 ,null, null, 7, 8, 7, 3, 8 ,null];
+            it('should patch Capacity', function (done) {
+                var capacityArray = [null, 5, 2, 8, 8, 8, null, null, 7, 8, 8, 8, 8, null, null, 7, 8, 8, 8, 8, null, null, 7, 8, 7, 3, 8, null];
                 var body = {
-                    "capacityArray"     : capacityArray,
-                    "capacityMonthTotal": 142,
-                    month               : "4",
-                    year                : "2017"
+                    'capacityArray'     : capacityArray,
+                    'capacityMonthTotal': 142,
+                    month               : '4',
+                    year                : '2017'
                 };
 
                 aggent
@@ -120,13 +122,13 @@ describe("Capacity Specs", function () {
                     .expect(200, done);
             });
 
-            it("should patch Capacity", function (done) {
-                var capacityArray = [null, 5, 2, 8, 8, 8 , null, null, 7, 8, 8, 8, 8 ,null, null, 7, 8, 8, 8, 8 ,null, null, 7, 8, 7, 3, 8 ,null];
+            it('should patch Capacity', function (done) {
+                var capacityArray = [null, 5, 2, 8, 8, 8, null, null, 7, 8, 8, 8, 8, null, null, 7, 8, 8, 8, 8, null, null, 7, 8, 7, 3, 8, null];
                 var body = {
-                    "capacityArray"     : capacityArray,
-                    "capacityMonthTotal": 142,
-                    month               : "4",
-                    year                : "2017"
+                    'capacityArray'     : capacityArray,
+                    'capacityMonthTotal': 142,
+                    month               : '4',
+                    year                : '2017'
                 };
 
                 aggent
@@ -135,10 +137,10 @@ describe("Capacity Specs", function () {
                     .expect(500, done);
             });
 
-            it("should get Capacity Expenses", function (done) {
+            it('should get Capacity Expenses', function (done) {
                 var query = {
-                    "month" : "4",
-                    "year" : "2017",
+                    'month' : '4',
+                    'year'  : '2017',
                     viewType: 'list'
                 };
 
@@ -155,36 +157,36 @@ describe("Capacity Specs", function () {
 
                         expect(body)
                             .to.be.instanceOf(Object)
-                            .and.to.have.property("capacityObject")
-                            .and.to.have.property("iOS")
-                            .and.to.have.deep.property("0")
-                            .and.to.have.property("_id");
+                            .and.to.have.property('capacityObject')
+                            .and.to.have.property('iOS')
+                            .and.to.have.deep.property('0')
+                            .and.to.have.property('_id');
 
                         done();
                     });
             });
 
-            it("should delete Capacity", function (done) {
+            it('should delete Capacity', function (done) {
                 aggent
                     .delete('capacity/' + id)
                     .expect(200, done);
             });
 
-            it("should fail delete Capacity", function (done) {
+            it('should fail delete Capacity', function (done) {
                 aggent
                     .delete('category/123cba')
                     .expect(500, done);
             });
         });
 
-      /*  describe('Generating Capacities', function () {
-
-            it("should generate Capacities for 2014, 2015", function (done) {
-             aggent
-             .post('capacity/create')
-             .expect(200, done);
-             });
-        });*/
+        /*  describe('Generating Capacities', function () {
+  
+              it('should generate Capacities for 2014, 2015', function (done) {
+               aggent
+               .post('capacity/create')
+               .expect(200, done);
+               });
+          });*/
 
     });
 
@@ -209,7 +211,7 @@ describe("Capacity Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail get Capacities", function (done) {
+        it('should fail get Capacities', function (done) {
 
             aggent
                 .get('capacity/')
@@ -219,7 +221,7 @@ describe("Capacity Specs", function () {
 
     describe('Capacity with no authorise', function () {
 
-        it("should fail get Capacities", function (done) {
+        it('should fail get Capacities', function (done) {
 
             aggent
                 .get('capacity/')

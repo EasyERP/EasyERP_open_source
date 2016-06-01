@@ -1,12 +1,12 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-describe("BonusType Specs", function () {
+require('../../config/development');
+
+describe('BonusType Specs', function () {
     'use strict';
 
     describe('chartOfAccount with admin', function () {
@@ -19,7 +19,7 @@ describe("BonusType Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -30,11 +30,11 @@ describe("BonusType Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create chartOfAccount", function (done) {
+        it('should create chartOfAccount', function (done) {
             var body = {
-                "account": "TestBank",
-                "code"    : 100001,
-                "type"     : "Bank and Cash"
+                'account': 'TestBank',
+                'code'    : 100001,
+                'type'     : 'Bank and Cash'
             };
 
             aggent
@@ -60,21 +60,21 @@ describe("BonusType Specs", function () {
                 });
         });
 
-        it("should fail create chartOfAccount", function (done) {
-            var body = "";
+        it('should fail create chartOfAccount', function (done) {
+            var body = {};
 
             aggent
                 .post('chartOfAccount')
                 .send(body)
-                .expect(404, done);
+                .expect(400, done);
         });
 
         it("should patch chartOfAccount's", function (done) {
             var body = [{
-                "_id"    : id,
-                "account": "BankTest",
-                "code"   : 100002,
-                "type"   : "Banks"
+                '_id'    : id,
+                'account': 'BankTest',
+                'code'   : 100002,
+                'type'   : 'Banks'
             }];
 
             aggent
@@ -83,9 +83,9 @@ describe("BonusType Specs", function () {
                 .expect(200, done);
         });
 
-        it("should fail patch chartOfAccount", function (done) {
+        it('should fail patch chartOfAccount', function (done) {
             var body = [{
-                "_id": "123cba"
+                '_id': '123cba'
             }];
 
             aggent
@@ -95,7 +95,7 @@ describe("BonusType Specs", function () {
 
         });
 
-        it("should get chartOfAccount with options", function (done) {
+        it('should get chartOfAccount with options', function (done) {
             var query = {
                 sort : {
                     account: -1
@@ -126,7 +126,7 @@ describe("BonusType Specs", function () {
                 });
         });
 
-        it("should get chartOfAccount for Dd", function (done) {
+        it('should get chartOfAccount for Dd', function (done) {
 
             aggent
                 .get('chartOfAccount/getForDd')
@@ -149,13 +149,13 @@ describe("BonusType Specs", function () {
                 });
         });
 
-        it("should delete chartOfAccount", function (done) {
+        it('should delete chartOfAccount', function (done) {
             aggent
                 .delete('chartOfAccount/' + id)
                 .expect(200, done);
         });
 
-        it("should fail delete chartOfAccount", function (done) {
+        it('should fail delete chartOfAccount', function (done) {
             aggent
                 .delete('chartOfAccount/123cba')
                 .expect(500, done);
@@ -173,7 +173,7 @@ describe("BonusType Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -184,12 +184,12 @@ describe("BonusType Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create chartOfAccount", function (done) {
+        it('should fail create chartOfAccount', function (done) {
 
             var body = {
-                "account": "TestBank",
-                "code"    : 100001,
-                "type"     : "Bank and Cash"
+                'account': 'TestBank',
+                'code'    : 100001,
+                'type'     : 'Bank and Cash'
             };
 
             aggent
@@ -201,11 +201,11 @@ describe("BonusType Specs", function () {
 
     describe('chartOfAccount with no authorise', function () {
 
-        it("should fail get chartOfAccount for Dd", function (done) {
+        it('should fail get chartOfAccount for Dd', function (done) {
 
             aggent
                 .get('chartOfAccount/getForDD')
-                .expect(401, done);
+                .expect(404, done);
         });
 
     });

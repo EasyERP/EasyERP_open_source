@@ -1,4 +1,3 @@
-
 var bonusTypeHandler = require('../handlers/bonusType');
 var express = require('express');
 var router = express.Router();
