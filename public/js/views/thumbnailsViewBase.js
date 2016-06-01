@@ -6,9 +6,9 @@
 ], function (Backbone, $, _, Pagination) {
     'use strict';
     var View = Pagination.extend({
-        el           : '#content-holder',
-        filter       : null,
-        viewType     : 'thumbnails', // needs in view.prototype.changeLocationHash
+        el      : '#content-holder',
+        filter  : null,
+        viewType: 'thumbnails', // needs in view.prototype.changeLocationHash
 
         events: {
             'click #showMore'            : 'showMore',
@@ -21,7 +21,7 @@
 
         initialize: function (options) {
             $(document).off('click');
-            
+
             this.startTime = options.startTime;
             this.collection = options.collection || Backbone.Collection.extend();
             this.responseObj = {};
@@ -29,7 +29,7 @@
 
             this.render();
         },
-        
+
         dropDown: function (e) {
             e.stopPropagation();
         },
@@ -69,8 +69,8 @@
                 this.filter = {};
             }
 
-            this.changeLocationHash(null, this.defaultItemsNumber, filter);
-            this.collection.showMore({count: this.defaultItemsNumber, page: 1, filter: filter});
+            this.changeLocationHash(null, this.collection.pageSize, filter);
+            this.collection.getFirstPage({filter: filter, showMore: true, viewType: this.viewType});
         },
 
         hideItemsNumber: function (e) {
@@ -87,7 +87,7 @@
         showMore: function (e) {
             e.preventDefault();
 
-            this.collection.getNextPage({filter: this.filter, showMore: true});
+            this.collection.getNextPage({filter: this.filter, showMore: true, viewType: this.viewType});
         },
 
         showMoreContent: function (newModels) {
@@ -97,7 +97,7 @@
             var $content = $holder.find('#thumbnailContent');
 
 
-            this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
+            this.changeLocationHash(null, this.collection.pageSize, this.filter);
 
             if ($showMore.length !== 0) {
                 $showMore.before(this.template({collection: this.collection.toJSON()}));
@@ -127,7 +127,7 @@
             var $showMore = $thisEl.find('#showMoreDiv');
             var $created = $thisEl.find('#timeRecivingDataFromServer');
             var collection = this.collection;
-            var showMore = collection.currentPage < collection.totalPages
+            var showMore = collection.currentPage < collection.totalPages;
 
             if (showMore) {
                 if ($showMore.length === 0) {
