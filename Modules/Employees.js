@@ -249,9 +249,6 @@ var Employee = function (event, models) {
                             }
                             ], function (err, result) {
                                 if (!err) {
-                                    if (data.currentNumber && data.currentNumber < result.length) {
-                                        res['showMore'] = true;
-                                    }
                                     res['count'] = result.length;
                                     response.send(res);
                                 } else {

@@ -1,6 +1,3 @@
-/**
- * Created by soundstorm on 17.06.15.
- */
 define([
         'Backbone',
         'models/EmployeesModel',
@@ -27,6 +24,7 @@ define([
                     }
                 });
             },
+
             parse     : function (response) {
                 return response.data;
             }

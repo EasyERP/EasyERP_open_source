@@ -1229,7 +1229,7 @@ define([
                             reset      : true,
                             count      : count,
                             filter     : filter,
-                            contentType: contentType,
+                            contentType: contentType
                         });
                     } else {
                         collection = new contentCollection();
@@ -1257,7 +1257,7 @@ define([
                         collection.trigger('fetchFinished', {
                             totalRecords: collection.totalRecords,
                             currentPage : collection.currentPage,
-                            pageSize    : collection.pageSize,
+                            pageSize    : collection.pageSize
                         });
                         // Backbone.history.navigate(url, { replace: true });
                     }

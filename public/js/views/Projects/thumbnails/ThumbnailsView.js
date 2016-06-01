@@ -22,7 +22,6 @@
         template          : _.template(thumbnailsItemTemplate),
         newCollection     : true,
         filter            : null,
-        defaultItemsNumber: null,
         contentType       : 'Projects', // needs in view.prototype.changeLocationHash
         viewType          : 'thumbnails', // needs in view.prototype.changeLocationHash
 
@@ -136,10 +135,10 @@
 
         asyncLoadImgs: function (collection) {
             var arr = _.filter(collection.toJSON(), function (item) {
-                return item.salesmanager;
+                return item.salesManager;
             });
             var ids = _.map(arr, function (item) {
-                return item.salesmanager._id;
+                return item.salesManager._id;
             });
 
             common.getImages(ids, CONSTANTS.URLS.EMPLOYEES + 'getEmployeesImages');
@@ -210,7 +209,7 @@
             $currentEl.append(createdInTag);
 
             return this;
-        },
+        }
     });
 
     return ProjectThumbnalView;

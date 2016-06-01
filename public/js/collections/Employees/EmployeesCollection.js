@@ -1,38 +1,46 @@
 define([
         'Backbone',
         'jQuery',
+        'collections/parent',
         'models/EmployeesModel',
         'constants'
     ],
-    function (Backbone, $, EmployeeModel, CONSTANTS) {
+    function (Backbone, $, Parent, EmployeeModel, CONSTANTS) {
         'use strict';
 
-        var EmployeesCollection = Backbone.Collection.extend({
-            model     : EmployeeModel,
-            url       : function () {
-                return CONSTANTS.URLS.EMPLOYEES;
-            },
-            initialize: function () {
-                var mid = 39;
-                this.fetch({
-                    data   : $.param({
-                        mid: mid
-                    }),
-                    type   : 'GET',
-                    reset  : true,
-                    success: this.fetchSuccess
-                });
+        var EmployeesCollection = Parent.extend({
+            model   : EmployeeModel,
+            url     : CONSTANTS.URLS.EMPLOYEES,
+            pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
+
+            initialize: function (options) {
+                var page;
+
+                function _errHandler(models, xhr) {
+                    if (xhr.status === 401) {
+                        Backbone.history.navigate('#login', {trigger: true});
+                    }
+                }
+
+                options = options || {};
+                options.error = options.error || _errHandler;
+                page = options.page;
+
+                this.startTime = new Date();
+
+                if (page) {
+                    return this.getPage(page, options);
+                }
+
+                this.getFirstPage(options);
             },
 
             filterByLetter: function (letter) {
                 var filtered = this.filter(function (data) {
-                    return data.get("name").last.toUpperCase().startsWith(letter);
+                    return data.get('name').last.toUpperCase().startsWith(letter);
                 });
+                
                 return new EmployeesCollection(filtered);
-            },
-
-            parse: function (response) {
-                return response.data;
             }
         });
         return EmployeesCollection;

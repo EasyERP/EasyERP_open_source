@@ -256,7 +256,7 @@ module.exports = function (models, event) {
                 task         : 1,
                 customer     : {$arrayElemAt: ['$customer', 0]},
                 health       : 1,
-                salesmanagers: {
+                salesManagers: {
                     $filter: {
                         input: '$projectMembers',
                         as   : 'projectMember',
@@ -276,7 +276,7 @@ module.exports = function (models, event) {
                 name        : 1,
                 task        : 1,
                 workflow    : 1,
-                salesManager: {$arrayElemAt: ['$salesmanagers', 0]},
+                salesManager: {$arrayElemAt: ['$salesManagers', 0]},
                 customer    : 1,
                 health      : 1
             }
@@ -307,16 +307,19 @@ module.exports = function (models, event) {
                 'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
                 'createdBy.date': 1,
                 'editedBy.date' : 1,
-                notRemovable    : {
-                    $size: {"$ifNull": ["$budget.projectTeam", []]} // added check on field value null
+
+                notRemovable: {
+                    $size: {$ifNull: ['$budget.projectTeam', []]} // added check on field value null
                 },
-                progress        : 1,
-                customer        : {$arrayElemAt: ['$customer', 0]},
-                StartDate       : 1,
-                EndDate         : 1,
-                TargetEndDate   : 1,
-                health          : 1,
-                salesmanagers   : {
+
+                progress     : 1,
+                customer     : {$arrayElemAt: ['$customer', 0]},
+                StartDate    : 1,
+                EndDate      : 1,
+                TargetEndDate: 1,
+                health       : 1,
+
+                salesmanagers: {
                     $filter: {
                         input: '$projectMembers',
                         as   : 'projectMember',
@@ -374,16 +377,19 @@ module.exports = function (models, event) {
         }];
 
         var projectionOptions = {
-            name        : 1,
-            task        : 1,
-            health      : 1,
-            workflow    : {
+            name  : 1,
+            task  : 1,
+            health: 1,
+
+            workflow: {
                 name: '$workflow.name'
             },
+
             salesManager: {
                 _id: '$salesManager._id'
             },
-            customer    : {
+
+            customer: {
                 name: '$customer.name'
             }
         };
@@ -441,9 +447,9 @@ module.exports = function (models, event) {
 
             delete projectionLastStepOptions.task;
 
-            mainPipeline = _.union(lookupPipeline, projectListPipeline);
+            mainPipeline = lookupPipeline.concat(projectListPipeline);
         } else if (viewType === 'thumbnails') {
-            mainPipeline = _.union(lookupPipeline, projectThumbPipeline);
+            mainPipeline = lookupPipeline.concat(projectThumbPipeline);
         }
 
         response.showMore = false;
@@ -512,7 +518,7 @@ module.exports = function (models, event) {
             }
 
             count = result[0].total || 0;
-            
+
             response.total = count;
             response.data = result;
             res.status(200).send(response);
@@ -767,10 +773,6 @@ module.exports = function (models, event) {
             }
 
             count = result[0].count || 0;
-
-            if (data.currentNumber && data.currentNumber < count) {
-                response.showMore = true;
-            }
 
             response.count = count;
             response.data = result;
