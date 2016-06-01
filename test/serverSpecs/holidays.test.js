@@ -132,11 +132,12 @@ describe("Holidays Specs", function () {
                     date : -1
                 },
                 page : 1,
-                count : 100
+                count : 100,
+                viewType: 'list'
             };
 
             aggent
-                .get('holiday/list')
+                .get('holiday/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -244,7 +245,7 @@ describe("Holidays Specs", function () {
         it("should fail get Holidays", function (done) {
 
             aggent
-                .get('holiday/list')
+                .get('holiday/')
                 .expect(401, done);
         });
 

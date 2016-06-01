@@ -52,9 +52,9 @@
                 if (options && options.url) {
                     this.url = options.url;
                     delete options.url;
-                } else if (options && options.viewType) {
+                } /* else if (options && options.viewType) {
                     this.url += options.viewType;
-                }
+                }*/
 
                 this.fetch({
                     data   : options,

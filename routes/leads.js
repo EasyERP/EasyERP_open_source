@@ -14,14 +14,16 @@ module.exports = function (models, event) {
     var moduleId = MODULES.LEADS;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
-    router.get('/', authStackMiddleware, accessStackMiddlware, handler.getByViewType);
-    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
-    router.get('/getLeadsForChart', authStackMiddleware, accessStackMiddlware, handler.getLeadsForChart);
-    router.get('/priority', authStackMiddleware, accessStackMiddlware, handler.getLeadsPriority);
-    router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
-    router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateLead);
-    router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.updateLead);
-    router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
+    router.use(authStackMiddleware);
+
+    router.get('/', accessStackMiddlware, handler.getByViewType);
+    router.get('/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
+    router.get('/getLeadsForChart', accessStackMiddlware, handler.getLeadsForChart);
+    router.get('/priority', accessStackMiddlware, handler.getLeadsPriority);
+    router.post('/', accessStackMiddlware, handler.create);
+    router.patch('/:id', accessStackMiddlware, handler.updateLead);
+    router.put('/:id', accessStackMiddlware, handler.updateLead);
+    router.delete('/:id', accessStackMiddlware, handler.remove);
 
     return router;
 };

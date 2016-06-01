@@ -20,11 +20,11 @@ define([
             this.startTime = new Date();
             var that = this;
             this.namberToShow = options.count;
+            this.viewType = options.viewType;
 
-            if (options && options.viewType) {
-                this.viewType = options.viewType;
+            /*if (options && options.viewType) {
                 this.url += options.viewType;
-            }
+            }*/
 
             this.contentType = options.contentType;
             this.count = options.count;

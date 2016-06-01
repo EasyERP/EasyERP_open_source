@@ -533,11 +533,12 @@ describe("Invoice Specs", function () {
                             key  : "project._id"
                         }
                     },
-                    forSales : true
+                    forSales : true,
+                    viewType: 'list'
                 };
 
                 aggent
-                    .get('invoice/list')
+                    .get('invoice/')
                     .query(query)
                     .query({"filter[project][value][0]": CONSTANTS.PROJECT})
                     .expect(200)
@@ -846,7 +847,7 @@ describe("Invoice Specs", function () {
         it("should fail get Invoices for View", function (done) {
 
             aggent
-                .get('invoice/list')
+                .get('invoice/')
                 .expect(404, done);
         });
 

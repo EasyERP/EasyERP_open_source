@@ -92,9 +92,9 @@ define([
             this.year = (this.startTime.getFullYear()).toString();
             this.viewType = options.viewType;
             this.contentType = options.contentType;
-            if (options && options.viewType) {
+           /* if (options && options.viewType) {
                 this.url += options.viewType;
-            }
+            }*/
 
             if (options && options.year) {
                 options.year = options.year;

@@ -308,7 +308,7 @@ describe("Product Specs", function () {
             };
 
             aggent
-                .get('product/list')
+                .get('product/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -410,7 +410,7 @@ describe("Product Specs", function () {
         it("should fail get Product for View", function (done) {
 
             aggent
-                .get('product/list')
+                .get('product/')
                 .expect(401, done);
         });
 

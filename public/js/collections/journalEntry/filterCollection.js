@@ -70,9 +70,9 @@ define([
                     endDate  : this.endDate
                 });
 
-                if (options && options.viewType) {
+                /*if (options && options.viewType) {
                     this.url += options.viewType;
-                }
+                }*/
 
                 this.fetch({
                     data   : options,

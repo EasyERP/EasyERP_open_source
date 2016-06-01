@@ -466,11 +466,12 @@ describe("journalEntries Specs", function () {
         it("should get JE for list", function (done) {
             var query = {
                 "startDate": '1 Feb, 2016',
-                "endDate"  : '28 Feb, 2016'
+                "endDate"  : '28 Feb, 2016',
+                viewType: 'list'
             };
 
             aggent
-                .get('journal/journalEntry/list')
+                .get('journal/journalEntry/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {

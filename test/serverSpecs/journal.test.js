@@ -62,15 +62,16 @@ describe("Journal Specs", function () {
         });
 
         it("should get journal with options", function (done) {
-            /*var query = {
+            var query = {
                 sort : {
                     account: -1
-                }
-            };*/
+                },
+                viewType: 'list'
+            };
 
             aggent
-                .get('journal/list')
-                //.query(query)
+                .get('journal/')
+                .query(query)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;

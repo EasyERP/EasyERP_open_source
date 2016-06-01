@@ -1,15 +1,13 @@
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var objectId = mongoose.Types.ObjectId;
+var CapacitySchema = mongoose.Schemas.Capacity;
+var async = require('async');
+var _ = require('lodash');
+var mid = 77;
 
 var Capacity = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
-    var CapacitySchema = mongoose.Schemas.Capacity;
-    var async = require('async');
-    var _ = require('lodash');
-    var error;
-    var query;
-    var mid = 77;
+    'use strict';
 
     function setVacations(model, vacation, db, callback) {
         var vacArrayLength;
@@ -59,70 +57,52 @@ var Capacity = function (models) {
     }
 
     function getCapacityFilter(modelId, req, res, next) {
+        var Capacity = models.get(req.session.lastDb, 'Capacity', CapacitySchema);
+        var query = req.query;
+        var queryObject = {};
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, modelId, function (access) {
-                if (!access) {
-                    error = new Error();
-                    error.status = 403;
+        var departmentsObject = {};
 
-                    next(error);
-                }
+        if (query) {
+            if (query.employee) {
+                queryObject['employee._id'] = objectId(query.employee);
+            }
+            if (query.year) {
+                queryObject.year = query.year;
+            }
+            if (query.month) {
+                queryObject.month = query.month;
+            }
+        }
 
-                var Capacity = models.get(req.session.lastDb, 'Capacity', CapacitySchema);
-                var query = req.query;
-                var queryObject = {};
+        queryObject.capacityMonthTotal = {$ne: 0};
 
-                var departmentsObject = {};
+        query = Capacity.find(queryObject)
+            .populate('vacation');
 
-                if (query) {
-                    if (query.employee) {
-                        queryObject['employee._id'] = objectId(query.employee);
-                    }
-                    if (query.year) {
-                        queryObject.year = query.year;
-                    }
-                    if (query.month) {
-                        queryObject.month = query.month;
-                    }
-                }
+        query.exec(function (err, result) {
+            if (err) {
+                return next(err);
+            }
 
-                queryObject.capacityMonthTotal = {$ne: 0};
-
-                query = Capacity.find(queryObject)
-                    .populate('vacation');
-
-                query.exec(function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    _.map(result, function (model) {
-                        model = model.toJSON();
-                        departmentsObject[model.department.name] = model.department;
-                    });
-
-                    result = _.groupBy(result, function (element) {
-                        return element.department.name;
-                    });
-
-                    res.status(200).send({capacityObject: result, departmentObject: departmentsObject});
-                });
+            _.map(result, function (model) {
+                model = model.toJSON();
+                departmentsObject[model.department.name] = model.department;
             });
 
-        } else {
-            error = new Error();
-            error.status = 401;
+            result = _.groupBy(result, function (element) {
+                return element.department.name;
+            });
 
-            next(error);
-        }
+            res.status(200).send({capacityObject: result, departmentObject: departmentsObject});
+        });
     }
 
     this.getForType = function (req, res, next) {
-        var viewType = req.params.viewType;
+        var viewType = req.query.viewType;
 
         switch (viewType) {
-            case "list":
+            case 'list':
                 getCapacityFilter(mid, req, res, next);
                 break;
         }
@@ -388,7 +368,7 @@ var Capacity = function (models) {
                 return next(err);
             }
 
-            res.status(200).send("ok");
+            res.status(200).send('ok');
         })
     };
 
@@ -461,29 +441,18 @@ var Capacity = function (models) {
         var data = req.body;
         var Capacity = models.get(req.session.lastDb, 'Capacity', CapacitySchema);
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, mid, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
+        data.editedBy = {
+            user: req.session.uId,
+            date: new Date().toISOString()
+        };
 
-                    Capacity.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
-                        if (err) {
-                            return next(err);
-                        }
+        Capacity.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
+            if (err) {
+                return next(err);
+            }
 
-                        res.status(200).send({success: 'updated'});
-                    });
-                } else {
-                    res.status(403).send();
-                }
-            });
-        } else {
-            res.status(401).send();
-        }
-
+            res.status(200).send({success: 'updated'});
+        });
     };
 
     this.putchBulk = function (req, res, next) {
@@ -491,34 +460,23 @@ var Capacity = function (models) {
         var uId;
         var Capacity = models.get(req.session.lastDb, 'Capacity', CapacitySchema);
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, mid, function (access) {
-                if (access) {
-                    async.each(body, function (data, cb) {
-                        var id = data._id;
+        async.each(body, function (data, cb) {
+            var id = data._id;
 
-                        data.editedBy = {
-                            user: uId,
-                            date: new Date().toISOString()
-                        };
-                        delete data._id;
+            data.editedBy = {
+                user: uId,
+                date: new Date().toISOString()
+            };
+            delete data._id;
 
-                        Capacity.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
-                    }, function (err) {
-                        if (err) {
-                            return next(err);
-                        }
+            Capacity.findByIdAndUpdate(id, {$set: data}, {new: true}, cb);
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
 
-                        res.status(200).send({success: 'updated'});
-                    });
-                } else {
-                    res.status(403).send();
-                }
-            });
-        } else {
-            res.status(401).send();
-        }
+            res.status(200).send({success: 'updated'});
+        });
     };
 
     this.remove = function (req, res, next) {
@@ -532,5 +490,5 @@ var Capacity = function (models) {
             res.status(200).send({success: capacity});
         });
     };
-};
+}
 module.exports = Capacity;

@@ -140,7 +140,7 @@ describe("wTrack Specs", function () {
                 };
 
                 aggent
-                    .get('wTrack/list')
+                    .get('wTrack/')
                     .query(query)
                     .query({"filter[projectName][value][0]": CONSTANTS.PROJECT})
                     .expect(200)
@@ -359,7 +359,7 @@ describe("wTrack Specs", function () {
                 };
 
                 aggent
-                    .get('wTrack/list')
+                    .get('wTrack/')
                     .query(query)
                     .query({"filter[projectName][value][0]": CONSTANTS.PROJECT})
                     .query({"filter[week][value][0]": 8})
@@ -467,7 +467,7 @@ describe("wTrack Specs", function () {
                 };
 
                 aggent
-                    .get('wTrack/list')
+                    .get('wTrack/')
                     .query(query)
                     .query({"filter[projectName][value][0]": CONSTANTS.PROJECT})
                     .query({"filter[week][value][0]": 2})
@@ -583,7 +583,7 @@ describe("wTrack Specs", function () {
         it("should fail get wTrack for View", function (done) {
 
             aggent
-                .get('wTrack/list')
+                .get('wTrack/')
                 .expect(404, done);
         });
 
