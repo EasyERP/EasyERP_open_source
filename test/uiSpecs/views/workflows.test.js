@@ -929,7 +929,7 @@ define([
 
                     $needInput.val('Test workflow');
                     server.respondWith('PUT', workflowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([{
-                        status: 'Pending'
+                        'success': 'WorkFlow update success'
                     }])]);
 
                     $saveBtn.click();
@@ -993,10 +993,10 @@ define([
                     server.respondWith('POST', workflowUrl, [201, {'Content-Type': 'application/json'}, JSON.stringify([{
                         success     : 'A new WorkFlow crate success',
                         createdModel: {
+                            _id     : '574c3e351f2d9f411ee93ffd',
                             sequence: 0,
                             status  : 'Pending',
                             name    : 'Super Test workflow',
-                            _id     : '574c3e351f2d9f411ee93ffd',
                             visible : true
                         }
                     }])]);

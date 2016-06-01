@@ -1,4 +1,3 @@
-/*
 define([
     'modules',
     'dashboardVacation',
@@ -8546,7 +8545,7 @@ define([
 
             describe('INITIALIZE', function () {
 
-                it('Try to create categories list view', function (done) {
+                it('Try to create Dashboard list view', function (done) {
                     var dashBoardUrl = new RegExp('dashboard\/vacation', 'i');
 
                     this.timeout(25000);
@@ -8570,7 +8569,6 @@ define([
                     expect(indexView.$el.find('#dashboardBody > tr:nth-child(3)').attr('data-content')).to.be.equals('project');
 
                     $expandAllBtn.click();
-
                 });
 
                 it('Try to open web department', function () {
@@ -8688,4 +8686,3 @@ define([
         });
     });
 });
-*/

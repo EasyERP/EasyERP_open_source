@@ -863,12 +863,14 @@ define([
             var mainSpy;
             var clock;
             var $thisEl;
+            var deleteSpy;
 
             before(function () {
                 windowConfirmStub = sinon.stub(window, 'confirm');
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
                 clock = sinon.useFakeTimers();
+                deleteSpy = sinon.spy(ListView.prototype, 'deleteItems');
             });
 
             after(function () {
@@ -876,6 +878,7 @@ define([
                 mainSpy.restore();
                 clock.restore();
                 windowConfirmStub.restore();
+                deleteSpy.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -883,14 +886,13 @@ define([
                 it('Try to create customerPayments list view', function (done) {
                     var customerPaymentsUrl = new RegExp('\/payment\/customers\/list', 'i');
 
-                    server.respondWith('GET', customerPaymentsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeSortedCustomerPayments)]);
-
+                    server.respondWith('GET', customerPaymentsUrl, [200, {'Content-Type': 'application/json'},
+                        JSON.stringify(fakeSortedCustomerPayments)]);
                     listView = new ListView({
                         collection: customerPaymentsCollection,
                         startTime : new Date(),
                         count     : 100
                     });
-
                     server.respond();
                     clock.tick(200);
 
@@ -1008,7 +1010,6 @@ define([
                 });
 
                 it('Try to delete item with 403 error', function () {
-                    var spyResponse;
                     var supplierPaymentsUrl = new RegExp('\/payment\/', 'i');
                     var $firstEl = listView.$el.find('#listTable > tr:nth-child(1) >.notForm > input');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
@@ -1017,13 +1018,13 @@ define([
 
                     windowConfirmStub.returns(true);
 
-                    server.respondWith('DELETE', supplierPaymentsUrl, [403, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Delete success'})]);
+                    server.respondWith('DELETE', supplierPaymentsUrl, [403, {'Content-Type': 'application/json'}, JSON.stringify({
+                        success: 'Delete success'
+                    })]);
                     $deleteBtn.click();
                     server.respond();
 
-                    spyResponse = mainSpy.args[0][0];
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'You do not have permission to perform this action');
+                    expect(deleteSpy.calledOnce).to.be.true;
                 });
 
                 it('Try to delete item', function () {
@@ -1037,6 +1038,8 @@ define([
                     server.respondWith('DELETE', supplierPaymentsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Delete success'})]);
                     $deleteBtn.click();
                     server.respond();
+
+                    expect(deleteSpy.calledTwice).to.be.true;
                 });
 
                 it('Try to edit item', function () {

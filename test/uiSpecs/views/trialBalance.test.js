@@ -110,9 +110,9 @@ define([
     expect = chai.expect;
 
     describe('TrialBalanceView', function () {
-
         var $fixture;
         var $elFixture;
+
         before(function () {
             setDateRangeSpy = sinon.spy(TopBarView.prototype, 'setDateRange');
             showDatePickerSpy = sinon.spy(TopBarView.prototype, 'showDatePickers');
