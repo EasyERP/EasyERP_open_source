@@ -138,11 +138,12 @@ describe("Capacity Specs", function () {
             it("should get Capacity Expenses", function (done) {
                 var query = {
                     "month" : "4",
-                    "year" : "2017"
+                    "year" : "2017",
+                    viewType: 'list'
                 };
 
                 aggent
-                    .get('capacity/list')
+                    .get('capacity/')
                     .query(query)
                     .expect(200)
                     .end(function (err, res) {
@@ -211,7 +212,7 @@ describe("Capacity Specs", function () {
         it("should fail get Capacities", function (done) {
 
             aggent
-                .get('capacity/list')
+                .get('capacity/')
                 .expect(403, done);
         });
     });
@@ -221,7 +222,7 @@ describe("Capacity Specs", function () {
         it("should fail get Capacities", function (done) {
 
             aggent
-                .get('capacity/list')
+                .get('capacity/')
                 .expect(404, done);
         });
 

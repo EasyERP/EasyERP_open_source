@@ -250,7 +250,7 @@
             },*/
 
             // modified for filter Vasya
-            showMoreContent: function (newModels) {
+            /*showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var content = holder.find('#thumbnailContent');
                 var showMore = holder.find('#showMoreDiv');
@@ -270,7 +270,7 @@
                 }
                 this.asyncLoadImgs(newModels);
                 this.filterView.renderFilterContent();
-            },
+            },*/
 
             showMoreAlphabet: function (newModels) {
                 var holder = this.$el;

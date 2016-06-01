@@ -87,7 +87,7 @@
         showMore: function (e) {
             e.preventDefault();
 
-            this.collection.getNextPage({filter: this.filter, showMore: true, viewType: this.viewType});
+            this.collection.getNextPage({filter: this.filter, showMore: true, viewType: this.viewType, contentType: this.contentType});
         },
 
         showMoreContent: function (newModels) {

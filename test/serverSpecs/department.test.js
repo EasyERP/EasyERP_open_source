@@ -98,7 +98,7 @@ describe("Department Specs", function () {
 
         it("should get Department", function (done) {
             aggent
-                .get('departments/list')
+                .get('departments/')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;

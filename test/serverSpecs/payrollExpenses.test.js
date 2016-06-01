@@ -57,9 +57,13 @@ describe("PayrollExpenses Specs", function () {
         });
 
         it("should get PayrollExpenses", function (done) {
+            var query = {
+                viewType: 'list'
+            };
 
             aggent
-                .get('payroll/list')
+                .get('payroll/')
+                .query(query)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -354,7 +358,7 @@ describe("PayrollExpenses Specs", function () {
         it("should fail get PayrollExpenses", function (done) {
 
             aggent
-                .get('payroll/list')
+                .get('payroll/')
                 .expect(404, done);
         });
 

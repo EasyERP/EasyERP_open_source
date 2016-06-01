@@ -104,7 +104,7 @@ describe("MonthHours Specs", function () {
         it("should get monthHours", function (done) {
 
             aggent
-                .get('monthHours/list')
+                .get('monthHours/')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -149,7 +149,7 @@ describe("MonthHours Specs", function () {
             };
 
             aggent
-                .get('monthHours/list')
+                .get('monthHours/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -176,7 +176,7 @@ describe("MonthHours Specs", function () {
             };
 
             aggent
-                .get('monthHours/list')
+                .get('monthHours/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -252,7 +252,7 @@ describe("MonthHours Specs", function () {
         it("should fail get MonthHours for View", function (done) {
 
             aggent
-                .get('monthHours/list')
+                .get('monthHours/')
                 .expect(404, done);
         });
 

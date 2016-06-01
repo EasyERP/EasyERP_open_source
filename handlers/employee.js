@@ -980,8 +980,6 @@ var Employee = function (event, models) {
             var count;
             var response = {};
 
-            response.showMore = false;
-
             if (err) {
                 return next(err);
             }

@@ -7,8 +7,8 @@ module.exports = function (models, event) {
     var handler = new ProformaHandler(models, event);
     var iHandler = new InvoiceHandler(models, event);
 
+    router.get('/', iHandler.getForView);
     router.post('/create', handler.create);
-    router.get('/list', iHandler.getForView);
     router.get('/totalCollectionLength', iHandler.totalCollectionLength);
     router.get('/stats/project', iHandler.getStatsForProject);
 

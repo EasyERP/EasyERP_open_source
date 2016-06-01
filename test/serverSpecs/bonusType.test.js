@@ -101,11 +101,12 @@ describe("BonusType Specs", function () {
                     value: -1
                 },
                 page : -1,
-                count: 100
+                count: 100,
+                viewType: 'list'
             };
 
             aggent
-                .get('bonusType/list')
+                .get('bonusType/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {

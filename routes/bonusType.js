@@ -10,12 +10,12 @@ module.exports = function (models) {
     var moduleId = MODULES.WORKFLOWS;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
+    router.get('/', authStackMiddleware, accessStackMiddlware, handler.getList);
     router.get('/getForDD', authStackMiddleware, accessStackMiddlware, handler.getForDD);
     router.get('/list/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
-    router.get('/list', authStackMiddleware, accessStackMiddlware, handler.getList);
 
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
-    router.patch('/',authStackMiddleware, accessStackMiddlware, handler.patchM);
+    router.patch('/', authStackMiddleware, accessStackMiddlware, handler.patchM);
     router.delete('/:_id', authStackMiddleware, accessStackMiddlware, handler.remove);
 
     return router;
