@@ -16132,6 +16132,12 @@ define([
                 it('Try to create ThumbnailsView', function (done) {
                     var projectsUrl = new RegExp('\/projects\/', 'i');
                     var worlflowUrl = new RegExp('\/Workflows', 'i');
+                    var $thumbnailsContainer;
+                    var $thumbnails;
+                    var $firstThumbnail;
+                    var projectName;
+                    var customerName;
+                    var $health;
 
                     server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectsForThumbnails)]);
                     projectsThumbCollection = new ProjectCollection({
@@ -16156,7 +16162,17 @@ define([
                     clock.tick(200);
 
                     $thisEl = thumbnailsView.$el;
-                    expect($thisEl.find('#thumbnailContent')).to.exist;
+                    $thumbnailsContainer = $thisEl.find('#thumbnailContent');
+                    $thumbnails = $thumbnailsContainer.find('.thumbnail');
+
+                    expect($thumbnailsContainer).to.exist;
+                    expect($thumbnails).to.have.lengthOf(3);
+
+                    $firstThumbnail = $($thumbnails[0]);
+                    projectName = $firstThumbnail.find('span[data-content="project"]').text();
+
+                    expect(projectName).not.to.be.empty;
+                    expect(projectName).to.not.match(/object Object|undefined/);
 
                     topBarView.bind('createEvent', thumbnailsView.createItem, thumbnailsView);
                     topBarView.bind('editEvent', thumbnailsView.editItem, thumbnailsView);
@@ -16164,6 +16180,7 @@ define([
                     topBarView.bind('exportToCsv', thumbnailsView.exportToCsv, thumbnailsView);
                     topBarView.bind('exportToXlsx', thumbnailsView.exportToXlsx, thumbnailsView);
                     topBarView.bind('importEvent', thumbnailsView.importFiles, thumbnailsView);
+
                     projectsThumbCollection.bind('showmore', thumbnailsView.showMoreContent, thumbnailsView);
                     projectsThumbCollection.bind('showmoreAlphabet', thumbnailsView.showMoreAlphabet, thumbnailsView);
 

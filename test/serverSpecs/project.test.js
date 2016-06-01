@@ -206,8 +206,6 @@ describe('Project Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('showMore');
-                    expect(body)
                         .to.have.property('total');
                     expect(body)
                         .to.have.property('data')
