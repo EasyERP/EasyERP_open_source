@@ -2665,7 +2665,8 @@ var Module = function (models, event) {
                                 var proformaPayments = [];
 
                                 var proforma = _.find(result, function (el) {
-                                    invoice.payments.forEach(function (payment) {
+                                    var payments = invoice.payments || [];
+                                    payments.forEach(function (payment) {
                                         if (el.payment && el.payment._id && (payment.toString() === el.payment._id.toString())) {
                                             proformaPayments.push(el);
                                         }

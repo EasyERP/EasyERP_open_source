@@ -44,7 +44,7 @@ describe("journalEntries Specs", function () {
                     },
                     endDate  : {
                         key  : 'endDate',
-                        value: '25 Feb, 2016'
+                        value: '2 Feb, 2016'
                     }
                 }
             };
@@ -302,7 +302,7 @@ describe("journalEntries Specs", function () {
         it("should get data for Inventory Report view", function (done) {
             var query = {
                 "startDate": '1 Feb, 2016',
-                "endDate"  : '28 Feb, 2016'
+                "endDate"  : '2 Feb, 2016'
             };
 
             aggent
