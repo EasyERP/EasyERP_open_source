@@ -12,19 +12,21 @@
     'models/ApplicationsModel',
     'dataService',
     'constants'
-], function (Backbone,
-             $,
-             _,
-             WorkflowsTemplate,
-             kanbanSettingsTemplate,
-             WorkflowsCollection,
-             KanbanItemView,
-             EditView,
-             CreateView,
-             ApplicationsCollection,
-             CurrentModel,
-             dataService,
-             CONSTANTS) {
+], function (
+    Backbone,
+    $,
+    _,
+    WorkflowsTemplate,
+    kanbanSettingsTemplate,
+    WorkflowsCollection,
+    KanbanItemView,
+    EditView,
+    CreateView,
+    ApplicationsCollection,
+    CurrentModel,
+    dataService,
+    CONSTANTS
+) {
 
     'use strict';
 
@@ -321,6 +323,7 @@
                     $('.column').children('.item').remove();
                     dataService.getData(CONSTANTS.URLS.APPLICATIONS_KANBAN, {
                         workflowId: wfModel._id,
+                        viewType  : 'kanban',
                         filter    : this.filter
                     }, this.asyncRender, this);
                 }, this);
@@ -346,6 +349,7 @@
                     $('.column').children('.item').remove();
                     dataService.getData(CONSTANTS.URLS.APPLICATIONS_KANBAN, {
                         workflowId: wfModel._id,
+                        viewType  : 'kanban',
                         filter    : this.filter
                     }, this.asyncRender, this);
                 }, this);

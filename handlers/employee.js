@@ -657,7 +657,7 @@ var Employee = function (event, models) {
             if (err) {
                 return next(err);
             }
-            
+
             response.count = result.length;
             res.status(200).send(response);
         });

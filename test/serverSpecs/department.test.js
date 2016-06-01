@@ -1,15 +1,12 @@
-/**
- * Created by liliy on 04.02.2016.
- */
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent;
 
-describe("Department Specs", function () {
+require('../../config/development');
+
+
+describe('Department Specs', function () {
     'use strict';
     var id;
 
@@ -27,13 +24,13 @@ describe("Department Specs", function () {
                 .expect(200, done);
         });
 
-        after(function(done){
+        after(function(done) {
             aggent
                 .get('logout')
                 .expect(302, done);
         });
 
-        it("should create Department", function (done) {
+        it('should create Department', function (done) {
             var body = {
                 departmentName: 'cccc'
             };
@@ -60,7 +57,7 @@ describe("Department Specs", function () {
                 });
         });
 
-        it("should not create Department", function (done) {
+        it('should not create Department', function (done) {
             var body = {
                 departmentName: 'cccc'
             };
@@ -71,7 +68,7 @@ describe("Department Specs", function () {
                 .expect(400, done);
         });
 
-        it("should get by id Department", function (done) {
+        it('should get by id Department', function (done) {
             var query = {
                 id: id
             };
@@ -96,7 +93,7 @@ describe("Department Specs", function () {
                 });
         });
 
-        it("should get Department", function (done) {
+        it('should get Department', function (done) {
             aggent
                 .get('departments/')
                 .expect(200)
@@ -118,25 +115,25 @@ describe("Department Specs", function () {
                 });
         });
 
-        it("should update Department", function (done) {
+        it('should update Department', function (done) {
             var body = {
-                "_id"          : "55b92ace21e4b7c40f000015",
-                "sequence"             : 1,
-                "nestingLevel"         : 0,
-                "editedBy"             : {
-                    "user": "52203e707d4dba8813000003"
+                '_id'          : '55b92ace21e4b7c40f000015',
+                'sequence'             : 1,
+                'nestingLevel'         : 0,
+                'editedBy'             : {
+                    'user': '52203e707d4dba8813000003'
                 },
-                "createdBy"            : {
-                    "date": "2015-07-29T19:34:38.909Z",
-                    "user": "52203e707d4dba8813000003"
+                'createdBy'            : {
+                    'date': '2015-07-29T19:34:38.909Z',
+                    'user': '52203e707d4dba8813000003'
                 },
-                "users"                : [],
-                "departmentManager"    : null,
-                "parentDepartment"     : null,
-                "departmentName"       : "HR5",
-                "creationDate"         : null,
-                "parentDepartmentStart": null,
-                "sequenceStart"        : 0
+                'users'                : [],
+                'departmentManager'    : null,
+                'parentDepartment'     : null,
+                'departmentName'       : 'HR5',
+                'creationDate'         : null,
+                'parentDepartmentStart': null,
+                'sequenceStart'        : 0
             };
             aggent
                 .put('departments/' + id)
@@ -158,7 +155,7 @@ describe("Department Specs", function () {
                 });
         });
 
-        it("should delete department", function (done) {
+        it('should delete department', function (done) {
             aggent
                 .delete('departments/' + id)
                 .expect(200, done);
@@ -186,7 +183,7 @@ describe("Department Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create Department", function (done) {
+        it('should fail create Department', function (done) {
             var body = {
                 departmentName: 'cccc'
             };

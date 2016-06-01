@@ -675,7 +675,7 @@ define([], function () {
             PROJECT_DASHBOARD         : 'project/getProjectPMForDashboard',
             PAYMENT_SUPPLIER          : '/payment/supplier/',
             APPLICATIONS_WFLENGTH     : '/applications/getApplicationsLengthByWorkflows',
-            APPLICATIONS_KANBAN       : '/applications/kanban',
+            APPLICATIONS_KANBAN       : '/applications/',
             EMPLOYEES_NATIONALITY     : '/employees/nationality',
             JOBPOSITIONS_JOBTYPE      : '/jobPositions/jobType',
             JOBPOSITIONS_FORDD        : '/jobPositions/getForDd',
