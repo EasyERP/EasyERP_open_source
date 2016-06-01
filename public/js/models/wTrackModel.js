@@ -10,11 +10,9 @@ define([
         defaults: {
             dateByWeek : 0,
             dateByMonth: 0,
-            project    : {
-                workflow      : {},
-                customer      : {},
-                projectmanager: {}
-            },
+            project    : {},
+            customer   : {},
+            workflow   : {},
             employee   : {},
             department : {},
             worked     : 40,

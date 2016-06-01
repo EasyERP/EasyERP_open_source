@@ -25,6 +25,7 @@ module.exports = function (config) {
 
             {pattern: 'constants/test/modules.js', included: false, watching: false},
             {pattern: 'constants/test/dashboardVacation.js', included: false, watching: false},
+            {pattern: 'constants/test/filter.js', included: false, watching: false},
 
             {pattern: 'public/js/Validation.js', included: false, watching: false},
             {pattern: 'public/js/collections/**/*.js', included: false, watching: false},
@@ -36,12 +37,14 @@ module.exports = function (config) {
             {pattern: 'public/templates/**/*.html', included: false, watching: false},
             {pattern: 'public/js/*.js', included: false, watching: false},
 
-            //{pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
-            //{pattern: 'test/uiSpecs/models/!*.test.js', included: false, watching: true},
-            //{pattern: 'test/uiSpecs/views/workflows.test.js', included: false, watching: true},
-            //{pattern: 'test/uiSpecs/views/login.test.js', included: false, watching: true}
+            {pattern: 'test/uiSpecs/collection/*.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/models/!*.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/views/tCard.test.js', included: false, watching: true},
+            {pattern: 'test/uiSpecs/views/login.test.js', included: false, watching: true},
+           /* {pattern: 'test/uiSpecs/views/workflows.test.js', included: false, watching: true},*/
 
-            {pattern: 'test/uiSpecs/**/*.test.js', included: false/*, watching: true*/}
+
+            /*{pattern: 'test/uiSpecs/!**!/!*.test.js', included: false/!*, watching: true*!/}*/
         ],
 
         exclude: [],
@@ -67,7 +70,7 @@ module.exports = function (config) {
 
         /*autoWatch: true,*/
 
-        browsers: ['Chrome', 'Firefox', /*'Safari',*/ 'IE', 'PhantomJS'],
+        browsers: ['Firefox', 'Chrome', /*'Safari', 'IE',*/ 'PhantomJS'],
 
         singleRun: false,
 
