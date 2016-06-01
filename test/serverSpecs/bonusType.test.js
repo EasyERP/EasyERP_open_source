@@ -5,7 +5,7 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
-var dbId = 'dendb';
+var dbId = 'production';
 var admin = {
     login: 'admin',
     pass : 'tm2016',
@@ -100,8 +100,6 @@ describe("BonusType Specs", function () {
                 sort : {
                     value: -1
                 },
-                page : -1,
-                count: 100,
                 viewType: 'list'
             };
 
@@ -116,19 +114,21 @@ describe("BonusType Specs", function () {
                         return done(err);
                     }
                     expect(body)
-                        .to.be.instanceOf(Array);
-                    expect(body.length)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('total')
+                    expect(body.data.length)
                         .to.be.lte(100);
-                    if (body.length > 1) { // test sorting
-                        expect(body[0].value)
-                            .to.be.gte(body[1].value);
+                    if (body.data.length > 1) { // test sorting
+                        expect(body.data[0].value)
+                            .to.be.gte(body.data[1].value);
                     }
 
                     done();
                 });
         });
 
-        it("should get BonusType length", function (done) {
+       /* it("should get BonusType length", function (done) {
 
             aggent
                 .get('bonusType/list/totalCollectionLength')
@@ -148,7 +148,7 @@ describe("BonusType Specs", function () {
 
                     done();
                 });
-        });
+        });*/
 
         it("should get BonusType for DD", function (done) {
 

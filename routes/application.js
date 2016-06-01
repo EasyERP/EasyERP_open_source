@@ -13,11 +13,8 @@ module.exports = function (event, models) {
     router.use(authStackMiddleware);
 
     router.get('/', accessStackMiddlWare, handler.getByViewTpe);
-
     router.get('/getApplicationsLengthByWorkflows', handler.getCollectionLengthByWorkflows);
     router.get('/totalCollectionLength', accessStackMiddlWare, handler.totalCollectionLength);
-
-    router.get('/:id', accessStackMiddlWare, handler.getByViewTpe);
 
     router.post('/', accessStackMiddlWare, handler.create);
     router.patch('/:id', accessStackMiddlWare, handler.updateOnlySelectedFields);

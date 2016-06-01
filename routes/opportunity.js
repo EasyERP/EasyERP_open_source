@@ -17,7 +17,6 @@ module.exports = function (models, event) {
     router.get('/OpportunitiesForMiniView', authStackMiddleware, accessStackMiddlware, handler.opportunitiesForMiniView);
     router.get('/getLengthByWorkflows', authStackMiddleware, accessStackMiddlware, handler.getLengthByWorkflows);
     router.get('/priority', authStackMiddleware, accessStackMiddlware, handler.getLeadsPriority);
-    router.post('/createLeadFromSite', handler.addNewLeadFromSite);
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateOnlySelectedFields);
     router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.update);

@@ -19,6 +19,7 @@ module.exports = function (models, event) {
     router.get('/getLeadsForChart', authStackMiddleware, accessStackMiddlware, handler.getLeadsForChart);
     router.get('/priority', authStackMiddleware, accessStackMiddlware, handler.getLeadsPriority);
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
+    router.post('/createLeadFromSite', handler.addNewLeadFromSite);
     router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateLead);
     router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.updateLead);
     router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
