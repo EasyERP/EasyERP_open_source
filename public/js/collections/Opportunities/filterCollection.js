@@ -21,9 +21,10 @@
                     this.page = options.page || 1;
                 }
                 var that = this;
-                if (options && options.viewType) {
+                
+                /*if (options && options.viewType) {
                     this.url += options.viewType;
-                }
+                }*/
                 this.fetch({
                     data   : options,
                     reset  : true,

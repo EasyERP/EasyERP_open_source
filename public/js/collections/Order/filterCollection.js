@@ -92,9 +92,9 @@
 
                 this.filter = options.filter;
 
-                if (options && options.viewType) {
+                /*if (options && options.viewType) {
                     this.url += options.viewType;
-                }
+                }*/
 
                 this.filter = options.filter;
 

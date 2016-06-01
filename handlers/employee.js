@@ -1203,7 +1203,7 @@ var Employee = function (event, models) {
         response.workflowId = data.workflowId;
 
         accessRollSearcher = function (cb) {
-            accessRoll(req, Employee, cb);
+            accessRoll(req, Model, cb);
         };
 
 

@@ -44,12 +44,9 @@ define([
                 this.count = options.count;
                 this.page = options.page || 1;
 
-                if (options && options.viewType) {
+                /* if (options && options.viewType) {
                     this.url += options.viewType;
-                }
-
-                delete options.viewType;
-                delete options.contentType;
+                }*/
 
                 this.fetch({
                     data   : options,
