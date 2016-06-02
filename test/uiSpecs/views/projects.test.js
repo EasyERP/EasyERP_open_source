@@ -16139,6 +16139,7 @@ define([
                     var projectName;
                     var customerName;
                     var $health;
+                    var $stageSelect;
                     var $showMoreBtn;
 
                     server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectsForThumbnails)]);
@@ -16181,13 +16182,27 @@ define([
 
                     $firstThumbnail = $($thumbnails[0]);
                     projectName = $firstThumbnail.find('span[data-content="project"]').text();
+                    customerName = $firstThumbnail.find('span[data-content="customer"]').text();
+                    $health = $firstThumbnail.find('span.health-container a');
+                    $stageSelect = $firstThumbnail.find('a.stageSelect');
 
                     expect(projectName).not.to.be.empty;
+                    expect(customerName).not.to.be.empty;
                     expect(projectName).to.not.match(/object Object|undefined/);
+                    expect(customerName).to.not.match(/object Object|undefined/);
+                    expect($health).to.exist;
+                    expect($health)
+                        .to.have.attr('data-value')
+                        .and.not.be.empty;
+
+                    expect($stageSelect).to.exist;
+                    expect($stageSelect.text())
+                        .not.to.be.empty
+                        .and.not.to.match(/object Object|undefined/);
 
                     $showMoreBtn = $thisEl.find('#showMore');
-                    /*clock.tick(1000);
-                     expect($showMoreBtn).to.exist;*/
+
+                    expect($showMoreBtn).to.exist;
 
                     done();
                 });
