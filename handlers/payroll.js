@@ -66,6 +66,10 @@ var Module = function (models) {
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
         var dataKeys = body && body.dataKeys ? body.dataKeys : null;
 
+        if (!dataKeys){
+            return res.status(400).send();
+        }
+
         if (dataKeys && dataKeys.length) {
             async.each(dataKeys, function (dataKey, cb) {
                 PayRoll.remove({dataKey: parseInt(dataKey, 10)}, cb);
@@ -112,8 +116,7 @@ var Module = function (models) {
 
     this.patchByDataKey = function (req, res, next) {
         var body = req.body;
-        var uId;
-        var error;
+        var uId = req.session.uId;
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
 
         var keys = body ? Object.keys(body) : null;
@@ -126,8 +129,19 @@ var Module = function (models) {
                     user: uId,
                     date: new Date().toISOString()
                 };
+                
+                PayRoll.find({dataKey: key}, function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+                    
+                    if (!result.length) {
+                        return res.status(400).send();
+                    }
 
-                PayRoll.update({dataKey: key}, {$set: data}, {multi: true, new: true}, cb);
+                    PayRoll.update({dataKey: key}, {$set: data}, {multi: true, new: true}, cb);
+                });
+                
             }, function (err) {
                 if (err) {
                     return next(err);
@@ -566,9 +580,13 @@ var Module = function (models) {
             year = parseInt(data.year, 10);
             month = parseInt(data.month, 10);
             dataKey = year * 100 + month;
-        } else {
+        } else if (data.dataKey) {
             year = parseInt(data.dataKey.slice(0, 4), 10);
             month = parseInt(data.dataKey.slice(4), 10);
+        }
+
+        if (!dataKey && !month && !year) {
+            return res.status(400).send();
         }
 
         req.body.month = month;
@@ -925,6 +943,6 @@ var Module = function (models) {
     this.generate = function (req, res, next) {
         recount(req, res, next);
     };
-}
+};
 
 module.exports = Module;
