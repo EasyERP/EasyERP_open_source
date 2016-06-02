@@ -495,7 +495,11 @@ var Payment = function (models, event) {
     }
 
     this.getById = function (req, res, next) {
-        var id = req.params.id;
+        getById(req, res, next);
+    };
+
+    function getById(req, res, next) {
+        var id = req.query.id;
         var Payment;
         var query;
         var moduleId = returnModuleId(req);
@@ -562,7 +566,8 @@ var Payment = function (models, event) {
     };
 
     this.getForView = function (req, res, next) {
-        var viewType = req.params.viewType;
+        var viewType = req.query.viewType;
+        var id = req.query.id;
         var type = req.params.byType;
         var forSale = type === 'customers';
         var bonus = type === 'supplier';
@@ -576,6 +581,10 @@ var Payment = function (models, event) {
             dividend: dividend,
             expenses: expenses
         };
+
+        if (id && id.length >= 24){
+            return getById(req, res, next);
+        }
 
         switch (viewType) {
             case "list":
