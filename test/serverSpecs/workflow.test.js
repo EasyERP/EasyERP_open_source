@@ -42,11 +42,11 @@ describe('Workflow Specs', function () {
 
         it('should create workflow', function (done) {
             var body = {
-                name    : 'testWorkflow_10',
-                'status': 'New',
-                '_id'   : 'testCreateWF',
-                'wName' : 'testCreateWF',
-                visible : true
+                name   : 'testWorkflow_10',
+                status : 'New',
+                _id    : 'testCreateWF',
+                wName  : 'testCreateWF',
+                visible: true
             };
             aggent
                 .post('workflows')
@@ -269,11 +269,11 @@ describe('Workflow Specs', function () {
 
         it('should fail create workflow', function (done) {
             var body = {
-                name    : 'testWorkflow_10',
-                'status': 'New',
-                '_id'   : 'testCreateWF',
-                'wName' : 'testCreateWF',
-                visible : true
+                name   : 'testWorkflow_10',
+                status : 'New',
+                _id    : 'testCreateWF',
+                wName  : 'testCreateWF',
+                visible: true
             };
             aggent
                 .post('workflows')
