@@ -1165,7 +1165,7 @@ require.config({
         images           : './public/images',
         modules          : './constants/test/modules',
         dashboardVacation: './constants/test/dashboardVacation',
-        filter          : './constants/test/filter'
+        filter           : './constants/test/filter'
     },
     shim   : {
         jQuery       : {

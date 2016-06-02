@@ -1364,11 +1364,14 @@ define([
             it('Try to fetch collection with 401 error', function () {
                 var leadsUrl = new RegExp('\/leads\/list', 'i');
 
+                historyNavigateSpy.reset();
+
                 server.respondWith('GET', leadsUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify(fakeLeads)]);
                 leadsCollection = new LeadsCollection({
                     viewType: 'list'
                 });
                 server.respond();
+                expect(historyNavigateSpy.called).to.be.true;
             });
 
             it('Try to create topBar view', function () {
@@ -1381,8 +1384,8 @@ define([
                     viewType: 'list'
                 });
                 server.respond();
-
-                expect(leadsCollection).to.have.lengthOf(3);
+                expect(leadsCollection)
+                    .to.have.lengthOf(3);
 
                 topBarView = new TopBarView({
                     collection: leadsCollection,
@@ -1426,6 +1429,7 @@ define([
                 var $contentHolderEl;
                 var $listContainerEl;
                 var workFlowUrl = new RegExp('/Workflows', 'i');
+                var $firstRow;
 
                 server.respondWith('GET', workFlowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWorkflows)]);
                 listView = new ListView({
@@ -1436,13 +1440,13 @@ define([
                 });
                 server.respond();
 
-                $contentHolderEl = view.$el.find('#content-holder');
-                $listContainerEl = $contentHolderEl.find('table');
+                $listContainerEl = listView.$el;
 
-                expect($contentHolderEl).to.exist;
                 expect($listContainerEl).to.exist;
-                expect($listContainerEl).to.have.class('list');
-                expect($listContainerEl.find('#listTable >tr').length).to.equals(3);
+                expect($listContainerEl.find('#listTable > tr').length).to.equals(3);
+
+                $firstRow = $listContainerEl.find('#listTable > tr').first();
+
 
                 topBarView.bind('copyEvent', listView.copy, listView);
                 topBarView.bind('generateEvent', listView.generate, listView);
