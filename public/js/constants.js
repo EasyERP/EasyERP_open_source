@@ -406,7 +406,7 @@ define([], function () {
         },
         salesQuotation  : {
             'Project'      : {
-                view   : 'projectName',
+                view   : 'project',
                 backend: 'project._id'
             },
             'Customer'     : {
