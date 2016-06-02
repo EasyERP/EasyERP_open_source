@@ -14,7 +14,7 @@ var workflows = function (models, event) {
             query.name = data.name;
         }
 
-        Workflow.find(query).sort({'sequence': -1, "editedBy.date": -1}).exec(function (err, result) {
+        Workflow.find(query).sort({sequence: -1, 'editedBy.date': -1}).exec(function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -30,7 +30,7 @@ var workflows = function (models, event) {
         var query = Workflow.find({wId: data.id, visible: true});
 
         query.select('name wName');
-        query.sort({'sequence': -1, "editedBy.date": -1});
+        query.sort({sequence: -1, 'editedBy.date': -1});
         query.exec(function (err, result) {
             if (err) {
                 return next(err);
@@ -152,16 +152,18 @@ var workflows = function (models, event) {
 
         if (!(isCreate || isDelete)) {
             var inc = -1;
+            var c;
+
             if (start > end) {
                 inc = 1;
-                var c = end;
+                c = end;
                 end = start;
                 start = c;
             } else {
                 end -= 1;
             }
             objChange = {};
-            objFind = {"wId": wId};
+            objFind = {wId: wId};
             objFind[sequenceField] = {$gte: start, $lte: end};
             objChange[sequenceField] = inc;
             query = model.update(objFind, {$inc: objChange}, {multi: true});
@@ -173,7 +175,7 @@ var workflows = function (models, event) {
             });
         } else {
             if (isCreate) {
-                query = model.count({"wId": wId}).exec(function (err, res) {
+                query = model.count({wId: wId}).exec(function (err, res) {
                     if (callback) {
                         callback(res);
                     }
@@ -181,7 +183,7 @@ var workflows = function (models, event) {
             }
             if (isDelete) {
                 objChange = {};
-                objFind = {"wId": wId};
+                objFind = {wId: wId};
                 objFind[sequenceField] = {$gt: start};
                 objChange[sequenceField] = -1;
                 query = model.update(objFind, {$inc: objChange}, {multi: true});
@@ -220,7 +222,7 @@ var workflows = function (models, event) {
                 body.wId = data._id;
                 body.name = data.name;
                 body.status = data.status;
-                updateSequence(Workflow, "sequence", 0, 0, data._id, true, false, function (sequence) {
+                updateSequence(Workflow, 'sequence', 0, 0, data._id, true, false, function (sequence) {
                     body.sequence = sequence;
 
                     body.save(function (err, result) {
@@ -235,11 +237,11 @@ var workflows = function (models, event) {
         });
     };
 
-    /*this.updateRefs = function (result, dbName, _id) {
+    /* this.updateRefs = function (result, dbName, _id) {
      var ProjectSchema;
      var ProjectModel;
 
-     if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === "production") || (dbName === "development")) {
+     if ((dbName === CONSTANTS.WTRACK_DB_NAME) || (dbName === 'production') || (dbName === 'development')) {
      ProjectSchema = mongoose.Schemas.Project;
      ProjectModel = models.get(dbName, 'Project', ProjectSchema);
 
@@ -274,7 +276,7 @@ var workflows = function (models, event) {
 
                         res.status(200).send({success: 'WorkFlow update success'});
 
-                        //self.updateRefs(res, dbName, _id);
+                        // self.updateRefs(res, dbName, _id);
                     });
                 }
             });
@@ -287,7 +289,7 @@ var workflows = function (models, event) {
         var data = req.body;
         var _id = req.params.id;
 
-        updateSequence(Workflow, "sequence", data.sequenceStart, data.sequence, data.wId, false, false, function (sequence) {
+        updateSequence(Workflow, 'sequence', data.sequenceStart, data.sequence, data.wId, false, false, function (sequence) {
             data.sequence = sequence;
             Workflow.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err) {
                 if (err) {
@@ -309,7 +311,7 @@ var workflows = function (models, event) {
             }
 
             event.emit('removeWorkflow', req, workflow.wId, workflow._id);
-            updateSequence(Workflow, "sequence", workflow.sequence, workflow.sequence, workflow.wId, false, true, function () {
+            updateSequence(Workflow, 'sequence', workflow.sequence, workflow.sequence, workflow.wId, false, true, function () {
                 res.status(200).send({success: 'workflow removed'});
             });
         });
@@ -317,7 +319,7 @@ var workflows = function (models, event) {
     };
 
     this.relatedStatus = function (req, res, next) {
-        var relatedStatus = models.get(req.session.lastDb, "relatedStatus", relatedStatusSchema);
+        var relatedStatus = models.get(req.session.lastDb, 'relatedStatus', relatedStatusSchema);
 
         relatedStatus.find({}, function (err, result) {
             if (err) {

@@ -8,7 +8,7 @@ var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
-var dbId = 'dendb';
+var dbId = 'production';
 var admin = {
     login: 'admin',
     pass : 'tm2016',
