@@ -15,7 +15,7 @@ var connectOptions = {
     w   : 1,
     j   : true
 };
-dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, connectOptions);
+var dbObject = mongoose.createConnection('localhost', 'production'/*, 28017, connectOptions*/);
 dbObject.on('error', function (err) {
     console.error(err);
 });
