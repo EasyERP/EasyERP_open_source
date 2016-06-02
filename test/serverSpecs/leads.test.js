@@ -1,4 +1,4 @@
-require('../../config/development');
+// require('../../config/development');
 
 var request = require('supertest');
 var expect = require('chai').expect;
@@ -48,18 +48,18 @@ describe('Leads Specs', function () {
                 .send(body)
                 .expect(201)
                 .end(function (err, res) {
-                    var body = res.body;
+                    var bodyRes = res.body;
 
                     if (err) {
                         return done(err);
                     }
 
-                    expect(body)
+                    expect(bodyRes)
                         .to.be.instanceOf(Object);
-                    expect(body)
+                    expect(bodyRes)
                         .to.have.property('success');
 
-                    id = body.id;
+                    id = bodyRes.id;
 
                     done();
                 });
@@ -193,40 +193,15 @@ describe('Leads Specs', function () {
                 });
         });
 
-        //it('should get Lead for viewType kanban', function (done) {
-        //
-        //    var query = {
-        //        workflowId: '528ce5e3f3f67bc40b000018'
-        //    };
-        //
-        //    aggent
-        //        .get('leads/kanban')
-        //        .query(query)
-        //        .expect(200)
-        //        .end(function (err, res) {
-        //            var body = res.body;
-        //
-        //            if (err) {
-        //                return done(err);
-        //            }
-        //
-        //            expect(body)
-        //                .to.be.instanceOf(Object);
-        //            expect(body)
-        //                .to.have.property('data');
-        //            expect(body)
-        //                .to.have.property('workflowId');
-        //            done();
-        //        });
-        //});
+/*        it('should get Lead for viewType kanban', function (done) {
 
-        it('should partially update Lead', function (done) {
-            var body = {
-                name: 'test'
+            var query = {
+                workflowId: '528ce5e3f3f67bc40b000018'
             };
+
             aggent
-                .patch('leads/' + id)
-                .send(body)
+                .get('leads/kanban')
+                .query(query)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -238,8 +213,33 @@ describe('Leads Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('success');
+                        .to.have.property('data');
                     expect(body)
+                        .to.have.property('workflowId');
+                    done();
+                });
+        });*/
+
+        it('should partially update Lead', function (done) {
+            var body = {
+                name: 'test'
+            };
+            aggent
+                .patch('leads/' + id)
+                .send(body)
+                .expect(200)
+                .end(function (err, res) {
+                    var bodyRes = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(bodyRes)
+                        .to.be.instanceOf(Object);
+                    expect(bodyRes)
+                        .to.have.property('success');
+                    expect(bodyRes)
                         .to.have.property('result');
 
                     done();
@@ -255,17 +255,17 @@ describe('Leads Specs', function () {
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {
-                    var body = res.body;
+                    var bodyRes = res.body;
 
                     if (err) {
                         return done(err);
                     }
 
-                    expect(body)
+                    expect(bodyRes)
                         .to.be.instanceOf(Object);
-                    expect(body)
+                    expect(bodyRes)
                         .to.have.property('success');
-                    expect(body)
+                    expect(bodyRes)
                         .to.have.property('result');
 
                     done();

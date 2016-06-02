@@ -1,4 +1,4 @@
-require('../../config/development');
+// require('../../config/development');
 
 var request = require('supertest');
 var expect = require('chai').expect;
@@ -17,7 +17,7 @@ var failUser = {
     dbId : dbId
 };
 
-describe("Opportunity Specs", function () {
+describe('Opportunity Specs', function () {
     'use strict';
     var id;
 
@@ -40,7 +40,7 @@ describe("Opportunity Specs", function () {
 
         it('should create opportunity', function (done) {
             var body = {
-                name: "Subject"
+                name: 'Subject'
             };
 
             aggent
@@ -48,18 +48,18 @@ describe("Opportunity Specs", function () {
                 .send(body)
                 .expect(201)
                 .end(function (err, res) {
-                    var body = res.body;
+                    var bodyRes = res.body;
 
                     if (err) {
                         return done(err);
                     }
 
-                    expect(body)
+                    expect(bodyRes)
                         .to.be.instanceOf(Object);
-                    expect(body)
+                    expect(bodyRes)
                         .to.have.property('success');
 
-                    id = body.id;
+                    id = bodyRes.id;
 
                     done();
                 });
@@ -272,15 +272,15 @@ describe("Opportunity Specs", function () {
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {
-                    var body = res.body;
+                    var bodyRes = res.body;
 
                     if (err) {
                         return done(err);
                     }
 
-                    expect(body)
+                    expect(bodyRes)
                         .to.be.instanceOf(Object);
-                    expect(body)
+                    expect(bodyRes)
                         .to.have.property('success');
 
                     done();
@@ -296,24 +296,24 @@ describe("Opportunity Specs", function () {
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {
-                    var body = res.body;
+                    var bodyRes = res.body;
 
                     if (err) {
                         return done(err);
                     }
 
-                    expect(body)
+                    expect(bodyRes)
                         .to.be.instanceOf(Object);
-                    expect(body)
+                    expect(bodyRes)
                         .to.have.property('success');
-                    expect(body)
+                    expect(bodyRes)
                         .to.have.property('result');
 
                     done();
                 });
         });
 
-        it("should remove opportunity", function (done) {
+        it('should remove opportunity', function (done) {
             aggent
                 .delete('opportunities/' + id)
                 .expect(200, done);
@@ -331,16 +331,16 @@ describe("Opportunity Specs", function () {
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {
-                    var body = res.body;
+                    var bodyRes = res.body;
 
                     if (err) {
                         return done(err);
                     }
 
-                    expect(body)
+                    expect(bodyRes)
                         .to.have.property('success');
 
-                    id = body.id;
+                    id = bodyRes.id;
 
                     done();
                 });
@@ -355,7 +355,7 @@ describe("Opportunity Specs", function () {
                 .expect(400, done);
         });
 
-        it("should remove opportunity after createLeadFromSite", function (done) {
+        it('should remove opportunity after createLeadFromSite', function (done) {
             aggent
                 .delete('opportunities/' + id)
                 .expect(200, done);
@@ -381,7 +381,7 @@ describe("Opportunity Specs", function () {
 
         it('should fail create Opportunity', function (done) {
             var body = {
-                name: "Subject"
+                name: 'Subject'
             };
 
             aggent
