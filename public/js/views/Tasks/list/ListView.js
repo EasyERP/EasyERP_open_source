@@ -76,9 +76,9 @@ define([
                 e.preventDefault();
                 var id = $(e.target).closest('tr').data("id");
                 var model = new currentModel({validate: false});
-                model.urlRoot = '/Tasks/form';
+                model.urlRoot = '/Tasks/';
                 model.fetch({
-                    data   : {id: id},
+                    data   : {id: id, viewType : "form"},
                     success: function (model) {
                         new editView({model: model});
                     },

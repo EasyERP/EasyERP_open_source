@@ -220,10 +220,10 @@ var Filters = function (models) {
                             name: '$jobs.name'
                         }
                     },
-                    'name': {
+                    'project': {
                         $addToSet: {
                             _id : '$project._id',
-                            name: '$project.projectName'
+                            name: '$project.name'
                         }
                     },
                     'customer'   : {
@@ -246,7 +246,7 @@ var Filters = function (models) {
                     'department' : {
                         $addToSet: {
                             _id : '$department._id',
-                            name: '$department.departmentName'
+                            name: '$department.name'
                         }
                     },
                     'year'       : {
@@ -877,7 +877,7 @@ var Filters = function (models) {
                     'project'   : {
                         $addToSet: {
                             _id : '$project._id',
-                            name: '$project.projectName'
+                            name: '$project.name'
                         }
                     },
                     'summary'   : {
@@ -1169,7 +1169,7 @@ var Filters = function (models) {
                     'project'    : {
                         $addToSet: {
                             _id : '$project._id',
-                            name: '$project.projectName'
+                            name: '$project.name'
                         }
                     },
                     'salesPerson': {
@@ -1285,7 +1285,7 @@ var Filters = function (models) {
                     'project'    : {
                         $addToSet: {
                             _id : '$project._id',
-                            name: '$project.projectName'
+                            name: '$project.name'
                         }
                     },
                     'salesPerson': {
@@ -1987,10 +1987,10 @@ var Filters = function (models) {
                 }, {
                     $group: {
                         _id           : null,
-                        'projectName' : {
+                        'project' : {
                             $addToSet: {
                                 _id : '$project._id',
-                                name: '$project.projectName'
+                                name: '$project.name'
                             }
                         },
                         'supplier'    : {

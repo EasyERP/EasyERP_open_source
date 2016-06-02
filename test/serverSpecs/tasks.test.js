@@ -28,7 +28,7 @@ describe("Tasks Specs", function () {
                 .send({
                     login: 'admin',
                     pass: 'tm2016',
-                    dbId: 'pavlodb'
+                    dbId: 'production'
                 })
                 .expect(200, done);
         });
@@ -201,8 +201,8 @@ describe("Tasks Specs", function () {
 
         it('should return one task with details', function (done) {
             aggent
-                .get('tasks/form')
-                .query({id: id})
+                .get('tasks')
+                .query({id: id, viewType : 'form'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -304,7 +304,7 @@ describe("Tasks Specs", function () {
 
         it('should return tasks for kanban', function (done) {
             aggent
-                .get('tasks/kanban')
+                .get('tasks')
                 .query({workflowId: workflow})
                 .expect(200)
                 .end(function (err, res) {
@@ -392,8 +392,8 @@ describe("Tasks Specs", function () {
 
         it('check if workflow changed', function (done) {
             aggent
-                .get('tasks/form')
-                .query({id: id})
+                .get('tasks')
+                .query({id: id, viewType : 'form'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -539,8 +539,8 @@ describe("Tasks Specs", function () {
 
         it('should return empty object when querying deleted task', function (done) {
             aggent
-                .get('tasks/form')
-                .query({id: id})
+                .get('tasks')
+                .query({id: id, viewType : 'form'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -610,7 +610,7 @@ describe("Tasks Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass: 'thinkmobiles2015',
-                    dbId: 'pavlodb'
+                    dbId: 'production'
                 })
                 .expect(200, done);
         });

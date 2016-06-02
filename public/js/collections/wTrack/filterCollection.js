@@ -82,6 +82,10 @@
                         });
                     }
                 });
+            },
+
+            parse : function (response) {
+                return response.data;
             }
         });
         return wTrackCollection;
