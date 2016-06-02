@@ -8548,37 +8548,49 @@ define([
                 it('Try to create Dashboard list view', function (done) {
                     var dashBoardUrl = new RegExp('dashboard\/vacation', 'i');
 
-                    this.timeout(25000);
+                    this.timeout(20000);
 
                     server.respondWith('GET', dashBoardUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDashBoardVacations)]);
                     indexView = new IndexView({
                         startTime: new Date()
                     });
                     server.respond();
-                    clock.tick(24000);
+                    clock.tick(19000);
 
                     expect(indexView.$el.find('.dashBoardMargin')).to.exist;
 
                     done();
                 });
 
-                it('Try to expand all', function () {
+                it('Try to expand all', function (done) {
                     var $expandAllBtn = indexView.$el.find('.openAll');
+
+                    this.timeout(20000);
 
                     $expandAllBtn.click();
                     expect(indexView.$el.find('#dashboardBody > tr:nth-child(3)').attr('data-content')).to.be.equals('project');
+                    clock.tick(9000);
 
                     $expandAllBtn.click();
+                    clock.tick(9000);
+
+                    done();
                 });
 
-                it('Try to open web department', function () {
+                it('Try to open web department', function (done) {
                     var $webDepartmentRow = indexView.$el.find('#dashboardBody > tr:nth-child(1) > td:nth-child(2)');
+
+                    this.timeout(20000);
 
                     $webDepartmentRow.click();
                     expect(depOpenSpy.called).to.be.true;
+                    clock.tick(9000);
 
                     $webDepartmentRow.click();
                     expect(depOpenSpy.calledTwice).to.be.true;
+                    clock.tick(9000);
+
+                    done();
                 });
 
                 it('Try to open and close change range dialog', function () {
@@ -8591,12 +8603,14 @@ define([
                     $cancelBtn.click();
                 });
 
-                it('Try to change date range in TopBarView', function () {
+                it('Try to change date range in TopBarView', function (done) {
                     var $startDateInput;
                     var $endDateInput;
                     var $updateBtn;
                     var $dateRangeEl = topBarView.$el.find('li.dateRange');
                     var dashBoardUrl = new RegExp('dashboard\/vacation', 'i');
+
+                    this.timeout(20000);
 
                     $dateRangeEl.click();
 
@@ -8614,47 +8628,73 @@ define([
                     indexView.changeDateRange();
                     server.respond();
 
+                    clock.tick(19000);
+
                     expect(indexView.$el.find('.dashBoardMargin')).to.exist;
+
+                    done();
                 });
 
-                it('Try to create wTrack', function () {
+                it('Try to create wTrack', function (done) {
                     var $projectsRow;
                     var $createWTrack;
-                    var $neeeEmployeeRow = indexView.$el.find('#dashboardBody > tr:nth-child(4) .employeesRow');
-                    var projectsUrl = new RegExp('\/project\/getForWtrack', 'i');
+                    var $needEmployeeRow = indexView.$el.find('#dashboardBody > tr[data-id="55b92ad221e4b7c40f00004d"] .employeesRow');
+                    var projectsUrl = new RegExp('\/projects\/getForWtrack', 'i');
+                    var vacationUrl = new RegExp('\/vacation\/list', 'i');
+                    var holidayUrl = new RegExp('\/holiday\/list', 'i');
 
-                    $neeeEmployeeRow.click();
+                    this.timeout(5000);
+
+                    $needEmployeeRow.click();
+                    clock.tick(4000);
                     expect(devOpenSpy.called).to.be.true;
 
-                    $projectsRow = $neeeEmployeeRow.closest('tr').next();
-                    $createWTrack = $($projectsRow.find('td.createTd')[0]);
+                    $projectsRow = $needEmployeeRow.closest('tr').next();
+
+                    $createWTrack = $projectsRow.find('td.createTd').first();
 
                     server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectWTrack)]);
+                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    server.respondWith('GET', holidayUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     $createWTrack.click();
+                    server.respond();
+                    server.respond();
                     server.respond();
 
                     expect($('.ui-dialog')).to.exist;
                     expect(createWTrackSpy.called).to.be.true;
                     $('.ui-dialog').remove();
+
+                    done();
                 });
 
                 it('Try to get Wtrack Info', function () {
-                    var $wTrackInfoEl;
                     var wTrackUrl = new RegExp('\/wTrack\/dash', 'i');
-                    var $neeeEmployeeRow = indexView.$el.find('#dashboardBody > tr:nth-child(4) .employeesRow');
+                    var $needEmployeeRow = indexView.$el.find('#dashboardBody > tr[data-id="55b92ad221e4b7c40f00004d"] .employeesRow');
+                    var vacationUrl = new RegExp('\/vacation\/list', 'i');
+                    var holidayUrl = new RegExp('\/holiday\/list', 'i');
+                    var $wTrackInfoEl;
+                    var $projectsRow;
 
                     // close employee
-                    $neeeEmployeeRow.click();
+                    $needEmployeeRow.click();
                     expect(devOpenSpy.calledTwice).to.be.true;
 
                     // open employee
-                    $neeeEmployeeRow.click();
+                    $needEmployeeRow.click();
                     expect(devOpenSpy.calledThrice).to.be.true;
 
-                    $wTrackInfoEl = $(indexView.$el.find('#dashboardBody > tr[data-employee="55b92ad221e4b7c40f00004d"] > td.wTrackInfo > span')[0]);
 
+                    $projectsRow = $needEmployeeRow.closest('tr').next().next();
+
+                    $wTrackInfoEl = $projectsRow.find('td').eq(1).find('span').first();
+
+                    server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                    server.respondWith('GET', holidayUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     server.respondWith('GET', wTrackUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWTrackDash)]);
                     $wTrackInfoEl.click();
+                    server.respond();
+                    server.respond();
                     server.respond();
 
                     expect($('.ui-dialog')).to.be.exist;
@@ -8680,7 +8720,7 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    expect($wTrackInfoEl.find('.projectHours').text()).to.be.equals('24');
+                    expect($wTrackInfoEl.find('.projectHours').text()).to.be.equals('39');
                 });
             });
         });

@@ -13,7 +13,8 @@ define([
     'helpers/employeeHelper',
     'helpers/keyCodeHelper',
     'helpers/overTime',
-    'helpers/isOverTime'
+    'helpers/isOverTime',
+    'constants'
 ], function (Backbone,
              $,
              _,
@@ -28,7 +29,8 @@ define([
              employeeHelper,
              keyCodes,
              setOverTime,
-             isOverTime) {
+             isOverTime,
+             CONSTANTS) {
     'use strict';
     var CreateView = Backbone.View.extend({
         template   : _.template(template),
