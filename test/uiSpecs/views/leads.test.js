@@ -31,106 +31,242 @@ define([
 
     var expect;
     var fakeLeads = {
-        data: [
+        total: 3,
+        data : [
             {
-                _id        : "56c1c4ecc99aad5365bff221",
-                source     : "linkedin",
-                campaign   : "",
-                editedBy   : {
-                    date: "2016-03-15T13:08:03.497Z",
-                    user: {
-                        _id  : "56d704f1805eb08d2b93d95f",
-                        login: "eugen.lendyel"
+                _id            : null,
+                contactName    : " ",
+                salesPerson    : {
+                    name: {
+                        last : "Gusti",
+                        first: "Yana"
                     }
                 },
-                createdBy  : {
-                    date: "2016-02-15T12:30:36.031Z",
-                    user: {
-                        _id  : "5631dc18bf9592df04c55106",
-                        login: "alina.yurenko"
-                    }
+                workflow       : {
+                    _id         : "528ce779f3f67bc40b00001f",
+                    __v         : 0,
+                    attachments : [],
+                    color       : "#2C3E50",
+                    name        : "In Progress",
+                    sequence    : 1,
+                    status      : "In Progress",
+                    wId         : "Leads",
+                    wName       : "lead",
+                    source      : "lead",
+                    targetSource: [
+                        "lead"
+                    ],
+                    visible     : true
                 },
-                workflow   : {
-                    _id   : "528ce79bf3f67bc40b000020",
-                    name  : "Cancelled",
-                    status: "Cancelled"
+                createdBy      : {
+                    user: "yana.gusti",
+                    date: "2016-05-17T08:49:02.333Z"
                 },
-                phones     : {
+                editedBy       : {
+                    user: "yana.gusti",
+                    date: "2016-05-17T08:49:56.981Z"
+                },
+                creationDate   : "2016-05-17T08:49:02.332Z",
+                isOpportunitie : false,
+                name           : "test",
+                expectedRevenue: {
+                    currency: "",
+                    progress: 0,
+                    value   : 0
+                },
+                attachments    : [],
+                notes          : [],
+                convertedDate  : "2016-05-17T08:49:02.334Z",
+                isConverted    : false,
+                source         : "email",
+                campaign       : "email",
+                sequence       : 0,
+                reffered       : "",
+                optout         : false,
+                active         : true,
+                color          : "#4d5a75",
+                categories     : {
+                    name: "",
+                    id  : ""
+                },
+                priority       : "High",
+                expectedClosing: null,
+                nextAction     : {
+                    date: "2016-05-17T08:49:02.332Z",
+                    desc: ""
+                },
+                internalNotes  : "",
+                phones         : {
                     fax   : "",
                     phone : "",
                     mobile: ""
                 },
-                email      : "herculosh@yahoo.com",
-                contactName: {
-                    last : "",
-                    first: ""
+                email          : "",
+                address        : {
+                    country: "",
+                    zip    : "",
+                    state  : "",
+                    city   : "",
+                    street : ""
                 },
-                name       : "clone livejasmin"
+                company        : null
             },
             {
-                _id        : "5707584d3850536324af7972",
-                source     : "",
-                campaign   : "",
-                editedBy   : {
-                    date: "2016-04-08T07:10:50.380Z",
-                    user: {
-                        _id  : "563f673270bbc2b740ce89ae",
-                        login: "alex.sokhanych"
+                _id            : null,
+                contactName    : "Michael FitzGerald",
+                salesPerson    : {
+                    name: {
+                        last : "Popp",
+                        first: "Larysa"
                     }
                 },
-                createdBy  : {
-                    date: "2016-04-08T07:05:49.923Z",
-                    user: null
+                workflow       : {
+                    _id         : "528ce779f3f67bc40b00001f",
+                    __v         : 0,
+                    attachments : [],
+                    color       : "#2C3E50",
+                    name        : "In Progress",
+                    sequence    : 1,
+                    status      : "In Progress",
+                    wId         : "Leads",
+                    wName       : "lead",
+                    source      : "lead",
+                    targetSource: [
+                        "lead"
+                    ],
+                    visible     : true
                 },
-                workflow   : {
-                    _id   : "528ce779f3f67bc40b00001f",
-                    name  : "In Progress",
-                    status: "In Progress"
+                createdBy      : {
+                    user: "larysa.popp",
+                    date: "2016-05-05T11:09:17.326Z"
                 },
-                phones     : {
+                editedBy       : {
+                    user: "larysa.popp",
+                    date: "2016-05-05T11:09:17.326Z"
+                },
+                creationDate   : "2016-05-05T11:09:17.326Z",
+                isOpportunitie : false,
+                name           : "Outstaff project Android",
+                expectedRevenue: {
+                    currency: "",
+                    progress: 0,
+                    value   : 0
+                },
+                attachments    : [],
+                notes          : [],
+                convertedDate  : "2016-05-05T11:09:17.326Z",
+                isConverted    : false,
+                source         : "",
+                campaign       : "",
+                sequence       : 14,
+                reffered       : "",
+                optout         : false,
+                active         : true,
+                color          : "#4d5a75",
+                categories     : {
+                    name: "",
+                    id  : ""
+                },
+                priority       : "P3",
+                expectedClosing: null,
+                nextAction     : {
+                    date: "2016-05-05T11:09:17.326Z",
+                    desc: ""
+                },
+                internalNotes  : "Android project ( 6-8 weeks)",
+                phones         : {
                     fax   : "",
                     phone : "",
-                    mobile: ""
+                    mobile: "+353868331710"
                 },
-                email      : "tatyanak1@mail.ru",
-                contactName: {
-                    last : "",
-                    first: "Tatyana"
+                email          : "",
+                address        : {
+                    country: "Ireland",
+                    zip    : "",
+                    state  : "",
+                    city   : "Galway",
+                    street : ""
                 },
-                name       : "Tatyana"
+                company        : null
             },
             {
-                _id        : "570379d4ec814f7c039b8077",
-                source     : "",
-                campaign   : "",
-                editedBy   : {
-                    date: "2016-04-06T09:05:11.540Z",
-                    user: {
-                        _id  : "563f673270bbc2b740ce89ae",
-                        login: "alex.sokhanych"
+                _id            : null,
+                contactName    : "Yuzak Mykhaylo ",
+                salesPerson    : {
+                    name: {
+                        last : "Yartysh",
+                        first: "Nataliya"
                     }
                 },
-                createdBy  : {
-                    date: "2016-04-05T08:39:48.972Z",
-                    user: null
+                workflow       : {
+                    _id         : "528ce779f3f67bc40b00001f",
+                    __v         : 0,
+                    attachments : [],
+                    color       : "#2C3E50",
+                    name        : "In Progress",
+                    sequence    : 1,
+                    status      : "In Progress",
+                    wId         : "Leads",
+                    wName       : "lead",
+                    source      : "lead",
+                    targetSource: [
+                        "lead"
+                    ],
+                    visible     : true
                 },
-                workflow   : {
-                    _id   : "528ce79bf3f67bc40b000020",
-                    name  : "Cancelled",
-                    status: "Cancelled"
+                createdBy      : {
+                    date: "2016-05-04T12:57:20.800Z"
                 },
-                phones     : {
+                editedBy       : {
+                    user: "natalia.yartysh",
+                    date: "2016-05-05T06:08:35.385Z"
+                },
+                creationDate   : "2016-05-04T12:57:20.800Z",
+                isOpportunitie : false,
+                name           : "Yuzak Mykhaylo",
+                expectedRevenue: {
+                    currency: "",
+                    progress: 0,
+                    value   : 0
+                },
+                attachments    : [],
+                notes          : [],
+                convertedDate  : "2016-05-04T12:57:20.801Z",
+                isConverted    : false,
+                source         : "website",
+                campaign       : "",
+                sequence       : 14,
+                reffered       : "",
+                optout         : false,
+                active         : true,
+                color          : "#4d5a75",
+                categories     : {
+                    name: "",
+                    id  : ""
+                },
+                priority       : "Trivial",
+                expectedClosing: null,
+                nextAction     : {
+                    date: "2016-05-04T12:57:20.800Z",
+                    desc: ""
+                },
+                internalNotes  : "message:Hello I would like to cooperate with your company. I am interested in your services, so how can i contact with you?",
+                phones         : {
                     fax   : "",
                     phone : "",
                     mobile: ""
                 },
-                email      : "jessica.robbins20@hotmail.com",
-                contactName: {
-                    last : "",
-                    first: "Jessica Robbins"
+                email          : "wodes.llc@gmail.com",
+                address        : {
+                    country: "",
+                    zip    : "",
+                    state  : "",
+                    city   : "",
+                    street : ""
                 },
-                name       : "Jessica Robbins"
-            }]
+                company        : null
+            }
+        ]
     };
     var fakeUsersForDD = {
         data: [
@@ -1362,7 +1498,7 @@ define([
             });
 
             it('Try to fetch collection with 401 error', function () {
-                var leadsUrl = new RegExp('\/leads\/list', 'i');
+                var leadsUrl = new RegExp('\/leads\/', 'i');
 
                 historyNavigateSpy.reset();
 
@@ -1377,7 +1513,7 @@ define([
             it('Try to create topBar view', function () {
                 var $createBtnHolderEl;
                 var $addLeadsBtnEl;
-                var leadsUrl = new RegExp('\/leads\/list', 'i');
+                var leadsUrl = new RegExp('\/leads\/', 'i');
 
                 server.respondWith('GET', leadsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeLeads)]);
                 leadsCollection = new LeadsCollection({
@@ -1426,10 +1562,21 @@ define([
             });
 
             it('Try to create lead list view', function () {
-                var $contentHolderEl;
                 var $listContainerEl;
                 var workFlowUrl = new RegExp('/Workflows', 'i');
                 var $firstRow;
+                var countColumn;
+                var subject;
+                var contactName;
+                var email;
+                var phone;
+                var country;
+                var campaign;
+                var source;
+                var stage;
+                var assigned;
+                var createBy;
+                var editedBy;
 
                 server.respondWith('GET', workFlowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWorkflows)]);
                 listView = new ListView({
@@ -1446,7 +1593,46 @@ define([
                 expect($listContainerEl.find('#listTable > tr').length).to.equals(3);
 
                 $firstRow = $listContainerEl.find('#listTable > tr').first();
+                countColumn = $firstRow.find('td').length;
+                expect(countColumn).to.be.equals(13);
 
+                subject = $firstRow.find('td:nth-child(3) > span').text();
+                expect(subject).not.to.be.empty;
+                expect(subject).to.not.match(/object Object|undefined/);
+
+                contactName = $firstRow.find('td:nth-child(4)').text();
+                expect(contactName).to.not.match(/object Object|undefined/);
+
+                email = $firstRow.find('td:nth-child(5)').text();
+                expect(email).to.not.match(/object Object|undefined/);
+
+                phone = $firstRow.find('td:nth-child(6) > a').text();
+                expect(phone).to.not.match(/object Object|undefined/);
+
+                country = $firstRow.find('td:nth-child(7)').text();
+                expect(country).to.not.match(/object Object|undefined/);
+
+                campaign = $firstRow.find('td:nth-child(8)').text();
+                expect(campaign).to.not.match(/object Object|undefined/);
+
+                source = $firstRow.find('td:nth-child(9)').text();
+                expect(source).to.not.match(/object Object|undefined/);
+
+                expect($firstRow.find('td:nth-child(10)').find('a')).to.be.not.empty;
+                stage = $firstRow.find('td:nth-child(10) > a').text();
+                expect(stage).not.to.be.empty;
+                expect(stage).to.not.match(/object Object|undefined/);
+
+                assigned = $firstRow.find('td:nth-child(11)').text();
+                expect(assigned).to.not.match(/object Object|undefined/);
+
+                createBy = $firstRow.find('td:nth-child(12)').text();
+                expect(createBy).not.to.be.empty;
+                expect(createBy).to.not.match(/object Object|undefined/);
+
+                editedBy = $firstRow.find('td:nth-child(13)').text();
+                expect(editedBy).not.to.be.empty;
+                expect(editedBy).to.not.match(/object Object|undefined/);
 
                 topBarView.bind('copyEvent', listView.copy, listView);
                 topBarView.bind('generateEvent', listView.generate, listView);
