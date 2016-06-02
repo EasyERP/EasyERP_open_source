@@ -1,13 +1,12 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var CONSTANTS = require('../../constants/constantsTest');
 var aggent;
 
-describe("Journal Specs", function () {
+require('../../config/development');
+
+describe('Journal Specs', function () {
     'use strict';
 
     describe('Journal with admin', function () {
@@ -31,12 +30,12 @@ describe("Journal Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create Journal", function (done) {
+        it('should create Journal', function (done) {
             var body = {
-                "creditAccount": CONSTANTS.CREDITACCOUNT,
-                "debitAccount" : CONSTANTS.DEBITACCOUNT,
-                "name"         : "testJournal",
-                "transaction"  : "Payment"
+                creditAccount: CONSTANTS.CREDITACCOUNT,
+                debitAccount : CONSTANTS.DEBITACCOUNT,
+                name         : 'testJournal',
+                transaction  : 'Payment'
             };
 
             aggent
@@ -61,11 +60,12 @@ describe("Journal Specs", function () {
                 });
         });
 
-        it("should get journal with options", function (done) {
+        it('should get journal with options', function (done) {
             var query = {
-                sort : {
+                sort: {
                     account: -1
                 },
+
                 viewType: 'list'
             };
 
@@ -89,9 +89,9 @@ describe("Journal Specs", function () {
                 });
         });
 
-        it("should get journal for Dd", function (done) {
+        it('should get journal for Dd', function (done) {
             var query = {
-                '_id' : id
+                _id: id
             };
 
             aggent
@@ -117,7 +117,7 @@ describe("Journal Specs", function () {
                 });
         });
 
-        it("should delete journal", function (done) {
+        it('should delete journal', function (done) {
             aggent
                 .delete('journal/' + id)
                 .expect(200, done);
@@ -127,7 +127,7 @@ describe("Journal Specs", function () {
 
     describe('Journal with no authorise', function () {
 
-        it("should fail get Journal for Dd", function (done) {
+        it('should fail get Journal for Dd', function (done) {
 
             aggent
                 .get('journal/getForDd')

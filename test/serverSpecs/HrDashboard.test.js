@@ -2,14 +2,13 @@ var request = require('supertest');
 var expect = require('chai').expect;
 var moment = require('../../public/js/libs/moment/moment');
 var url = 'http://localhost:8089/';
-var CONSTANTS = require('../../constants/mainConstants');
 var aggent;
 
 
-describe("Dashboard Vacation Specs", function () {
+describe('Dashboard Vacation Specs', function () {
     'use strict';
 
-    describe("With admin user", function () {
+    describe('With admin user', function () {
 
         var startTime;
         var endTime;
@@ -21,13 +20,13 @@ describe("Dashboard Vacation Specs", function () {
                 .post('users/login')
                 .send({
                     login: 'admin',
-                    pass: 'tm2016',
-                    dbId: 'production'
+                    pass : 'tm2016',
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
 
-        it("should return HRdashboard", function (done) {
+        it('should return HRdashboard', function (done) {
 
             startTime = new Date();
 
@@ -35,16 +34,18 @@ describe("Dashboard Vacation Specs", function () {
                 .get('dashboard/hr')
                 .expect(200)
                 .end(function (err, res) {
-                    if (err) {
-                        return done(err);
-                    }
-
                     var body = res.body;
                     var dateStart = moment().subtract(11, 'month').startOf('month');
                     var hiredEmployees;
                     var firedEmployees;
                     var dateStartHired;
                     var dateStartFired;
+                    var i;
+                    var j;
+
+                    if (err) {
+                        return done(err);
+                    }
 
                     expect(body)
                         .to.be.instanceOf(Array)
@@ -62,14 +63,14 @@ describe("Dashboard Vacation Specs", function () {
                         .and.to.have.deep.property('0')
                         .and.to.have.property('firedEmployees');
 
-                    for (var i = 0; i <= 11; i++) {
+                    for (i = 0; i <= 11; i++) {
                         if (body[0].data[i].hiredEmployees.length) {
                             hiredEmployees = body[0].data[i].hiredEmployees;
                             dateStartHired = dateStart.add(i, 'month');
                             break;
                         }
                     }
-                    for (var j = 0; j <= 11; j++) {
+                    for (j = 0; j <= 11; j++) {
                         if (body[1].data[j].firedEmployees.length) {
                             firedEmployees = body[1].data[j].firedEmployees;
                             dateStartFired = dateStart.add(j, 'month');
@@ -113,7 +114,7 @@ describe("Dashboard Vacation Specs", function () {
 
     });
 
-    describe("With baned user", function () {
+    describe('With baned user', function () {
 
         var startTime;
 
@@ -123,13 +124,13 @@ describe("Dashboard Vacation Specs", function () {
                 .post('users/login')
                 .send({
                     login: 'ArturMyhalko',
-                    pass: 'thinkmobiles2015',
-                    dbId: 'production'
+                    pass : 'thinkmobiles2015',
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
 
-        it("should fail return dashboard using startDate == now", function (done) {
+        it('should fail return dashboard using startDate == now', function (done) {
 
             startTime = new Date();
 

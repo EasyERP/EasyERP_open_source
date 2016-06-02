@@ -1,12 +1,11 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent;
 
-describe("PaymentTerm Specs", function () {
+require('../../config/development');
+
+describe('PaymentTerm Specs', function () {
     'use strict';
 
     describe('PaymentTerm with admin', function () {
@@ -29,7 +28,7 @@ describe("PaymentTerm Specs", function () {
                 .expect(302, done);
         });
 
-        it("should get PaymentTerm for Dd", function (done) {
+        it('should get PaymentTerm for Dd', function (done) {
 
             aggent
                 .get('paymentTerm')
@@ -55,7 +54,7 @@ describe("PaymentTerm Specs", function () {
 
     describe('PaymentTerm with no authorise', function () {
 
-        it("should fail get PaymentTerm for Dd", function (done) {
+        it('should fail get PaymentTerm for Dd', function (done) {
 
             aggent
                 .get('paymentTerm')

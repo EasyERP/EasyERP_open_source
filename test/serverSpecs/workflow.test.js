@@ -1,8 +1,3 @@
-/**
- * Created by den on 08.02.16.
- */
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
@@ -20,12 +15,15 @@ var bannedUser = {
     dbId : dbId
 };
 
-describe("Workflow Specs", function () {
+
+require('../../config/development');
+
+describe('Workflow Specs', function () {
 
     'use strict';
     var id;
 
-    describe("Workflow with admin", function () {
+    describe('Workflow with admin', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -42,12 +40,12 @@ describe("Workflow Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create workflow", function (done) {
+        it('should create workflow', function (done) {
             var body = {
-                name    : "testWorkflow_10",
-                "status": "New",
-                "_id"   : "testCreateWF",
-                "wName" : "testCreateWF",
+                name    : 'testWorkflow_10',
+                'status': 'New',
+                '_id'   : 'testCreateWF',
+                'wName' : 'testCreateWF',
                 visible : true
             };
             aggent
@@ -72,9 +70,9 @@ describe("Workflow Specs", function () {
                 });
         });
 
-        it("should get workflow", function (done) {
+        it('should get workflow', function (done) {
             var body = {
-                id: "testCreateWF"
+                id: 'testCreateWF'
             };
 
             aggent
@@ -97,7 +95,7 @@ describe("Workflow Specs", function () {
                 });
         });
 
-        it("should get relatedStatus", function (done) {
+        it('should get relatedStatus', function (done) {
             var body = {};
 
             aggent
@@ -120,9 +118,9 @@ describe("Workflow Specs", function () {
                 });
         });
 
-        it("should get getWorkflowsForDd", function (done) {
+        it('should get getWorkflowsForDd', function (done) {
             var body = {
-                id: "testCreateWF"
+                id: 'testCreateWF'
             };
 
             aggent
@@ -145,9 +143,9 @@ describe("Workflow Specs", function () {
                 });
         });
 
-        it("should get getFirstForConvert", function (done) {
+        it('should get getFirstForConvert', function (done) {
             var body = {
-                wId: "testCreateWF"
+                wId: 'testCreateWF'
             };
 
             aggent
@@ -170,9 +168,9 @@ describe("Workflow Specs", function () {
                 });
         });
 
-        it("should fetch", function (done) {
+        it('should fetch', function (done) {
             var body = {
-                wId: "testCreateWF"
+                wId: 'testCreateWF'
             };
 
             aggent
@@ -193,9 +191,9 @@ describe("Workflow Specs", function () {
                 });
         });
 
-        it("should update workflow", function (done) {
+        it('should update workflow', function (done) {
             var body = {
-                name: "testWorkflow_updated"
+                name: 'testWorkflow_updated'
             };
             aggent
                 .put('workflows/' + id)
@@ -217,7 +215,7 @@ describe("Workflow Specs", function () {
                 });
         });
 
-        it("should update only selected fields", function (done) {
+        it('should update only selected fields', function (done) {
             var body = {
                 color        : '#2C3E51',
                 sequenceStart: 1,
@@ -245,14 +243,14 @@ describe("Workflow Specs", function () {
                 });
         });
 
-        it("should delete workflow", function (done) {
+        it('should delete workflow', function (done) {
             aggent
                 .delete('workflows/' + id)
                 .expect(200, done);
         });
     });
 
-    describe("Workflow with user without a license", function () {
+    describe('Workflow with user without a license', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -269,12 +267,12 @@ describe("Workflow Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create workflow", function (done) {
+        it('should fail create workflow', function (done) {
             var body = {
-                name    : "testWorkflow_10",
-                "status": "New",
-                "_id"   : "testCreateWF",
-                "wName" : "testCreateWF",
+                name    : 'testWorkflow_10',
+                'status': 'New',
+                '_id'   : 'testCreateWF',
+                'wName' : 'testCreateWF',
                 visible : true
             };
             aggent
