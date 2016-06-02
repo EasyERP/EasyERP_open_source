@@ -1,13 +1,13 @@
 var mongoose = require('mongoose');
 var moment = require('../public/js/libs/moment/moment');
 var CapacityHandler = require('./capacity');
-var objectId = mongoose.Types.ObjectId;
 var CONSTANTS = require('../constants/mainConstants');
 
-var Vacation = function (event, models) {
+var Module = function (event, models) {
     'use strict';
-    var access = require("../Modules/additions/access.js")(models);
+    var access = require('../Modules/additions/access.js')(models);
     var capacityHandler = new CapacityHandler(models);
+    var objectId = mongoose.Types.ObjectId;
     var VacationSchema = mongoose.Schemas.Vacation;
     var DepartmentSchema = mongoose.Schemas.Department;
     var EmployeeSchema = mongoose.Schemas.Employee;
@@ -184,10 +184,10 @@ var Vacation = function (event, models) {
 
             result.sort();
 
-            /*length = result.length;
+            /* length = result.length;
              lastEl = result[length - 1];*/
 
-            /*if (lastEl._id >= curDate.getFullYear() - 1) {
+            /* if (lastEl._id >= curDate.getFullYear() - 1) {
              result[length] = {};
              result[length]._id = lastEl._id + 1;
              result[length].name = lastEl._id + 1;
@@ -218,7 +218,7 @@ var Vacation = function (event, models) {
             if (options.year && options.year !== 'Line Year') {
                 if (options.month) {
                     queryObject.year = parseInt(options.year, 10);
-                    queryObject.month = parseInt(options.month,10);
+                    queryObject.month = parseInt(options.month, 10);
                 } else {
                     endDate = moment([options.year, 12]);
                     startDate = moment([options.year, 1]);
@@ -246,10 +246,10 @@ var Vacation = function (event, models) {
 
                 //date.subtract(12, 'M');
 
-                condition1 = {month: {'$gte': parseInt(date.format('M'), 10)}};
-                condition2 = {year: {'$gte': parseInt(date.format('YYYY'), 10)}};
+                condition1 = {month: {$gte: parseInt(date.format('M'), 10)}};
+                condition2 = {year: {$gte: parseInt(date.format('YYYY'), 10)}};
 
-                startQuery = {'$and': [condition1, condition2, employeeQuery]};
+                startQuery = {$and: [condition1, condition2, employeeQuery]};
 
                 queryObject = {};
 
@@ -262,20 +262,22 @@ var Vacation = function (event, models) {
         // query.exec(function (err, result) {
         Vacation.aggregate([{
             $lookup: {
-                from        : "Employees",
-                localField  : "employee",
-                foreignField: "_id", as: "employee"
+                from        : 'Employees',
+                localField  : 'employee',
+                foreignField: '_id',
+                as          : 'employee'
             }
         }, {
             $lookup: {
-                from        : "Department",
-                localField  : "department",
-                foreignField: "_id", as: "department"
+                from        : 'Department',
+                localField  : 'department',
+                foreignField: '_id',
+                as          : 'department'
             }
         }, {
             $project: {
-                department: {$arrayElemAt: ["$department", 0]},
-                employee  : {$arrayElemAt: ["$employee", 0]},
+                department: {$arrayElemAt: ['$department', 0]},
+                employee  : {$arrayElemAt: ['$employee', 0]},
                 month     : 1,
                 year      : 1,
                 vacations : 1,
@@ -323,8 +325,7 @@ var Vacation = function (event, models) {
                             });
 
                             callback(null, resultObj);
-                        },
-                        function (result, callback) {
+                        }, function (result, callback) {
                             if (options.year !== 'Line Year') {
                                 stat = calculate(result.preYear, options.year - 1);
                             } else {
@@ -333,13 +334,12 @@ var Vacation = function (event, models) {
 
                             callback(null, result, stat);
                         }
-                    ],
-                    function (err, object, stat) {
+                    ], function (err, object, stat) {
                         if (err) {
                             return next(err);
                         }
-                        res.status(200).send({data: object.curYear, stat: stat});
 
+                        res.status(200).send({data: object.curYear, stat: stat});
                     }
                 );
             }
@@ -419,23 +419,11 @@ var Vacation = function (event, models) {
     }
 
     this.getForView = function (req, res, next) {
-        var modelId = 70;
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getReadAccess(req, req.session.uId, modelId, function (access) {
-                if (access) {
-                    if (req.query.week) {
-                        getVacationByWeek(req, res, next);
-                    } else {
-                        getVacationFilter(req, res, next);
-                    }
-                } else {
-                    res.send(403);
-                }
-            });
-
+        if (req.query.week) {
+            getVacationByWeek(req, res, next);
         } else {
-            res.send(401);
+            getVacationFilter(req, res, next);
         }
     };
 
@@ -448,37 +436,32 @@ var Vacation = function (event, models) {
             db: req.session.lastDb
         };
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            access.getEditWritAccess(req, req.session.uId, 70, function (access) {
-                if (access) {
-                    data.editedBy = {
-                        user: req.session.uId,
-                        date: new Date().toISOString()
-                    };
+        data.editedBy = {
+            user: req.session.uId,
+            date: new Date().toISOString()
+        };
 
-                    data.vacations = calculateWeeks(vacArr, data.month, data.year);
+        data.vacations = calculateWeeks(vacArr, data.month, data.year);
 
-                    Vacation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
-                        if (err) {
-                            return next(err);
-                        }
+        Vacation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, response) {
+            if (err) {
+                return next(err);
+            }
 
-                        capacityHandler.vacationChanged(capData, next);
-                        capData.id = response.employee;
-                        capData.year = response.year;
-                        capData.month = response.month;
+            capacityHandler.vacationChanged(capData, next);
+            capData.id = response.employee;
+            capData.year = response.year;
+            capData.month = response.month;
 
-                        res.status(200).send({success: 'updated'});
-                        event.emit('setReconcileTimeCard', {req: req, month: response.month, year: response.year, employee: response.employee});
-                        event.emit('recollectVacationDash');
-                    });
-                } else {
-                    res.status(403).send();
-                }
+            res.status(200).send({success: 'updated'});
+            event.emit('setReconcileTimeCard', {
+                req     : req,
+                month   : response.month,
+                year    : response.year,
+                employee: response.employee
             });
-        } else {
-            res.status(401).send();
-        }
+            event.emit('recollectVacationDash');
+        });
     };
 
     this.putchBulk = function (req, res, next) {
@@ -487,72 +470,64 @@ var Vacation = function (event, models) {
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
         var capData = {db: req.session.lastDb};
 
-        if (req.session && req.session.loggedIn && req.session.lastDb) {
-            uId = req.session.uId;
-            access.getEditWritAccess(req, req.session.uId, 70, function (access) {
-                if (access) {
-                    async.each(body, function (data, cb) {
-                        var id = data._id;
+        async.each(body, function (data, cb) {
+            var id = data._id;
 
-                        capData.id = id;
+            capData.id = id;
 
-                        data.editedBy = {
-                            user: uId,
-                            date: new Date().toISOString()
-                        };
-                        delete data._id;
+            data.editedBy = {
+                user: uId,
+                date: new Date().toISOString()
+            };
+            delete data._id;
 
-                        if (data.vacArray) {
-                            data.vacations = calculateWeeks(data.vacArray, data.month, data.year);
-                        }
+            if (data.vacArray) {
+                data.vacations = calculateWeeks(data.vacArray, data.month, data.year);
+            }
 
-                        Vacation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, result) {
-                            if (err) {
-                                return cb(err);
-                            }
-
-                            capData.vacation = result.toJSON();
-
-                            capacityHandler.vacationChanged(capData, next);
-                            event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year, employee: result.employee});
-                            cb(null, result);
-                        });
-                    }, function (err) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        res.status(200).send({success: 'updated'});
-                        event.emit('recollectVacationDash');
-                    });
-                } else {
-                    res.status(403).send();
+            Vacation.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, result) {
+                if (err) {
+                    return cb(err);
                 }
+
+                capData.vacation = result.toJSON();
+
+                capacityHandler.vacationChanged(capData, next);
+                event.emit('setReconcileTimeCard', {
+                    req     : req,
+                    month   : result.month,
+                    year    : result.year,
+                    employee: result.employee
+                });
+                cb(null, result);
             });
-        } else {
-            res.status(401).send();
-        }
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: 'updated'});
+            event.emit('recollectVacationDash');
+        });
     };
 
     this.remove = function (req, res, next) {
         var id = req.params.id;
         var Vacation = models.get(req.session.lastDb, 'Vacation', VacationSchema);
 
-        access.getDeleteAccess(req, req.session.uId, 72, function (access) {
-            if (access) {
-
-                Vacation.findByIdAndRemove({_id: id}, function (err, vacation) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    res.status(200).send({success: vacation});
-                    event.emit('setReconcileTimeCard', {req: req, month: vacation.month, year: vacation.year, employee: vacation.employee});
-                    event.emit('recollectVacationDash');
-                });
-            } else {
-                res.status(403).send();
+        Vacation.findByIdAndRemove({_id: id}, function (err, vacation) {
+            if (err) {
+                return next(err);
             }
+
+            res.status(200).send({success: vacation});
+            event.emit('setReconcileTimeCard', {
+                req     : req,
+                month   : vacation.month,
+                year    : vacation.year,
+                employee: vacation.employee
+            });
+            event.emit('recollectVacationDash');
         });
     };
 
@@ -589,21 +564,26 @@ var Vacation = function (event, models) {
                 return next(err);
             }
 
-            event.emit('setReconcileTimeCard', {req: req, month: Vacation.month, year: Vacation.year, employee: Vacation.employee});
+            event.emit('setReconcileTimeCard', {
+                req     : req,
+                month   : Vacation.month,
+                year    : Vacation.year,
+                employee: Vacation.employee
+            });
 
-            function populateEmployees (cb) {
+            function populateEmployees(cb) {
                 Employee.populate(Vacation, {
-                    'path'  : 'employee',
-                    'select': '_id name fullName',
-                    'lean'  : true
+                    path  : 'employee',
+                    select: '_id name fullName',
+                    lean  : true
                 }, cb);
             }
 
             function populateDeps(cb) {
                 Department.populate(Vacation, {
-                    'path'  : 'department',
-                    'select': '_id departmentName',
-                    'lean'  : true
+                    path  : 'department',
+                    select: '_id departmentName',
+                    lean  : true
                 }, cb);
             }
 
@@ -622,4 +602,4 @@ var Vacation = function (event, models) {
 
 };
 
-module.exports = Vacation;
+module.exports = Module;

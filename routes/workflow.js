@@ -1,5 +1,3 @@
-
-
 var express = require('express');
 var router = express.Router();
 var WorkflowHandler = require('../handlers/workflow');
@@ -12,7 +10,7 @@ module.exports = function (models, event) {
     var moduleId = MODULES.WORKFLOWS;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
-    router.get('/', authStackMiddleware,  handler.get);
+    router.get('/', authStackMiddleware, handler.get);
     router.get('/relatedStatus', authStackMiddleware, handler.relatedStatus);
     router.get('/getWorkflowsForDd', authStackMiddleware, handler.getWorkflowsForDd);
     router.get('/getFirstForConvert', handler.getFirstForConvert);

@@ -1,9 +1,8 @@
 var mongoose = require('mongoose');
 var Categories = function (models, event) {
-    var access = require("../Modules/additions/access.js")(models);
-    var CategorySchema = mongoose.Schemas['ProductCategory'];
-    var ProductSchema = mongoose.Schemas['Products'];
-    var PayRollSchema = mongoose.Schemas['PayRoll'];
+    var CategorySchema = mongoose.Schemas.ProductCategory;
+    var ProductSchema = mongoose.Schemas.Products;
+    var PayRollSchema = mongoose.Schemas.PayRoll;
     var objectId = mongoose.Types.ObjectId;
     var MAINCONSTANTS = require('../constants/mainConstants');
 
@@ -27,8 +26,31 @@ var Categories = function (models, event) {
 
     };
 
+    function getById(req, res, next) {
+        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+        var id = req.query.id;
+
+        if (id && id.length < 24) {
+            return res.status(400).send();
+        }
+
+        ProductCategory
+            .findById(id)
+            .populate('parent')
+            .exec(function (err, category) {
+                if (err) {
+                    return next(err);
+                }
+                res.status(200).send(category);
+            });
+    }
+
     this.getForDd = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
+
+        if (req.query.id) {
+            return getById(req, res, next);
+        }
 
         ProductCategory
             .find()
@@ -43,24 +65,17 @@ var Categories = function (models, event) {
     };
 
     this.getById = function (req, res, next) {
-        var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
-        var id = req.params.id;
-
-        ProductCategory
-            .findById(id)
-            .populate('parent')
-            .exec(function (err, category) {
-                if (err) {
-                    return next(err);
-                }
-                res.status(200).send(category);
-            });
+        getById(req, res, next);
     };
 
     this.create = function (req, res, next) {
         var ProductCategory = models.get(req.session.lastDb, 'ProductCategory', CategorySchema);
         var body = req.body;
         var category;
+
+        if (!Object.keys(body).length){
+            return res.status(400).send();
+        }
 
         body.createdBy = {
             user: req.session.uId
@@ -90,7 +105,7 @@ var Categories = function (models, event) {
                     n++;
 
                     ProductCategory.findByIdAndUpdate(item._id, {nestingLevel: nestingLevel + 1}, {new: true}, function (err, res) {
-                        if (result.length == n) {
+                        if (result.length === n) {
                             updateNestingLevel(req, res._id, res.nestingLevel + 1, function () {
                                 callback();
                             });

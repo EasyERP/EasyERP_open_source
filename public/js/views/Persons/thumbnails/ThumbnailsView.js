@@ -3,6 +3,7 @@
         'jQuery',
         'Underscore',
         'common',
+        'views/thumbnailsViewBase',
         'views/Persons/EditView',
         'views/Persons/CreateView',
         'text!templates/Alpabet/AphabeticTemplate.html',
@@ -12,9 +13,9 @@
         'constants'
     ],
 
-    function (Backbone, $, _, common, EditView, CreateView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, FilterView, CONSTANTS) {
+    function (Backbone, $, _, common, BaseView, EditView, CreateView, AphabeticTemplate, ThumbnailsItemTemplate, dataService, FilterView, CONSTANTS) {
         'use strict';
-        var PersonsThumbnalView = Backbone.View.extend({
+        var PersonsThumbnalView = BaseView.extend({
             el                : '#content-holder',
             countPerPage      : 0,
             template          : _.template(ThumbnailsItemTemplate),
@@ -29,21 +30,19 @@
 
             initialize: function (options) {
                 this.mId = CONSTANTS.MID[this.contentType];
-                this.asyncLoadImgs(this.collection);
-                this.startTime = options.startTime;
-                this.collection = options.collection;
-                _.bind(this.collection.showMore, this.collection);
+                $(document).off('click');
+
+                this.EditView = EditView;
+                this.CreateView = CreateView;
+
+
                 _.bind(this.collection.showMoreAlphabet, this.collection);
                 this.allAlphabeticArray = common.buildAllAphabeticArray();
-                this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 100;
-                this.newCollection = options.newCollection;
-                this.deleteCounter = 0;
 
-                this.render();
-
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
                 this.asyncLoadImgs(this.collection);
+                this.stages = [];
+
+                BaseView.prototype.initialize.call(this, options);
             },
 
             events: {
@@ -219,7 +218,7 @@
                 }
             },
 
-            showMore       : function (event) {
+           /* showMore       : function (event) {
                 //event.preventDefault();
                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
             },
@@ -243,7 +242,7 @@
                 this.asyncLoadImgs(newModels);
 
                 this.filterView.renderFilterContent();
-            },
+            },*/
 
             showMoreAlphabet: function (newModels) {
                 var holder = this.$el;
