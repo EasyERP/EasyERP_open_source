@@ -1,10 +1,10 @@
 var mongoose = require('mongoose');
 var Opportunity = function (models, event) {
     'use strict';
-    var access = require("../Modules/additions/access.js")(models);
+    var access = require('../Modules/additions/access.js')(models);
     var _ = require('../node_modules/underscore');
     var rewriteAccess = require('../helpers/rewriteAccess');
-    var accessRoll = require("../helpers/accessRollHelper.js")(models);
+    var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var logWriter = require('../helpers/logWriter.js');
     var opportunitiesSchema = mongoose.Schemas.Opportunitie;
     var DepartmentSchema = mongoose.Schemas['Department'];
@@ -24,7 +24,7 @@ var Opportunity = function (models, event) {
     var HistoryWriter = require('../helpers/historyWriter.js');
     var historyWriter = new HistoryWriter(models);
 
-    var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    var EMAIL_REGEXP = /^(([^<>()[\]\\.,;:\s@\']+(\.[^<>()[\]\\.,;:\s@\']+)*)|(\'.+\'))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
 
     function validBody(body) {
         if (body.name) {
@@ -246,7 +246,7 @@ var Opportunity = function (models, event) {
             }
 
             if (result && result.isOpportunitie) {
-                event.emit('updateSequence', Opportunity, "sequence", result.sequence, 0, result.workflow, result.workflow, false, true);
+                event.emit('updateSequence', Opportunity, 'sequence', result.sequence, 0, result.workflow, result.workflow, false, true);
             }
 
             res.status(200).send({success: 'Opportunities removed'});
@@ -283,7 +283,7 @@ var Opportunity = function (models, event) {
                 },
                 {
                     $group: {
-                        _id  : "$workflow",
+                        _id  : '$workflow',
                         count: {$sum: 1}
                     }
                 }], waterfallCallback);
@@ -316,11 +316,11 @@ var Opportunity = function (models, event) {
         var query;
 
         if (data.person) {
-            arrOr.push({"customer": objectId(data.person)});
+            arrOr.push({'customer': objectId(data.person)});
         }
         if (data.company) {
-            arrOr.push({"customer": objectId(data.company)});
-            arrOr.push({"company": objectId(data.company)});
+            arrOr.push({'customer': objectId(data.company)});
+            arrOr.push({'company': objectId(data.company)});
         }
 
         accessRollSearcher = function (cb) {
@@ -349,7 +349,7 @@ var Opportunity = function (models, event) {
                 return next(err);
             }
 
-            if (data && data.onlyCount && data.onlyCount.toString().toLowerCase() === "true") {
+            if (data && data.onlyCount && data.onlyCount.toString().toLowerCase() === 'true') {
                 query.count(function (err, result) {
                     if (err) {
                         return next(err);
@@ -363,7 +363,7 @@ var Opportunity = function (models, event) {
                     query.where('workflow').in(data.status);
                 }
                 query
-                    .select("_id name expectedRevenue.currency expectedRevenue.value nextAction.date workflow");
+                    .select('_id name expectedRevenue.currency expectedRevenue.value nextAction.date workflow');
 
                 query
                     .populate('workflow', 'name')
@@ -397,7 +397,7 @@ var Opportunity = function (models, event) {
             };
         }
 
-        event.emit('updateSequence', Opportunity, "sequence", 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
+        event.emit('updateSequence', Opportunity, 'sequence', 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
             if (!data.info) {
                 data.info = {};
             }
@@ -428,8 +428,8 @@ var Opportunity = function (models, event) {
 
         if (data.workflow && data.sequenceStart && data.workflowStart) {
             if (data.sequence === -1) {
-                event.emit('updateSequence', Opportunity, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function (sequence) {
-                    event.emit('updateSequence', Opportunity, "sequence", data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
+                event.emit('updateSequence', Opportunity, 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflowStart, false, true, function (sequence) {
+                    event.emit('updateSequence', Opportunity, 'sequence', data.sequenceStart, data.sequence, data.workflow, data.workflow, true, false, function (sequence) {
                         data.sequence = sequence;
                         if (data.workflow === data.workflowStart) {
                             data.sequence -= 1;
@@ -446,7 +446,7 @@ var Opportunity = function (models, event) {
                     });
                 });
             } else {
-                event.emit('updateSequence', Opportunity, "sequence", data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
+                event.emit('updateSequence', Opportunity, 'sequence', data.sequenceStart, data.sequence, data.workflowStart, data.workflow, false, false, function (sequence) {
                     delete data.sequenceStart;
                     delete data.workflowStart;
                     data.info = {};
@@ -483,29 +483,29 @@ var Opportunity = function (models, event) {
                 Opportunity.findByIdAndUpdate(_id, {$set: data}, {new: true}, function (err, result) {
                     if (!err) {
                         if (fileName) {
-                            var os = require("os");
+                            var os = require('os');
                             var osType = (os.type().split('_')[0]);
                             var path;
                             var dir;
                             switch (osType) {
-                                case "Windows":
+                                case 'Windows':
                                 {
-                                    newDirname = __dirname.replace("\\Modules", "");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
+                                    newDirname = __dirname.replace('\\Modules', '');
+                                    while (newDirname.indexOf('\\') !== -1) {
+                                        newDirname = newDirname.replace('\\', '\/');
                                     }
-                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                    dir = newDirname + "\/uploads\/" + _id;
+                                    path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                                    dir = newDirname + '\/uploads\/' + _id;
                                 }
                                     break;
-                                case "Linux":
+                                case 'Linux':
                                 {
-                                    newDirname = __dirname.replace("/Modules", "");
-                                    while (newDirname.indexOf("\\") !== -1) {
-                                        newDirname = newDirname.replace("\\", "\/");
+                                    newDirname = __dirname.replace('/Modules', '');
+                                    while (newDirname.indexOf('\\') !== -1) {
+                                        newDirname = newDirname.replace('\\', '\/');
                                     }
-                                    path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                                    dir = newDirname + "\/uploads\/" + _id;
+                                    path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                                    dir = newDirname + '\/uploads\/' + _id;
                                 }
                             }
 
@@ -601,7 +601,7 @@ var Opportunity = function (models, event) {
 
             var savetoDb = function (data) {
                 try {
-                    var _opportunitie = new models.get(req.session.lastDb, "Opportunities", opportunitiesSchema)();
+                    var _opportunitie = new models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema)();
                     _opportunitie.isOpportunitie = data.isOpportunitie || false;
                     if (data.name) {
                         _opportunitie.name = data.name;
@@ -755,7 +755,7 @@ var Opportunity = function (models, event) {
                     if (data.source) {
                         _opportunitie.source = data.source;
                     }
-                    event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
+                    event.emit('updateSequence', models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema), 'sequence', 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
                         _opportunitie.sequence = sequence;
                         _opportunitie.save(function (err, result) {
                             var historyOptions;
@@ -773,7 +773,7 @@ var Opportunity = function (models, event) {
                                 historyWriter.addEntry(historyOptions);
 
                                 res.status(201).send({
-                                    success: "A new Opportunities create success",
+                                    success: 'A new Opportunities create success',
                                     id     : result._id
                                 });
 
@@ -831,7 +831,7 @@ var Opportunity = function (models, event) {
      }
      opportunity = new Opportunity(body);
 
-     event.emit('updateSequence', Opportunity, "sequence", 0, 0, opportunity.workflow, opportunity.workflow, true, false, function (sequence) {
+     event.emit('updateSequence', Opportunity, 'sequence', 0, 0, opportunity.workflow, opportunity.workflow, true, false, function (sequence) {
      opportunity.sequence = sequence;
 
      opportunity.save(function (err, result) {
@@ -839,7 +839,7 @@ var Opportunity = function (models, event) {
      return next(err);
      }
 
-     res.status(201).send({success: "A new Opportunities create success", id: result._id});
+     res.status(201).send({success: 'A new Opportunities create success', id: result._id});
      });
      });
      };*/
@@ -856,23 +856,23 @@ var Opportunity = function (models, event) {
             data.dataRange = 365;
         }
         if (!data.dataItem) {
-            data.dataItem = "M";
+            data.dataItem = 'M';
         }
         switch (data.dataItem) {
-            case "M":
-                data.dataItem = "$month";
+            case 'M':
+                data.dataItem = '$month';
                 break;
-            case "W":
-                data.dataItem = "$week";
+            case 'W':
+                data.dataItem = '$week';
                 break;
-            case "D":
-                data.dataItem = "$dayOfYear";
+            case 'D':
+                data.dataItem = '$dayOfYear';
                 break;
-            case "DW":
-                data.dataItem = "$dayOfWeek";
+            case 'DW':
+                data.dataItem = '$dayOfWeek';
                 break;
-            case "DM":
-                data.dataItem = "$dayOfMonth";
+            case 'DM':
+                data.dataItem = '$dayOfMonth';
                 break;
 
         }
@@ -884,20 +884,20 @@ var Opportunity = function (models, event) {
                 $match: {
                     $and: [{
                         createdBy: {$ne: null},
-                        source   : {$ne: ""},
+                        source   : {$ne: ''},
                         $or      : [{isConverted: true}, {isOpportunitie: false}]
                     }, {'createdBy.date': {$gte: a}}]
                 }
             }, {
                 $group: {
-                    _id  : {source: "$source", isOpportunitie: "$isOpportunitie"},
+                    _id  : {source: '$source', isOpportunitie: '$isOpportunitie'},
                     count: {$sum: 1}
                 }
             }, {
                 $project: {
-                    "source": "$_id.source",
+                    'source': '$_id.source',
                     count   : 1,
-                    "isOpp" : "$_id.isOpportunitie",
+                    'isOpp' : '$_id.isOpportunitie',
                     _id     : 0
                 }
             }).exec(function (err, result) {
@@ -912,10 +912,10 @@ var Opportunity = function (models, event) {
             var myItem = {};
             myItem.$project = {isOpportunitie: 1, convertedDate: 1};
             myItem.$project.dateBy = {};
-            myItem.$project.dateBy[data.dataItem] = "$convertedDate";
-            if (data.dataItem === "$dayOfYear") {
+            myItem.$project.dateBy[data.dataItem] = '$convertedDate';
+            if (data.dataItem === '$dayOfYear') {
                 myItem.$project.year = {};
-                myItem.$project.year.$year = "$convertedDate";
+                myItem.$project.year.$year = '$convertedDate';
             }
             var c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
             var a = new Date(c);
@@ -934,18 +934,18 @@ var Opportunity = function (models, event) {
                 myItem,
                 {
                     $group: {
-                        _id  : {dateBy: "$dateBy", isOpportunitie: "$isOpportunitie", year: "$year"},
+                        _id  : {dateBy: '$dateBy', isOpportunitie: '$isOpportunitie', year: '$year'},
                         count: {$sum: 1},
-                        date : {$push: "$convertedDate"}
+                        date : {$push: '$convertedDate'}
                     }
                 },
                 {
                     $project: {
-                        "source": "$_id.dateBy",
+                        'source': '$_id.dateBy',
                         count   : 1,
                         date    : 1,
-                        year    : "$_id.year",
-                        "isOpp" : "$_id.isOpportunitie",
+                        year    : '$_id.year',
+                        'isOpp' : '$_id.isOpportunitie',
                         _id     : 0
                     }
                 },
@@ -1042,7 +1042,7 @@ var Opportunity = function (models, event) {
                 });
             }
 
-            event.emit('updateSequence', Opportunity, "sequence", 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
+            event.emit('updateSequence', Opportunity, 'sequence', 0, 0, data.workflow, data.workflow, true, false, function (sequence) {
                 data.sequence = sequence;
 
                 Opportunity.findById(_id, function (err, oldOpportunity) {
@@ -1180,13 +1180,13 @@ var Opportunity = function (models, event) {
         var viewType = req.query.viewType;
 
         switch (viewType) {
-            case "list":
+            case 'list':
                 getFilter(req, res, next);
                 break;
-            case "form":
+            case 'form':
                 getById(req, res, next);
                 break;
-            case "kanban":
+            case 'kanban':
                 getForKanban(req, res, next);
         }
     };
@@ -1207,7 +1207,7 @@ var Opportunity = function (models, event) {
      *
      * @example
      *     {
-     *         "count": 15
+     *         'count': 15
      *     }
      *
      * @method totalCollectionLength
@@ -1245,95 +1245,95 @@ var Opportunity = function (models, event) {
      * This __method__ allows get all opportunities for `list` viewType.
      *
      * @example
-     *        {"data":[{
-     *        "_id":"5374c180503e85ec0e00000d",
-     *        "__v":0,
-     *        "attachments":[],
-     *        "notes":[],
-     *        "convertedDate":"2014-04-18T07:58:16.145Z",
-     *        "isConverted":false,
-     *        "source":"",
-     *        "campaign":"",
-     *        "editedBy":{
-     *            "date":"2014-04-18T07:58:16.145Z",
-     *            "user":{
-     *                "_id":"52203e707d4dba8813000003",
-     *                "login":"admin"
+     *        {'data':[{
+     *        '_id':'5374c180503e85ec0e00000d',
+     *        '__v':0,
+     *        'attachments':[],
+     *        'notes':[],
+     *        'convertedDate':'2014-04-18T07:58:16.145Z',
+     *        'isConverted':false,
+     *        'source':'',
+     *        'campaign':'',
+     *        'editedBy':{
+     *            'date':'2014-04-18T07:58:16.145Z',
+     *            'user':{
+     *                '_id':'52203e707d4dba8813000003',
+     *                'login':'admin'
      *                }
      *            },
-     *        "createdBy":{
-     *            "date":"2014-04-18T07:58:16.145Z",
-     *            "user":{
-     *                "_id":"52203e707d4dba8813000003",
-     *                "login":"admin"
+     *        'createdBy':{
+     *            'date':'2014-04-18T07:58:16.145Z',
+     *            'user':{
+     *                '_id':'52203e707d4dba8813000003',
+     *                'login':'admin'
      *                }
      *            },
-     *        "sequence":3,
-     *        "groups":{
-     *            "group":[],
-     *            "users":[],
-     *            "owner":"52203e707d4dba8813000003"
+     *        'sequence':3,
+     *        'groups':{
+     *            'group':[],
+     *            'users':[],
+     *            'owner':'52203e707d4dba8813000003'
      *            },
-     *        "whoCanRW":"everyOne",
-     *        "workflow":{
-     *            "_id":"528cdcb4f3f67bc40b000006",
-     *            "name":"New",
-     *            "status":"New"
+     *        'whoCanRW':'everyOne',
+     *        'workflow':{
+     *            '_id':'528cdcb4f3f67bc40b000006',
+     *            'name':'New',
+     *            'status':'New'
      *            },
-     *        "reffered":"",
-     *        "optout":false,
-     *        "active":true,
-     *        "color":"#4d5a75",
-     *        "categories":{
-     *            "name":"",
-     *            "id":""
+     *        'reffered':'',
+     *        'optout':false,
+     *        'active':true,
+     *        'color':'#4d5a75',
+     *        'categories':{
+     *            'name':'',
+     *            'id':''
      *            },
-     *        "priority":"P3",
-     *        "expectedClosing":"2014-04-24T22:00:00.000Z",
-     *        "nextAction":{
-     *            "date":"2014-04-17T22:00:00.000Z",
-     *            "desc":""
+     *        'priority':'P3',
+     *        'expectedClosing':'2014-04-24T22:00:00.000Z',
+     *        'nextAction':{
+     *            'date':'2014-04-17T22:00:00.000Z',
+     *            'desc':''
      *            },
-     *        "internalNotes":"Applications where the whole universe has been hand drawn on paper sheets and then animated using the stop motion.",
-     *        "salesTeam":"5256a08a77285cfc06000009",
-     *        "salesPerson":null,
-     *        "func":"",
-     *        "phones":{
-     *            "fax":"",
-     *            "phone":"",
-     *             "mobile":""
+     *        'internalNotes':'Applications where the whole universe has been hand drawn on paper sheets and then animated using the stop motion.',
+     *        'salesTeam':'5256a08a77285cfc06000009',
+     *        'salesPerson':null,
+     *        'func':'',
+     *        'phones':{
+     *            'fax':'',
+     *            'phone':'',
+     *             'mobile':''
      *            },
-     *        "email":"",
-     *        "contactName":{
-     *            "last":"",
-     *            "first":""
+     *        'email':'',
+     *        'contactName':{
+     *            'last':'',
+     *            'first':''
      *            },
-     *        "address":{
-     *            "country":"USA",
-     *            "zip":"",
-     *            "state":"WA",
-     *            "city":"Seattle",
-     *            "street":""
+     *        'address':{
+     *            'country':'USA',
+     *            'zip':'',
+     *            'state':'WA',
+     *            'city':'Seattle',
+     *            'street':''
      *            },
-     *        "customer":{
-     *            "_id":"5303bc0fae122c781b0000c2",
-     *            "name":{
-     *                "last":"Finn",
-     *                "first":"Aaron"
+     *        'customer':{
+     *            '_id':'5303bc0fae122c781b0000c2',
+     *            'name':{
+     *                'last':'Finn',
+     *                'first':'Aaron'
      *            },
-     *            "fullName":"Aaron Finn",
-     *            "id":"5303bc0fae122c781b0000c2"
+     *            'fullName':'Aaron Finn',
+     *            'id':'5303bc0fae122c781b0000c2'
      *            },
-     *        "company":null,
-     *        "tempCompanyField":"",
-     *        "creationDate":"2014-04-18T07:58:16.145Z",
-     *        "expectedRevenue":{
-     *            "currency":"$",
-     *            "progress":0,
-     *            "value":7000
+     *        'company':null,
+     *        'tempCompanyField':'',
+     *        'creationDate':'2014-04-18T07:58:16.145Z',
+     *        'expectedRevenue':{
+     *            'currency':'$',
+     *            'progress':0,
+     *            'value':7000
      *            },
-     *        "name":"Teavana",
-     *        "isOpportunitie":true
+     *        'name':'Teavana',
+     *        'isOpportunitie':true
      *        }]}
      *
      * @method Opportunities
@@ -1396,7 +1396,7 @@ var Opportunity = function (models, event) {
     }
 
     function getFilter(req, res, next) {
-        var Opportunities = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
+        var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var data = req.query;
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
@@ -1442,7 +1442,7 @@ var Opportunity = function (models, event) {
                     }
                 }];
 
-            var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
+            var query = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
 
             switch (data.contentType) {
 
@@ -1509,38 +1509,38 @@ var Opportunity = function (models, event) {
                 },
                 {
                     $project: {
-                        "contactName"    : {$concat: ['$contactName.first', " ", '$contactName.last']},
-                        "customer"       : {$arrayElemAt: ["$customer", 0]},
-                        "salesPerson"    : {$arrayElemAt: ["$salesPerson", 0]},
-                        "workflow"       : {$arrayElemAt: ["$workflow", 0]},
-                        "createdBy.user" : {$arrayElemAt: ["$createdBy.user", 0]},
-                        "editedBy.user"  : {$arrayElemAt: ["$editedBy.user", 0]},
-                        "createdBy.date" : 1,
-                        "editedBy.date"  : 1,
-                        "creationDate"   : 1,
-                        "isOpportunitie" : 1,
-                        "name"           : 1,
-                        "expectedRevenue": 1,
-                        "attachments"    : 1,
-                        "notes"          : 1,
-                        "convertedDate"  : 1,
-                        "isConverted"    : 1,
-                        "source"         : 1,
-                        "campaign"       : 1,
-                        "sequence"       : 1,
-                        "reffered"       : 1,
-                        "optout"         : 1,
-                        "active"         : 1,
-                        "color"          : 1,
-                        "categories"     : 1,
-                        "priority"       : 1,
-                        "expectedClosing": 1,
-                        "nextAction"     : 1,
-                        "internalNotes"  : 1,
-                        "phones"         : 1,
-                        "email"          : 1,
-                        "address"        : 1,
-                        "company"        : 1
+                        'contactName'    : {$concat: ['$contactName.first', ' ', '$contactName.last']},
+                        'customer'       : {$arrayElemAt: ['$customer', 0]},
+                        'salesPerson'    : {$arrayElemAt: ['$salesPerson', 0]},
+                        'workflow'       : {$arrayElemAt: ['$workflow', 0]},
+                        'createdBy.user' : {$arrayElemAt: ['$createdBy.user', 0]},
+                        'editedBy.user'  : {$arrayElemAt: ['$editedBy.user', 0]},
+                        'createdBy.date' : 1,
+                        'editedBy.date'  : 1,
+                        'creationDate'   : 1,
+                        'isOpportunitie' : 1,
+                        'name'           : 1,
+                        'expectedRevenue': 1,
+                        'attachments'    : 1,
+                        'notes'          : 1,
+                        'convertedDate'  : 1,
+                        'isConverted'    : 1,
+                        'source'         : 1,
+                        'campaign'       : 1,
+                        'sequence'       : 1,
+                        'reffered'       : 1,
+                        'optout'         : 1,
+                        'active'         : 1,
+                        'color'          : 1,
+                        'categories'     : 1,
+                        'priority'       : 1,
+                        'expectedClosing': 1,
+                        'nextAction'     : 1,
+                        'internalNotes'  : 1,
+                        'phones'         : 1,
+                        'email'          : 1,
+                        'address'        : 1,
+                        'company'        : 1
                     }
                 },
                 {
@@ -1559,38 +1559,40 @@ var Opportunity = function (models, event) {
                 $unwind: '$root'
             }, {
                 $project: {
-                    "contactName"     : '$root.contactName',
-                    "customer.name"   : '$root.customer.name',
-                    "salesPerson.name": '$root.salesPerson.name',
-                    "workflow"        : '$root.workflow',
-                    "createdBy.user"  : '$root.createdBy.user.login',
-                    "editedBy.user"   : '$root.editedBy.user.login',
-                    "createdBy.date"  : '$root.createdBy.date',
-                    "editedBy.date"   : '$root.editedBy.date',
-                    "creationDate"    : '$root.creationDate',
-                    "isOpportunitie"  : '$root.isOpportunitie',
-                    "name"            : '$root.name',
-                    "expectedRevenue" : '$root.expectedRevenue',
-                    "attachments"     : '$root.attachments',
-                    "notes"           : '$root.notes',
-                    "convertedDate"   : '$root.convertedDate',
-                    "isConverted"     : '$root.isConverted',
-                    "source"          : '$root.source',
-                    "campaign"        : '$root.campaign',
-                    "sequence"        : '$root.sequence',
-                    "reffered"        : '$root.reffered',
-                    "optout"          : '$root.optout',
-                    "active"          : '$root.active',
-                    "color"           : '$root.color',
-                    "categories"      : '$root.categories',
-                    "priority"        : '$root.priority',
-                    "expectedClosing" : '$root.expectedClosing',
-                    "nextAction"      : '$root.nextAction',
-                    "internalNotes"   : '$root.internalNotes',
-                    "phones"          : '$root.phones',
-                    "email"           : '$root.email',
-                    "address"         : '$root.address',
-                    "company"         : '$root.company'
+                    '_id'             : '$root._id',
+                    'contactName'     : '$root.contactName',
+                    'customer.name'   : '$root.customer.name',
+                    'salesPerson.name': '$root.salesPerson.name',
+                    'workflow'        : '$root.workflow',
+                    'createdBy.user'  : '$root.createdBy.user.login',
+                    'editedBy.user'   : '$root.editedBy.user.login',
+                    'createdBy.date'  : '$root.createdBy.date',
+                    'editedBy.date'   : '$root.editedBy.date',
+                    'creationDate'    : '$root.creationDate',
+                    'isOpportunitie'  : '$root.isOpportunitie',
+                    'name'            : '$root.name',
+                    'expectedRevenue' : '$root.expectedRevenue',
+                    'attachments'     : '$root.attachments',
+                    'notes'           : '$root.notes',
+                    'convertedDate'   : '$root.convertedDate',
+                    'isConverted'     : '$root.isConverted',
+                    'source'          : '$root.source',
+                    'campaign'        : '$root.campaign',
+                    'sequence'        : '$root.sequence',
+                    'reffered'        : '$root.reffered',
+                    'optout'          : '$root.optout',
+                    'active'          : '$root.active',
+                    'color'           : '$root.color',
+                    'categories'      : '$root.categories',
+                    'priority'        : '$root.priority',
+                    'expectedClosing' : '$root.expectedClosing',
+                    'nextAction'      : '$root.nextAction',
+                    'internalNotes'   : '$root.internalNotes',
+                    'phones'          : '$root.phones',
+                    'email'           : '$root.email',
+                    'address'         : '$root.address',
+                    'company'         : '$root.company',
+                    'total'             : 1
                 }
             });
 
@@ -1603,7 +1605,7 @@ var Opportunity = function (models, event) {
                 });
             } else {
                 aggregateQuery.push({
-                    $sort: {"editedBy.date": -1}
+                    $sort: {'editedBy.date': -1}
                 });
             }
 
@@ -1622,16 +1624,19 @@ var Opportunity = function (models, event) {
 
         async.waterfall(waterfallTasks, function (err, result) {
             var count;
+            var firstElement;
             var response = {};
 
             if (err) {
                 return next(err);
             }
 
-            count = result[0].total || 0;
+            firstElement = result[0];
+            count = firstElement && firstElement.total ? firstElement.total : 0;
 
             response.total = count;
             response.data = result;
+            
             res.status(200).send(response);
         });
     }
@@ -1688,7 +1693,7 @@ var Opportunity = function (models, event) {
     };
 
     function getForKanban(req, res, next) {
-        var Opportunities = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
+        var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var contentSearcher;
         var waterfallTasks;
         var accessRollSearcher;
@@ -1758,7 +1763,7 @@ var Opportunity = function (models, event) {
 
     function getById(req, res, next) {
         var id = req.query.id;
-        var Opportunities = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
+        var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var query;
 
         query = Opportunities.findById({_id: id});
@@ -1816,7 +1821,7 @@ var Opportunity = function (models, event) {
      * This __method__ allows get count of Leads.
      *
      * @example {
-     *         "count": 35
+     *         'count': 35
      *     }
      *
      * @method totalCollectionLength
@@ -1854,95 +1859,95 @@ var Opportunity = function (models, event) {
      * This __method__ allows get all Leads for `list` viewType.
      *
      * @example
-     *        {"data":[{
-     *        "_id":"5374c181503e85ec0e000010",
-     *        "__v":0,
-     *        "attachments":[],
-     *        "notes":[],
-     *        "convertedDate":"2014-04-18T07:58:16.145Z",
-     *        "isConverted":false,
-     *        "source":"",
-     *        "campaign":"",
-     *        "editedBy":{
-     *            "date":"2014-04-18T07:58:16.145Z",
-     *            "user":{
-     *                "_id":"52203e707d4dba8813000003",
-     *                "login":"admin"
+     *        {'data':[{
+     *        '_id':'5374c181503e85ec0e000010',
+     *        '__v':0,
+     *        'attachments':[],
+     *        'notes':[],
+     *        'convertedDate':'2014-04-18T07:58:16.145Z',
+     *        'isConverted':false,
+     *        'source':'',
+     *        'campaign':'',
+     *        'editedBy':{
+     *            'date':'2014-04-18T07:58:16.145Z',
+     *            'user':{
+     *                '_id':'52203e707d4dba8813000003',
+     *                'login':'admin'
      *                }
      *            },
-     *        "createdBy":{
-     *            "date":"2014-04-18T07:58:16.145Z",
-     *            "user":{
-     *                "_id":"52203e707d4dba8813000003",
-     *                "login":"admin"
+     *        'createdBy':{
+     *            'date':'2014-04-18T07:58:16.145Z',
+     *            'user':{
+     *                '_id':'52203e707d4dba8813000003',
+     *                'login':'admin'
      *                }
      *            },
-     *        "sequence":3,
-     *        "groups":{
-     *            "group":[],
-     *            "users":[],
-     *            "owner":"52203e707d4dba8813000003"
+     *        'sequence':3,
+     *        'groups':{
+     *            'group':[],
+     *            'users':[],
+     *            'owner':'52203e707d4dba8813000003'
      *            },
-     *        "whoCanRW":"everyOne",
-     *        "workflow":{
-     *            "_id":"528cdcb4f3f67bc40b000006",
-     *            "name":"New",
-     *            "status":"New"
+     *        'whoCanRW':'everyOne',
+     *        'workflow':{
+     *            '_id':'528cdcb4f3f67bc40b000006',
+     *            'name':'New',
+     *            'status':'New'
      *            },
-     *        "reffered":"",
-     *        "optout":false,
-     *        "active":true,
-     *        "color":"#4d5a75",
-     *        "categories":{
-     *            "name":"",
-     *            "id":""
+     *        'reffered':'',
+     *        'optout':false,
+     *        'active':true,
+     *        'color':'#4d5a75',
+     *        'categories':{
+     *            'name':'',
+     *            'id':''
      *            },
-     *        "priority":"P3",
-     *        "expectedClosing":"2014-04-24T22:00:00.000Z",
-     *        "nextAction":{
-     *            "date":"2014-04-17T22:00:00.000Z",
-     *            "desc":""
+     *        'priority':'P3',
+     *        'expectedClosing':'2014-04-24T22:00:00.000Z',
+     *        'nextAction':{
+     *            'date':'2014-04-17T22:00:00.000Z',
+     *            'desc':''
      *            },
-     *        "internalNotes":"Applications where the whole universe has been hand drawn on paper sheets and then animated using the stop motion.",
-     *        "salesTeam":"5256a08a77285cfc06000009",
-     *        "salesPerson":null,
-     *        "func":"",
-     *        "phones":{
-     *            "fax":"",
-     *            "phone":"",
-     *             "mobile":""
+     *        'internalNotes':'Applications where the whole universe has been hand drawn on paper sheets and then animated using the stop motion.',
+     *        'salesTeam':'5256a08a77285cfc06000009',
+     *        'salesPerson':null,
+     *        'func':'',
+     *        'phones':{
+     *            'fax':'',
+     *            'phone':'',
+     *             'mobile':''
      *            },
-     *        "email":"",
-     *        "contactName":{
-     *            "last":"",
-     *            "first":""
+     *        'email':'',
+     *        'contactName':{
+     *            'last':'',
+     *            'first':''
      *            },
-     *        "address":{
-     *            "country":"USA",
-     *            "zip":"",
-     *            "state":"WA",
-     *            "city":"Seattle",
-     *            "street":""
+     *        'address':{
+     *            'country':'USA',
+     *            'zip':'',
+     *            'state':'WA',
+     *            'city':'Seattle',
+     *            'street':''
      *            },
-     *        "customer":{
-     *            "_id":"5303bc0fae122c781b0000c2",
-     *            "name":{
-     *                "last":"Finn",
-     *                "first":"Aaron"
+     *        'customer':{
+     *            '_id':'5303bc0fae122c781b0000c2',
+     *            'name':{
+     *                'last':'Finn',
+     *                'first':'Aaron'
      *            },
-     *            "fullName":"Aaron Finn",
-     *            "id":"5303bc0fae122c781b0000c2"
+     *            'fullName':'Aaron Finn',
+     *            'id':'5303bc0fae122c781b0000c2'
      *            },
-     *        "company":null,
-     *        "tempCompanyField":"",
-     *        "creationDate":"2014-04-18T07:58:16.145Z",
-     *        "expectedRevenue":{
-     *            "currency":"$",
-     *            "progress":0,
-     *            "value":7000
+     *        'company':null,
+     *        'tempCompanyField':'',
+     *        'creationDate':'2014-04-18T07:58:16.145Z',
+     *        'expectedRevenue':{
+     *            'currency':'$',
+     *            'progress':0,
+     *            'value':7000
      *            },
-     *        "name":"Wildy Jimi",
-     *        "isOpportunitie":false
+     *        'name':'Wildy Jimi',
+     *        'isOpportunitie':false
      *        }]}
      *
      * @method Leads

@@ -32,8 +32,6 @@ module.exports = function (config) {
             {pattern: 'public/js/models/*.js', included: false, watching: false},
             {pattern: 'public/js/helpers/*.js', included: false, watching: false},
             {pattern: 'public/js/views/**/*.js', included: false, watching: false},
-            {pattern: 'public/js/views/**/**/*.js', included: false, watching: false},
-            {pattern: 'public/js/views/*.js', included: false, watching: false},
             {pattern: 'public/templates/**/*.html', included: false, watching: false},
             {pattern: 'public/js/*.js', included: false, watching: false},
 

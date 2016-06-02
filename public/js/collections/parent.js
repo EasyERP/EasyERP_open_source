@@ -254,12 +254,12 @@ define([
             this.totalRecords = response.total;
             this.totalPages = Math.ceil(this.totalRecords / this.pageSize);
 
-            this.trigger('fetchFinished', {
+            /*this.trigger('fetchFinished', {
                 totalRecords: this.totalRecords,
                 currentPage : this.currentPage,
                 pageSize    : this.pageSize
             });
-
+*/
             return response.data;
         }
     });
