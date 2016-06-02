@@ -1,12 +1,11 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent;
 
-describe("Product Specs", function () {
+require('../../config/development');
+
+describe('Product Specs', function () {
     'use strict';
 
     describe('Product with admin', function () {
@@ -19,7 +18,7 @@ describe("Product Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -30,31 +29,31 @@ describe("Product Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create Product", function (done) {
+        it('should create Product', function (done) {
             var body = {
-                "accounting" : {
-                    "category" : {
-                        "name" : "All",
-                        "_id" : "564591f9624e48551dfe3b23"
+                'accounting'    : {
+                    'category': {
+                        'name': 'All',
+                        '_id' : '564591f9624e48551dfe3b23'
                     }
                 },
-                "canBeExpensed": true,
-                "canBePurchased"    : true,
-                "canBeSold"     : false,
-                "groups" : {
-                    "group" : [],
-                    "owner": "560c099da5d4a2e20ba5068b",
-                    "users" : []
+                'canBeExpensed' : true,
+                'canBePurchased': true,
+                'canBeSold'     : false,
+                'groups'        : {
+                    'group': [],
+                    'owner': '560c099da5d4a2e20ba5068b',
+                    'users': []
                 },
-                "info" : {
-                    "barcode" : "543345",
-                    "description" : "New testProduct",
-                    "isActive" : true,
-                    "productType" : "Service",
-                    "salePrice" : "123"
+                'info'          : {
+                    'barcode'    : '543345',
+                    'description': 'New testProduct',
+                    'isActive'   : true,
+                    'productType': 'Service',
+                    'salePrice'  : '123'
                 },
-                "name" : "TestProduct",
-                "whoCanRW" : "everyOne"
+                'name'          : 'TestProduct',
+                'whoCanRW'      : 'everyOne'
             };
 
             aggent
@@ -80,27 +79,27 @@ describe("Product Specs", function () {
                 });
         });
 
-        it("should fail create Product", function (done) {
+        it('should fail create Product', function (done) {
             var body = {};
 
             aggent
                 .post('product')
                 .send(body)
-                .expect(404, done);
+                .expect(400, done);
         });
 
-        it("should patch Product", function (done) {
+        it('should patch Product', function (done) {
             var body = {
-                "canBeExpensed" : false,
-                "canBePurchased": false,
-                "canBeSold"     : true,
-                "name"          : "TestProduct1",
-                "info"          : {
-                    "barcode"    : "543345",
-                    "description": "New testProduct1",
-                    "isActive"   : true,
-                    "productType": "Product",
-                    "salePrice"  : "123"
+                'canBeExpensed' : false,
+                'canBePurchased': false,
+                'canBeSold'     : true,
+                'name'          : 'TestProduct1',
+                'info'          : {
+                    'barcode'    : '543345',
+                    'description': 'New testProduct1',
+                    'isActive'   : true,
+                    'productType': 'Product',
+                    'salePrice'  : '123'
                 }
             };
 
@@ -110,7 +109,7 @@ describe("Product Specs", function () {
                 .expect(200, done);
         });
 
-        it("should fail patch product", function (done) {
+        it('should fail patch product', function (done) {
             var body = {};
 
             aggent
@@ -120,7 +119,7 @@ describe("Product Specs", function () {
 
         });
 
-        it("should get products Alphabet", function (done) {
+        it('should get products Alphabet', function (done) {
 
             aggent
                 .get('product/getProductsAlphabet')
@@ -141,7 +140,7 @@ describe("Product Specs", function () {
                 });
         });
 
-        it("should get products all", function (done) {
+        it('should get products all', function (done) {
             var query = {
                 canBeSold: true
             };
@@ -168,11 +167,11 @@ describe("Product Specs", function () {
                 });
         });
 
-        it("should get products images", function (done) {
+        it('should get products images', function (done) {
 
             aggent
                 .get('product/getProductsImages')
-                .query({"ids[0]": id})
+                .query({'ids[0]': id})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -196,7 +195,7 @@ describe("Product Specs", function () {
 
         // todo exportToCsv test
 
-        it("should get productsType for Dd", function (done) {
+        it('should get productsType for Dd', function (done) {
 
             aggent
                 .get('product/getProductsTypeForDd')
@@ -219,11 +218,11 @@ describe("Product Specs", function () {
                 });
         });
 
-        it("should get invoices totalCollectionLength", function (done) {
+        it('should get products totalCollectionLength', function (done) {
             var query = {
                 filter: {
                     canBeSold: {
-                        key  : "canBeSold"
+                        key: 'canBeSold'
                     }
                 }
             };
@@ -231,7 +230,7 @@ describe("Product Specs", function () {
             aggent
                 .get('product/totalCollectionLength')
                 .query(query)
-                .query({"filter[canBeSold][value][0]": true})
+                .query({'filter[canBeSold][value][0]': true})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -251,13 +250,13 @@ describe("Product Specs", function () {
                 });
         });
 
-        it("should get product by id", function (done) {
+        it('should get product by id', function (done) {
             var query = {
-                id : id
+                id: id
             };
 
             aggent
-                .get('product/form/')
+                .get('product/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -276,35 +275,38 @@ describe("Product Specs", function () {
                 });
         });
 
-        it("should fail get product by id", function (done) {
+        it('should fail get product by id', function (done) {
             var query = {
-                id : "123cba"
+                id: '123cba'
             };
 
             aggent
-                .get('product/form/')
+                .get('product/')
                 .query(query)
-                .expect(500, done);
+                .expect(400, done);
 
         });
 
-        it("should get products for list", function (done) {
+        it('should get products for list', function (done) {
             var query = {
-              contentType : "Product",
-                count : "1",
-                filter : {
-                    productType : {
-                        key : "info.productType",
-                        value : ["Product", ""]
+                contentType: 'Product',
+                count      : '1',
+
+                filter: {
+                    productType: {
+                        key  : 'info.productType',
+                        value: ['Product', '']
 
                     },
-                    canBeSold : {
-                        key : "canBeSold",
-                        value : ["true", ""]
+
+                    canBeSold: {
+                        key  : 'canBeSold',
+                        value: ['true', '']
                     }
                 },
-                page : "1",
-                viewType : "list"
+
+                page    : '1',
+                viewType: 'list'
             };
 
             aggent
@@ -320,28 +322,30 @@ describe("Product Specs", function () {
 
                     expect(body)
                         .to.be.instanceOf(Object)
-                        .and.to.have.property('success')
+                        .and.to.have.property('data')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0]');
-                    expect(body.success.length)
+                    expect(body.data.length)
                         .to.be.equal(1);
-                    expect(body.success[0])
-                        .to.have.property("canBeSold", true);
-                    expect(body.success[0])
-                        .to.have.property("info")
-                        .and.to.have.property("productType", "Product");
+                    expect(body.data[0])
+                        .to.have.property('canBeSold', true);
+                    expect(body.data[0])
+                        .to.have.property('info')
+                        .and.to.have.property('productType', 'Product');
+                    expect(body)
+                        .and.to.have.property('total');
 
                     done();
                 });
         });
 
-        it("should delete product", function (done) {
+        it('should delete product', function (done) {
             aggent
                 .delete('product/' + id)
                 .expect(200, done);
         });
 
-        it("should fail delete product", function (done) {
+        it('should fail delete product', function (done) {
             aggent
                 .delete('product/123cba')
                 .expect(500, done);
@@ -359,7 +363,7 @@ describe("Product Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -370,32 +374,32 @@ describe("Product Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create Product", function (done) {
+        it('should fail create Product', function (done) {
 
             var body = {
-                "accounting" : {
-                    "category" : {
-                        "name" : "All",
-                        "_id" : "564591f9624e48551dfe3b23"
+                'accounting'    : {
+                    'category': {
+                        'name': 'All',
+                        '_id' : '564591f9624e48551dfe3b23'
                     }
                 },
-                "canBeExpensed": true,
-                "canBePurchased"    : true,
-                "canBeSold"     : true,
-                "groups" : {
-                    "group" : [],
-                    "owner": "560c099da5d4a2e20ba5068b",
-                    "users" : []
+                'canBeExpensed' : true,
+                'canBePurchased': true,
+                'canBeSold'     : true,
+                'groups'        : {
+                    'group': [],
+                    'owner': '560c099da5d4a2e20ba5068b',
+                    'users': []
                 },
-                "info" : {
-                    "barcode" : "543345",
-                    "description" : "New testProduct",
-                    "isActive" : true,
-                    "productType" : "Stock",
-                    "salePrice" : "123"
+                'info'          : {
+                    'barcode'    : '543345',
+                    'description': 'New testProduct',
+                    'isActive'   : true,
+                    'productType': 'Stock',
+                    'salePrice'  : '123'
                 },
-                "name" : "TestProduct",
-                "whoCanRW" : "everyOne"
+                'name'          : 'TestProduct',
+                'whoCanRW'      : 'everyOne'
             };
 
             aggent
@@ -407,11 +411,11 @@ describe("Product Specs", function () {
 
     describe('Product with no authorise', function () {
 
-        it("should fail get Product for View", function (done) {
+        it('should fail get Product for View', function (done) {
 
             aggent
                 .get('product/')
-                .expect(401, done);
+                .expect(404, done);
         });
 
     });
