@@ -2,7 +2,7 @@ var mongoose = require('mongoose');
 var Period = function (models) {
     'use strict';
 
-    var PeriodSchema = mongoose.Schemas['Period'];
+    var PeriodSchema = mongoose.Schemas.Period;
 
     this.getForDd = function (req, res, next) {
         var Period = models.get(req.session.lastDb, 'Period', PeriodSchema);
@@ -14,6 +14,7 @@ var Period = function (models) {
                 if (err) {
                     return next(err);
                 }
+                
                 res.status(200).send({data: terms});
             });
     };
