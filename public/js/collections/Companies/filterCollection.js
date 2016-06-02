@@ -1,90 +1,46 @@
 ﻿define([
         'Backbone',
+        'collections/parent',
         'models/CompaniesModel',
         "dataService",
         'constants'
     ],
-    function (Backbone, CompanyModel, dataService, CONSTANTS) {
+    function (Backbone, Parent, CompanyModel, dataService, CONSTANTS) {
         'use strict';
 
-        var CompaniesCollection = Backbone.Collection.extend({
-            model       : CompanyModel,
-            url         : CONSTANTS.URLS.COMPANIES,
-            page        : null,
-            namberToShow: null,
-            viewType    : null,
-            contentType : null,
+        var CompaniesCollection = Parent.extend({
+            model   : CompanyModel,
+            url     : CONSTANTS.URLS.COMPANIES,
+            pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
 
-            initialize      : function (options) {
-                var that = this;
-                this.viewType = options.viewType;
-                this.contentType = options.contentType;
-                this.startTime = new Date();
-                this.namberToShow = options.count;
-                this.page = options.page || 1;
-                
-               /* if (options && options.viewType) {
-                    this.url += options.viewType;
-                }*/
-                this.fetch({
-                    data   : options,
-                    reset  : true,
-                    success: function () {
-                        that.page++;
-                    },
-                    error  : function (models, xhr) {
-                        if (xhr.status === 401) {
-                            Backbone.history.navigate('#login', {trigger: true});
-                        }
+            initialize: function (options) {
+                var page;
+
+                function _errHandler(models, xhr) {
+                    if (xhr.status === 401) {
+                        Backbone.history.navigate('#login', {trigger: true});
                     }
-                });
+                }
+
+                options = options || {};
+                options.error = options.error || _errHandler;
+                page = options.page;
+
+                this.startTime = new Date();
+
+                if (page) {
+                    return this.getPage(page, options);
+                }
+
+                this.getFirstPage(options);
             },
+
             filterByWorkflow: function (id) {
                 return this.filter(function (data) {
                     return data.get("workflow")._id === id;
                 });
             },
-            showMore        : function (options) {
-                var that = this;
-                var filterObject = {};
 
-                if (options) {
-                    var count = options.count;
-
-                    filterObject.viewType = options.viewType || this.viewType;
-                    filterObject.contentType = options.contentType || this.contentType;
-                    filterObject.filter = options.filter || {};
-
-                    if (count) {
-                        if (count !== 'all') {
-                            filterObject.page = options.page || this.page;
-                            filterObject.count = count;
-                        }
-                    } else {
-                        filterObject.page = options.page || this.page;
-                        filterObject.count = this.namberToShow;
-                    }
-
-                }
-
-                this.fetch({
-                    data   : filterObject,
-                    waite  : true,
-                    success: function (models) {
-                        that.page += 1;
-                        that.trigger('showmore', models);
-                    },
-                    error  : function (models, xhr) {
-                        if (xhr.status === 401) {
-                            Backbone.history.navigate('#login', {trigger: true});
-                        }
-                        App.render({
-                            type   : 'error',
-                            message: "Some Error."
-                        });
-                    }
-                });
-            },
             showMoreAlphabet: function (options) {
                 var that = this;
                 var filterObject = options || {};
@@ -114,10 +70,6 @@
                         callback(response.data);
                     }
                 });
-            },
-
-            parse: function (response) {
-                return response.data;
             }
         });
         return CompaniesCollection;

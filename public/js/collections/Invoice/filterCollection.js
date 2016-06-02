@@ -1,23 +1,21 @@
 ﻿define([
         'Backbone',
+        'collections/parent',
         'models/InvoiceModel',
         'constants'
     ],
-    function (Backbone, InvoiceModel, CONSTANTS) {
+    function (Backbone, Parent, InvoiceModel, CONSTANTS) {
         'use strict';
 
-        var InvoiceCollection = Backbone.Collection.extend({
-            model       : InvoiceModel,
-            url         : CONSTANTS.URLS.INVOICE,
-            page        : null,
-            namberToShow: null,
-            viewType    : null,
-            contentType : null,
+        var InvoiceCollection = Parent.extend({
+            model   : InvoiceModel,
+            url     : CONSTANTS.URLS.INVOICE,
+            pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
 
             initialize: function (options) {
                 var regex = /^sales/;
                 var that = this;
-
+                var page;
                 this.startTime = new Date();
                 this.namberToShow = options.count;
                 this.viewType = options.viewType;
@@ -52,35 +50,30 @@
                 if (options && options.url) {
                     this.url = options.url;
                     delete options.url;
-                } /* else if (options && options.viewType) {
-                    this.url += options.viewType;
-                }*/
+                }
+                /* else if (options && options.viewType) {
+                                   this.url += options.viewType;
+                               }*/
 
-                this.fetch({
-                    data   : options,
-                    reset  : true,
-                    success: function (newCollection) {
-                        that.page++;
 
-                        if (App.invoiceCollection) {
-                            App.invoiceCollection.reset(newCollection.models);
-                        }
-                    },
-                    error  : function (models, xhr) {
-                        if (xhr.status === 401) {
-                            Backbone.history.navigate('#login', {trigger: true});
-                        }
-                        if (xhr.status === 403) {
-                            App.render({
-                                type   : 'error',
-                                message: 'No access'
-                            });
-                        }
+                function _errHandler(models, xhr) {
+                    if (xhr.status === 401) {
+                        Backbone.history.navigate('#login', {trigger: true});
                     }
-                });
-            },
+                }
 
-            showMore: function (options) {
+                options = options || {};
+                options.error = options.error || _errHandler;
+                page = options.page;
+
+                if (page) {
+                    return this.getPage(page, options);
+                }
+
+                this.getFirstPage(options);
+            }
+
+            /*showMore: function (options) {
                 var that = this;
                 var regex = /^sales/;
                 var filterObject = options || {};
@@ -117,7 +110,7 @@
                         });
                     }
                 });
-            }
+            }*/
         });
         return InvoiceCollection;
     });

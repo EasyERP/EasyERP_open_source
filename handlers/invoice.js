@@ -1255,6 +1255,7 @@ var Invoice = function (models, event) {
                     $unwind: '$root'
                 }, {
                     $project: {
+                        _id               : '$root._id',
                         'salesPerson.name': '$root.salesPerson.name',
                         sourceDocument    : '$root.sourceDocument',
                         workflow          : '$root.workflow',
