@@ -195,7 +195,7 @@ describe('ProductCategories Specs', function () {
                 'fullName'    : 'All/Test',
                 'name'        : 'Test',
                 'nestingLevel': null,
-                'parent'      : '564591f9624e48551dfe3b23',
+                'parent'      : 'null',
                 'sequence'    : 0
             };
 
