@@ -2,9 +2,10 @@
  * Created by Roman on 27.04.2015.
  */
 define([
+    'Backbone',
     'text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html'
 
-], function (template) {
+], function (Backbone, template) {
     var View = Backbone.View.extend({
         /*el: '#wTrackItemsHolder',*/
         className: 'rawValue',

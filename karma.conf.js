@@ -25,6 +25,7 @@ module.exports = function (config) {
 
             {pattern: 'constants/test/modules.js', included: false, watching: false},
             {pattern: 'constants/test/dashboardVacation.js', included: false, watching: false},
+            {pattern: 'constants/test/filter.js', included: false, watching: false},
 
             {pattern: 'public/js/Validation.js', included: false, watching: false},
             {pattern: 'public/js/collections/**/*.js', included: false, watching: false},
@@ -68,7 +69,7 @@ module.exports = function (config) {
 
         /*autoWatch: true,*/
 
-        browsers: ['Chrome', 'Firefox', /*'Safari',*/ 'IE', 'PhantomJS'],
+        browsers: ['Firefox', 'Chrome', /*'Safari', 'IE',*/ 'PhantomJS'],
 
         singleRun: false,
 

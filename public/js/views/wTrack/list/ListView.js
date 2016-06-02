@@ -181,7 +181,7 @@ define([
             }
         },
 
-        generateInvoice: function () {
+       /* generateInvoice: function () {
             var selectedWtracks = this.$el.find('input.listCB:checked');
             var wTracks = [];
             var self = this;
@@ -228,7 +228,7 @@ define([
                     });
                 }
             });
-        },
+        },*/
 
         hideGenerateCopy: function () {
             //$('#top-bar-generateBtn').hide();
