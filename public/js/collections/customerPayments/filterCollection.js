@@ -80,7 +80,8 @@ define([
                 });
             },
 
-            parse: function (payments) {
+            parse: function (response) {
+                var payments = response.data;
                 /*_.map(quotations, function (quotation) {
                  quotation.orderDate = common.utcDateToLocaleDate(quotation.orderDate);
                  if(quotation.expectedDate){

@@ -60,6 +60,12 @@ define([
                         }
                     }
                 });
+            },
+            
+            parse: function (response) {
+                var payments = response.data;
+
+                return payments;
             }
         });
         return PaymentCollection;

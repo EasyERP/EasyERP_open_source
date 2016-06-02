@@ -226,9 +226,11 @@ describe('Payment Specs', function () {
                         }
 
                         expect(body)
-                            .to.be.instanceOf(Array);
-                        expect(body.length)
-                            .to.be.lte(100);
+                            .to.be.instanceOf(Object);
+                        expect(body)
+                            .to.have.property('data');
+                        expect(body)
+                            .to.have.property('total');
 
                         done();
                     });
