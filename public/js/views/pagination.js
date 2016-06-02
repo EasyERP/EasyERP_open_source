@@ -6,14 +6,14 @@ define([
     'dataService'
 ], function (Backbone, $, _, CONSTANTS, dataService) {
     var View = Backbone.View.extend({
-        listLength        : null,
-        defaultItemsNumber: null,
-        newCollection     : null,
+        /*listLength        : null,*/
+        /*defaultItemsNumber: null,*/
+        /*newCollection     : null,*/
         $pagination       : null,
-        rowClicks         : 0,
+        /*rowClicks         : 0,*/
 
         events: {
-            'click .oe_sortable': 'sort',
+            'click .oe_sortable': 'goSort',
             'click #check_all'  : 'checkAll',
             click               : 'hide'
         },
@@ -56,8 +56,9 @@ define([
             e.stopPropagation();
         },
 
-        sort: function (e) {
+        goSort: function (e) {
             var newRows = this.$el.find('#false');
+            var filter = this.filter || {};
             var target$;
             var currentParrentSortClass;
             var sortClass;
@@ -126,9 +127,10 @@ define([
                 data.contentType = this.contentType;
             }
 
-            data.newCollection = false;
             data.page = 1;
 
+            this.changeLocationHash(null, this.collection.pageSize, filter);
+            this.collection.getFirstPage({filter: filter, viewType: this.viewType});
             this.collection.getFirstPage(data);
         },
 
@@ -196,14 +198,10 @@ define([
                     self.filter = filter;
 
                     if (!self.$el.hasClass("ui-dialog-content ui-widget-content") && !self.$el.parents(".ui-dialog").length) {
-                        self.changeLocationHash(1, otherConstants.DEFAULT_PER_PAGE, filter);
+                        self.changeLocationHash(1, CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE, filter);
                     }
 
                     self.trigger('filter');
-                });
-
-                this.filterView.bind('collapseActionDropDown', function () {
-                    self.trigger('collapseActionDropDown');
                 });
             }
         },
@@ -262,6 +260,7 @@ define([
 
         nextPage: function (options) {
             var page = options.page;
+            //todo change it for count
             var itemsNumber = options.itemsNumber;
 
             options = options || {count: itemsNumber};

@@ -14,24 +14,22 @@ define([
     'use strict';
 
     var ListViewBase = Backbone.View.extend({
-        el                : '#content-holder',
-        defaultItemsNumber: null,
-        listLength        : null,
-        filter            : null,
-        newCollection     : null,
-        page              : null,
-        viewType          : 'list',
+        el      : '#content-holder',
+        /*defaultItemsNumber: null,
+         listLength        : null,*/
+        filter  : null,
+        /*newCollection     : null,
+         page              : null,*/
+        viewType: 'list',
 
         events: {
-            "click #previousPage, #nextPage, #firstShowPage, #lastShowPage": "checkPage",
-            "click .itemsNumber"                                           : "switchPageCounter",
-            "click .showPage"                                              : "showPage",
-            "change #currentShowPage"                                      : "showPage",
-            "click .checkbox"                                              : "checked",
-            "click .list td:not(.notForm)"                                 : "gotoForm",
-            "mouseover .currentPageList"                                   : "showPagesPopup",
-            "click"                                                        : "hidePagesPopup",
-            "click .oe_sortable"                                           : "goSort"
+            'click #previousPage, #nextPage, #firstShowPage, #lastShowPage': 'checkPage',
+            'click .itemsNumber'                                           : 'switchPageCounter',
+            'click .showPage'                                              : 'showPage',
+            'change #currentShowPage'                                      : 'showPage',
+            'click .checkbox'                                              : 'checked',
+            'click .list td:not(.notForm)'                                 : 'gotoForm',
+            'mouseover .currentPageList'                                   : 'showPagesPopup',
         },
 
         //to remove zombies was needed for event after recieveInvoice on projectInfo
@@ -44,7 +42,7 @@ define([
 
         //<editor-fold desc="Logic">
 
-        //todo remove after inherit from paginator
+        // todo remove after inherit from pagination
         fetchSortCollection: function (sortObject) {
             this.sort = sortObject;
             this.collection = new this.contentCollection({
