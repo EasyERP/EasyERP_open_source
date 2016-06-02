@@ -1,12 +1,11 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent;
 
-describe("PaymentType Specs", function () {
+require('../../config/development');
+
+describe('PaymentType Specs', function () {
     'use strict';
 
     describe('PaymentType with admin', function () {
@@ -18,7 +17,7 @@ describe("PaymentType Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -29,7 +28,7 @@ describe("PaymentType Specs", function () {
                 .expect(302, done);
         });
 
-        it("should get PaymentType for Dd", function (done) {
+        it('should get PaymentType for Dd', function (done) {
 
             aggent
                 .get('paymentType')
@@ -52,7 +51,7 @@ describe("PaymentType Specs", function () {
 
     describe('PaymentType with no authorise', function () {
 
-        it("should fail get PaymentType for Dd", function (done) {
+        it('should fail get PaymentType for Dd', function (done) {
 
             aggent
                 .get('paymentType')

@@ -1,8 +1,9 @@
 var mongoose = require('mongoose');
-var PaymentMethod = function (models) {
+
+var Module = function (models) {
     'use strict';
 
-    var PaymentMethodSchema = mongoose.Schemas['PaymentMethod'];
+    var PaymentMethodSchema = mongoose.Schemas.PaymentMethod;
 
     this.getForDd = function (req, res, next) {
         var PaymentMethod = models.get(req.session.lastDb, 'PaymentMethod', PaymentMethodSchema);
@@ -14,7 +15,8 @@ var PaymentMethod = function (models) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send({data: methods})
+
+                res.status(200).send({data: methods});
             });
     };
 
@@ -73,4 +75,4 @@ var PaymentMethod = function (models) {
 
 };
 
-module.exports = PaymentMethod;
+module.exports = Module;

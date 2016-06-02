@@ -1,12 +1,8 @@
-/**
- * Created by lilya on 10/11/15.
- */
-
 var mongoose = require('mongoose');
 var PaymentTerm = function (models) {
     'use strict';
 
-    var PaymentTypeSchema = mongoose.Schemas['PaymentType'];
+    var PaymentTypeSchema = mongoose.Schemas.PaymentType;
 
     this.getForDd = function (req, res, next) {
         var PaymentType = models.get(req.session.lastDb, 'PaymentType', PaymentTypeSchema);
@@ -19,7 +15,8 @@ var PaymentTerm = function (models) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send(types)
+                
+                res.status(200).send(types);
             });
     };
 
