@@ -112,7 +112,9 @@
                 });
             },
 
-            parse: function (quotations) {
+            parse: function (response) {
+                var quotations = response.data;
+
                 _.map(quotations, function (quotation) {
                     quotation.orderDate = common.utcDateToLocaleDate(quotation.orderDate);
                     if (quotation.expectedDate) {
