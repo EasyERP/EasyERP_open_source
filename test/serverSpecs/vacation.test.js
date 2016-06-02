@@ -101,7 +101,7 @@ describe("Vacation Specs", function () {
             };
 
             aggent
-                .get('vacation/list')
+                .get('vacation/')
                 .expect(200)
                 .query(body)
                 .end(function (err, res) {

@@ -57,13 +57,13 @@ module.exports = function (models, event) {
                 case 'customer':
                     condition.push({'customer._id': {$in: filter.customer.value.objectID()}});
                     break;
-                case 'projectmanager':
+                case 'projectManager':
                     if (filter.projectmanager && filter.projectmanager.value) {
-                        condition.push({'projectmanager._id': {$in: filter.projectmanager.value.objectID()}});
+                        condition.push({'projectManager._id': {$in: filter.projectManager.value.objectID()}});
                     }
                     break;
-                case 'salesmanager':
-                    condition.push({'salesmanager._id': {$in: filter.salesmanager.value.objectID()}});
+                case 'salesManager':
+                    condition.push({'salesManager._id': {$in: filter.salesManager.value.objectID()}});
                     break;
                 case 'name':
                     condition.push({_id: {$in: filter.name.value.objectID()}});
@@ -319,7 +319,7 @@ module.exports = function (models, event) {
                 TargetEndDate: 1,
                 health       : 1,
 
-                salesmanagers: {
+                salesManagers: {
                     $filter: {
                         input: '$projectMembers',
                         as   : 'projectMember',
@@ -347,7 +347,7 @@ module.exports = function (models, event) {
                 TargetEndDate   : 1,
                 name            : 1,
                 workflow        : 1,
-                salesManager    : {$arrayElemAt: ['$salesmanagers', 0]},
+                salesManager    : {$arrayElemAt: ['$salesManagers', 0]},
                 customer        : 1,
                 health          : 1
             }
@@ -452,8 +452,6 @@ module.exports = function (models, event) {
             mainPipeline = lookupPipeline.concat(projectThumbPipeline);
         }
 
-        response.showMore = false;
-
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
                 optionsObject.$or = caseFilter(filter);
@@ -497,30 +495,31 @@ module.exports = function (models, event) {
                 $limit: limit
             });
 
-            Project
-                .aggregate(mainPipeline, function (err, result) {
-                        if (err) {
-                            return cb(err);
-                        }
-
-                        cb(null, result);
+            Project.aggregate(mainPipeline, function (err, result) {
+                    if (err) {
+                        return cb(err);
                     }
-                )
+
+                    cb(null, result);
+                }
+            )
         };
 
         waterfallTasks = [accessRollSearcher, contentSearcher];
 
         async.waterfall(waterfallTasks, function (err, result) {
             var count;
+            var firstElement;
 
             if (err) {
                 return next(err);
             }
 
-            count = result[0].total || 0;
-
+            firstElement = result[0];
+            count = firstElement && firstElement.total ? firstElement.total : 0;
             response.total = count;
             response.data = result;
+
             res.status(200).send(response);
         });
     };

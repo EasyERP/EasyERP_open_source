@@ -67,7 +67,7 @@ var FilterMapper = function () {
             filterResult.push(filterObject);
         }
 
-        queryObject[condition] = filterResult
+        queryObject[condition] = filterResult;
 
         return queryObject;
     };

@@ -1,12 +1,11 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent;
 
-describe("Incoterm Specs", function () {
+require('../../config/development');
+
+describe('Incoterm Specs', function () {
     'use strict';
 
     describe('Incoterm with admin', function () {
@@ -18,7 +17,7 @@ describe("Incoterm Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -29,7 +28,7 @@ describe("Incoterm Specs", function () {
                 .expect(302, done);
         });
 
-        it("should get Incoterm for Dd", function (done) {
+        it('should get Incoterm for Dd', function (done) {
 
             aggent
                 .get('incoterm')
@@ -54,7 +53,7 @@ describe("Incoterm Specs", function () {
 
     describe('Incoterm with no authorise', function () {
 
-        it("should fail get Incoterm for Dd", function (done) {
+        it('should fail get Incoterm for Dd', function (done) {
 
             aggent
                 .get('incoterm')

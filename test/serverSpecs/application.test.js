@@ -1,15 +1,12 @@
-/**
- * Created by liliy on 27.01.2016.
- */
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-describe("Application Specs", function () {
+require('../../config/development');
+
+describe('Application Specs', function () {
     'use strict';
     var id;
 
@@ -33,13 +30,13 @@ describe("Application Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create application", function (done) {
+        it('should create application', function (done) {
             var body = {
-                "name"     : {
-                    "first": "test",
-                    "last" : "test"
+                name     : {
+                    first: 'test',
+                    last : 'test'
                 },
-                "dateBirth": "28 Dec, 1990"
+                dateBirth: '28 Dec, 1990'
             };
 
             aggent
@@ -70,12 +67,12 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should getById application", function (done) {
+        it('should getById application', function (done) {
             var query = {
                 id: id
             };
             aggent
-                .get('applications/' + id)
+                .get('applications/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -94,10 +91,10 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should get by viewType list application", function (done) {
+        it('should get by viewType list application', function (done) {
             var query = {
-                viewType     : "list",
-                contentType  : 'Applications'
+                viewType   : 'list',
+                contentType: 'Applications'
             };
             aggent
                 .get('applications/')
@@ -121,13 +118,13 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should get by viewType kanban application", function (done) {
+        it('should get by viewType kanban application', function (done) {
             var query = {
                 workflowId: '528ce5e3f3f67bc40b000018',
-                viewType     : "kanban"
+                viewType  : 'kanban'
             };
             aggent
-                .get('applications/kanban')
+                .get('applications/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -150,11 +147,11 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should get applications length by workflows", function(done){
+        it('should get applications length by workflows', function (done) {
             aggent
                 .get('applications/getApplicationsLengthByWorkflows')
                 .expect(200)
-                .end(function(err, res){
+                .end(function (err, res) {
                     var body = res.body;
 
                     if (err) {
@@ -173,7 +170,7 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should get total collection length", function(done){
+        it('should get total collection length', function (done) {
             var body = {
                 contentType: 'Applications'
             };
@@ -182,7 +179,7 @@ describe("Application Specs", function () {
                 .get('applications/totalCollectionLength')
                 .query(body)
                 .expect(200)
-                .end(function(err, res){
+                .end(function (err, res) {
                     var body = res.body;
 
                     if (err) {
@@ -200,9 +197,9 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should update application", function (done) {
+        it('should update application', function (done) {
             var body = {
-                'social': {
+                social: {
                     LI: 'test'
                 }
             };
@@ -226,7 +223,7 @@ describe("Application Specs", function () {
                 });
         });
 
-        it("should delete application", function (done) {
+        it('should delete application', function (done) {
             aggent
                 .delete('applications/' + id)
                 .expect(200, done);
@@ -254,13 +251,13 @@ describe("Application Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create application", function (done) {
+        it('should fail create application', function (done) {
             var body = {
-                "name"     : {
-                    "first": "test",
-                    "last" : "test"
+                name     : {
+                    first: 'test',
+                    last : 'test'
                 },
-                "dateBirth": "28 Dec, 1990"
+                dateBirth: '28 Dec, 1990'
             };
 
             aggent

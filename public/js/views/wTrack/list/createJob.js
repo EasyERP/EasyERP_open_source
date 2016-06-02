@@ -28,11 +28,11 @@ define([
                     this.render();
                 },
 
-                keyDown: function (e) {
+               /* keyDown: function (e) {
                     if (e.which === 13) {
                         this.setChangedValueToModel(e);
                     }
-                },
+                },*/
 
                 stopDefaultEvents: function (e) {
                     e.stopPropagation();
@@ -43,7 +43,7 @@ define([
                     $(".wTrackDialog").remove();
                 },
 
-                setChangedValueToModel: function (elem) {
+                /*setChangedValueToModel: function (elem) {
                     var editedElement = elem || this.$listTable.find('.editing');
                     var editedCol;
                     var editedElementRowId;
@@ -72,7 +72,7 @@ define([
                             editedElement.not('.endDateInput').remove();
                         }
                     }
-                },
+                },*/
 
                 generateItems: function (e) {
                     var self = this;
@@ -141,6 +141,7 @@ define([
                             cancel: {
                                 text : "Cancel",
                                 class: "btn",
+                                id   : "cancelBtn",
                                 click: function () {
                                     self.hideDialog();
                                 }

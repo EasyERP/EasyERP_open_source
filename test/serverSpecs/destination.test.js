@@ -1,12 +1,11 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent;
 
-describe("Destination Specs", function () {
+require('../../config/development');
+
+describe('Destination Specs', function () {
     'use strict';
 
     describe('Destination with admin', function () {
@@ -18,7 +17,7 @@ describe("Destination Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'maxdb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -29,7 +28,7 @@ describe("Destination Specs", function () {
                 .expect(302, done);
         });
 
-        it("should get Destination for Dd", function (done) {
+        it('should get Destination for Dd', function (done) {
 
             aggent
                 .get('destination')
@@ -55,7 +54,7 @@ describe("Destination Specs", function () {
 
     describe('Destination with no authorise', function () {
 
-        it("should fail get Destination for Dd", function (done) {
+        it('should fail get Destination for Dd', function (done) {
 
             aggent
                 .get('destination')

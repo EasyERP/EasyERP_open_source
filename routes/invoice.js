@@ -10,23 +10,27 @@ module.exports = function (models, event) {
     var moduleId = MODULES.INVOICE;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
-    router.get('/',  authStackMiddleware, accessStackMiddlware, handler.getAll);
-    router.get('/totalCollectionLength',  authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
+    router.get('/', authStackMiddleware, accessStackMiddlware, function (req, res, next) {
+        var viewType = req.query.viewType;
+        switch (viewType) {
+            case 'form':
+                handler.getInvoiceById(req, res, next);
+                break;
+            case 'list':
+                handler.getForView(req, res, next);
+                break;
+            default:
+                handler.getAll(req, res, next);
+        }
+    });
+    
+   // router.get('/',  authStackMiddleware, accessStackMiddlware, handler.getAll);
+    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddlware, handler.getFilterValues);
     router.get('/generateName', authStackMiddleware, accessStackMiddlware, handler.generateName);
     router.get('/stats', authStackMiddleware, accessStackMiddlware, handler.getStats);
     router.get('/stats/project', authStackMiddleware, accessStackMiddlware, handler.getStatsForProject);
     router.get('/chart', authStackMiddleware, accessStackMiddlware, handler.chartForProject);
-    router.get('/:viewType', authStackMiddleware, accessStackMiddlware, function (req, res, next) {
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                handler.getInvoiceById(req, res, next);
-                break;
-            default:
-                handler.getForView(req, res, next);
-        }
-    });
 
     router.delete('/:_id', authStackMiddleware, accessStackMiddlware, function (req, res) {
         var id = req.param('_id');

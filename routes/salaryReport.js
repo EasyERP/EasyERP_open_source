@@ -34,7 +34,7 @@ module.exports = function (models) {
         });
     }
 
-    router.get('/list', cacheRetriver, handler.getSalaryReport);
+    router.get('/', cacheRetriver, handler.getSalaryReport);
 
     return router;
 };

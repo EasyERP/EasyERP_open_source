@@ -750,418 +750,79 @@ define([
         ]
     };
     var fakeProjectsForThumbnails = {
-        data: [
+        total: 220,
+        data : [
             {
-                _id           : "55b92ad621e4b7c40f00065f",
-                health        : 1,
-                workflow      : {
-                    _id         : "528ce7f2f3f67bc40b000023",
-                    __v         : 0,
-                    attachments : [],
-                    color       : "#2C3E50",
-                    name        : "In Progress",
-                    sequence    : 2,
-                    status      : "In Progress",
-                    wId         : "Projects",
-                    wName       : "project",
-                    source      : "project",
-                    targetSource: [
-                        "project"
-                    ],
-                    visible     : true
-                },
-                projectmanager: {
-                    _id           : "55b92ad221e4b7c40f000063",
-                    dateBirth     : "1990-07-30T00:00:00.000Z",
-                    ID            : 57,
-                    isLead        : 2,
-                    fire          : [],
-                    hire          : [
-                        "2013-11-17T22:00:00.000Z"
-                    ],
-                    social        : {
-                        FB: "",
-                        LI: "https://ua.linkedin.com/pub/yana"
-                    },
-                    sequence      : 0,
-                    jobType       : "fullTime",
-                    gender        : "male",
-                    marital       : "married",
-                    contractEnd   : {
-                        date  : "2015-07-29T19:34:42.464Z",
-                        reason: ""
-                    },
-                    attachments   : [],
-                    editedBy      : {
-                        date: "2016-03-31T09:31:59.608Z",
-                        user: "563f673270bbc2b740ce89ae"
-                    },
-                    createdBy     : {
-                        date: "2015-07-29T19:34:42.464Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    creationDate  : "2015-07-29T19:34:42.464Z",
-                    color         : "#4d5a75",
-                    otherInfo     : "",
-                    groups        : {
-                        group: [],
-                        users: [],
-                        owner: "55ba28c8d79a3a3439000016"
-                    },
-                    whoCanRW      : "everyOne",
-                    workflow      : null,
-                    active        : false,
-                    referredBy    : "",
-                    source        : "",
-                    age           : 25,
-                    homeAddress   : {
-                        country: "",
-                        zip    : "",
-                        state  : "",
-                        city   : "",
-                        street : ""
-                    },
-                    otherId       : "",
-                    bankAccountNo : "",
-                    nationality   : "Ukrainian",
-                    coach         : null,
-                    manager       : "55b92ad221e4b7c40f00004f",
-                    jobPosition   : "5644388770bbc2b740ce8a18",
-                    department    : "55b92ace21e4b7c40f000011",
-                    visibility    : "Public",
-                    relatedUser   : null,
-                    officeLocation: "",
-                    skype         : "yanochka_3007",
-                    workPhones    : {
-                        phone : "",
-                        mobile: "+380508754761"
-                    },
-                    personalEmail : "yana.gusti@gmail.com",
-                    workEmail     : "yana.gusti@thinkmobiles.com",
-                    workAddress   : {
-                        country: "",
-                        zip    : "",
-                        state  : "",
-                        city   : "",
-                        street : ""
-                    },
-                    tags          : [
-                        ""
-                    ],
-                    name          : {
-                        last : "Gusti",
-                        first: "Yana"
-                    },
-                    subject       : "",
-                    imageSrc      : "data:image/jpeg;base64,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",
-                    isEmployee    : true,
-                    __v           : 0,
-                    transferred   : [
-                        {
-                            date      : "2015-11-12T07:01:22.647Z",
-                            department: " BusinessDev"
-                        }
-                    ],
-                    transfer      : [
-                        {
-                            date       : "2013-11-17T22:00:00.000Z",
-                            isDeveloper: true,
-                            info       : "",
-                            salary     : 350,
-                            jobType    : "fullTime",
-                            manager    : "55b92ad221e4b7c40f00004f",
-                            jobPosition: "5644388770bbc2b740ce8a18",
-                            department : "55b92ace21e4b7c40f000011",
-                            status     : "hired"
-                        },
-                        {
-                            date       : "2014-06-30T21:00:00.000Z",
-                            isDeveloper: true,
-                            info       : "",
-                            salary     : 450,
-                            jobType    : "fullTime",
-                            manager    : "55b92ad221e4b7c40f00004f",
-                            jobPosition: "5644388770bbc2b740ce8a18",
-                            department : "55b92ace21e4b7c40f000011",
-                            status     : "updated"
-                        },
-                        {
-                            date       : "2015-08-31T21:00:00.000Z",
-                            isDeveloper: true,
-                            info       : "",
-                            salary     : 1000,
-                            jobType    : "fullTime",
-                            manager    : "55b92ad221e4b7c40f00004f",
-                            jobPosition: "5644388770bbc2b740ce8a18",
-                            department : "55b92ace21e4b7c40f000011",
-                            status     : "updated"
-                        }
-                    ]
-                },
-                customer      : {
-                    _id           : "55b92ad521e4b7c40f00060c",
-                    ID            : 1,
-                    companyInfo   : {
-                        size    : null,
-                        industry: null
-                    },
-                    editedBy      : {
-                        date: "2015-10-05T06:46:29.793Z",
-                        user: "55bf144765cda0810b000005"
-                    },
-                    createdBy     : {
-                        date: "2015-07-29T19:34:45.989Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    history       : [],
-                    attachments   : [],
-                    notes         : [],
-                    groups        : {
-                        owner: "55ba28c8d79a3a3439000016",
-                        users: [],
-                        group: []
-                    },
-                    whoCanRW      : "everyOne",
-                    social        : {
-                        LI: "",
-                        FB: ""
-                    },
-                    color         : "#4d5a75",
-                    relatedUser   : null,
-                    salesPurchases: {
-                        isCustomer: true,
-                        isSupplier: false,
-                        active    : false,
-                        reference : "",
-                        language  : ""
-                    },
-                    title         : "",
-                    internalNotes : "",
-                    contacts      : [],
-                    phones        : {
-                        phone : "",
-                        mobile: "",
-                        fax   : ""
-                    },
-                    skype         : "",
-                    jobPosition   : null,
-                    website       : "",
-                    address       : {
-                        country: "",
-                        zip    : "",
-                        state  : "",
-                        city   : "",
-                        street : ""
-                    },
-                    timezone      : "UTC",
-                    department    : null,
-                    company       : null,
-                    email         : "",
-                    imageSrc      : "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC",
-                    name          : {
-                        first: "Alexey",
-                        last : "Blinov"
-                    },
-                    isOwn         : false,
-                    type          : "Person",
-                    __v           : 0,
-                    dateBirth     : null
-                },
-                task          : [],
-                projectName   : "IOS/Android QA"
-            }, {
-                _id           : "55b92ad621e4b7c40f000660",
-                health        : 1,
-                workflow      : {
-                    _id         : "528ce82df3f67bc40b000025",
-                    __v         : 0,
-                    attachments : [],
-                    color       : "#2C3E50",
-                    name        : "Closed",
-                    sequence    : 1,
-                    status      : "Done",
-                    wId         : "Projects",
-                    wName       : "project",
-                    source      : "project",
-                    targetSource: [
-                        "project"
-                    ],
-                    visible     : true
-                },
-                projectmanager: {
-                    _id           : "55b92ad221e4b7c40f00004f",
-                    dateBirth     : "1980-09-29T01:00:00.000Z",
-                    ID            : 59,
-                    isLead        : 2,
-                    fire          : [],
-                    hire          : [
-                        "2011-10-06T21:00:00.000Z"
-                    ],
-                    social        : {
-                        FB: "",
-                        LI: ""
-                    },
-                    sequence      : 0,
-                    jobType       : "Full-time",
-                    gender        : "male",
-                    marital       : "unmarried",
-                    contractEnd   : {
-                        date  : "2015-07-29T19:34:42.438Z",
-                        reason: ""
-                    },
-                    attachments   : [],
-                    editedBy      : {
-                        date: "2016-03-11T13:41:21.146Z",
-                        user: "55ba2f3ed79a3a343900001d"
-                    },
-                    createdBy     : {
-                        date: "2015-07-29T19:34:42.438Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    creationDate  : "2015-07-29T19:34:42.438Z",
-                    color         : "#4d5a75",
-                    otherInfo     : "",
-                    groups        : {
-                        group: [],
-                        users: [],
-                        owner: "55ba28c8d79a3a3439000016"
-                    },
-                    whoCanRW      : "everyOne",
-                    workflow      : null,
-                    active        : false,
-                    referredBy    : "",
-                    source        : "",
-                    age           : 35,
-                    homeAddress   : {
-                        country: "",
-                        zip    : "",
-                        state  : "",
-                        city   : "",
-                        street : ""
-                    },
-                    otherId       : "",
-                    bankAccountNo : "",
-                    nationality   : "",
-                    coach         : null,
-                    manager       : null,
-                    jobPosition   : "55b92acf21e4b7c40f00001f",
-                    department    : "55b92ace21e4b7c40f000014",
-                    visibility    : "Public",
-                    relatedUser   : "563f673270bbc2b740ce89ae",
-                    officeLocation: "",
-                    skype         : "yourtradingsystems",
-                    workPhones    : {
-                        phone : "",
-                        mobile: "+380955676729"
-                    },
-                    personalEmail : "alexandervojak@gmail.com",
-                    workEmail     : "info@thinkmobiles.com",
-                    workAddress   : {
-                        country: "",
-                        zip    : "",
-                        state  : "",
-                        city   : "",
-                        street : ""
-                    },
-                    tags          : [
-                        ""
-                    ],
-                    name          : {
-                        last : "Sokhanych",
-                        first: "Alex"
-                    },
-                    subject       : "",
-                    imageSrc      : "data:image/jpeg;base64,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",
-                    isEmployee    : true,
-                    __v           : 0,
-                    transfer      : [
-                        {
-                            date       : "2011-10-06T21:00:00.000Z",
-                            isDeveloper: true,
-                            info       : "",
-                            salary     : 0,
-                            jobType    : "Full-time",
-                            manager    : null,
-                            jobPosition: "55b92acf21e4b7c40f00001f",
-                            department : "55b92ace21e4b7c40f000014",
-                            status     : "hired"
-                        }
-                    ]
-                },
-                customer      : {
-                    _id           : "55b92ad621e4b7c40f00064f",
-                    ID            : 5,
-                    companyInfo   : {
-                        size    : "200-500",
-                        industry: null
-                    },
-                    editedBy      : {
-                        user: "55b9dd7a7a3632120b000006",
-                        date: "2015-07-30T09:39:00.881Z"
-                    },
-                    createdBy     : {
-                        date: "2015-07-29T19:34:46.022Z",
-                        user: "52203e707d4dba8813000003"
-                    },
-                    history       : [],
-                    attachments   : [],
-                    notes         : [],
-                    groups        : {
-                        owner: "52203e707d4dba8813000003",
-                        users: [],
-                        group: []
-                    },
-                    whoCanRW      : "everyOne",
-                    social        : {
-                        LI: "",
-                        FB: ""
-                    },
-                    color         : "#4d5a75",
-                    relatedUser   : null,
-                    salesPurchases: {
-                        isCustomer : true,
-                        isSupplier : false,
-                        active     : false,
-                        salesPerson: null,
-                        reference  : "",
-                        language   : ""
-                    },
-                    title         : "",
-                    internalNotes : "",
-                    contacts      : [],
-                    phones        : {
-                        phone : "+972-3-942-4772",
-                        mobile: "+972-54-5492645"
-                    },
-                    skype         : "",
-                    jobPosition   : "",
-                    website       : "http://www.kenlo-group.com/",
-                    address       : {
-                        street : "Medinat HaYehudim 60 St.",
-                        city   : "Herzliya Pituah",
-                        state  : "Tel Aviv",
-                        zip    : "43661",
-                        country: "Israel"
-                    },
-                    timezone      : "UTC",
-                    department    : null,
-                    company       : null,
-                    email         : "igor@kenlo-group.com",
-                    imageSrc      : "data:image/jpeg;base64,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",
-                    name          : {
-                        first: "Kenlo Group Ltd",
-                        last : ""
-                    },
-                    isOwn         : false,
-                    type          : "Company",
-                    __v           : 0
-                },
-                task          : [],
-                projectName   : "iOS1"
-            }
+                _id  : '55b92ad621e4b7c40f00065f',
+                total: 220,
+                name : 'IOS/Android QA',
+                task : [],
 
+                workflow: {
+                    name: 'Closed'
+                },
+
+                salesManager: {
+                    _id: '55b92ad221e4b7c40f000063'
+                },
+
+                customer: {
+                    name: {
+                        first: 'Alexey',
+                        last : 'Blinov'
+                    }
+                },
+
+                health: 3
+            },
+            {
+                _id  : '55b92ad621e4b7c40f000660',
+                total: 220,
+                name : 'iOS1',
+                task : [],
+
+                workflow: {
+                    name: 'Closed'
+                },
+
+                salesManager: {
+                    _id: '55b92ad221e4b7c40f00004f'
+                },
+
+                customer: {
+                    name: {
+                        last : '',
+                        first: 'Kenlo Group Ltd'
+                    }
+                },
+
+                health: 1
+            },
+            {
+                _id  : '55b92ad621e4b7c40f000661',
+                total: 220,
+                name : 'Android2',
+                task : [],
+
+                workflow: {
+                    name: 'Closed'
+                },
+
+                salesManager: {
+                    _id: '55b92ad221e4b7c40f00004f'
+                },
+
+                customer: {
+                    name: {
+                        last : '',
+                        first: 'PatrickMolander'
+                    }
+                },
+
+                health: 1
+            }
         ]
-    };
+    }
     var fakeUsers = {
         data: [
             {
@@ -16469,21 +16130,27 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create ThumbnailsView', function (done) {
-                    var projectsUrl = new RegExp('\/projects\/thumbnails', 'i');
-                    var totalUrl = new RegExp('\/projects\/totalCollectionLength', 'i');
+                    var projectsUrl = new RegExp('\/projects\/', 'i');
                     var worlflowUrl = new RegExp('\/Workflows', 'i');
+                    var $thumbnailsContainer;
+                    var $thumbnails;
+                    var $firstThumbnail;
+                    var projectName;
+                    var customerName;
+                    var $health;
 
-                    server.respondWith('GET', totalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count   : 1,
-                        showMore: true
-                    })]);
-                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakeProjectsForThumbnails.data[0]]})]);
+                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectsForThumbnails)]);
                     projectsThumbCollection = new ProjectCollection({
                         viewType   : 'thumbnails',
+                        reset      : true,
+                        count      : 3,
                         contentType: 'Projects'
                     });
+
                     server.respond();
-                    server.respond();
+
+                    expect(projectsThumbCollection)
+                        .to.have.lengthOf(3);
 
                     server.respondWith('GET', worlflowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWorkflows)]);
                     thumbnailsView = new ThumbnailsView({
@@ -16495,7 +16162,17 @@ define([
                     clock.tick(200);
 
                     $thisEl = thumbnailsView.$el;
-                    expect($thisEl.find('#thumbnailContent')).to.exist;
+                    $thumbnailsContainer = $thisEl.find('#thumbnailContent');
+                    $thumbnails = $thumbnailsContainer.find('.thumbnail');
+
+                    expect($thumbnailsContainer).to.exist;
+                    expect($thumbnails).to.have.lengthOf(3);
+
+                    $firstThumbnail = $($thumbnails[0]);
+                    projectName = $firstThumbnail.find('span[data-content="project"]').text();
+
+                    expect(projectName).not.to.be.empty;
+                    expect(projectName).to.not.match(/object Object|undefined/);
 
                     topBarView.bind('createEvent', thumbnailsView.createItem, thumbnailsView);
                     topBarView.bind('editEvent', thumbnailsView.editItem, thumbnailsView);
@@ -16503,6 +16180,7 @@ define([
                     topBarView.bind('exportToCsv', thumbnailsView.exportToCsv, thumbnailsView);
                     topBarView.bind('exportToXlsx', thumbnailsView.exportToXlsx, thumbnailsView);
                     topBarView.bind('importEvent', thumbnailsView.importFiles, thumbnailsView);
+
                     projectsThumbCollection.bind('showmore', thumbnailsView.showMoreContent, thumbnailsView);
                     projectsThumbCollection.bind('showmoreAlphabet', thumbnailsView.showMoreAlphabet, thumbnailsView);
 
@@ -16510,328 +16188,328 @@ define([
                 });
 
                 /*it('Try to showMore', function () {
-                    var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
-                    var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
-                    var $thisEl = thumbnailsView.$el;
-                    var $showMoreBtn = $thisEl.find('#showMore');
+                 var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
+                 var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
+                 var $thisEl = thumbnailsView.$el;
+                 var $showMoreBtn = $thisEl.find('#showMore');
 
-                    server.respondWith('GET', totalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count   : 2,
-                        showMore: false
-                    })]);
-                    server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectsForThumbnails)]);
-                    $showMoreBtn.click();
-                    server.respond();
-                    server.respond();
+                 server.respondWith('GET', totalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
+                 count   : 2,
+                 showMore: false
+                 })]);
+                 server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectsForThumbnails)]);
+                 $showMoreBtn.click();
+                 server.respond();
+                 server.respond();
 
-                    expect($thisEl.find('#thumbnailContent')).to.exist;
-                    expect($thisEl.find('.thumbnail').length).to.be.equals(3);
-                });*/
+                 expect($thisEl.find('#thumbnailContent')).to.exist;
+                 expect($thisEl.find('.thumbnail').length).to.be.equals(3);
+                 });*/
 
-               /* it('Try to filtered projects', function () {
-                    var $selectedItem;
-                    var $contactBtn;
-                    var $projectNameBtn;
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $searchArrow = $searchContainer.find('.search-content');
-                    var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
-                    var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
+                /* it('Try to filtered projects', function () {
+                 var $selectedItem;
+                 var $contactBtn;
+                 var $projectNameBtn;
+                 var $searchContainer = $thisEl.find('#searchContainer');
+                 var $searchArrow = $searchContainer.find('.search-content');
+                 var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
+                 var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
 
-                    $searchArrow.mouseover();
+                 $searchArrow.mouseover();
 
-                    // select contact
-                    $contactBtn = $searchContainer.find('#customerFullContainer >.groupName');
-                    $contactBtn.click();
-                    $selectedItem = $searchContainer.find('li[data-value="55b92ad621e4b7c40f000635"]');
-                    server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count   : 2,
-                        showMore: false
-                    })]);
-                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
-                    $selectedItem.click();
-                    server.respond();
-                    server.respond();
-                    expect($thisEl.find('.thumbnail').length).to.be.equals(2);
+                 // select contact
+                 $contactBtn = $searchContainer.find('#customerFullContainer >.groupName');
+                 $contactBtn.click();
+                 $selectedItem = $searchContainer.find('li[data-value="55b92ad621e4b7c40f000635"]');
+                 server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                 count   : 2,
+                 showMore: false
+                 })]);
+                 server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
+                 $selectedItem.click();
+                 server.respond();
+                 server.respond();
+                 expect($thisEl.find('.thumbnail').length).to.be.equals(2);
 
-                    // select project name
-                    $projectNameBtn = $searchContainer.find('#nameFullContainer >.groupName');
-                    $projectNameBtn.click();
-                    $selectedItem = $searchContainer.find('li[data-value="56e689c75ec71b00429745a9"]');
-                    server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count   : 1,
-                        showMore: true
-                    })]);
-                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakeProjectsForThumbnails.data[0]]})]);
-                    $selectedItem.click();
-                    server.respond();
-                    server.respond();
-                    expect($thisEl.find('.thumbnail').length).to.be.equals(1);
+                 // select project name
+                 $projectNameBtn = $searchContainer.find('#nameFullContainer >.groupName');
+                 $projectNameBtn.click();
+                 $selectedItem = $searchContainer.find('li[data-value="56e689c75ec71b00429745a9"]');
+                 server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                 count   : 1,
+                 showMore: true
+                 })]);
+                 server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({data: [fakeProjectsForThumbnails.data[0]]})]);
+                 $selectedItem.click();
+                 server.respond();
+                 server.respond();
+                 expect($thisEl.find('.thumbnail').length).to.be.equals(1);
 
-                    // close project name filter
-                    server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count   : 2,
-                        showMore: false
-                    })]);
-                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
-                    $selectedItem.click();
-                    server.respond();
-                    server.respond();
-                    expect($thisEl.find('.thumbnail').length).to.be.equals(2);
-                });
+                 // close project name filter
+                 server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                 count   : 2,
+                 showMore: false
+                 })]);
+                 server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
+                 $selectedItem.click();
+                 server.respond();
+                 server.respond();
+                 expect($thisEl.find('.thumbnail').length).to.be.equals(2);
+                 });
 
-                it('Try to close contact filter', function () {
-                    var $searchContainer = $thisEl.find('#searchContainer');
-                    var $closeContactBtn = $searchContainer.find('span[data-value="customer"]').next();
-                    var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
-                    var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
+                 it('Try to close contact filter', function () {
+                 var $searchContainer = $thisEl.find('#searchContainer');
+                 var $closeContactBtn = $searchContainer.find('span[data-value="customer"]').next();
+                 var projectsUrl = new RegExp('\/Projects\/thumbnails', 'i');
+                 var totalUrl = new RegExp('\/totalCollectionLength\/Projects', 'i');
 
-                    server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count   : 2,
-                        showMore: false
-                    })]);
-                    server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
-                    $closeContactBtn.click();
-                    server.respond();
-                    server.respond();
-                });
+                 server.respondWith('GET', totalUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
+                 count   : 2,
+                 showMore: false
+                 })]);
+                 server.respondWith('GET', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectsForThumbnails)]);
+                 $closeContactBtn.click();
+                 server.respond();
+                 server.respond();
+                 });
 
-                it('Try to change project status', function () {
-                    var $statusSelectedItem;
-                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
-                    var $projectStatusBtn = $needItem.find('.stageSelect');
-                    var projectUrl = new RegExp('\/Projects\/', 'i');
+                 it('Try to change project status', function () {
+                 var $statusSelectedItem;
+                 var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
+                 var $projectStatusBtn = $needItem.find('.stageSelect');
+                 var projectUrl = new RegExp('\/Projects\/', 'i');
 
-                    $projectStatusBtn.click();
-                    $statusSelectedItem = $needItem.find('.newSelectList li:nth-child(3)');
-                    $statusSelectedItem.click();
+                 $projectStatusBtn.click();
+                 $statusSelectedItem = $needItem.find('.newSelectList li:nth-child(3)');
+                 $statusSelectedItem.click();
 
-                    server.respondWith('PATCH', projectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
-                    $statusSelectedItem.click();
-                    server.respond();
+                 server.respondWith('PATCH', projectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+                 $statusSelectedItem.click();
+                 server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails');
-                });
+                 expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails');
+                 });
 
-                it('Try to change health of project', function () {
-                    var $healthSelectedItem;
-                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
-                    var $projectHealthBtn = $needItem.find('.health-container');
-                    var projectUrl = new RegExp('\/Projects\/', 'i');
+                 it('Try to change health of project', function () {
+                 var $healthSelectedItem;
+                 var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
+                 var $projectHealthBtn = $needItem.find('.health-container');
+                 var projectUrl = new RegExp('\/Projects\/', 'i');
 
-                    $projectHealthBtn.click();
-                    $healthSelectedItem = $needItem.find('ul li div.health1');
+                 $projectHealthBtn.click();
+                 $healthSelectedItem = $needItem.find('ul li div.health1');
 
-                    server.respondWith('PATCH', projectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
-                    $healthSelectedItem.click();
-                    server.respond();
+                 server.respondWith('PATCH', projectUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Updated success'})]);
+                 $healthSelectedItem.click();
+                 server.respond();
 
-                    expect($needItem.find('.health-container a')).to.have.class('health1');
+                 expect($needItem.find('.health-container a')).to.have.class('health1');
 
-                });
+                 });
 
-                it('Try to open CreateView', function () {
-                    var $createBtn = topBarView.$el.find('#top-bar-createBtn');
-                    var usersUrl = '/users/forDd';
-                    var employeesUrl = '/employees/getPersonsForDd';
-                    var customerUrl = '/customers/';
+                 it('Try to open CreateView', function () {
+                 var $createBtn = topBarView.$el.find('#top-bar-createBtn');
+                 var usersUrl = '/users/forDd';
+                 var employeesUrl = '/employees/getPersonsForDd';
+                 var customerUrl = '/customers/';
 
-                    server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
-                    server.respondWith('GET', employeesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployees)]);
-                    server.respondWith('GET', customerUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
-                    $createBtn.click();
-                    thumbnailsView.createItem();
-                    server.respond();
-                    server.respond();
-                    server.respond();
+                 server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
+                 server.respondWith('GET', employeesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployees)]);
+                 server.respondWith('GET', customerUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
+                 $createBtn.click();
+                 thumbnailsView.createItem();
+                 server.respond();
+                 server.respond();
+                 server.respond();
 
-                    expect($('.ui-dialog')).to.exist;
-                });
+                 expect($('.ui-dialog')).to.exist;
+                 });
 
-                it('Try to change tabs', function () {
-                    var $dialogEl = $('.ui-dialog');
-                    var $firstTab = $dialogEl.find('.dialog-tabs > li:nth-child(1) > a');
-                    var $secondTab = $dialogEl.find('.dialog-tabs > li:nth-child(2) > a');
+                 it('Try to change tabs', function () {
+                 var $dialogEl = $('.ui-dialog');
+                 var $firstTab = $dialogEl.find('.dialog-tabs > li:nth-child(1) > a');
+                 var $secondTab = $dialogEl.find('.dialog-tabs > li:nth-child(2) > a');
 
-                    expect($firstTab).to.have.class('active');
+                 expect($firstTab).to.have.class('active');
 
-                    $secondTab.click();
-                    expect($secondTab).to.have.class('active');
+                 $secondTab.click();
+                 expect($secondTab).to.have.class('active');
 
-                    $firstTab.click();
-                    expect($firstTab).to.have.class('active');
+                 $firstTab.click();
+                 expect($firstTab).to.have.class('active');
 
-                });
+                 });
 
-                it('Try to create item without required data', function () {
-                    var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
-                    var spyResponse;
+                 it('Try to create item without required data', function () {
+                 var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                 var spyResponse;
 
-                    $createBtn.click();
-                    spyResponse = mainSpy.args[0][0];
+                 $createBtn.click();
+                 spyResponse = mainSpy.args[0][0];
 
-                    expect(spyResponse).to.have.property('type', 'error');
+                 expect(spyResponse).to.have.property('type', 'error');
 
-                });
+                 });
 
-                it('Try to set set required data to CreateView', function () {
-                    var $selectedItem;
-                    var $salesManagerSelect;
-                    var $projectHealthSelect;
-                    var $customerSelect;
-                    var $next;
-                    var $prev;
-                    var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
-                    var $dialogEl = $('.ui-dialog');
-                    var $projectNameEl = $dialogEl.find('#projectName');
-                    var $projectDescEl = $dialogEl.find('#projectShortDesc');
-                    var $startDate = $dialogEl.find('#StartDate');
-                    var $endDate = $dialogEl.find('#EndDateTarget');
-                    var projectsUrl = '/Projects/';
+                 it('Try to set set required data to CreateView', function () {
+                 var $selectedItem;
+                 var $salesManagerSelect;
+                 var $projectHealthSelect;
+                 var $customerSelect;
+                 var $next;
+                 var $prev;
+                 var $createBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                 var $dialogEl = $('.ui-dialog');
+                 var $projectNameEl = $dialogEl.find('#projectName');
+                 var $projectDescEl = $dialogEl.find('#projectShortDesc');
+                 var $startDate = $dialogEl.find('#StartDate');
+                 var $endDate = $dialogEl.find('#EndDateTarget');
+                 var projectsUrl = '/Projects/';
 
-                    $projectNameEl.val('Test');
-                    $projectDescEl.val('Test');
-                    $startDate.val('5 Apr, 2016');
-                    $endDate.val('25 Apr, 2016');
+                 $projectNameEl.val('Test');
+                 $projectDescEl.val('Test');
+                 $startDate.val('5 Apr, 2016');
+                 $endDate.val('25 Apr, 2016');
 
-                    // select sales manager
-                    $salesManagerSelect = $dialogEl.find('#projectManagerDD');
-                    $salesManagerSelect.click();
-                    $next = $dialogEl.find('.next');
-                    $next.click();
-                    $prev = $dialogEl.find('.prev');
-                    $prev.click();
-                    $selectedItem = $dialogEl.find('#55b92ad221e4b7c40f000084');
-                    $selectedItem.click();
+                 // select sales manager
+                 $salesManagerSelect = $dialogEl.find('#projectManagerDD');
+                 $salesManagerSelect.click();
+                 $next = $dialogEl.find('.next');
+                 $next.click();
+                 $prev = $dialogEl.find('.prev');
+                 $prev.click();
+                 $selectedItem = $dialogEl.find('#55b92ad221e4b7c40f000084');
+                 $selectedItem.click();
 
-                    //select customer
-                    $customerSelect = $dialogEl.find('#customerDd');
-                    $customerSelect.click();
-                    $selectedItem = $dialogEl.find('#55b92ad521e4b7c40f00060e');
-                    $selectedItem.click();
+                 //select customer
+                 $customerSelect = $dialogEl.find('#customerDd');
+                 $customerSelect.click();
+                 $selectedItem = $dialogEl.find('#55b92ad521e4b7c40f00060e');
+                 $selectedItem.click();
 
-                    //select project health
-                    $projectHealthSelect = $dialogEl.find('#health a');
-                    $projectHealthSelect.click();
-                    $selectedItem = $dialogEl.find('.health2');
-                    $selectedItem.click();
+                 //select project health
+                 $projectHealthSelect = $dialogEl.find('#health a');
+                 $projectHealthSelect.click();
+                 $selectedItem = $dialogEl.find('.health2');
+                 $selectedItem.click();
 
-                    server.respondWith('POST', projectsUrl, [201, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
-                    $createBtn.click();
-                    server.respond();
+                 server.respondWith('POST', projectsUrl, [201, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
+                 $createBtn.click();
+                 server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=100');
-                });
+                 expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails/c=100');
+                 });
 
-                it('Close CreateView', function () {
-                    var $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
+                 it('Close CreateView', function () {
+                 var $cancelBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(2)');
 
-                    $cancelBtn.click();
+                 $cancelBtn.click();
 
-                    expect($('.ui-dialog')).to.not.exist;
-                });
+                 expect($('.ui-dialog')).to.not.exist;
+                 });
 
 
-                it('Try to open EditView', function () {
-                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
-                    var projectFormUrl = new RegExp('\/Projects\/form\/', 'i');
-                    var usersUrl = '/users/forDd';
-                    var employeesUrl = '/employees/getPersonsForDd';
-                    var customerUrl = '/customers/';
+                 it('Try to open EditView', function () {
+                 var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
+                 var projectFormUrl = new RegExp('\/Projects\/form\/', 'i');
+                 var usersUrl = '/users/forDd';
+                 var employeesUrl = '/employees/getPersonsForDd';
+                 var customerUrl = '/customers/';
 
-                    server.respondWith('GET', projectFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectById)]);
-                    server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
-                    server.respondWith('GET', employeesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployees)]);
-                    server.respondWith('GET', customerUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
-                    $needItem.click();
-                    server.respond();
-                    server.respond();
-                    server.respond();
-                    server.respond();
+                 server.respondWith('GET', projectFormUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProjectById)]);
+                 server.respondWith('GET', usersUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeUsers)]);
+                 server.respondWith('GET', employeesUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeEmployees)]);
+                 server.respondWith('GET', customerUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCustomers)]);
+                 $needItem.click();
+                 server.respond();
+                 server.respond();
+                 server.respond();
+                 server.respond();
 
-                    expect($('.ui-dialog')).to.exist;
-                });
+                 expect($('.ui-dialog')).to.exist;
+                 });
 
-                it('Try to change tabs', function () {
-                    var $dialogEl = $('.ui-dialog');
-                    var $firstTab = $dialogEl.find('.dialog-tabs > li:nth-child(1) > a');
-                    var $secondTab = $dialogEl.find('.dialog-tabs > li:nth-child(2) > a');
+                 it('Try to change tabs', function () {
+                 var $dialogEl = $('.ui-dialog');
+                 var $firstTab = $dialogEl.find('.dialog-tabs > li:nth-child(1) > a');
+                 var $secondTab = $dialogEl.find('.dialog-tabs > li:nth-child(2) > a');
 
-                    expect($firstTab).to.have.class('active');
+                 expect($firstTab).to.have.class('active');
 
-                    $secondTab.click();
-                    expect($secondTab).to.have.class('active');
+                 $secondTab.click();
+                 expect($secondTab).to.have.class('active');
 
-                    $firstTab.click();
-                    expect($firstTab).to.have.class('active');
+                 $firstTab.click();
+                 expect($firstTab).to.have.class('active');
 
-                });
+                 });
 
-                it('Try to set required data to EditView', function () {
-                    var $selectedItem;
-                    var $salesManagerSelect;
-                    var $projectHealthSelect;
-                    var $customerSelect;
-                    var $next;
-                    var $prev;
-                    var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-project-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
-                    var $dialogEl = $('.ui-dialog');
-                    var projectsUrl = new RegExp('\/Projects\/', 'i');
-                    var $startDate = $dialogEl.find('#StartDate');
-                    var $endTargetDate = $dialogEl.find('#EndDateTarget');
-                    var $endDate = $dialogEl.find('#EndDate');
+                 it('Try to set required data to EditView', function () {
+                 var $selectedItem;
+                 var $salesManagerSelect;
+                 var $projectHealthSelect;
+                 var $customerSelect;
+                 var $next;
+                 var $prev;
+                 var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-project-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
+                 var $dialogEl = $('.ui-dialog');
+                 var projectsUrl = new RegExp('\/Projects\/', 'i');
+                 var $startDate = $dialogEl.find('#StartDate');
+                 var $endTargetDate = $dialogEl.find('#EndDateTarget');
+                 var $endDate = $dialogEl.find('#EndDate');
 
-                    $startDate.val('5 Apr, 2016');
-                    $endTargetDate.val('25 Apr, 2016');
-                    $endDate.val('25 Apr, 2016');
+                 $startDate.val('5 Apr, 2016');
+                 $endTargetDate.val('25 Apr, 2016');
+                 $endDate.val('25 Apr, 2016');
 
-                    // select sales manager
-                    $salesManagerSelect = $dialogEl.find('#projectManagerDD');
-                    $salesManagerSelect.click();
-                    $next = $dialogEl.find('.next');
-                    $next.click();
-                    $prev = $dialogEl.find('.prev');
-                    $prev.click();
-                    $selectedItem = $dialogEl.find('#55b92ad221e4b7c40f000084');
-                    $selectedItem.click();
+                 // select sales manager
+                 $salesManagerSelect = $dialogEl.find('#projectManagerDD');
+                 $salesManagerSelect.click();
+                 $next = $dialogEl.find('.next');
+                 $next.click();
+                 $prev = $dialogEl.find('.prev');
+                 $prev.click();
+                 $selectedItem = $dialogEl.find('#55b92ad221e4b7c40f000084');
+                 $selectedItem.click();
 
-                    //select customer
-                    $customerSelect = $dialogEl.find('#customerDd');
-                    $customerSelect.click();
-                    $selectedItem = $dialogEl.find('#55b92ad521e4b7c40f00060e');
-                    $selectedItem.click();
+                 //select customer
+                 $customerSelect = $dialogEl.find('#customerDd');
+                 $customerSelect.click();
+                 $selectedItem = $dialogEl.find('#55b92ad521e4b7c40f00060e');
+                 $selectedItem.click();
 
-                    //select project health
-                    $projectHealthSelect = $dialogEl.find('#health a');
-                    $projectHealthSelect.click();
-                    $selectedItem = $dialogEl.find('.health2');
-                    $selectedItem.click();
+                 //select project health
+                 $projectHealthSelect = $dialogEl.find('#health a');
+                 $projectHealthSelect.click();
+                 $selectedItem = $dialogEl.find('.health2');
+                 $selectedItem.click();
 
-                    server.respondWith('PUT', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
-                    $saveBtn.click();
-                    server.respond();
+                 server.respondWith('PUT', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
+                 $saveBtn.click();
+                 server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails');
-                });
+                 expect(window.location.hash).to.be.equals('#easyErp/Projects/thumbnails');
+                 });
 
-                it('Try to delete project', function () {
-                    var $deleteBtn;
-                    var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
-                    var projectsUrl = new RegExp('\/Projects\/', 'i');
+                 it('Try to delete project', function () {
+                 var $deleteBtn;
+                 var $needItem = $thisEl.find('#55b92ad621e4b7c40f00065f');
+                 var projectsUrl = new RegExp('\/Projects\/', 'i');
 
-                    windowConfirmStub.returns(true);
-                    $needItem.click();
-                    server.respond();
+                 windowConfirmStub.returns(true);
+                 $needItem.click();
+                 server.respond();
 
-                    $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-project-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
+                 $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-project-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
 
-                    server.respondWith('DELETE', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
-                    $deleteBtn.click();
-                    server.respond();
+                 server.respondWith('DELETE', projectsUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({success: 'Deleted success'})]);
+                 $deleteBtn.click();
+                 server.respond();
 
-                    expect($('.ui-dialog')).to.not.exist;
-                    expect($thisEl.find('.thumbnail').length).to.be.equals(1);
+                 expect($('.ui-dialog')).to.not.exist;
+                 expect($thisEl.find('.thumbnail').length).to.be.equals(1);
 
-                });*/
+                 });*/
             });
 
         });

@@ -18,18 +18,16 @@
                 var that = this;
 
                 options = options || {};
-                this.startTime = new Date();
-                
+                this.viewType = options.viewType || 'list';
                 this.startTime = new Date();
                 this.namberToShow = options.count || 100;
 
                 if (options && options.url) {
                     this.url = options.url;
                     delete options.url;
-                } else if (options && options.viewType) {
-                    this.viewType = options.viewType || 'list';
+                }/* else if (options && options.viewType) {
                     this.url += this.viewType;
-                }
+                }*/
 
                 this.contentType = options.contentType || 'wTrack';
                 this.count = options.count || 100;

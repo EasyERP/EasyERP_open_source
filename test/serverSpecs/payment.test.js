@@ -208,11 +208,12 @@ describe("Payment Specs", function () {
 
             it("should get payments by viewType", function (done) {
                 var query = {
-                    count: 100
+                    count: 100,
+                    viewType: 'list'
                 };
 
                 aggent
-                    .get('payment/salary/list')
+                    .get('payment/salary/')
                     .query(query)
                     .expect(200)
                     .end(function (err, res) {
@@ -579,7 +580,7 @@ describe("Payment Specs", function () {
         it("should fail get payments by viewType", function (done) {
 
             aggent
-                .get('payment/salary/list')
+                .get('payment/salary/')
                 .expect(404, done);
         });
 

@@ -1164,7 +1164,8 @@ require.config({
         fixtures         : './test/uiSpecs/fixtures',
         images           : './public/images',
         modules          : './constants/test/modules',
-        dashboardVacation: './constants/test/dashboardVacation'
+        dashboardVacation: './constants/test/dashboardVacation',
+        filter          : './constants/test/filter'
     },
     shim   : {
         jQuery       : {

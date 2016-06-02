@@ -1,10 +1,11 @@
 var mongoose = require('mongoose');
-var JobPosition = function (models) {
+var Module = function (models) {
     'use strict';
-    var accessRoll = require("../helpers/accessRollHelper.js")(models);
+
     var jobPositionSchema = mongoose.Schemas.JobPosition;
     var jobTypeSchema = mongoose.Schemas.jobType;
     var employeeSchema = mongoose.Schemas.Employee;
+    var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var async = require('async');
     var objectId = mongoose.Types.ObjectId;
 
@@ -14,25 +15,26 @@ var JobPosition = function (models) {
     this.getFilterValues = function (req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
 
-        JobPosition.aggregate([
-            {
-                $group: {
-                    _id                          : null,
-                    'Job name'                   : {
-                        $addToSet: '$name'
-                    },
-                    'Total forecasted employees' : {
-                        $addToSet: '$totalForecastedEmployees'
-                    },
-                    'Current number of employees': {
-                        $addToSet: '$numberOfEmployees'
-                    },
-                    'Expected in recruitment'    : {
-                        $addToSet: '$expectedRecruitment'
-                    }
+        JobPosition.aggregate([{
+            $group: {
+                _id       : null,
+                'Job name': {
+                    $addToSet: '$name'
+                },
+
+                'Total forecasted employees': {
+                    $addToSet: '$totalForecastedEmployees'
+                },
+
+                'Current number of employees': {
+                    $addToSet: '$numberOfEmployees'
+                },
+
+                'Expected in recruitment': {
+                    $addToSet: '$expectedRecruitment'
                 }
             }
-        ], function (err, result) {
+        }], function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -102,7 +104,7 @@ var JobPosition = function (models) {
         }
 
         switch (viewType) {
-            case "form":
+            case 'form':
                 getById(req, res, next);
                 break;
             default:
@@ -118,8 +120,8 @@ var JobPosition = function (models) {
 
         JobPosition
             .findById(id)
-            .populate("department", "departmentName _id")
-            .populate("workflow", "name _id")
+            .populate('department', 'departmentName _id')
+            .populate('workflow', 'name _id')
             .populate('createdBy.user')
             .populate('editedBy.user')
             .populate('groups.users')
@@ -133,7 +135,7 @@ var JobPosition = function (models) {
                 Employee.aggregate(
                     {
                         $match: {
-                            "jobPosition": objectId(id)
+                            'jobPosition': objectId(id)
                         }
                     },
                     function (err, result) {
@@ -202,7 +204,7 @@ var JobPosition = function (models) {
                         return pCb(err);
                     }
                     async.each(result, function (jp, cb) {
-                        Employee.find({"jobPosition": jp._id}).count(function (err, count) {
+                        Employee.find({'jobPosition': jp._id}).count(function (err, count) {
                             if (err) {
                                 return cb(err);
                             }
@@ -357,4 +359,4 @@ var JobPosition = function (models) {
     };
 };
 
-module.exports = JobPosition;
+module.exports = Module;

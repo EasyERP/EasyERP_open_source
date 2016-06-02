@@ -1,15 +1,12 @@
-/**
- * Created by liliy on 04.02.2016.
- */
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-describe("Campaigns Specs", function () {
+require('../../config/development');
+
+describe('Campaigns Specs', function () {
     'use strict';
     before(function (done) {
         aggent = request.agent(url);
@@ -18,17 +15,17 @@ describe("Campaigns Specs", function () {
             .post('users/login')
             .send({
                 login: 'admin',
-                pass : '1q2w3eQWE',
+                pass : 'tm2016',
                 dbId : 'production'
             })
             .expect(200, done);
     });
 
-    it("should get campaigns for dropDown", function (done) {
+    it('should get campaigns for dropDown', function (done) {
         aggent
             .get('campaigns')
             .expect(200)
-            .end(function(err, res){
+            .end(function (err, res) {
                 var body = res.body;
 
                 if (err) {

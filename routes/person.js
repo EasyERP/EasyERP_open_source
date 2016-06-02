@@ -13,17 +13,17 @@ module.exports = function (models, event) {
     var moduleId = MODULES.PERSONS;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
-    router.get('/getPersonAlphabet', authStackMiddleware, accessStackMiddlware, handler.getCompaniesAlphabet);
-    router.get('/getPersonsForMiniView', authStackMiddleware, handler.getFilterPersonsForMiniView);
-    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.getTotalCount);
-    router.get('/:id', authStackMiddleware, accessStackMiddlware, handler.getByViewType);
+    router.use(authStackMiddleware);
 
-    router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
-    router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.update);
-    router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.udateOnlySelectedFields);
-    router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
-    //router.get('/form', authStackMiddleware, accessStackMiddlware, handler.getById);
-    //router.get('/list', authStackMiddleware, accessStackMiddlware, handler.getFilterCustomers);
-    //router.get('/thumbnails', authStackMiddleware, accessStackMiddlware, handler.getFilterCustomers);
+    router.get('/', accessStackMiddlware, handler.getByViewType);
+    router.get('/getPersonAlphabet', accessStackMiddlware, handler.getCompaniesAlphabet);
+    router.get('/getPersonsForMiniView', handler.getFilterPersonsForMiniView);
+    router.get('/totalCollectionLength', accessStackMiddlware, handler.getTotalCount);
+
+    router.post('/', accessStackMiddlware, handler.create);
+    router.put('/:id', accessStackMiddlware, handler.update);
+    router.patch('/:id', accessStackMiddlware, handler.udateOnlySelectedFields);
+    router.delete('/:id', accessStackMiddlware, handler.remove);
+    
     return router;
 };

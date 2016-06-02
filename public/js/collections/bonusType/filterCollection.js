@@ -21,11 +21,11 @@ define([
             this.startTime = new Date();
             var that = this;
             this.numberToShow = options.count;
+            this.viewType = options.viewType;
 
-            if (options && options.viewType) {
-                this.viewType = options.viewType;
+            /*if (options && options.viewType) {
                 this.url += options.viewType;
-            }
+            }*/
 
             this.contentType = options.contentType;
             this.count = options.count;
@@ -72,6 +72,12 @@ define([
                     });
                 }
             });
+        },
+
+        parse: function (response) {
+            var bonusType = response.data;
+
+            return bonusType;
         }
     });
 

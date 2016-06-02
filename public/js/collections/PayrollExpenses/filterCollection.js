@@ -33,9 +33,9 @@ define([
                 this.viewType = options.viewType;
                 this.contentType = options.contentType;
 
-                if (options && options.viewType) {
+                /*if (options && options.viewType) {
                     this.url += options.viewType;
-                }
+                }*/
 
                 this.fetch({
                     data   : options,

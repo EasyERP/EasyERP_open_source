@@ -16,7 +16,6 @@ module.exports = function (models) {
     var handler = new WtrackHandler(models);
 
     function cacheRetriver(req, res, next) {
-        console.time('cash');
         var query = req.query;
         var filter = query.filter || {};
         var key;
@@ -25,6 +24,8 @@ module.exports = function (models) {
         var startByWeek;
         var endByWeek;
         var needRefresh = !!query.refresh;
+
+        console.time('cash');
 
         if (filter.startDate && filter.endDate) {
             startDate = new Date(filter.startDate);
@@ -55,7 +56,7 @@ module.exports = function (models) {
                 result = JSON.parse(result);
                 res.status(200).send(result);
                 console.timeEnd('cash');
-            } catch (exc){
+            } catch (exc) {
                 return next();
             }
         });

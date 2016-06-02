@@ -44,5 +44,7 @@ module.exports = {
     JOURNALENTRY      : 86,
     INVOICECHARTS     : 87,
     SALARYREPORT      : 88,
-    WORKFLOWS         : 44
+    WORKFLOWS         : 44,
+    DIVIDENDINVOICE   : 101,
+    EXPENSESINVOICE   : 97
 };

@@ -1,21 +1,21 @@
 var mongoose = require('mongoose');
-var Department = function (models) {
+var Module = function (models) {
     'use strict';
-    var access = require("../Modules/additions/access.js")(models);
+    var access = require('../Modules/additions/access.js')(models);
     var DepartmentSchema = mongoose.Schemas.Department;
 
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Department;
 
-    // exportDecorator.addExportFunctionsToHandler(this, function (req) {
-    //    return models.get(req.session.lastDb, 'Department', DepartmentSchema)
-    // }, exportMap, "Department");
+    /* exportDecorator.addExportFunctionsToHandler(this, function (req) {
+       return models.get(req.session.lastDb, 'Department', DepartmentSchema)
+    }, exportMap, 'Department');*/
 
     this.getForDD = function (req, res, next) {
         var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
         var query = req.query;
         var matchQuery = {};
-        if (query.devDepartments){
+        if (query.devDepartments) {
             matchQuery.isDevelopment = true;
         }
 
@@ -33,6 +33,10 @@ var Department = function (models) {
     };
 
     this.get = function (req, res, next) {
+        get(req, res, next);
+    }
+
+    function get(req, res, next) {
         var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
         var query = Department.find({});
 
@@ -46,7 +50,7 @@ var Department = function (models) {
             res.status(200).send({data: departments});
 
         });
-    };
+    }
 
     this.create = function (req, res, next) {
         var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
@@ -75,6 +79,10 @@ var Department = function (models) {
     };
 
     this.getById = function (req, res, next) {
+        getById(req, res, next);
+    }
+
+    function getById(req, res, next) {
         var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
         var id = req.query.id;
 
@@ -91,6 +99,29 @@ var Department = function (models) {
 
                 res.status(200).send(result);
             });
+    }
+
+    this.getByViewType = function (req, res, next) {
+        var query = req.query;
+        var viewType = query.viewType;
+        var id = req.query.id;
+
+        if (id && id.length >= 24) {
+            getById(req, res, next);
+            return false;
+        }
+
+        switch (viewType) {
+            case 'form':
+                getById(req, res, next);
+                break;
+            case 'list':
+                getCustomDepartment(req, res, next);
+                break;
+            default:
+                get(req, res, next);
+                break;
+        }
     };
 
     this.getCustomDepartment = function (req, res, next) {
@@ -98,9 +129,9 @@ var Department = function (models) {
 
         Department
             .find({})
-            .populate("parentDepartment", "departmentName _id")
-            .populate("departmentManager", "name _id")
-            .populate("users", "login _id")
+            .populate('parentDepartment', 'departmentName _id')
+            .populate('departmentManager', 'name _id')
+            .populate('users', 'login _id')
             .sort({nestingLevel: 1, sequence: -1})
             .exec(function (err, result) {
                 if (err) {
@@ -178,7 +209,7 @@ var Department = function (models) {
                     end -= 1;
                 }
                 objChange = {};
-                objFind = {"parentDepartment": parentDepartmentStart};
+                objFind = {'parentDepartment': parentDepartmentStart};
                 objFind[sequenceField] = {$gte: start, $lte: end};
                 objChange[sequenceField] = inc;
                 query = model.update(objFind, {$inc: objChange}, {multi: true});
@@ -189,7 +220,7 @@ var Department = function (models) {
                 });
             } else {
                 if (isCreate) {
-                    query = model.count({"parentDepartment": parentDepartmentStart}).exec(function (err, res) {
+                    query = model.count({'parentDepartment': parentDepartmentStart}).exec(function (err, res) {
                         if (callback) {
                             callback(res);
                         }
@@ -197,7 +228,7 @@ var Department = function (models) {
                 }
                 if (isDelete) {
                     objChange = {};
-                    objFind = {"parentDepartment": parentDepartmentStart};
+                    objFind = {'parentDepartment': parentDepartmentStart};
                     objFind[sequenceField] = {$gt: start};
                     objChange[sequenceField] = -1;
                     query = model.update(objFind, {$inc: objChange}, {multi: true});
@@ -210,12 +241,12 @@ var Department = function (models) {
             }
         } else {
             objChange = {};
-            objFind = {"parentDepartment": parentDepartmentStart};
+            objFind = {'parentDepartment': parentDepartmentStart};
             objFind[sequenceField] = {$gte: start};
             objChange[sequenceField] = -1;
             query = model.update(objFind, {$inc: objChange}, {multi: true});
             query.exec();
-            objFind = {"parentDepartment": parentDepartmentEnd};
+            objFind = {'parentDepartment': parentDepartmentEnd};
             objFind[sequenceField] = {$gte: end};
             objChange[sequenceField] = 1;
             query = model.update(objFind, {$inc: objChange}, {multi: true});
@@ -276,7 +307,7 @@ var Department = function (models) {
             if (doc.length > 0 && doc[0]._id.toString() !== _id) {
                 res.status(400).send({error: 'An Department with the same Name already exists'});
             } else if (data.sequenceStart) {
-                updateSequence(Department, "sequence", data.sequenceStart, data.sequence, data.parentDepartmentStart, data.parentDepartment, false, false, function (sequence) {
+                updateSequence(Department, 'sequence', data.sequenceStart, data.sequence, data.parentDepartmentStart, data.parentDepartment, false, false, function (sequence) {
                     data.sequence = sequence;
                     Department.findByIdAndUpdate({_id: _id}, data, {new: true}, function (err) {
                         if (err) {
@@ -354,4 +385,4 @@ var Department = function (models) {
     };
 };
 
-module.exports = Department;
+module.exports = Module;

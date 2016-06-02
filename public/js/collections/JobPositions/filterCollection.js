@@ -20,9 +20,9 @@
                 this.namberToShow = options.count;
                 this.page = options.page || 1;
                 var that = this;
-                if (options && options.viewType) {
+                /*if (options && options.viewType) {
                     this.url += options.viewType;
-                }
+                }*/
                 if (options && options.count) {
                     this.namberToShow = options.count;
                     this.page = options.page || 1;

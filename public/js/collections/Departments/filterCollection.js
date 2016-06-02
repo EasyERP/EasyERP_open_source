@@ -14,10 +14,10 @@
             initialize: function (options) {
                 this.startTime = new Date();
                 var that = this;
-                if (options && options.viewType) {
+                /*if (options && options.viewType) {
                     this.url += options.viewType;
                     delete options.viewType;
-                }
+                }*/
                 var filterObject = {};
                 for (var i in options) {
                     filterObject[i] = options[i];

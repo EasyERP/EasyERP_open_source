@@ -1,6 +1,3 @@
-/**
- * Created by liliy on 04.02.2016.
- */
 var mongoose = require('mongoose');
 
 var Degrees = function (models) {

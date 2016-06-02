@@ -1,20 +1,18 @@
-/**
- * Created by den on 09.02.16.
- */
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-describe("jobs Specs", function () {
+
+require('../../config/development');
+
+describe('jobs Specs', function () {
     'use strict';
     var id;
     var projectId;
 
-    describe("Jobs with admin", function () {
+    describe('Jobs with admin', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -23,7 +21,7 @@ describe("jobs Specs", function () {
                 .post('users/login')
                 .send({
                     login: 'admin',
-                    pass : '1q2w3eQWE',
+                    pass : 'tm2016',
                     dbId : 'production'
                 })
                 .expect(200, done);
@@ -35,7 +33,7 @@ describe("jobs Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create jobs", function (done) {
+        it('should create jobs', function (done) {
             aggent
                 .post('jobs')
                 .expect(200)
@@ -60,7 +58,7 @@ describe("jobs Specs", function () {
                 });
         });
 
-        it("should get jobs", function (done) {
+        it('should get jobs', function (done) {
             var body = {
                 page : 1,
                 count: 1
@@ -84,7 +82,7 @@ describe("jobs Specs", function () {
                 });
         });
 
-        it("should get jobs ForDD", function (done) {
+        it('should get jobs ForDD', function (done) {
             var body = {
                 projectId: projectId
             };
@@ -107,14 +105,14 @@ describe("jobs Specs", function () {
                 });
         });
 
-        it("should get totalCollectionLength for jobs", function (done) {
+        it('should get totalCollectionLength for jobs', function (done) {
             var body = {
                 filter: {
                     projectManager: {
-                        key  : "projectmanager._id",
-                        value: ["55b92ad221e4b7c40f00004f",""]
+                        key  : 'projectmanager._id',
+                        value: ['55b92ad221e4b7c40f00004f', '']
                     }
-               }
+                }
             };
 
             aggent
@@ -137,10 +135,10 @@ describe("jobs Specs", function () {
                 });
         });
 
-        it("should update jobs", function (done) {
+        it('should update jobs', function (done) {
             var body = {
                 _id : id,
-                name: "testJobsName"
+                name: 'testJobsName'
             };
 
             aggent
@@ -165,7 +163,7 @@ describe("jobs Specs", function () {
                 });
         });
 
-        it("should delete jobs", function (done) {
+        it('should delete jobs', function (done) {
             var body = {
                 _id: id
             };
@@ -193,7 +191,7 @@ describe("jobs Specs", function () {
         });
     });
 
-    describe("Jobs with user without a license ", function () {
+    describe('Jobs with user without a license ', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -214,7 +212,7 @@ describe("jobs Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create jobs", function (done) {
+        it('should fail create jobs', function (done) {
             aggent
                 .post('jobs')
                 .expect(200)

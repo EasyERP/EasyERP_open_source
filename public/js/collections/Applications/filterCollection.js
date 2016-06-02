@@ -21,9 +21,10 @@
                 this.viewType = options.viewType;
                 this.wfStatus = options.status || [];
 
-                if (options && options.viewType) {
+                /*if (options && options.viewType) {
                     this.url += options.viewType;
-                }
+                }*/
+                
                 if (options && options.count) {
                     this.namberToShow = options.count;
                     this.count = options.count;

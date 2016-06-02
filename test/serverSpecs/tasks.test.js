@@ -127,8 +127,8 @@ describe("Tasks Specs", function () {
 
         it('should return all tasks with details', function (done) {
             aggent
-                .get('tasks/list')
-                .query({count: 100})
+                .get('tasks/')
+                .query({count: 100, viewType: 'list'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -643,8 +643,8 @@ describe("Tasks Specs", function () {
 
         it('should fail return all tasks with details', function (done) {
             aggent
-                .get('tasks/list')
-                .query({count: 100})
+                .get('tasks/')
+                .query({count: 100, viewType: 'list'})
                 .expect(403, done);
 
         });

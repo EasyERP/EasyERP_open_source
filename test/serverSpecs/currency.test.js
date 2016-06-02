@@ -1,12 +1,12 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-describe("Currency Specs", function () {
+require('../../config/development');
+
+describe('Currency Specs', function () {
     'use strict';
 
     describe('Currency with admin', function () {
@@ -18,7 +18,7 @@ describe("Currency Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'pavlodb'
+                    dbId : 'production'
                 })
                 .expect(200, done);
         });
@@ -29,7 +29,7 @@ describe("Currency Specs", function () {
                 .expect(302, done);
         });
 
-        it("should get currency for Dd", function (done) {
+        it('should get currency for Dd', function (done) {
 
             aggent
                 .get('currency/getForDD')
@@ -55,11 +55,11 @@ describe("Currency Specs", function () {
 
     describe('Currency with no authorise', function () {
 
-        it("should fail get currency for Dd", function (done) {
+        it('should fail get currency for Dd', function (done) {
 
             aggent
                 .get('currency/getForDD')
-                .expect(401, done);
+                .expect(404, done);
         });
 
     });
