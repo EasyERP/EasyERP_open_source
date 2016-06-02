@@ -5,29 +5,13 @@ define([
     'views/main/MainView',
     'views/login/LoginView',
     'dataService',
+    'helpers/eventsBinder',
     'custom',
     'common',
     'constants'
 
-], function (Backbone, _, $, mainView, loginView, dataService, custom, common, CONTENT_TYPES) {
+], function (Backbone, _, $, mainView, loginView, dataService, eventsBinder, custom, common, CONTENT_TYPES) {
     'use strict';
-    var subscribeCollectionEvents = function (collection, contentView) {
-        collection.bind('showmore', contentView.showMoreContent, contentView);
-        /* collection.bind('add', contentView.addItem, contentView);
-         collection.bind('remove', contentView.removeRow, contentView); */
-        collection.bind('showmoreAlphabet', contentView.showMoreAlphabet, contentView);
-        collection.bind('fetchFinished', contentView.setPagination, contentView);
-    };
-    var subscribeTopBarEvents = function (topBarView, contentView) {
-        topBarView.bind('createEvent', contentView.createItem, contentView);
-        topBarView.bind('editEvent', contentView.editItem, contentView);
-        topBarView.bind('deleteEvent', contentView.deleteItems, contentView);
-        topBarView.bind('exportToCsv', contentView.exportToCsv, contentView);
-        topBarView.bind('exportToXlsx', contentView.exportToXlsx, contentView);
-        topBarView.bind('importEvent', contentView.importFiles, contentView);
-
-        // topBarView.bind('showFilteredContent', contentView.showFilteredContent, contentView);
-    };
     var bindDefaultUIListeners = function () {
         $(document).on('keydown', '.ui-dialog', function (e) {
             if ($(e.target).get(0).tagName.toLowerCase() === 'textarea') {
@@ -1248,8 +1232,8 @@ define([
 
                         collection.unbind('reset');
                         // var url = '#easyErp/' + contentType + '/thumbnails';
-                        subscribeCollectionEvents(collection, contentview);
-                        subscribeTopBarEvents(topbarView, contentview);
+                        eventsBinder.subscribeCollectionEvents(collection, contentview);
+                        eventsBinder.subscribeTopBarEvents(topbarView, contentview);
 
                         context.changeView(contentview);
                         context.changeTopBarView(topbarView);

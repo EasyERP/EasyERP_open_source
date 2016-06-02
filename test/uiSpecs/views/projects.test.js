@@ -10,13 +10,14 @@ define([
     'views/main/MainView',
     'views/Projects/TopBarView',
     'views/Projects/thumbnails/ThumbnailsView',
+    'helpers/eventsBinder'
     /*'views/Projects/list/ListView',
      'views/Projects/form/FormView',
      'views/Projects/CreateView',
      'views/Projects/EditView',
      'custom',
      'async'*/
-], function ($, chai, chaiJquery, sinonChai, modules, fixtures, ProjectModel, ProjectCollection, MainView, topBarView, ThumbnailsView/*, ListView, FormView, ThumbnailsView, CreateView, EditView*/) {
+], function ($, chai, chaiJquery, sinonChai, modules, fixtures, ProjectModel, ProjectCollection, MainView, topBarView, ThumbnailsView, eventsBinder/*, ListView, FormView, ThumbnailsView, CreateView, EditView*/) {
     'use strict';
 
     var fakeProjects = {
@@ -16138,6 +16139,8 @@ define([
                     var projectName;
                     var customerName;
                     var $health;
+                    var $stageSelect;
+                    var $showMoreBtn;
 
                     server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectsForThumbnails)]);
                     projectsThumbCollection = new ProjectCollection({
@@ -16157,11 +16160,20 @@ define([
                         startTime : new Date(),
                         collection: projectsThumbCollection
                     });
+
                     server.respond();
 
-                    clock.tick(200);
+                    eventsBinder.subscribeTopBarEvents(topBarView, thumbnailsView);
+                    eventsBinder.subscribeCollectionEvents(projectsThumbCollection, thumbnailsView);
+
+                    projectsThumbCollection.trigger('fetchFinished', {
+                        totalRecords: projectsThumbCollection.totalRecords,
+                        currentPage : projectsThumbCollection.currentPage,
+                        pageSize    : projectsThumbCollection.pageSize
+                    });
 
                     $thisEl = thumbnailsView.$el;
+
                     $thumbnailsContainer = $thisEl.find('#thumbnailContent');
                     $thumbnails = $thumbnailsContainer.find('.thumbnail');
 
@@ -16170,19 +16182,27 @@ define([
 
                     $firstThumbnail = $($thumbnails[0]);
                     projectName = $firstThumbnail.find('span[data-content="project"]').text();
+                    customerName = $firstThumbnail.find('span[data-content="customer"]').text();
+                    $health = $firstThumbnail.find('span.health-container a');
+                    $stageSelect = $firstThumbnail.find('a.stageSelect');
 
                     expect(projectName).not.to.be.empty;
+                    expect(customerName).not.to.be.empty;
                     expect(projectName).to.not.match(/object Object|undefined/);
+                    expect(customerName).to.not.match(/object Object|undefined/);
+                    expect($health).to.exist;
+                    expect($health)
+                        .to.have.attr('data-value')
+                        .and.not.be.empty;
 
-                    topBarView.bind('createEvent', thumbnailsView.createItem, thumbnailsView);
-                    topBarView.bind('editEvent', thumbnailsView.editItem, thumbnailsView);
-                    topBarView.bind('deleteEvent', thumbnailsView.deleteItems, thumbnailsView);
-                    topBarView.bind('exportToCsv', thumbnailsView.exportToCsv, thumbnailsView);
-                    topBarView.bind('exportToXlsx', thumbnailsView.exportToXlsx, thumbnailsView);
-                    topBarView.bind('importEvent', thumbnailsView.importFiles, thumbnailsView);
+                    expect($stageSelect).to.exist;
+                    expect($stageSelect.text())
+                        .not.to.be.empty
+                        .and.not.to.match(/object Object|undefined/);
 
-                    projectsThumbCollection.bind('showmore', thumbnailsView.showMoreContent, thumbnailsView);
-                    projectsThumbCollection.bind('showmoreAlphabet', thumbnailsView.showMoreAlphabet, thumbnailsView);
+                    $showMoreBtn = $thisEl.find('#showMore');
+
+                    expect($showMoreBtn).to.exist;
 
                     done();
                 });
