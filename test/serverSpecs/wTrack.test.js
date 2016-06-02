@@ -21,7 +21,7 @@ describe("wTrack Specs", function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'production'
+                    dbId : 'pavlodb'
                 })
                 .expect(200, done);
         });
@@ -132,7 +132,7 @@ describe("wTrack Specs", function () {
                     viewType: "list",
                     count   : "100",
                     filter  : {
-                        projectName: {
+                        project: {
                             key  : "project._id",
                             type : "ObjectId"
                         }
@@ -142,10 +142,10 @@ describe("wTrack Specs", function () {
                 aggent
                     .get('wTrack/')
                     .query(query)
-                    .query({"filter[projectName][value][0]": CONSTANTS.PROJECT})
+                    .query({"filter[project][value][0]": CONSTANTS.PROJECT})
                     .expect(200)
                     .end(function (err, res) {
-                        var body = res.body;
+                        var body = res.body.data;
 
                         if (err) {
                             return done(err);
@@ -157,7 +157,7 @@ describe("wTrack Specs", function () {
                             .and.to.have.property('project')
                             .and.to.have.property('_id', CONSTANTS.PROJECT);
                         expect(body[0].project)
-                            .to.have.property('projectName');
+                            .to.have.property('name');
                         expect(body[0])
                             .to.have.property('department')
                             .and.to.have.property('_id');
@@ -171,7 +171,7 @@ describe("wTrack Specs", function () {
                             .to.have.property('jobs')
                             .and.to.have.property('name');
 
-                        projectName = body[0].project.projectName;
+                        projectName = body[0].project.name;
 
                         done();
                     });
@@ -212,7 +212,7 @@ describe("wTrack Specs", function () {
             it("should get wTrack totalCollectionLength", function (done) {
                 var query = {
                     filter: {
-                        projectName: {
+                        project: {
                             key  : "project._id",
                             type : "ObjectId"
                         }
@@ -222,7 +222,7 @@ describe("wTrack Specs", function () {
                 aggent
                     .get('wTrack/totalCollectionLength')
                     .query(query)
-                    .query({"filter[projectName][value][0]": CONSTANTS.PROJECT})
+                    .query({"filter[project][value][0]": CONSTANTS.PROJECT})
                     .expect(200)
                     .end(function (err, res) {
                         var body = res.body;
@@ -246,7 +246,7 @@ describe("wTrack Specs", function () {
                 var query = {
                     dateByWeek : dateByWeek,
                     employee   : CONSTANTS.EMPLOYEE,
-                    projectName: projectName
+                    project    : projectName
                 };
 
                 aggent
@@ -339,7 +339,7 @@ describe("wTrack Specs", function () {
                     viewType: "list",
                     count   : "100",
                     filter  : {
-                        projectName: {
+                        project : {
                             key : "project._id",
                             type: "ObjectId"
                         },
@@ -361,46 +361,53 @@ describe("wTrack Specs", function () {
                 aggent
                     .get('wTrack/')
                     .query(query)
-                    .query({"filter[projectName][value][0]": CONSTANTS.PROJECT})
+                    .query({"filter[project][value][0]": CONSTANTS.PROJECT})
                     .query({"filter[week][value][0]": 8})
                     .query({"filter[year][value][0]": 2016})
                     .query({"filter[department][value][0]": CONSTANTS.DEPARTMENT})
                     .expect(200)
                     .end(function (err, res) {
-                        var body = res.body;
+                        var response = res.body;
+                        var data;
 
                         if (err) {
                             return done(err);
                         }
-                        expect(body)
+
+                        expect(response)
+                            .to.be.instanceOf(Object)
+                            .and.to.have.deep.property('data');
+                        data = response.data;
+
+                        expect(data)
                             .to.be.instanceOf(Array)
                             .and.to.have.deep.property('[0]')
                             .and.to.have.property('_id');
-                        expect(body[0])
+                        expect(data[0])
                             .to.have.property('jobs');
 
-                        wTrackId = body[0]._id;
-                        jobsId = body[0].jobs;
+                        wTrackId = data[0]._id;
+                        jobsId = data[0].jobs;
 
-                        expect(body)
+                        expect(data)
                             .to.be.instanceOf(Array)
                             .and.to.have.deep.property('[0]')
                             .and.to.have.property('project')
                             .and.to.have.property('_id', CONSTANTS.PROJECT);
-                        expect(body[0].project)
-                            .to.have.property('projectName');
-                        expect(body[0])
+                        expect(data[0].project)
+                            .to.have.property('name');
+                        expect(data[0])
                             .to.have.property('department')
                             .and.to.have.property('_id', CONSTANTS.DEPARTMENT);
-                        expect(body[0])
+                        expect(data[0])
                             .to.have.property('employee')
                             .and.to.have.property('_id');
-                        expect(body[0])
+                        expect(data[0])
                             .to.have.property('customer')
                             .and.to.have.property('_id');
-                        expect(body[0])
+                        expect(data[0])
                             .to.have.property('week', 8);
-                        expect(body[0])
+                        expect(data[0])
                             .to.have.property('year', 2016);
 
                         done();
@@ -447,7 +454,7 @@ describe("wTrack Specs", function () {
                 var query = {
                     viewType: "list",
                     filter  : {
-                        projectName: {
+                        project : {
                             key : "project._id",
                             type: "ObjectId"
                         },
@@ -469,27 +476,33 @@ describe("wTrack Specs", function () {
                 aggent
                     .get('wTrack/')
                     .query(query)
-                    .query({"filter[projectName][value][0]": CONSTANTS.PROJECT})
+                    .query({"filter[project][value][0]": CONSTANTS.PROJECT})
                     .query({"filter[week][value][0]": 2})
                     .query({"filter[year][value][0]": 2016})
                     .query({"filter[department][value][0]": CONSTANTS.DEPARTMENT})
                     .expect(200)
                     .end(function (err, res) {
-                        var body = res.body;
+                        var response = res.body;
+                        var data = response.data;
 
                         if (err) {
                             return done(err);
                         }
 
-                        expect(body)
+                        expect(response)
+                            .to.be.instanceOf(Object)
+                            .and.to.have.deep.property('data');
+                        data = response.data;
+
+                        expect(data)
                             .to.be.instanceOf(Array)
                             .and.to.have.deep.property('[0]')
                             .and.to.have.property('worked', 14);
-                        expect(body[0])
+                        expect(data[0])
                             .to.have.property('week', 2);
-                        expect(body[0])
+                        expect(data[0])
                             .to.have.property('month', 1);
-                        expect(body[0])
+                        expect(data[0])
                             .to.have.property('rate', 0);
 
                         done();
@@ -542,7 +555,7 @@ describe("wTrack Specs", function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'pavlodb'
                 })
                 .expect(200, done);
         });

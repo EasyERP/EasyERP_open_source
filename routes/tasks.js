@@ -20,7 +20,7 @@ module.exports = function (models, event) {
 
     router.get('/getLengthByWorkflows', handler.getLengthByWorkflows);
 
-    router.get('/:viewType', handler.getTasks);
+    router.get('/', handler.getTasks);
 
     router.patch('/:_id', handler.taskUpdateOnlySelectedFields);
 

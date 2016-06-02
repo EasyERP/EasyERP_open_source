@@ -1498,19 +1498,13 @@ define([
                 self.setAllTotalVals();
             });
 
-            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, {inProgress: true}, function (projects) {
-                projects = _.map(projects.data, function (project) {
-                    project.name = project.projectName;
-
-                    return project;
-                });
-
-                self.responseObj['#project'] = projects;
+            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, {inProgress: true}, function (res) {
+                self.responseObj['#project'] = res.data;
             });
 
-                dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, {devDepartments: true}, function (employees) {
-                    employees = _.map(employees.data, function (employee) {
-                        employee.name = employee.name.first + ' ' + employee.name.last;
+            dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, {devDepartments: true}, function (employees) {
+                employees = _.map(employees.data, function (employee) {
+                    employee.name = employee.name.first + ' ' + employee.name.last;
 
                     return employee;
                 });
@@ -1518,9 +1512,9 @@ define([
                 self.responseObj['#employee'] = employees;
             });
 
-                dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, {devDepartments: true}, function (departments) {
-                    departments = _.map(departments.data, function (department) {
-                        department.name = department.departmentName;
+            dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, {devDepartments: true}, function (departments) {
+                departments = _.map(departments.data, function (department) {
+                    department.name = department.departmentName;
 
                     return department;
                 });

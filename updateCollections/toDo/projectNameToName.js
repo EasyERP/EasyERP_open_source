@@ -9,7 +9,13 @@ require('../../models/index.js');
 
 ProjectSchema = mongoose.Schemas.Project;
 async = require('async');
-dbObject = mongoose.createConnection('localhost', 'production');
+var connectOptions = {
+    user: 'easyerp',
+    pass: '1q2w3e!@#',
+    w   : 1,
+    j   : true
+};
+dbObject = mongoose.createConnection('144.76.56.111', 'pavlodb', 28017, connectOptions);
 dbObject.on('error', function (err) {
     console.error(err);
 });

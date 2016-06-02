@@ -80,6 +80,10 @@
                 });
             },
 
+            parse: function (response) {
+                return response.data;
+            },
+
             showMore: function (options) {
                 var that = this;
                 var regex = /^sales/;
