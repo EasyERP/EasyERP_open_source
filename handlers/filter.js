@@ -220,7 +220,7 @@ var Filters = function (models) {
                             name: '$jobs.name'
                         }
                     },
-                    'projectName': {
+                    'name': {
                         $addToSet: {
                             _id : '$project._id',
                             name: '$project.projectName'
@@ -1875,10 +1875,10 @@ var Filters = function (models) {
                 }, {
                     $group: {
                         _id           : null,
-                        'projectName' : {
+                        'project' : {
                             $addToSet: {
                                 _id : '$project._id',
-                                name: '$project.projectName'
+                                name: '$project.name'
                             }
                         },
                         'supplier'    : {

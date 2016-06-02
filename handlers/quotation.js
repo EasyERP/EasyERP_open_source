@@ -60,10 +60,6 @@ var Quotation = function (models, event) {
                         filtrElement[key] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
                         break;
-                    case 'projectName':
-                        filtrElement[key] = {$in: condition.objectID()};
-                        resArray.push(filtrElement);
-                        break;
                     case 'project':
                         filtrElement[key] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
@@ -544,7 +540,7 @@ var Quotation = function (models, event) {
                         function (callback) {
                             Project.populate(_quotation, {
                                 path  : 'project',
-                                select: '_id projectName salesmanager'
+                                select: '_id name salesmanager'
                             }, function (err) {
                                 if (err) {
                                     return callback(err);
@@ -896,25 +892,25 @@ var Quotation = function (models, event) {
         var key;
         var queryObject = {};
 
-            if (isOrder) {
-                filter.isOrder = {
-                    key  : 'isOrder',
-                    value: ['true']
-                };
-            } else {
-                filter.isOrder = {
-                    key  : 'isOrder',
-                    value: ['false']
-                };
-            }
+        if (isOrder) {
+            filter.isOrder = {
+                key  : 'isOrder',
+                value: ['true']
+            };
+        } else {
+            filter.isOrder = {
+                key  : 'isOrder',
+                value: ['false']
+            };
+        }
 
-            if (filter && typeof filter === 'object') {
-                if (filter.condition === 'or') {
-                    queryObject.$or = caseFilter(filter);
-                } else {
-                    queryObject.$and = caseFilter(filter);
-                }
+        if (filter && typeof filter === 'object') {
+            if (filter.condition === 'or') {
+                queryObject.$or = caseFilter(filter);
+            } else {
+                queryObject.$and = caseFilter(filter);
             }
+        }
 
         if (data.sort) {
             key = Object.keys(data.sort)[0];
@@ -1007,6 +1003,7 @@ var Quotation = function (models, event) {
                     },
                     name           : 1,
                     paymentInfo    : 1,
+                    project        : {$arrayElemAt: ["$project", 0]},
                     orderDate      : 1,
                     forSales       : 1,
                     isOrder        : 1,
@@ -1020,8 +1017,12 @@ var Quotation = function (models, event) {
                     paymentInfo      : 1,
                     orderDate        : 1,
                     forSales         : 1,
+                    'project._id'    : 1,
+                    'project.name'   : 1,
+                    'workflow._id'   : '$workflow._id',
                     'workflow.status': '$workflow.status',
                     'workflow.name'  : '$workflow.name',
+                    'supplier._id'   : '$supplier._id',
                     'supplier.name'  : '$supplier.name',
                     isOrder          : 1,
                     currency         : 1,
@@ -1039,6 +1040,7 @@ var Quotation = function (models, event) {
                     salesmanager   : {$arrayElemAt: ["$salesmanagers", 0]},
                     name           : 1,
                     paymentInfo    : 1,
+                    project        : 1,
                     orderDate      : 1,
                     forSales       : 1,
                     workflow       : 1,
@@ -1069,6 +1071,7 @@ var Quotation = function (models, event) {
                     supplier           : '$root.supplier',
                     isOrder            : '$root.isOrder',
                     currency           : '$root.currency',
+                    project            : '$root.project',
                     proformaCounter    : '$root.proformaCounter',
                     total              : 1
                 }
@@ -1091,7 +1094,7 @@ var Quotation = function (models, event) {
                 return next(err);
             }
 
-            count = result[0].total || 0;
+            count =  result[0] && result[0].total ?  result[0].total : 0;
 
             response.total = count;
             response.data = result;
@@ -1177,7 +1180,7 @@ var Quotation = function (models, event) {
                     .populate('groups.group')
                     .populate('groups.owner', '_id login')
                     .populate('deliverTo', '_id, name')
-                    .populate('project', '_id projectName')
+                    .populate('project', '_id name')
                     .populate('workflow', '_id name status');
 
                 query.exec(waterfallCallback);

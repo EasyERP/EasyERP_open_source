@@ -38,6 +38,11 @@ describe('Filter Specs', function () {
                 }
             };
             var project;
+            var lead;
+            var opportunity;
+            var person;
+            var company;
+            var quotation;
 
             aggent
                 .get('filter/getFiltersValues')
@@ -91,6 +96,138 @@ describe('Filter Specs', function () {
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
+
+//------------------------ Leads  ----------------
+
+                    lead = body.Leads;
+
+                    expect(lead).to.exist;
+
+                    expect(lead).to.be.instanceOf(Object)
+                        .and.to.have.property('contactName')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(lead)
+                        .to.have.property('salesPerson')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(lead)
+                        .to.have.property('source')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(lead)
+                        .to.have.property('workflow')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+
+//------------------------ Opportunities  ----------------
+
+                    opportunity = body.Opportunities;
+
+                    expect(opportunity).to.exist;
+
+                    expect(opportunity).to.be.instanceOf(Object)
+                        .and.to.have.property('customer')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(opportunity)
+                        .to.have.property('salesPerson')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(opportunity)
+                        .to.have.property('workflow')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+                    done();
+
+//------------------------ Persons  ----------------
+
+                    person = body.Persons;
+
+                    expect(person).to.exist;
+
+                    expect(person).to.be.instanceOf(Object)
+                        .and.to.have.property('country')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(person)
+                        .to.have.property('name')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(person)
+                        .to.have.property('services')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+                    done();
+
+//------------------------ Companies  ----------------
+
+                    company = body.Companies;
+
+                    expect(company).to.exist;
+
+                    expect(company).to.be.instanceOf(Object)
+                        .and.to.have.property('country')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(company)
+                        .to.have.property('name')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(company)
+                        .to.have.property('services')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+
+/*//------------------------ Quotation  ----------------
+
+                    quotation = body.Quotation;
+
+                    expect(quotation).to.exist;
+
+                    expect(quotation).to.be.instanceOf(Object)
+                        .and.to.have.property('project')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(quotation)
+                        .to.have.property('name')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(quotation)
+                        .to.have.property('services')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;*/
+
+
 
                     done();
                     // todo test other properties if its need
