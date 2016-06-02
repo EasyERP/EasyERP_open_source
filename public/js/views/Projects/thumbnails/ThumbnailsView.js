@@ -17,13 +17,13 @@
 ], function (Backbone, $, _, thumbnailsItemTemplate, stagesTamplate, BaseView, EditView, CreateView, formView, filterView, dataService, common, CONSTANTS, populate, custom) {
     'use strict';
     var ProjectThumbnalView = BaseView.extend({
-        el                : '#content-holder',
-        countPerPage      : 0,
-        template          : _.template(thumbnailsItemTemplate),
-        newCollection     : true,
-        filter            : null,
-        contentType       : 'Projects', // needs in view.prototype.changeLocationHash
-        viewType          : 'thumbnails', // needs in view.prototype.changeLocationHash
+        el           : '#content-holder',
+        countPerPage : 0,
+        template     : _.template(thumbnailsItemTemplate),
+        newCollection: true,
+        filter       : null,
+        contentType  : 'Projects', // needs in view.prototype.changeLocationHash
+        viewType     : 'thumbnails', // needs in view.prototype.changeLocationHash
 
         initialize: function (options) {
             $(document).off('click');
