@@ -1,13 +1,12 @@
-/**
- * Created by liliy on 20.01.2016.
- */
-"use strict";
 var express = require('express');
 var router = express.Router();
 var SalaryHandler = require('../handlers/payroll');
 var redisStore = require('../helpers/redisClient');
+var authStackMiddleware = require('../helpers/checkAuth');
 
 module.exports = function (models) {
+    'use strict';
+    
     var handler = new SalaryHandler(models);
 
     function cacheRetriver(req, res, next){
@@ -34,7 +33,7 @@ module.exports = function (models) {
         });
     }
 
-    router.get('/', cacheRetriver, handler.getSalaryReport);
+    router.get('/', authStackMiddleware, cacheRetriver, handler.getSalaryReport);
 
     return router;
 };
