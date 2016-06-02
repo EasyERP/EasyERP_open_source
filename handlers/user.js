@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
 var User = function (event, models) {
-    "use strict";
+    'use strict';
     var _ = require('lodash');
     var crypto = require('crypto');
     var userSchema = mongoose.Schemas.User;
@@ -67,7 +67,7 @@ var User = function (event, models) {
                     if (resp) {
                         saveChanges();
                     } else {
-                        err = new Error("An user with the same Login already exists");
+                        err = new Error('An user with the same Login already exists');
                         err.status = 400;
 
                         next(err);
@@ -209,9 +209,9 @@ var User = function (event, models) {
      *
      * This __method__ allows to login.
      * @example {
-         *     dbId: "CRM",
-         *     login: "Alex"
-         *     pass: "777777"
+         *     dbId: 'CRM',
+         *     login: 'Alex'
+         *     pass: '777777'
          * }
      * @method login
      * @property {JSON} Object - Object with data for login (like in example)
@@ -284,15 +284,15 @@ var User = function (event, models) {
      *
      * This __method__ allows to create __User__
      * @example  Object for request: {
-	     *    "pass" : "777777",
-	     *    "email" : "Alex@mail.com",
-		 *    "login" : "Alex",
-         *    "imageSrc" : ""
+	     *    'pass' : '777777',
+	     *    'email' : 'Alex@mail.com',
+		 *    'login' : 'Alex',
+         *    'imageSrc' : ''
          *   }
      *
      * @example Response example: {
-         *      "success":"A new User crate success",
-         *      "id":"55df03676774745332000005"
+         *      'success':'A new User crate success',
+         *      'id':'55df03676774745332000005'
          *     }
      * @method Users
      * @property {JSON} Object - Object with data to create User (like in example)
@@ -360,7 +360,7 @@ var User = function (event, models) {
 
                     updateUser(req, res, next);
                 } else {
-                    err = new Error("Incorrect Old Pass");
+                    err = new Error('Incorrect Old Pass');
                     err.status = 400;
                     next(err);
                 }
