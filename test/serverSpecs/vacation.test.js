@@ -1,12 +1,6 @@
-/**
- * Created by den on 10.02.16.
- */
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent;
 var dbId = 'production';
 var admin = {
@@ -20,11 +14,13 @@ var bannedUser = {
     dbId : dbId
 };
 
-describe("Vacation Specs", function () {
+require('../../config/development');
+
+describe('Vacation Specs', function () {
     'use strict';
     var id;
 
-    describe("Vacation with admin", function () {
+    describe('Vacation with admin', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -41,14 +37,13 @@ describe("Vacation Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create vacation", function (done) {
+        it('should create vacation', function (done) {
             var body = {
-                department: "55b92ace21e4b7c40f000014",
-                employee  : "55b92ad221e4b7c40f00004f",
+                department: '55b92ace21e4b7c40f000014',
+                employee  : '55b92ad221e4b7c40f00004f',
                 month     : 2,
                 year      : 2016,
-                vacArray  : [null, "V", "V", "V", null, "V", null, "V", "V", "V", null, null, null, null, null
-                    , null, null, null, null, null, null, null, null, null, null, null, null, null, null]
+                vacArray  : [null, 'V', 'V', 'V', null, 'V', null, 'V', 'V', 'V', null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null]
             };
 
             aggent
@@ -73,11 +68,11 @@ describe("Vacation Specs", function () {
                 });
         });
 
-        it("should get Years for vacation",function(done){
+        it('should get Years for vacation', function (done) {
             aggent
                 .get('vacation/getYears')
                 .expect(200)
-                .end(function(err, res){
+                .end(function (err, res) {
                     var body = res.body;
 
                     if (err) {
@@ -93,10 +88,10 @@ describe("Vacation Specs", function () {
                 });
         });
 
-        it("should get For list View of vacation", function (done) {
+        it('should get For list View of vacation', function (done) {
             var body = {
                 month   : 2,
-                viewType: "list",
+                viewType: 'list',
                 year    : 2016
             };
 
@@ -118,15 +113,15 @@ describe("Vacation Specs", function () {
                 });
         });
 
-        it("should get For attendance View of vacation", function (done) {
+        it('should get For attendance View of vacation', function (done) {
             var body = {
                 month   : 2,
-                viewType: "list",
+                viewType: 'list',
                 year    : 2016
             };
 
             aggent
-                .get('vacation/attendance')
+                .get('vacation/')
                 .expect(200)
                 .query(body)
                 .end(function (err, res) {
@@ -143,12 +138,12 @@ describe("Vacation Specs", function () {
                 });
         });
 
-        it("should update putchModel of vacation", function (done) {
+        it('should update putchModel of vacation', function (done) {
             var body = [{
                 _id     : id,
                 month   : 2,
                 year    : 2016,
-                vacArray: [null, null, null, null, null, "V", "V", null, "V", null, null, null, "P", null, null, null, "S", null, null
+                vacArray: [null, null, null, null, null, 'V', 'V', null, 'V', null, null, null, 'P', null, null, null, 'S', null, null
                     , null, null, null, null, null, null, null, null, null, null]
             }];
 
@@ -172,14 +167,14 @@ describe("Vacation Specs", function () {
                 });
         });
 
-        it("should delete vacation", function (done) {
+        it('should delete vacation', function (done) {
             aggent
                 .delete('vacation/' + id)
                 .expect(200, done);
         });
     });
 
-    describe("Vacation with user without a license", function () {
+    describe('Vacation with user without a license', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -196,14 +191,14 @@ describe("Vacation Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create vacation", function (done) {
+        it('should fail create vacation', function (done) {
             var body = {
-                department: "55b92ace21e4b7c40f000014",
-                employee  : "55b92ad221e4b7c40f00004f",
+                department: '55b92ace21e4b7c40f000014',
+                employee  : '55b92ad221e4b7c40f00004f',
                 month     : 2,
                 year      : 2016,
-                vacArray  : ["V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"
-                    , "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V", "V"]
+                vacArray  : ['V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V'
+                    , 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V', 'V']
             };
 
             aggent

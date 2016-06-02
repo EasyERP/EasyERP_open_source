@@ -166,7 +166,7 @@ define([
                 self.currentEmployee = self.currentEmployee._id;
             }
 
-            dataService.getData("/vacation/attendance", {
+            dataService.getData("/vacation/", {
                 year    : self.currentTime,
                 employee: self.currentEmployee
             }, function (result) {
@@ -213,7 +213,7 @@ define([
                 self.currentTime = self.model.get('years')[0].id;
             }
 
-            dataService.getData("/vacation/attendance", {
+            dataService.getData("/vacation/", {
                 year    : self.currentTime,
                 employee: self.currentEmployee
             }, function (result) {
