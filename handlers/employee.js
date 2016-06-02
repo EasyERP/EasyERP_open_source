@@ -978,16 +978,18 @@ var Employee = function (event, models) {
 
         async.waterfall(waterfallTasks, function (err, result) {
             var count;
+            var firstElement;
             var response = {};
 
             if (err) {
                 return next(err);
             }
 
-            count = result[0].total || 0;
-
+            firstElement = result[0];
+            count = firstElement && firstElement.total ? firstElement.total : 0;
             response.total = count;
             response.data = result;
+
             res.status(200).send(response);
         });
 

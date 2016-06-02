@@ -1636,6 +1636,7 @@ var Opportunity = function (models, event) {
 
             response.total = count;
             response.data = result;
+            
             res.status(200).send(response);
         });
     }
