@@ -12,7 +12,8 @@ module.exports = function (models, event) {
 
     router.use(authStackMiddleware);
     router.use(accessStackMiddlware);
-    
+
+    router.get('/', handler.getForView);
     router.get('/:byType/', handler.getForView);
 
     router.get('/amountLeftCalc', handler.amountLeftCalc);
