@@ -46,5 +46,6 @@ module.exports = {
     SALARYREPORT      : 88,
     WORKFLOWS         : 44,
     DIVIDENDINVOICE   : 101,
-    EXPENSESINVOICE   : 97
+    EXPENSESINVOICE   : 97,
+    PROFORMA          : 99
 };
