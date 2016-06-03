@@ -13,7 +13,6 @@ var Module = function (models) {
     var objectId = mongoose.Types.ObjectId;
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var pageHelper = require('../helpers/pageHelper');
-    var async = require('async');
     var fs = require('fs');
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
@@ -465,6 +464,7 @@ var Module = function (models) {
 
         contentSearcher = function (ids, cb) {
             var queryObject = {};
+            var query;
 
             queryObject.$and = [];
 
@@ -474,7 +474,7 @@ var Module = function (models) {
 
             queryObject.$and.push({_id: {$in: ids}});
 
-            var query = Customers.find(queryObject);
+            query = Customers.find(queryObject);
 
             if (data.onlyCount && data.onlyCount.toString().toLowerCase() === 'true') {
 

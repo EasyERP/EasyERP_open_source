@@ -32,9 +32,9 @@ describe('Company Specs', function () {
 
         it('should create company', function (done) {
             var body = {
-                'name': {
-                    'first': 'test11',
-                    'last' : 'testCompany'
+                name: {
+                    first: 'test11',
+                    last : 'testCompany'
                 }
             };
 

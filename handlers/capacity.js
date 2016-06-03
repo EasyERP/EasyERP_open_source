@@ -6,7 +6,7 @@ var async = require('async');
 var _ = require('lodash');
 var mid = 77;
 
-var Capacity = function (models) {
+var Module = function (models) {
     'use strict';
 
     function setVacations(model, vacation, db, callback) {
@@ -14,12 +14,9 @@ var Capacity = function (models) {
         var vacArray;
         var capacityArray;
         var total;
-
         var month = vacation.month;
         var year = vacation.year;
-
-        var Capacity = models.get(db, 'Capacity', CapacitySchema);
-
+        var i;
         var dateValue;
         var dayNumber;
 
@@ -30,7 +27,7 @@ var Capacity = function (models) {
         if (vacArray) {
             vacArrayLength = vacArray.length;
 
-            for (var i = vacArrayLength - 1; i >= 0; i--) {
+            for (i = vacArrayLength - 1; i >= 0; i--) {
                 dateValue = moment([year, month - 1, i + 1]);
                 dayNumber = dateValue.day();
 
@@ -44,7 +41,7 @@ var Capacity = function (models) {
                     if (capacityArray[i] && !isFinite(capacityArray[i])) {
                         if (dayNumber !== 0 && dayNumber !== 6) {
                             capacityArray[i] = 8;
-                            total += capacityArray[i]
+                            total += capacityArray[i];
                         } else {
                             capacityArray[i] = null;
                         }
@@ -110,12 +107,10 @@ var Capacity = function (models) {
 
     function createCapacityOnMonth(db, month, year, callback) {
         var Capacity = models.get(db, 'Capacity', CapacitySchema);
-
-        var VacationSchema = mongoose.Schemas['Vacation'];
+        var VacationSchema = mongoose.Schemas.Vacation;
         var Vacation = models.get(db, 'Vacation', VacationSchema);
-        var EmployeeSchema = mongoose.Schemas['Employees'];
+        var EmployeeSchema = mongoose.Schemas.Employees;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
-
         var capacity;
         var waterfallTasks;
         var date = moment([year, month - 1]);
@@ -147,7 +142,7 @@ var Capacity = function (models) {
                     return callback(err);
                 }
 
-                /*result = _.filter(result, function (element) {
+                /* result = _.filter(result, function (element) {
                  hire = element.hire[0];
                  fire = element.fire[0];
 
@@ -155,7 +150,7 @@ var Capacity = function (models) {
                  })*/
 
                 callback(null, result);
-            })
+            });
         }
 
         function saveCapacities(employees, callback) {
@@ -165,7 +160,6 @@ var Capacity = function (models) {
             async.eachLimit(employees, 100, function (employee, cb) {
                 var query;
                 var queryObject = {};
-                var saveOrNot = true;
                 var fire;
                 var hire;
 
@@ -173,9 +167,9 @@ var Capacity = function (models) {
                     year : year,
                     month: month
                 };
-
+                var day;
                 var condition;
-
+                var hireNum;
                 var date = moment([year, month - 1]);
 
                 queryObject.month = modelObject.month;
@@ -194,9 +188,7 @@ var Capacity = function (models) {
                 modelObject.capacityArray = [];
                 modelObject.capacityMonthTotal = 0;
 
-                //if (modelObject.employee.name === 'Ivan Kornyk') {
-
-                for (var hireNum = 0; hireNum < employee.hire.length; hireNum++) {
+                for (hireNum = 0; hireNum < employee.hire.length; hireNum++) {
 
                     fire = employee.fire[hireNum];
 
@@ -205,17 +197,17 @@ var Capacity = function (models) {
                     }
 
                     hire = employee.hire[hireNum];
-                    hire = moment([hire.getFullYear(), hire.getMonth(), hire.getDate()])
+                    hire = moment([hire.getFullYear(), hire.getMonth(), hire.getDate()]);
 
                     if (!fire) {
-                        condition = (hire <= date.date(1))
+                        condition = (hire <= date.date(1));
                     } else {
-                        condition = (fire >= date.date(1) && hire <= date.date(1))
+                        condition = (fire >= date.date(1) && hire <= date.date(1));
                     }
 
                     if (condition) {
 
-                        for (var day = daysCount - 1; day >= 0; day--) {
+                        for (day = daysCount - 1; day >= 0; day--) {
 
                             dateValue = date.date(day + 1);
 
@@ -223,9 +215,9 @@ var Capacity = function (models) {
 
                             if (dayNumber !== 0 && dayNumber !== 6) {
                                 if (!fire) {
-                                    condition = (hire <= dateValue)
+                                    condition = (hire <= dateValue);
                                 } else {
-                                    (fire >= dateValue && hire <= dateValue) //?
+                                   // (fire >= dateValue && hire <= dateValue);
                                 }
 
                                 if (condition) {
@@ -240,12 +232,11 @@ var Capacity = function (models) {
                         }
                     }
                 }
-                //}
 
                 query = Vacation.find(queryObject).lean();
 
                 query.exec(function (err, result) {
-                    var seriesTasks = [saveModel];
+                    var seriesTasks;
 
                     function saveModel(seriaCB) {
                         var length = modelObject.capacityArray.length;
@@ -267,7 +258,7 @@ var Capacity = function (models) {
                     function getData(seriaCB) {
                         setVacations(modelObject, result, db, function (err, result) {
                             if (err) {
-                                return seriaCB(err)
+                                return seriaCB(err);
                             }
 
                             if (result.total !== 0) {
@@ -276,12 +267,14 @@ var Capacity = function (models) {
                             }
 
                             seriaCB(null, 'Good');
-                        })
+                        });
                     }
 
                     if (err) {
                         return cb(err);
                     }
+
+                    seriesTasks = [saveModel];
 
                     result = result[0];
 
@@ -298,7 +291,7 @@ var Capacity = function (models) {
                         }
 
                         cb(null, 'Good');
-                    })
+                    });
                 });
 
             }, function (err) {
@@ -310,15 +303,15 @@ var Capacity = function (models) {
 
             });
         }
-    };
+    }
 
     this.createNextMonth = function (req, res, next) {
         var db = req.session.lastDb;
 
         var date = moment(new Date());
 
-        var year = parseInt(date.format('YYYY'));
-        var month = parseInt(date.format('M'));
+        var year = parseInt(date.format('YYYY'), 10);
+        var month = parseInt(date.format('M'), 10);
 
         createCapacityOnMonth(db, month, year, function (err) {
             if (err) {
@@ -326,50 +319,54 @@ var Capacity = function (models) {
             }
 
             res.status(200).send('ok');
-        })
+        });
     };
 
     this.createAll = function (req, res, next) {
         var db = req.session.lastDb;
 
         var date = moment(new Date());
-
-        var year = parseInt(date.format('YYYY'));
-        var month = parseInt(date.format('M'));
-
-        var parralelTasks = [createFor2014, createFor2015];
+        var year = parseInt(date.format('YYYY'), 10);
+        var month = parseInt(date.format('M'), 10);
+        var parralelTasks;
 
         function createFor2014(callback) {
-            for (var monthCount = 1; monthCount <= 12; monthCount++) {
+            var monthCount;
+
+            for (monthCount = 1; monthCount <= 12; monthCount++) {
                 createCapacityOnMonth(db, monthCount, 2014, function (err) {
                     if (err) {
                         return callback(err);
                     }
-                })
+                });
             }
 
             callback(null, 'ok');
         }
 
         function createFor2015(callback) {
-            for (var monthCount = 1; monthCount <= month; monthCount++) {
+            var monthCount;
+
+            for (monthCount = 1; monthCount <= month; monthCount++) {
                 createCapacityOnMonth(db, monthCount, 2015, function (err) {
                     if (err) {
                         return callback(err);
                     }
-                })
+                });
             }
 
             callback(null, 'ok');
         }
 
-        async.parallel(parralelTasks, function (err, results) {
+        parralelTasks = [createFor2014, createFor2015];
+
+        async.parallel(parralelTasks, function (err) {
             if (err) {
                 return next(err);
             }
 
             res.status(200).send('ok');
-        })
+        });
     };
 
     this.create = function (req, res, next) {
@@ -386,6 +383,7 @@ var Capacity = function (models) {
             if (err) {
                 return next(err);
             }
+
             res.status(200).send({success: capacityResult});
         });
     };
@@ -409,7 +407,7 @@ var Capacity = function (models) {
 
                 setVacations(modelJSON, vacation, db, function (err, result) {
                     if (err) {
-                        return eachCB(err)
+                        return eachCB(err);
                     }
 
                     modelJSON.capacityArray = result.array;
@@ -431,9 +429,9 @@ var Capacity = function (models) {
                     if (err) {
                         return next(err);
                     }
-                })
-            })
-        })
+                });
+            });
+        });
     };
 
     this.putchModel = function (req, res, next) {
@@ -490,5 +488,6 @@ var Capacity = function (models) {
             res.status(200).send({success: capacity});
         });
     };
-}
-module.exports = Capacity;
+};
+
+module.exports = Module;

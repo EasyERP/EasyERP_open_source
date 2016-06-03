@@ -53,7 +53,7 @@ var Chart = function (models) {
                 date: new Date().toISOString()
             };
             delete data._id;
-            //data.name = data.code + ' ' + data.account;
+            // data.name = data.code + ' ' + data.account;
 
             Model.findByIdAndUpdate(id, {$set: data}, {new: true}, function (err, model) {
                 if (err) {

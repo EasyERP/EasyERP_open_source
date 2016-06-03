@@ -4,7 +4,6 @@ var url = 'http://localhost:8089/';
 var host = process.env.HOST;
 var aggent;
 
-
 require('../../config/development');
 
 describe('jobs Specs', function () {
@@ -107,12 +106,12 @@ describe('jobs Specs', function () {
 
         it('should get totalCollectionLength for jobs', function (done) {
             var body = {
-                filter: {
-                    projectManager: {
-                        key  : 'projectmanager._id',
-                        value: ['55b92ad221e4b7c40f00004f', '']
-                    }
-                }
+                /* filter: {
+                 projectManager: {
+                 key  : '',
+                 value: ['55b92ad221e4b7c40f00004f', '']
+                 }
+                 }*/
             };
 
             aggent
@@ -227,7 +226,7 @@ describe('jobs Specs', function () {
                         .to.be.instanceOf(Object);
                     expect(body)
                         .to.have.property('success');
-                    //expect(body)
+                    // expect(body)
                     //    .to.have.property('id');
 
                     id = body.success._id;

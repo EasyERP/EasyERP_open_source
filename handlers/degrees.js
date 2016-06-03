@@ -5,7 +5,7 @@ var Degrees = function (models) {
     var degreesSchema = mongoose.Schemas.Degree;
 
     this.create = function (req, res, next) {
-        var Degree = models.get(req.session.lastDb, "Degrees", degreesSchema);
+        var Degree = models.get(req.session.lastDb, 'Degrees', degreesSchema);
         var body = req.body;
         var degree;
 
@@ -24,19 +24,19 @@ var Degrees = function (models) {
                 body._id = body.name;
                 degree = new Degree(body);
 
-                degree.save(function (err, result) {
+                degree.save(function (error, deg) {
                     if (err) {
-                        return next(err);
+                        return next(error);
                     }
 
-                    res.status(201).send({success: 'A new Degree create success', id: result._id});
+                    res.status(201).send({success: 'A new Degree create success', id: deg._id});
                 });
             }
         });
     };
 
     this.getDegrees = function (req, res, next) {
-        var Degree = models.get(req.session.lastDb, "Degrees", degreesSchema);
+        var Degree = models.get(req.session.lastDb, 'Degrees', degreesSchema);
 
         Degree.find({}).sort({name: 1}).exec(function (err, result) {
             if (err) {
@@ -48,7 +48,7 @@ var Degrees = function (models) {
     };
 
     this.update = function (req, res, next) {
-        var Degree = models.get(req.session.lastDb, "Degrees", degreesSchema);
+        var Degree = models.get(req.session.lastDb, 'Degrees', degreesSchema);
         var data = req.body;
         var id = req.params.id;
 
@@ -65,7 +65,7 @@ var Degrees = function (models) {
     };
 
     this.remove = function (req, res, next) {
-        var Degree = models.get(req.session.lastDb, "Degrees", degreesSchema);
+        var Degree = models.get(req.session.lastDb, 'Degrees', degreesSchema);
         var id = req.params.id;
 
         Degree.remove({_id: id}, function (err) {

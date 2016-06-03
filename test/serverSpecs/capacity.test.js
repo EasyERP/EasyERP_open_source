@@ -1,7 +1,6 @@
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var CONSTANTS = require('../../constants/constantsTest');
 var aggent;
 
@@ -78,11 +77,11 @@ describe('Capacity Specs', function () {
             it('should patch Capacity bulk', function (done) {
                 var capacityArray = [null, 5, 2, 12, 8, 8, null, null, 8, 8, 8, 8, 8, null, null, 8, 8, 8, 8, 8, null, null, 8, 8, 7, 3, 8, null];
                 var body = [{
-                    '_id'               : id,
-                    'capacityArray'     : capacityArray,
-                    'capacityMonthTotal': 149,
-                    month               : '3',
-                    year                : '2017'
+                    _id               : id,
+                    capacityArray     : capacityArray,
+                    capacityMonthTotal: 149,
+                    month             : '3',
+                    year              : '2017'
                 }];
 
                 aggent
@@ -94,11 +93,11 @@ describe('Capacity Specs', function () {
             it('should patch Capacity bulk', function (done) {
                 var capacityArray = [null, 5, 2, 12, 8, 8, null, null, 8, 8, 8, 8, 8, null, null, 8, 8, 8, 8, 8, null, null, 8, 8, 7, 3, 8, null];
                 var body = [{
-                    '_id'               : '123cba',
-                    'capacityArray'     : capacityArray,
-                    'capacityMonthTotal': 149,
-                    month               : '3',
-                    year                : '2017'
+                    _id               : '123cba',
+                    capacityArray     : capacityArray,
+                    capacityMonthTotal: 149,
+                    month             : '3',
+                    year              : '2017'
                 }];
 
                 aggent
@@ -110,10 +109,10 @@ describe('Capacity Specs', function () {
             it('should patch Capacity', function (done) {
                 var capacityArray = [null, 5, 2, 8, 8, 8, null, null, 7, 8, 8, 8, 8, null, null, 7, 8, 8, 8, 8, null, null, 7, 8, 7, 3, 8, null];
                 var body = {
-                    'capacityArray'     : capacityArray,
-                    'capacityMonthTotal': 142,
-                    month               : '4',
-                    year                : '2017'
+                    capacityArray     : capacityArray,
+                    capacityMonthTotal: 142,
+                    month             : '4',
+                    year              : '2017'
                 };
 
                 aggent
@@ -125,10 +124,10 @@ describe('Capacity Specs', function () {
             it('should patch Capacity', function (done) {
                 var capacityArray = [null, 5, 2, 8, 8, 8, null, null, 7, 8, 8, 8, 8, null, null, 7, 8, 8, 8, 8, null, null, 7, 8, 7, 3, 8, null];
                 var body = {
-                    'capacityArray'     : capacityArray,
-                    'capacityMonthTotal': 142,
-                    month               : '4',
-                    year                : '2017'
+                    capacityArray     : capacityArray,
+                    capacityMonthTotal: 142,
+                    month             : '4',
+                    year              : '2017'
                 };
 
                 aggent
@@ -139,8 +138,8 @@ describe('Capacity Specs', function () {
 
             it('should get Capacity Expenses', function (done) {
                 var query = {
-                    'month' : '4',
-                    'year'  : '2017',
+                    month   : '4',
+                    year    : '2017',
                     viewType: 'list'
                 };
 
@@ -180,13 +179,13 @@ describe('Capacity Specs', function () {
         });
 
         /*  describe('Generating Capacities', function () {
-  
-              it('should generate Capacities for 2014, 2015', function (done) {
-               aggent
-               .post('capacity/create')
-               .expect(200, done);
-               });
-          });*/
+
+         it('should generate Capacities for 2014, 2015', function (done) {
+         aggent
+         .post('capacity/create')
+         .expect(200, done);
+         });
+         });*/
 
     });
 

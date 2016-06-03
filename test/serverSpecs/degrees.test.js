@@ -5,7 +5,6 @@ var aggent;
 
 require('../../config/development');
 
-
 describe('Degrees Specs', function () {
     'use strict';
     var id;
