@@ -145,15 +145,19 @@ define([
             var model;
 
             e.preventDefault();
+
             id = $(e.target).closest('tr').data('id');
             model = new CurrentModel({validate: false});
-            model.urlRoot = '/Leads/form';
+            model.urlRoot = '/leads/';
             model.fetch({
-                data   : {id: id},
+                data: {
+                    id      : id,
+                    viewType: 'form'
+                },
                 success: function (model) {
                     new EditView({model: model});
                 },
-                error  : function () {
+                error: function () {
                     App.render({
                         type   : 'error',
                         message: 'Please refresh browser'

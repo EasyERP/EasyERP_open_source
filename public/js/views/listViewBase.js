@@ -258,7 +258,6 @@ define([
                             that.deleteCounter = localCounter;
                             that.deletePage = $("#currentShowPage").val();
                             that.deleteItemsRender(that.deleteCounter, that.deletePage);
-
                         }
                     }
                 });
