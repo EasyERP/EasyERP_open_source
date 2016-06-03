@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 04.04.2015.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
     var moduleSchema = mongoose.Schema({
@@ -21,5 +18,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['module'] = moduleSchema;
+    mongoose.Schemas.module = moduleSchema;
 })();

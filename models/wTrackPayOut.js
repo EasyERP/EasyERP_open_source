@@ -1,18 +1,22 @@
-/**
- * Created by soundstorm on 26.08.15.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
     var Schema = mongoose.Schema;
+    var paymentSchema;
 
-    var paymentSchema = new Schema({
-        ID              : Number,
-        forSale         : {type: Boolean, default: false},
-        supplier        : {
+    function setPrice(num) {
+        return num * 100;
+    }
+
+    paymentSchema = new Schema({
+        ID     : Number,
+        forSale: {type: Boolean, default: false},
+
+        supplier: {
             _id     : {type: ObjectId, ref: 'Employees', default: null},
             fullName: String
         },
+
         paidAmount      : {type: Number, default: 0, set: setPrice},
         name            : {type: String, default: '', unique: true},
         date            : {type: Date, default: Date.now},
@@ -34,13 +38,15 @@ module.exports = (function () {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
-        editedBy : {
+
+        editedBy: {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         }
     }, {collection: 'Payment'});
 
     mongoose.model('wTrackPayOut', paymentSchema);
+
     paymentSchema.pre('save', function (next) {
         var payment = this;
 
@@ -48,13 +54,9 @@ module.exports = (function () {
         next();
     });
 
-    function setPrice(num) {
-        return num * 100;
-    }
-
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['wTrackPayOut'] = paymentSchema;
+    mongoose.Schemas.wTrackPayOut = paymentSchema;
 })();

@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 04.04.2015.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
     var ObjectId = mongoose.Schema.Types.ObjectId;
@@ -70,7 +67,7 @@ module.exports = (function () {
         budget: {
             _id        : false,
             bonus      : Array,
-            projectTeam: [{type: ObjectId, ref: "jobs", default: null}]
+            projectTeam: [{type: ObjectId, ref: 'jobs', default: null}]
         }
     }, {collection: 'Project'});
 

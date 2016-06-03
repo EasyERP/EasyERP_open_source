@@ -1,17 +1,14 @@
-/**
- * Created by soundstorm on 29.06.15.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
 
     var holidaySchema = new mongoose.Schema({
-        ID: Number,
-        date: Date,
-        year: Number,
-        week: Number,
-        day: Number,
+        ID         : Number,
+        date       : Date,
+        year       : Number,
+        week       : Number,
+        day        : Number,
         dateByMonth: Number,
-        comment: String
+        comment    : String
 
     }, {collection: 'Holiday'});
 
@@ -21,5 +18,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Holiday'] = holidaySchema;
+    mongoose.Schemas.Holiday = holidaySchema;
 })();

@@ -1,13 +1,10 @@
-/**
- * Created by Roman on 13.05.2015.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
 
     var IncotermSchema = mongoose.Schema({
         code: String,
         name: String
-    }, { collection: 'Incoterms' });
+    }, {collection: 'Incoterms'});
 
     mongoose.model('Incoterm', IncotermSchema);
 
@@ -15,5 +12,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Incoterm'] = IncotermSchema;
+    mongoose.Schemas.Incoterm = IncotermSchema;
 })();

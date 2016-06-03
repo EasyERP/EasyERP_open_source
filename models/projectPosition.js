@@ -2,7 +2,7 @@ module.exports = (function () {
     var mongoose = require('mongoose');
 
     var projectPositionSchema = mongoose.Schema({
-        name     : {type: String, default: ''}
+        name: {type: String, default: ''}
     }, {collection: 'projectPositions'});
 
     mongoose.model('projectPosition', projectPositionSchema);
@@ -11,5 +11,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['projectPosition'] = projectPositionSchema;
+    mongoose.Schemas.projectPosition = projectPositionSchema;
 })();

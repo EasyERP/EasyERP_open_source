@@ -4,6 +4,10 @@ module.exports = (function () {
     var extend = require('mongoose-schema-extend');
     var Schema = mongoose.Schema;
 
+    function setPrice(num) {
+        return num * 100;
+    }
+
     var basePaymentSchema = new Schema({
         ID              : Number,
         invoice         : {type: ObjectId, ref: 'Invoice', default: null},
@@ -15,11 +19,13 @@ module.exports = (function () {
         whoCanRW        : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         month           : {type: Number},
         year            : {type: Number},
-        currency        : {
+
+        currency: {
             _id : {type: ObjectId, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
         },
-        groups          : {
+
+        groups: {
             owner: {type: ObjectId, ref: 'Users', default: null},
             users: [{type: ObjectId, ref: 'Users', default: null}],
             group: [{type: ObjectId, ref: 'Department', default: null}]
@@ -29,7 +35,8 @@ module.exports = (function () {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
-        editedBy : {
+
+        editedBy: {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         }
@@ -43,7 +50,8 @@ module.exports = (function () {
         paymentMethod: {type: ObjectId, ref: 'PaymentMethod', default: null},
         period       : {type: ObjectId, ref: 'Destination', default: null},
         bonus        : {type: Boolean},
-        currency     : {
+
+        currency: {
             _id : {type: ObjectId, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
         }
@@ -58,22 +66,16 @@ module.exports = (function () {
     var DividendInvoicePaymentSchema = PaymentSchema.extend({});
 
     var salaryPaymentSchema = basePaymentSchema.extend({
-        /* invoice      : {
-         _id     : {type: ObjectId, ref: 'Invoice', default: null},
-         name    : String,
-         assigned: {
-         _id : {type: ObjectId, ref: 'Employee', default: null},
-         name: String
-         }
-         }, */
-        invoice      : {type: ObjectId, ref: 'Invoice', default: null},
-        isExpense    : {type: Boolean, default: true},
-        supplier     : [{
+        invoice  : {type: ObjectId, ref: 'Invoice', default: null},
+        isExpense: {type: Boolean, default: true},
+
+        supplier: [{
             _id             : {type: ObjectId, ref: 'Employees', default: null},
             fullName        : String,
             paidAmount      : Number,
             differenceAmount: {type: Number, default: 0, set: setPrice}
         }],
+
         paymentMethod: {type: ObjectId, ref: 'ProductCategory', default: null},
         paymentRef   : [{type: ObjectId, ref: 'PayRoll', default: null}],//ref to PayRoll
         period       : {type: Date, default: null}
@@ -94,12 +96,6 @@ module.exports = (function () {
     mongoose.model('dividendInvoicePayment', DividendInvoicePaymentSchema);
     mongoose.model('salaryPayment', salaryPaymentSchema);
     mongoose.model('wTrackPayOut', payOutSchema);
-
-    PaymentSchema.pre('save', setName);
-    ProformaPaymentSchema.pre('save', setName);
-    InvoicePaymentSchema.pre('save', setName);
-    ExpensesInvoicePaymentSchema.pre('save', setName);
-    DividendInvoicePaymentSchema.pre('save', setName);
 
     function setName(next) {
         var payment = this;
@@ -127,6 +123,12 @@ module.exports = (function () {
                 next();
             });
     }
+
+    PaymentSchema.pre('save', setName);
+    ProformaPaymentSchema.pre('save', setName);
+    InvoicePaymentSchema.pre('save', setName);
+    ExpensesInvoicePaymentSchema.pre('save', setName);
+    DividendInvoicePaymentSchema.pre('save', setName);
 
     /*PaymentSchema.post('save', function (doc) {
      var payment = this;
@@ -215,10 +217,6 @@ module.exports = (function () {
         payment.name = new Date().valueOf();
         next();
     });
-
-    function setPrice(num) {
-        return num * 100;
-    }
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};

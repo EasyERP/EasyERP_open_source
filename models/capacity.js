@@ -3,20 +3,23 @@ module.exports = (function () {
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var capacitySchema = new mongoose.Schema({
-        ID           : Number,
-        employee     : {
+        ID: Number,
+
+        employee: {
             _id : {type: ObjectId, ref: 'Employees', default: null},
             name: String
         },
-        department   : {
+
+        department: {
             _id : {type: ObjectId, ref: 'Department', default: null},
             name: String
         },
-        vacation     : {type: ObjectId, ref: 'Vacation', default: null},
-        month        : Number,
-        year         : Number,
-        capacityArray: Array,
-        capacityMonthTotal   : Number
+
+        vacation          : {type: ObjectId, ref: 'Vacation', default: null},
+        month             : Number,
+        year              : Number,
+        capacityArray     : Array,
+        capacityMonthTotal: Number
 
     }, {collection: 'Capacity'});
 
@@ -28,5 +31,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Capacity'] = capacitySchema;
+    mongoose.Schemas.Capacity = capacitySchema;
 })();

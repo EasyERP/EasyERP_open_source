@@ -1,12 +1,9 @@
-/**
- * Created by Roman on 13.05.2015.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
 
     var DestinationSchema = mongoose.Schema({
         name: String
-    }, { collection: 'Destination' });
+    }, {collection: 'Destination'});
 
     mongoose.model('Destination', DestinationSchema);
 
@@ -14,5 +11,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Destination'] = DestinationSchema;
+    mongoose.Schemas.Destination = DestinationSchema;
 })();

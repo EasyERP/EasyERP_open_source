@@ -1,11 +1,10 @@
 module.exports = (function () {
     var mongoose = require('mongoose');
 
-
     var vacationCacheSchema = mongoose.Schema({
-        _id: { type: Number, default: 1 },
+        _id : {type: Number, default: 1},
         data: JSON
-    }, { collection: 'vacationCache' });
+    }, {collection: 'vacationCache'});
 
     mongoose.model('vacationCache', vacationCacheSchema);
 
@@ -13,5 +12,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['vacationCache'] = vacationCacheSchema;
+    mongoose.Schemas.vacationCache = vacationCacheSchema;
 })();
