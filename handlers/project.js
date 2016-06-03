@@ -995,9 +995,9 @@ module.exports = function (models, event) {
 
         var contentSearcher = function (result, cb) {
 
-            project.find({_id: {$in: result}}, {projectName: 1, projectShortDesc: 1})
+            project.find({_id: {$in: result}}, {name: 1, projectShortDesc: 1})
                 .lean()
-                .sort({'projectName': 1})
+                .sort({'name': 1})
                 .exec(function (err, _res) {
                     if (err) {
                         return cb(err);

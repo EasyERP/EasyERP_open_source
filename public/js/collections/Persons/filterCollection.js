@@ -1,69 +1,39 @@
 ﻿define([
         'Backbone',
+        'collections/parent',
         'models/PersonsModel',
         'dataService',
         'constants'
     ],
-    function (Backbone, PersonModel, dataService, CONSTANTS) {
+    function (Backbone, Parent, PersonModel, dataService, CONSTANTS) {
         'use strict';
-        var PersonsCollection = Backbone.Collection.extend({
-            model       : PersonModel,
-            url         : CONSTANTS.URLS.PERSONS,
-            page        : null,
-            namberToShow: null,
-            viewType    : null,
-            contentType : null,
+        var PersonsCollection = Parent.extend({
+            model   : PersonModel,
+            url     : CONSTANTS.URLS.PERSONS,
+            pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
 
             initialize: function (options) {
+                var page;
+
+                function _errHandler(models, xhr) {
+                    if (xhr.status === 401) {
+                        Backbone.history.navigate('#login', {trigger: true});
+                    }
+                }
+
+                options = options || {};
+                options.error = options.error || _errHandler;
+                page = options.page;
+
                 this.startTime = new Date();
-                var that = this;
-                this.namberToShow = options.count;
-                this.viewType = options.viewType;
-                this.contentType = options.contentType;
-                this.count = options.count;
-                this.page = options.page || 1;
-                /* if (options && options.viewType) {
-                    this.url += options.viewType;
-                }*/
-                this.fetch({
-                    data   : options,
-                    reset  : true,
-                    success: function () {
-                        that.page++;
-                    },
-                    error  : function (models, xhr) {
-                        if (xhr.status === 401) {
-                            Backbone.history.navigate('#login', {trigger: true});
-                        }
-                    }
-                });
+
+                if (page) {
+                    return this.getPage(page, options);
+                }
+
+                this.getFirstPage(options);
             },
 
-            showMore        : function (options) {
-                var that = this;
-                var filterObject = options || {};
-
-                filterObject.page = (options && options.page) ? options.page : this.page;
-                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
-                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject.filter = options ? options.filter : {};
-
-                this.fetch({
-                    data   : filterObject,
-                    waite  : true,
-                    success: function (models) {
-                        that.page++;
-                        that.trigger('showmore', models);
-                    },
-                    error  : function () {
-                        App.render({
-                            type   : 'error',
-                            message: "Some Error."
-                        });
-                    }
-                });
-            },
             showMoreAlphabet: function (options) {
                 var that = this;
                 var filterObject = options || {};
@@ -83,13 +53,14 @@
                     error  : function () {
                         App.render({
                             type   : 'error',
-                            message: "Some Error."
+                            message: 'Some Error.'
                         });
                     }
                 });
             },
-            getAlphabet     : function (callback) {
-                dataService.getData("/persons/getPersonAlphabet", {
+
+            getAlphabet: function (callback) {
+                dataService.getData('/persons/getPersonAlphabet', {
                     mid        : 39,
                     contentType: this.contentType
                 }, function (response) {
@@ -97,11 +68,8 @@
                         callback(response.data);
                     }
                 });
-            },
-
-            parse: function (response) {
-                return response.data;
             }
         });
         return PersonsCollection;
-    });
+    }
+);

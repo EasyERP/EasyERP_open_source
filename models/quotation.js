@@ -1,7 +1,3 @@
-/**
- * Created by Roman on 04.05.2015.
- */
-
 module.exports = (function () {
     'use strict';
 
@@ -12,9 +8,9 @@ module.exports = (function () {
     var products;
     var quotationSchema;
 
-/*    function setPrice(num) {
-        return num * 100;
-    }*/
+    /*    function setPrice(num) {
+     return num * 100;
+     }*/
 
     payments = {
         _id    : false,
@@ -34,14 +30,15 @@ module.exports = (function () {
         unitPrice    : {type: Number, default: 0},
         product      : {type: ObjectId, ref: 'Product', default: null},
         description  : {type: String, default: ''},
-        jobs         : {type: ObjectId, ref: "jobs", default: null}
+        jobs         : {type: ObjectId, ref: 'jobs', default: null}
     };
 
     quotationSchema = new Schema({
-        currency      : {
+        currency: {
             _id : {type: ObjectId, ref: 'currency', default: null},
             rate: {type: Number, default: 0} //changed default to '0' for catching errors
         },
+
         forSales      : {type: Boolean, default: true},
         type          : {type: String, default: 'Not Ordered', enum: ['Not Ordered', 'Not Invoiced', 'Invoiced']},
         isOrder       : {type: Boolean, default: false},
@@ -61,20 +58,25 @@ module.exports = (function () {
         workflow      : {type: ObjectId, ref: 'workflows', default: null},
         whoCanRW      : {type: String, enum: ['owner', 'group', 'everyOne'], default: 'everyOne'},
         attachments   : {type: Array, default: []},
-        groups        : {
+
+        groups: {
             owner: {type: ObjectId, ref: 'Users', default: null},
             users: [{type: ObjectId, ref: 'Users', default: null}],
             group: [{type: ObjectId, ref: 'Department', default: null}]
         },
-        creationDate  : {type: Date, default: Date.now},
-        createdBy     : {
+
+        creationDate: {type: Date, default: Date.now},
+
+        createdBy: {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
-        editedBy      : {
+
+        editedBy: {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
+
         proformaCounter: {type: Number, default: 0}
     }, {collection: 'Quotation'});
 
@@ -85,31 +87,27 @@ module.exports = (function () {
         var db = quotation.db.db;
 
         db.collection('settings').findOneAndUpdate({
-                dbName: db.databaseName,
-                name  : 'quotation'
-            },
-            //[['name', 1]],
-            {
-                $inc: {seq: 1}
-            },
-            {
-                returnOriginal: false,
-                upsert        : true
-            },
-            function (err, rate) {
-                if (err) {
-                    return next(err);
-                }
-                // quotation.name = 'PO' + rate.seq; //it was working before mongoose and mongo update
-                quotation.name = 'PO' + rate.value.seq;
+            dbName: db.databaseName,
+            name  : 'quotation'
+        }, {
+            $inc: {seq: 1}
+        }, {
+            returnOriginal: false,
+            upsert        : true
+        }, function (err, rate) {
+            if (err) {
+                return next(err);
+            }
+            // quotation.name = 'PO' + rate.seq; //it was working before mongoose and mongo update
+            quotation.name = 'PO' + rate.value.seq;
 
-                next();
-            });
+            next();
+        });
     });
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['Quotation'] = quotationSchema;
+    mongoose.Schemas.Quotation = quotationSchema;
 })();

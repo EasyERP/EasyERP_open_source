@@ -1,10 +1,9 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent = request.agent(url);
+
+require('../../config/development');
 
 describe('Filter Specs', function () {
     'use strict';
@@ -37,12 +36,7 @@ describe('Filter Specs', function () {
                     endDate  : 201607
                 }
             };
-            var project;
-            var lead;
-            var opportunity;
-            var person;
-            var company;
-            var quotation;
+            var typeFilter;
 
             aggent
                 .get('filter/getFiltersValues')
@@ -63,35 +57,35 @@ describe('Filter Specs', function () {
                         .and.to.have.property('name')
                         .and.to.be.instanceOf(Array);
 
-                    project = body.Projects;
+                    typeFilter = body.Projects;
 
-                    expect(project).to.exist;
+                    expect(typeFilter).to.exist;
 
-                    expect(project).to.be.instanceOf(Object)
+                    expect(typeFilter).to.be.instanceOf(Object)
                         .and.to.have.property('name')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(project)
+                    expect(typeFilter)
                         .to.have.property('workflow')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(project)
+                    expect(typeFilter)
                         .to.have.property('customer')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(project)
+                    expect(typeFilter)
                         .to.have.property('projectManager')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(project)
+                    expect(typeFilter)
                         .to.have.property('salesManager')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
@@ -99,134 +93,328 @@ describe('Filter Specs', function () {
 
 //------------------------ Leads  ----------------
 
-                    lead = body.Leads;
+                    typeFilter = body.Leads;
 
-                    expect(lead).to.exist;
+                    expect(typeFilter).to.exist;
 
-                    expect(lead).to.be.instanceOf(Object)
+                    expect(typeFilter).to.be.instanceOf(Object)
                         .and.to.have.property('contactName')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(lead)
+                    expect(typeFilter)
                         .to.have.property('salesPerson')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(lead)
+                    expect(typeFilter)
                         .to.have.property('source')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(lead)
+                    expect(typeFilter)
                         .to.have.property('workflow')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-
 //------------------------ Opportunities  ----------------
 
-                    opportunity = body.Opportunities;
+                    typeFilter = body.Opportunities;
 
-                    expect(opportunity).to.exist;
+                    expect(typeFilter).to.exist;
 
-                    expect(opportunity).to.be.instanceOf(Object)
+                    expect(typeFilter).to.be.instanceOf(Object)
                         .and.to.have.property('customer')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(opportunity)
+                    expect(typeFilter)
                         .to.have.property('salesPerson')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(opportunity)
+                    expect(typeFilter)
                         .to.have.property('workflow')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
-                    done();
 
 //------------------------ Persons  ----------------
 
-                    person = body.Persons;
+                    typeFilter = body.Persons;
 
-                    expect(person).to.exist;
+                    expect(typeFilter).to.exist;
 
-                    expect(person).to.be.instanceOf(Object)
+                    expect(typeFilter).to.be.instanceOf(Object)
                         .and.to.have.property('country')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(person)
+                    expect(typeFilter)
                         .to.have.property('name')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(person)
+                    expect(typeFilter)
                         .to.have.property('services')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
-                    done();
 
 //------------------------ Companies  ----------------
 
-                    company = body.Companies;
+                    typeFilter = body.Companies;
 
-                    expect(company).to.exist;
+                    expect(typeFilter).to.exist;
 
-                    expect(company).to.be.instanceOf(Object)
+                    expect(typeFilter).to.be.instanceOf(Object)
                         .and.to.have.property('country')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(company)
+                    expect(typeFilter)
                         .to.have.property('name')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(company)
+                    expect(typeFilter)
                         .to.have.property('services')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
+//------------------------ Sales Quotation  ----------------
 
-/*//------------------------ Quotation  ----------------
+                    typeFilter = body.salesQuotation;
 
-                    quotation = body.Quotation;
+                    expect(typeFilter).to.exist;
 
-                    expect(quotation).to.exist;
-
-                    expect(quotation).to.be.instanceOf(Object)
+                    expect(typeFilter).to.be.instanceOf(Object)
                         .and.to.have.property('project')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(quotation)
-                        .to.have.property('name')
+                    expect(typeFilter)
+                        .to.have.property('salesmanager')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-                    expect(quotation)
-                        .to.have.property('services')
+                    expect(typeFilter)
+                        .to.have.property('supplier')
                         .and.to.be.instanceOf(Array)
                         .and.to.have.deep.property('[0].name')
-                        .and.to.exist;*/
+                        .and.to.exist;
 
+                    expect(typeFilter)
+                        .to.have.property('workflow')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+//------------------------ Sales Order  ----------------
+
+                    typeFilter = body.salesOrder;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('project')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('salesmanager')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('supplier')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('workflow')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+//------------------------ Sales Invoice  ----------------
+
+                    typeFilter = body.salesInvoice;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('project')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('salesPerson')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('supplier')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('workflow')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+//------------------------ Sales Proforma  ----------------
+
+                    typeFilter = body.salesProforma;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('project')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('salesPerson')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('supplier')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('workflow')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+//------------------------ PROJECT -------------------
+//------------------------ Tasks -------------------
+
+                    typeFilter = body.Tasks;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('project')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('assignedTo')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('project')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('summary')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('type')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('workflow')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+//------------------------ tCard -------------------
+
+                    typeFilter = body.wTrack;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('customer')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('department')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('employee')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('isPaid')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('month')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('project')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('week')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('year')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('_type')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
 
 
                     done();
@@ -241,11 +429,10 @@ describe('Filter Specs', function () {
 
             aggent
                 .get('filter/getFiltersValues')
-                .expect(500, done);
+                .expect(404, done);
         });
 
     });
-
 
 });
 

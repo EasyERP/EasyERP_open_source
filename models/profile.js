@@ -4,10 +4,10 @@
     var ProfileSchema = mongoose.Schema({
         ID                : Number,
         _id               : Number,
-        profileName       : {type: String, default: 'emptyProfile', unique : true},
+        profileName       : {type: String, default: 'emptyProfile', unique: true},
         profileDescription: {type: String, default: 'No description'},
         profileAccess     : [{
-            module: {type: Number, ref: "modules"},
+            module: {type: Number, ref: 'modules'},
             access: {
                 read     : {type: Boolean, default: false},
                 editWrite: {type: Boolean, default: false},

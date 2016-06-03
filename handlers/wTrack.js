@@ -248,7 +248,7 @@ var TCard = function (event, models) {
                 key = filter[filterName].key;
 
                 switch (filterName) {
-                    case 'projectName':
+                    case 'project':
                         filtrElement['project._id'] = {$in: condition.objectID()};
                         resArray.push(filtrElement);
                         break;
@@ -687,43 +687,53 @@ var TCard = function (event, models) {
                     7         : 1
                 }
             }, {
-                $project: {
-                    'customer._id'             : '$customer._id',
-                    'customer.name'            : '$customer.name',
-                    'project._id'              : '$project._id',
-                    'project.projectName'      : '$project.projectName',
-                    'employee._id'             : '$employee._id',
-                    'employee.name'            : '$employee.name',
-                    'department._id'           : '$department._id',
-                    'department.departmentName': '$department.departmentName',
-                    'jobs._id'                 : '$jobs._id',
-                    'jobs.name'                : '$jobs.name',
-                    'workflow._id'             : '$workflow._id',
-                    'workflow.name'            : '$workflow.name',
-                    dateByWeek                 : 1,
-                    createdBy                  : 1,
-                    month                      : 1,
-                    year                       : 1,
-                    week                       : 1,
-                    revenue                    : 1,
-                    amount                     : 1,
-                    rate                       : 1,
-                    hours                      : 1,
-                    cost                       : 1,
-                    worked                     : 1,
-                    isPaid                     : 1,
-                    _type                      : 1,
-                    1                          : 1,
-                    2                          : 1,
-                    3                          : 1,
-                    4                          : 1,
-                    5                          : 1,
-                    6                          : 1,
-                    7                          : 1
-                }
-            }, {
                 $match: queryObject
             }, {
+                $group: {
+                    _id  : null,
+                    total: {$sum: 1},
+                    root : {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    '_id'                      : '$root._id',
+                    'customer._id'             : '$root.customer._id',
+                    'customer.name'            : '$root.customer.name',
+                    'project._id'              : '$root.project._id',
+                    'project.name'             : '$root.project.name',
+                    'employee._id'             : '$root.employee._id',
+                    'employee.name'            : '$root.employee.name',
+                    'department._id'           : '$root.department._id',
+                    'department.name'          : '$root.department.name',
+                    'jobs._id'                 : '$root.jobs._id',
+                    'jobs.name'                : '$root.jobs.name',
+                    'workflow._id'             : '$root.workflow._id',
+                    'workflow.name'            : '$root.workflow.name',
+                    dateByWeek                 : '$root.dateByWeek',
+                    createdBy                  : '$root.createdBy',
+                    month                      : '$root.month',
+                    year                       : '$root.year',
+                    week                       : '$root.week',
+                    revenue                    : '$root.revenue',
+                    amount                     : '$root.amount',
+                    rate                       : '$root.rate',
+                    hours                      : '$root.hours',
+                    cost                       : '$root.cost',
+                    worked                     : '$root.worked',
+                    isPaid                     : '$root.isPaid',
+                    _type                      : '$root._type',
+                    1                          : '$root.1',
+                    2                          : '$root.2',
+                    3                          : '$root.3',
+                    4                          : '$root.4',
+                    5                          : '$root.5',
+                    6                          : '$root.6',
+                    7                          : '$root.7',
+                    total                      : 1
+                }
+            },  {
                 $sort: sort
             }, {
                 $skip: skip
@@ -741,11 +751,18 @@ var TCard = function (event, models) {
         waterfallTasks = [accessRollSearcher, contentSearcher];
 
         async.waterfall(waterfallTasks, function (err, result) {
+            var count;
+            var response = {};
+
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send(result);
+            count = result[0] && result[0].total ? result[0].total : 0;
+
+            response.total = count;
+            response.data = result;
+            res.status(200).send(response);
         });
     };
 
@@ -843,7 +860,7 @@ var TCard = function (event, models) {
                 sort = query.sort;
             }
         } else {
-            sort = {'project.projectName': 1, year: 1, month: 1, week: 1};
+            sort = {'project.name': 1, year: 1, month: 1, week: 1};
         }
 
         contentSearcher = function (wtrackIds, waterfallCallback) {
@@ -1463,7 +1480,7 @@ var TCard = function (event, models) {
             }
         }, {
             $match: {
-                'project.projectName': query.projectName
+                'project.name': query.project
             }
         }, {
             $lookup: {
@@ -1562,7 +1579,7 @@ var TCard = function (event, models) {
                 project    : 1,
                 department : {
                     _id           : '$department._id',
-                    departmentName: '$department.departmentName'
+                     name:  '$department.name'
                 },
                 customer   : {
                     _id : '$customer._id',
@@ -1861,7 +1878,7 @@ var TCard = function (event, models) {
                     },
 
                     department: {
-                        departmentName: '$department.departmentName'
+                        name  : '$department.name'
                     },
 
                     month  : 1,

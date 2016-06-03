@@ -5,8 +5,8 @@ var CONSTANTS = require('../constants/mainConstants.js');
 var ProjectMembers = function (models) {
     'use strict';
 
-    var ProjectMembersSchema = mongoose.Schemas['ProjectMember'];
-    var ProjectSchema = mongoose.Schemas['Project'];
+    var ProjectMembersSchema = mongoose.Schemas.ProjectMember;
+    var ProjectSchema = mongoose.Schemas.Project;
 
     function changedManager(db, doc) {
         var ProjectMemberModel = models.get(db, 'ProjectMember', ProjectMembersSchema);
@@ -67,7 +67,6 @@ var ProjectMembers = function (models) {
 
                     res.status(200).send(doc);
                 });
-
 
 
         });

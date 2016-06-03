@@ -208,9 +208,9 @@ define([
 
                 notDiv.append(this.attachView.render().el);
                 if (projectID) {
-                    populate.get('#projectDd', '/projects/getForDd', {}, 'projectName', this, false, false, projectID);
+                    populate.get('#projectDd', '/projects/getForDd', {}, 'project', this, false, false, projectID);
                 } else {
-                    populate.get('#projectDd', '/projects/getForDd', {}, 'projectName', this, true);
+                    populate.get('#projectDd', '/projects/getForDd', {}, 'project', this, true);
                 }
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Tasks"}, "name", this, true);
                 populate.get2name("#assignedToDd", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, true);

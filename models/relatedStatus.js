@@ -1,10 +1,7 @@
-/**
- * Created by Roman on 04.04.2015.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
     var relatedStatusSchema = mongoose.Schema({
-        _id: Number,
+        _id   : Number,
         status: String
     }, {collection: 'relatedStatus'});
 
@@ -14,5 +11,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['relatedStatus'] = relatedStatusSchema;
+    mongoose.Schemas.relatedStatus = relatedStatusSchema;
 })();

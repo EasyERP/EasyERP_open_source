@@ -17,7 +17,7 @@ module.exports = function (event, models) {
     // router.get('/exportToCsv',handler.exportToCsv);
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/dash', handler.getForDashVacation);
-    router.get('/:viewType', accessStackMiddleware, handler.getByViewType);
+    router.get('/', accessStackMiddleware, handler.getByViewType);
     router.post('/', accessStackMiddleware, handler.create);
     router.post('/generateWTrack', accessStackMiddleware, handler.generateWTrack);
     router.delete('/:id', accessStackMiddleware, handler.remove);

@@ -1,8 +1,8 @@
 var mongoose = require('mongoose');
-var PaymentTerm = function (models) {
+var Module = function (models) {
     'use strict';
 
-    var PaymentTermSchema = mongoose.Schemas['PaymentTerm'];
+    var PaymentTermSchema = mongoose.Schemas.PaymentTerm;
 
     this.getForDd = function (req, res, next) {
         var PaymentTerm = models.get(req.session.lastDb, 'PaymentTerm', PaymentTermSchema);
@@ -74,4 +74,4 @@ var PaymentTerm = function (models) {
 
 };
 
-module.exports = PaymentTerm;
+module.exports = Module;

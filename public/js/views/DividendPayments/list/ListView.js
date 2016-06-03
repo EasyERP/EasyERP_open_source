@@ -2,46 +2,50 @@
  * Created by soundstorm on 21.05.15.
  */
 define([
-    'jQuery',
-    'Underscore',
-    'text!templates/Pagination/PaginationTemplate.html',
-    'text!templates/DividendPayments/list/ListTemplate.html',
-    'text!templates/DividendPayments/list/ListHeader.html',
-    'text!templates/supplierPayments/forWTrack/cancelEdit.html',
-    'views/selectView/selectView',
-    'views/supplierPayments/CreateView',
-    'views/Filter/FilterView',
-    'models/PaymentModel',
-    'views/DividendPayments/list/ListItemView',
-    'views/DividendPayments/list/ListTotalView',
-    'collections/DividendPayments/filterCollection',
-    'collections/DividendPayments/editCollection',
-    'dataService',
-    'populate',
-    'async',
-    'helpers/keyCodeHelper',
-    'views/listViewBase',
-    'helpers'
+        'jQuery',
+        'Underscore',
+        'text!templates/Pagination/PaginationTemplate.html',
+        'text!templates/DividendPayments/list/ListTemplate.html',
+        'text!templates/DividendPayments/list/ListHeader.html',
+        'text!templates/supplierPayments/forWTrack/cancelEdit.html',
+        'views/selectView/selectView',
+        'views/supplierPayments/CreateView',
+        'views/Filter/FilterView',
+        'models/PaymentModel',
+        'views/DividendPayments/list/ListItemView',
+        'views/DividendPayments/list/ListTotalView',
+        'collections/DividendPayments/filterCollection',
+        'collections/DividendPayments/editCollection',
+        'dataService',
+        'populate',
+        'async',
+        'helpers/keyCodeHelper',
+        'views/listViewBase',
+        'helpers',
+        'constants'
     ],
-    function ($, _,
-              paginationTemplate,
-              listTemplate,
-              ListHeaderForWTrack,
-              cancelEdit,
-              selectView,
-              createView,
-              filterView,
-              currentModel,
-              listItemView,
-              listTotalView,
-              paymentCollection,
-              editCollection,
-              dataService,
-              populate,
-              async,
-              keyCodes,
-              ListViewBase,
-              helpers) {
+    function (
+        $, _,
+        paginationTemplate,
+        listTemplate,
+        ListHeaderForWTrack,
+        cancelEdit,
+        selectView,
+        createView,
+        filterView,
+        currentModel,
+        listItemView,
+        listTotalView,
+        paymentCollection,
+        editCollection,
+        dataService,
+        populate,
+        async,
+        keyCodes,
+        ListViewBase,
+        helpers,
+        CONSTANTS
+    ) {
         var PaymentListView = ListViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
@@ -57,11 +61,11 @@ define([
             responseObj             : {},
 
             events: {
-                "click td.editable"                                               : "editRow",
-                "change .editable"                                                : "setEditable",
-                "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-                "focusout .editing"                                               : "onChangeInput",
-                "keydown .editing"                                                : "onKeyDownInput"
+                "click td.editable"                                : "editRow",
+                "change .editable"                                 : "setEditable",
+                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+                "focusout .editing"                                : "onChangeInput",
+                "keydown .editing"                                 : "onKeyDownInput"
             },
 
             initialize: function (options) {
@@ -243,7 +247,7 @@ define([
                 var code = e.keyCode;
                 if (keyCodes.isEnter(e.keyCode)) {
                     this.setChangedValueToModel();
-                } else if ( !keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code) ){
+                } else if (!keyCodes.isDigitOrDecimalDot(code) && !keyCodes.isBspaceAndDelete(code)) {
                     e.preventDefault();
                 }
             },
@@ -279,7 +283,7 @@ define([
 
                 this.setChangedValueToModel();
 
-                keys.forEach(function(id){
+                keys.forEach(function (id) {
                     changedModelsId = self.changedModels[id];
                     model = self.editCollection.get(id) || self.collection.get(id);
                     model.changed = changedModelsId;
@@ -292,7 +296,7 @@ define([
 
                 this.editCollection.save();
 
-                keys.forEach(function(id){
+                keys.forEach(function (id) {
                     delete self.changedModels[id];
                     self.editCollection.remove(id);
                 });
@@ -472,11 +476,11 @@ define([
 
                 self.renderPagination($currentEl, self);
 
-                dataService.getData("/employee/getForDD", null, function (employees) {
+                dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
                     employees = _.map(employees.data, function (employee) {
                         employee.name = employee.name.first + ' ' + employee.name.last;
 
-                        return employee
+                        return employee;
                     });
 
                     self.responseObj['#employee'] = employees;
@@ -559,67 +563,67 @@ define([
 
                 count = listTableCheckedInput.length;
                 this.collectionLength = this.collection.length;
-                if(!this.createdItem){
-                async.eachSeries(listTableCheckedInput, function (checkbox, cb) {
-                    model = that.collection.get(checkbox.value);
-                    model.destroy({
-                        headers: {
-                            mid: mid
-                        },
-                        wait   : true,
-                        success: function () {
-                            that.listLength--;
-                            localCounter++;
-                            count--;
-                            if (count === 0) {
-                                if (this.hasAlphabet) {
-                                    common.buildAphabeticArray(that.collection, function (arr) {
-                                        $("#startLetter").remove();
-                                        that.alphabeticArray = arr;
-                                        $('#searchContainer').after(_.template(aphabeticTemplate, {
-                                            alphabeticArray   : that.alphabeticArray,
-                                            selectedLetter    : (that.selectedLetter == "" ? "All" : that.selectedLetter),
-                                            allAlphabeticArray: that.allAlphabeticArray
-                                        }));
-                                        var currentLetter = (that.filter) ? that.filter.letter : null;
-                                        if (currentLetter) {
-                                            $('#startLetter').find('a').each(function () {
-                                                var target = $(this);
-                                                if (target.text() == currentLetter) {
-                                                    target.addClass("current");
-                                                }
-                                            });
-                                        }
-                                    });
+                if (!this.createdItem) {
+                    async.eachSeries(listTableCheckedInput, function (checkbox, cb) {
+                        model = that.collection.get(checkbox.value);
+                        model.destroy({
+                            headers: {
+                                mid: mid
+                            },
+                            wait   : true,
+                            success: function () {
+                                that.listLength--;
+                                localCounter++;
+                                count--;
+                                if (count === 0) {
+                                    if (this.hasAlphabet) {
+                                        common.buildAphabeticArray(that.collection, function (arr) {
+                                            $("#startLetter").remove();
+                                            that.alphabeticArray = arr;
+                                            $('#searchContainer').after(_.template(aphabeticTemplate, {
+                                                alphabeticArray   : that.alphabeticArray,
+                                                selectedLetter    : (that.selectedLetter == "" ? "All" : that.selectedLetter),
+                                                allAlphabeticArray: that.allAlphabeticArray
+                                            }));
+                                            var currentLetter = (that.filter) ? that.filter.letter : null;
+                                            if (currentLetter) {
+                                                $('#startLetter').find('a').each(function () {
+                                                    var target = $(this);
+                                                    if (target.text() == currentLetter) {
+                                                        target.addClass("current");
+                                                    }
+                                                });
+                                            }
+                                        });
+                                    }
+
+                                    that.deleteCounter = localCounter;
+                                    that.deletePage = $("#currentShowPage").val();
+                                    that.deleteItemsRender(that.deleteCounter, that.deletePage);
                                 }
 
-                                that.deleteCounter = localCounter;
-                                that.deletePage = $("#currentShowPage").val();
-                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
-                            }
+                                cb();
+                            },
+                            error  : function (model, res) {
+                                if (res.status === 403/* && index === 0 comment after unit tests */) {
+                                    App.render({
+                                        type   : 'error',
+                                        message: "You do not have permission to perform this action"
+                                    });
+                                }
+                                that.listLength--;
+                                count--;
+                                if (count === 0) {
+                                    that.deleteCounter = localCounter;
+                                    that.deletePage = $("#currentShowPage").val();
+                                    that.deleteItemsRender(that.deleteCounter, that.deletePage);
 
-                            cb();
-                        },
-                        error  : function (model, res) {
-                            if (res.status === 403/* && index === 0 comment after unit tests */) {
-                                App.render({
-                                    type: 'error',
-                                    message: "You do not have permission to perform this action"
-                                });
-                            }
-                            that.listLength--;
-                            count--;
-                            if (count === 0) {
-                                that.deleteCounter = localCounter;
-                                that.deletePage = $("#currentShowPage").val();
-                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
+                                }
 
+                                cb();
                             }
-
-                            cb();
-                        }
+                        });
                     });
-                });
                 }
                 this.cancelChanges();
             },

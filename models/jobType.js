@@ -1,19 +1,16 @@
-/**
- * Created by Roman on 04.04.2015.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
     var jobTypeSchema = mongoose.Schema({
-        _id: String,
+        _id : String,
         neme: String
 
-    }, { collection: 'jobType' });
+    }, {collection: 'jobType'});
 
     mongoose.model('jobType', jobTypeSchema);
 
-    if(!mongoose.Schemas) {
+    if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['jobType'] = jobTypeSchema;
+    mongoose.Schemas.jobType = jobTypeSchema;
 })();

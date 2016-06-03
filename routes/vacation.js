@@ -11,8 +11,9 @@ module.exports = function (event, models) {
     var moduleId = MODULES.APPLICATIONS;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
+    router.get('/', authStackMiddleware, accessStackMiddlware, handler.getForView);
+
     router.get('/getYears', authStackMiddleware, accessStackMiddlware, handler.getYears);
-    router.get('/:viewType', authStackMiddleware, accessStackMiddlware, handler.getForView);
     router.patch('/', authStackMiddleware, accessStackMiddlware, handler.putchBulk);
     //router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.putchModel); //not need
     router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);

@@ -1,5 +1,3 @@
-require('../../config/development');
-
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
@@ -17,7 +15,9 @@ var bannedUser = {
     dbId : dbId
 };
 
-describe("BonusType Specs", function () {
+require('../../config/development');
+
+describe('BonusType Specs', function () {
     'use strict';
 
     describe('BonusType with admin', function () {
@@ -37,12 +37,12 @@ describe("BonusType Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create BonusType", function (done) {
+        it('should create BonusType', function (done) {
             var body = {
-                "isPercent": true,
-                "value"    : 10,
-                "name"     : "Test Bonus",
-                "bonusType": "Sales"
+                isPercent: true,
+                value    : 10,
+                name     : 'Test Bonus',
+                bonusType: 'Sales'
             };
 
             aggent
@@ -68,13 +68,13 @@ describe("BonusType Specs", function () {
                 });
         });
 
-        it("should patch BonusType", function (done) {
+        it('should patch BonusType', function (done) {
             var body = [{
-                "_id"      : id,
-                "name"     : "Test Bonus Patched",
-                "value"    : "11",
-                "isPercent": false,
-                "bonusType": "PM"
+                _id      : id,
+                name     : 'Test Bonus Patched',
+                value    : '11',
+                isPercent: false,
+                bonusType: 'PM'
             }];
 
             aggent
@@ -83,9 +83,9 @@ describe("BonusType Specs", function () {
                 .expect(200, done);
         });
 
-        it("should fail patch BonusType", function (done) {
+        it('should fail patch BonusType', function (done) {
             var body = [{
-                "_id": "123cba"
+                _id: '123cba'
             }];
 
             aggent
@@ -95,11 +95,12 @@ describe("BonusType Specs", function () {
 
         });
 
-        it("should get BonusType with options", function (done) {
+        it('should get BonusType with options', function (done) {
             var query = {
-                sort : {
+                sort: {
                     value: -1
                 },
+
                 viewType: 'list'
             };
 
@@ -128,29 +129,29 @@ describe("BonusType Specs", function () {
                 });
         });
 
-       /* it("should get BonusType length", function (done) {
+        /* it('should get BonusType length', function (done) {
+ 
+             aggent
+                 .get('bonusType/list/totalCollectionLength')
+                 .expect(200)
+                 .end(function (err, res) {
+                     var body = res.body;
+ 
+                     if (err) {
+                         return done(err);
+                     }
+ 
+                     expect(body)
+                         .to.be.instanceOf(Object);
+                     expect(body)
+                         .to.have.property('count')
+                         .and.to.be.gte(1);
+ 
+                     done();
+                 });
+         });*/
 
-            aggent
-                .get('bonusType/list/totalCollectionLength')
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('count')
-                        .and.to.be.gte(1);
-
-                    done();
-                });
-        });*/
-
-        it("should get BonusType for DD", function (done) {
+        it('should get BonusType for DD', function (done) {
 
             aggent
                 .get('bonusType/getForDD')
@@ -173,13 +174,13 @@ describe("BonusType Specs", function () {
                 });
         });
 
-        it("should delete BonusType", function (done) {
+        it('should delete BonusType', function (done) {
             aggent
                 .delete('bonusType/' + id)
                 .expect(200, done);
         });
 
-        it("should fail delete BonusType", function (done) {
+        it('should fail delete BonusType', function (done) {
             aggent
                 .delete('bonusType/123cba')
                 .expect(500, done);
@@ -204,13 +205,13 @@ describe("BonusType Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create BonusType", function (done) {
+        it('should fail create BonusType', function (done) {
 
             var body = {
-                "isPercent": true,
-                "value"    : 10,
-                "name"     : "Test Bonus",
-                "bonusType": "Sales"
+                isPercent: true,
+                value    : 10,
+                name     : 'Test Bonus',
+                bonusType: 'Sales'
             };
 
             aggent
@@ -222,7 +223,7 @@ describe("BonusType Specs", function () {
 
     describe('BonusType with no authorise', function () {
 
-        it("should fail get BonusType for Dd", function (done) {
+        it('should fail get BonusType for Dd', function (done) {
 
             aggent
                 .get('bonusType/getForDD')

@@ -19,5 +19,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['weeklyScheduler'] = weeklySchedulerSchema;
+    mongoose.Schemas.weeklyScheduler = weeklySchedulerSchema;
 })();

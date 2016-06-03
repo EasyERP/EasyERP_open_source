@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 
-var Currency = function (models) {
-    var projectPositionSchema = mongoose.Schemas['projectPosition'];
+var Module = function (models) {
+    var projectPositionSchema = mongoose.Schemas.projectPosition;
 
     this.getForDd = function (req, res, next) {
 
@@ -15,9 +15,7 @@ var Currency = function (models) {
             }
             res.status(200).send({data: result});
         });
-    }
-
-
+    };
 };
 
-module.exports = Currency;
+module.exports = Module;

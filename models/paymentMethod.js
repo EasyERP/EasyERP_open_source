@@ -1,17 +1,13 @@
-/**
- * Created by Roman on 21.05.2015.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
     var Schema = mongoose.Schema;
-
 
     var paymentSchema = new Schema({
         name    : {type: String},
         account : {type: String},
         currency: {type: String},
         bank    : {type: String},
-        owner   : {type: String, default: ''},
+        owner   : {type: String, default: ''}
     }, {collection: 'PaymentMethod'});
 
     mongoose.model('PaymentMethod', paymentSchema);
@@ -20,5 +16,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['PaymentMethod'] = paymentSchema;
+    mongoose.Schemas.PaymentMethod = paymentSchema;
 })();

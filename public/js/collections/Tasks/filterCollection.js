@@ -13,6 +13,7 @@
             namberToShow: null,
             viewType    : null,
             initialize  : function (options) {
+                var that = this;
                 this.startTime = new Date();
                 this.parrentContentId = options ? options.parrentContentId : null;
                 if (options && options.count) {
@@ -20,7 +21,8 @@
                     this.count = options.count;
                     this.page = options.page || 1;
                 }
-                var that = this;
+                this.viewType = options.viewType;
+
                /* if (options && options.viewType) {
                     this.url += options.viewType;
                 }*/
@@ -51,9 +53,10 @@
                 if (options && options.count) {
                     this.namberToShow = options.count;
                 }
-                filterObject['page'] = this.page;
-                filterObject['count'] = this.namberToShow;
-                filterObject['filter'] = (options) ? options.filter : {};
+                filterObject.page = this.page;
+                filterObject.count = this.namberToShow;
+                filterObject.filter = (options) ? options.filter : {};
+                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
                 this.fetch({
                     data   : filterObject,
                     waite  : true,

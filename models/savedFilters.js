@@ -1,6 +1,3 @@
-/**
- * Created by liliya on 8/12/15.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
     var savedFiltersSchema = mongoose.Schema({
@@ -16,5 +13,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['savedFilters'] = savedFiltersSchema;
+    mongoose.Schemas.savedFilters = savedFiltersSchema;
 })();

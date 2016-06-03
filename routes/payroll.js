@@ -2,20 +2,28 @@ var express = require('express');
 var router = express.Router();
 var PayRollHandler = require('../handlers/payroll');
 var redisStore = require('../helpers/redisClient');
+var authStackMiddleware = require('../helpers/checkAuth');
+var MODULES = require('../constants/modules');
 
 module.exports = function (models) {
-    "use strict";
+    'use strict';
+    
     var handler = new PayRollHandler(models);
+    var moduleId = MODULES.PAYROLLEXPENSES;
+    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
-    function cacheRetriver(req, res, next){
+    router.use(authStackMiddleware);
+    router.use(accessStackMiddlware);
+
+    function cacheRetriver(req, res, next) {
         var query = req.query;
         var filter = query.filter;
         var key = 'payrollExpenses' + filter;
 
-        redisStore.readFromStorage('payrollExpenses', key, function(err, expensesStringObject){
+        redisStore.readFromStorage('payrollExpenses', key, function (err, expensesStringObject) {
             var expenses;
 
-            if(!expensesStringObject) {
+            if (!expensesStringObject) {
                 return next();
             }
 
@@ -24,9 +32,10 @@ module.exports = function (models) {
         });
     }
 
-    router.get('/', handler.getSorted);
+    router.get('/', cacheRetriver, handler.getForView);
+
+    //router.get('/', handler.getSorted);
     router.get('/getAsyncData', handler.getAsyncData);
-    router.get('/:viewType', cacheRetriver, handler.getForView);
     router.post('/', handler.create);
     router.post('/generate', handler.generate);
     router.post('/recount', handler.recount);

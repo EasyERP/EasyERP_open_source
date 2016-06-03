@@ -15,7 +15,7 @@ define([], function () {
                 type   : 'ObjectId'
             },
             'Project Name': {
-                view   : 'projectName',
+                view   : 'project',
                 backend: 'project._id',
                 type   : 'ObjectId'
             },
@@ -424,7 +424,7 @@ define([], function () {
         },
         salesOrder      : {
             'Project'      : {
-                view   : 'projectName',
+                view   : 'project',
                 backend: 'project._id'
             },
             'Customer'     : {

@@ -11,9 +11,9 @@ module.exports = (function () {
         calc    : Number,
         paid    : Number,
         diff    : Number,
-        type  : {type: ObjectId, ref: "journal", default: null},
-        date  : {type: Date, default: null},
-        status: {type: Boolean, default: false}
+        type    : {type: ObjectId, ref: 'journal', default: null},
+        date    : {type: Date, default: null},
+        status  : {type: Boolean, default: false}
     }, {collection: 'PayRoll'});
 
     payRollSchema.set('toJSON', {virtuals: true});
@@ -24,5 +24,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['PayRoll'] = payRollSchema;
+    mongoose.Schemas.PayRoll = payRollSchema;
 })();

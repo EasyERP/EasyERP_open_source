@@ -393,7 +393,7 @@ var Tasks = function (models, event) {
         var Tasks = models.get(req.session.lastDb, 'Tasks', tasksSchema);
 
         Tasks.findById(data.id)
-            .populate('project', '_id projectShortDesc projectName')
+            .populate('project', '_id projectShortDesc name')
             .populate(' assignedTo', '_id name imageSrc')
             .populate('createdBy.user')
             .populate('createdBy.user')
@@ -560,28 +560,37 @@ var Tasks = function (models, event) {
                                     taskCount       : 1
                                 }
                             }, {
-                                $project: {
-                                    _id             : 1,
-                                    summary         : 1,
-                                    type            : 1,
-                                    workflow        : 1,
-                                    project         : 1,
-                                    assignedTo      : 1,
-                                    'createdBy.date': 1,
-                                    'editedBy.date' : 1,
-                                    'createdBy.user': 1,
-                                    'editedBy.user' : 1,
-                                    StartDate       : 1,
-                                    EndDate         : 1,
-                                    logged          : 1,
-                                    tags            : 1,
-                                    progress        : 1,
-                                    status          : 1,
-                                    estimated       : 1,
-                                    sequence        : 1,
-                                    taskCount       : 1
+                                $group: {
+                                    _id  : null,
+                                    total: {$sum: 1},
+                                    root : {$push: '$$ROOT'}
                                 }
                             }, {
+                                $unwind: '$root'
+                            }, {
+                                $project: {
+                                    _id             : '$root._id',
+                                    summary         : '$root.summary',
+                                    type            : '$root.type',
+                                    workflow        : '$root.workflow',
+                                    assignedTo      : '$root.assignedTo',
+                                    project         : '$root.project',
+                                    'editedBy.user' : '$root.editedBy.user',
+                                    'createdBy.user': '$root.createdBy.user',
+                                    'editedBy.date' : '$root.editedBy.date',
+                                    'createdBy.date': '$root.createdBy.date',
+                                    StartDate       : '$root.StartDate',
+                                    EndDate         : '$root.EndDate',
+                                    logged          : '$root.logged',
+                                    tags            : '$root.tags',
+                                    progress        : '$root.progress',
+                                    status          : '$root.status',
+                                    estimated       : '$root.estimated',
+                                    sequence        : '$root.sequence',
+                                    taskCount       : '$root.taskCount',
+                                    total           : 1
+                                }
+                            },  {
                                 $match: obj
                             }, {
                                 $sort: sort
@@ -589,12 +598,19 @@ var Tasks = function (models, event) {
                                 $skip: skip
                             }, {
                                 $limit: limit
-                            }], function (err, tasks) {
+                            }], function (err, result) {
+                                var count;
+                                var response = {};
+
                                 if (err) {
                                     return next(err);
                                 }
 
-                                res.send({data: tasks});
+                                count = result[0] && result[0].total ? result[0].total : 0;
+
+                                response.total = count;
+                                response.data = result;
+                                res.status(200).send(response);
                             });
                     });
             }
@@ -602,7 +618,7 @@ var Tasks = function (models, event) {
     }
 
     this.getTasks = function (req, res, next) {
-        var viewType = req.params.viewType;
+        var viewType = req.query.viewType;
 
         switch (viewType) {
             case 'form':

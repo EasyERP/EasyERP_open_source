@@ -3,17 +3,17 @@ define([
     'jQuery',
     'Underscore',
     'constants',
-    'dataService'
-], function (Backbone, $, _, CONSTANTS, dataService) {
+    'common'
+], function (Backbone, $, _, CONSTANTS, common) {
     var View = Backbone.View.extend({
-        listLength        : null,
-        defaultItemsNumber: null,
-        newCollection     : null,
-        $pagination       : null,
-        rowClicks         : 0,
+        /*listLength        : null,*/
+        /*defaultItemsNumber: null,*/
+        /*newCollection     : null,*/
+        $pagination: null,
+        /*rowClicks         : 0,*/
 
         events: {
-            'click .oe_sortable': 'sort',
+            'click .oe_sortable': 'goSort',
             'click #check_all'  : 'checkAll',
             click               : 'hide'
         },
@@ -53,11 +53,16 @@ define([
                 checkAll: checkAllBool
             });
 
+            if (typeof(this.setAllTotalVals) === 'function') {   // added in case of existing setAllTotalVals in View
+                this.setAllTotalVals();
+            }
+
             e.stopPropagation();
         },
 
-        sort: function (e) {
+        goSort: function (e) {
             var newRows = this.$el.find('#false');
+            var filter = this.filter || {};
             var target$;
             var currentParrentSortClass;
             var sortClass;
@@ -113,9 +118,8 @@ define([
                 sort: sortObject
             };
 
-            if (this.filter) {
-                data.filter = this.filter;
-            }
+            data.filter = filter;
+
             if (this.viewType) {
                 data.viewType = this.viewType;
             }
@@ -126,15 +130,17 @@ define([
                 data.contentType = this.contentType;
             }
 
-            data.newCollection = false;
             data.page = 1;
 
+            this.changeLocationHash(null, this.collection.pageSize);
+            this.collection.getFirstPage({filter: filter, viewType: this.viewType});
             this.collection.getFirstPage(data);
         },
 
         makeRender: function (options) {
-            _.bindAll(this, 'render', 'afterRender', 'beforeRender');
             var self = this;
+
+            _.bindAll(this, 'render', 'afterRender', 'beforeRender');
 
             this.render = _.wrap(this.render, function (render) {
                 self.beforeRender(options);
@@ -196,14 +202,10 @@ define([
                     self.filter = filter;
 
                     if (!self.$el.hasClass("ui-dialog-content ui-widget-content") && !self.$el.parents(".ui-dialog").length) {
-                        self.changeLocationHash(1, otherConstants.DEFAULT_PER_PAGE, filter);
+                        self.changeLocationHash(1, CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE, filter);
                     }
 
                     self.trigger('filter');
-                });
-
-                this.filterView.bind('collapseActionDropDown', function () {
-                    self.trigger('collapseActionDropDown');
                 });
             }
         },
@@ -257,11 +259,12 @@ define([
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
             }
 
-            Backbone.history.navigate(url, false);
+            Backbone.history.navigate(url, {replace: true});
         },
 
         nextPage: function (options) {
             var page = options.page;
+            //todo change it for count
             var itemsNumber = options.itemsNumber;
 
             options = options || {count: itemsNumber};
@@ -417,86 +420,9 @@ define([
             this.changeLocationHash(1, itemsNumber);
         },
 
-        pageAnimation: function (direction, $holder) {
-            var $absolute = $holder.find('.absoluteContent');
-
-            if ($absolute.length) {
-                $holder = $absolute;
-            }
-
-            if (!direction) {
-                $holder.removeClass('contentFadeInLeft');
-                $holder.removeClass('contentFadeInRight');
-                $holder.removeClass('contentFadeOutLeft');
-                $holder.addClass('contentFadeOutRight');
-            } else {
-                $holder.removeClass('contentFadeInLeft');
-                $holder.removeClass('contentFadeInRight');
-                $holder.removeClass('contentFadeOutRight');
-                $holder.addClass('contentFadeOutLeft');
-            }
-
-            setTimeout(function () {
-                if (!direction) {
-                    $holder.addClass('contentFadeInLeft');
-                    $holder.removeClass('contentFadeOutRight');
-                } else {
-                    $holder.addClass('contentFadeInRight');
-                    $holder.removeClass('contentFadeOutLeft');
-                }
-            }, 300);
-        },
-
         // </editor-fold>
 
         // <editor-fold desc="Checkboxes">
-
-        addCheckboxesFunctionality: function (context) {
-            var currentEl;
-
-            if (!context) {
-                context = this;
-            }
-
-            currentEl = context.$el;
-
-            currentEl.find(".checkbox").click(function (e) {
-                e.stopPropagation();
-
-                setViewStateAfterCheck();
-            });
-
-            currentEl.find(".checkboxArea").click(function (e) {
-                var checkbox;
-
-                e.stopPropagation();
-                checkbox = $(e.target).children('input:checkbox');
-                checkbox.prop('checked', !checkbox.is(':checked'));
-
-                setViewStateAfterCheck();
-            });
-
-            var setViewStateAfterCheck = function () {
-
-                if (!context.$checkAll) {
-                    //todo change after button behavior adding
-                    return;
-                }
-
-                var checkLength;
-                var collectionLength = context.collection.length;
-                if (collectionLength > 0) {
-                    checkLength = $("input.checkbox:checked").length;
-
-                    if (checkLength === collectionLength) {
-                        context.$checkAll.prop('checked', true);
-                    } else {
-                        context.$checkAll.prop('checked', false);
-                    }
-                }
-            };
-
-        },
 
         checked: function (e) {
             e.stopPropagation();
@@ -516,34 +442,11 @@ define([
             var contentType = this.contentType;
             var viewType = this.viewType;
             var parentId = this.parentId;
-            var translation = this.translation;
-            var modelUrl = 'models/' + contentType;
             var self = this;
             var CreateView = this.CreateView;
 
-            require([modelUrl], function (Model) {
-                var creationOptions = {
-                    Model      : Model,
-                    contentType: contentType,
-                    viewType   : viewType,
-                    parentId   : parentId,
-                    translation: translation
-                };
 
-                if (modelForDuplicate) {
-                    creationOptions['modelForDuplicate'] = modelForDuplicate;
-                }
-
-                var createView = new CreateView(creationOptions);
-
-                createView.on('itemSaved', function () {
-                    self.collection.getPage(1, {filter: self.filter});
-                });
-
-                createView.on('modelSaved', function (model) {
-                    self.addReplaceRow(model);
-                });
-            });
+            return new CreateView();
         },
 
         editItem: function (id) {
@@ -578,9 +481,63 @@ define([
             });
         },
 
-        incClicks: function (e) {
-            this.rowClicks += 1;
-            this.runClickItem(e);
+        deleteItems: function () {
+            var self = this;
+            var $thisEl = this.$el;
+            var $table = $thisEl.find('#listTable');
+            var mid = CONSTANTS.MID[this.contentType];
+            var model;
+            var localCounter = 0;
+            var $checkedInputs;
+            var count;
+
+            $checkedInputs = $table.find('input:checked');
+            $.each($checkedInputs, function (index, checkbox) {
+                model = self.collection.get(checkbox.value);
+                model.destroy({
+                    headers: {
+                        mid: mid
+                    },
+                    wait   : true,
+                    success: function () {
+                        if (self.hasAlphabet) {
+                            common.buildAphabeticArray(self.collection, function (arr) {
+                                var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : null;
+                                var $startLetter = $('#startLetter');
+
+                                self.alphabeticArray = arr;
+                                $startLetter = $startLetter.replaceWith(_.template(aphabeticTemplate, {
+                                    alphabeticArray   : self.alphabeticArray,
+                                    selectedLetter    : (self.selectedLetter === '' ? 'All' : self.selectedLetter),
+                                    allAlphabeticArray: self.allAlphabeticArray
+                                }));
+
+                                if (currentLetter) {
+                                    $startLetter.find('a').each(function () {
+                                        var $target = $(this);
+
+                                        if ($target.text() === currentLetter) {
+                                            $target.addClass('current');
+                                        }
+                                    });
+                                }
+                            });
+                        }
+
+                        self.collection.remove(model);
+                        // self.deleteItemsRender(self.deleteCounter, self.deletePage);
+                    },
+
+                    error: function (_model, xhr) {
+                        if (xhr.status === 403) {
+                            App.render({
+                                type   : 'error',
+                                message: 'You do not have permission to perform this action'
+                            });
+                        }
+                    }
+                });
+            });
         },
 
         clickItem: function (e) {
@@ -649,21 +606,73 @@ define([
             this.trigger('hideActionDd');
         },
 
-        changeTranslatedFields: function (translation) {
-            var self = this;
+        setPagination: function (options) {
             var $curEl = this.$el;
-            var $elementsForTranslation = $curEl.find('[data-translation]');
+            var $pageList = $curEl.find('#pageList');
+            var $curPageInput = $curEl.find('#currentShowPage');
+            var $itemsNumber = $curEl.find('#itemsNumber');
 
-            this.translation = translation;
-            $elementsForTranslation.each(function (index, el) {
-                var $element = $(el);
-                var property = $element.attr('data-translation');
+            var currentPage = parseInt(options.currentPage, 10) || parseInt($curPageInput.val(), 10);
+            var itemsNumber = parseInt(options.itemsNumber, 10) || parseInt($itemsNumber.text(), 10);
 
-                $element.html(self.translation[property]);
-            });
+            var $gridStart = this.$el.find('#gridStart');
+            var $gridEnd = this.$el.find('#gridEnd');
+            var $gridCount = this.$el.find('#gridCount');
 
+            var gridCount;
+            var gridStartValue;
+            var gridEndValue;
+            var pageNumber;
+            var $lastPage;
+            var i;
+
+            currentPage = isNaN(currentPage) ? 1 : currentPage;
+
+            if (isNaN(itemsNumber)) {
+                itemsNumber = CONSTANTS.DEFAULT_PER_PAGE;
+            }
+
+            gridCount = (options.length >= 0) ? options.length : parseInt($gridCount.text(), 10);
+            gridStartValue = (currentPage - 1) * itemsNumber;
+            gridEndValue = gridStartValue + itemsNumber;
+
+            $gridCount.text(gridCount);
+
+            if (gridEndValue > gridCount) {
+                gridEndValue = gridCount;
+            }
+
+            $gridStart.text((gridCount === 0) ? 0 : gridStartValue + 1);
+            $gridEnd.text(gridEndValue);
+
+            if (options.length || options.length === 0) {
+                $lastPage = $curEl.find('#lastPage');
+                pageNumber = Math.ceil(gridCount / itemsNumber);
+                $pageList.html('');
+
+                pageNumber = pageNumber || 1;
+
+                for (i = 1; i <= pageNumber; i++) {
+                    $pageList.append('<li class="showPage">' + i + '</li>');
+                }
+
+                $lastPage.text(pageNumber);
+
+                if (pageNumber <= 1) {
+                    $curEl.find('#nextPage').prop('disabled', true);
+                    $curEl.find('#previousPage').prop('disabled', true);
+                } else {
+                    $curEl.find('#previousPage').prop('disabled', gridStartValue + 1 === 1);
+                    $curEl.find('#nextPage').prop('disabled', gridEndValue === gridCount);
+                }
+            }
+
+            if (options.itemsNumber) {
+                $itemsNumber.text(itemsNumber);
+            }
+
+            $curPageInput.val(currentPage);
         }
-
     });
 
     View.extend = function (childView) {

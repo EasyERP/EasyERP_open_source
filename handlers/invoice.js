@@ -24,10 +24,11 @@ var Invoice = function (models, event) {
     var PaymentSchema = mongoose.Schemas.Payment;
     var wTrackSchema = mongoose.Schemas.wTrack;
     var JobsSchema = mongoose.Schemas.jobs;
+    var objectId = mongoose.Types.ObjectId;
+
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var access = require('../Modules/additions/access.js')(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
-    var objectId = mongoose.Types.ObjectId;
     var async = require('async');
     var workflowHandler = new WorkflowHandler(models);
     var moment = require('../public/js/libs/moment/moment');
@@ -107,7 +108,7 @@ var Invoice = function (models, event) {
 
         if (forSales) {
             Invoice = models.get(dbIndex, 'wTrackInvoice', wTrackInvoiceSchema);
-            waterfallTasks = [invoiceSaver/*, journalEntryComposer*/];
+            waterfallTasks = [invoiceSaver];
         } else {
             Invoice = models.get(dbIndex, 'Invoice', InvoiceSchema);
             waterfallTasks = [invoiceSaver];   // added in case of bad creating no forSales invoice ( property model undefined for Journal )
@@ -304,7 +305,7 @@ var Invoice = function (models, event) {
                 order = parallelResponse[0];
                 workflow = parallelResponse[1];
 
-                //order.attachments[0].shortPas = order.attachments[0].shortPas.replace('..%2Froutes', '');
+                // order.attachments[0].shortPas = order.attachments[0].shortPas.replace('..%2Froutes', '');
                 delete order.attachments;
 
             } else {
@@ -438,7 +439,7 @@ var Invoice = function (models, event) {
                 }
             });
 
-            //result.attachments[0].shortPas = result.attachments[0].shortPas.replace(id.toString(), invoiceId.toString());
+            // result.attachments[0].shortPas = result.attachments[0].shortPas.replace(id.toString(), invoiceId.toString());
 
             /* Invoice.findByIdAndUpdate(invoiceId, {
                  $set: {
@@ -459,12 +460,13 @@ var Invoice = function (models, event) {
 
     function uploadFileArray(req, res, callback) {
         var files = [];
-        if (req.files && req.files.attachfile && !req.files.attachfile.length) {
-            req.files.attachfile = [req.files.attachfile];
-        }
         var path;
         var os = require('os');
         var osType = (os.type().split('_')[0]);
+
+        if (req.files && req.files.attachfile && !req.files.attachfile.length) {
+            req.files.attachfile = [req.files.attachfile];
+        }
 
         req.files.attachfile.forEach(function (item) {
             var localPath;
@@ -1255,6 +1257,7 @@ var Invoice = function (models, event) {
                     $unwind: '$root'
                 }, {
                     $project: {
+                        _id               : '$root._id',
                         'salesPerson.name': '$root.salesPerson.name',
                         sourceDocument    : '$root.sourceDocument',
                         workflow          : '$root.workflow',

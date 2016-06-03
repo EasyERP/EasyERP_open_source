@@ -25,11 +25,11 @@ define([
         templateList            : _.template(ListTemplate),
 
         events: {
-            "click .checkbox"                    : "checked",
-            "click #createQuotation"             : "createQuotation",
-            "click #removeQuotation"             : "removeItems",
-            "click  .list tbody td:not(.notForm)": "goToEditDialog",
-            "click .stageSelect"                 : "showNewSelect"
+            'click .checkbox'                    : 'checked',
+            'click #createQuotation'             : 'createQuotation',
+            'click #removeQuotation'             : 'removeItems',
+            'click  .list tbody td:not(.notForm)': 'goToEditDialog',
+            'click .stageSelect'                 : 'showNewSelect'
         },
 
         initialize: function (options) {

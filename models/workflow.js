@@ -1,15 +1,12 @@
-/**
- * Created by Roman on 04.04.2015.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
     var workflowSchema = mongoose.Schema({
-        wId: String,
-        wName: String,
-        status: String,
-        name: String,
+        wId     : String,
+        wName   : String,
+        status  : String,
+        name    : String,
         sequence: Number,
-        visible: {type: Boolean, default: true}
+        visible : {type: Boolean, default: true}
     }, {collection: 'workflows'});
 
     mongoose.model('workflows', workflowSchema);
@@ -18,5 +15,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['workflow'] = workflowSchema;
+    mongoose.Schemas.workflow = workflowSchema;
 })();

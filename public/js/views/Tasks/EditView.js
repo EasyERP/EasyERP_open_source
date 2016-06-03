@@ -339,7 +339,7 @@
                         url  : "/uploadTasksFiles"
                     }).render().el
                 );
-                populate.get('#projectDd', '/projects/getForDd', {}, 'projectName', this);
+                populate.get('#projectDd', '/projects/getForDd', {}, 'project', this);
                 populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Tasks"}, "name", this);
                 populate.get2name("#assignedToDd", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
                 populate.getPriority("#priorityDd", this);
