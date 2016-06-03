@@ -60,7 +60,7 @@ var Filters = function (models) {
                 for (filterName in result[modelName]) {
                     if (_.isArray(result[modelName][filterName])) {
                         result[modelName][filterName] = _.reject(result[modelName][filterName], function (element) {
-                            return (element.name === '' || element.name === 'None');
+                            return (element ? (element.name === '' || element.name === 'None') : null);
                         });
                     }
                 }

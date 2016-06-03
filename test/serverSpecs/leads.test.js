@@ -151,10 +151,12 @@ describe('Leads Specs', function () {
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
+                    var firstProject;
 
                     if (err) {
                         return done(err);
                     }
+
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
@@ -163,6 +165,67 @@ describe('Leads Specs', function () {
                         .to.have.property('total');
                     expect(body.data)
                         .to.be.instanceOf(Array);
+
+                    firstProject = body.data[1];
+
+                    expect(firstProject)
+                        .and.to.have.property('_id')
+                        .and.to.have.lengthOf(24);
+                    expect(firstProject)
+                        .and.to.have.property('name')
+                        .and.to.be.a('string');
+                    expect(firstProject)
+                        .and.to.have.property('contactName');
+                    expect(firstProject)
+                        .and.to.have.property('email');
+                    expect(firstProject)
+                        .and.to.have.property('phones')
+                        .and.to.have.property('phone')
+                        .and.not.to.have.property('mobile');
+                    expect(firstProject)
+                        .and.to.have.property('address');
+                    expect(firstProject.address)
+                        .and.to.have.property('country');
+                    expect(firstProject.address)
+                        .not.to.have.property('street');
+                    expect(firstProject.address)
+                        .not.to.have.property('state');
+                    expect(firstProject.address)
+                        .not.to.have.property('zip');
+                    expect(firstProject.address)
+                        .not.to.have.property('city');
+                    expect(firstProject)
+                        .to.have.property('workflow')
+                        .and.to.have.property('_id');
+                    expect(firstProject)
+                        .to.have.property('workflow');
+                    expect(firstProject.workflow)
+                        .to.have.property('name');
+                    expect(firstProject.workflow)
+                        .to.have.property('status');
+                    expect(firstProject.workflow.name)
+                        .to.be.a('string');
+                    expect(firstProject)
+                        .and.to.have.property('campaign');
+                    expect(firstProject)
+                        .to.have.property('source');
+                    expect(firstProject)
+                        .and.to.have.property('salesPerson')
+                        .and.to.have.property('name')
+                        .and.to.have.property('first')
+                        .and.to.be.a('string');
+                    expect(firstProject)
+                        .and.to.have.property('createdBy')
+                        .and.to.have.property('date');
+                    expect(firstProject)
+                        .and.to.have.property('createdBy')
+                        .and.to.have.property('user');
+                    expect(firstProject)
+                        .and.to.have.property('editedBy')
+                        .and.to.have.property('date');
+                    expect(firstProject)
+                        .and.to.have.property('editedBy')
+                        .and.to.have.property('user');
 
                     done();
                 });
@@ -193,32 +256,32 @@ describe('Leads Specs', function () {
                 });
         });
 
-/*        it('should get Lead for viewType kanban', function (done) {
+        /*        it('should get Lead for viewType kanban', function (done) {
 
-            var query = {
-                workflowId: '528ce5e3f3f67bc40b000018'
-            };
+         var query = {
+         workflowId: '528ce5e3f3f67bc40b000018'
+         };
 
-            aggent
-                .get('leads/kanban')
-                .query(query)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
+         aggent
+         .get('leads/kanban')
+         .query(query)
+         .expect(200)
+         .end(function (err, res) {
+         var body = res.body;
 
-                    if (err) {
-                        return done(err);
-                    }
+         if (err) {
+         return done(err);
+         }
 
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('data');
-                    expect(body)
-                        .to.have.property('workflowId');
-                    done();
-                });
-        });*/
+         expect(body)
+         .to.be.instanceOf(Object);
+         expect(body)
+         .to.have.property('data');
+         expect(body)
+         .to.have.property('workflowId');
+         done();
+         });
+         });*/
 
         it('should partially update Lead', function (done) {
             var body = {

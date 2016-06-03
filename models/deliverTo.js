@@ -1,13 +1,10 @@
-/**
- * Created by Roman on 14.05.2015.
- */
 module.exports = (function () {
     var mongoose = require('mongoose');
 
     var DeliverToSchema = mongoose.Schema({
         code: String,
         name: String
-    }, { collection: 'deliverTo' });
+    }, {collection: 'deliverTo'});
 
     mongoose.model('DeliverTo', DeliverToSchema);
 
@@ -15,5 +12,6 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['DeliverTo'] = DeliverToSchema;
+    mongoose.Schemas.DeliverTo = DeliverToSchema;
 })();
+

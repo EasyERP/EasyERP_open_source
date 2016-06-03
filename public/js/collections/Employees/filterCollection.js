@@ -70,20 +70,7 @@
                 filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
                 filterObject.filter = options ? options.filter : {};
 
-                this.fetch({
-                    data   : filterObject,
-                    waite  : true,
-                    success: function (models) {
-                        that.page++;
-                        that.trigger('showmoreAlphabet', models);
-                    },
-                    error  : function () {
-                        App.render({
-                            type   : 'error',
-                            message: 'Some Error.'
-                        });
-                    }
-                });
+                this.getFirstPage(filterObject);
             },
 
             getAlphabet: function (callback) {

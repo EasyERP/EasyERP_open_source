@@ -27,7 +27,8 @@ module.exports = (function () {
         dueDate    : Date,
         paymentDate: Date,
         journal    : {type: ObjectId, ref: 'journal', default: null},
-        currency   : {
+
+        currency: {
             _id : {type: ObjectId, ref: 'currency', default: null},
             rate: {type: Number, default: 1}
         },
@@ -47,16 +48,17 @@ module.exports = (function () {
             group: [{type: ObjectId, ref: 'Department', default: null}]
         },
 
-        creationDate: {type: Date, default: Date.now},//remove it, duplicated by createdAt & invoiceDate
+        creationDate: {type: Date, default: Date.now}, // remove it, duplicated by createdAt & invoiceDate
         createdBy   : {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
 
-        editedBy   : {
+        editedBy: {
             user: {type: ObjectId, ref: 'Users', default: null},
             date: {type: Date, default: Date.now}
         },
+
         attachments: {type: Array, default: []},
         invoiced   : {type: Boolean, default: false},
         removable  : {type: Boolean, default: true},
@@ -72,11 +74,12 @@ module.exports = (function () {
             unitPrice  : Number,
             product    : productForJobs,
             description: {type: String, default: ''},
-            jobs       : {type: ObjectId, ref: "jobs", default: null},
+            jobs       : {type: ObjectId, ref: 'jobs', default: null},
             taxes      : {type: Number, default: 0},
             subTotal   : Number
         }],
-        project : {type: ObjectId, ref: 'Project', default: null}
+
+        project: {type: ObjectId, ref: 'Project', default: null}
     });
 
     var proformaSchema = jobsInvoiceSchema.extend({});
@@ -118,32 +121,29 @@ module.exports = (function () {
     });
 
     /*    function setPrice(num) {
-            return num * 100;
-        };*/
+     return num * 100;
+     };*/
 
     dividendInvoiceSchema.pre('save', function (next) {
         var invoice = this;
         var db = invoice.db.db;
 
         db.collection('settings').findOneAndUpdate({
-                dbName: db.databaseName,
-                name  : 'DividendDeclaration'
-            },
-            {
-                $inc: {seq: 1}
-            },
-            {
-                returnOriginal: false,
-                upsert        : true
-            },
-            function (err, rate) {
-                if (err) {
-                    return next(err);
-                }
-                invoice.name = 'DD' + rate.value.seq;
+            dbName: db.databaseName,
+            name  : 'DividendDeclaration'
+        }, {
+            $inc: {seq: 1}
+        }, {
+            returnOriginal: false,
+            upsert        : true
+        }, function (err, rate) {
+            if (err) {
+                return next(err);
+            }
+            invoice.name = 'DD' + rate.value.seq;
 
-                next();
-            });
+            next();
+        });
     });
 
     jobsInvoiceSchema.set('toJSON', {getters: true});
@@ -160,15 +160,13 @@ module.exports = (function () {
     mongoose.model('dividendInvoice', dividendInvoiceSchema);
     mongoose.model('Proforma', proformaSchema);
 
-    proformaSchema.pre('save', setName);
-
     function setName(next) {
         var proforma = this;
         var db = proforma.db.db;
 
         db.collection('settings').findOneAndUpdate({
-                dbName: db.databaseName,
-                name  : 'proforma',
+                dbName   : db.databaseName,
+                name     : 'proforma',
                 quotation: proforma.name
             }, {
                 $inc: {seq: 1}
@@ -185,16 +183,18 @@ module.exports = (function () {
 
                 next();
             });
-    };
+    }
+
+    proformaSchema.pre('save', setName);
 
     if (!mongoose.Schemas) {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['wTrackInvoice'] = jobsInvoiceSchema;
-    mongoose.Schemas['payRollInvoice'] = payRollInvoiceSchema;
-    mongoose.Schemas['Invoice'] = invoiceSchema;
-    mongoose.Schemas['expensesInvoice'] = expensesInvoiceSchema;
-    mongoose.Schemas['dividendInvoice'] = dividendInvoiceSchema;
-    mongoose.Schemas['Proforma'] = proformaSchema;
+    mongoose.Schemas.wTrackInvoice = jobsInvoiceSchema;
+    mongoose.Schemas.payRollInvoice = payRollInvoiceSchema;
+    mongoose.Schemas.Invoice = invoiceSchema;
+    mongoose.Schemas.expensesInvoice = expensesInvoiceSchema;
+    mongoose.Schemas.dividendInvoice = dividendInvoiceSchema;
+    mongoose.Schemas.Proforma = proformaSchema;
 })();

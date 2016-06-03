@@ -9,7 +9,7 @@ class="notEditable"
 <td class="centerCell"><%=startNumber + index + 1%></td>
 <td><%=order.name%></td>
 <td><%=(order.supplier) ? order.supplier.name.first + ' ' + order.supplier.name.last : ''%></td>
-<td><%=(order.salesmanager) ? order.salesmanager.name.first + ' ' + order.salesmanager.name.last : ''%></td>
+<td><%=(order.salesManager) ? order.salesManager.name.first + ' ' + order.salesManager.name.last : ''%></td>
 <td class="total"><%=(order.paymentInfo && order.paymentInfo.total) ? currencySplitter(order.paymentInfo.total) : '0'%></td>
 <td id='<%=order._id%>'>
     <span><%=order.workflow ? order.workflow.name: 'Undefinded'%></span>

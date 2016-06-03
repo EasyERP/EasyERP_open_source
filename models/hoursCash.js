@@ -3,7 +3,7 @@ module.exports = (function () {
 
     var hoursCashSchema = new mongoose.Schema({
         dateField: {type: String, default: ''},
-        result: JSON
+        result   : JSON
 
     }, {collection: 'HoursCashes'});
 
@@ -13,5 +13,5 @@ module.exports = (function () {
         mongoose.Schemas = {};
     }
 
-    mongoose.Schemas['HoursCashes'] = hoursCashSchema;
+    mongoose.Schemas.HoursCashes = hoursCashSchema;
 })();

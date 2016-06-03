@@ -44,10 +44,11 @@
                 this.stages = [];
 
                 BaseView.prototype.initialize.call(this, options);
+
+                this.filter = options.filter || {};
             },
 
             events: {
-                'click #showMore'           : 'showMore',
                 'click .thumbnailwithavatar': 'gotoEditForm',
                 'click .letter:not(.empty)' : 'alpabeticalRender',
                 'click .saveFilterButton'   : 'saveFilter',
@@ -235,13 +236,13 @@
                 }
             },
 
-           /* showMore: function (event) {
-                event.preventDefault();
-                this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
-            },*/
+            /* showMore: function (event) {
+                 event.preventDefault();
+                 this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
+             },*/
 
             // modified for filter Vasya
-            /*showMoreContent: function (newModels) {
+            /* showMoreContent: function (newModels) {
                 var holder = this.$el;
                 var content = holder.find('#thumbnailContent');
                 var showMore = holder.find('#showMoreDiv');

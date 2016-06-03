@@ -7,5 +7,5 @@ module.exports = (function () {
     }, {collection: 'currency'});
 
     mongoose.model('currency', currencySchema);
-    mongoose.Schemas['Currency'] = currencySchema;
+    mongoose.Schemas.Currency = currencySchema;
 })();
