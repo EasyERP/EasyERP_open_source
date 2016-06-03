@@ -1816,13 +1816,36 @@ var Module = function (models, event) {
         var Opportunities = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
         var query;
 
-        query = Opportunities.findById({_id: id});
+        query = Opportunities.findById({_id: id}, {
+            company         : 1,
+            customer        : 1,
+            salesPerson     : 1,
+            workflow        : 1,
+            groups          : 1,
+            createdBy       : 1,
+            name            : 1,
+            tempCompanyField: 1,
+            address         : 1,
+            contactName     : 1,
+            email           : 1,
+            phones          : 1,
+            priority        : 1,
+            campaign        : 1,
+            source          : 1,
+            internalNotes   : 1,
+            nextAction      : 1,
+            editedBy        : 1
+        });
 
-        query.populate('company customer salesPerson salesTeam workflow')
+        query
+            .populate('company', 'name')
+            .populate('customer', 'name')
+            .populate('salesPerson', 'name')
+            .populate('workflow', 'name')
             .populate('groups.users')
             .populate('groups.group')
-            .populate('createdBy.user')
-            .populate('editedBy.user')
+            .populate('createdBy.user', 'login')
+            .populate('editedBy.user', 'login')
             .populate('groups.owner', '_id login');
 
         query.exec(function (err, result) {

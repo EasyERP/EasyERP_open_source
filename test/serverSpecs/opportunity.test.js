@@ -251,7 +251,7 @@ describe('Opportunity Specs', function () {
                     expect(first)
                         .to.have.property('expectedRevenue');
 
-                    if (first.salesPerson){
+                    if (first.salesPerson) {
                         expect(first)
                             .and.to.have.property('salesPerson')
                             .and.to.have.property('name')
