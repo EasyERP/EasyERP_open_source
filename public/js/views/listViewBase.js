@@ -14,12 +14,12 @@ define([
 ], function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, Pagination, AttachView, common, dataService, CONSTANTS, helpers) {
     'use strict';
 
-    var ListViewBase = Backbone.View.extend({
+    var ListViewBase = Pagination.extend({
         el      : '#content-holder',
-        /*defaultItemsNumber: null,
+        /* defaultItemsNumber: null,
          listLength        : null,*/
         filter  : null,
-        /*newCollection     : null,
+        /* newCollection     : null,
          page              : null,*/
         viewType: 'list',
 
@@ -33,120 +33,13 @@ define([
             'mouseover .currentPageList'                                   : 'showPagesPopup'
         },
 
-        //to remove zombies was needed for event after recieveInvoice on projectInfo
+        // to remove zombies was needed for event after recieveInvoice on projectInfo
         remove: function () {
             this.$el.empty().off();
             this.stopListening();
 
             return this;
         },
-
-        //<editor-fold desc="Logic">
-
-        // todo remove after inherit from pagination
-        /*fetchSortCollection: function (sortObject) {
-         this.sort = sortObject;
-         this.collection = new this.contentCollection({
-         viewType        : 'list',
-         sort            : sortObject,
-         page            : this.page,
-         count           : this.defaultItemsNumber,
-         filter          : this.filter,
-         parrentContentId: this.parrentContentId,
-         contentType     : this.contentType,
-         newCollection   : this.newCollection
-         });
-         this.collection.bind('reset', this.renderContent, this);
-         this.collection.bind('showmore', this.showMoreContent, this);
-         },*/
-
-        /*goSort: function (e) {
-         var target$;
-         var currentParrentSortClass;
-         var sortClass;
-         var sortConst;
-         var sortBy;
-         var sortObject;
-         var newRows = this.$el.find('#false');
-
-         if ((this.changed && this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
-         return App.render({
-         type   : 'notify',
-         message: 'Please, save previous changes or cancel them!'
-         });
-         }
-
-         this.collection.unbind('reset');
-         this.collection.unbind('showmore');
-
-         target$ = $(e.target).closest('th');
-         currentParrentSortClass = target$.attr('class');
-         sortClass = currentParrentSortClass.split(' ')[1];
-         sortConst = 1;
-         sortBy = target$.data('sort');
-         sortObject = {};
-
-         if (!sortClass) {
-         target$.addClass('sortUp');
-         sortClass = "sortUp";
-         }
-         switch (sortClass) {
-         case "sortDn":
-         {
-         target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-         target$.removeClass('sortDn').addClass('sortUp');
-         sortConst = 1;
-         }
-         break;
-         case "sortUp":
-         {
-         target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-         target$.removeClass('sortUp').addClass('sortDn');
-         sortConst = -1;
-         }
-         break;
-         }
-
-         sortObject[sortBy] = sortConst;
-
-         this.fetchSortCollection(sortObject);
-         this.changeLocationHash(1, this.defaultItemsNumber);
-         this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-         },*/
-
-        /*getTotalLength: function (currentNumber, itemsNumber, filter) {
-
-         if (this.contentType === 'invoiceAging') {
-         return;
-         }
-
-         dataService.getData(this.totalCollectionLengthUrl, {
-         currentNumber: currentNumber,
-         filter       : filter,
-         contentType  : this.contentType,
-         newCollection: this.newCollection,
-         mid          : this.mId
-         }, function (response, context) {
-         var page = context.page || 1;
-         var length = context.listLength = response.count || 0;
-
-         if (itemsNumber === 'all') {
-         itemsNumber = response.count;
-         }
-
-         if (itemsNumber * (page - 1) > length) {
-         context.page = page = Math.ceil(length / itemsNumber);
-         context.fetchSortCollection(context.sort);
-         context.changeLocationHash(page, context.defaultItemsNumber, filter);
-         }
-
-         if (response.totalValue) {
-         context.$el.find('#totalDebit').text(helpers.currencySplitter((response.totalValue / 100).toFixed(2)));
-         }
-
-         context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
-         }, this);
-         },*/
 
         gotoForm: function (e) {
             var id = $(e.target).closest('tr').data('id');
@@ -159,11 +52,6 @@ define([
             Backbone.history.navigate(this.formUrl + id, {trigger: true});
         },
 
-        //</editor-fold>
-
-        //<editor-fold desc="Pagination">
-
-        // carried off eventHandlers for pages in one
         checkPage: function (event) {
             var newRows = this.$el.find('#false');
             var elementId = $(event.target).attr('id');
@@ -174,6 +62,7 @@ define([
             };
 
             event.preventDefault();
+            $('#check_all').prop('checked', false);
 
             if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
                 return App.render({
@@ -182,35 +71,25 @@ define([
                 });
             }
 
-            //$("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
-
             switch (elementId) {
                 case 'previousPage':
-                    this.prevP(data);
+                    this.previousPage(data);
                     break;
 
                 case 'nextPage':
-                    this.nextP(data);
+                    this.nextPage(data);
                     break;
 
                 case 'firstShowPage':
-                    this.firstP(data);
+                    this.firstPage(data);
                     break;
 
                 case 'lastShowPage':
-                    this.lastP(data);
+                    this.lastPage(data);
                     break;
-            }
 
-            dataService.getData(this.totalCollectionLengthUrl, {
-                sort       : this.sort,
-                filter     : this.filter,
-                contentType: this.contentType,
-                mid        : this.mId
-            }, function (response, context) {
-                context.listLength = response.count || 0;
-            }, this);
+                // skip default case
+            }
         },
 
         switchPageCounter: function (event) {
@@ -283,10 +162,6 @@ define([
             }
         },
 
-        //</editor-fold>
-
-        //<editor-fold desc="Show">
-
         showFilteredPage: function (filter, context) {
             var itemsNumber = $("#itemsNumber").text();
 
@@ -296,7 +171,7 @@ define([
             $("#top-bar-deleteBtn").hide();
             $('#check_all').prop('checked', false);
 
-            if (selectedLetter === "All") {
+            if (selectedLetter === 'All') {
                 selectedLetter = '';
             }
 
@@ -306,8 +181,8 @@ define([
             this.filter = Object.keys(filter).length === 0 ? {} : filter;
 
             context.changeLocationHash(1, itemsNumber, filter);
-            context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
-            context.getTotalLength(null, itemsNumber, filter);
+            // context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
+            // context.getTotalLength(null, itemsNumber, filter);
         },
 
         showPage: function (event) {
@@ -330,22 +205,21 @@ define([
             var page = parseInt($holder.find('#currentShowPage').val(), 10) || 1; // if filter give 0 elements
             var pagenation;
 
-            $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+            this.hideDeleteBtnAndUnSelectCheckAll();
 
-            holder.find('#listTable').empty();
+            $holder.find('#listTable').empty();
 
-            itemView = new this.listItemView({
+            itemView = new this.ListItemView({
                 collection : newModels,
                 page       : page,
-                itemsNumber: this.defaultItemsNumber
+                itemsNumber: this.collection.pageSize
             });
 
-            holder.append(itemView.render());
+            $holder.append(itemView.render());
 
             itemView.undelegateEvents();
 
-            pagenation = holder.find('.pagination');
+            pagenation = $holder.find('.pagination');
 
             if (newModels.length !== 0) {
                 pagenation.show();
@@ -353,14 +227,12 @@ define([
                 pagenation.hide();
             }
 
-            
-            
             if (typeof (this.recalcTotal) === 'function') {
                 this.recalcTotal();
             }
 
-            holder.find('#timeRecivingDataFromServer').remove();
-            holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $holder.find('#timeRecivingDataFromServer').remove();
+            $holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
         },
 
         /* showMoreAlphabet: function (newModels) {
@@ -378,10 +250,6 @@ define([
          holder.prepend(alphaBet);
          holder.append(created);
          },*/
-
-        //</editor-fold>
-
-        //<editor-fold desc="Renders">
 
         renderContent: function () {
             var $currentEl = this.$el;
@@ -419,7 +287,7 @@ define([
 
         alpabeticalRender: function (e) {
             var target;
-            var itemsNumber = $("#itemsNumber").text();
+            var itemsNumber = $('#itemsNumber').text();
             var selectedLetter;
 
             this.startTime = new Date();
@@ -431,15 +299,15 @@ define([
                 if (!this.filter) {
                     this.filter = {};
                 }
-                this.filter['letter'] = {
+                this.filter.letter = {
                     key  : 'letter',
                     value: selectedLetter,
                     type : null
                 };
 
-                target.parent().find(".current").removeClass("current");
-                target.addClass("current");
-                if ($(e.target).text() === "All") {
+                target.parent().find('.current').removeClass('current');
+                target.addClass('current');
+                if ($(e.target).text() === 'All') {
                     delete this.filter;
                     delete App.filter.letter;
                 } else {
@@ -506,32 +374,29 @@ define([
             });
         },
 
-        renderPagination: function ($currentEl, self) {
+        renderPagination: function ($currentEl, _self) {
+            var self = _self || this;
             var countNumber;
-            var pagenation;
-
-            self = self || this;
+            var pagination;
 
             $currentEl.append(_.template(paginationTemplate));
 
-            pagenation = self.$el.find('.pagination');
+            pagination = self.$el.find('.pagination');
 
             if (self.collection.length === 0) {
-                pagenation.hide();
+                pagination.hide();
             } else {
-                pagenation.show();
+                pagination.show();
                 // This is for counterPages at start
-                countNumber = ([100, 200, 500].indexOf(self.defaultItemsNumber) !== -1) ? this.defaultItemsNumber : "all"; // changed in case of bad view after refreshing with not default counter
-
+                countNumber = (CONSTANTS.PAGINATION_ARRAY.indexOf(self.collection.pageSize) !== -1) ? self.collection.pageSize : 'all';
                 this.previouslySelected = $('.itemsNumber:contains(' + countNumber + ')');
                 this.previouslySelected.addClass('selectedItemsNumber');
                 // end
             }
 
-            $(document).on("click", function (e) {
+            $(document).on('click', function (e) {
                 self.hidePagesPopup(e);
             });
-
         },
 
         renderFilter: function (self, baseFilter) {
