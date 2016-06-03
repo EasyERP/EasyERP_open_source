@@ -76,7 +76,7 @@ var Module = function (models, event) {
                     filtrElement[key] = {$in: condition};
                     resArray.push(filtrElement);
                     break;
-                case 'salesmanager':
+                case 'salesManager':
                     filtrElement[key] = {$in: condition.objectID()};
                     resArray.push(filtrElement);
                     break;
@@ -375,7 +375,7 @@ var Module = function (models, event) {
                         workflow: {$arrayElemAt: ['$workflow', 0]},
                         supplier: {$arrayElemAt: ['$supplier', 0]},
 
-                        salesmanagers: {
+                        salesManagers: {
                             $filter: {
                                 input: '$projectMembers',
                                 as   : 'projectMember',
@@ -392,7 +392,7 @@ var Module = function (models, event) {
                     }
                 }, {
                     $project: {
-                        salesmanagers: {$arrayElemAt: ['$salesmanagers', 0]},
+                        salesManagers: {$arrayElemAt: ['$salesManagers', 0]},
 
                         supplier: {
                             _id : '$supplier._id',
@@ -414,13 +414,13 @@ var Module = function (models, event) {
                 }, {
                     $lookup: {
                         from        : 'Employees',
-                        localField  : 'salesmanagers.employeeId',
+                        localField  : 'salesManagers.employeeId',
                         foreignField: '_id',
-                        as          : 'salesmanagers'
+                        as          : 'salesManagers'
                     }
                 }, {
                     $project: {
-                        salesPerson    : {$arrayElemAt: ['$salesmanagers', 0]},
+                        salesPerson    : {$arrayElemAt: ['$salesManagers', 0]},
                         workflow       : 1,
                         supplier       : 1,
                         currency       : 1,
@@ -784,7 +784,7 @@ var Module = function (models, event) {
             },
                 {
                     $project: {
-                        salesmanagers: {
+                        salesManagers: {
                             $filter: {
                                 input: '$projectMembers',
                                 as   : 'projectMember',
@@ -801,7 +801,7 @@ var Module = function (models, event) {
                     }
                 }, {
                     $project: {
-                        salesmanagers: {$arrayElemAt: ['$salesmanagers', 0]},
+                        salesManagers: {$arrayElemAt: ['$salesManagers', 0]},
                         forSales     : 1,
                         workflow     : 1,
                         supplier     : 1,
@@ -811,13 +811,13 @@ var Module = function (models, event) {
                 }, {
                     $lookup: {
                         from        : 'Employees',
-                        localField  : 'salesmanagers.employeeId',
+                        localField  : 'salesManagers.employeeId',
                         foreignField: '_id',
-                        as          : 'salesmanagers'
+                        as          : 'salesManagers'
                     }
                 }, {
                     $project: {
-                        salesmanager: {$arrayElemAt: ['$salesmanagers', 0]},
+                        salesManager: {$arrayElemAt: ['$salesManagers', 0]},
                         forSales    : 1,
                         workflow    : 1,
                         supplier    : 1,
@@ -961,7 +961,7 @@ var Module = function (models, event) {
                     workflow: {$arrayElemAt: ['$workflow', 0]},
                     supplier: {$arrayElemAt: ['$supplier', 0]},
 
-                    salesmanagers: {
+                    salesManagers: {
                         $filter: {
                             input: '$projectMembers',
                             as   : 'projectMember',
@@ -980,7 +980,7 @@ var Module = function (models, event) {
                 }
             }, {
                 $project: {
-                    salesmanagers    : {$arrayElemAt: ['$salesmanagers', 0]},
+                    salesManagers    : {$arrayElemAt: ['$salesManagers', 0]},
                     name             : 1,
                     paymentInfo      : 1,
                     orderDate        : 1,
@@ -999,13 +999,13 @@ var Module = function (models, event) {
             }, {
                 $lookup: {
                     from        : 'Employees',
-                    localField  : 'salesmanagers.employeeId',
+                    localField  : 'salesManagers.employeeId',
                     foreignField: '_id',
-                    as          : 'salesmanagers'
+                    as          : 'salesManagers'
                 }
             }, {
                 $project: {
-                    salesmanager   : {$arrayElemAt: ['$salesmanagers', 0]},
+                    salesManager   : {$arrayElemAt: ['$salesManagers', 0]},
                     name           : 1,
                     paymentInfo    : 1,
                     project        : 1,
@@ -1030,7 +1030,7 @@ var Module = function (models, event) {
             }, {
                 $project: {
                     _id                : '$root._id',
-                    'salesmanager.name': '$root.salesmanager.name',
+                    'salesManager.name': '$root.salesManager.name',
                     name               : '$root.name',
                     paymentInfo        : '$root.paymentInfo',
                     orderDate          : '$root.orderDate',

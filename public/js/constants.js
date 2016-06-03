@@ -1,121 +1,140 @@
-/**
- * Created by Roman on 23.04.2015.
- */
 define([], function () {
     var filters = {
-        wTrack          : {
-            'Employee'    : {
+        wTrack: {
+            'Employee': {
                 view   : 'employee',
                 backend: 'employee._id',
                 type   : 'ObjectId'
             },
-            'Customer'    : {
+
+            'Customer': {
                 view   : 'customer',
                 backend: 'customer._id',
                 type   : 'ObjectId'
             },
+
             'Project Name': {
                 view   : 'project',
                 backend: 'project._id',
                 type   : 'ObjectId'
             },
-            'Department'  : {
+
+            'Department': {
                 view   : 'department',
                 backend: 'department._id',
                 type   : 'ObjectId'
             },
-            'Month'       : {
+
+            'Month': {
                 view   : 'month',
                 backend: 'month',
                 type   : 'integer'
             },
-            'Year'        : {
+
+            'Year': {
                 view   : 'year',
                 backend: 'year',
                 type   : 'integer'
             },
-            'Week'        : {
+
+            'Week': {
                 view   : 'week',
                 backend: 'week',
                 type   : 'integer'
             },
-            'Type'        : {
+
+            'Type': {
                 view   : '_type',
                 backend: '_type',
                 type   : 'string'
             },
-            'Status'      : {
+
+            'Status': {
                 view   : 'isPaid',
                 backend: 'isPaid',
                 type   : 'boolean'
             }
         },
-        Persons         : {
+
+        Persons: {
             'Full Name': {
                 view   : 'name',
                 backend: '_id'
             },
-            'Country'  : {
+
+            'Country': {
                 view   : 'country',
                 backend: 'address.country'
             },
-            'Services' : {
-                view   : 'services',
-                backend: 'services'
-            }
-        },
-        DashVacation    : {
-            'Employee'  : {
-                view   : 'name',
-                backend: 'employee'
-            },
-            'Department': {
-                view   : 'department',
-                backend: 'department._id'
-            }
-        },
-        Companies       : {
-            'Name'    : {
-                view   : 'name',
-                backend: '_id'
-            },
-            'Country' : {
-                view   : 'country',
-                backend: 'address.country'
-            },
+
             'Services': {
                 view   : 'services',
                 backend: 'services'
             }
         },
-        Employees       : {
-            'Full Name'   : {
+
+        DashVacation: {
+            'Employee': {
+                view   : 'name',
+                backend: 'employee'
+            },
+
+            'Department': {
+                view   : 'department',
+                backend: 'department._id'
+            }
+        },
+
+        Companies: {
+            'Name': {
                 view   : 'name',
                 backend: '_id'
             },
-            'Department'  : {
+
+            'Country': {
+                view   : 'country',
+                backend: 'address.country'
+            },
+
+            'Services': {
+                view   : 'services',
+                backend: 'services'
+            }
+        },
+
+        Employees: {
+            'Full Name': {
+                view   : 'name',
+                backend: '_id'
+            },
+
+            'Department': {
                 view   : 'department',
                 backend: 'department._id'
             },
-            'Manager'     : {
+
+            'Manager': {
                 view   : 'manager',
                 backend: 'manager._id'
             },
+
             'Job Position': {
                 view   : 'jobPosition',
                 backend: 'jobPosition._id'
             }
         },
-        Applications    : {
-            'Full Name'   : {
+
+        Applications: {
+            'Full Name': {
                 view   : 'name',
                 backend: '_id'
             },
+
             'Department'  : {
                 view   : 'department',
                 backend: 'department._id'
             },
-            /*'Manager': {
+            /* 'Manager': {
              view: 'manager',
              backend: 'manager._id'
              },*/
@@ -124,60 +143,71 @@ define([], function () {
                 backend: 'jobPosition._id'
             }
         },
-        JobPositions    : {
-            'Name'      : {
+
+        JobPositions: {
+            'Name': {
                 view   : 'name',
                 backend: 'name'
             },
-            'Status'    : {
+
+            'Status': {
                 view   : 'workflow',
                 backend: 'workflow'
             },
+
             'Department': {
                 view   : 'department',
                 backend: 'department'
             }
         },
-        salesInvoice    : {
-            'Customer'    : {
+
+        salesInvoice: {
+            'Customer': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Assigned'    : {
+
+            'Assigned': {
                 view   : 'salesPerson',
                 backend: 'salesPerson._id'
             },
+
             'Project Name': {
                 view   : 'project',
                 backend: 'project._id'
-            }
-            ,
-            'Status'      : {
-                view   : 'workflow',
-                backend: 'workflow._id'
-            }
-        },
-        ExpensesInvoice : {
-            'Supplier': {
-                view   : 'supplier',
-                backend: 'supplier._id'
             },
-            'Status'  : {
-                view   : 'workflow',
-                backend: 'workflow._id'
-            }
-        },
-        DividendInvoice : {
+
             'Status': {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
-        salesProforma   : {
-            'Customer'    : {
+
+        ExpensesInvoice: {
+            'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
+
+            'Status': {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+
+        DividendInvoice: {
+            'Status': {
+                view   : 'workflow',
+                backend: 'workflow._id'
+            }
+        },
+
+        salesProforma: {
+            'Customer': {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+
             'Assigned'    : {
                 view   : 'salesPerson',
                 backend: 'salesPerson._id'
@@ -185,331 +215,401 @@ define([], function () {
             'Project Name': {
                 view   : 'project',
                 backend: 'project._id'
-            }
-            ,
-            'Status'      : {
+            },
+
+            'Status': {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
-        Projects        : {
-            'Project Name'   : {
+
+        Projects: {
+            'Project Name': {
                 view   : 'name',
                 backend: '_id'
             },
-            'Contact'        : {
+
+            'Contact': {
                 view   : 'customer',
                 backend: 'customer._id'
             },
-            'Status'         : {
+
+            'Status': {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
-            'Sales Manager'  : {
+
+            'Sales Manager': {
                 view   : 'salesManager',
                 backend: 'salesManager._id'
             },
+
             'Project Manager': {
                 view   : 'projectManager',
                 backend: 'projectManager._id'
             }
         },
-        Leads           : {
+
+        Leads: {
             'Contact Name': {
                 view   : 'contactName',
                 backend: 'contactName'
             },
-            'Source'      : {
+
+            'Source': {
                 view   : 'source',
                 backend: 'source'
             },
-            'Stage'       : {
+
+            'Stage': {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
+
             'Sales Person': {
                 view   : 'salesPerson',
                 backend: 'salesPerson._id'
             }
         },
-        Opportunities   : {
-            'Customer'    : {
+
+        Opportunities: {
+            'Customer': {
                 view   : 'customer',
                 backend: 'customer._id'
             },
-            'Stage'       : {
+
+            'Stage': {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
+
             'Sales Person': {
                 view   : 'salesPerson',
                 backend: 'salesPerson._id'
             }
         },
-        Tasks           : {
-            'Project'     : {
+
+        Tasks: {
+            'Project': {
                 view   : 'project',
                 backend: 'project'
             },
+
             'Task Summary': {
                 view   : 'summary',
                 backend: 'summary'
             },
-            'Status'      : {
+
+            'Status': {
                 view   : 'workflow',
                 backend: 'workflow'
             },
-            'Assigned To' : {
+
+            'Assigned To': {
                 view   : 'assignedTo',
                 backend: 'assignedTo'
             },
-            'Type'        : {
+
+            'Type': {
                 view   : 'type',
                 backend: 'type'
             }
         },
+
         customerPayments: {
-            'Assigned'   : {
+            'Assigned': {
                 view   : 'assigned',
                 backend: 'assigned._id'
             },
-            'Company'    : {
+
+            'Company': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
+
             'Payment way': {
                 view   : 'paymentMethod',
                 backend: 'paymentMethod._id'
             },
-            'Name'       : {
+
+            'Name': {
                 view   : 'name',
                 backend: '_id'
             }
         },
+
         supplierPayments: {
-            'Employee'  : {
-                view   : 'supplier',
-                backend: 'supplier._id'
-            },
-            'Bonus Type': {
-                view   : 'paymentRef',
-                backend: 'paymentRef'
-            },
-            'Year'      : {
-                view   : 'year',
-                backend: 'year'
-            },
-            'Month'     : {
-                view   : 'month',
-                backend: 'month'
-            },
-            'Status'    : {
-                view   : 'workflow',
-                backend: 'workflow'
-            }
-        },
-        ExpensesPayments: {
             'Employee': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Year'    : {
+
+            'Bonus Type': {
+                view   : 'paymentRef',
+                backend: 'paymentRef'
+            },
+
+            'Year' : {
                 view   : 'year',
                 backend: 'year'
             },
-            'Month'   : {
+            'Month': {
                 view   : 'month',
                 backend: 'month'
             },
-            'Status'  : {
-                view   : 'workflow',
-                backend: 'workflow'
-            }
-        },
-        DividendPayments: {
-            'Year'  : {
-                view   : 'year',
-                backend: 'year'
-            },
-            'Month' : {
-                view   : 'month',
-                backend: 'month'
-            },
+
             'Status': {
                 view   : 'workflow',
                 backend: 'workflow'
             }
         },
-        Product         : {
-            'Product Name'    : {
+
+        ExpensesPayments: {
+            'Employee': {
+                view   : 'supplier',
+                backend: 'supplier._id'
+            },
+
+            'Year': {
+                view   : 'year',
+                backend: 'year'
+            },
+
+            'Month': {
+                view   : 'month',
+                backend: 'month'
+            },
+
+            'Status': {
+                view   : 'workflow',
+                backend: 'workflow'
+            }
+        },
+
+        DividendPayments: {
+            'Year': {
+                view   : 'year',
+                backend: 'year'
+            },
+
+            'Month': {
+                view   : 'month',
+                backend: 'month'
+            },
+
+            'Status': {
+                view   : 'workflow',
+                backend: 'workflow'
+            }
+        },
+
+        Product: {
+            'Product Name': {
                 view   : 'name',
                 backend: '_id'
             },
-            'Product Type'    : {
+
+            'Product Type': {
                 view   : 'productType',
                 backend: 'info.productType'
             },
-            'Can be Sold'     : {
+
+            'Can be Sold': {
                 view   : 'canBeSold',
                 backend: 'canBeSold'
             },
-            'Can be Expensed' : {
+
+            'Can be Expensed': {
                 view   : 'canBeExpensed',
                 backend: 'canBeExpensed'
             },
+
             'Can be Purchased': {
                 view   : 'canBePurchased',
                 backend: 'canBePurchased'
             }
         },
-        salesProduct    : {
-            'Product Name'    : {
+
+        salesProduct: {
+            'Product Name': {
                 view   : 'name',
                 backend: '_id'
             },
-            'Product Type'    : {
+
+            'Product Type': {
                 view   : 'productType',
                 backend: 'info.productType'
             },
-            'Can be Sold'     : {
+
+            'Can be Sold': {
                 view   : 'canBeSold',
                 backend: 'canBeSold'
             },
-            'Can be Expensed' : {
+
+            'Can be Expensed': {
                 view   : 'canBeExpensed',
                 backend: 'canBeExpensed'
             },
+
             'Can be Purchased': {
                 view   : 'canBePurchased',
                 backend: 'canBePurchased'
             }
         },
-        Quotation       : {
+
+        Quotation: {
             'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Status'  : {
+
+            'Status': {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
-        Invoice         : {
+
+        Invoice: {
             'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Status'  : {
+
+            'Status': {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
-        salesQuotation  : {
-            'Project'      : {
+
+        salesQuotation: {
+            'Project': {
                 view   : 'project',
                 backend: 'project._id'
             },
-            'Customer'     : {
+
+            'Customer': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
+
             'Sales Manager': {
-                view   : 'salesmanager',
-                backend: 'salesmanager._id'
+                view   : 'salesManager',
+                backend: 'salesManager._id'
             },
-            'Status'       : {
+
+            'Status': {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
-        salesOrder      : {
-            'Project'      : {
+
+        salesOrder: {
+            'Project': {
                 view   : 'project',
                 backend: 'project._id'
             },
-            'Customer'     : {
+
+            'Customer': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
+
             'Sales Manager': {
-                view   : 'salesmanager',
-                backend: 'salesmanager._id'
+                view   : 'salesManager',
+                backend: 'salesManager._id'
             },
-            'Status'       : {
+
+            'Status': {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
-        Order           : {
+
+        Order: {
             'Supplier': {
                 view   : 'supplier',
                 backend: 'supplier._id'
             },
-            'Status'  : {
+
+            'Status': {
                 view   : 'workflow',
                 backend: 'workflow._id'
             }
         },
-        PayrollExpenses : {
-            'Employee'    : {
+
+        PayrollExpenses: {
+            'Employee': {
                 view   : 'employee',
                 backend: 'employee._id'
             },
+
             'Payment Type': {
                 view   : 'type',
                 backend: 'type._id'
             },
-            'Data Key'    : {
+
+            'Data Key': {
                 view   : 'dataKey',
                 backend: 'dataKey'
             }
         },
-        "jobsDashboard" : {
-            "Sales Manager": {
-                view   : 'salesmanager',
-                backend: 'salesmanager._id'
+
+        'jobsDashboard': {
+            'Sales Manager': {
+                view   : 'salesManager',
+                backend: 'salesManager._id'
             },
-            "Project"      : {
+
+            'Project': {
                 view   : 'project',
                 backend: 'project._id'
             },
-            "Status"       : {
+
+            'Status': {
                 view   : 'workflow',
                 backend: 'workflow._id'
             },
-            "Type"         : {
+
+            'Type': {
                 view   : 'type',
                 backend: 'type'
             },
-            "Payment Count": {
+
+            'Payment Count': {
                 view   : 'paymentsCount',
                 backend: 'payment.count'
             }
         },
-        "salaryReport"  : {
-            "Employee"      : {
+
+        'salaryReport': {
+            'Employee': {
                 view   : 'employee',
                 backend: '_id'
             },
-            "Department"    : {
+
+            'Department': {
                 view   : 'department',
                 backend: 'department._id'
             },
-            "Only Employees": {
+
+            'Only Employees': {
                 view   : 'onlyEmployees',
                 backend: 'onlyEmployees'
             }
         },
-        "journalEntry"  : {
-            "Journal"       : {
+
+        'journalEntry': {
+            'Journal': {
                 view   : 'journalName',
                 backend: 'journal.name'
             },
-            "Subject"       : {
+
+            'Subject': {
                 view   : 'sourceDocument',
                 backend: 'sourceDocument.subject._id'
             },
-            "Credit Account": {
+
+            'Credit Account': {
                 view   : 'creditAccount',
                 backend: 'journal.creditAccount._id'
             }
@@ -610,7 +710,7 @@ define([], function () {
         IT_SERVICES: 'IT services',
 
         END_CONTRACT_WORKFLOW_ID: '52d2c1369b57890814000005',
-        TRASH_BIN               : '<a class="fa fa-trash"></a>',
+        TRASH_BIN               : "<a class='fa fa - trash'></a>",
 
         DASH_VAC_WEEK_BEFORE    : 2,
         DASH_VAC_WEEK_AFTER     : 8,

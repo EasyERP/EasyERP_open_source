@@ -1,13 +1,10 @@
-/**
- * Created by Roman on 24.08.2015.
- */
 var request = require('supertest');
 var expect = require('chai').expect;
 var CONSTANTS = require('../../constants/constantsTest');
 var url = 'http://localhost:8089/';
 var aggent;
 
-describe("Quotation Specs", function () {
+describe('Quotation Specs', function () {
     'use strict';
     var id;
 
@@ -31,51 +28,57 @@ describe("Quotation Specs", function () {
                 .expect(302, done);
         });
 
-        it("should create quotation", function (done) {
+        it('should create quotation', function (done) {
             var body = {
-                "supplier"         : CONSTANTS.SUPPLIER,
-                "project"          : CONSTANTS.PROJECT,
-                "workflow"         : CONSTANTS.WORKFLOW,
-                "supplierReference": null,
-                "orderDate"        : "28 Dec, 2015",
-                "expectedDate"     : "Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))",
-                "name"             : "PO",
-                "invoiceControl"   : null,
-                "invoiceRecived"   : false,
-                "paymentTerm"      : null,
-                "fiscalPosition"   : null,
-                "destination"      : null,
-                "incoterm"         : null,
-                "products"         : [
+                'supplier'         : CONSTANTS.SUPPLIER,
+                'project'          : CONSTANTS.PROJECT,
+                'workflow'         : CONSTANTS.WORKFLOW,
+                'supplierReference': null,
+                'orderDate'        : '28 Dec, 2015',
+                'expectedDate'     : 'Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))',
+                'name'             : 'PO',
+                'invoiceControl'   : null,
+                'invoiceRecived'   : false,
+                'paymentTerm'      : null,
+                'fiscalPosition'   : null,
+                'destination'      : null,
+                'incoterm'         : null,
+
+                'products': [
                     {
-                        "product"      : CONSTANTS.PRODUCT,
-                        "unitPrice"    : "500",
-                        "quantity"     : "1",
-                        "scheduledDate": "28 Dec, 2015",
-                        "taxes"        : "0.00",
-                        "description"  : "",
-                        "subTotal"     : "500",
-                        "jobs"         : CONSTANTS.JOB
+                        'product'      : CONSTANTS.PRODUCT,
+                        'unitPrice'    : '500',
+                        'quantity'     : '1',
+                        'scheduledDate': '28 Dec, 2015',
+                        'taxes'        : '0.00',
+                        'description'  : '',
+                        'subTotal'     : '500',
+                        'jobs'         : CONSTANTS.JOB
                     }
                 ],
-                "currency"         : {
+
+                'currency': {
                     _id : CONSTANTS.EURO,
                     name: 'EUR'
                 },
-                "forSales"         : true,
-                "deliverTo"        : CONSTANTS.DELIVERTO,
-                "populate"         : true,
-                "paymentInfo"      : {
-                    "total"  : "500.00",
-                    "unTaxed": "500.00",
-                    "taxes"  : "0.00"
+
+                'forSales' : true,
+                'deliverTo': CONSTANTS.DELIVERTO,
+                'populate' : true,
+
+                'paymentInfo': {
+                    'total'  : '500.00',
+                    'unTaxed': '500.00',
+                    'taxes'  : '0.00'
                 },
-                "groups"           : {
-                    "owner": CONSTANTS.OWNER,
-                    "users": [],
-                    "group": []
+
+                'groups': {
+                    'owner': CONSTANTS.OWNER,
+                    'users': [],
+                    'group': []
                 },
-                "whoCanRW"         : "everyOne"
+
+                'whoCanRW': 'everyOne'
             };
 
             aggent
@@ -112,11 +115,11 @@ describe("Quotation Specs", function () {
                 });
         });
 
-        it("should get quotations by viewType", function (done) {
+        it('should get quotations by viewType', function (done) {
             var query = {
                 page       : 1,
                 count      : 4,
-                viewType: 'list',
+                viewType   : 'list',
                 contentType: 'salesQuotation',
                 forSales   : true
             };
@@ -127,24 +130,62 @@ describe("Quotation Specs", function () {
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
+                    var first;
 
                     if (err) {
                         return done(err);
                     }
                     expect(body)
                         .to.be.instanceOf(Object);
-
                     expect(body.data.length)
                         .to.be.lte(4);
                     expect(body)
-                        .to.have.property('total')
+                        .to.have.property('total');
 
+                    first = body.data[0];
+
+                    expect(first)
+                        .and.to.have.property('_id')
+                        .and.to.have.lengthOf(24);
+                    expect(first)
+                        .and.to.have.property('project');
+                    expect(first.project)
+                        .and.to.have.property('name');
+                    expect(first)
+                        .and.to.have.property('currency');
+                    expect(first)
+                        .and.to.have.property('paymentInfo');
+                    expect(first)
+                        .and.to.have.property('orderDate');
+                    expect(first)
+                        .and.to.have.property('workflow')
+                        .and.to.have.property('_id');
+                    expect(first)
+                        .and.to.have.property('workflow')
+                        .and.to.have.property('name')
+                        .and.to.be.a('string');
+                    expect(first)
+                        .and.to.have.property('workflow')
+                        .and.to.have.property('status')
+                        .and.to.be.a('string');
+                    expect(first)
+                        .and.to.have.property('supplier');
+                    expect(first.supplier)
+                        .and.to.have.property('name')
+                        .and.to.have.property('first')
+                        .and.to.be.a('string');
+                    expect(first)
+                        .and.to.have.property('salesManager');
+                    expect(first.salesManager)
+                        .and.to.have.property('name')
+                        .and.to.have.property('first')
+                        .and.to.be.a('string');
 
                     done();
                 });
         });
 
-        it("should get quotations totalCollectionLength", function (done) {
+        it('should get quotations totalCollectionLength', function (done) {
 
             aggent
                 .get('quotation/totalCollectionLength')
@@ -166,7 +207,7 @@ describe("Quotation Specs", function () {
                 });
         });
 
-        it("should get quotations filterValues", function (done) {
+        it('should get quotations filterValues', function (done) {
 
             aggent
                 .get('quotation/getFilterValues')
@@ -188,11 +229,11 @@ describe("Quotation Specs", function () {
                 });
         });
 
-        it("should get quotation by id", function (done) {
+        it('should get quotation by id', function (done) {
             var query = {
                 forSales: true,
                 viewType: 'form',
-                id: id
+                id      : id
             };
 
             aggent
@@ -244,7 +285,7 @@ describe("Quotation Specs", function () {
                 });
         });
 
-        it("should fail get quotation by id", function (done) {
+        it('should fail get quotation by id', function (done) {
 
             aggent
                 .get('quotation')
@@ -252,7 +293,7 @@ describe("Quotation Specs", function () {
                 .expect(400, done);
         });
 
-        it("should update quotation", function (done) {
+        it('should update quotation', function (done) {
             var body = {
                 validate      : false,
                 supplier      : CONSTANTS.SUPPLIER,
@@ -267,23 +308,23 @@ describe("Quotation Specs", function () {
                 fiscalPosition: '',
                 destination   : '',
                 incoterm      : '',
-                "products"    : [
+                'products'    : [
                     {
-                        "product"      : CONSTANTS.PRODUCT,
-                        "unitPrice"    : "500",
-                        "quantity"     : "1",
-                        "scheduledDate": "28 Dec, 2015",
-                        "taxes"        : "0.00",
-                        "description"  : "",
-                        "subTotal"     : "500",
-                        "jobs"         : CONSTANTS.JOB
+                        'product'      : CONSTANTS.PRODUCT,
+                        'unitPrice'    : '500',
+                        'quantity'     : '1',
+                        'scheduledDate': '28 Dec, 2015',
+                        'taxes'        : '0.00',
+                        'description'  : '',
+                        'subTotal'     : '500',
+                        'jobs'         : CONSTANTS.JOB
                     }
                 ],
                 _id           : id,
-                "groups"      : {
-                    "owner": CONSTANTS.OWNER,
-                    "users": [],
-                    "group": []
+                'groups'      : {
+                    'owner': CONSTANTS.OWNER,
+                    'users': [],
+                    'group': []
                 },
                 whoCanRW      : 'everyOne',
                 paymentInfo   : {total: '1500', unTaxed: '1500', taxes: '0.00'},
@@ -319,7 +360,7 @@ describe("Quotation Specs", function () {
                 });
         });
 
-        it("should fail update quotation", function (done) {
+        it('should fail update quotation', function (done) {
             var body = {};
 
             aggent
@@ -329,7 +370,7 @@ describe("Quotation Specs", function () {
                 .expect(500, done);
         });
 
-        it("should create order", function (done) {
+        it('should create order', function (done) {
             var body = {
                 isOrder : true,
                 type    : 'Not Invoiced',
@@ -357,7 +398,7 @@ describe("Quotation Specs", function () {
                 });
         });
 
-        it("should fail create order", function (done) {
+        it('should fail create order', function (done) {
             var body = {};
 
             aggent
@@ -367,14 +408,14 @@ describe("Quotation Specs", function () {
                 .expect(500, done);
         });
 
-        it("should delete quotation", function (done) {
+        it('should delete quotation', function (done) {
             aggent
                 .delete('quotation/' + id)
                 .set('type', 'sales')
                 .expect(200, done);
         });
 
-        it("should fail delete quotation", function (done) {
+        it('should fail delete quotation', function (done) {
             aggent
                 .delete('quotation/123cba')
                 .set('type', 'sales')
@@ -404,51 +445,51 @@ describe("Quotation Specs", function () {
                 .expect(302, done);
         });
 
-        it("should fail create quotation", function (done) {
+        it('should fail create quotation', function (done) {
             var body = {
-                "supplier"         : CONSTANTS.SUPPLIER,
-                "project"          : CONSTANTS.PROJECT,
-                "workflow"         : CONSTANTS.WORKFLOW,
-                "supplierReference": null,
-                "orderDate"        : "28 Dec, 2015",
-                "expectedDate"     : "Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))",
-                "name"             : "PO",
-                "invoiceControl"   : null,
-                "invoiceRecived"   : false,
-                "paymentTerm"      : null,
-                "fiscalPosition"   : null,
-                "destination"      : null,
-                "incoterm"         : null,
-                "products"         : [
+                'supplier'         : CONSTANTS.SUPPLIER,
+                'project'          : CONSTANTS.PROJECT,
+                'workflow'         : CONSTANTS.WORKFLOW,
+                'supplierReference': null,
+                'orderDate'        : '28 Dec, 2015',
+                'expectedDate'     : 'Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))',
+                'name'             : 'PO',
+                'invoiceControl'   : null,
+                'invoiceRecived'   : false,
+                'paymentTerm'      : null,
+                'fiscalPosition'   : null,
+                'destination'      : null,
+                'incoterm'         : null,
+                'products'         : [
                     {
-                        "product"      : CONSTANTS.PRODUCT,
-                        "unitPrice"    : "500",
-                        "quantity"     : "1",
-                        "scheduledDate": "28 Dec, 2015",
-                        "taxes"        : "0.00",
-                        "description"  : "",
-                        "subTotal"     : "500",
-                        "jobs"         : CONSTANTS.JOB
+                        'product'      : CONSTANTS.PRODUCT,
+                        'unitPrice'    : '500',
+                        'quantity'     : '1',
+                        'scheduledDate': '28 Dec, 2015',
+                        'taxes'        : '0.00',
+                        'description'  : '',
+                        'subTotal'     : '500',
+                        'jobs'         : CONSTANTS.JOB
                     }
                 ],
-                "currency"         : {
+                'currency'         : {
                     _id : CONSTANTS.EURO,
                     name: 'EUR'
                 },
-                "forSales"         : true,
-                "deliverTo"        : CONSTANTS.DELIVERTO,
-                "populate"         : true,
-                "paymentInfo"      : {
-                    "total"  : "500.00",
-                    "unTaxed": "500.00",
-                    "taxes"  : "0.00"
+                'forSales'         : true,
+                'deliverTo'        : CONSTANTS.DELIVERTO,
+                'populate'         : true,
+                'paymentInfo'      : {
+                    'total'  : '500.00',
+                    'unTaxed': '500.00',
+                    'taxes'  : '0.00'
                 },
-                "groups"           : {
-                    "owner": CONSTANTS.OWNER,
-                    "users": [],
-                    "group": []
+                'groups'           : {
+                    'owner': CONSTANTS.OWNER,
+                    'users': [],
+                    'group': []
                 },
-                "whoCanRW"         : "everyOne"
+                'whoCanRW'         : 'everyOne'
             };
 
             aggent
@@ -461,7 +502,7 @@ describe("Quotation Specs", function () {
 
     describe('Quotation with no authorise', function () {
 
-        it("should fail get Quotation for View", function (done) {
+        it('should fail get Quotation for View', function (done) {
             var query = {
                 viewType: 'list'
             };
