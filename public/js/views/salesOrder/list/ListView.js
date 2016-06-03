@@ -3,7 +3,7 @@ define([
     'Underscore',
     'views/listViewBase',
     'text!templates/salesQuotation/list/ListHeader.html',
-    'text!templates/salesOrder/wTrack/ListHeader.html',
+    'text!templates/salesOrder/list/ListHeader.html',
     'text!templates/stages.html',
     'views/salesQuotation/CreateView',
     'views/salesOrder/list/ListItemView',

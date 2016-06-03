@@ -5,11 +5,11 @@ var aggent;
 
 require('../../config/development');
 
-describe('Person Specs', function () {
+describe('Company Specs', function () {
     'use strict';
     var id;
 
-    describe('Person with admin', function () {
+    describe('Company with admin', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -30,16 +30,16 @@ describe('Person Specs', function () {
                 .expect(302, done);
         });
 
-        it('should create person', function (done) {
+        it('should create company', function (done) {
             var body = {
-                name: {
-                    first: 'test',
-                    last : 'test'
+                'name': {
+                    'first': 'test11',
+                    'last' : 'testCompany'
                 }
             };
 
             aggent
-                .post('persons')
+                .post('customers')
                 .send(body)
                 .expect(201)
                 .end(function (err, res) {
@@ -62,10 +62,15 @@ describe('Person Specs', function () {
                 });
         });
 
-        it('should get by _id person', function (done) {
+        it('should get by _id company', function (done) {
+            var query = {
+                id      : id,
+                viewType: 'form'
+            };
+
             aggent
-                .get('persons/')
-                .query({id: id})
+                .get('customers/')
+                .query(query)
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -83,10 +88,10 @@ describe('Person Specs', function () {
                 });
         });
 
-        it('should get persons for viewType', function (done) {
+        it('should get companies for mobile', function (done) {
             aggent
-                .get('persons')
-                .query({contentType: 'Persons', viewType: 'thumbnails'})
+                .get('customers')
+                .query({contentType: 'Companies', viewType: 'mobile'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -105,10 +110,83 @@ describe('Person Specs', function () {
                 });
         });
 
-        it('should get persons for list', function (done) {
+        it('should get companies for dropDown', function (done) {
+            aggent
+                .get('customers/getCompaniesForDd')
+                .query({contentType: 'Companies'})
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+                    expect(body.data)
+                        .to.be.instanceOf(Array);
+
+                    done();
+                });
+        });
+
+        it('should get companies images', function (done) {
+            aggent
+                .get('customers/getCustomersImages')
+                .query({ids: ['55b92ad521e4b7c40f00061d', id]})
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data');
+                    expect(body.data)
+                        .to.be.instanceOf(Array);
+
+                    done();
+                });
+        });
+
+        it('should get companies for viewType', function (done) {
+            var query = {
+                viewType   : 'thumbnails',
+                contentType: 'Companies'
+            };
+
+            aggent
+                .get('customers/')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('total');
+                    expect(body)
+                        .to.have.property('data');
+                    expect(body.data)
+                        .to.be.instanceOf(Array);
+
+                    done();
+                });
+        });
+
+        it('should get companies for list', function (done) {
             var query = {
                 viewType   : 'list',
-                contentType: 'Persons'
+                contentType: 'Companies'
             };
             var first;
 
@@ -143,8 +221,9 @@ describe('Person Specs', function () {
                     expect(first)
                         .and.to.have.property('phones');
                     expect(first.phones)
-                        .to.have.property('phone')
-                        .and.not.to.have.property('mobile');
+                        .to.have.property('phone');
+                    expect(first.phones)
+                        .to.have.property('mobile');
                     expect(first)
                         .to.have.property('address');
                     expect(first.address)
@@ -174,10 +253,10 @@ describe('Person Specs', function () {
                 });
         });
 
-        it('should get persons first letters', function (done) {
+        it('should get companies first letters', function (done) {
             aggent
-                .get('persons/getPersonAlphabet')
-                .query({contentType: 'Persons'})
+                .get('customers/getCompaniesAlphabet')
+                .query({contentType: 'Companies'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -196,53 +275,10 @@ describe('Person Specs', function () {
                 });
         });
 
-        it('should get persons for miniView', function (done) {
+        it('should get totalCollectionLength of companies', function (done) {
             aggent
-                .get('persons/getPersonsForMiniView')
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('data');
-                    expect(body.data)
-                        .to.be.instanceOf(Array);
-
-                    done();
-                });
-        });
-
-        it('should get count of persons for miniView', function (done) {
-            aggent
-                .get('persons/getPersonsForMiniView')
-                .query({onlyCount: true})
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('listLength');
-
-                    done();
-                });
-        });
-
-        it('should get totalCollectionLength of persons', function (done) {
-            aggent
-                .get('persons/totalCollectionLength')
-                .query({contentType: 'Persons'})
+                .get('customers/totalCollectionLength')
+                .query({contentType: 'Companies'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -262,10 +298,10 @@ describe('Person Specs', function () {
                 });
         });
 
-        it('should updateOnlySelectedFields of persons', function (done) {
+        it('should updateOnlySelectedFields of companies', function (done) {
             aggent
-                .patch('persons/' + id)
-                .send({'name.last': 'Persons'})
+                .patch('customers/55b92ad521e4b7c40f00061d')
+                .send({'name.last': 'Companies'})
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -287,29 +323,30 @@ describe('Person Specs', function () {
 
         it('should update', function (done) {
             var body = {
-                address       : {country: 'Singapore', zip: '', state: '', city: '', street: ''},
-                attachments   : [],
-                color         : '#4d5a75',
-                company       : null,
-                companyInfo   : {size: null, industry: null},
-                contacts      : [],
-                createdBy     : {date: '1970-01-01T00:00:00.000Z', user: null},
-                dateBirth     : '',
-                department    : null,
-                editedBy      : {date: '2016-01-29T14:45:54.455Z', user: '52203e707d4dba8813000003'},
-                email         : '',
-                fullName      : 'Sharmila Persons ssss',
-                groups        : {group: [], users: [], owner: '560c099da5d4a2e20ba5068b'},
-                history       : [],
-                id            : '55b92ad521e4b7c40f00060f',
-                imageSrc      : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC',
-                internalNotes : '',
-                isOwn         : false,
-                jobPosition   : null,
-                name          : {last: 'Persons ssss', first: 'Sharmila'},
-                notes         : [],
-                phones        : {fax: '', mobile: '', phone: ''},
-                relatedUser   : null,
+                address      : {country: 'Singapore', zip: '', state: '', city: '', street: ''},
+                attachments  : [],
+                color        : '#4d5a75',
+                company      : null,
+                companyInfo  : {size: null, industry: null},
+                contacts     : [],
+                createdBy    : {date: '1970-01-01T00:00:00.000Z', user: null},
+                dateBirth    : '',
+                department   : null,
+                editedBy     : {date: '2016-01-29T14:45:54.455Z', user: '52203e707d4dba8813000003'},
+                email        : '',
+                fullName     : 'Sharmila companies ssss',
+                groups       : {group: [], users: [], owner: '560c099da5d4a2e20ba5068b'},
+                history      : [],
+                id           : '55b92ad521e4b7c40f00060f',
+                imageSrc     : 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAAAAACPAi4CAAAACXBIWXMAAABIAAAASABGyWs+AAAACXZwQWcAAABAAAAAQADq8/hgAAAEaElEQVRYw82X6XLbNhCA+f4PVomk5MRyHDtp63oEgDcl3vfRBQhQIEVKSvsnO+OxRBEfFnthV+n/pyi/NaCryzzL8rJu/wOgzQPXJBgjhDExnXPW/Aqgy30DI0yIwYQQ4Bhe2j0I6BIbI1jL9meC2TdkRu0jgMxCGN5H2HT8IIzjKPAdE9NngEjuAhqfv3rOpe3aIrDAFoB1qtuA3ADlMXKuz9vlLqZokt4CxPAOQXa2bPDCRVSJYB0QIDA4ibp+TVKDbuCvAeh6YpX9DWkcUGJCkAARXW9UfXeL0PmUcF4CZBA4cALv5nqQM+yD4mtATQMOGMi9RzghiKriCuBiAzsB1e8uwUUGtroZIAEsqfqHCI2JjdGZHNDSZzHYb0boQK4JOTVXNQFEoJXDPskEvrYTrJHgIwOdZEBrggXzfkbo+sY7Hp0Fx9bUYbUEAAtgV/waHAcCnOew3arbLy5lVXGSXIrKGQkrKKMLcnHsPjEGAla1PYi+/YCV37e7DRp1qUDjwREK1wjbo56hezRoPLxt9lzUg+m96Hvtz3BMcU9syQAxKBSJ/c2Nqv0Em5C/97q+BdGoEuoORN98CkAqzsAAPh690vdv2tOOEcx/dodP0zq+qjpoQQF7/Vno2UA0OgLQQbUZI6t/1+BlRgAlyywvqtNXja0HFQ7jGVwoUA0HUBNcMvRdpW8PpzDPYRAERfmNE/TDuE8Ajis4oJAiUwB2+g+am3YEEmT5kz4HgOdRygHUIPEMsFf/YvXJYoSKbPczQI4HwysSbKKBdk4dLAhJsptrUHK1lSERUDYD6E9pGLsjoXzRZgAIJVaYBCCfA57zMBoJYfV9CXDigHhRgww2Hgngh4UjnCUbJAs2CEdCkl25kbou5ABh0KkXPupA6IB8fOUF4TpFOs5Eg50eFSOBfOz0GYCWoJwDoJzwcjQBfM2rMAjD0CEsL/Qp4ISG/FHkuJ4A9toXv66KomosMMNAuAA6GxOWPwqP64sb3kTm7HX1Fbsued9BXjACZKNIphLz/FF4WIps6vqff+jaIFAONiBbTf1hDITti5RLg+cYoDOxqJFwxb0dXmT5Bn/Pn8wOh9dQnMASK4aaSGuk+G24DObCbm5XzkXs9RdASTuytUZO6Czdm2BCA2cSgNbIWedxk0AV4FVYEYFJpLK4SuA3DrsceQEQl6svXy33CKfxIrwAanqZBA8R4AAQWeUMwJ6CZ7t7BIh6utfos0uLwxqP7BECMaTUuQCoawhO+9sSUWtjs1kA9I1Fm8DoNiCl64nUCsp9Ym1SgncjoLoz7YTl9dNOtbGRYSAjWbMDNPKw3py0otNeufVYN2wvzha5g6iGzlTDebsfEdbtW9EsLOvYZs06Dmbsq4GjcoeBgThBWtRN2zZ1mYUuGZ7axfz9hZEns+mMQ+ckzIYm/gn+WQvWWRq6uoxuSNi4RWWAYGfRuCtjXx25Bh25MGaTFzaccCVX1wfPtkiCk+e6nh/ExXps/N6z80PyL8wPTYgPwzDiAAAAJXRFWHRkYXRlOmNyZWF0ZQAyMDExLTAxLTE5VDAzOjU5OjAwKzAxOjAwaFry6QAAACV0RVh0ZGF0ZTptb2RpZnkAMjAxMC0xMi0yMVQxNDozMDo0NCswMTowMGxOe/8AAAAZdEVYdFNvZnR3YXJlAEFkb2JlIEltYWdlUmVhZHlxyWU8AAAAAElFTkSuQmCC',
+                internalNotes: '',
+                isOwn        : false,
+                jobPosition  : null,
+                name         : {last: 'companies ssss', first: 'Sharmila'},
+                notes        : [],
+                phones       : {fax: '', mobile: '', phone: ''},
+                relatedUser  : null,
+
                 salesPurchases: {
                     receiveMessages: 0,
                     language       : 'English',
@@ -322,12 +359,12 @@ describe('Person Specs', function () {
                 social  : {LI: '', FB: ''},
                 timezone: 'UTC',
                 title   : '',
-                type    : 'Person',
+                type    : 'Company',
                 website : '',
                 whoCanRW: 'everyOne'
             };
             aggent
-                .put('persons/' + id)
+                .put('customers/' + id)
                 .send(body)
                 .expect(200)
                 .end(function (err, res) {
@@ -346,21 +383,21 @@ describe('Person Specs', function () {
                 });
         });
 
-
-        it('should delete person', function (done) {
+        it('should delete company', function (done) {
             aggent
-                .delete('persons/' + id)
+                .delete('customers/' + id)
                 .expect(200, done);
         });
 
-        it('should not delete person', function (done) {
+        it('should not delete company', function (done) {
             aggent
-                .delete('persons/' + 'kkk')
+                .delete('customers/' + 'kkk')
                 .expect(500, done);
         });
+
     });
 
-    describe('Person with user without a license', function () {
+    describe('Company with user without a license', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -381,19 +418,20 @@ describe('Person Specs', function () {
                 .expect(302, done);
         });
 
-        it('should fail create person', function (done) {
+        it('should fail create company', function (done) {
             var body = {
                 name: {
                     first: 'test',
-                    last : 'test'
+                    last : 'testCompany'
                 }
             };
 
             aggent
-                .post('persons')
+                .post('customers')
                 .send(body)
                 .expect(403, done);
         });
+
     });
 
 });
