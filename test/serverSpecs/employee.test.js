@@ -181,6 +181,7 @@ describe('Employee Specs', function () {
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
+                    var employee;
 
                     if (err) {
                         return done(err);
@@ -189,9 +190,118 @@ describe('Employee Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('data');
+                        .to.have.property('data')
+                        .and.to.be.instanceOf(Array);
                     expect(body)
                         .to.have.property('total');
+
+                    employee = body.data[0];
+
+                    expect(employee)
+                        .to.exist;
+                    expect(employee)
+                        .to.have.property('department')
+                        .and.to.have.property('_id');
+                    expect(employee)
+                        .to.have.property('department')
+                        .and.to.have.property('name')
+                        .and.to.be.a('string');
+                    expect(employee)
+                        .to.have.property('jobPosition')
+                        .and.to.have.property('_id');
+                    expect(employee)
+                        .to.have.property('jobPosition')
+                        .and.to.have.property('name')
+                        .and.to.be.a('string');
+                    expect(employee)
+                        .and.to.have.property('manager')
+                        .and.to.have.property('_id');
+                    expect(employee)
+                        .to.have.property('manager')
+                        .and.to.have.property('name')
+                        .and.to.have.property('first')
+                        .and.to.be.a('string');
+                    expect(employee)
+                        .to.have.property('name')
+                        .and.to.have.property('last')
+                        .and.to.be.a('string');
+                    expect(employee)
+                        .to.have.property('name')
+                        .and.to.have.property('first')
+                        .and.to.be.a('string');
+                    expect(employee)
+                        .to.have.property('isEmployee')
+                        .and.to.be.true;
+
+                    done();
+                });
+        });
+
+        it('should get by viewType list employee', function (done) {
+            var query = {
+                viewType     : 'list',
+                contentType  : 'Employees',
+                count        : 100,
+                page         : 1,
+                newCollection: false
+            };
+            aggent
+                .get('employees/')
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+                    var employee;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('data')
+                        .and.to.be.instanceOf(Array);
+                    expect(body)
+                        .to.have.property('total');
+
+                    employee = body.data[0];
+
+                    expect(employee)
+                        .to.exist;
+                    expect(employee)
+                        .to.have.property('department')
+                        .and.to.have.property('_id');
+                    expect(employee)
+                        .to.have.property('department')
+                        .and.to.have.property('name')
+                        .and.to.be.a('string');
+                    expect(employee)
+                        .to.have.property('jobPosition')
+                        .and.to.have.property('_id');
+                    expect(employee)
+                        .to.have.property('jobPosition')
+                        .and.to.have.property('name')
+                        .and.to.be.a('string');
+                    expect(employee)
+                        .and.to.have.property('manager')
+                        .and.to.have.property('_id');
+                    expect(employee)
+                        .to.have.property('manager')
+                        .and.to.have.property('name')
+                        .and.to.have.property('first')
+                        .and.to.be.a('string');
+                    expect(employee)
+                        .to.have.property('name')
+                        .and.to.have.property('last')
+                        .and.to.be.a('string');
+                    expect(employee)
+                        .to.have.property('name')
+                        .and.to.have.property('first')
+                        .and.to.be.a('string');
+                    expect(employee)
+                        .to.have.property('isEmployee')
+                        .and.to.be.true;
 
                     done();
                 });

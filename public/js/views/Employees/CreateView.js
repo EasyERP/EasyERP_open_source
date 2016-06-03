@@ -238,7 +238,7 @@ define([
 
         changeTab: function (e) {
             var $holder = $(e.target);
-            var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+            var n = $holder.parents(".dialog-tabs").find("li").index($holder.parent());
             var $dialogHolder = $(".dialog-tabs-items");
 
             $holder.closest(".dialog-tabs").find("a.active").removeClass("active");
@@ -552,13 +552,13 @@ define([
                     }).render().el
                 );
 
-                populate.get("#departmentManagers", "/DepartmentsForDd", {}, "departmentManager", this);
+                populate.get("#departmentManagers", "departments/getForDd", {}, "departmentManager", this);
                 populate.get("#jobTypeDd", CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, "name", this, true);
                 populate.get("#nationality", CONSTANTS.URLS.EMPLOYEES_NATIONALITY, {}, "_id", this, true);
                 populate.get2name("#projectManagerDD", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, true);
                 populate.get("#jobPositionDd", CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, "name", this, true, true);
                 populate.get("#relatedUsersDd", CONSTANTS.URLS.USERS_FOR_DD, {}, "login", this, true, true);
-                populate.get("#departmentsDd",  CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this, true);
+                populate.get("#departmentsDd",  CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "name", this, true);
                 populate.get("#weeklySchedulerDd", "/weeklyScheduler/forDd", {}, "name", this, true);
                 
             common.canvasDraw({model: this.model.toJSON()}, this);
