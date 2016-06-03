@@ -32,52 +32,57 @@ describe('Invoice Specs', function () {
             var quotationBody;
             var invoiceId;
 
-
             it('should create quotation', function (done) {
                 var body = {
-                    'supplier'         : CONSTANTS.SUPPLIER,
-                    'project'          : CONSTANTS.PROJECT,
-                    'workflow'         : CONSTANTS.WORKFLOW,
-                    'supplierReference': null,
-                    'orderDate'        : '28 Dec, 2015',
-                    'expectedDate'     : 'Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))',
-                    'name'             : 'PO',
-                    'invoiceControl'   : null,
-                    'invoiceRecived'   : false,
-                    'paymentTerm'      : null,
-                    'fiscalPosition'   : null,
-                    'destination'      : null,
-                    'incoterm'         : null,
-                    'products'         : [
+                    supplier         : CONSTANTS.SUPPLIER,
+                    project          : CONSTANTS.PROJECT,
+                    workflow         : CONSTANTS.WORKFLOW,
+                    supplierReference: null,
+                    orderDate        : '28 Dec, 2015',
+                    expectedDate     : 'Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))',
+                    name             : 'PO',
+                    invoiceControl   : null,
+                    invoiceRecived   : false,
+                    paymentTerm      : null,
+                    fiscalPosition   : null,
+                    destination      : null,
+                    incoterm         : null,
+
+                    products: [
                         {
-                            'product'      : CONSTANTS.PRODUCT,
-                            'unitPrice'    : '500',
-                            'quantity'     : '1',
-                            'scheduledDate': '28 Dec, 2015',
-                            'taxes'        : '0.00',
-                            'description'  : '',
-                            'subTotal'     : '500',
-                            'jobs'         : CONSTANTS.JOB
+                            product      : CONSTANTS.PRODUCT,
+                            unitPrice    : '500',
+                            quantity     : '1',
+                            scheduledDate: '28 Dec, 2015',
+                            taxes        : '0.00',
+                            description  : '',
+                            subTotal     : '500',
+                            jobs         : CONSTANTS.JOB
                         }
                     ],
-                    'currency'         : {
+
+                    currency: {
                         _id : CONSTANTS.DOLLAR,
                         name: 'USD'
                     },
-                    'forSales'         : 'true',
-                    'deliverTo'        : CONSTANTS.DELIVERTO,
-                    'populate'         : true,
-                    'paymentInfo'      : {
-                        'total'  : 500,
-                        'unTaxed': 500,
-                        'taxes'  : 0
+
+                    forSales : 'true',
+                    deliverTo: CONSTANTS.DELIVERTO,
+                    populate : true,
+
+                    paymentInfo: {
+                        total  : 500,
+                        unTaxed: 500,
+                        taxes  : 0
                     },
-                    'groups'           : {
-                        'owner': CONSTANTS.OWNER,
-                        'users': [],
-                        'group': []
+
+                    groups: {
+                        owner: CONSTANTS.OWNER,
+                        users: [],
+                        group: []
                     },
-                    'whoCanRW'         : 'everyOne'
+
+                    whoCanRW: 'everyOne'
                 };
 
                 aggent
@@ -182,7 +187,6 @@ describe('Invoice Specs', function () {
                                 });
 
                         });
-
 
                         done();
                     });
@@ -400,50 +404,56 @@ describe('Invoice Specs', function () {
 
             it('should update invoice', function (done) {
                 var body = {
-                    'supplier'         : CONSTANTS.SUPPLIER,
-                    'project'          : CONSTANTS.PROJECT,
-                    'workflow'         : CONSTANTS.WORKFLOW,
-                    'supplierReference': null,
-                    'orderDate'        : '28 Dec, 2015',
-                    'expectedDate'     : 'Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))',
-                    'name'             : 'PO',
-                    'invoiceControl'   : null,
-                    'invoiceRecived'   : false,
-                    'paymentTerm'      : null,
-                    'fiscalPosition'   : null,
-                    'destination'      : null,
-                    'incoterm'         : null,
-                    'products'         : [
+                    supplier         : CONSTANTS.SUPPLIER,
+                    project          : CONSTANTS.PROJECT,
+                    workflow         : CONSTANTS.WORKFLOW,
+                    supplierReference: null,
+                    orderDate        : '28 Dec, 2015',
+                    expectedDate     : 'Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))',
+                    name             : 'PO',
+                    invoiceControl   : null,
+                    invoiceRecived   : false,
+                    paymentTerm      : null,
+                    fiscalPosition   : null,
+                    destination      : null,
+                    incoterm         : null,
+
+                    products: [
                         {
-                            'product'      : CONSTANTS.PRODUCT,
-                            'unitPrice'    : '500',
-                            'quantity'     : '1',
-                            'scheduledDate': '28 Dec, 2015',
-                            'taxes'        : '0.00',
-                            'description'  : '',
-                            'subTotal'     : '500',
-                            'jobs'         : CONSTANTS.JOB
+                            product      : CONSTANTS.PRODUCT,
+                            unitPrice    : '500',
+                            quantity     : '1',
+                            scheduledDate: '28 Dec, 2015',
+                            taxes        : '0.00',
+                            description  : '',
+                            subTotal     : '500',
+                            jobs         : CONSTANTS.JOB
                         }
                     ],
-                    'currency'         : {
+
+                    currency: {
                         _id : CONSTANTS.DOLLAR,
                         name: 'USD'
                     },
-                    'forSales'         : 'true',
-                    'deliverTo'        : CONSTANTS.DELIVERTO,
-                    'populate'         : true,
-                    'paymentInfo'      : {
-                        'total'  : 500,
-                        'unTaxed': 500,
-                        'taxes'  : 0
+
+                    forSales : 'true',
+                    deliverTo: CONSTANTS.DELIVERTO,
+                    populate : true,
+
+                    paymentInfo: {
+                        total  : 500,
+                        unTaxed: 500,
+                        taxes  : 0
                     },
-                    'groups'           : {
-                        'owner': CONSTANTS.OWNER,
-                        'users': [],
-                        'group': []
+
+                    groups: {
+                        owner: CONSTANTS.OWNER,
+                        users: [],
+                        group: []
                     },
-                    'dueDate'          : '11 Feb, 2016',
-                    'whoCanRW'         : 'everyOne'
+
+                    dueDate : '11 Feb, 2016',
+                    whoCanRW: 'everyOne'
                 };
 
                 aggent
@@ -537,10 +547,11 @@ describe('Invoice Specs', function () {
                 aggent
                     .get('invoice/')
                     .query(query)
-                    //.query({'filter[project][value][0]': CONSTANTS.PROJECT})
+                    // .query({'filter[project][value][0]': CONSTANTS.PROJECT})
                     .expect(200)
                     .end(function (err, res) {
                         var body = res.body;
+                        var first;
 
                         if (err) {
                             return done(err);
@@ -548,12 +559,53 @@ describe('Invoice Specs', function () {
 
                         expect(body)
                             .to.be.instanceOf(Object);
-                        expect(body.data)
-                            .to.have.deep.property('[0]')
-                            .and.to.have.property('project')
-                            .and.to.have.property('_id', CONSTANTS.PROJECT);
                         expect(body)
                             .to.have.property('total');
+
+                        first = body.data[0];
+
+                        expect(first)
+                            .and.to.have.property('_id')
+                            .and.to.have.lengthOf(24);
+                        expect(first)
+                            .and.to.have.property('project');
+                        expect(first.project)
+                            .and.to.have.property('_id');
+                        expect(first.project)
+                            .and.to.have.property('name');
+                        expect(first)
+                            .and.to.have.property('currency');
+                        expect(first)
+                            .and.to.have.property('dueDate');
+                        expect(first)
+                            .and.to.have.property('approved');
+                        expect(first)
+                            .and.to.have.property('paymentInfo');
+                        expect(first)
+                            .and.to.have.property('removable');
+                        expect(first)
+                            .and.to.have.property('workflow')
+                            .and.to.have.property('_id');
+                        expect(first)
+                            .and.to.have.property('workflow')
+                            .and.to.have.property('name')
+                            .and.to.be.a('string');
+                        expect(first)
+                            .and.to.have.property('workflow')
+                            .and.to.have.property('status')
+                            .and.to.be.a('string');
+                        expect(first)
+                            .and.to.have.property('supplier');
+                        expect(first.supplier)
+                            .and.to.have.property('name')
+                            .and.to.have.property('first')
+                            .and.to.be.a('string');
+                        expect(first)
+                            .and.to.have.property('salesPerson');
+                        expect(first.salesPerson)
+                            .and.to.have.property('name')
+                            .and.to.have.property('first')
+                            .and.to.be.a('string');
 
                         done();
                     });
@@ -599,25 +651,29 @@ describe('Invoice Specs', function () {
                     supplierInvoiceNumber: 'dad',
                     whoCanRW             : 'everyOne',
                     workflow             : CONSTANTS.DRAFT, // Draft
-                    paymentInfo          : {
+
+                    paymentInfo: {
                         balance: 5000,
                         total  : 5000,
                         unTaxed: 5000
                     },
-                    products             : [{
-                        'product'    : CONSTANTS.BANKEXPENSES,  // Bank expenses
-                        'unitPrice'  : '500',
-                        'quantity'   : '10',
-                        'taxes'      : '0.00',
-                        'description': 'test',
-                        'subTotal'   : '5000'
+
+                    products: [{
+                        product    : CONSTANTS.BANKEXPENSES,  // Bank expenses
+                        unitPrice  : '500',
+                        quantity   : '10',
+                        taxes      : '0.00',
+                        description: 'test',
+                        subTotal   : '5000'
                     }],
-                    groups               : {
+
+                    groups: {
                         group: [],
                         owner: CONSTANTS.OWNER,
                         users: []
                     },
-                    currency             : {
+
+                    currency: {
                         name: 'USD',
                         _id : CONSTANTS.DOLLAR
                     }
@@ -652,7 +708,6 @@ describe('Invoice Specs', function () {
                         expect(body)
                             .to.have.property('paymentInfo')
                             .and.to.have.property('total', 5000);
-
 
                         id = body._id;
 
@@ -694,32 +749,38 @@ describe('Invoice Specs', function () {
 
             it('should update invoice', function (done) {
                 var body = {
-                    account              : null,
-                    fiscalPosition       : null,
-                    forSales             : false,
-                    groups               : {
+                    account       : null,
+                    fiscalPosition: null,
+                    forSales      : false,
+
+                    groups: {
                         group: [],
                         owner: CONSTANTS.OWNER,
                         users: []
                     },
-                    dueDate              : '10 Feb, 2016',
-                    currency             : {
+
+                    dueDate: '10 Feb, 2016',
+
+                    currency: {
                         _id : CONSTANTS.DOLLAR,
                         name: 'EUR'
                     },
-                    paymentInfo          : {
+
+                    paymentInfo: {
                         balance: 5000,
                         total  : 5000,
                         unTaxed: 5000
                     },
-                    products             : [{
-                        'product'    : CONSTANTS.BANKEXPENSES, // Bank expenses
-                        'unitPrice'  : '500',
-                        'quantity'   : '10',
-                        'taxes'      : '0.00',
-                        'description': 'test',
-                        'subTotal'   : '5000'
+
+                    products: [{
+                        product    : CONSTANTS.BANKEXPENSES, // Bank expenses
+                        unitPrice  : '500',
+                        quantity   : '10',
+                        taxes      : '0.00',
+                        description: 'test',
+                        subTotal   : '5000'
                     }],
+
                     salesPerson          : null,
                     sourceDepartment     : null,
                     supplier             : CONSTANTS.TESTSUPPLIER,
@@ -761,7 +822,6 @@ describe('Invoice Specs', function () {
                     .expect(400, done);
             });
 
-
             it('should delete invoice', function (done) {
                 aggent
                     .delete('invoice/' + id)
@@ -796,34 +856,41 @@ describe('Invoice Specs', function () {
         it('should fail create Invoice', function (done) {
 
             var body = {
-                account              : null,
-                currency             : {
+                account: null,
+
+                currency: {
                     name: 'USD',
                     _id : CONSTANTS.DOLLAR
                 },
-                dueDate              : '10 Feb, 2016',
-                fiscalPosition       : null,
-                forSales             : false,
-                groups               : {
+
+                dueDate       : '10 Feb, 2016',
+                fiscalPosition: null,
+                forSales      : false,
+
+                groups: {
                     group: [],
                     owner: CONSTANTS.OWNER,
                     users: []
                 },
-                invoiceDate          : '11 Feb, 2016',
-                journal              : null,
-                paymentInfo          : {
+
+                invoiceDate: '11 Feb, 2016',
+                journal    : null,
+
+                paymentInfo: {
                     balance: 5000,
                     total  : 5000,
                     unTaxed: 5000
                 },
-                products             : [{
-                    'product'    : CONSTANTS.BANKEXPENSES,
-                    'unitPrice'  : '500',
-                    'quantity'   : '10',
-                    'taxes'      : '0.00',
-                    'description': 'test',
-                    'subTotal'   : '5000'
+
+                products: [{
+                    product    : CONSTANTS.BANKEXPENSES,
+                    unitPrice  : '500',
+                    quantity   : '10',
+                    taxes      : '0.00',
+                    description: 'test',
+                    subTotal   : '5000'
                 }],
+
                 salesPerson          : null,
                 sourceDepartment     : null,
                 supplier             : CONSTANTS.TESTSUPPLIER,
