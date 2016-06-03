@@ -1,12 +1,11 @@
 var mongoose = require('mongoose');
-var Holiday = function (models, event) {
+var Module = function (models, event) {
     'use strict';
 
     var HolidaySchema = mongoose.Schemas.Holiday;
     var async = require('async');
     var mapObject = require('../helpers/bodyMaper');
     var moment = require('../public/js/libs/moment/moment');
-    var CONSTANTS = require('../constants/mainConstants');
     var pageHelper = require('../helpers/pageHelper');
 
     this.totalCollectionLength = function (req, res, next) {
@@ -37,14 +36,16 @@ var Holiday = function (models, event) {
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
         var parallelTasks;
+        var getTotal;
+        var getData;
 
         if (options && options.sort) {
             sort = options.sort;
         } else {
-            sort = {'date': -1};
+            sort = {date: -1};
         }
 
-        var getTotal = function (pCb) {
+        getTotal = function (pCb) {
 
             Holiday.find(queryObject).count(function (err, _res) {
                 if (err) {
@@ -55,7 +56,7 @@ var Holiday = function (models, event) {
             });
         };
 
-        var getData = function (pCb) {
+        getData = function (pCb) {
             Holiday.find(queryObject).skip(skip).limit(limit).sort(sort).exec(function (err, _res) {
                 if (err) {
                     return pCb(err);
@@ -87,8 +88,8 @@ var Holiday = function (models, event) {
     function getHolidayByWeek(req, res, next) {
         var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
         var options = req.query;
-        var year = parseInt(options.year);
-        var week = parseInt(options.week);
+        var year = parseInt(options.year, 10);
+        var week = parseInt(options.week, 10);
         var date = moment([year, 2]);
         var holidaysWeek = {};
         var startDate;
@@ -104,7 +105,6 @@ var Holiday = function (models, event) {
         date.isoWeekday(7);
 
         endDate = new Date(date.toDate());
-
 
         Holiday.aggregate([{
             $match: {
@@ -134,7 +134,7 @@ var Holiday = function (models, event) {
             res.status(200).send(holidaysWeek);
         });
 
-    };
+    }
 
     this.getForView = function (req, res, next) {
         var viewType = req.params.viewType;
@@ -262,4 +262,4 @@ var Holiday = function (models, event) {
 
 };
 
-module.exports = Holiday;
+module.exports = Module;

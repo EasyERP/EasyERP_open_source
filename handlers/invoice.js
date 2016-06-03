@@ -1553,11 +1553,13 @@ var Module = function (models, event) {
                 }
 
                 fs.readdir(dir, function (err, files) {
+                    var file;
+
                     if (err) {
                         return parallelCb();
                     }
                     async.each(files, function (file, cb) {
-                        var file = pathMod.join(dir, file);
+                        file = pathMod.join(dir, file);
                         fs.unlink(file, function (err) {
                             if (err) {
                                 return cb(err);

@@ -917,4 +917,3 @@ describe('Invoice Specs', function () {
 
     });
 });
-

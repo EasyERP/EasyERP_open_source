@@ -31,10 +31,10 @@ describe('Holidays Specs', function () {
 
         it('should create holiday', function (done) {
             var body = {
-                'comment': 'New Year',
-                'date'   : 'Jan 1 2016 00:00:00 GMT+0200',
-                'year'   : 2016,
-                'week'   : 53
+                comment: 'New Year',
+                date   : 'Jan 1 2016 00:00:00 GMT+0200',
+                year   : 2016,
+                week   : 53
             };
 
             aggent
@@ -75,11 +75,11 @@ describe('Holidays Specs', function () {
 
         it('should patch Holidays', function (done) {
             var body = [{
-                '_id'    : id,
-                'comment': 'New Year 2016',
-                'date'   : '9 Jan, 2016',
-                'week'   : 1,
-                'year'   : 2016
+                _id    : id,
+                comment: 'New Year 2016',
+                date   : '9 Jan, 2016',
+                week   : 1,
+                year   : 2016
             }];
 
             aggent
@@ -91,7 +91,7 @@ describe('Holidays Specs', function () {
 
         it('should fail patch Holidays', function (done) {
             var body = [{
-                '_id': '123cba'
+                _id: '123cba'
             }];
 
             aggent
@@ -102,10 +102,10 @@ describe('Holidays Specs', function () {
 
         it('should patch holiday', function (done) {
             var body = {
-                'comment': 'New Year 2016 2',
-                'date'   : '10 Jan, 2016',
-                'week'   : 1,
-                'year'   : 2016
+                comment: 'New Year 2016 2',
+                date   : '10 Jan, 2016',
+                week   : 1,
+                year   : 2016
             };
 
             aggent
@@ -126,12 +126,13 @@ describe('Holidays Specs', function () {
         });
 
         it('should get Holidays with options', function (done) {
-            var query ={
-                sort : {
-                    date : -1
+            var query = {
+                sort: {
+                    date: -1
                 },
-                page : 1,
-                count : 100,
+
+                page    : 1,
+                count   : 100,
                 viewType: 'list'
             };
 
@@ -154,14 +155,14 @@ describe('Holidays Specs', function () {
                     expect(body)
                         .to.have.property('total');
 
-                    /*result = body.success;
+                    /* result = body.success;
 
-                    expect(result.length)
-                        .to.be.lte(100);
-                    if (result.length > 1) {  // test sorting
-                        expect(result[0].date)
-                            .to.be.gte(result[1].date);
-                    }*/
+                     expect(result.length)
+                     .to.be.lte(100);
+                     if (result.length > 1) {  // test sorting
+                     expect(result[0].date)
+                     .to.be.gte(result[1].date);
+                     }*/
 
                     done();
                 });
@@ -226,10 +227,10 @@ describe('Holidays Specs', function () {
         it('should fail create Holidays', function (done) {
 
             var body = {
-                'comment': 'New Year',
-                'date'   : 'Jan 1 2016 00:00:00 GMT+0200',
-                'year'   : 2016,
-                'week'   : 53
+                comment: 'New Year',
+                date   : 'Jan 1 2016 00:00:00 GMT+0200',
+                year   : 2016,
+                week   : 53
             };
 
             aggent

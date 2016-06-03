@@ -62,6 +62,4 @@ describe('Incoterm Specs', function () {
 
     });
 
-
 });
-
