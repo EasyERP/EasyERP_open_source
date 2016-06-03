@@ -716,7 +716,7 @@ define([], function () {
         DASH_VAC_WEEK_AFTER     : 8,
         DASH_VAC_RANGE_WEEKS_MIN: 6,
 
-        DEFAULT_ELEMENTS_PER_PAGE  : 100,
+        DEFAULT_ELEMENTS_PER_PAGE  : 5,
         DEFAULT_THUMBNAILS_PER_PAGE: 50,
 
         URLS: {
@@ -806,6 +806,7 @@ define([], function () {
         PAYMENT_METHOD  : '565f2e05ab70d49024242e07',
         END_OF_PROJECT  : 'To end of project',
 
-        DEFAULT_SCREEN_WIDTH: 1349
+        DEFAULT_SCREEN_WIDTH: 1349,
+        PAGINATION_ARRAY    : [50, 100, 200, 500]
     };
 });

@@ -168,7 +168,7 @@
                                     </dt>
                                     <dd>
                                         <span id="department"
-                                              data-id="<%=model.department ? model.department._id: ''%>"><%=model.department.departmentName%></span>
+                                              data-id="<%=model.department ? model.department._id: ''%>"><%=model.department.name%></span>
                                     </dd>
                                     <dt>
                                         <label>Manager</label>
@@ -453,7 +453,7 @@
                                     <a id="departmentsDd" class="current-selected"
                                        data-id="<%=transfer.department ? transfer.department._id : null%>"
                                        href="javascript:;">
-                                        <%=transfer.department ? transfer.department.departmentName :
+                                        <%=transfer.department ? transfer.department.name :
                                         "Select" %>
                                     </a>
                                 </td>

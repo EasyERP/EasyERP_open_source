@@ -18,6 +18,8 @@ module.exports = function (models, event) {
     router.get('/priority', handler.getTasksPriority);
     router.get('/getLengthByWorkflows', handler.getLengthByWorkflows);
 
+    router.get('/getFilterValues', handler.getFilterValues);
+
     router.get('/', handler.getTasks);
 
     router.patch('/:_id', handler.taskUpdateOnlySelectedFields);

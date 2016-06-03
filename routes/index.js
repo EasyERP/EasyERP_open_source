@@ -43,7 +43,6 @@ module.exports = function (app, mainDb) {
     var salaryRouter = require('./salary')(event, models);
     var opportunityRouter = require('./opportunity')(models, event);
     var leadsRouter = require('./leads')(models, event);
-    var taskRouter = require('./task')(models);
     var jobPositionRouter = require('./jobPosition')(models);
     var holidayRouter = require('./holiday')(event, models);
     var monthHoursRouter = require('./monthHours')(event, models);
@@ -123,7 +122,6 @@ module.exports = function (app, mainDb) {
     app.use('/salaryReport', salaryReportRouter);
     app.use('/opportunities', opportunityRouter);
     app.use('/leads', leadsRouter);
-    app.use('/task', taskRouter);
     app.use('/jobPositions', jobPositionRouter);
     app.use('/holiday', holidayRouter);
     app.use('/vacation', vacationRouter);

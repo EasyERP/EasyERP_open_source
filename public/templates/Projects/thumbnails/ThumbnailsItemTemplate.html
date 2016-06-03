@@ -1,7 +1,7 @@
 <div id="searchContainer"></div>
 <div id="thumbnailContent">
     <% collection.forEach(function(project){ %>
-    <div class="thumbnail" id="<%=project._id%>">
+    <div class="thumbnail thumbnailElement" id="<%=project._id%>">
         <div class="dropDown">
             <a href="#easyErp/Tasks/kanban/<%= project._id %>" class="icon icon-btn">r</a>
             <a href="javascript:;" id="<%=project._id %>"  class="icon icon-btn project">i</a>

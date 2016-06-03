@@ -516,15 +516,11 @@ var Filters = function (models) {
                             name: {
                                 $concat: ['$name.first', ' ', '$name.last']
                             }
-                        }
-                    },
-
-                    department: {
-                        $addToSet: {
-                            _id: '$department._id',
-
-                            name: {
-                                $ifNull: ['$department.departmentName', 'None']
+                        },
+                        department : {
+                            $addToSet: {
+                                _id : '$department._id',
+                                name: {$ifNull: ['$department.name', 'None']}
                             }
                         }
                     },
@@ -607,7 +603,7 @@ var Filters = function (models) {
                         $addToSet: {
                             _id : '$department._id',
                             name: {
-                                $ifNull: ['$department.departmentName', 'None']
+                                $ifNull: ['$department.name', 'None']
                             }
                         }
                     },
