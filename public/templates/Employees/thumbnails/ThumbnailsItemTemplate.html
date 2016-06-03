@@ -1,6 +1,7 @@
 <div id="searchContainer"></div>
+<div id="thumbnailContent">
 <% collection.forEach(function(employee){ %>
-<div class="thumbnailwithavatar employee" id="<%=employee._id%>">
+<div class="thumbnailwithavatar employee thumbnailElement" id="<%=employee._id%>">
     <div class="inner">
         <div class="avatar" style="line-height: 140px;">
             <!-- <a href="#easyErp/Employees/form/<%=employee._id%>" class="title gotoForm" title="<%=employee.name.first%> <%=employee.name.last%>">-->
@@ -29,3 +30,4 @@
     </div>
 </div>
 <% }) %>
+</div>

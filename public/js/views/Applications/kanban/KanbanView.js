@@ -176,9 +176,9 @@
             e.preventDefault();
             var id = $(e.target).closest(".inner").data("id");
             var model = new CurrentModel();
-            model.urlRoot = '/applications/' + id;
+            model.urlRoot = '/applications/';
             model.fetch({
-                data   : {id: id},
+                data   : {id: id, viewType : 'form'},
                 success: function (model) {
                     new EditView({model: model});
                 },

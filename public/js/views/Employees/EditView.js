@@ -766,7 +766,7 @@ define([
                 populate.get2name("#projectManagerDD", constants.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
                 populate.get("#jobPositionDd", constants.URLS.JOBPOSITIONS_FORDD, {}, "name", this, false, false);
                 populate.get("#relatedUsersDd",  constants.URLS.USERS_FOR_DD, {}, "login", this, false, true);
-                populate.get("#departmentsDd", constants.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this);
+                populate.get("#departmentsDd", constants.URLS.DEPARTMENTS_FORDD, {}, "name", this);
                 common.canvasDraw({model: this.currentModel.toJSON()}, this);
 
                 $('#dateBirth').datepicker({

@@ -60,7 +60,7 @@
         },
 
         showFilteredPage: function (filter) {
-            this.$el.find('.thumbnail').remove();
+            this.$el.find('.thumbnailElement').remove();
             this.startTime = new Date();
 
             this.filter = filter;
@@ -70,7 +70,7 @@
             }
 
             this.changeLocationHash(null, this.collection.pageSize, filter);
-            this.collection.getFirstPage({filter: filter, showMore: true, viewType: this.viewType});
+            this.collection.getFirstPage({filter: filter, showMore: true, viewType: this.viewType, contentType : this.contentType});
         },
 
         hideItemsNumber: function (e) {

@@ -93,11 +93,10 @@
                 if (e && e.target) {
                     target = $(e.target);
                     selectedLetter = $(e.target).text();
-
-                    this.filter.letter = selectedLetter;
                     if (!this.filter) {
                         this.filter = {};
                     }
+
                     this.filter.letter = {
                         key  : 'letter',
                         value: selectedLetter,
@@ -116,20 +115,12 @@
 
                 this.filter = App.filter;
 
-                this.filterView.renderFilterContent(this.filter);
-                _.debounce(
-                    function () {
-                        this.trigger('filter', App.filter);
-                    }, 10);
-
                 this.startTime = new Date();
                 this.newCollection = false;
-                this.$el.find('.thumbnailwithavatar').remove();
+                this.$el.find('.thumbnailElement').remove();
 
-                this.defaultItemsNumber = 0;
-                this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
-                this.collection.showMoreAlphabet({count: this.defaultItemsNumber, filter: this.filter});
-                this.getTotalLength(this.defaultItemsNumber, this.filter);
+                this.changeLocationHash(null, this.collection.pageSize,  this.filter);
+                this.collection.getFirstPage({filter:  this.filter, showMore: true, viewType: this.viewType, contentType : this.contentType});
             },
 
             render: function () {
@@ -183,7 +174,7 @@
                 return this;
             },
 
-            showFilteredPage: function (filter, context) {
+           /* showFilteredPage: function (filter, context) {
                 $('#top-bar-deleteBtn').hide();
                 $('#check_all').prop('checked', false);
 
@@ -199,7 +190,7 @@
                 context.changeLocationHash(null, context.defaultItemsNumber, filter);
                 context.collection.showMoreAlphabet({count: context.defaultItemsNumber, page: 1, filter: filter});
                 context.getTotalLength(this.defaultItemsNumber, filter);
-            },
+            },*/
 
             hideItemsNumber: function (e) {
                 var el = $(e.target);
@@ -231,9 +222,9 @@
                     model.urlRoot = CONSTANTS.URLS.EMPLOYEES;
 
                     model.fetch({
-                        data   : {id: id},
+                        data   : {id: id, viewType : 'form'},
                         success: function (model) {
-                            self.EditView({model: model});
+                            new self.EditView({model: model});
                         },
                         error  : function () {
                             App.render({
@@ -291,7 +282,7 @@
             },
 
             createItem: function () {
-                this.CreateView();
+               new this.CreateView();
             },
 
             editItem: function () {

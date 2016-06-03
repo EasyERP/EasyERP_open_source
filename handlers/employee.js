@@ -274,7 +274,7 @@ var Employee = function (event, models) {
         Model
             .find({_id: {$in: idsArray}})
             .populate('jobPosition', '_id name')
-            .populate('department', '_id departmentName')
+            .populate('department', '_id name')
             .exec(function (err, result) {
                 if (err) {
                     return next(err);
@@ -390,7 +390,7 @@ var Employee = function (event, models) {
                     resArray.push(filtrElement);
                     break;
                 case 'letter':
-                    filtrElement['name.last'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
+                    filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
                     resArray.push(filtrElement);
                     break;
                 case 'department':
@@ -432,9 +432,9 @@ var Employee = function (event, models) {
             .populate('manager', '_id name')
             .populate('jobPosition', '_id name fullName')
             .populate('weeklyScheduler', '_id name')
-            .populate('department', '_id departmentName')
+            .populate('department', '_id name')
             .populate('groups.group')
-            .populate('transfer.department', '_id departmentName')
+            .populate('transfer.department', '_id name')
             .populate('transfer.jobPosition', '_id name')
             .populate('transfer.manager', '_id name')
             .populate('transfer.weeklyScheduler', '_id name')
@@ -742,9 +742,12 @@ var Employee = function (event, models) {
                             };
 
                             projectSecond = {
+                                'manager._id'              : '$manager._id',
                                 'manager.name'             : '$manager.name',
+                                'jobPosition._id'          : '$jobPosition._id',
                                 'jobPosition.name'         : '$jobPosition.name',
-                                'department.departmentName': '$department.departmentName',
+                                'department._id'           : '$department._id',
+                                'department.name'          : '$department.name',
                                 'createdBy.user'           : 1,
                                 'editedBy.user'            : 1,
                                 'editedBy.date'            : 1,
@@ -781,9 +784,11 @@ var Employee = function (event, models) {
                         case ('thumbnails'):
                         {
                             project = {
+                                manager            : {$arrayElemAt: ['$manager', 0]},
                                 jobPosition        : {$arrayElemAt: ['$jobPosition', 0]},
                                 age                : 1,
                                 relatedUser        : {$arrayElemAt: ['$relatedUser', 0]},
+                                department         : {$arrayElemAt: ['$department', 0]},
                                 'workPhones.mobile': 1,
                                 name               : 1,
                                 dateBirth          : 1,
@@ -791,22 +796,29 @@ var Employee = function (event, models) {
                             };
 
                             projectSecond = {
+                                'manager.name'     : '$manager.name',
+                                'manager._id'      : '$manager._id',
+                                'jobPosition._id'  : '$jobPosition._id',
                                 'jobPosition.name' : '$jobPosition.name',
                                 age                : 1,
                                 'relatedUser.login': '$relatedUser.login',
                                 workPhones         : 1,
                                 name               : 1,
                                 dateBirth          : 1,
-                                isEmployee         : 1
+                                isEmployee         : 1,
+                                'department.name'  : '$department.name',
+                                'department._id'   : '$department._id'
                             };
 
                             projectAfterRoot = {
                                 _id        : '$root._id',
                                 jobPosition: '$root.jobPosition',
+                                manager    : '$root.manager',
                                 age        : '$root.age',
                                 relatedUser: '$root.relatedUser',
                                 workPhones : '$root.workPhones',
                                 name       : '$root.name',
+                                department : '$root.department',
                                 dateBirth  : '$root.dateBirth',
                                 isEmployee : '$root.isEmployee',
                                 total      : 1
@@ -830,6 +842,7 @@ var Employee = function (event, models) {
                                 jobPosition     : {$arrayElemAt: ['$jobPosition', 0]},
                                 'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
                                 'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
+                                department      : {$arrayElemAt: ['$department', 0]},
                                 name            : 1,
                                 'editedBy.date' : 1,
                                 'createdBy.date': 1,
@@ -855,6 +868,7 @@ var Employee = function (event, models) {
                                 name            : 1,
                                 dateBirth       : 1,
                                 skype           : 1,
+                                department      : 1,
                                 workEmail       : 1,
                                 workPhones      : 1,
                                 jobType         : 1,
@@ -869,10 +883,13 @@ var Employee = function (event, models) {
                             projectAfterRoot = {
                                 _id               : '$root._id',
                                 'jobPosition.name': '$root.jobPosition.name',
+                                'jobPosition._id' : '$root.jobPosition._id',
                                 'createdBy.user'  : '$root.createdBy.user.login',
                                 'editedBy.user'   : '$root.editedBy.user.login',
                                 'editedBy.date'   : '$root.editedBy.date',
                                 'createdBy.date'  : '$root.createdBy.createdBy',
+                                'department._id'  : '$root.department._id',
+                                'department.name' : '$root.department.name',
                                 name              : '$root.name',
                                 dateBirth         : '$root.dateBirth',
                                 skype             : '$root.skype',
@@ -1677,7 +1694,7 @@ var Employee = function (event, models) {
                 Model.find().where('_id').in(result)
                     .select('_id name dateBirth age jobPosition workPhones.mobile department')
                     .populate('jobPosition', '_id name')
-                    .populate('department', ' _id departmentName')
+                    .populate('department', ' _id name')
                     .lean()
                     .exec(function (err, resArray) {
                         if (err) {

@@ -537,7 +537,7 @@
             $(document).on("keypress", "#cPerPage", this.isNumberKey);
             this.$el.unbind();
 
-            dataService.getData('/task/getFilterValues', null, function (values) {
+            dataService.getData('/tasks/getFilterValues', null, function (values) {
                 FilterView = new filterView({collection: workflows, customCollection: values});
                 // Filter custom event listen ------begin
                 FilterView.bind('filter', function () {

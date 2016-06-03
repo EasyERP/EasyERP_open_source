@@ -102,6 +102,7 @@ describe('Application Specs', function () {
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
+                    var application;
 
                     if (err) {
                         return done(err);
@@ -113,6 +114,36 @@ describe('Application Specs', function () {
                         .to.have.property('data');
                     expect(body)
                         .to.have.property('total');
+
+                    application = body.data[0];
+
+                    expect(application)
+                        .to.exist;
+                    expect(application)
+                        .to.have.property('department')
+                        .and.to.have.property('_id');
+                    expect(application)
+                        .to.have.property('department')
+                        .and.to.have.property('name')
+                        .and.to.be.a('string');
+                    expect(application)
+                        .to.have.property('jobPosition')
+                        .and.to.have.property('_id');
+                    expect(application)
+                        .to.have.property('jobPosition')
+                        .and.to.have.property('name')
+                        .and.to.be.a('string');
+                    expect(application)
+                        .to.have.property('name')
+                        .and.to.have.property('last')
+                        .and.to.be.a('string');
+                    expect(application)
+                        .to.have.property('name')
+                        .and.to.have.property('first')
+                        .and.to.be.a('string');
+                    expect(application)
+                        .to.have.property('isEmployee')
+                        .and.to.be.false;
 
                     done();
                 });
