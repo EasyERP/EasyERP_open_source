@@ -10,7 +10,7 @@ define([
     'common',
     'constants'
 
-], function (Backbone, _, $, mainView, loginView, dataService, eventsBinder, custom, common, CONTENT_TYPES) {
+], function (Backbone, _, $, mainView, loginView, dataService, eventsBinder, custom, common, CONSTANTS) {
     'use strict';
     var bindDefaultUIListeners = function () {
         $(document).on('keydown', '.ui-dialog', function (e) {
@@ -99,7 +99,7 @@ define([
             bindDefaultUIListeners();
 
             if (!App || !App.currentUser) {
-                dataService.getData(CONTENT_TYPES.URLS.CURRENT_USER, null, function (response) {
+                dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response) {
                     if (response && !response.error) {
                         App.currentUser = response.user;
                         App.savedFilters = response.savedFilters;
@@ -860,17 +860,18 @@ define([
                 contentViewUrl = 'views/' + contentType + '/list/ListView';
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
                 collectionUrl = context.buildCollectionRoute(contentType);
-                navigatePage = page ? parseInt(page, 10) : 1;
+                page = parseInt(page, 10);
+                count = parseInt(countPerPage, 10);
 
                 if (isNaN(page)) {
                     page = 1;
                 }
+                if (isNaN(count)) {
+                    count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
+                }
 
-                var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
-                var location = window.location.hash;
 
                 if (!filter) {
-                    newCollection = false;
 
                     if (contentType === 'salesProduct') {
                         filter = {
@@ -885,7 +886,7 @@ define([
                         Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     } else if (contentType === 'Product') {
                         filter = {
-                            'canBePurchased': {
+                            canBePurchased: {
                                 key  : 'canBePurchased',
                                 value: ['true']
                             }
@@ -908,7 +909,7 @@ define([
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
                     var collection = new contentCollection({
                         viewType        : 'list',
-                        page            : navigatePage,
+                        page            : page,
                         reset           : true,
                         count           : count,
                         filter          : savedFilter,
@@ -930,10 +931,9 @@ define([
                             collection: collection
                         });
                         contentview = new contentView({
-                            collection   : collection,
-                            startTime    : startTime,
-                            filter       : savedFilter,
-                            newCollection: newCollection
+                            collection: collection,
+                            startTime : startTime,
+                            filter    : savedFilter
                         });
 
                         eventsBinder.subscribeTopBarEvents(topbarView, contentview);
@@ -1257,8 +1257,8 @@ define([
         },
 
         testContent: function (contentType) {
-            if (!CONTENT_TYPES[contentType.toUpperCase()]) {
-                contentType = CONTENT_TYPES.PERSONS;
+            if (!CONSTANTS[contentType.toUpperCase()]) {
+                contentType = CONSTANTS.PERSONS;
             }
 
             return contentType;
