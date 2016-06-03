@@ -4,8 +4,7 @@ var objectId = mongoose.Types.ObjectId;
 
 var Employee = function (event, models) {
     'use strict';
-    var accessRoll = require('../helpers/accessRollHelper.js')(models);
-    var uploadFileArray = require('../helpers/uploadFileArray.js')();
+
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
     var DepartmentSchema = mongoose.Schemas.Department;
@@ -13,9 +12,11 @@ var Employee = function (event, models) {
     var LanguageSchema = mongoose.Schemas.language;
     var SourceSchema = mongoose.Schemas.source;
     var birthdaysSchema = mongoose.Schemas.birthday;
+
+    var accessRoll = require('../helpers/accessRollHelper.js')(models);
+    var uploadFileArray = require('../helpers/uploadFileArray.js')();
     var _ = require('underscore');
     var fs = require('fs');
-    var moment = require('../public/js/libs/moment/moment');
     var validatorEmployee = require('../helpers/validator');
     var Payroll = require('../handlers/payroll');
     var pageHelper = require('../helpers/pageHelper');
@@ -26,8 +27,8 @@ var Employee = function (event, models) {
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
     /* exportDecorator.addExportFunctionsToHandler(this, function (req) {
-       return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
-    }, exportMap, 'Employees');*/
+     return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
+     }, exportMap, 'Employees');*/
 
     this.exportToXlsx = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -723,7 +724,6 @@ var Employee = function (event, models) {
                 case ('Employees'):
                     switch (viewType) {
                         case ('list'):
-                        {
                             project = {
                                 manager         : {$arrayElemAt: ['$manager', 0]},
                                 jobPosition     : {$arrayElemAt: ['$jobPosition', 0]},
@@ -776,10 +776,9 @@ var Employee = function (event, models) {
                                 isEmployee      : '$root.isEmployee',
                                 total           : 1
                             };
-                        }
+
                             break;
                         case ('thumbnails'):
-                        {
                             project = {
                                 jobPosition        : {$arrayElemAt: ['$jobPosition', 0]},
                                 age                : 1,
@@ -811,7 +810,6 @@ var Employee = function (event, models) {
                                 isEmployee : '$root.isEmployee',
                                 total      : 1
                             };
-                        }
                             break;
 
                     }
@@ -819,7 +817,6 @@ var Employee = function (event, models) {
                 case ('Applications'):
                     switch (viewType) {
                         case ('list'):
-                        {
                             if (data && data.filter && data.filter.workflow) {
                                 data.filter.workflow = data.filter.workflow.map(function (item) {
                                     return item === 'null' ? null : item;
@@ -887,7 +884,6 @@ var Employee = function (event, models) {
                                 fire              : '$root.fire',
                                 total             : 1
                             };
-                        }
                             break;
                     }
                     break;
@@ -1126,24 +1122,20 @@ var Employee = function (event, models) {
                         if (fileName) {
                             switch (osType) {
                                 case 'Windows':
-                                {
                                     newDirname = __dirname.replace('\\Modules', '');
                                     while (newDirname.indexOf('\\') !== -1) {
                                         newDirname = newDirname.replace('\\', '\/');
                                     }
                                     path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                                     dir = newDirname + '\/uploads\/' + _id;
-                                }
                                     break;
                                 case 'Linux':
-                                {
                                     newDirname = __dirname.replace('/Modules', '');
                                     while (newDirname.indexOf('\\') !== -1) {
                                         newDirname = newDirname.replace('\\', '\/');
                                     }
                                     path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                                     dir = newDirname + '\/uploads\/' + _id;
-                                }
                                     break;
                             }
 
@@ -1208,13 +1200,11 @@ var Employee = function (event, models) {
             accessRoll(req, Model, cb);
         };
 
-
         contentSearcher = function (responseApplications, cb) {
             filterObj.$and = [];
             filterObj.$and.push({isEmployee: false});
             filterObj.$and.push({workflow: objectId(data.workflowId)});
             filterObj.$and.push({_id: {$in: responseApplications}});
-
 
             Model
                 .find(filterObj)
@@ -1247,7 +1237,6 @@ var Employee = function (event, models) {
             res.status(200).send(response);
         });
     }
-
 
     this.getForDdByRelatedUser = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -1501,7 +1490,6 @@ var Employee = function (event, models) {
                 return callback(0);
             }
 
-
             if (birth[0].date < dateOnly) {
                 callback(0);
             } else {
@@ -1725,21 +1713,15 @@ var Employee = function (event, models) {
         check(req, function (status, employees) {
             switch (status) {
                 case -1:
-                {
                     err.status = 500;
                     next(err);
-                }
                     break;
                 case 0:
-                {
                     getEmployeesInDateRange(req, res, next, set);
-                }
                     break;
                 case 1:
-                {
                     result.data = employees;
                     res.status(200).send(result);
-                }
                     break;
             }
         });

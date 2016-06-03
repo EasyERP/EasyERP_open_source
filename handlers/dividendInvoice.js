@@ -12,9 +12,8 @@ var Proforma = function (models) {
     var async = require('async');
 
     var DividendInvoiceSchema = mongoose.Schemas.dividendInvoice;
-    var objectId = mongoose.Types.ObjectId;
-    var workflowHandler = new WorkflowHandler(models);
 
+    var workflowHandler = new WorkflowHandler(models);
     var JournalEntryHandler = require('./journalEntry');
     var _journalEntryHandler = new JournalEntryHandler(models);
 
@@ -39,9 +38,10 @@ var Proforma = function (models) {
 
         function fetchFirstWorkflow(callback) {
             request = {
-                query  : {
+                query: {
                     wId: 'Sales Invoice'
                 },
+
                 session: req.session
             };
             workflowHandler.getFirstForConvert(request, callback);
@@ -56,14 +56,14 @@ var Proforma = function (models) {
             var err;
             var dividendInvoice;
             var saveObject = {
-                currency: data.currency,
-                dueDate: data.dueDate,
-                forSales: data.forSales,
-                groups: data.groups,
+                currency   : data.currency,
+                dueDate    : data.dueDate,
+                forSales   : data.forSales,
+                groups     : data.groups,
                 invoiceDate: data.invoiceDate,
                 paymentInfo: data.paymentInfo,
-                products: data.products,
-                whoCanRW: data.whoCanRW
+                products   : data.products,
+                whoCanRW   : data.whoCanRW
             };
 
             if (parallelResponse && parallelResponse.length) {
@@ -111,8 +111,9 @@ var Proforma = function (models) {
                     model: 'dividendInvoice',
                     _id  : dividendInvoice._id
                 },
-                amount        : 0,
-                date          : dividendInvoice.invoiceDate
+
+                amount: 0,
+                date  : dividendInvoice.invoiceDate
             };
 
             var amount = dividendInvoice.currency.rate * dividendInvoice.paymentInfo.total;
