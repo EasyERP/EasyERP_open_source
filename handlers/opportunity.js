@@ -1786,7 +1786,15 @@ var Module = function (models, event) {
             queryObject.$and.push({workflow: data.workflowId});
 
             query = Opportunities
-                .find(queryObject)
+                .find(queryObject, {
+                    name           : 1,
+                    sequence       : 1,
+                    expectedRevenue: 1,
+                    customer       : 1,
+                    salesPerson    : 1,
+                    nextAction     : 1,
+                    workflow       : 1
+                })
                 .populate('customer', 'name')
                 .populate('salesPerson', 'name')
                 .populate('workflow', '_id')
