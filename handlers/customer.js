@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
 var async = require('async');
 
-var Customers = function (models) {
+var Module = function (models) {
     'use strict';
     /**
      * @module Customer
@@ -17,7 +17,6 @@ var Customers = function (models) {
     var fs = require('fs');
     var exporter = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Customers;
-
 
     var projectCustomer = {
         type                            : 1,
@@ -234,7 +233,7 @@ var Customers = function (models) {
                             values     : _.sortBy(value, 'name')
                         };
                         break;
-                    case  'country':
+                    case 'country':
                         result[0][key] = {
                             displayName: 'Country',
                             values     : _.sortBy(value, function (num) {
@@ -389,10 +388,6 @@ var Customers = function (models) {
             });
     };
 
-    this.getCustomers = function (req, res, next) {
-        getCustomers(req, res, next);
-    };
-
     function getCustomers(req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
         var query = req.query;
@@ -403,9 +398,13 @@ var Customers = function (models) {
             queryObject.type = type;
         }
 
+        if (query && query.id) {
+            queryObject._id = objectId(query.id);
+        }
+
         Customers
             .find(queryObject)
-            .sort({'editedBy.date': 1})
+            .sort({'name.first': 1})
             .exec(function (err, customers) {
                 if (err) {
                     return next(err);
@@ -417,24 +416,28 @@ var Customers = function (models) {
     }
 
     this.getCustomers = function (req, res, next) {
-        var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
-
-        var data = req.query;
-
-        var query = Customers.find();
-        if (data && data.id) {
-            query.where({_id: objectId(data.id)});
-        }
-
-        query.sort({'name.first': 1});
-        query.exec(function (err, customers) {
-            if (err) {
-                return next(err);
-            }
-            res.status(200).send({data: customers});
-        });
-
+        getCustomers(req, res, next);
     };
+
+    /* this.getCustomers = function (req, res, next) {
+     var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
+
+     var data = req.query;
+
+     var query = Customers.find();
+     if (data && data.id) {
+     query.where({_id: objectId(data.id)});
+     }
+
+     query.sort({'name.first': 1});
+     query.exec(function (err, customers) {
+     if (err) {
+     return next(err);
+     }
+     res.status(200).send({data: customers});
+     });
+
+     };*/
 
     this.getFilterPersonsForMiniView = function (req, res, next) {
         var Customers = models.get(req.session.lastDb, 'Customers', CustomerSchema);
@@ -475,12 +478,12 @@ var Customers = function (models) {
 
             if (data.onlyCount && data.onlyCount.toString().toLowerCase() === 'true') {
 
-                query.count(function (err, res) {
+                query.count(function (err, result) {
                     if (err) {
                         cb(err);
                     }
 
-                    cb(null, {listLength: res});
+                    cb(null, {listLength: result});
                 });
             } else {
 
@@ -520,20 +523,14 @@ var Customers = function (models) {
 
         switch (contentType) {
             case ('Persons'):
-            {
                 optionsObject.type = 'Person';
-            }
                 break;
             case ('Companies'):
-            {
                 optionsObject.type = 'Company';
-            }
                 break;
             case ('ownCompanies'):
-            {
                 optionsObject.type = 'Company';
                 optionsObject.isOwn = true;
-            }
                 break;
         }
         if (data && data.ids) {
@@ -547,7 +544,6 @@ var Customers = function (models) {
         } else {
             res.send(200, {data: []});
         }
-
 
     };
 
@@ -599,14 +595,24 @@ var Customers = function (models) {
         var id = req.query.id;
 
         Model
-            .findById(id)
+            .findById(id, {
+                name          : 1,
+                website       : 1,
+                email         : 1,
+                social        : 1,
+                phones        : 1,
+                salesPurchases: 1,
+                address       : 1,
+                groups        : 1,
+                jobPosition   : 1,
+                dateBirth     : 1,
+                skype         : 1,
+                company       : 1
+            })
             .populate('company', '_id name')
-            .populate('department')
             .populate('salesPurchases.salesPerson', '_id name fullName')
             .populate('salesPurchases.salesTeam', '_id departmentName')
             .populate('salesPurchases.implementedBy', '_id name fullName')
-            .populate('createdBy.user', 'login')
-            .populate('editedBy.user', 'login')
             .populate('groups.users', '_id login')
             .populate('groups.group', '_id departmentName')
             .populate('groups.owner', '_id login')
@@ -637,6 +643,8 @@ var Customers = function (models) {
         var parallelTasks;
         var query = {};
         var countQuery;
+        var getData;
+        var getTotal;
 
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
@@ -682,48 +690,36 @@ var Customers = function (models) {
                     case ('Persons'):
                         switch (viewType) {
                             case ('list'):
-                            {
                                 query.sort(sort);
 
                                 query
                                     .select('_id createdBy editedBy address.country email name phones.phone')
                                     .populate('createdBy.user', 'login')
                                     .populate('editedBy.user', 'login');
-                            }
                                 break;
                             case ('thumbnails'):
-                            {
                                 query
-                                    .select('_id name email company')
-                                    .populate('company', '_id name')
-                                    .populate('department', '_id departmentName')
-                                    .populate('createdBy.user')
-                                    .populate('editedBy.user');
-                            }
+                                    .select('_id name company')
+                                    .populate('company', '_id name');
                                 break;
                         }
                         break;
                     case ('Companies'):
                         switch (viewType) {
                             case ('list'):
-                            {
                                 query.sort(sort);
 
                                 query
-                                    .select('_id editedBy createdBy salesPurchases name email phones.phone address.country')
+                                    .select('_id editedBy createdBy salesPurchases name email phones.phone phones.mobile address.country')
                                     .populate('salesPurchases.salesPerson', '_id name')
                                     .populate('salesPurchases.salesTeam', '_id departmentName')
                                     .populate('createdBy.user', 'login')
                                     .populate('editedBy.user', 'login');
-                            }
                                 break;
                             case ('thumbnails'):
-                            {
                                 query
-                                    .select('_id name address')
-                                    .populate('createdBy.user')
-                                    .populate('editedBy.user');
-                            }
+                                    .select('_id name company')
+                                    .populate('company', '_id name address');
                                 break;
 
                         }
@@ -731,22 +727,17 @@ var Customers = function (models) {
                     case ('ownCompanies'):
                         switch (viewType) {
                             case ('list'):
-                            {
                                 query
                                     .populate('salesPurchases.salesPerson', '_id name')
                                     .populate('salesPurchases.salesTeam', '_id departmentName')
                                     .populate('createdBy.user')
                                     .populate('editedBy.user');
-                            }
                                 break;
                             case ('thumbnails'):
-                            {
                                 query
-                                    .select('_id name')
-                                    .populate('company', '_id name address')
-                                    .populate('createdBy.user')
-                                    .populate('editedBy.user');
-                            }
+                                    .select('_id name company')
+                                    .populate('company', '_id name address');
+
                                 break;
                         }
                         break;
@@ -758,7 +749,7 @@ var Customers = function (models) {
             query = queryBuilder(contentType, viewType);
             countQuery = queryBuilder(contentType, viewType);
 
-            var getTotal = function (pCb) {
+            getTotal = function (pCb) {
 
                 countQuery.count(function (err, _res) {
                     if (err) {
@@ -769,7 +760,7 @@ var Customers = function (models) {
                 });
             };
 
-            var getData = function (pCb) {
+            getData = function (pCb) {
                 query.skip(skip).limit(limit).exec(function (err, _res) {
                     if (err) {
                         return pCb(err);
@@ -870,9 +861,10 @@ var Customers = function (models) {
         var fileName = data.fileName;
         var updateObject;
         var newDirname;
+        var obj;
 
         if (data.notes && data.notes.length !== 0) {
-            var obj = data.notes[data.notes.length - 1];
+            obj = data.notes[data.notes.length - 1];
 
             if (!obj._id) {
                 obj._id = mongoose.Types.ObjectId();
@@ -893,35 +885,33 @@ var Customers = function (models) {
         };
 
         Model.findByIdAndUpdate(_id, {$set: updateObject}, {new: true}, function (err, result) {
+            var os = require('os');
+            var osType = (os.type().split('_')[0]);
+            var path;
+            var dir;
+
             if (err) {
                 return next(err);
             }
 
             if (fileName) {
-                var os = require('os');
-                var osType = (os.type().split('_')[0]);
-                var path;
-                var dir;
+
                 switch (osType) {
                     case 'Windows':
-                    {
                         newDirname = __dirname.replace('\\Modules', '');
                         while (newDirname.indexOf('\\') !== -1) {
                             newDirname = newDirname.replace('\\', '\/');
                         }
                         path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                         dir = newDirname + '\/uploads\/' + _id;
-                    }
                         break;
                     case 'Linux':
-                    {
                         newDirname = __dirname.replace('/Modules', '');
                         while (newDirname.indexOf('\\') !== -1) {
                             newDirname = newDirname.replace('\\', '\/');
                         }
                         path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                         dir = newDirname + '\/uploads\/' + _id;
-                    }
                         break;
                 }
 
@@ -952,23 +942,17 @@ var Customers = function (models) {
 
         switch (contentType) {
             case ('Persons'):
-            {
                 optionsObject.$and.push({type: 'Person'});
                 searchName = '$name.last';
-            }
                 break;
             case ('Companies'):
-            {
                 optionsObject.$and.push({type: 'Company'});
                 searchName = '$name.first';
-            }
                 break;
             case ('ownCompanies'):
-            {
                 optionsObject.$and.push({type: 'Company'});
                 optionsObject.$and.push({isOwn: true});
                 searchName = '$name.first';
-            }
                 break;
         }
 
@@ -1059,7 +1043,6 @@ var Customers = function (models) {
 
             query.push({$match: matchObject});
 
-
             if (filterObj && filterObj.$and && filterObj.$and.length) {
                 query.push({$match: filterObj});
             }
@@ -1118,7 +1101,6 @@ var Customers = function (models) {
 
             query.push({$match: matchObject});
 
-
             if (filterObj && filterObj.$and && filterObj.$and.length) {
                 query.push({$match: filterObj});
             }
@@ -1147,4 +1129,4 @@ var Customers = function (models) {
 
 };
 
-module.exports = Customers;
+module.exports = Module;
