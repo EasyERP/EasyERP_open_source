@@ -192,10 +192,12 @@ describe('Opportunity Specs', function () {
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
+                    var first;
 
                     if (err) {
                         return done(err);
                     }
+
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
@@ -204,6 +206,58 @@ describe('Opportunity Specs', function () {
                         .to.have.property('total');
                     expect(body.data)
                         .to.be.instanceOf(Array);
+
+                    first = body.data[1];
+
+                    expect(first)
+                        .and.to.have.property('_id')
+                        .and.to.have.lengthOf(24);
+                    expect(first)
+                        .and.to.have.property('name')
+                        .and.to.be.a('string');
+                    expect(first)
+                        .to.have.property('workflow')
+                        .and.to.have.property('_id');
+                    expect(first)
+                        .to.have.property('workflow');
+                    expect(first.workflow)
+                        .to.have.property('name');
+                    expect(first.workflow)
+                        .to.have.property('status');
+                    expect(first.workflow.name)
+                        .to.be.a('string');
+                    expect(first)
+                        .and.to.have.property('createdBy')
+                        .and.to.have.property('date');
+                    expect(first)
+                        .and.to.have.property('createdBy')
+                        .and.to.have.property('user');
+                    expect(first)
+                        .and.to.have.property('editedBy')
+                        .and.to.have.property('date');
+                    expect(first)
+                        .and.to.have.property('editedBy')
+                        .and.to.have.property('user');
+                    expect(first)
+                        .to.have.property('expectedRevenue');
+                    expect(first)
+                        .to.have.property('nextAction');
+                    expect(first)
+                        .to.have.property('sequence');
+                    expect(first)
+                        .to.have.property('creationDate');
+                    expect(first)
+                        .to.have.property('expectedRevenue');
+                    expect(first)
+                        .to.have.property('expectedRevenue');
+
+                    if (first.salesPerson){
+                        expect(first)
+                            .and.to.have.property('salesPerson')
+                            .and.to.have.property('name')
+                            .and.to.have.property('first')
+                            .and.to.be.a('string');
+                    }
 
                     done();
                 });
