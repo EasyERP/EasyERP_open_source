@@ -86,7 +86,7 @@
 
         showMore: function (e) {
             e.preventDefault();
-
+            
             this.collection.getNextPage({filter: this.filter, showMore: true, viewType: this.viewType, contentType: this.contentType});
         },
 
@@ -95,9 +95,6 @@
             var $showMore = $holder.find('#showMoreDiv');
             var $created = $holder.find('#timeRecivingDataFromServer');
             var $content = $holder.find('#thumbnailContent');
-
-
-            this.changeLocationHash(null, this.collection.pageSize, this.filter);
 
             if ($showMore.length !== 0) {
                 $showMore.before(this.template({collection: this.collection.toJSON()}));
@@ -138,6 +135,8 @@
             } else {
                 $showMore.hide();
             }
+
+            this.changeLocationHash(null, this.collection.pageSize, this.filter);
         }
     });
 
