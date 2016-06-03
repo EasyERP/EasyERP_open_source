@@ -86,7 +86,7 @@ describe('Dashboard Vacation Specs', function () {
                         expect(hiredEmployees[0])
                             .to.have.property('department')
                             .and.to.be.instanceOf(Object)
-                            .and.to.have.property('departmentName');
+                            .and.to.have.property('name');
                     }
                     if (firedEmployees) {
                         expect(firedEmployees[0])
@@ -96,7 +96,7 @@ describe('Dashboard Vacation Specs', function () {
                         expect(firedEmployees[0])
                             .to.have.property('department')
                             .and.to.be.instanceOf(Object)
-                            .and.to.have.property('departmentName');
+                            .and.to.have.property('name');
                     }
 
 

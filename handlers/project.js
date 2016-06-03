@@ -969,7 +969,7 @@ module.exports = function (models, event) {
             .populate('bonus.employeeId', '_id name')
             .populate('groups.owner', '_id name')
             .populate('groups.users', '_id login')
-            .populate('groups.group', '_id departmentName')
+            .populate('groups.group', '_id name')
             .populate('groups.owner', '_id login')
             .populate('projectmanager', '_id name fullName')
             .populate('salesmanager', '_id name fullName')
@@ -1384,7 +1384,7 @@ module.exports = function (models, event) {
                                 jobPosition: 1,
                                 department : 1
                             })
-                            .populate('department', '_id departmentName')
+                            .populate('department', '_id name')
                             .populate('jobPosition', '_id name')
                             .lean();
                         empQuery.exec(function (err, response) {

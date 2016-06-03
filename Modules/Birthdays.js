@@ -157,7 +157,7 @@
                     query.where('_id').in(res)
                         .select('_id name dateBirth age jobPosition workPhones.mobile department')
                         .populate('jobPosition', '_id name')
-                        .populate('department', ' _id departmentName')
+                        .populate('department', ' _id name')
                         .lean()
                         .exec(function (error, ress) {
                             if (error) {

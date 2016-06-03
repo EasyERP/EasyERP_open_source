@@ -131,8 +131,8 @@ module.exports = (function () {
         collection: 'Department',
         table: 'Department',
         aliases: {
-            departmentName: 'Name',
-            ID: 'ID'
+            name: 'Name',
+            ID  : 'ID'
         }
     };
     var project = {

@@ -1452,7 +1452,7 @@ var Module = function (models, event) {
                     worked     : 1,
                     revenue    : 1,
                     employee   : 1,
-                    department : '$department.departmentName',
+                    department : '$department.name',
 
                     transfer: {
                         $filter: {

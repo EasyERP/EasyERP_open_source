@@ -190,7 +190,7 @@ var wTrack = function (models) {
 
             groupBy = {
                 _id    : {
-                    department: '$department.departmentName',
+                    department: '$department.name',
                     _id       : '$department._id',
                     year      : '$year',
                     week      : '$week'
@@ -823,7 +823,7 @@ var wTrack = function (models) {
 
             groupBy = {
                 _id : {
-                    department: '$department.departmentName',
+                    department: '$department.name',
                     _id       : '$department._id',
                     year      : '$year',
                     week      : '$week'
@@ -1949,7 +1949,7 @@ var wTrack = function (models) {
 
             groupBy = {
                 _id : {
-                    department: '$department.departmentName',
+                    department: '$department.name',
                     _id       : '$department._id',
                     year      : '$year',
                     week      : '$week'
@@ -2029,7 +2029,7 @@ var wTrack = function (models) {
 
             groupBy = {
                 _id : {
-                    department: '$department.departmentName',
+                    department: '$department.name',
                     _id       : '$department._id',
                     year      : '$year',
                     month     : '$month',
@@ -2252,7 +2252,7 @@ var wTrack = function (models) {
                             {
                                 $group: {
                                     _id: {
-                                        department: '$department.departmentName',
+                                        department: '$department.name',
                                         depId     : '$department._id',
                                         employee  : '$name',
                                         _id       : '$_id',

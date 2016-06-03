@@ -137,7 +137,7 @@ define([
                     return $(elm).attr('id');
                 });
                 this.model.save({
-                        departmentName   : departmentName,
+                        name             : departmentName,
                         parentDepartment : parentDepartment,
                         departmentManager: departmentManager,
                         nestingLevel     : ++nestingLevel,
@@ -220,7 +220,7 @@ define([
 
                 });
                 populate.get2name("#departmentManager", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this, true, true);
-                populate.getParrentDepartment("#parentDepartment", "/departments/getSalesTeam", {}, this, true, true);
+                populate.getParrentDepartment("#parentDepartment", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, this, true, true);
                 common.populateUsersForGroups('#sourceUsers', '#targetUsers', null, 1);
                 this.delegateEvents(this.events);
                 return this;

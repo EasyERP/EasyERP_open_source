@@ -79,7 +79,7 @@ describe('Dashboard Vacation Specs', function () {
                     expect(department)
                         .to.have.property('_id');
                     expect(department)
-                        .to.have.property('departmentName');
+                        .to.have.property('name');
 
                     departmentId = department._id;
 
@@ -261,7 +261,7 @@ describe('Dashboard Vacation Specs', function () {
                     expect(department)
                         .to.have.property('_id');
                     expect(department)
-                        .to.have.property('departmentName');
+                        .to.have.property('name');
 
                     departmentId = department._id;
 
@@ -456,7 +456,7 @@ describe('Dashboard Vacation Specs', function () {
                     expect(department)
                         .to.have.property('_id');
                     expect(department)
-                        .to.have.property('departmentName');
+                        .to.have.property('name');
 
                     departmentId = department._id;
 
@@ -667,7 +667,7 @@ describe('Dashboard Vacation Specs', function () {
                     expect(department)
                         .to.have.property('_id');
                     expect(department)
-                        .to.have.property('departmentName');
+                        .to.have.property('name');
 
                     departmentId = department._id;
 
@@ -879,7 +879,7 @@ describe('Dashboard Vacation Specs', function () {
                     expect(department)
                         .to.have.property('_id');
                     expect(department)
-                        .to.have.property('departmentName');
+                        .to.have.property('name');
 
                     departmentId = department._id;
 

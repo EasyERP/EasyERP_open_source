@@ -1364,7 +1364,7 @@ var Module = function (models, event) {
                 .populate('products.jobs')
                 .populate('currency._id')
                 .populate('payments', '_id name date paymentRef paidAmount')
-                .populate('department', '_id departmentName')
+                .populate('department', '_id name')
                 .populate('paymentTerms', '_id name')
                 .populate('createdBy.user')
                 .populate('editedBy.user')

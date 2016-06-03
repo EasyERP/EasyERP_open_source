@@ -286,7 +286,7 @@ var Module = function (event, models) {
             }
         }, {
             $project: {
-                'department.departmentName': 1,
+                'department.name'          : 1,
                 'employee.name'            : 1,
                 'employee._id'             : 1,
                 month                      : 1,
@@ -582,7 +582,7 @@ var Module = function (event, models) {
             function populateDeps(cb) {
                 Department.populate(Vacation, {
                     path  : 'department',
-                    select: '_id departmentName',
+                    select: '_id name',
                     lean  : true
                 }, cb);
             }

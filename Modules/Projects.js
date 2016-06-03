@@ -1067,7 +1067,7 @@ var Project = function (models, event) {
             // .populate('editedBy.user', '_id login')
             .populate('groups.owner', '_id name')
             .populate('groups.users', '_id login')
-            .populate('groups.group', '_id departmentName')
+            .populate('groups.group', '_id name')
             .populate('groups.owner', '_id login')
             // .populate('budget.projectTeam')
             .populate('projectmanager', '_id name fullName')

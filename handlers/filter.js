@@ -436,7 +436,7 @@ var Filters = function (models) {
                     'department': {
                         $addToSet: {
                             _id : '$department._id',
-                            name: {'$ifNull': ['$department.departmentName', 'None']}
+                            name: {'$ifNull': ['$department.name', 'None']}
                         }
                     }
                 }
@@ -820,7 +820,7 @@ var Filters = function (models) {
                         'department': {
                             $addToSet: {
                                 _id : '$department._id',
-                                name: {'$ifNull': ['$department.departmentName', 'None']}
+                                name: {'$ifNull': ['$department.name', 'None']}
                             }
                         }
                     }

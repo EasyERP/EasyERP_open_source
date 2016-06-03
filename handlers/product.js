@@ -427,7 +427,7 @@ var Products = function (models) {
 
             query = Product.findById(id);
 
-            query.populate('info.productType', 'name _id').populate('department', '_id departmentName').populate('createdBy.user').populate('editedBy.user').populate('groups.users').populate('groups.group').populate('groups.owner', '_id login');
+            query.populate('info.productType', 'name _id').populate('department', '_id name').populate('createdBy.user').populate('editedBy.user').populate('groups.users').populate('groups.group').populate('groups.owner', '_id login');
 
             query.exec(waterfallCallback);
         };

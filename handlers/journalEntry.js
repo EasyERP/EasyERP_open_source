@@ -190,7 +190,7 @@ var Module = function (models, event) {
             'journal.name'               : 1,
             date                         : 1,
             'sourceDocument.subject.name': {$concat: ['$sourceDocument.subject.name.first', ' ', '$sourceDocument.subject.name.last']},
-            'sourceDocument.name'        : '$sourceDocument._id.department.departmentName',
+            'sourceDocument.name'        : '$sourceDocument._id.department.name',
             'sourceDocument.subject._id' : 1
         }
     }];
@@ -6684,7 +6684,7 @@ var Module = function (models, event) {
                                 date                           : 1,
                                 'sourceDocument.model'         : 1,
                                 'sourceDocument.subject'       : 1,
-                                'sourceDocument.name'          : '$sourceDocument._id.department.departmentName',
+                                'sourceDocument.name'          : '$sourceDocument._id.department.name',
                                 account                        : 1
                             }
                         }, {
@@ -7011,7 +7011,7 @@ var Module = function (models, event) {
                                 date                    : 1,
                                 'sourceDocument.model'  : 1,
                                 'sourceDocument.subject': 1,
-                                'sourceDocument.name'   : '$sourceDocument.name.departmentName',
+                                'sourceDocument.name'   : '$sourceDocument.name.name',
                                 account                 : 1
                             }
                         }, {

@@ -644,7 +644,7 @@ define([
 
                     if (elementType === '#employee') {
                         departmentContainer = tr.find('[data-content="department"]');
-                        departmentContainer.find('a.current-selected').text(element.department.departmentName);
+                        departmentContainer.find('a.current-selected').text(element.department.name);
                         departmentContainer.removeClass('errorContent');
 
                         employee = element._id;
@@ -741,14 +741,8 @@ define([
                         self.responseObj['#employee'] = employees;
                     });
 
-                    dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, {devDepartments : true}, function (departments) {
-                        departments = _.map(departments.data, function (department) {
-                            department.name = department.departmentName;
-
-                            return department;
-                        });
-
-                        self.responseObj['#department'] = departments;
+                    dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, {devDepartments : true}, function (response) {
+                        self.responseObj['#department'] = response.data;
                     });
 
                     this.$listTable = $('#rawTable tbody');

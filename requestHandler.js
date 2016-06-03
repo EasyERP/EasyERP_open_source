@@ -830,7 +830,7 @@ var requestHandler = function (app, event, mainDb) {
             $project: {
                 _id: '$_id',
                 'department._id': '$department._id',
-                'department.departmentName': '$department.departmentName',
+                'department.name': '$department.name',
                 'employee._id': '$employee._id',
                 'employee.name': '$employee.name',
                 'employee.jobPosition': {$arrayElemAt: ['$employee.jobPosition', 0]},

@@ -560,7 +560,7 @@ module.exports = function (models) {
                             Department
                                 .findOne(departmentQuery, {
                                     _id: 1,
-                                    departmentName: 1
+                                    name: 1
                                 })
                                 .lean()
                                 .exec(function (err, department) {
@@ -611,7 +611,7 @@ module.exports = function (models) {
                             if (result.department) {
                                 objectToSave.department = {};
                                 objectToSave.department._id = result.department._id || null;
-                                objectToSave.department.departmentName = result.department.departmentName || '';
+                                objectToSave.department.name = result.department.name || '';
                             }
                             if (result.project) {
                                 objectToSave.project = {};
@@ -1537,7 +1537,7 @@ module.exports = function (models) {
                            if(result.department){
                                objectToSave.department = {
                                    _id: result.department._id,
-                                   name: result.department.departmentName
+                                   name: result.department.name
                                }
                            } else {
                                objectToSave.department = {
@@ -1891,10 +1891,10 @@ module.exports = function (models) {
                                     objectToSave.employee._id = employee._id || null;
                                     objectToSave.employee.name = employee.name ? employee.name.first + ' ' + employee.name.last : '';
 
-                                    if (employee.department && employee.department.departmentName) {
+                                    if (employee.department && employee.department.name) {
                                         objectToSave.department = {}
                                         objectToSave.department._id = employee.department._id;
-                                        objectToSave.department.name = employee.department.departmentName;
+                                        objectToSave.department.name = employee.department.name;
                                     }
                                     Vacation.findOne({
                                         month: objectToSave.month,

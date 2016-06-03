@@ -270,7 +270,7 @@ var wTrack = function (models) {
             function sendResponse() {
                 Department.populate(employeesByDep, {
                     path  : 'department',
-                    select: 'departmentName _id'
+                    select: 'name _id'
                 }, function () {
                     var sortDepartments = [];
                     var resultData = {
@@ -829,7 +829,7 @@ var wTrack = function (models) {
 
                     Department.populate(employees, {
                         path  : 'hiredEmployees.department',
-                        select: '_id departmentName'
+                        select: '_id name'
                     }, function (err) {
                         if (err) {
                             return parallelCb(err);
@@ -901,7 +901,7 @@ var wTrack = function (models) {
 
                     Department.populate(employees, {
                         path   : 'firedEmployees.department',
-                        select : '_id departmentName',
+                        select : '_id name',
                         options: {
                             lean: true
                         }

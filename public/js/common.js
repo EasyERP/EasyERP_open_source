@@ -439,12 +439,12 @@
                 if (model && (model.department || (model.salesPurchases && model.salesPurchases.salesTeam) || model.salesTeam || model.parentDepartment)) {
                     options = $.map(response.data, function (item) {
                         return ((model.department === item._id) || (model.department && model.department._id === item._id) || (model.salesPurchases && model.salesPurchases.salesTeam && model.salesPurchases.salesTeam === item._id) || (model.salesPurchases && model.salesPurchases.salesTeam && model.salesPurchases.salesTeam._id === item._id) || (model.salesTeam && (model.salesTeam._id === item._id)) || (model.salesTeam === item._id) || (model.parentDepartment && model.parentDepartment === item._id)) ?
-                            $('<option/>').val(item._id).text(item.departmentName).attr('selected', 'selected').attr('data-level', item.nestingLevel) :
-                            $('<option/>').val(item._id).text(item.departmentName).attr('data-level', item.nestingLevel);
+                            $('<option/>').val(item._id).text(item.name).attr('selected', 'selected').attr('data-level', item.nestingLevel) :
+                            $('<option/>').val(item._id).text(item.name).attr('data-level', item.nestingLevel);
                     });
                 } else {
                     options = $.map(response.data, function (item) {
-                        return $('<option/>').val(item._id).text(item.departmentName).attr('data-level', item.nestingLevel);
+                        return $('<option/>').val(item._id).text(item.name).attr('data-level', item.nestingLevel);
                     });
                 }
                 selectList.append(options);
@@ -489,7 +489,7 @@
                         return (ids.indexOf(filteredItem._id) == -1);
                     }),
                     function (item) {
-                        return $('<li/>').attr('id', item._id).text(item.departmentName);
+                        return $('<li/>').attr('id', item._id).text(item.name);
                     }
                 );
 
@@ -502,7 +502,7 @@
                         return (ids.indexOf(filteredItem._id) !== -1);
                     }),
                     function (item) {
-                        return $('<li/>').attr('id', item._id).text(item.departmentName);
+                        return $('<li/>').attr('id', item._id).text(item.name);
                     }
                 );
 
@@ -519,10 +519,10 @@
                     options = $.map(tt, function (item) {
                         if (k < 20) {
                             k++;
-                            return $('<li/>').attr("id", item._id).text(item.departmentName);
+                            return $('<li/>').attr("id", item._id).text(item.name);
                         } else {
                             k++;
-                            return $('<li/>').attr("id", item._id).text(item.departmentName).attr("style", "display:none");
+                            return $('<li/>').attr("id", item._id).text(item.name).attr("style", "display:none");
                         }
                     });
                 }
@@ -531,10 +531,10 @@
                     options = $.map(response.data, function (item) {
                         if (k < 20) {
                             k++;
-                            return $('<li/>').attr("id", item._id).text(item.departmentName);
+                            return $('<li/>').attr("id", item._id).text(item.name);
                         } else {
                             k++;
-                            return $('<li/>').attr("id", item._id).text(item.departmentName).attr("style", "display:none");
+                            return $('<li/>').attr("id", item._id).text(item.name).attr("style", "display:none");
                         }
                     });
                 }
@@ -578,13 +578,13 @@
             if (model && model.parentDepartment && (model.department || (model.salesPurchases && model.salesPurchases.salesTeam) || model.salesTeam || model.parentDepartment)) {
                 options = $.map(response.data, function (item) {
                     return ((model.department && model.department._id === item._id) || (model.salesPurchases && model.salesPurchases.salesTeam && model.salesPurchases.salesTeam._id === item._id) || (model.salesTeam === item._id) || (model.parentDepartment && model.parentDepartment._id === item._id)) ?
-                        $('<option/>').val(item._id).text(item.departmentName).attr('selected', 'selected') :
-                        $('<option/>').val(item._id).text(item.departmentName);
+                        $('<option/>').val(item._id).text(item.name).attr('selected', 'selected') :
+                        $('<option/>').val(item._id).text(item.name);
                 });
             } else {
                 options = $.map(response.data, function (item) {
                     if (!item.parentDepartment) {
-                        return $('<option/>').val(item._id).text(item.departmentName);
+                        return $('<option/>').val(item._id).text(item.name);
                     }
                 });
             }
