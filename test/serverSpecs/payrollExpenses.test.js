@@ -85,11 +85,12 @@ describe('PayrollExpenses Specs', function () {
         it('should create Payroll', function (done) {
 
             var body = {
-                dataKey : dateKey,
-                type    : {
+                dataKey: dateKey,
+                type   : {
                     _id : '5645920f624e48551dfe3b25',
                     name: ''
                 },
+
                 month   : month,
                 year    : year,
                 diff    : -200,
@@ -135,8 +136,8 @@ describe('PayrollExpenses Specs', function () {
         it('should patch PayrollExpenses', function (done) {
             var body = {};
             body[dateKey] = {
-                'date'  : 'Sat Feb 20 2016 00:00:00 GMT+0200 (EET)',
-                'status': true
+                date  : 'Sat Feb 20 2016 00:00:00 GMT+0200 (EET)',
+                status: true
             };
 
             aggent
@@ -222,8 +223,8 @@ describe('PayrollExpenses Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Array);
 
-                   /* expect(body[0].calc) // test sorting
-                        .to.be.gte(body[1].calc);*/
+                    /* expect(body[0].calc) // test sorting
+                     .to.be.gte(body[1].calc);*/
 
                     done();
                 });
@@ -231,10 +232,10 @@ describe('PayrollExpenses Specs', function () {
 
         it('should patch Payrolls', function (done) {
             var body = [{
-                '_id' : id,
-                'diff': -300,
-                'paid': 0,
-                'calc': 300
+                _id : id,
+                diff: -300,
+                paid: 0,
+                calc: 300
             }];
 
             aggent
@@ -245,7 +246,7 @@ describe('PayrollExpenses Specs', function () {
 
         it('should fail patch Payrolls', function (done) {
             var body = [{
-                '_id': '123cba'
+                _id: '123cba'
             }];
 
             aggent
@@ -256,10 +257,10 @@ describe('PayrollExpenses Specs', function () {
 
         it('should patch Payroll', function (done) {
             var body = {
-                'diff': -500,
-                'paid': 0,
-                'calc': 500,
-                'type': '564592fbabb1c35728ad7d0f'
+                diff: -500,
+                paid: 0,
+                calc: 500,
+                type: '564592fbabb1c35728ad7d0f'
             };
 
             aggent
@@ -332,11 +333,12 @@ describe('PayrollExpenses Specs', function () {
         it('should fail create Payroll', function (done) {
 
             var body = {
-                dataKey : '201605',
-                type    : {
+                dataKey: '201605',
+                type   : {
                     _id : '5645920f624e48551dfe3b25',
                     name: ''
                 },
+
                 month   : year,
                 year    : month,
                 diff    : -200,
@@ -366,6 +368,4 @@ describe('PayrollExpenses Specs', function () {
 
     });
 });
-
-
 

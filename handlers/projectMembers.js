@@ -68,7 +68,6 @@ var ProjectMembers = function (models) {
                     res.status(200).send(doc);
                 });
 
-
         });
     };
 

@@ -264,9 +264,9 @@ var Module = function (models, event) {
                 $match: queryObjectStage2
             }], function (err, jobs) {
                 if (err) {
-                   return next(err);
+                    return next(err);
                 }
-                
+
                 res.status(200).send({count: jobs ? jobs.length : 0});
             });
 

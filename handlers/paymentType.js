@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
-var PaymentTerm = function (models) {
+
+var Module = function (models) {
     'use strict';
 
     var PaymentTypeSchema = mongoose.Schemas.PaymentType;
@@ -15,11 +16,11 @@ var PaymentTerm = function (models) {
                 if (err) {
                     return next(err);
                 }
-                
+
                 res.status(200).send(types);
             });
     };
 
 };
 
-module.exports = PaymentTerm;
+module.exports = Module;

@@ -28,7 +28,6 @@ module.exports = function (models) {
         var rows = 0;
         var notImportedEmployees = {};
 
-
         if (req.session && req.session.loggedIn && req.session.lastDb) {
 
             if (headers && files && files.attachfile) {
@@ -69,7 +68,6 @@ module.exports = function (models) {
             var month;
             var year = 2000 + parseInt(periodArray[1]);
             var keyForNotSaved;
-
 
             switch (periodArray[0]) {
                 case 'Jan':
@@ -117,7 +115,7 @@ module.exports = function (models) {
             }
 
             return {
-                year: year,
+                year : year,
                 month: month
             }
         };
@@ -178,7 +176,6 @@ module.exports = function (models) {
                             lastName = lastName.replace(' ', '');
                         }
 
-
                         dataKey = saveObject.year * 100 + saveObject.month;
 
                         saveObject.type = typeComposer(type);
@@ -190,7 +187,7 @@ module.exports = function (models) {
 
                         Employee.findOne({
                             'name.first': firstName,
-                            'name.last': lastName
+                            'name.last' : lastName
                         }, function (err, employee) {
                             "use strict";
                             if (err) {

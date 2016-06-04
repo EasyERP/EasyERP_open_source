@@ -27,7 +27,7 @@ var Module = function (models) {
         var body = req.body;
         var payRollModel;
 
-        if (!body.month || !body.year){
+        if (!body.month || !body.year) {
             return res.status(400).send();
         }
 
@@ -66,7 +66,7 @@ var Module = function (models) {
         var PayRoll = models.get(req.session.lastDb, 'PayRoll', PayRollSchema);
         var dataKeys = body && body.dataKeys ? body.dataKeys : null;
 
-        if (!dataKeys){
+        if (!dataKeys) {
             return res.status(400).send();
         }
 
@@ -129,19 +129,19 @@ var Module = function (models) {
                     user: uId,
                     date: new Date().toISOString()
                 };
-                
+
                 PayRoll.find({dataKey: key}, function (err, result) {
                     if (err) {
                         return next(err);
                     }
-                    
+
                     if (!result.length) {
                         return res.status(400).send();
                     }
 
                     PayRoll.update({dataKey: key}, {$set: data}, {multi: true, new: true}, cb);
                 });
-                
+
             }, function (err) {
                 if (err) {
                     return next(err);
@@ -151,9 +151,9 @@ var Module = function (models) {
 
         res.status(200).send({done: 'success'});
         composeExpensesAndCache(req, function (err) {
-            /*if (err) {
-                return next(err);
-            }*/
+            /* if (err) {
+             return next(err);
+             }*/
         });
     };
 
@@ -247,7 +247,6 @@ var Module = function (models) {
         if (data.sort) {
             sort[sortKeys[0]] = parseInt(sort[sortKeys[0]], 10);
         }
-
 
         PayRoll.aggregate([{
             $match: {
@@ -462,7 +461,7 @@ var Module = function (models) {
                                 vars: {
                                     firstHired: {$arrayElemAt: ['$hire', 0]}
                                 },
-                                
+
                                 in: {$add: [{$multiply: [{$year: '$$firstHired'}, 100]}, {$week: '$$firstHired'}]}
                             }
                         }
@@ -485,9 +484,9 @@ var Module = function (models) {
                         year      : {$year: '$transfer.date'}
                     }
                     /* }, {
-                        $match: {
-                            'year': {$lt: year + 1}
-                        }*/
+                     $match: {
+                     'year': {$lt: year + 1}
+                     }*/
                 }, {
                     $project: {
                         isEmployee: 1,
@@ -567,55 +566,6 @@ var Module = function (models) {
         salaryReport(req, cb);
     };
 
-    function recount(req, res, next) {
-        var db = req.session.lastDb;
-        var data = req.body;
-        var dataKey = parseInt(data.dataKey, 10);
-        var year;
-        var month;
-        var Payroll = models.get(db, 'PayRoll', PayRollSchema);
-        var waterfallFunc;
-
-        if (!dataKey) {
-            year = parseInt(data.year, 10);
-            month = parseInt(data.month, 10);
-            dataKey = year * 100 + month;
-        } else if (data.dataKey) {
-            year = parseInt(data.dataKey.slice(0, 4), 10);
-            month = parseInt(data.dataKey.slice(4), 10);
-        }
-
-        if (!dataKey && !month && !year) {
-            return res.status(400).send();
-        }
-
-        req.body.month = month;
-        req.body.year = year;
-
-        function removeByDataKey(wfCb) {
-            Payroll.remove({dataKey: dataKey}, wfCb);
-        }
-
-        function createIdleByMonth(removed, wfCb) {
-            journalEntry.createIdleByMonth({req: req, callback: wfCb, month: month, year: year});
-        }
-
-        function generateByDataKey(wfCb) {
-            generate(req, res, next, wfCb);
-        }
-
-        waterfallFunc = [removeByDataKey, createIdleByMonth, generateByDataKey];
-
-        async.waterfall(waterfallFunc, function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send({success: true});
-        });
-
-    }
-
     function generate(req, res, next, cbFromRecalc) {
         var db = req.session.lastDb;
         var Employee = models.get(db, 'Employees', EmployeeSchema);
@@ -632,7 +582,7 @@ var Module = function (models) {
         var date = moment().year(year).month(month - 1).startOf('month');
         var endDate = moment(date).endOf('month');
 
-        if (!body.month || !body.year){
+        if (!data.month || !data.year) {
             return res.status(400).send();
         }
 
@@ -905,7 +855,7 @@ var Module = function (models) {
 
             parallelTasks = [createForDev, createForNotDev];
 
-            async.parallel(parallelTasks, function (err, result) {
+            async.parallel(parallelTasks, function (err) {
                 if (err) {
                     return callback(err);
                 }
@@ -932,6 +882,55 @@ var Module = function (models) {
                     res.status(200).send('ok');
                 }
             });
+        });
+
+    }
+
+    function recount(req, res, next) {
+        var db = req.session.lastDb;
+        var data = req.body;
+        var dataKey = parseInt(data.dataKey, 10);
+        var year;
+        var month;
+        var Payroll = models.get(db, 'PayRoll', PayRollSchema);
+        var waterfallFunc;
+
+        if (!dataKey) {
+            year = parseInt(data.year, 10);
+            month = parseInt(data.month, 10);
+            dataKey = year * 100 + month;
+        } else if (data.dataKey) {
+            year = parseInt(data.dataKey.slice(0, 4), 10);
+            month = parseInt(data.dataKey.slice(4), 10);
+        }
+
+        if (!dataKey && !month && !year) {
+            return res.status(400).send();
+        }
+
+        req.body.month = month;
+        req.body.year = year;
+
+        function removeByDataKey(wfCb) {
+            Payroll.remove({dataKey: dataKey}, wfCb);
+        }
+
+        function createIdleByMonth(removed, wfCb) {
+            journalEntry.createIdleByMonth({req: req, callback: wfCb, month: month, year: year});
+        }
+
+        function generateByDataKey(wfCb) {
+            generate(req, res, next, wfCb);
+        }
+
+        waterfallFunc = [removeByDataKey, createIdleByMonth, generateByDataKey];
+
+        async.waterfall(waterfallFunc, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
         });
 
     }

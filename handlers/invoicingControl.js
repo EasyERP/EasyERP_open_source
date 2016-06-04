@@ -1,7 +1,7 @@
 var mongoose = require('mongoose');
-var InvoicingControl = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
-    var InvoicingControlSchema = mongoose.Schemas['InvoicingControl'];
+
+var Module = function (models) {
+    var InvoicingControlSchema = mongoose.Schemas.InvoicingControl;
 
     this.getForDd = function (req, res, next) {
         var InvoicingControl = models.get(req.session.lastDb, 'InvoicingControl', InvoicingControlSchema);
@@ -13,10 +13,11 @@ var InvoicingControl = function (models) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send({data: controls})
+                
+                res.status(200).send({data: controls});
             });
     };
 
 };
 
-module.exports = InvoicingControl;
+module.exports = Module;

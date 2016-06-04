@@ -9,7 +9,7 @@ module.exports = function (models) {
     router.get('/:viewType', function (req, res, next) {
         var viewType = req.params.viewType;
         switch (viewType) {
-            case "form":
+            case 'form':
                 handler.getInvoiceById(req, res, next);
                 break;
             default:

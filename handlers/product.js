@@ -10,16 +10,13 @@ var Products = function (models) {
     var rewriteAccess = require('../helpers/rewriteAccess');
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var async = require('async');
-    var _ = require('lodash');
-    var underscore = require('../node_modules/underscore');
-    var CONSTANTS = require('../constants/mainConstants.js');
     var fs = require('fs');
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Products;
     var pageHelper = require('../helpers/pageHelper');
 
     /* exportDecorator.addExportFunctionsToHandler(this, function (req) {
-        return models.get(req.session.lastDb, 'Product', ProductSchema)
+     return models.get(req.session.lastDb, 'Product', ProductSchema)
      }, exportMap, 'Products');*/
 
     this.create = function (req, res, next) {
@@ -71,13 +68,6 @@ var Products = function (models) {
         updateOnlySelectedFields(req, res, next, id, data);
     };
 
-    this.getProductsImages = function (req, res, next) {
-        var data = {};
-        data.ids = req.query.ids || [];
-
-        getProductImages(req, res, next, data);
-    };
-
     function getProductImages(req, res, next, data) {
         var query = models.get(req.session.lastDb, 'Products', ProductSchema).find({});
         query.where('_id').in(data.ids).select('_id imageSrc').exec(function (error, response) {
@@ -89,20 +79,24 @@ var Products = function (models) {
         });
     }
 
+    this.getProductsImages = function (req, res, next) {
+        var data = {};
+        data.ids = req.query.ids || [];
+
+        getProductImages(req, res, next, data);
+    };
+
     this.uploadProductFiles = function (req, res, next) {
         var os = require('os');
         var osType = (os.type().split('_')[0]);
         var dir;
+
         switch (osType) {
             case 'Windows':
-            {
                 dir = __dirname + '\\uploads\\';
-            }
                 break;
             case 'Linux':
-            {
                 dir = __dirname + '\/uploads\/';
-            }
         }
         fs.readdir(dir, function (err, files) {
             if (err) {
@@ -261,7 +255,7 @@ var Products = function (models) {
 
         if (type === 'integer') {
             for (i = array.length - 1; i >= 0; i--) {
-                result[i] = parseInt(array[i]);
+                result[i] = parseInt(array[i], 10);
             }
         } else if (type === 'boolean') {
             for (i = array.length - 1; i >= 0; i--) {
@@ -427,7 +421,14 @@ var Products = function (models) {
 
             query = Product.findById(id);
 
-            query.populate('info.productType', 'name _id').populate('department', '_id departmentName').populate('createdBy.user').populate('editedBy.user').populate('groups.users').populate('groups.group').populate('groups.owner', '_id login');
+            query
+                .populate('info.productType', 'name _id')
+                .populate('department', '_id departmentName')
+                .populate('createdBy.user')
+                .populate('editedBy.user')
+                .populate('groups.users')
+                .populate('groups.group')
+                .populate('groups.owner', '_id login');
 
             query.exec(waterfallCallback);
         };
@@ -493,10 +494,11 @@ var Products = function (models) {
     };
 
     function getProductsAlphabet(req, response, next) {
+        var Product = models.get(req.session.lastDb, 'Product', ProductSchema);
         var queryObject = {};
         var query;
 
-        query = models.get(req.session.lastDb, 'Product', ProductSchema).aggregate([{$match: queryObject}, {$project: {later: {$substr: ['$name', 0, 1]}}}, {$group: {_id: '$later'}}]);
+        query = Product.aggregate([{$match: queryObject}, {$project: {later: {$substr: ['$name', 0, 1]}}}, {$group: {_id: '$later'}}]);
 
         query.exec(function (err, result) {
             var res = {};

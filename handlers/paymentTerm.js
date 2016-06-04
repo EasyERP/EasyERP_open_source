@@ -15,7 +15,8 @@ var Module = function (models) {
                 if (err) {
                     return next(err);
                 }
-                res.status(200).send({data: terms})
+
+                res.status(200).send({data: terms});
             });
     };
 
@@ -29,6 +30,7 @@ var Module = function (models) {
                 if (err) {
                     return next(err);
                 }
+
                 res.status(200).send(methods);
             });
     };
@@ -42,6 +44,7 @@ var Module = function (models) {
             if (err) {
                 return next(err);
             }
+
             res.status(200).send(method);
         });
     };
@@ -56,6 +59,7 @@ var Module = function (models) {
             if (err) {
                 return next(err);
             }
+
             res.status(200).send(method);
         });
     };
@@ -68,6 +72,7 @@ var Module = function (models) {
             if (err) {
                 return next(err);
             }
+
             res.status(200).send(method);
         });
     };

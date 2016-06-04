@@ -21,6 +21,6 @@ module.exports = function (models, event) {
     router.put('/:id', accessStackMiddlware, handler.update);
     router.patch('/:id', accessStackMiddlware, handler.udateOnlySelectedFields);
     router.delete('/:id', accessStackMiddlware, handler.remove);
-    
+
     return router;
 };
