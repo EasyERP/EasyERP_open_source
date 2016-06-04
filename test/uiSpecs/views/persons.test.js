@@ -11681,7 +11681,6 @@ define([
                 expect($thisEl.find('.thumbnailwithavatar'))
                     .to.have.lengthOf(3);
 
-                $thisEl = thumbnailsView.$el;
                 $firstEl = $thisEl.find('.thumbnailwithavatar').first();
 
                 $avatarHolder = $firstEl.find('.avatar');
