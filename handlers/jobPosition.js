@@ -46,17 +46,17 @@ var Module = function (models) {
                             return num;
                         });
                         break;
-                    case  'Total forecasted employees':
+                    case 'Total forecasted employees':
                         result[0][key] = _.sortBy(value, function (num) {
                             return num;
                         });
                         break;
-                    case  'Current number of employees':
+                    case 'Current number of employees':
                         result[0][key] = _.sortBy(value, function (num) {
                             return num;
                         });
                         break;
-                    case  'Expected in recruitment':
+                    case 'Expected in recruitment':
                         result[0][key] = _.sortBy(value, function (num) {
                             return num;
                         });
@@ -93,26 +93,6 @@ var Module = function (models) {
         });
     };
 
-    this.getByViewType = function (req, res, next) {
-        var query = req.query;
-        var viewType = query.viewType;
-        var id = query.id;
-
-        if (id && id.length >= 24) {
-            getById(req, res, next);
-            return false;
-        }
-
-        switch (viewType) {
-            case 'form':
-                getById(req, res, next);
-                break;
-            default:
-                getFilterJobPositions(req, res, next);
-                break;
-        }
-    };
-
     function getById(req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
@@ -132,23 +112,20 @@ var Module = function (models) {
                     return next(err);
                 }
 
-                Employee.aggregate(
-                    {
-                        $match: {
-                            'jobPosition': objectId(id)
-                        }
-                    },
-                    function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-
-                        response.numberOfEmployees = result.length;
-                        response.totalForecastedEmployees = response.expectedRecruitment + result.length;
-                        res.status(200).send(response);
-
+                Employee.aggregate([{
+                    $match: {
+                        jobPosition: objectId(id)
                     }
-                );
+                }], function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    response.numberOfEmployees = result.length;
+                    response.totalForecastedEmployees = response.expectedRecruitment + result.length;
+
+                    res.status(200).send(response);
+                });
             });
     }
 
@@ -162,7 +139,8 @@ var Module = function (models) {
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
-
+        var getCount;
+        var getData;
 
         function compareSort(personA, personB) {
             if (sort[i] === 1) {
@@ -172,7 +150,7 @@ var Module = function (models) {
             return personB[i] - personA[i];
         }
 
-        var getCount = function (pCb) {
+        getCount = function (pCb) {
             JobPosition
                 .find({})
                 .populate('createdBy.user')
@@ -188,7 +166,7 @@ var Module = function (models) {
                 });
         };
 
-        var getData = function (pCb) {
+        getData = function (pCb) {
             JobPosition
                 .find({})
                 .populate('createdBy.user')
@@ -204,10 +182,11 @@ var Module = function (models) {
                         return pCb(err);
                     }
                     async.each(result, function (jp, cb) {
-                        Employee.find({'jobPosition': jp._id}).count(function (err, count) {
+                        Employee.find({jobPosition: jp._id}).count(function (err, count) {
                             if (err) {
                                 return cb(err);
                             }
+
                             jp.numberOfEmployees = count;
                             jp.totalForecastedEmployees = count + jp.expectedRecruitment;
                             cb();
@@ -246,6 +225,26 @@ var Module = function (models) {
             res.status(200).send(response);
         });
     }
+
+    this.getByViewType = function (req, res, next) {
+        var query = req.query;
+        var viewType = query.viewType;
+        var id = query.id;
+
+        if (id && id.length >= 24) {
+            getById(req, res, next);
+            return false;
+        }
+
+        switch (viewType) {
+            case 'form':
+                getById(req, res, next);
+                break;
+            default:
+                getFilterJobPositions(req, res, next);
+                break;
+        }
+    };
 
     this.create = function (req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);

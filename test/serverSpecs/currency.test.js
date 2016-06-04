@@ -1,7 +1,6 @@
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent;
 
 require('../../config/development');
@@ -64,7 +63,4 @@ describe('Currency Specs', function () {
 
     });
 
-
-
 });
-

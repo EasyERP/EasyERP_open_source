@@ -18,6 +18,11 @@ define([
             click               : 'hide'
         },
 
+        hideDeleteBtnAndUnSelectCheckAll: function () {
+            $('#top-bar-deleteBtn').hide();
+            $('#check_all').prop('checked', false);
+        },
+
         checkAll: function (e) {
             var $el = $(e.target);
             var $thisEl = this.$el;
@@ -223,12 +228,20 @@ define([
                 page = (location.split('/p=')[1]) ? location.split('/p=')[1].split('/')[0] : 1;
             }
 
+            if (isNaN(page)) {
+                page = 1;
+            }
+
             if (!count) {
                 thumbnails = location.split('thumbnails')[0];
-                count = (location.split('/c=')[1]) ? location.split('/c=')[1].split('/')[0] : 100;
+                count = (location.split('/c=')[1]) ? location.split('/c=')[1].split('/')[0] : CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
 
-                if (thumbnails && count < 100) {
-                    count = 100;
+                if (isNaN(count)) {
+                    count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
+                }
+
+                if (thumbnails && count < CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE) {
+                    count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
                 }
             }
 
@@ -248,8 +261,6 @@ define([
                 url += '/c=' + count;
             }
 
-            this.trigger('hideCreateForBreadCrumbs', value);
-
             if (!filter) {
                 locationFilter = location.split('/filter=')[1];
                 if (locationFilter) {
@@ -264,15 +275,14 @@ define([
 
         nextPage: function (options) {
             var page = options.page;
-            //todo change it for count
-            var itemsNumber = options.itemsNumber;
+            var count = options.count;
 
-            options = options || {count: itemsNumber};
+            options = options || {count: count};
 
             options.filter = this.filter;
 
             this.collection.getNextPage(options);
-            this.changeLocationHash(page, itemsNumber);
+            this.changeLocationHash(page, count);
         },
 
         previousPage: function (options) {
@@ -430,7 +440,7 @@ define([
 
         checklistRow: function (e) {
             var $targetEl = $(e.target);
-            var $targetDivContainer = $targetEl.closest(".listRow");
+            var $targetDivContainer = $targetEl.closest('.listRow');
             var $checkbox = $targetDivContainer.find('input[type="checkbox"]');
             var checked = $checkbox.prop('checked');
 
@@ -583,41 +593,18 @@ define([
             this.collection.getPage(1, creationOptions);
         },
 
-        addReplaceRow: function (model) {
-            var $curEl = this.$el;
-            var $listTable = $curEl.find('.listTable');
-            var id = model.get('_id');
-            var $listRow = $listTable.find('.listRow[data-id = "' + id + '"]');
-            var modelJSON = model.toJSON();
-
-            if ($listRow.length) {
-                $listRow.replaceWith(this.templateNew({model: modelJSON, translation: this.translation}));
-                if (this.preView) {
-                    this.preView.trigger('updatePreview', model);
-                }
-
-                this.collection.add(modelJSON, {merge: true});
-            } else {
-                $curEl.find(".noData").remove();
-                this.collection.add(modelJSON, {remove: false});
-                $listTable.prepend(this.templateNew({model: modelJSON, translation: this.translation}));
-            }
-
-            this.trigger('hideActionDd');
-        },
-
         setPagination: function (options) {
-            var $curEl = this.$el;
-            var $pageList = $curEl.find('#pageList');
-            var $curPageInput = $curEl.find('#currentShowPage');
-            var $itemsNumber = $curEl.find('#itemsNumber');
+            var $thisEl = this.$el;
+            var $pageList = $thisEl.find('#pageList');
+            var $curPageInput = $thisEl.find('#currentShowPage');
+            var $itemsNumber = $thisEl.find('#itemsNumber');
 
             var currentPage = parseInt(options.currentPage, 10) || parseInt($curPageInput.val(), 10);
             var itemsNumber = parseInt(options.itemsNumber, 10) || parseInt($itemsNumber.text(), 10);
 
-            var $gridStart = this.$el.find('#gridStart');
-            var $gridEnd = this.$el.find('#gridEnd');
-            var $gridCount = this.$el.find('#gridCount');
+            var $gridStart = $thisEl.find('#gridStart');
+            var $gridEnd = $thisEl.find('#gridEnd');
+            var $gridCount = $thisEl.find('#gridCount');
 
             var gridCount;
             var gridStartValue;
@@ -629,7 +616,7 @@ define([
             currentPage = isNaN(currentPage) ? 1 : currentPage;
 
             if (isNaN(itemsNumber)) {
-                itemsNumber = CONSTANTS.DEFAULT_PER_PAGE;
+                itemsNumber = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
             }
 
             gridCount = (options.length >= 0) ? options.length : parseInt($gridCount.text(), 10);
@@ -646,7 +633,7 @@ define([
             $gridEnd.text(gridEndValue);
 
             if (options.length || options.length === 0) {
-                $lastPage = $curEl.find('#lastPage');
+                $lastPage = $thisEl.find('#lastPage');
                 pageNumber = Math.ceil(gridCount / itemsNumber);
                 $pageList.html('');
 
@@ -659,11 +646,11 @@ define([
                 $lastPage.text(pageNumber);
 
                 if (pageNumber <= 1) {
-                    $curEl.find('#nextPage').prop('disabled', true);
-                    $curEl.find('#previousPage').prop('disabled', true);
+                    $thisEl.find('#nextPage').prop('disabled', true);
+                    $thisEl.find('#previousPage').prop('disabled', true);
                 } else {
-                    $curEl.find('#previousPage').prop('disabled', gridStartValue + 1 === 1);
-                    $curEl.find('#nextPage').prop('disabled', gridEndValue === gridCount);
+                    $thisEl.find('#previousPage').prop('disabled', gridStartValue + 1 === 1);
+                    $thisEl.find('#nextPage').prop('disabled', gridEndValue === gridCount);
                 }
             }
 

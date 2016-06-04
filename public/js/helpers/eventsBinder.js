@@ -2,12 +2,11 @@ define([], function () {
     return {
         subscribeCollectionEvents: function (collection, contentView) {
             collection.bind('showmore', contentView.showMoreContent, contentView);
-            /* collection.bind('add', contentView.addItem, contentView);
-             collection.bind('remove', contentView.removeRow, contentView); */
             collection.bind('showmoreAlphabet', contentView.showMoreAlphabet, contentView);
             collection.bind('fetchFinished', contentView.setPagination, contentView);
         },
-        subscribeTopBarEvents    : function (topBarView, contentView) {
+
+        subscribeTopBarEvents: function (topBarView, contentView) {
             topBarView.bind('createEvent', contentView.createItem, contentView);
             topBarView.bind('editEvent', contentView.editItem, contentView);
             topBarView.bind('deleteEvent', contentView.deleteItems, contentView);
@@ -21,8 +20,6 @@ define([], function () {
             topBarView.bind('copyRow', contentView.copyRow, contentView);
             topBarView.bind('pay', contentView.newPayment, contentView);
             topBarView.bind('changeDateRange', contentView.changeDateRange, contentView);
-
-            // topBarView.bind('showFilteredContent', contentView.showFilteredContent, contentView);
         }
     };
 });

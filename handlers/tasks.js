@@ -648,6 +648,27 @@ var Tasks = function (models, event) {
         });
     };
 
+    this.getFilterValues = function (req, res, next) {
+        var task = models.get(req.session.lastDb, 'Task', tasksSchema);
+
+        task.aggregate([
+            {
+                $group: {
+                    _id : null,
+                    type: {
+                        $addToSet: '$type'
+                    }
+                }
+            }
+        ], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(result);
+        });
+    };
+
     this.getTasksPriority = function (req, res, next) {
 
         models.get(req.session.lastDb, 'Priority', prioritySchema).find({}, function (err, _priority) {

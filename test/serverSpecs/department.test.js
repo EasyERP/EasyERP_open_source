@@ -5,12 +5,11 @@ var aggent;
 
 require('../../config/development');
 
-
 describe('Department Specs', function () {
     'use strict';
     var id;
 
-    describe('Department with admin', function(){
+    describe('Department with admin', function () {
         before(function (done) {
             aggent = request.agent(url);
 
@@ -24,7 +23,7 @@ describe('Department Specs', function () {
                 .expect(200, done);
         });
 
-        after(function(done) {
+        after(function (done) {
             aggent
                 .get('logout')
                 .expect(302, done);
@@ -117,23 +116,25 @@ describe('Department Specs', function () {
 
         it('should update Department', function (done) {
             var body = {
-                '_id'          : '55b92ace21e4b7c40f000015',
-                'sequence'             : 1,
-                'nestingLevel'         : 0,
-                'editedBy'             : {
-                    'user': '52203e707d4dba8813000003'
+                _id         : '55b92ace21e4b7c40f000015',
+                sequence    : 1,
+                nestingLevel: 0,
+                editedBy    : {
+                    user: '52203e707d4dba8813000003'
                 },
-                'createdBy'            : {
-                    'date': '2015-07-29T19:34:38.909Z',
-                    'user': '52203e707d4dba8813000003'
+
+                createdBy: {
+                    date: '2015-07-29T19:34:38.909Z',
+                    user: '52203e707d4dba8813000003'
                 },
-                'users'                : [],
-                'departmentManager'    : null,
-                'parentDepartment'     : null,
-                'departmentName'       : 'HR5',
-                'creationDate'         : null,
-                'parentDepartmentStart': null,
-                'sequenceStart'        : 0
+
+                users                : [],
+                departmentManager    : null,
+                parentDepartment     : null,
+                departmentName       : 'HR5',
+                creationDate         : null,
+                parentDepartmentStart: null,
+                sequenceStart        : 0
             };
             aggent
                 .put('departments/' + id)
@@ -162,7 +163,7 @@ describe('Department Specs', function () {
         });
     });
 
-    describe('Department with user without a license', function(){
+    describe('Department with user without a license', function () {
 
         before(function (done) {
             aggent = request.agent(url);
@@ -177,7 +178,7 @@ describe('Department Specs', function () {
                 .expect(200, done);
         });
 
-        after(function(done){
+        after(function (done) {
             aggent
                 .get('logout')
                 .expect(302, done);

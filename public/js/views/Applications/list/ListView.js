@@ -36,7 +36,7 @@ define([
         filterView              : filterView,
         contentType             : 'Applications',
         totalCollectionLengthUrl: '/applications/totalCollectionLength',
-        formUrl                 : '#easyErp/Applications/form/',
+        formUrl                 : '#easyErp/Applications/',
 
         events: {
             'click .list td:not(.notForm)': 'goToEditDialog',
@@ -149,7 +149,8 @@ define([
 
             e.preventDefault();
 
-            model.urlRoot = '/applications/' + id;
+
+            model.urlRoot = '/applications/';
             model.fetch({
                 success: function (model) {
                     new EditView({model: model});

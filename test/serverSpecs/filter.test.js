@@ -57,40 +57,6 @@ describe('Filter Specs', function () {
                         .and.to.have.property('name')
                         .and.to.be.instanceOf(Array);
 
-                    typeFilter = body.Projects;
-
-                    expect(typeFilter).to.exist;
-
-                    expect(typeFilter).to.be.instanceOf(Object)
-                        .and.to.have.property('name')
-                        .and.to.be.instanceOf(Array)
-                        .and.to.have.deep.property('[0].name')
-                        .and.to.exist;
-
-                    expect(typeFilter)
-                        .to.have.property('workflow')
-                        .and.to.be.instanceOf(Array)
-                        .and.to.have.deep.property('[0].name')
-                        .and.to.exist;
-
-                    expect(typeFilter)
-                        .to.have.property('customer')
-                        .and.to.be.instanceOf(Array)
-                        .and.to.have.deep.property('[0].name')
-                        .and.to.exist;
-
-                    expect(typeFilter)
-                        .to.have.property('projectManager')
-                        .and.to.be.instanceOf(Array)
-                        .and.to.have.deep.property('[0].name')
-                        .and.to.exist;
-
-                    expect(typeFilter)
-                        .to.have.property('salesManager')
-                        .and.to.be.instanceOf(Array)
-                        .and.to.have.deep.property('[0].name')
-                        .and.to.exist;
-
 //------------------------ Leads  ----------------
 
                     typeFilter = body.Leads;
@@ -314,6 +280,42 @@ describe('Filter Specs', function () {
                         .and.to.exist;
 
 //------------------------ PROJECT -------------------
+//------------------------ Projects -------------------
+
+                    typeFilter = body.Projects;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('name')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('workflow')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('customer')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('projectManager')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('salesManager')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
 //------------------------ Tasks -------------------
 
                     typeFilter = body.Tasks;
@@ -416,6 +418,60 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
+//---------------------------  HR  ------------------------
+//--------------------------- Employee  ----------------
+
+                    typeFilter = body.Employees;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('department')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('jobPosition')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('manager')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('name')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+//--------------------------- Application  ----------------
+
+                    typeFilter = body.Applications;
+
+                    expect(typeFilter).to.exist;
+
+                    expect(typeFilter).to.be.instanceOf(Object)
+                        .and.to.have.property('department')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('jobPosition')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
+
+                    expect(typeFilter)
+                        .to.have.property('name')
+                        .and.to.be.instanceOf(Array)
+                        .and.to.have.deep.property('[0].name')
+                        .and.to.exist;
 
                     done();
                     // todo test other properties if its need

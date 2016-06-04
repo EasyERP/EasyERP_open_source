@@ -4,8 +4,7 @@ var objectId = mongoose.Types.ObjectId;
 
 var Employee = function (event, models) {
     'use strict';
-    var accessRoll = require('../helpers/accessRollHelper.js')(models);
-    var uploadFileArray = require('../helpers/uploadFileArray.js')();
+
     var EmployeeSchema = mongoose.Schemas.Employee;
     var ProjectSchema = mongoose.Schemas.Project;
     var DepartmentSchema = mongoose.Schemas.Department;
@@ -13,9 +12,11 @@ var Employee = function (event, models) {
     var LanguageSchema = mongoose.Schemas.language;
     var SourceSchema = mongoose.Schemas.source;
     var birthdaysSchema = mongoose.Schemas.birthday;
+
+    var accessRoll = require('../helpers/accessRollHelper.js')(models);
+    var uploadFileArray = require('../helpers/uploadFileArray.js')();
     var _ = require('underscore');
     var fs = require('fs');
-    var moment = require('../public/js/libs/moment/moment');
     var validatorEmployee = require('../helpers/validator');
     var Payroll = require('../handlers/payroll');
     var pageHelper = require('../helpers/pageHelper');
@@ -26,8 +27,8 @@ var Employee = function (event, models) {
     var exportDecorator = require('../helpers/exporter/exportDecorator');
     var exportMap = require('../helpers/csvMap').Employees;
     /* exportDecorator.addExportFunctionsToHandler(this, function (req) {
-       return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
-    }, exportMap, 'Employees');*/
+     return models.get(req.session.lastDb, 'Employee', EmployeeSchema);
+     }, exportMap, 'Employees');*/
 
     this.exportToXlsx = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -274,7 +275,7 @@ var Employee = function (event, models) {
         Model
             .find({_id: {$in: idsArray}})
             .populate('jobPosition', '_id name')
-            .populate('department', '_id departmentName')
+            .populate('department', '_id name')
             .exec(function (err, result) {
                 if (err) {
                     return next(err);
@@ -390,7 +391,7 @@ var Employee = function (event, models) {
                     resArray.push(filtrElement);
                     break;
                 case 'letter':
-                    filtrElement['name.last'] = new RegExp('^[' + filter.letter.toLowerCase() + filter.letter.toUpperCase() + '].*');
+                    filtrElement['name.last'] = new RegExp('^[' + condition.toLowerCase() + condition.toUpperCase() + '].*');
                     resArray.push(filtrElement);
                     break;
                 case 'department':
@@ -432,9 +433,9 @@ var Employee = function (event, models) {
             .populate('manager', '_id name')
             .populate('jobPosition', '_id name fullName')
             .populate('weeklyScheduler', '_id name')
-            .populate('department', '_id departmentName')
+            .populate('department', '_id name')
             .populate('groups.group')
-            .populate('transfer.department', '_id departmentName')
+            .populate('transfer.department', '_id name')
             .populate('transfer.jobPosition', '_id name')
             .populate('transfer.manager', '_id name')
             .populate('transfer.weeklyScheduler', '_id name')
@@ -723,7 +724,6 @@ var Employee = function (event, models) {
                 case ('Employees'):
                     switch (viewType) {
                         case ('list'):
-                        {
                             project = {
                                 manager         : {$arrayElemAt: ['$manager', 0]},
                                 jobPosition     : {$arrayElemAt: ['$jobPosition', 0]},
@@ -742,9 +742,12 @@ var Employee = function (event, models) {
                             };
 
                             projectSecond = {
+                                'manager._id'              : '$manager._id',
                                 'manager.name'             : '$manager.name',
+                                'jobPosition._id'          : '$jobPosition._id',
                                 'jobPosition.name'         : '$jobPosition.name',
-                                'department.departmentName': '$department.departmentName',
+                                'department._id'           : '$department._id',
+                                'department.name'          : '$department.name',
                                 'createdBy.user'           : 1,
                                 'editedBy.user'            : 1,
                                 'editedBy.date'            : 1,
@@ -776,14 +779,15 @@ var Employee = function (event, models) {
                                 isEmployee      : '$root.isEmployee',
                                 total           : 1
                             };
-                        }
+
                             break;
                         case ('thumbnails'):
-                        {
                             project = {
+                                manager            : {$arrayElemAt: ['$manager', 0]},
                                 jobPosition        : {$arrayElemAt: ['$jobPosition', 0]},
                                 age                : 1,
                                 relatedUser        : {$arrayElemAt: ['$relatedUser', 0]},
+                                department         : {$arrayElemAt: ['$department', 0]},
                                 'workPhones.mobile': 1,
                                 name               : 1,
                                 dateBirth          : 1,
@@ -791,27 +795,33 @@ var Employee = function (event, models) {
                             };
 
                             projectSecond = {
+                                'manager.name'     : '$manager.name',
+                                'manager._id'      : '$manager._id',
+                                'jobPosition._id'  : '$jobPosition._id',
                                 'jobPosition.name' : '$jobPosition.name',
                                 age                : 1,
                                 'relatedUser.login': '$relatedUser.login',
                                 workPhones         : 1,
                                 name               : 1,
                                 dateBirth          : 1,
-                                isEmployee         : 1
+                                isEmployee         : 1,
+                                'department.name'  : '$department.name',
+                                'department._id'   : '$department._id'
                             };
 
                             projectAfterRoot = {
                                 _id        : '$root._id',
                                 jobPosition: '$root.jobPosition',
+                                manager    : '$root.manager',
                                 age        : '$root.age',
                                 relatedUser: '$root.relatedUser',
                                 workPhones : '$root.workPhones',
                                 name       : '$root.name',
+                                department : '$root.department',
                                 dateBirth  : '$root.dateBirth',
                                 isEmployee : '$root.isEmployee',
                                 total      : 1
                             };
-                        }
                             break;
 
                     }
@@ -819,7 +829,6 @@ var Employee = function (event, models) {
                 case ('Applications'):
                     switch (viewType) {
                         case ('list'):
-                        {
                             if (data && data.filter && data.filter.workflow) {
                                 data.filter.workflow = data.filter.workflow.map(function (item) {
                                     return item === 'null' ? null : item;
@@ -830,6 +839,7 @@ var Employee = function (event, models) {
                                 jobPosition     : {$arrayElemAt: ['$jobPosition', 0]},
                                 'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
                                 'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
+                                department      : {$arrayElemAt: ['$department', 0]},
                                 name            : 1,
                                 'editedBy.date' : 1,
                                 'createdBy.date': 1,
@@ -855,6 +865,7 @@ var Employee = function (event, models) {
                                 name            : 1,
                                 dateBirth       : 1,
                                 skype           : 1,
+                                department      : 1,
                                 workEmail       : 1,
                                 workPhones      : 1,
                                 jobType         : 1,
@@ -869,10 +880,13 @@ var Employee = function (event, models) {
                             projectAfterRoot = {
                                 _id               : '$root._id',
                                 'jobPosition.name': '$root.jobPosition.name',
+                                'jobPosition._id' : '$root.jobPosition._id',
                                 'createdBy.user'  : '$root.createdBy.user.login',
                                 'editedBy.user'   : '$root.editedBy.user.login',
                                 'editedBy.date'   : '$root.editedBy.date',
                                 'createdBy.date'  : '$root.createdBy.createdBy',
+                                'department._id'  : '$root.department._id',
+                                'department.name' : '$root.department.name',
                                 name              : '$root.name',
                                 dateBirth         : '$root.dateBirth',
                                 skype             : '$root.skype',
@@ -887,7 +901,6 @@ var Employee = function (event, models) {
                                 fire              : '$root.fire',
                                 total             : 1
                             };
-                        }
                             break;
                     }
                     break;
@@ -1126,24 +1139,20 @@ var Employee = function (event, models) {
                         if (fileName) {
                             switch (osType) {
                                 case 'Windows':
-                                {
                                     newDirname = __dirname.replace('\\Modules', '');
                                     while (newDirname.indexOf('\\') !== -1) {
                                         newDirname = newDirname.replace('\\', '\/');
                                     }
                                     path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                                     dir = newDirname + '\/uploads\/' + _id;
-                                }
                                     break;
                                 case 'Linux':
-                                {
                                     newDirname = __dirname.replace('/Modules', '');
                                     while (newDirname.indexOf('\\') !== -1) {
                                         newDirname = newDirname.replace('\\', '\/');
                                     }
                                     path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
                                     dir = newDirname + '\/uploads\/' + _id;
-                                }
                                     break;
                             }
 
@@ -1208,13 +1217,11 @@ var Employee = function (event, models) {
             accessRoll(req, Model, cb);
         };
 
-
         contentSearcher = function (responseApplications, cb) {
             filterObj.$and = [];
             filterObj.$and.push({isEmployee: false});
             filterObj.$and.push({workflow: objectId(data.workflowId)});
             filterObj.$and.push({_id: {$in: responseApplications}});
-
 
             Model
                 .find(filterObj)
@@ -1247,7 +1254,6 @@ var Employee = function (event, models) {
             res.status(200).send(response);
         });
     }
-
 
     this.getForDdByRelatedUser = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -1501,7 +1507,6 @@ var Employee = function (event, models) {
                 return callback(0);
             }
 
-
             if (birth[0].date < dateOnly) {
                 callback(0);
             } else {
@@ -1677,7 +1682,7 @@ var Employee = function (event, models) {
                 Model.find().where('_id').in(result)
                     .select('_id name dateBirth age jobPosition workPhones.mobile department')
                     .populate('jobPosition', '_id name')
-                    .populate('department', ' _id departmentName')
+                    .populate('department', ' _id name')
                     .lean()
                     .exec(function (err, resArray) {
                         if (err) {
@@ -1725,21 +1730,15 @@ var Employee = function (event, models) {
         check(req, function (status, employees) {
             switch (status) {
                 case -1:
-                {
                     err.status = 500;
                     next(err);
-                }
                     break;
                 case 0:
-                {
                     getEmployeesInDateRange(req, res, next, set);
-                }
                     break;
                 case 1:
-                {
                     result.data = employees;
                     res.status(200).send(result);
-                }
                     break;
             }
         });

@@ -2,8 +2,8 @@ function kill(req, res, next) {
     if (req.session) {
         req.session.destroy();
     }
-    res.status(200).send({success: "Logout successful"});
-};
+    res.status(200).send({success: 'Logout successful'});
+}
 
 function authenticatedUser(req, res, next) {
     var err;
@@ -15,7 +15,7 @@ function authenticatedUser(req, res, next) {
         err.status = 401;
         next(err);
     }
-};
+}
 
 exports.kill = kill;
 exports.authenticatedUser = authenticatedUser;

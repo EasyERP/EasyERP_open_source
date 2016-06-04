@@ -10,7 +10,7 @@ define([
     'common',
     'constants'
 
-], function (Backbone, _, $, mainView, loginView, dataService, eventsBinder, custom, common, CONTENT_TYPES) {
+], function (Backbone, _, $, mainView, loginView, dataService, eventsBinder, custom, common, CONSTANTS) {
     'use strict';
     var bindDefaultUIListeners = function () {
         $(document).on('keydown', '.ui-dialog', function (e) {
@@ -99,7 +99,7 @@ define([
             bindDefaultUIListeners();
 
             if (!App || !App.currentUser) {
-                dataService.getData(CONTENT_TYPES.URLS.CURRENT_USER, null, function (response) {
+                dataService.getData(CONSTANTS.URLS.CURRENT_USER, null, function (response) {
                     if (response && !response.error) {
                         App.currentUser = response.user;
                         App.savedFilters = response.savedFilters;
@@ -810,6 +810,7 @@ define([
 
         goToList: function (contentType, parrentContentId, page, countPerPage, filter) {
             var self = this;
+
             this.checkLogin(function (success) {
                 if (success) {
                     if (!App || !App.currentDb) {
@@ -831,8 +832,19 @@ define([
             });
 
             function goList(context) {
+                var self = context;
                 var currentContentType = context.testContent(contentType);
+                var location = window.location.hash;
+                var startTime = new Date();
                 var url;
+                var savedFilter;
+                var startDate;
+                var endDate;
+                var contentViewUrl;
+                var topBarViewUrl;
+                var collectionUrl;
+                var navigatePage;
+                var count;
 
                 if (contentType !== currentContentType) {
                     contentType = currentContentType;
@@ -845,21 +857,21 @@ define([
                     Backbone.history.navigate(url, {replace: true});
                 }
 
-                var newCollection = true;
-                var self = context;
-                var savedFilter;
-                var startDate;
-                var endDate;
-                var startTime = new Date();
-                var contentViewUrl = "views/" + contentType + "/list/ListView";
-                var topBarViewUrl = "views/" + contentType + "/TopBarView";
-                var collectionUrl = context.buildCollectionRoute(contentType);
-                var navigatePage = (page) ? parseInt(page) : 1;
-                var count = (countPerPage) ? parseInt(countPerPage) || 100 : 100;
-                var location = window.location.hash;
+                contentViewUrl = 'views/' + contentType + '/list/ListView';
+                topBarViewUrl = 'views/' + contentType + '/TopBarView';
+                collectionUrl = context.buildCollectionRoute(contentType);
+                page = parseInt(page, 10);
+                count = parseInt(countPerPage, 10);
+
+                if (isNaN(page)) {
+                    page = 1;
+                }
+                if (isNaN(count)) {
+                    count = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
+                }
+
 
                 if (!filter) {
-                    newCollection = false;
 
                     if (contentType === 'salesProduct') {
                         filter = {
@@ -874,7 +886,7 @@ define([
                         Backbone.history.navigate(location + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     } else if (contentType === 'Product') {
                         filter = {
-                            'canBePurchased': {
+                            canBePurchased: {
                                 key  : 'canBePurchased',
                                 value: ['true']
                             }
@@ -897,46 +909,42 @@ define([
                 require([contentViewUrl, topBarViewUrl, collectionUrl], function (contentView, topBarView, contentCollection) {
                     var collection = new contentCollection({
                         viewType        : 'list',
-                        page            : navigatePage,
+                        page            : page,
+                        reset           : true,
                         count           : count,
                         filter          : savedFilter,
                         parrentContentId: parrentContentId,
-                        contentType     : contentType,
-                        newCollection   : newCollection
+                        contentType     : contentType
                     });
 
                     collection.bind('reset', _.bind(createViews, self));
                     custom.setCurrentVT('list');
 
                     function createViews() {
+                        var topbarView;
+                        var contentview;
+
                         collection.unbind('reset');
 
-                        var topbarView = new topBarView({
-                            actionType: "Content",
+                        topbarView = new topBarView({
+                            actionType: 'Content',
                             collection: collection
                         });
-                        var contentview = new contentView({
-                            collection   : collection,
-                            startTime    : startTime,
-                            filter       : savedFilter,
-                            newCollection: newCollection
+                        contentview = new contentView({
+                            collection: collection,
+                            startTime : startTime,
+                            filter    : savedFilter
                         });
 
-                        topbarView.bind('copyEvent', contentview.copy, contentview);
-                        topbarView.bind('generateEvent', contentview.generate, contentview);
-                        topbarView.bind('createEvent', contentview.createItem, contentview);
-                        topbarView.bind('editEvent', contentview.editItem, contentview);
-                        topbarView.bind('saveEvent', contentview.saveItem, contentview);
-                        topbarView.bind('deleteEvent', contentview.deleteItems, contentview);
-                        topbarView.bind('generateInvoice', contentview.generateInvoice, contentview);
-                        topbarView.bind('copyRow', contentview.copyRow, contentview);
-                        topbarView.bind('exportToCsv', contentview.exportToCsv, contentview);
-                        topbarView.bind('exportToXlsx', contentview.exportToXlsx, contentview);
-                        topbarView.bind('importEvent', contentview.importFiles, contentview);
-                        topbarView.bind('pay', contentview.newPayment, contentview);
-                        topbarView.bind('changeDateRange', contentview.changeDateRange, contentview);
+                        eventsBinder.subscribeTopBarEvents(topbarView, contentview);
+                        eventsBinder.subscribeCollectionEvents(collection, contentview);
 
-                        collection.bind('showmore', contentview.showMoreContent, contentview);
+                        collection.trigger('fetchFinished', {
+                            totalRecords: collection.totalRecords,
+                            currentPage : collection.currentPage,
+                            pageSize    : collection.pageSize
+                        });
+
                         context.changeView(contentview);
                         context.changeTopBarView(topbarView);
                     }
@@ -1142,17 +1150,17 @@ define([
                 var newCollection = true;
                 var startTime = new Date();
                 var viewType = custom.getCurrentVT({contentType: contentType}); // for default filter && defaultViewType
-                var count;
                 var topBarViewUrl;
                 var contentViewUrl;
                 var collectionUrl;
                 var savedFilter;
                 var url;
 
-                if (count) {
-                    count = parseInt(countPerPage, 10);
-                    if (isNaN(count)) {
-                        count = 0;
+                if (countPerPage) {
+                    countPerPage = parseInt(countPerPage, 10);
+
+                    if (isNaN(countPerPage)) {
+                        countPerPage = 0;
                     }
                 }
 
@@ -1166,7 +1174,6 @@ define([
                 topBarViewUrl = 'views/' + contentType + '/TopBarView';
 
                 if (!filter) {
-                    newCollection = false;
 
                     if (contentType === 'salesProduct') {
                         filter = {
@@ -1177,7 +1184,7 @@ define([
                         };
 
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                        Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     } else if (contentType === 'Product') {
                         filter = {
                             canBePurchased: {
@@ -1187,7 +1194,7 @@ define([
                         };
 
                         Backbone.history.fragment = '';
-                        Backbone.history.navigate(location + '/c=' + count + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
+                        Backbone.history.navigate(location + '/c=' + countPerPage + '/filter=' + encodeURI(JSON.stringify(filter)), {replace: true});
                     }
                 } else if (filter) {
                     filter = JSON.parse(filter);
@@ -1211,7 +1218,7 @@ define([
                         collection = new contentCollection({
                             viewType   : 'thumbnails',
                             reset      : true,
-                            count      : count,
+                            count      : countPerPage,
                             filter     : filter,
                             contentType: contentType
                         });
@@ -1250,8 +1257,8 @@ define([
         },
 
         testContent: function (contentType) {
-            if (!CONTENT_TYPES[contentType.toUpperCase()]) {
-                contentType = CONTENT_TYPES.PERSONS;
+            if (!CONSTANTS[contentType.toUpperCase()]) {
+                contentType = CONSTANTS.PERSONS;
             }
 
             return contentType;
