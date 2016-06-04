@@ -40,40 +40,40 @@ define([
     var fakeCompaniesList = {
         data: [
             {
-            _id           : "56bc9b53dfd8a81466e2f48b",
-            editedBy      : {
-                date: "2016-02-11T14:31:47.740Z",
-                user: null
+                _id           : "56bc9b53dfd8a81466e2f48b",
+                editedBy      : {
+                    date: "2016-02-11T14:31:47.740Z",
+                    user: null
+                },
+                createdBy     : {
+                    date: "2016-02-11T14:31:47.740Z",
+                    user: null
+                },
+                salesPurchases: {
+                    receiveMessages: 0,
+                    language       : "English",
+                    reference      : "",
+                    active         : false,
+                    implementedBy  : null,
+                    salesTeam      : null,
+                    salesPerson    : null,
+                    isSupplier     : false,
+                    isCustomer     : false
+                },
+                phones        : {
+                    phone: ""
+                },
+                address       : {
+                    country: ""
+                },
+                email         : "",
+                name          : {
+                    last : "",
+                    first: "TestAlina"
+                },
+                fullName      : "TestAlina ",
+                id            : "56bc9b53dfd8a81466e2f48b"
             },
-            createdBy     : {
-                date: "2016-02-11T14:31:47.740Z",
-                user: null
-            },
-            salesPurchases: {
-                receiveMessages: 0,
-                language       : "English",
-                reference      : "",
-                active         : false,
-                implementedBy  : null,
-                salesTeam      : null,
-                salesPerson    : null,
-                isSupplier     : false,
-                isCustomer     : false
-            },
-            phones        : {
-                phone: ""
-            },
-            address       : {
-                country: ""
-            },
-            email         : "",
-            name          : {
-                last : "",
-                first: "TestAlina"
-            },
-            fullName      : "TestAlina ",
-            id            : "56bc9b53dfd8a81466e2f48b"
-        },
             {
                 _id           : "56a9ee95d59a04d6225b0df4",
                 editedBy      : {
@@ -219,21 +219,21 @@ define([
         total: 100,
         data : [
             {
-            _id     : "55b92ad521e4b7c40f00060d",
-            address : {
-                country: "USA",
-                zip    : "49525 ",
-                state  : "Michigan",
-                city   : "Grand Rapids",
-                street : "4647 Shearwood Ct."
+                _id     : "55b92ad521e4b7c40f00060d",
+                address : {
+                    country: "USA",
+                    zip    : "49525 ",
+                    state  : "Michigan",
+                    city   : "Grand Rapids",
+                    street : "4647 Shearwood Ct."
+                },
+                name    : {
+                    last : "",
+                    first: "Sportsman Tracker"
+                },
+                fullName: "Sportsman Tracker ",
+                id      : "55b92ad521e4b7c40f00060d"
             },
-            name    : {
-                last : "",
-                first: "Sportsman Tracker"
-            },
-            fullName: "Sportsman Tracker ",
-            id      : "55b92ad521e4b7c40f00060d"
-        },
             {
                 _id     : "55b92ad521e4b7c40f00061d",
                 address : {
@@ -1592,13 +1592,17 @@ define([
             //formView.remove();
             //editView.remove();
 
+            if ($('.ui-dialog').length) {
+                $('.ui-dialog').remove();
+            }
+
             debounceStub.restore();
             windowConfirmStub.restore();
         });
 
         describe('#initialize()', function () {
             var server;
-            
+
             before(function () {
                 $fixture = $(fixtures);
                 $fixture.appendTo(document.body);
@@ -1685,7 +1689,7 @@ define([
                     viewType     : 'list'
                 });
                 server.respond();
-                
+
                 expect(companiesCollection).to.have.lengthOf(3);
 
                 topBarView = new TopBarView({
@@ -1716,60 +1720,57 @@ define([
         });
 
         /*describe('Companies list View', function () {
-            var server;
+         var server;
 
-            before(function () {
-                server = sinon.fakeServer.create();
-            });
+         before(function () {
+         server = sinon.fakeServer.create();
+         });
 
-            after(function () {
-                server.restore();
-            });
+         after(function () {
+         server.restore();
+         });
 
-            it('Try to create companies list view', function () {
-                var $contentHolderEl;
-                var $searchContainerEl;
-                var $alphabetEl;
-                var companiesAlphabetUrl = new RegExp('\/customers\/getCompaniesAlphabet', 'i');
+         it('Try to create companies list view', function () {
+         var $contentHolderEl;
+         var $searchContainerEl;
+         var $alphabetEl;
+         var companiesAlphabetUrl = new RegExp('\/customers\/getCompaniesAlphabet', 'i');
 
-                server.respondWith('GET', companiesAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlphabet)]);
-                listView = new ListView({
-                    collection: companiesCollection,
-                    startTime : new Date()
-                });
+         server.respondWith('GET', companiesAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlphabet)]);
+         listView = new ListView({
+         collection: companiesCollection,
+         startTime : new Date()
+         });
 
-                server.respond();
+         server.respond();
 
-                $contentHolderEl = listView.$el;
-                $searchContainerEl = $contentHolderEl.find('.search-view');
-                $alphabetEl = $contentHolderEl.find('#startLetter');
+         $contentHolderEl = listView.$el;
+         $searchContainerEl = $contentHolderEl.find('.search-view');
+         $alphabetEl = $contentHolderEl.find('#startLetter');
 
-                expect($contentHolderEl).to.exist;
-                expect($searchContainerEl).to.exist;
-                expect($alphabetEl).to.exist;
-                expect($contentHolderEl.find('table')).to.exist;
-                expect($contentHolderEl.find('table')).to.have.class('list');
-            });
+         expect($contentHolderEl).to.exist;
+         expect($searchContainerEl).to.exist;
+         expect($alphabetEl).to.exist;
+         expect($contentHolderEl.find('table')).to.exist;
+         expect($contentHolderEl.find('table')).to.have.class('list');
+         });
 
-        });*/
+         });*/
 
         describe('Companies thumbnail view', function () {
             var companiesCollection;
             var server;
             var $thisEl;
             var clock;
-            var gotoCompanySpy;
 
             before(function () {
                 server = sinon.fakeServer.create();
                 clock = sinon.useFakeTimers();
-                gotoCompanySpy = sinon.spy(ThumbnailsView.prototype, 'gotoForm');
             });
 
             after(function () {
                 server.restore();
                 clock.restore();
-                gotoCompanySpy.restore();
             });
 
             it('Try to create persons thumbnails view', function (done) {
@@ -1886,20 +1887,19 @@ define([
                 expect($thisEl.find('#showMore')).to.exist;
             });
 
-            it('Try to go to Company form', function () {
-                var $firsEl = $thisEl.find('.thumbnailwithavatar').first();
-                var $goToFormBtn = $firsEl.find('.gotoForm').first();
-                var id = $goToFormBtn.attr('data-id');
-                var expectedUrl = '#easyErp/Companies/form/' + id;
+            /*it('Try to go to Company form', function () {
+             var $firsEl = $thisEl.find('.thumbnailwithavatar').first();
+             var $goToFormBtn = $firsEl.find('.gotoForm').first();
+             var id = $goToFormBtn.attr('data-id');
+             var expectedUrl = '#easyErp/Companies/form/' + id;
 
-                $goToFormBtn.click();
-                expect(gotoCompanySpy.calledOnce).to.be.true;
-                expect(window.location.hash).to.be.equals(expectedUrl);
-            });
+             $goToFormBtn.click();
+             expect(window.location.hash).to.be.equals(expectedUrl);
+             });*/
 
         });
 
-        /*describe('Form View', function () {
+        describe('Form View', function () {
             var companyModel;
             var server;
             var mainSpy;
@@ -1931,6 +1931,9 @@ define([
 
                 companyModel.fetch({
                     success: function (model) {
+
+                        expect(model).to.be.instanceOf(Object);
+
                         formView = new FormView({
                             model    : model,
                             startTime: new Date()
@@ -1940,21 +1943,10 @@ define([
                         server.respondWith('GET', '/opportunities/OpportunitiesForMiniView?person=&company=55b92ad521e4b7c40f00060d&page=1&count=4&onlyCount=false', [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeOpportunitiesForFormView)]);
                         server.respondWith('GET', '/persons/getPersonsForMiniView?companyId=55b92ad521e4b7c40f00060d&page=1&count=4&onlyCount=true', [200, {'Content-Type': 'application/json'}, JSON.stringify({listLength: 98})]);
                         server.respondWith('GET', '/persons/getPersonsForMiniView?companyId=55b92ad521e4b7c40f00060d&page=1&count=4&onlyCount=false', [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersonsForMiveView)]);
-
                         formView.render();
-
-                        server.respond();
-                        server.respond();
-                        server.respond();
                         server.respond();
 
-                        topBarView.bind('pay', formView.newPayment, formView);
-                        topBarView.bind('deleteEvent', formView.deleteItems, formView);
-                        topBarView.bind('editEvent', formView.editItem, formView);
-                        topBarView.bind('saveEvent', formView.saveItem, formView);
-                        topBarView.bind('copyEvent', formView.copy, formView);
-                        topBarView.bind('generateEvent', formView.generate, formView);
-                        topBarView.bind('createEvent', formView.createItem, formView);
+                        eventsBinder.subscribeTopBarEvents(topBarView, formView);
 
                         done();
                     },
@@ -1968,7 +1960,6 @@ define([
                 $contentHolder = formView.$el;
 
                 expect($contentHolder).to.exist;
-
             });
 
             it('Try to click on pagination for opportunity miniView', function () {
@@ -2004,7 +1995,6 @@ define([
                 server.respond();
                 expect($formEl.find('.prev')).to.have.class('not-active');
                 expect($formEl.find('.first')).to.have.class('not-active');
-
             });
 
             it('Try to click on pagination for persons miniView', function () {
@@ -2043,17 +2033,6 @@ define([
                 expect($formEl.find('.firstPersons')).to.have.class('not-active');
             });
 
-            it('Try to change social active', function () {
-                var $formEl = formView.$el;
-                var $social = $formEl.find('.social a');
-
-                $social.mouseover();
-
-                $social.mouseleave();
-
-
-            });
-
             it('Try to quick edit with error validate', function () {
                 var $editSpan;
                 var $editInput;
@@ -2062,6 +2041,8 @@ define([
                 var $formHolder = formView.$el;
                 var $editableEl = $($formHolder.find('.editable')[5]);
                 var companyIdUrl = new RegExp('/Companies/', 'i');
+
+                mainSpy.reset();
 
                 $editableEl.mouseenter();
                 $editSpan = $formHolder.find('#editSpan a');
@@ -2072,15 +2053,11 @@ define([
                 $saveSpan = $formHolder.find('#saveSpan');
 
                 $editInput.val('vvsdas'); // not valid email
-
                 server.respondWith('PATCH', companyIdUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(new Error())]);
-
                 $saveSpan.click();
-
                 server.respond();
 
                 spyResponse = mainSpy.args[0][0];
-
                 expect(spyResponse).to.have.property('type', 'error');
             });
 
@@ -2126,6 +2103,7 @@ define([
                 var customersUrl = new RegExp('\/customers\/', 'i');
                 var workflowUrl = new RegExp('\/workflows\/getWorkflowsForDd', 'i');
                 var taskUrl = new RegExp('\/tasks\/priority', 'i');
+                var $dialog;
 
                 server.respondWith('GET', userForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
                 server.respondWith('GET', depsForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepsForDD)]);
@@ -2133,13 +2111,13 @@ define([
                 server.respondWith('GET', customersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomers)]);
                 server.respondWith('GET', workflowUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWorkflowForDD)]);
                 server.respondWith('GET', taskUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTaskPriority)]);
-
                 $createOppBtn.click();
-
                 server.respond();
 
-                expect($('#createOpportunities')).to.exist;
-
+                $dialog = $('.ui-dialog');
+                expect($dialog).to.exist;
+                expect($dialog.find('.dialog-tabs')).to.exist;
+                expect($dialog.find('.dialog-tabs > li')).to.have.lengthOf(3);
             });
 
             it('Try to change tab', function () {
@@ -2305,42 +2283,24 @@ define([
                 expect($('.ui-dialog')).to.not.exist;
             });
 
-            it('Try to showEdit|hideEdit PersonCreateForm', function () {
-                var $createPersonBtn = formView.$el.find('.formRightColumn .btnHolder .add.persons');
-                var $dialog;
-                var $avatar;
-
-                $createPersonBtn.click();
-
-                server.respond();
-                server.respond();
-                server.respond();
-                server.respond();
-                server.respond();
-                server.respond();
-
-                expect('.ui-dialog').to.exist;
-
-                $dialog = $('.ui-dialog');
-                $avatar = $dialog.find('.avatar');
-
-                $avatar.mouseenter();
-                //clock.tick(260000);
-                //expect($avatar.find('.upload')).to.have.css('height', '20px');
-                $avatar.mouseleave();
-                //clock.tick(260000);
-                //expect($avatar.find('.upload')).to.have.css('height', '0px');
-
-            });
-
             it('Try to save person', function () {
                 var $selectedItem;
                 var $next;
                 var $prev;
-                var $createBtn = $('#create-person-dialog');
-                var $form = $('.ui-dialog');
-                var $secondTab = $form.find('.dialog-tabs > li:nth-child(2) > a');
-                var $salesTeam = $form.find('#departmentDd');
+                var $createBtn;
+                var $form;
+                var $secondTab;
+                var $salesTeam;
+                var $createPersonBtn = formView.$el.find('.formRightColumn .btnHolder .add.persons');
+
+                $createPersonBtn.click();
+                server.respond();
+
+                expect('.ui-dialog').to.exist;
+                $createBtn = $('#create-person-dialog');
+                $form = $('.ui-dialog');
+                $secondTab = $form.find('.dialog-tabs > li:nth-child(2) > a');
+                $salesTeam = $form.find('#departmentDd');
 
                 $secondTab.click();
 
@@ -2356,16 +2316,13 @@ define([
                 $form.find('#lastName').val('Test');
 
                 server.respondWith('POST', '/persons/', [201, {'Content-Type': 'application/json'}, JSON.stringify({
-                    success: "A new Person create success",
+                    success: 'A new Person create success',
                     id     : '123'
                 })]);
-
                 $createBtn.click();
-
                 server.respond();
 
                 $('.ui-dialog').remove();
-
                 expect(window.location.hash).to.be.equals('#easyErp/Persons');
             });
 
@@ -2373,7 +2330,6 @@ define([
                 var $gotoPersonBtn = $('#persons p > a');
 
                 $gotoPersonBtn.click();
-
                 expect(window.location.hash).to.equals('#easyErp/Persons/form/55b92ad521e4b7c40f00060c');
             });
 
@@ -2391,11 +2347,9 @@ define([
                 server.respondWith('GET', emplLangUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmplLang)]);
                 server.respondWith('GET', emplRelUserUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmplRelUser)]);
                 server.respondWith('GET', customersUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomers)]);
-
                 editView = new EditView({
                     model: companyModel
                 });
-
                 server.respond();
 
                 $contentHolderEl = editView.$el;
@@ -2412,28 +2366,10 @@ define([
                 expect($firstTab).to.have.class('active');
 
                 $secondTab.click();
-
                 expect($secondTab).to.have.class('active');
 
                 $thirdTab.click();
-
                 expect($thirdTab).to.have.class('active');
-            });
-
-            it('Try to showEdit|hideEdit', function () {
-                var $firstTab = $('.dialog-tabs > li:nth-child(1) > a');
-                var $dialog = $('.ui-dialog');
-                var $avatar = $dialog.find('.avatar');
-
-
-                $avatar.mouseover();
-                //clock.tick(260000);
-                //expect($avatar.find('.upload')).to.have.css('height', '20px');
-                $avatar.mouseleave();
-                //clock.tick(260000);
-                //expect($avatar.find('.upload')).to.have.css('height', '0px');
-
-                // done();
             });
 
             it('Try to PATCH company with error', function () {
@@ -2469,13 +2405,10 @@ define([
                 var companiesUrl = new RegExp('\/Companies\/', 'i');
 
                 server.respondWith('DELETE', companiesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'customer removed'})]);
-
                 deleteBtn.click();
-
                 server.respond();
 
                 expect(window.location.hash).to.equals('#easyErp/Companies');
-
             });
 
             it('Try to PATCH company', function () {
@@ -2507,19 +2440,14 @@ define([
                 $selectBtn = $('.current-selected')[1];
 
                 $form.find('#name').val('testCompany');
-
                 $selectBtn.click();
-
                 $salesTeam = $('#departmentDd .newSelectList li')[0];
-
                 $salesTeam.click();
 
                 server.respondWith('PUT', companiesUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                     id: '123'
                 })]);
-
                 editBtn.click();
-
                 server.respond();
 
                 expect(window.location.hash).to.be.equals('#easyErp/Companies/form/55b92ad521e4b7c40f00060d');
@@ -2607,6 +2535,7 @@ define([
                 var emplRelUserUrl = new RegExp('\/employees\/getForDdByRelatedUser', 'i');
                 var customersUrl = new RegExp('\/customers\/', 'i');
                 var $createBtn = topBarView.$el.find('#top-bar-createBtn');
+                var $dialog;
 
                 server.respondWith('GET', userForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
                 server.respondWith('GET', depsForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepsForDD)]);
@@ -2616,13 +2545,14 @@ define([
                 expect($('#dialogContainer')).to.empty;
                 $createBtn.click();
                 server.respond();
-                server.respond();
-                server.respond();
-                server.respond();
-                server.respond();
 
-                expect($('.ui-dialog')).to.exist;
-                expect($('.form-holder')).to.exist;
+                $dialog = $('.ui-dialog');
+                expect($dialog).to.exist;
+                expect($dialog.find('.dialog-tabs')).to.exist;
+                expect($dialog.find('.dialog-tabs > li')).to.have.lengthOf(3);
+                expect($dialog.find('.avatar')).to.exist;
+                expect($dialog.find('.avatarInfoContainer')).to.exist;
+                expect($dialog.find('.avatarInfoContainer  .half-block')).to.have.lengthOf(2);
             });
 
             it('Try to save lead without need data', function () {
@@ -2632,9 +2562,7 @@ define([
                 createBtn.click();
 
                 spyResponse = mainSpy.args[0][0];
-
                 expect(spyResponse).to.have.property('type', 'error');
-
             });
 
             it('Try to change tab', function () {
@@ -2716,7 +2644,7 @@ define([
 
                 expect(window.location.hash).to.be.equals('#easyErp/Companies/thumbnails');
             });
-        });*/
+        });
 
     });
 

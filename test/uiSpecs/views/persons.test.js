@@ -85,10 +85,6 @@ define([
             }
         ]
     };
-    var fakeCollectionTotal = {
-        showMore: false,
-        count   : 98
-    };
     var fakeAlfabetic = {
         data: [
             {
