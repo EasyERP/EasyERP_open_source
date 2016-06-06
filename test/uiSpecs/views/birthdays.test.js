@@ -131,7 +131,7 @@ define([
                 var $expectedSubMenuEl;
                 var $expectedMenuEl;
 
-                server.respondWith('GET', '/getModules', [200, {"Content-Type": "application/json"}, JSON.stringify(modules)]);
+                server.respondWith('GET', '/getModules', [200, {'Content-Type': 'application/json'}, JSON.stringify(modules)]);
 
                 view = new MainView({el: $elFixture, contentType: 'Birthdays'});
 
@@ -156,9 +156,7 @@ define([
 
                 expect($expectedMenuEl).to.have.class('selected');
                 expect(window.location.hash).to.be.equals('#easyErp/Birthdays');
-
             });
-
         });
 
         describe('TopBarView', function () {
@@ -176,7 +174,7 @@ define([
                 var birthdaysUrl = new RegExp('\/birthdays\/', 'i');
                 var collectionJSON;
 
-                server.respondWith('GET', birthdaysUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBirthdays)]);
+                server.respondWith('GET', birthdaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeBirthdays)]);
                 birthdaysCollection = new BirthdaysCollection({
                     count      : 100,
                     viewType   : 'list',
@@ -223,7 +221,7 @@ define([
                     var $listHolder;
                     var birthdaysUrl = new RegExp('\/birthdays\/', 'i');
 
-                    server.respondWith('GET', birthdaysUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeBirthdays)]);
+                    server.respondWith('GET', birthdaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeBirthdays)]);
                     listView = new ListView({
                         collection: birthdaysCollection,
                         startTime : new Date()
@@ -232,6 +230,7 @@ define([
 
                     $listHolder = listView.$el;
                     expect($listHolder).to.exist;
+
 
                 });
 

@@ -50,7 +50,7 @@
                         that.page++;
                         that.trigger('showmoreAlphabet', models);
                     },
-                    error  : function () {
+                    error: function () {
                         App.render({
                             type   : 'error',
                             message: 'Some Error.'
