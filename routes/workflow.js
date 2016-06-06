@@ -8,7 +8,7 @@ module.exports = function (models, event) {
     'use strict';
     var handler = new WorkflowHandler(models, event);
     var moduleId = MODULES.WORKFLOWS;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.get('/', authStackMiddleware, handler.get);
     router.get('/relatedStatus', authStackMiddleware, handler.relatedStatus);
@@ -16,10 +16,10 @@ module.exports = function (models, event) {
     router.get('/getFirstForConvert', handler.getFirstForConvert);
     router.get('/fetch', handler.fetch);
 
-    router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
-    router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.updateWorkflow);
-    router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.updateOnlySelectedFields);
-    router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
+    router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
+    router.put('/:id', authStackMiddleware, accessStackMiddleware, handler.updateWorkflow);
+    router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.updateOnlySelectedFields);
+    router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
 
     return router;
 };

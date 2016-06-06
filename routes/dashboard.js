@@ -11,8 +11,8 @@ module.exports = function (models) {
     'use strict';
     var moduleHRId = MODULES.DASHBOARD_HR;
     var moduleVacationId = MODULES.DASHBOARD_VACATION;
-    var accessStackMiddlwareHR = require('../helpers/access')(moduleHRId, models);
-    var accessStackMiddlwareVacation = require('../helpers/access')(moduleVacationId, models);
+    var accessStackMiddlewareHR = require('../helpers/access')(moduleHRId, models);
+    var accessStackMiddlewareVacation = require('../helpers/access')(moduleVacationId, models);
     var handler = new WtrackHandler(models);
 
     function cacheRetriver(req, res, next) {
@@ -62,9 +62,9 @@ module.exports = function (models) {
         });
     }
 
-    router.get('/vacation', authStackMiddleware, accessStackMiddlwareVacation, cacheRetriver, handler.composeForVacation);
+    router.get('/vacation', authStackMiddleware, accessStackMiddlewareVacation, cacheRetriver, handler.composeForVacation);
     // router.get('/vacation', handler.getFromCache);
-    router.get('/hr', authStackMiddleware, accessStackMiddlwareHR, handler.composeForHr);
+    router.get('/hr', authStackMiddleware, accessStackMiddlewareHR, handler.composeForHr);
 
     return router;
 };

@@ -7,15 +7,15 @@ var MODULES = require('../constants/modules');
 module.exports = function (models) {
     var handler = new chartOfAccountHandler(models);
     var moduleId = MODULES.CHARTOFACCOUNT;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
 
-    router.get('/', accessStackMiddlware, handler.getForView);
-    router.get('/getForDd', accessStackMiddlware, handler.getForDd);
-    router.post('/', accessStackMiddlware, handler.create);
-    router.delete('/:id', accessStackMiddlware, handler.remove);
-    router.patch('/', accessStackMiddlware, handler.putchBulk);
+    router.get('/', accessStackMiddleware, handler.getForView);
+    router.get('/getForDd', accessStackMiddleware, handler.getForDd);
+    router.post('/', accessStackMiddleware, handler.create);
+    router.delete('/:id', accessStackMiddleware, handler.remove);
+    router.patch('/', accessStackMiddleware, handler.putchBulk);
 
     return router;
 };

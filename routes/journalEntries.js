@@ -7,10 +7,10 @@ var MODULES = require('../constants/modules');
 module.exports = function (models, event) {
     var _journalEntryHandler = new journalEntryHandler(models, event);
     var moduleId = MODULES.JOURNALENTRY;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddlware);
+    router.use(accessStackMiddleware);
 
     router.get('/getReconcileDate', _journalEntryHandler.getReconcileDate);
     router.get('/getForReport', _journalEntryHandler.getForReport);

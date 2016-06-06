@@ -7,10 +7,10 @@ var MODULES = require('../constants/modules');
 module.exports = function (event, models) {
     var handler = new MonthHoursHandler(event, models);
     var moduleId = MODULES.MONTHHOURS;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddlware);
+    router.use(accessStackMiddleware);
 
     router.get('/', function (req, res, next) {
         if (req.query.month) {

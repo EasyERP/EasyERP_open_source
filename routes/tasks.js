@@ -8,10 +8,10 @@ module.exports = function (models, event) {
     'use strict';
     var moduleId = MODULES.TASKS;
     var handler = new TasksHandler(models, event);
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddlware);
+    router.use(accessStackMiddleware);
 
     router.post('/', handler.createTask);
     router.get('/priority', handler.getTasksPriority);
