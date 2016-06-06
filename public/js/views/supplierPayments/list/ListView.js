@@ -21,6 +21,8 @@ define([
     'helpers',
     'constants'
 ], function ($, _, paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, CreateView, filterView, currentModel, ListItemView, ListTotalView, paymentCollection, EditCollection, dataService, populate, async, keyCodes, ListViewBase, helpers, CONSTANTS) {
+    'use strict';
+
     var PaymentListView = ListViewBase.extend({
         createView              : CreateView,
         listTemplate            : listTemplate,
@@ -68,7 +70,6 @@ define([
             var id = target.attr('id');
             var attr = targetElement.attr('id') || targetElement.attr('data-content');
             var elementType = '#' + attr;
-            var workflow;
             var changedAttr;
             var supplier;
             var editModel;
@@ -547,33 +548,13 @@ define([
                             localCounter++;
                             count--;
                             if (count === 0) {
-                                if (this.hasAlphabet) {
-                                    common.buildAphabeticArray(that.collection, function (arr) {
-                                        $('#startLetter').remove();
-                                        that.alphabeticArray = arr;
-                                        $('#searchContainer').after(_.template(aphabeticTemplate, {
-                                            alphabeticArray   : that.alphabeticArray,
-                                            selectedLetter    : (that.selectedLetter == '' ? 'All' : that.selectedLetter),
-                                            allAlphabeticArray: that.allAlphabeticArray
-                                        }));
-                                        var currentLetter = (that.filter) ? that.filter.letter : null;
-                                        if (currentLetter) {
-                                            $('#startLetter').find('a').each(function () {
-                                                var target = $(this);
-                                                if (target.text() == currentLetter) {
-                                                    target.addClass('current');
-                                                }
-                                            });
-                                        }
-                                    });
-                                }
-
                                 that.deleteCounter = localCounter;
                                 that.deletePage = $('#currentShowPage').val();
                                 that.deleteItemsRender(that.deleteCounter, that.deletePage);
                             }
                         },
-                        error  : function (model, res) {
+
+                        error: function (model, res) {
                             if (res.status === 403 && index === 0) {
                                 App.render({
                                     type   : 'error',
@@ -582,6 +563,7 @@ define([
                             }
                             that.listLength--;
                             count--;
+
                             if (count === 0) {
                                 that.deleteCounter = localCounter;
                                 that.deletePage = $('#currentShowPage').val();
@@ -591,8 +573,34 @@ define([
                         }
                     });
                 });
+            } else {
+                this.cancelChanges();
             }
-            this.cancelChanges();
+        },
+
+        checked: function (e) {
+            var el = this.$el;
+            var checkLength = el.find('input.checkbox:checked').length;
+            var checkAll$ = el.find('#check_all');
+            var removeBtnEl = $('#top-bar-deleteBtn');
+
+            e.stopPropagation();
+
+            if (this.collection.length > 0) {
+                if (checkLength > 0) {
+                    checkAll$.prop('checked', false);
+
+                    removeBtnEl.show();
+
+                    if (checkLength === this.collection.length) {
+
+                        checkAll$.prop('checked', true);
+                    }
+                } else {
+                    removeBtnEl.hide();
+                    checkAll$.prop('checked', false);
+                }
+            }
         },
 
         savedNewModel: function (modelObject) {
