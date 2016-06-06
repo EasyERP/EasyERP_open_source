@@ -509,9 +509,9 @@ var Project = function (models, event) {
                         function (err, result) {
                             if (!err) {
                                 var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
-                                query.select("_id projectName projectShortDesc")
+                                query.select("_id name projectShortDesc")
                                     .lean()
-                                    .sort({'projectName': 1})
+                                    .sort({'name': 1})
                                     .exec(function (error, _res) {
                                         if (!error) {
                                             res['data'] = _res;
@@ -711,7 +711,7 @@ var Project = function (models, event) {
                                     'editedBy.user' : {$arrayElemAt: ["$editedBy.user", 0]},
                                     'createdBy.date': 1,
                                     'editedBy.date' : 1,
-                                    projectName     : 1,
+                                    name            : 1,
                                     health          : 1,
                                     progress        : 1,
                                     StartDate       : 1,
@@ -723,7 +723,7 @@ var Project = function (models, event) {
                                     salesmanager    : {$arrayElemAt: ["$salesmanagers", 0]},
                                     notRemovable    : 1,
                                     workflow        : 1,
-                                    projectName     : 1,
+                                    name            : 1,
                                     health          : 1,
                                     customer        : 1,
                                     progress        : 1,
@@ -747,7 +747,7 @@ var Project = function (models, event) {
                                     salesmanager    : {$arrayElemAt: ["$salesmanager", 0]},
                                     notRemovable    : 1,
                                     workflow        : 1,
-                                    projectName     : 1,
+                                    name            : 1,
                                     health          : 1,
                                     customer        : 1,
                                     progress        : 1,
@@ -850,7 +850,7 @@ var Project = function (models, event) {
                         function (err, result) {
                             if (!err) {
                                 var query = models.get(req.session.lastDb, "Project", projectSchema).find().where('_id').in(result);
-                                query.select("_id TargetEndDate projectmanager projectName health").
+                                query.select("_id TargetEndDate projectmanager name health").
                                     // populate('projectmanager', 'name _id').
                                     exec(function (error, _res) {
                                         if (!error) {
@@ -989,7 +989,7 @@ var Project = function (models, event) {
                                         }
                                     }, {
                                         $project: {
-                                            projectName   : 1,
+                                            name          : 1,
                                             workflow      : {$arrayElemAt: ["$workflow", 0]},
                                             task          : 1,
                                             customer      : {$arrayElemAt: ["$customer", 0]},
@@ -1005,7 +1005,7 @@ var Project = function (models, event) {
                                     }, {
                                         $project: {
                                             _id           : 1,
-                                            projectName   : 1,
+                                            name          : 1,
                                             task          : 1,
                                             workflow      : 1,
                                             salesmanager  : {$arrayElemAt: ["$salesmanagers", 0]},
@@ -1022,7 +1022,7 @@ var Project = function (models, event) {
                                     }, {
                                         $project: {
                                             _id           : 1,
-                                            projectName   : 1,
+                                            name          : 1,
                                             task          : 1,
                                             workflow      : 1,
                                             salesmanager  : {$arrayElemAt: ["$salesmanager", 0]},
@@ -1067,7 +1067,7 @@ var Project = function (models, event) {
             // .populate('editedBy.user', '_id login')
             .populate('groups.owner', '_id name')
             .populate('groups.users', '_id login')
-            .populate('groups.group', '_id departmentName')
+            .populate('groups.group', '_id name')
             .populate('groups.owner', '_id login')
             // .populate('budget.projectTeam')
             .populate('projectmanager', '_id name fullName')
@@ -1216,7 +1216,7 @@ var Project = function (models, event) {
                                         }
                                     }, {
                                         $project: {
-                                            projectName   : 1,
+                                            name          : 1,
                                             workflow      : {$arrayElemAt: ["$workflow", 0]},
                                             task          : 1,
                                             customer      : {$arrayElemAt: ["$customer", 0]},
@@ -1227,7 +1227,7 @@ var Project = function (models, event) {
                                     }, {
                                         $project: {
                                             _id           : 1,
-                                            projectName   : 1,
+                                            name          : 1,
                                             task          : 1,
                                             workflow      : 1,
                                             projectmanager: 1,
@@ -1934,7 +1934,7 @@ var Project = function (models, event) {
 
     function getTaskById(req, data, response) {
         var query = models.get(req.session.lastDb, 'Tasks', tasksSchema).findById(data.id);
-        query.populate('project', '_id projectShortDesc projectName').
+        query.populate('project', '_id projectShortDesc name').
             populate(' assignedTo', '_id name imageSrc').
             populate('createdBy.user').
             populate('createdBy.user').
@@ -2029,7 +2029,7 @@ var Project = function (models, event) {
 
                                 query.select("_id assignedTo workflow editedBy.date project taskCount summary type remaining priority sequence").
                                     populate('assignedTo', 'name').
-                                    populate('project', 'projectName').
+                                    populate('project', 'name').
                                     sort({'sequence': -1}).
                                     limit(req.session.kanbanSettings.tasks.countPerPage).
                                     exec(function (err, result) {

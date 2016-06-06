@@ -19,7 +19,7 @@ define([
             project          : {
                 _id           : null,
                 projectnamager: {},
-                projectName   : ''
+                name          : ''
             },
             workflow         : {
                 _id : null,

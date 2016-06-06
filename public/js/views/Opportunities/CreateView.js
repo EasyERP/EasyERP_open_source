@@ -342,7 +342,7 @@ define([
                     self.responseObj['#salesPersonDd'] = employees;
                 });
                 populate.getWorkflow("#workflowDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Opportunities"}, "name", this, true);
-                populate.get("#salesTeamDd",  CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this, true, true);
+                populate.get("#salesTeamDd",  CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "name", this, true, true);
 
                 /*                common.populateCustomers("#customerDd", "/Customers",this.model);
                  //common.populateEmployeesDd("#salesPerson"Dd, "/employee/getPersonsForDd");

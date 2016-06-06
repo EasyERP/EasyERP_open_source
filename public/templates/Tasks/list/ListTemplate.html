@@ -3,7 +3,7 @@
     class="stage-<%=(task.workflow) ? task.workflow.status.toLowerCase() : ''%>">
     <td class="centerCell"><input type="checkbox" value="<%=task._id%>" class="checkbox"/></td>
     <td class="centerCell"><%=startNumber + index + 1%></td>
-    <td><%=(task.project) ? task.project.projectName : ''%><%=task.taskCount%></td>
+    <td><%=(task.project) ? task.project.name : ''%><%=task.taskCount%></td>
     <td><%=task.summary%></td>
     <td>
         <a href="javascript:;" data-id="<%=task.project._id%>" class="project"><%=task.project.name%></a>

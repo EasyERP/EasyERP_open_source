@@ -11,7 +11,7 @@ define([
             endDate   : '',
             hours     : '',
             project   : {
-                projectName   : '',
+                name          : '',
                 workflow      : {},
                 customer      : {},
                 projectmanager: {}

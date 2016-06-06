@@ -18,14 +18,8 @@ define([
                 responseObj = options.mainWtrackView.responseObj;
                 responseObj = responseObj || {};
                 
-                dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (projects) {
-                    projects = _.map(projects.data, function (project) {
-                        project.name = project.projectName;
-
-                        return project;
-                    });
-
-                    responseObj['#project'] = projects;
+                dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (response) {
+                    responseObj['#project'] = response.data;
                 });
 
                 dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
@@ -38,14 +32,8 @@ define([
                     responseObj['#employee'] = employees;
                 });
 
-                dataService.getData('/department/getForDD', null, function (departments) {
-                    departments = _.map(departments.data, function (department) {
-                        department.name = department.departmentName;
-
-                        return department;
-                    });
-
-                    responseObj['#department'] = departments;
+                dataService.getData('/department/getForDD', null, function (response) {
+                    responseObj['#department'] = response.data;
                 });
             }
         },

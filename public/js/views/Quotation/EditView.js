@@ -191,7 +191,7 @@ define([
 
                                     if (self.redirect) {
                                         var filter = {
-                                            'projectName': {
+                                            'project': {
                                                 key  : 'project._id',
                                                 value: [self.pId]
                                             },
@@ -725,7 +725,7 @@ define([
             if (this.forSales) {
                 populate.get("#supplierDd", CONSTANTS.URLS.CUSTOMERS, {}, "fullName", this, false, false);
 
-                populate.get('#projectDd', '/projects/getForDd', {}, 'projectName', this, false, false);
+                populate.get('#projectDd', '/projects/getForDd', {}, 'name', this, false, false);
 
             } else {
                 populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
@@ -747,22 +747,16 @@ define([
                 new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
             );
 
-            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (projects) {
-                projects = _.map(projects.data, function (project) {
-                    project.name = project.projectName;
-
-                    return project;
-                });
-
-                self.responseObj['#project'] = projects;
+            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (response) {
+                self.responseObj['#project'] = response.data;
             });
 
             if (model.groups) {
                 if (model.groups.users.length > 0 || model.groups.group.length) {
                     $('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
-                        $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.departmentName + "</td><td class='text-right'></td></tr>");
-                        $("#targetGroups").append("<li id='" + item._id + "'>" + item.departmentName + "</li>");
+                        $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
+                        $("#targetGroups").append("<li id='" + item._id + "'>" + item.name + "</li>");
                     });
                     model.groups.users.forEach(function (item) {
                         $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");

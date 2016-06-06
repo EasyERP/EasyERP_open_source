@@ -5,7 +5,7 @@
         <input type="checkbox" value="<%=project._id%>"
                class="checkbox  <%=project.notRemovable ? 'notRemovable' : ''%>"/></td>
     <td class="centerCell"><%=startNumber + index + 1 %></td>
-    <td><%=project.projectName%></td>
+    <td><%=project.name%></td>
     <td><%=(project.customer) ? project.customer.name.first + ' ' + project.customer.name.last : ''%></td>
     <td><%=project.StartDate%></td>
     <td

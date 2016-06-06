@@ -1088,7 +1088,7 @@ var Module = function (models, event) {
                     name        : 1,
                     workflow    : '$workflow.name',
                     type        : 1,
-                    project     : '$project.projectName',
+                    project     : '$project.name',
                     budget      : 1,
                     quotation   : 1,
                     invoice     : 1,
@@ -1452,7 +1452,7 @@ var Module = function (models, event) {
                     worked     : 1,
                     revenue    : 1,
                     employee   : 1,
-                    department : '$department.departmentName',
+                    department : '$department.name',
 
                     transfer: {
                         $filter: {

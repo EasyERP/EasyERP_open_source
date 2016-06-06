@@ -468,7 +468,7 @@ define([
             daysRow = '<tr class="subHeaderHolder borders">' + daysRow + '</tr>';
 
             daysNumRow = '<tr class="subHeaderHolder borders"><th class="oe_sortable" data-sort="employee.name">Employee Name</th>' +
-                '<th class="oe_sortable" data-sort="department.departmentName">Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
+                '<th class="oe_sortable" data-sort="department.name">Department</th>' + daysNumRow + '<th>Total Days</th></tr>';
 
             this.daysCount = daysInMonth;
 
@@ -590,7 +590,7 @@ define([
                 //}
 
                 tr.find('[data-content="employee"]').html(delHTML + element.name);
-                tr.find('.department').text(element.department.departmentName);
+                tr.find('.department').text(element.department.name);
 
                 employee = element._id;
 

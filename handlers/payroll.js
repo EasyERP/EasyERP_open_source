@@ -517,7 +517,7 @@ var Module = function (models) {
                 }, {
                     $project: {
                         _id       : 1,
-                        department: '$department.departmentName',
+                        department: '$department.name',
                         name      : {$concat: ['$name.first', ' ', '$name.last']},
                         transfer  : 1,
                         lastFire  : 1

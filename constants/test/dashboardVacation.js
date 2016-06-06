@@ -13549,7 +13549,7 @@ define([], function () {
                 ],
                 department: {
                     _id: "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    name: "iOS"
                 }
             },
             {
@@ -27046,7 +27046,7 @@ define([], function () {
                 ],
                 department: {
                     _id: "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    name: "Android"
                 }
             },
             {
@@ -37859,7 +37859,7 @@ define([], function () {
                 ],
                 department: {
                     _id: "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    name: "Web"
                 }
             },
             {
@@ -38368,7 +38368,7 @@ define([], function () {
                 ],
                 department: {
                     _id: "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    name: "Ruby on Rails"
                 }
             },
             {
@@ -40437,7 +40437,7 @@ define([], function () {
                 ],
                 department: {
                     _id: "56802e9d1afe27f547b7ba51",
-                    departmentName: "CSS/FrontEnd"
+                    name: "CSS/FrontEnd"
                 }
             },
             {
@@ -41826,7 +41826,7 @@ define([], function () {
                 ],
                 department: {
                     _id: "56802ec21afe27f547b7ba53",
-                    departmentName: "PHP/WordPress"
+                    name: "PHP/WordPress"
                 }
             },
             {
@@ -44257,7 +44257,7 @@ define([], function () {
                 ],
                 department: {
                     _id: "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    name: ".NET/WP"
                 }
             },
             {
@@ -49957,7 +49957,7 @@ define([], function () {
                 ],
                 department: {
                     _id: "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    name: "QA"
                 }
             },
             {
@@ -56630,7 +56630,7 @@ define([], function () {
                 ],
                 department: {
                     _id: "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name: "Design"
                 }
             },
             {
@@ -58860,7 +58860,7 @@ define([], function () {
                 ],
                 department: {
                     _id: "56e175c4d62294582e10ca68",
-                    departmentName: "Unity"
+                    name: "Unity"
                 }
             }
         ]

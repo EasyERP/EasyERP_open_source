@@ -185,7 +185,7 @@ var Module = function (models, event) {
                 .populate('products.product')
                 .populate('products.jobs')
                 .populate('currency._id')
-                .populate('project', '_id projectName salesmanager');
+                .populate('project', '_id name salesmanager');
 
             query.exec(callback);
         }
@@ -1364,7 +1364,7 @@ var Module = function (models, event) {
                 .populate('products.jobs')
                 .populate('currency._id')
                 .populate('payments', '_id name date paymentRef paidAmount')
-                .populate('department', '_id departmentName')
+                .populate('department', '_id name')
                 .populate('paymentTerms', '_id name')
                 .populate('createdBy.user')
                 .populate('editedBy.user')
@@ -2081,7 +2081,7 @@ var Module = function (models, event) {
             $project: {
                 salesManagers        : {$arrayElemAt: ['$salesManagers', 0]},
                 dueDate              : 1,
-                'project.projectName': 1,
+                'project.name'       : 1,
                 invoiceDate          : 1,
 
                 'supplier.name': {
@@ -2150,7 +2150,7 @@ var Module = function (models, event) {
                 salesPerson          : {$arrayElemAt: ['$salesManagers', 0]},
                 dueDate              : 1,
                 invoiceDate          : 1,
-                'project.projectName': 1,
+                'project.name'       : 1,
                 'supplier.name'      : 1,
                 name                 : 1,
                 paymentInfo          : 1,
@@ -2165,7 +2165,7 @@ var Module = function (models, event) {
 
                 dueDate              : 1,
                 invoiceDate          : 1,
-                'project.projectName': 1,
+                'project.name'       : 1,
                 'supplier.name'      : 1,
                 name                 : 1,
                 paymentInfo          : 1,
@@ -2177,7 +2177,7 @@ var Module = function (models, event) {
                 'salesPerson.name'   : 1,
                 dueDate              : 1,
                 invoiceDate          : 1,
-                'project.projectName': 1,
+                'project.name'       : 1,
                 'supplier.name'      : 1,
                 name                 : 1,
                 'paymentInfo.taxes'  : {$divide: ['$paymentInfo.taxes', '$rate']},
