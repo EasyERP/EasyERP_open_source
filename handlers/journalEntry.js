@@ -8387,7 +8387,7 @@ var Module = function (models, event) {
         var getTotal;
 
         getTotal = function (mainCallback) {
-            totalCollectionLength(res, mainCallback);
+            totalCollectionLength(req, mainCallback);
         };
 
         getData = function (mainCallback) {

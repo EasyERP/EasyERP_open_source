@@ -205,8 +205,8 @@ define([
             var viewType = Custom.getCurrentVT();
             var dateRange = Custom.retriveFromCash('journalEntryDateRange');
 
-            this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
-            this.endDate = common.utcDateToLocaleDate(dateRange.endDate);
+            this.startDate = common.utcDateToLocaleDate(new Date(dateRange.startDate));
+            this.endDate = common.utcDateToLocaleDate(new Date(dateRange.endDate));
 
             $('title').text(this.contentType);
 
