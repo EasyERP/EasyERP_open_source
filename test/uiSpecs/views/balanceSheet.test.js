@@ -1,4 +1,5 @@
 define([
+    'Backbone',
     'modules',
     'text!fixtures/index.html',
     'collections/balanceSheet/filterCollection',
@@ -10,7 +11,7 @@ define([
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (modules, fixtures, BalanceSheetCollection, MainView, ListView, TopBarView, FilterView, $, chai, chaiJquery, sinonChai) {
+], function (Backbone, modules, fixtures, BalanceSheetCollection, MainView, ListView, TopBarView, FilterView, $, chai, chaiJquery, sinonChai) {
     'use strict';
 
     var expect;
@@ -94,12 +95,14 @@ define([
     expect = chai.expect;
 
     describe('BalanceSheetView', function () {
-
         var $fixture;
         var $elFixture;
+        var historyNavigateSpy;
+
         before(function () {
             setDateRangeSpy = sinon.spy(TopBarView.prototype, 'setDateRange');
             showDatePickerSpy = sinon.spy(TopBarView.prototype, 'showDatePickers');
+            historyNavigateSpy = sinon.spy(Backbone.history, 'navigate');
         });
 
         after(function () {
@@ -109,6 +112,7 @@ define([
 
             setDateRangeSpy.restore();
             showDatePickerSpy.restore();
+            historyNavigateSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -185,6 +189,7 @@ define([
 
             it('Try to create TopBarView', function (done) {
                 var balanceUrl = new RegExp('journal\/journalEntry\/getBalanceSheet', 'i');
+                var collectionJSON;
 
                 server.respondWith('GET', balanceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeBalance)]);
                 balanceSheetCollection = new BalanceSheetCollection({
@@ -193,6 +198,13 @@ define([
                     contentType: 'balanceSheet'
                 });
                 server.respond();
+
+                collectionJSON = balanceSheetCollection.toJSON();
+
+                expect(balanceSheetCollection).to.have.lengthOf(1);
+                expect(collectionJSON[0]).to.have.property('assets');
+                expect(collectionJSON[0]).to.have.property('equity');
+                expect(collectionJSON[0]).to.have.property('liabilities');
 
                 clock.tick(200);
 
@@ -253,9 +265,10 @@ define([
                     });
                     server.respond();
                     clock.tick(300);
-                    expect(listView.$el.find('.list')).to.exist;
 
                     $thisEl = listView.$el;
+
+                    expect($thisEl.find('.list')).to.have.lengthOf(4);
 
                     topBarView.bind('copyEvent', listView.copy, listView);
                     topBarView.bind('generateEvent', listView.generate, listView);
