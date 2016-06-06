@@ -1088,7 +1088,7 @@ var Module = function (models, event) {
                     name        : 1,
                     workflow    : '$workflow.name',
                     type        : 1,
-                    project     : '$project.projectName',
+                    project     : '$project.name',
                     budget      : 1,
                     quotation   : 1,
                     invoice     : 1,

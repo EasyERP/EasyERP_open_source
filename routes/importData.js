@@ -616,7 +616,7 @@ module.exports = function (models) {
                             if (result.project) {
                                 objectToSave.project = {};
                                 objectToSave.project._id = result.project._id || null;
-                                objectToSave.project.projectName = result.project.projectName || '';
+                                objectToSave.project.name = result.project.name || '';
 
                                 if (result.project.projectmanager && result.project.projectmanager.name) {
                                     objectToSave.project.projectmanager = {
@@ -828,7 +828,7 @@ module.exports = function (models) {
 
                                 objectToSave.project = {
                                     _id: result.project._id,
-                                    name: result.project.projectName
+                                    name: result.project.name
                                 };
                             }
 

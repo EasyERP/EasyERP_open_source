@@ -97,13 +97,13 @@ define([
             },
 
             saveItem: function (event) {
-                event.preventDefault();
+
 
                 var validation = true;
                 var self = this;
                 var viewType = custom.getCurrentVT();
                 var mid = 39;
-                var projectName = $.trim(this.$el.find("#projectName").val());
+                var name = $.trim(this.$el.find("#projectName").val());
                 var projectShortDesc = $.trim(this.$el.find("#projectShortDesc").val());
                 var customer = this.$el.find("#customerDd").data("id");
                 var projectmanager = this.$el.find("#projectManagerDD").data("id");
@@ -116,6 +116,9 @@ define([
                 var bonusContainer = $('#bonusTable');
                 var bonusRow = bonusContainer.find('tr');
                 var bonus = [];
+
+                event.preventDefault();
+
                 $userNodes.each(function (key, val) {
                     users.push({
                         id  : val.value,
@@ -127,6 +130,8 @@ define([
                     var employeeId = $(val).find("[data-content='employee']").attr('data-id');
                     var bonusId = $(val).find("[data-content='bonus']").attr('data-id');
                     var value;
+                    var startD;
+                    var endD;
 
                     if (!employeeId || !bonusId) {
                         if (!employeeId) {
@@ -145,8 +150,8 @@ define([
                         validation = false;
                     }
 
-                    var startD = $(val).find(".startDate input").val() || null;
-                    var endD = $(val).find(".endDate input").val() || null;
+                    startD = $(val).find(".startDate input").val() || null;
+                    endD = $(val).find(".endDate input").val() || null;
 
                     bonus.push({
                         employeeId: employeeId,
@@ -175,7 +180,7 @@ define([
                 var currentTargetEndDate = this.currentModel.get('TargetEndDate');
                 //var TargetEndDate = _targetEndDate || currentTargetEndDate;
                 var data = {
-                    projectName     : projectName,
+                    name            : name,
                     projectShortDesc: projectShortDesc,
                     customer        : customer ? customer : null,
                     projectmanager  : projectmanager ? projectmanager : null,
@@ -211,8 +216,8 @@ define([
                             $(".add-user-dialog").remove();
                             if (viewType == "list") {
                                 var tr_holder = $("tr[data-id='" + self.currentModel.toJSON()._id + "'] td");
-                                $("a[data-id='" + self.currentModel.toJSON()._id + "']").text(projectName);
-                                tr_holder.eq(2).text(projectName);
+                                $("a[data-id='" + self.currentModel.toJSON()._id + "']").text(name);
+                                tr_holder.eq(2).text(name);
                                 tr_holder.eq(3).text(self.$el.find("#customerDd").text());
                                 tr_holder.eq(4).text(self.$el.find("#StartDate").val());
                                 tr_holder.eq(5).text(self.$el.find("#EndDate").val());
@@ -227,7 +232,7 @@ define([
                                 tr_holder.eq(11).text(model.toJSON().editedBy.date + " (" + model.toJSON().editedBy.user.login + ")");
                             } else {
                                 var currentModel_holder = $("#" + self.currentModel.toJSON()._id);
-                                currentModel_holder.find(".project-text span").eq(0).text(projectName);
+                                currentModel_holder.find(".project-text span").eq(0).text(name);
                                 currentModel_holder.find(".project-text span").eq(1).find("a").attr("class", "health" + health).attr("data-value", health);
                                 if (customer) {
                                     $("#" + self.currentModel.toJSON()._id).find(".project-text span").eq(2).text(self.$el.find("#customerDd").text());
@@ -267,8 +272,9 @@ define([
                             mid: mid
                         },
                         success: function (model) {
-                            model = model.toJSON();
                             var viewType = custom.getCurrentVT();
+                            model = model.toJSON();
+
                             switch (viewType) {
                                 case 'list':
                                 {

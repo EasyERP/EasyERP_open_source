@@ -2178,7 +2178,7 @@ var Filters = function (models) {
                     'project'      : {
                         $addToSet: {
                             _id : '$project._id',
-                            name: '$project.projectName'
+                            name: '$project.name'
                         }
                     },
                     'salesmanager' : {
@@ -2239,10 +2239,10 @@ var Filters = function (models) {
                 }, {
                     $group: {
                         _id             : null,
-                        'projectName'   : {
+                        'project'          : {
                             $addToSet: {
                                 _id : '$project._id',
-                                name: '$project.projectName'
+                                name: '$project.name'
                             }
                         },
                         'supplier'      : {

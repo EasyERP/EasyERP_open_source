@@ -661,7 +661,7 @@ var wTrack = function (models) {
                             department: 1,
                             employee  : 1,
                             dateByWeek: 1,
-                            project   : '$project.projectName',
+                            project   : '$project.name',
                             hours     : 1
                         }
                     }, {

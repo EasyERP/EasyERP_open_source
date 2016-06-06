@@ -201,7 +201,7 @@ define([
 
                 if (validation) {
                     this.model.save({
-                            projectName     : $.trim(this.$el.find("#projectName").val()),
+                            name            : $.trim(this.$el.find("#projectName").val()),
                             projectShortDesc: $.trim(this.$el.find("#projectShortDesc").val()),
                             customer        : customer ? customer : "",
                             workflow        : workflow ? workflow : "",

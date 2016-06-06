@@ -374,20 +374,20 @@ define([
             var targetEl = $(e.target);
             var td = targetEl.closest('td');
             var tr = td.closest('tr');
-            var projectName = td.attr('data-project');
+            var project  = td.attr('data-project');
             var dateByWeek = td.attr('data-date');
             var employee = tr.attr('data-employee');
             var table = this.$el.find('#dashboardBody');
             var allRows = table.find('[data-employee="' + employee + '"]');
-            var tds = allRows.find('[data-date="' + dateByWeek + '"]:not([data-project="' + projectName + '"])');
+            var tds = allRows.find('[data-date="' + dateByWeek + '"]:not([data-project="' + project + '"])');
             var queryData;
 
-            if (!projectName) {
+            if (!project) {
                 return false;
             }
 
             queryData = {
-                projectName: projectName,
+                project    : project,
                 dateByWeek : dateByWeek,
                 employee   : employee
             };
@@ -400,7 +400,7 @@ define([
                         tr            : tr,
                         tds           : tds,
                         dateByWeek    : dateByWeek,
-                        projectName   : projectName,
+                        project       : project,
                         customer      : response.customer,
                         projectmanager: response.projectmanager,
                         wTracks       : response.wTracks

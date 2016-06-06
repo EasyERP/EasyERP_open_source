@@ -2,7 +2,7 @@
 <tr>
     <td><%=startNumber + index + 1 %></td>
     <td><a href='#easyErp/Employees/form/<%=project.salesmanager._id%>'><%=project.salesmanager.name.first + ' ' + project.salesmanager.name.last%></a></td>
-    <td><a href='#easyErp/Projects/form/<%=project._id%>'><%=project.projectName%></a></td>
+    <td><a href='#easyErp/Projects/form/<%=project._id%>'><%=project.name%></a></td>
     <td><%=(project.total && project.total.revenueSum) ? currencySplitter((project.total.revenueSum/100).toFixed()) :
         '&nbsp'%>
     </td>

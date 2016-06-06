@@ -9,7 +9,7 @@
         model.projectmanager.name.last :
         ''%>
     </td>-->
-    <td class="editable" data-content="project" data-id="<%= model.project._id%>"><%=model.project ? model.project.projectName : ''%></td>
+    <td class="editable" data-content="project" data-id="<%= model.project._id%>"><%=model.project ? model.project.name : ''%></td>
    <!-- <td data-content="workflow" data-id="<%= model.workflow ? model.workflow._id : ''%>"><%=model.project && model.workflow? model.workflow.name : ''%></td>-->
     <td data-content="customer" data-id="<%= model.customer? model.customer.name.first + ' ' + model.customer.name.last : ''%>"><%= model.customer ? model.customer.name.first + ' ' + model.customer.name.last : ''%></td>
     <td class="editable <%= enable ? 'textUnderlineHover' : ''%> " data-content="employee" data-id="<%= model.employee._id%>"><%=model.employee ? model.employee.name.first + ' ' + model.employee.name.last  : ''%></td>

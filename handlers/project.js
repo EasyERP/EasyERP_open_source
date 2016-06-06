@@ -792,7 +792,7 @@ module.exports = function (models, event) {
 
         Project
             .find(filter)
-            .sort({projectName: 1})
+            .sort({name: 1})
             .lean()
             .populate('workflow', '_id name')
             .populate('customer', '_id name')
@@ -931,7 +931,7 @@ module.exports = function (models, event) {
                 $group: {
                     _id      : null,
                     project  : {
-                        $addToSet: '$projectName'
+                        $addToSet: '$name'
                     },
                     startDate: {
                         $addToSet: '$StartDate'
@@ -1484,7 +1484,7 @@ module.exports = function (models, event) {
 
         Project
             .find()
-            .sort({projectName: 1})
+            .sort({name: 1})
             .lean()
             .exec(function (err, projects) {
                 if (err) {
@@ -1528,12 +1528,12 @@ module.exports = function (models, event) {
                 'budget.projectTeam': {$arrayElemAt: ['$budget.projectTeam', 0]},
                 salesmanager        : {$arrayElemAt: ['$salesmanager', 0]},
                 'budget.budgetTotal': 1,
-                projectName         : 1
+                name                : 1
             }
         }, {
             $project: {
                 salesmanager        : 1,
-                projectName         : 1,
+                name                : 1,
                 'budget.projectTeam': 1,
                 'budget.budgetTotal': 1
             }
@@ -1549,15 +1549,15 @@ module.exports = function (models, event) {
                 budgetTotal : {
                     $addToSet: '$budget.budgetTotal'
                 },
-                projectName : {
-                    $addToSet: '$projectName'
+                name        : {
+                    $addToSet: '$name'
                 }
             }
         }, {
             $project: {
                 _id                 : 1,
                 salesmanager        : {$arrayElemAt: ['$salesmanager', 0]},
-                projectName         : {$arrayElemAt: ['$projectName', 0]},
+                name                : {$arrayElemAt: ['$name', 0]},
                 'budget.projectTeam': '$projectTeam',
                 'budget.budgetTotal': '$budgetTotal'
             }

@@ -262,12 +262,12 @@
             if (model && model.project) {
                 options = $.map(response.data, function (item) {
                     return (model.project._id == item._id) ?
-                        $('<option/>').val(item._id).text(item.projectName).attr('selected', 'selected') :
-                        $('<option/>').val(item._id).text(item.projectName);
+                        $('<option/>').val(item._id).text(item.name).attr('selected', 'selected') :
+                        $('<option/>').val(item._id).text(item.name);
                 });
             } else {
                 options = $.map(response.data, function (item) {
-                    return $('<option/>').val(item._id).text(item.projectName);
+                    return $('<option/>').val(item._id).text(item.name);
                 });
             }
             selectList.append(options);

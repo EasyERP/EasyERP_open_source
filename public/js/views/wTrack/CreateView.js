@@ -18,14 +18,8 @@ define([
                 responseObj = options.mainWtrackView.responseObj;
                 responseObj = responseObj || {};
                 
-                dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (projects) {
-                    projects = _.map(projects.data, function (project) {
-                        project.name = project.projectName;
-
-                        return project;
-                    });
-
-                    responseObj['#project'] = projects;
+                dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (response) {
+                    responseObj['#project'] = response.data;
                 });
 
                 dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {

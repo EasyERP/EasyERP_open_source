@@ -1349,7 +1349,7 @@ var wTrack = function (models) {
                     }, {
                         $group: {
                             _id    : {
-                                name       : '$project.projectName',
+                                name       : '$project.name',
                                 _id        : '$project._id',
                                 dateByMonth: '$dateByMonth'
                             },
@@ -1358,7 +1358,7 @@ var wTrack = function (models) {
                         }
                     }, {
                         $project: {
-                            projectName: '$_id.name',
+                            project    : '$_id.name',
                             _id        : '$_id._id',
                             dateByMonth: '$_id.dateByMonth',
                             revenue    : 1
@@ -1403,7 +1403,7 @@ var wTrack = function (models) {
                             projects: {
                                 $addToSet: {
                                     _id : '$_id',
-                                    name: '$projectName'
+                                    name: '$name'
                                 }
                             }
 
@@ -1684,7 +1684,7 @@ var wTrack = function (models) {
                     }, {
                         $group: {
                             _id    : {
-                                name       : '$project.projectName',
+                                name       : '$project.name',
                                 _id        : '$project._id',
                                 dateByMonth: '$dateByMonth'
                             },
@@ -1693,7 +1693,7 @@ var wTrack = function (models) {
                         }
                     }, {
                         $project: {
-                            projectName: '$_id.name',
+                            name       : '$_id.name',
                             _id        : '$_id._id',
                             dateByMonth: '$_id.dateByMonth',
                             revenue    : 1
@@ -1738,7 +1738,7 @@ var wTrack = function (models) {
                             projects: {
                                 $addToSet: {
                                     _id : '$_id',
-                                    name: '$projectName'
+                                    name: '$name'
                                 }
                             }
 

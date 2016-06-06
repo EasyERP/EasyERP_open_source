@@ -191,7 +191,7 @@ define([
 
                                     if (self.redirect) {
                                         var filter = {
-                                            'projectName': {
+                                            'project': {
                                                 key  : 'project._id',
                                                 value: [self.pId]
                                             },
@@ -725,7 +725,7 @@ define([
             if (this.forSales) {
                 populate.get("#supplierDd", CONSTANTS.URLS.CUSTOMERS, {}, "fullName", this, false, false);
 
-                populate.get('#projectDd', '/projects/getForDd', {}, 'projectName', this, false, false);
+                populate.get('#projectDd', '/projects/getForDd', {}, 'name', this, false, false);
 
             } else {
                 populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
@@ -747,14 +747,8 @@ define([
                 new ProductItemView({editable: true, canBeSold: true, service: service}).render({model: model}).el
             );
 
-            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (projects) {
-                projects = _.map(projects.data, function (project) {
-                    project.name = project.projectName;
-
-                    return project;
-                });
-
-                self.responseObj['#project'] = projects;
+            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, null, function (response) {
+                self.responseObj['#project'] = response.data;
             });
 
             if (model.groups) {

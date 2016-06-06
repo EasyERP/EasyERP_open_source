@@ -4908,7 +4908,7 @@ var Module = function (models, event) {
                     newElement.salesmanager = opening ? opening.salesmanager : (inwards ? inwards.salesmanager : '');
 
                     newElement.project = project ? project._id : null;
-                    newElement.projectName = project ? project.projectName : "-----";
+                    newElement.projectName = project ? project.name : "-----";
 
                     newElement.openingBalance = opening ? opening.debit / 100 : 0;
                     newElement.inwards = inwards ? inwards.debit / 100 : 0;

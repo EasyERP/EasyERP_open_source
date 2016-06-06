@@ -503,7 +503,7 @@ define([
                         var nameRegExp = /^[a-zA-Z0-9\s][a-zA-Z0-9-,\s\.\/\s]+$/;
 
                         var filter = {
-                            'projectName': {
+                            'project' : {
                                 key  : 'project._id',
                                 value: [_id],
                                 type : "ObjectId"

@@ -13,7 +13,7 @@ module.exports = function (models) {
 
     router.get('/', accessStackMiddlware, handler.getList);
     router.get('/getForDD', accessStackMiddlware, handler.getForDD);
-    router.get('/list/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
+    router.get('/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
 
     router.post('/', accessStackMiddlware, handler.create);
     router.patch('/', accessStackMiddlware, handler.patchM);
