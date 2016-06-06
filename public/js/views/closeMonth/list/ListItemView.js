@@ -1,6 +1,3 @@
-/**
- * Created by liliy on 25.03.2016.
- */
 define([
     'Backbone',
     'Underscore',
@@ -14,14 +11,18 @@ define([
 
         initialize: function (options) {
             this.collection = options.collection;
-            this.startNumber = (options.page - 1 ) * options.itemsNumber;
+            this.startNumber = (options.page - 1) * options.itemsNumber;
             if (!this.startNumber) {
                 this.startNumber = 0;
             }
         },
 
         render: function () {
-            this.$el.append(_.template(listTemplate, {collection: this.collection, startNumber: this.startNumber, moment: moment}));
+            this.$el.append(_.template(listTemplate, {
+                collection : this.collection,
+                startNumber: this.startNumber,
+                moment     : moment
+            }));
         }
     });
 

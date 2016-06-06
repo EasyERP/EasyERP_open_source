@@ -358,43 +358,43 @@ var Module = function (models, event) {
                         }
                     },
 
-                    forSale         : 1,
-                    differenceAmount: 1,
-                    paidAmount      : 1,
-                    workflow        : 1,
-                    date            : 1,
-                    paymentMethod   : 1,
-                    isExpense       : 1,
-                    bonus           : 1,
-                    paymentRef      : 1,
-                    year            : 1,
-                    month           : 1,
-                    period          : 1,
-                    _type           : 1
+                    forSale             : 1,
+                    differenceAmount    : 1,
+                    paidAmount          : 1,
+                    workflow            : 1,
+                    date                : 1,
+                    'paymentMethod.name': '$paymentMethod.name',
+                    isExpense           : 1,
+                    bonus               : 1,
+                    paymentRef          : 1,
+                    year                : 1,
+                    month               : 1,
+                    period              : 1,
+                    _type               : 1
                 }
             }, {
                 $project: {
-                    supplier          : 1,
-                    'currency.name'   : 1,
-                    'currency._id'    : 1,
-                    'currency.rate'   : 1,
-                    'invoice._id'     : 1,
-                    'invoice.name'    : 1,
-                    'invoice.workflow': 1,
-                    salesmanagers     : {$arrayElemAt: ['$salesmanagers', 0]},
-                    forSale           : 1,
-                    differenceAmount  : 1,
-                    paidAmount        : 1,
-                    workflow          : 1,
-                    date              : 1,
-                    paymentMethod     : 1,
-                    isExpense         : 1,
-                    bonus             : 1,
-                    paymentRef        : 1,
-                    year              : 1,
-                    month             : 1,
-                    period            : 1,
-                    _type             : 1
+                    supplier               : 1,
+                    'currency.name'        : 1,
+                    'currency._id'         : 1,
+                    'currency.rate'        : 1,
+                    'invoice._id'          : 1,
+                    'invoice.name'         : 1,
+                    'invoice.workflow.name': '$invoice.workflow.name',
+                    salesmanagers          : {$arrayElemAt: ['$salesmanagers', 0]},
+                    forSale                : 1,
+                    differenceAmount       : 1,
+                    paidAmount             : 1,
+                    workflow               : 1,
+                    date                   : 1,
+                    paymentMethod          : 1,
+                    isExpense              : 1,
+                    bonus                  : 1,
+                    paymentRef             : 1,
+                    year                   : 1,
+                    month                  : 1,
+                    period                 : 1,
+                    _type                  : 1
                 }
             }, {
                 $lookup: {
@@ -439,7 +439,8 @@ var Module = function (models, event) {
                     'invoice._id'     : 1,
                     'invoice.name'    : 1,
                     'invoice.workflow': 1,
-                    assigned          : 1,
+                    'assigned.name'   : '$assigned.name',
+                    'assigned._id'    : '$assigned._id',
                     forSale           : 1,
                     differenceAmount  : 1,
                     name              : 1,
@@ -522,7 +523,6 @@ var Module = function (models, event) {
 
             res.status(200).send(response);
         });
-
     }
 
     function getById(req, res, next) {

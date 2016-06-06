@@ -23,7 +23,7 @@ define([
                     this._id = options._id;
                     this.dataKey = options.dataKey;
 
-                    dataService.getData('journal/journalEntry/getPayrollForReport', {_id: self._id, dataKey: self.dataKey}, function (result) {
+                    dataService.getData('journalEntries/getPayrollForReport', {_id: self._id, dataKey: self.dataKey}, function (result) {
                         self.render(result);
                     });
                 },

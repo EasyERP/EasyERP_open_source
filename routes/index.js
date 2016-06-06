@@ -64,13 +64,14 @@ module.exports = function (app, mainDb) {
     var chartOfAccountRouter = require('./chartOfAccount')(models);
     var currencyRouter = require('./currency')(models);
     var prPositionRouter = require('./projectPosition')(models);
-    var journalRouter = require('./journal')(models, event);
+    var journalRouter = require('./journals')(models, event);
     var salaryReportRouter = require('./salaryReport')(models);
     var userRouter = require('./user')(event, models);
     var campaignRouter = require('./campaign')(models);
     var degreesRouter = require('./degrees')(models);
     var profilesRouter = require('./profiles')(models);
     var tasksRouter = require('./tasks')(models, event);
+    var journalEntriesRouter = require('./journalEntries')(models, event);
 
     var logger = require('../helpers/logger');
 
@@ -141,7 +142,8 @@ module.exports = function (app, mainDb) {
     app.use('/currency', currencyRouter);
     app.use('/projectPosition', prPositionRouter);
     app.use('/projectMember', projectMemberRouter);
-    app.use('/journal', journalRouter);
+    app.use('/journals', journalRouter);
+    app.use('/journalEntries', journalEntriesRouter);
     app.use('/campaigns', campaignRouter);
     app.use('/degrees', degreesRouter);
     app.use('/profiles', profilesRouter);

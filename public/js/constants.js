@@ -716,7 +716,7 @@ define([], function () {
         DASH_VAC_WEEK_AFTER     : 8,
         DASH_VAC_RANGE_WEEKS_MIN: 6,
 
-        DEFAULT_ELEMENTS_PER_PAGE  : 5,
+        DEFAULT_ELEMENTS_PER_PAGE  : 100,
         DEFAULT_THUMBNAILS_PER_PAGE: 50,
 
         URLS: {
@@ -734,8 +734,8 @@ define([], function () {
             HOLIDAY                   : '/Holiday/',
             INVOICE                   : '/Invoice/',
             JOBPOSITIONS              : '/JobPositions/',
-            JOURNALENTRY              : '/journalEntry/',
-            JOURNAL                   : '/journal/',
+            JOURNALENTRY              : '/journalEntries/',
+            JOURNAL                   : '/journals/',
             LEADS                     : '/leads/',
             MONTHHOURS                : '/monthHours/',
             OPPORTUNITIES             : '/Opportunities/',
@@ -765,7 +765,7 @@ define([], function () {
             INVOICE_STATS             : '/invoice/stats/',
             REVENUE_SYNTHETIC         : 'revenue/synthetic',
             JOBS                      : '/jobs/',
-            JOURNAL_ENTRY             : '/journal/journalEntry/',
+            JOURNAL_ENTRY             : '/journalEntries/',
             WORKFLOWS                 : '/workflows/',
             MODULES                   : '/getModules',
             PAYMENT_SALARY            : '/payment/salary/',

@@ -1,210 +1,203 @@
 define([
-        'Backbone',
-        'jQuery',
-        'Underscore',
-        'text!templates/inventoryReport/TopBarTemplate.html',
-        'custom',
-        'constants',
-        'dataService',
-        'common',
-        'moment'
-    ],
-    function (Backbone, $, _, ContentTopBarTemplate, Custom, CONSTANTS, dataService, common, moment) {
-        'use strict';
-        var TopBarView = Backbone.View.extend({
-            el         : '#top-bar',
-            contentType: CONSTANTS.INVENTORYREPORT,
-            template   : _.template(ContentTopBarTemplate),
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'views/topBarViewBase',
+    'text!templates/inventoryReport/TopBarTemplate.html',
+    'custom',
+    'constants',
+    'dataService',
+    'common',
+    'moment'
+], function (Backbone, $, _, BaseView, ContentTopBarTemplate, Custom, CONSTANTS, dataService, common, moment) {
+    'use strict';
 
-            events: {
-                "click #updateDate"                 : "changeDateRange",
-                "click .dateRange"                  : "toggleDateRange",
-                "click #cancelBtn"                  : "cancel",
-                "click li.filterValues:not(#custom)": "setDateRange",
-                "click #custom"                     : "showDatePickers"
-            },
+    var TopBarView = BaseView.extend({
+        el         : '#top-bar',
+        contentType: CONSTANTS.INVENTORYREPORT,
+        template   : _.template(ContentTopBarTemplate),
 
-            removeAllChecked: function () {
-                var filter = this.$el.find('ul.dateFilter');
-                var li = filter.find('li');
+        events: {
+            'click #updateDate'                 : 'changeDateRange',
+            'click .dateRange'                  : 'toggleDateRange',
+            'click #cancelBtn'                  : 'cancel',
+            'click li.filterValues:not(#custom)': 'setDateRange',
+            'click #custom'                     : 'showDatePickers'
+        },
 
-                li.removeClass('checkedValue');
-            },
+        removeAllChecked: function () {
+            var filter = this.$el.find('ul.dateFilter');
+            var li = filter.find('li');
 
-            cancel: function (e) {
-                var targetEl = $(e.target);
-                var ul = targetEl.closest('ul.frameDetail');
+            li.removeClass('checkedValue');
+        },
 
-                ul.addClass('hidden');
-            },
+        cancel: function (e) {
+            var targetEl = $(e.target);
+            var ul = targetEl.closest('ul.frameDetail');
 
-            setDateRange: function (e) {
-                var $target = $(e.target);
-                var id = $target.attr('id');
-                var date = moment(new Date());
-                var quarter;
+            ul.addClass('hidden');
+        },
 
-                var startDate;
-                var endDate;
+        setDateRange: function (e) {
+            var $target = $(e.target);
+            var id = $target.attr('id');
+            var date = moment(new Date());
+            var quarter;
 
-                this.$el.find('.customTime').addClass('hidden');
+            var startDate;
+            var endDate;
 
-                this.removeAllChecked();
+            this.$el.find('.customTime').addClass('hidden');
 
-                $target.toggleClass('checkedValue');
+            this.removeAllChecked();
 
-                switch (id) {
-                    case 'thisMonth':
-                    {
-                        startDate = date.startOf('month');
-                        endDate = moment(startDate).endOf('month');
-                    }
-                        break;
-                    case 'thisYear':
-                    {
-                        startDate = date.startOf('year');
-                        endDate = moment(startDate).endOf('year');
-                    }
-                        break;
-                    case 'lastMonth':
-                    {
-                        startDate = date.subtract(1, 'month').startOf('month');
-                        endDate = moment(startDate).endOf('month');
-                    }
-                        break;
-                    case 'lastQuarter':
-                    {
-                        quarter = date.quarter();
+            $target.toggleClass('checkedValue');
 
-                        startDate = date.quarter(quarter - 1).startOf('quarter');
-                        endDate = moment(startDate).endOf('quarter');
-                    }
-                        break;
-                    case 'lastYear':
-                    {
-                        startDate = date.subtract(1, 'year').startOf('year');
-                        endDate = moment(startDate).endOf('year');
-                    }
-                        break;
-                }
+            switch (id) {
+                case 'thisMonth':
+                    startDate = date.startOf('month');
+                    endDate = moment(startDate).endOf('month');
+                    break;
+                case 'thisYear':
+                    startDate = date.startOf('year');
+                    endDate = moment(startDate).endOf('year');
+                    break;
+                case 'lastMonth':
+                    startDate = date.subtract(1, 'month').startOf('month');
+                    endDate = moment(startDate).endOf('month');
+                    break;
+                case 'lastQuarter':
+                    quarter = date.quarter();
 
-                this.$el.find('#startDate').datepicker('setDate', new Date(startDate));
-                this.$el.find('#endDate').datepicker('setDate', new Date(endDate));
-
-                this.changeDateRange();
-            },
-
-            showDatePickers: function (e) {
-                var $target = $(e.target);
-
-                this.removeAllChecked();
-
-                $target.toggleClass('checkedValue');
-                this.$el.find('.customTime').toggleClass('hidden');
-            },
-
-            changeDateRange: function (e) {
-                var dateFilter = e ? $(e.target).closest('ul.dateFilter') : this.$el.find('ul.dateFilter');
-                var startDate = dateFilter.find('#startDate');
-                var endDate = dateFilter.find('#endDate');
-                var startTime = dateFilter.find('#startTime');
-                var endTime = dateFilter.find('#endTime');
-
-                startDate = startDate.val();
-                endDate = endDate.val();
-
-                startTime.text(startDate);
-                endTime.text(endDate);
-
-                Custom.cacheToApp('inventoryReportDateRange', {
-                    startDate: startDate,
-                    endDate  : endDate
-                });
-
-                this.trigger('changeDateRange');
-                this.toggleDateRange();
-            },
-
-            toggleDateRange: function (e) {
-                var ul = e ? $(e.target).closest('ul') : this.$el.find('.dateFilter');
-
-                if (!ul.hasClass('frameDetail')) {
-                    ul.find('.frameDetail').toggleClass('hidden');
-                } else {
-                    ul.toggleClass('hidden');
-                }
-            },
-
-            hideDateRange: function () {
-                var targetEl = this.$el.find('.frameDetail');
-
-                targetEl.addClass('hidden');
-            },
-
-            bindDataPickers: function (startDate, endDate) {
-                var self = this;
-
-                this.$el.find('#startDate')
-                    .datepicker({
-                        dateFormat : "d M, yy",
-                        changeMonth: true,
-                        changeYear : true,
-                        defaultDate: startDate,
-                        onSelect   : function () {
-                            var endDatePicker = self.$endDate;
-                            var endDate;
-
-                            endDatePicker.datepicker('option', 'minDate', $(this).val());
-
-                            endDate =  moment(new Date($(this).val())).endOf('month');
-                            endDate = new Date(endDate);
-
-                            endDatePicker.datepicker('setDate', endDate);
-
-                            return false;
-                        }
-                    }).datepicker('setDate', startDate);
-
-                this.$endDate = this.$el.find('#endDate')
-                    .datepicker({
-                        dateFormat : "d M, yy",
-                        changeMonth: true,
-                        changeYear : true,
-                        defaultDate: endDate
-                    }).datepicker('setDate', endDate);
-            },
-
-            initialize: function (options) {
-                if (options.collection) {
-                    this.collection = options.collection;
-                }
-
-                this.render();
-            },
-
-            render: function () {
-                var viewType = Custom.getCurrentVT();
-                var dateRange = Custom.retriveFromCash('inventoryReportDateRange');
-
-                this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
-                this.endDate = common.utcDateToLocaleDate(dateRange.endDate);
-
-                $('title').text(this.contentType);
-
-                this.$el.html(this.template({
-                    viewType   : viewType,
-                    contentType: this.contentType,
-                    startDate  : this.startDate,
-                    endDate    : this.endDate
-                }));
-
-                this.bindDataPickers(this.startDate, this.endDate);
-
-                return this;
+                    startDate = date.quarter(quarter - 1).startOf('quarter');
+                    endDate = moment(startDate).endOf('quarter');
+                    break;
+                case 'lastYear':
+                    startDate = date.subtract(1, 'year').startOf('year');
+                    endDate = moment(startDate).endOf('year');
+                    break;
             }
-        });
 
-        return TopBarView;
-    }
-)
-;
+            this.$el.find('#startDate').datepicker('setDate', new Date(startDate));
+            this.$el.find('#endDate').datepicker('setDate', new Date(endDate));
+
+            this.changeDateRange();
+        },
+
+        showDatePickers: function (e) {
+            var $target = $(e.target);
+
+            this.removeAllChecked();
+
+            $target.toggleClass('checkedValue');
+            this.$el.find('.customTime').toggleClass('hidden');
+        },
+
+        changeDateRange: function (e) {
+            var dateFilter = e ? $(e.target).closest('ul.dateFilter') : this.$el.find('ul.dateFilter');
+            var startDate = dateFilter.find('#startDate');
+            var endDate = dateFilter.find('#endDate');
+            var startTime = dateFilter.find('#startTime');
+            var endTime = dateFilter.find('#endTime');
+
+            startDate = startDate.val();
+            endDate = endDate.val();
+
+            startTime.text(startDate);
+            endTime.text(endDate);
+
+            Custom.cacheToApp('inventoryReportDateRange', {
+                startDate: startDate,
+                endDate  : endDate
+            });
+
+            this.trigger('changeDateRange');
+            this.toggleDateRange();
+        },
+
+        toggleDateRange: function (e) {
+            var ul = e ? $(e.target).closest('ul') : this.$el.find('.dateFilter');
+
+            if (!ul.hasClass('frameDetail')) {
+                ul.find('.frameDetail').toggleClass('hidden');
+            } else {
+                ul.toggleClass('hidden');
+            }
+        },
+
+        hideDateRange: function () {
+            var targetEl = this.$el.find('.frameDetail');
+
+            targetEl.addClass('hidden');
+        },
+
+        bindDataPickers: function (startDate, endDate) {
+            var self = this;
+
+            this.$el.find('#startDate')
+                .datepicker({
+                    dateFormat : 'd M, yy',
+                    changeMonth: true,
+                    changeYear : true,
+                    defaultDate: startDate,
+                    onSelect   : function () {
+                        var endDatePicker = self.$endDate;
+                        var endDate;
+
+                        endDatePicker.datepicker('option', 'minDate', $(this).val());
+
+                        endDate = moment(new Date($(this).val())).endOf('month');
+                        endDate = new Date(endDate);
+
+                        endDatePicker.datepicker('setDate', endDate);
+
+                        return false;
+                    }
+                }).datepicker('setDate', startDate);
+
+            this.$endDate = this.$el.find('#endDate')
+                .datepicker({
+                    dateFormat : 'd M, yy',
+                    changeMonth: true,
+                    changeYear : true,
+                    defaultDate: endDate
+                }).datepicker('setDate', endDate);
+        },
+
+        initialize: function (options) {
+            this.actionType = options.actionType;
+            if (this.actionType !== 'Content') {
+                Custom.setCurrentVT('form');
+            }
+            if (options.collection) {
+                this.collection = options.collection;
+                this.collection.bind('reset', _.bind(this.render, this));
+            }
+            this.render();
+        },
+
+        render: function () {
+            var viewType = Custom.getCurrentVT();
+            var dateRange = Custom.retriveFromCash('inventoryReportDateRange');
+
+            this.startDate = common.utcDateToLocaleDate(dateRange.startDate);
+            this.endDate = common.utcDateToLocaleDate(dateRange.endDate);
+
+            $('title').text(this.contentType);
+
+            this.$el.html(this.template({
+                viewType   : viewType,
+                contentType: this.contentType,
+                startDate  : this.startDate,
+                endDate    : this.endDate
+            }));
+
+            this.bindDataPickers(this.startDate, this.endDate);
+
+            return this;
+        }
+    });
+
+    return TopBarView;
+});

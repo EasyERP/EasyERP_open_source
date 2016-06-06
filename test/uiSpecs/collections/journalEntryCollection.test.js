@@ -566,7 +566,7 @@ define([
         });
 
         it('Try to create collection', function (done) {
-            var journalUrl = new RegExp('/journal/journalEntry/list', 'i');
+            var journalUrl = new RegExp('/journalEntries/list', 'i');
 
             server.respondWith('GET', journalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJournal)]);
             journalEntryCollection = new JournalEntryCollection({
@@ -584,7 +584,7 @@ define([
         });
 
         it('Try to create collection with error', function (done) {
-            var journalUrl = new RegExp('/journal/journalEntry/list', 'i');
+            var journalUrl = new RegExp('/journalEntries/list', 'i');
 
             server.respondWith('GET', journalUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify(fakeJournal)]);
             journalEntryCollection = new JournalEntryCollection({
@@ -602,7 +602,7 @@ define([
         });
 
         it('Try to showMore collection', function () {
-            var journalUrl = new RegExp('/journal/journalEntry/list', 'i');
+            var journalUrl = new RegExp('/journalEntries/list', 'i');
 
             server.respondWith('GET', journalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJournal)]);
             journalEntryCollection.showMore({
@@ -618,7 +618,7 @@ define([
 
         it('Try to showMore collection', function () {
             var spyResponse;
-            var journalUrl = new RegExp('/journal/journalEntry/list', 'i');
+            var journalUrl = new RegExp('/journalEntries/list', 'i');
 
             server.respondWith('GET', journalUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeJournal)]);
             journalEntryCollection.showMore();

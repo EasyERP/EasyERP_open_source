@@ -198,7 +198,7 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var closeMonthUrl = new RegExp('journal/journalEntry/getCloseMonth', 'i');
+                var closeMonthUrl = new RegExp('journalEntries/getCloseMonth', 'i');
 
                 server.respondWith('GET', closeMonthUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 closeMonthCollection = new CloseMonthCollection({
@@ -211,7 +211,7 @@ define([
             });
 
             it('Try to create TopBarView', function (done) {
-                var closeMonthUrl = new RegExp('journal/journalEntry/getCloseMonth', 'i');
+                var closeMonthUrl = new RegExp('journalEntries/getCloseMonth', 'i');
 
                 server.respondWith('GET', closeMonthUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCloseMonth)]);
                 closeMonthCollection = new CloseMonthCollection({
@@ -274,7 +274,7 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create CloseMonthListView', function (done) {
-                    var asyncDataUrl = new RegExp('\/journal\/journalEntry\/getAsyncCloseMonth', 'i');
+                    var asyncDataUrl = new RegExp('journalEntries\/getAsyncCloseMonth', 'i');
 
                     server.respondWith('GET', asyncDataUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAsyncData)]);
                     listView = new ListView({
@@ -333,7 +333,7 @@ define([
                 });
 
                 it('Try to reclose item with error response', function () {
-                    var recloseUrl = new RegExp('\/journal\/journalEntry\/recloseMonth', 'i');
+                    var recloseUrl = new RegExp('journalEntries\/recloseMonth', 'i');
                     var $needItem = $thisEl.find('#listTable > tr:nth-child(1) > td.notForm > input');
                     var $secondItem = $thisEl.find('#listTable > tr:nth-child(5) > td.notForm > input');
                     var $recloseBtn;
@@ -355,7 +355,7 @@ define([
                 });
 
                 it('Try to reclose month', function () {
-                    var recloseUrl = new RegExp('\/journal\/journalEntry\/recloseMonth', 'i');
+                    var recloseUrl = new RegExp('journalEntries\/recloseMonth', 'i');
                     var $needItem = $thisEl.find('#listTable > tr:nth-child(1) > td.notForm > input');
                     var $recloseBtn;
 
@@ -399,7 +399,7 @@ define([
                 });
 
                 it('Try to close month with error response', function () {
-                    var closeMonthUrl = new RegExp('\/journal\/journalEntry\/closeMonth', 'i');
+                    var closeMonthUrl = new RegExp('journalEntries\/closeMonth', 'i');
                     var $dialog = $('.ui-dialog');
                     var $monthInput = $dialog.find('#month');
                     var $yearInput = $dialog.find('#year');
@@ -430,7 +430,7 @@ define([
                     var $closeMonthBtn = topBarView.$el.find('#top-bar-generate');
                     var keyDownEvent = $.Event('keydown', {which: 46});
                     var keyUpEvent = $.Event('keyup');
-                    var closeMonthUrl = new RegExp('\/journal\/journalEntry\/closeMonth', 'i')
+                    var closeMonthUrl = new RegExp('journalEntries\/closeMonth', 'i')
                     var $dialog;
                     var $monthInput;
                     var $yearInput;

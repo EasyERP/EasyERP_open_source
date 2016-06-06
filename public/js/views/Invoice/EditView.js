@@ -653,7 +653,7 @@ define([
                 populate.get("#paymentTerm", "/paymentTerm", {}, 'name', this, false, true);
             }
 
-            populate.get("#journal", "/journal/getForDd", {transaction: 'invoice'}, 'name', this, true);
+            populate.get("#journal", "/journals/getForDd", {transaction: 'invoice'}, 'name', this, true);
 
             this.$el.find('#invoice_date').datepicker({
                 dateFormat : "d M, yy",

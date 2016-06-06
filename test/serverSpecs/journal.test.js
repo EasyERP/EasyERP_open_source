@@ -95,7 +95,7 @@ describe('Journal Specs', function () {
             };
 
             aggent
-                .get('journal/getForDd')
+                .get('journals/getForDd')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -119,7 +119,7 @@ describe('Journal Specs', function () {
 
         it('should delete journal', function (done) {
             aggent
-                .delete('journal/' + id)
+                .delete('journals/' + id)
                 .expect(200, done);
         });
 
@@ -130,7 +130,7 @@ describe('Journal Specs', function () {
         it('should fail get Journal for Dd', function (done) {
 
             aggent
-                .get('journal/getForDd')
+                .get('journals/getForDd')
                 .expect(404, done);
         });
 

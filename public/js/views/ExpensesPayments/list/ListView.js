@@ -5,7 +5,7 @@ define([
         'text!templates/Pagination/PaginationTemplate.html',
         'text!templates/ExpensesPayments/list/ListHeader.html',
         'text!templates/ExpensesPayments/list/ListHeader.html',
-        'text!templates/supplierPayments/forWTrack/cancelEdit.html',
+        'text!templates/supplierPayments/list/cancelEdit.html',
         'views/selectView/selectView',
         'views/supplierPayments/CreateView',
         'views/Filter/FilterView',
