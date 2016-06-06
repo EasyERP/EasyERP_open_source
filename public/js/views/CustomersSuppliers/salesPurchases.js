@@ -28,7 +28,7 @@ define([
 
             this.$el.append(this.template({model: model}));
 
-            populate.get("#departmentDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this.parrent, isForCreate, true);
+            populate.get("#departmentDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "name", this.parrent, isForCreate, true);
             populate.get2name("#employeesDd", CONSTANTS.URLS.EMPLOYEES_RELATEDUSER, {}, this.parrent, isForCreate, true);
             populate.get("#language", CONSTANTS.URLS.EMPLOYEES_LANGUAGES, {}, "name", this.parrent, isForCreate, false);
             populate.get2name("#implementedBy", CONSTANTS.URLS.CUSTOMERS, {}, this.parrent, isForCreate, true);

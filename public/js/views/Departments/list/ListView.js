@@ -32,13 +32,13 @@ define([
             },
 
             createDepartmentListRow: function (department, index, className) {
-                return ('<li class="' + className + '" data-id="' + department._id + '" data-level="' + department.nestingLevel + '" data-sequence="' + department.sequence + '"><span class="content"><span class="dotted-line"></span><span class="text">' + department.departmentName + '<span title="Delete" class="trash icon">1</span><span title="Edit" class="edit icon">e</span></span></span></li>');
+                return ('<li class="' + className + '" data-id="' + department._id + '" data-level="' + department.nestingLevel + '" data-sequence="' + department.sequence + '"><span class="content"><span class="dotted-line"></span><span class="text">' + department.name + '<span title="Delete" class="trash icon">1</span><span title="Edit" class="edit icon">e</span></span></span></li>');
             },
 
             editItem               : function (e) {
 
                 var model = new currentModel({validate: false});
-                model.urlRoot = '/Departments/form/';
+                model.urlRoot = '/Departments/';
                 model.fetch({
                     data   : {id: $(e.target).closest("li").data("id")},
                     success: function (model) {

@@ -29,7 +29,7 @@
             if(employees && employees.length){%>
             <td>
                 <%employees.forEach(function(employee){%>
-                <span><%=employee ? employee.name.first + ' ' + employee.name.last : ''%><br><%=employee.department ? employee.department.departmentName : ''%></span>
+                <span><%=employee ? employee.name.first + ' ' + employee.name.last : ''%><br><%=employee.department ? employee.department.name : ''%></span>
                 <%})%>
             </td>
             <%} else {%>
@@ -74,7 +74,7 @@
             if(employees && employees.length){%>
             <td>
                 <%employees.forEach(function(employee){%>
-                <span><%=employee ? employee.name.first + ' ' + employee.name.last : ''%><br><%=employee.department ? employee.department.departmentName : ''%></span>
+                <span><%=employee ? employee.name.first + ' ' + employee.name.last : ''%><br><%=employee.department ? employee.department.name : ''%></span>
                 <%})%>
             </td>
             <%} else {%>

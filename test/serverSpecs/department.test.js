@@ -31,7 +31,7 @@ describe('Department Specs', function () {
 
         it('should create Department', function (done) {
             var body = {
-                departmentName: 'cccc'
+                name: 'cccc'
             };
 
             aggent
@@ -58,7 +58,7 @@ describe('Department Specs', function () {
 
         it('should not create Department', function (done) {
             var body = {
-                departmentName: 'cccc'
+                name: 'cccc'
             };
 
             aggent
@@ -131,7 +131,7 @@ describe('Department Specs', function () {
                 users                : [],
                 departmentManager    : null,
                 parentDepartment     : null,
-                departmentName       : 'HR5',
+                name                 : 'HR5',
                 creationDate         : null,
                 parentDepartmentStart: null,
                 sequenceStart        : 0
@@ -186,7 +186,7 @@ describe('Department Specs', function () {
 
         it('should fail create Department', function (done) {
             var body = {
-                departmentName: 'cccc'
+                name : 'cccc'
             };
 
             aggent

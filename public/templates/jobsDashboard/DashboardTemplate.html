@@ -4,7 +4,7 @@
     <td><%=startNumber + count + 1%></a></td>
     <td><%=job.project && job.salesmanager ? job.salesmanager.name.first + ' ' + job.salesmanager.name.last : "---"%></td>
     <td><a href='#easyErp/Projects/form/<%=job.project ? job.project._id : null%>'><%=job.project ?
-        job.project.projectName : "---"%></a></td>
+        job.project.name : "---"%></a></td>
     <td><a data-id="<%=job._id%>" class="jobs"><%=job.name%></a></td>
     <td><%=job.workflow ? job.workflow.name : ''%></td>
     <td><%=job.type%></td>

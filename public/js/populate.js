@@ -51,7 +51,7 @@ define([
                 content.responseObj[id] = content.responseObj[id].concat(_.map(response.data, function (item) {
                     return {
                         _id             : item._id,
-                        name            : item.departmentName,
+                        name            : item.name,
                         level           : item.nestingLevel,
                         parentDepartment: item.parentDepartment
                     };

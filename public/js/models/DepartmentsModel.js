@@ -22,13 +22,13 @@
         },
         validate   : function (attrs) {
             var errors = [];
-            Validation.checkGroupsNameField(errors, true, attrs.departmentName, "Department name");
+            Validation.checkGroupsNameField(errors, true, attrs.name, "Department name");
             if (errors.length > 0) {
                 return errors;
             }
         },
         defaults   : {
-            departmentName   : '',
+            name             : '',
             parentDepartment : "",
             departmentManager: ""
         },

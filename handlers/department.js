@@ -21,8 +21,8 @@ var Module = function (models) {
 
         Department
             .find(matchQuery)
-            .select('_id departmentName departmentManager')
-            .sort({departmentName: 1})
+            .select('_id name departmentManager')
+            .sort({name: 1})
             .lean()
             .exec(function (err, departments) {
                 if (err) {
@@ -36,8 +36,8 @@ var Module = function (models) {
         var Department = models.get(req.session.lastDb, 'Department', DepartmentSchema);
         var query = Department.find({});
 
-        query.select('_id departmentName');
-        query.sort({departmentName: 1});
+        query.select('_id name');
+        query.sort({name: 1});
         query.exec(function (err, departments) {
             if (err) {
                 return next(err);
@@ -57,7 +57,7 @@ var Module = function (models) {
         var body = req.body;
         var department;
 
-        Department.find({departmentName: body.departmentName}, function (err, result) {
+        Department.find({name: body.name}, function (err, result) {
             if (err) {
                 return next(err);
             }
@@ -106,7 +106,7 @@ var Module = function (models) {
 
         Department
             .find({})
-            .populate('parentDepartment', 'departmentName _id')
+            .populate('parentDepartment', 'name _id')
             .populate('departmentManager', 'name _id')
             .populate('users', 'login _id')
             .sort({nestingLevel: 1, sequence: -1})
@@ -172,8 +172,8 @@ var Module = function (models) {
         var id = req.query.id;
 
         Department
-            .find({}, {departmentName: 1, nestingLevel: 1, parentDepartment: 1})
-            .sort({departmentName: 1})
+            .find({}, {name: 1, nestingLevel: 1, parentDepartment: 1})
+            .sort({name: 1})
             .lean()
             .exec(function (err, departments) {
                 var ids;
@@ -309,7 +309,7 @@ var Module = function (models) {
             });
         }
 
-        Department.find({departmentName: data.departmentName}, function (err, doc) {
+        Department.find({name: data.name}, function (err, doc) {
             if (err) {
                 return next(err);
             }

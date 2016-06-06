@@ -6,7 +6,7 @@
                 <dl class="person-info">
                     <dt><label for="project">Project</label></dt>
                     <dd>
-                        <span id="project"><%= projectName %></span>
+                        <span id="project"><%=name%></span>
                     </dd>
                 </dl>
             </div>
@@ -145,7 +145,7 @@
                                     <%=(wTrack.employee) ? wTrack.employee.name.first + ' ' + wTrack.employee.name.last: ''%>
                                 </td>
                                 <td data-content="department">
-                                    <%=(wTrack.department) ? wTrack.department.departmentName : ''%>
+                                    <%=(wTrack.department) ? wTrack.department.name : ''%>
                                 </td>
                                 <td data-content="year"><%=wTrack.year%></td>
                                 <td data-content="month"><%=wTrack.month%></td>
@@ -183,7 +183,7 @@
                                 <%=(wTrack.employee) ? wTrack.employee.name.first + ' ' + wTrack.employee.name.last: ''%>
                             </td>
                             <td data-content="department">
-                                <%=(wTrack.department) ? wTrack.department.departmentName : ''%>
+                                <%=(wTrack.department) ? wTrack.department.name : ''%>
                             </td>
                             <td data-content="year"><%=wTrack.year%></td>
                             <td data-content="month"><%=wTrack.month%></td>

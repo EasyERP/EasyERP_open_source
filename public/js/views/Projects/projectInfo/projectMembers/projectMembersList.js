@@ -510,8 +510,8 @@ define([
 
                 self.responseObj['#employee'] = employees;
             });
-            dataService.getData('/bonusType/list', null, function (bonus) {
-                self.responseObj['#bonus'] = bonus;
+            dataService.getData('/bonusType', null, function (bonus) {
+                self.responseObj['#bonus'] = bonus.data;
                 self.responseObj['#bonus'].push({_id: null, name: 'No bonus'});
             });
             dataService.getData('/projectPosition/getForDD', null, function (data) {

@@ -175,7 +175,7 @@ define([
                 });
 
                 this.currentModel.set({
-                    departmentName   : departmentName,
+                    name             : departmentName,
                     parentDepartment : parentDepartment,
                     departmentManager: departmentManager,
                     nestingLevel     : nestingLevel,

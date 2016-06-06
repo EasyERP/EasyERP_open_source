@@ -3,7 +3,7 @@
         <%=vacation.employee ? vacation.employee.name.first + vacation.employee.name.last : ''%>
     </td>
     <td class="department">
-        <%=vacation.department ? vacation.department.departmentName : ''%>
+        <%=vacation.department ? vacation.department.name : ''%>
     </td>
     <% for (var i=0; i<=vacation.vacArray.length - 1; i++) { %>
     <%=vacation.vacArray[i] ? '<td data-dayID="' + (i) + '" class="editable selectedType ' + vacation.vacArray[i] + '" data-content="vacType">' + vacation.vacArray[i] + ' </td> ' : '<td data-dayID="' + (i) + '" class="editable" data-content="vacType"></td>'%>
