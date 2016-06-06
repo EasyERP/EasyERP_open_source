@@ -1,12 +1,9 @@
-/**
- * Created by soundstorm on 14.05.15.
- */
 define([
         'Backbone',
         'jQuery',
         'Underscore',
         'text!templates/supplierPayments/list/ListTotal.html',
-        'text!templates/supplierPayments/forWTrack/ListTotal.html',
+        'text!templates/supplierPayments/list/ListTotal.html',
         'helpers'
     ],
 

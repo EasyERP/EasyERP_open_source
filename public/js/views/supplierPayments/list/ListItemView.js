@@ -1,11 +1,8 @@
-/**
- * Created by soundstorm on 21.05.15.
- */
 define([
         'Backbone',
         'Underscore',
         'text!templates/supplierPayments/list/ListTemplate.html',
-        'text!templates/supplierPayments/forWTrack/ListTemplate.html',
+        'text!templates/supplierPayments/list/ListTemplate.html',
         'helpers'
     ],
 

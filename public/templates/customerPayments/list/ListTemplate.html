@@ -1,16 +1,19 @@
-<% paymentCollection.forEach(function(payment, index){ %>
+<% paymentCollection.forEach(function(payment, index) {%>
 <tr data-id="<%=payment._id%>">
     <td class="notForm centerCell"><input type="checkbox" value="<%=payment._id%>" class="checkbox <%=payment.removable ? '' : 'notRemovable'%>"/></td>
     <td class="centerCell"><%=startNumber + index + 1%></td>
-    <td><%=(payment.number) ? payment.number : ''%></td>
-    <td><%=payment.paymentRef%></td>
-    <td><%=payment.supplier.fullName%></td>
-    <td><%=(payment.journal) ? payment.journal : ''%></td>
-    <td class="total"><%=(payment.paidAmount) ? payment.paidAmount : '0.00'%></td>
-    <!--<td id='<%=payment._id%>'>-->
-    <!--<a href="javascript:;" class="stageSelect"><%=payment.workflow ? payment.workflow.name: 'Undefinded'%></a>-->
-    <!--</td>-->
-    <td><%=payment.date%></td>
+    <td><%=(payment && payment.assigned) ? payment.assigned.name.first + ' ' + payment.assigned.name.last : ''%></td>
+    <td><%=(payment.supplier && payment.supplier.name) ? payment.supplier.name.first + ' ' + payment.supplier.name.last
+        : '' %>
+    </td>
+    <td><%=payment.invoice ? payment.invoice.name : ''%></td>
+    <td><%=(payment.paymentMethod) ? payment.paymentMethod.name : ''%></td>
 
+    <td class="totalPaidAmount <%=currencyClass(payment.currency._id)%>
+    <%= payment.paidAmount != payment.invoiced ? 'red' :''%>"><%=currencySplitter(payment.paidAmount)%>
+    </td>
+    <td class="date" data-content="date">
+        <%=payment.date%>
+    </td>
 </tr>
-<% }) %>
+<%})%>
