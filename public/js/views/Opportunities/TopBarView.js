@@ -49,7 +49,7 @@ define([
 
             event.preventDefault();
 
-            if (answer == true) {
+            if (answer === true) {
                 this.trigger('deleteEvent');
             }
         },

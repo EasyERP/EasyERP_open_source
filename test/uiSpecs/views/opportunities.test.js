@@ -3177,6 +3177,7 @@ define([
                     page       : 1
                 });
                 server.respond();
+
                 expect(historyNavigateSpy.calledOnce).to.be.true;
             });
 
@@ -3225,10 +3226,12 @@ define([
             var chooseOptionSpy;
 
             before(function () {
+                App.currentViewType = 'list';
+
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
-                App.currentViewType = 'list';
                 windowConfirmStub = sinon.stub(window, 'confirm');
+                windowConfirmStub.returns(true);
                 alertStub = sinon.stub(window, 'alert');
                 alertStub.returns(true);
                 ajaxSpy = sinon.spy($, 'ajax');
@@ -3271,6 +3274,7 @@ define([
                         startTime : new Date()
                     });
                     server.respond();
+
                     $thisEl = listView.$el;
 
                     eventsBinder.subscribeCollectionEvents(opportunitiesCollection, listView);

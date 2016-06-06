@@ -1842,7 +1842,8 @@ var Module = function (models, event) {
             source          : 1,
             internalNotes   : 1,
             nextAction      : 1,
-            editedBy        : 1
+            editedBy        : 1,
+            notes           : 1
         });
 
         query
