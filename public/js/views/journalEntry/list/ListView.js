@@ -35,24 +35,25 @@ define([
     'use strict';
 
     var ListView = listViewBase.extend({
-        listTemplate            : listTemplate,
-        listItemView            : ListItemView,
-        filterView              : filterView,
-        contentCollection       : contentCollection,
-        contentType             : CONSTANTS.JOURNALENTRY,
-        exportToXlsxUrl         : 'journalEntries/exportToXlsx',
-        exportToCsvUrl          : 'journalEntries/exportToCsv',
+        listTemplate     : listTemplate,
+        listItemView     : ListItemView,
+        filterView       : filterView,
+        contentCollection: contentCollection,
+        contentType      : CONSTANTS.JOURNALENTRY,
+        exportToXlsxUrl  : 'journalEntries/exportToXlsx',
+        exportToCsvUrl   : 'journalEntries/exportToCsv',
 
         initialize: function (options) {
             var dateRange = custom.retriveFromCash('journalEntryDateRange');
 
             $(document).off('click');
+
             this.startTime = options.startTime;
             this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
-            this.defaultItemsNumber = this.collection.namberToShow || 100;
-            this.newCollection = options.newCollection;
-            this.page = options.collection.page;
+            this.parrentContentId = options.collection.parrentContentId;
+            this.sort = options.sort;
+            this.page = options.collection.currentPage;
+            this.contentCollection = contentCollection;
 
             this.filter = options.filter || custom.retriveFromCash('journalEntry.filter');
 
@@ -77,9 +78,6 @@ define([
             this.render();
 
             custom.cacheToApp('journalEntry.filter', this.filter);
-
-            this.contentCollection = contentCollection;
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
         },
 
         events: {
@@ -165,9 +163,11 @@ define([
                     contentType: $target.attr('class'),
                     forSales   : forSales.toString()
                 },
+
                 success: function (model) {
                     new View({model: model, redirect: true, notCreate: true});
                 },
+
                 error: function () {
                     App.render({
                         type   : 'error',
@@ -209,26 +209,6 @@ define([
             $holder.find('#timeRecivingDataFromServer').remove();
             $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
-
-        /* calcTotal: function () {
-            var $curEl = this.$el;
-            var $rows = $curEl.find('#listTable tr').not('#listFooter');
-            var $totalEl = $curEl.find('#listFooter').find('#totalDebit');
-            var total = 0;
-
-            $rows.each(function (index, element) {
-                var $curElement = $(element);
-                var $val = $curElement.find('.value');
-                var debitVal = parseInt($val.attr('data-amount'), 10);
-
-                total += debitVal;
-            });
-
-            $totalEl.addClass('money');
-            $totalEl.text(helpers.currencySplitter(total.toFixed(2)));
-
-            return total;
-        },*/
 
         render: function () {
             var $currentEl;

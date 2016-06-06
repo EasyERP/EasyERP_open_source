@@ -563,6 +563,2585 @@ var Module = function (models, event) {
                 cb(null, response);
             }
         });
+    }
+
+    this.createReconciled = function (body, dbIndex, cb, uId) {
+        createReconciled(body, dbIndex, cb, uId);
+    };
+
+    function caseFilter(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var filterName;
+
+        for (filterName in filter) {
+            condition = filter[filterName].value;
+
+            switch (filterName) {
+                case 'journalName':
+                    filtrElement['journal.name'] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'sourceDocument':
+                    filtrElement['sourceDocument.subject._id'] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'creditAccount':
+                    filtrElement['journal.creditAccount._id'] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        }
+
+        return resArray;
+    }
+
+    function caseFilterForTotalCount(filter) {
+        var condition;
+        var resArray = [];
+        var filtrElement = {};
+        var key;
+        var filterName;
+
+        for (filterName in filter) {
+            condition = filter[filterName].value;
+            key = filter[filterName].key;
+
+            switch (filterName) {
+                case 'journalName':
+                    filtrElement['journal.name'] = {$in: condition};
+                    resArray.push(filtrElement);
+                    break;
+                case 'sourceDocument':
+                    filtrElement['sourceDocument.subject'] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+                case 'creditAccount':
+                    filtrElement['journal.creditAccount'] = {$in: condition.objectID()};
+                    resArray.push(filtrElement);
+                    break;
+            }
+        }
+
+        return resArray;
+    }
+
+    function totalCollectionLength(req, mainCallback) {
+        var dbIndex = req.session.lastDb;
+        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+
+        var data = req.query;
+        var findInvoice;
+        var findSalary;
+        var findByEmployee;
+        var filter = data.filter;
+        var filterObj = {};
+        var startDate = data.startDate || filter.startDate.value;
+        var endDate = data.endDate || filter.endDate.value;
+        var findJobsFinished;
+        var findPayments;
+        var findSalaryPayments;
+        var matchObject;
+        var filterArray;
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
+        matchObject = {
+            date: {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            }
+        };
+
+        if (filter) {
+            filterArray = caseFilterForTotalCount(filter);
+
+            if (filterArray.length) {
+                filterObj.$and = filterArray;
+            }
+        }
+
+        findInvoice = function (cb) {
+            Model
+                .aggregate([{
+                    $match: matchObject
+                }, {
+                    $match: {
+                        'sourceDocument.model': {$in: ['Invoice', 'Proforma', 'dividendInvoice']},
+                        debit                 : {$gt: 0}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'chartOfAccount',
+                        localField  : 'account',
+                        foreignField: '_id',
+                        as          : 'account'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Invoice',
+                        localField  : 'sourceDocument._id',
+                        foreignField: '_id',
+                        as          : 'sourceDocument._id'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'journals',
+                        localField  : 'journal',
+                        foreignField: '_id',
+                        as          : 'journal'
+                    }
+                }, {
+                    $project: {
+                        debit               : 1,
+                        currency            : 1,
+                        journal             : {$arrayElemAt: ['$journal', 0]},
+                        'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
+                    }
+                }, {
+                    $project: {
+                        debit                   : 1,
+                        'journal.name'          : 1,
+                        'journal.creditAccount' : 1,
+                        'sourceDocument._id'    : 1,
+                        'sourceDocument.subject': '$sourceDocument._id.supplier'
+                    }
+                }, {
+                    $match: filterObj
+                }, {
+                    $project: {
+                        _id  : 1,
+                        debit: 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    cb(null, result);
+                });
+        };
+
+        findSalary = function (cb) {
+            var aggregate;
+            var query = [{
+                $match: matchObject
+            }, {
+                $match: {
+                    'sourceDocument.model': 'wTrack',
+                    debit                 : {$gt: 0}
+                }
+            }, {
+                $lookup: {
+                    from        : 'journals',
+                    localField  : 'journal',
+                    foreignField: '_id',
+                    as          : 'journal'
+                }
+            }, {
+                $project: {
+                    debit         : 1,
+                    journal       : {$arrayElemAt: ['$journal', 0]},
+                    sourceDocument: 1
+                }
+            }, {
+                $project: {
+                    debit                   : 1,
+                    'journal.creditAccount' : 1,
+                    'journal.name'          : 1,
+                    'sourceDocument.subject': '$sourceDocument.employee'
+                }
+            }];
+
+            if (filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            aggregate = Model.aggregate(query);
+
+            aggregate.options = {allowDiskUse: true};
+
+            aggregate.exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        findByEmployee = function (cb) {
+            var aggregate;
+            var query = [{
+                $match: matchObject
+            }, {
+                $match: {
+                    'sourceDocument.model': 'Employees',
+                    debit                 : {$gt: 0}
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'sourceDocument._id',
+                    foreignField: '_id',
+                    as          : 'sourceDocument._id'
+                }
+            }, {
+                $lookup: {
+                    from        : 'journals',
+                    localField  : 'journal',
+                    foreignField: '_id',
+                    as          : 'journal'
+                }
+            }, {
+                $project: {
+                    debit               : 1,
+                    journal             : {$arrayElemAt: ['$journal', 0]},
+                    'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
+                }
+            }, {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : 'journal.debitAccount',
+                    foreignField: '_id',
+                    as          : 'journal.debitAccount'
+                }
+            }, {
+                $project: {
+                    debit                   : 1,
+                    'journal.creditAccount' : 1,
+                    'journal.name'          : 1,
+                    'sourceDocument.subject': '$sourceDocument._id._id'
+                }
+            }, {
+                $project: {
+                    debit                   : 1,
+                    'journal.creditAccount' : 1,
+                    'journal.name'          : 1,
+                    'sourceDocument.subject': 1
+                }
+            }];
+
+            if (filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            aggregate = Model.aggregate(query);
+
+            aggregate.options = {allowDiskUse: true};
+
+            aggregate.exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        findJobsFinished = function (cb) {
+            var aggregate;
+            var query = [{
+                $match: matchObject
+            }, {
+                $match: {
+                    'sourceDocument.model': 'jobs',
+                    debit                 : {$gt: 0}
+                }
+            }, {
+                $lookup: {
+                    from        : 'jobs',
+                    localField  : 'sourceDocument._id',
+                    foreignField: '_id',
+                    as          : 'sourceDocument._id'
+                }
+            }, {
+                $lookup: {
+                    from        : 'journals',
+                    localField  : 'journal',
+                    foreignField: '_id',
+                    as          : 'journal'
+                }
+            }, {
+                $project: {
+                    debit               : 1,
+                    journal             : {$arrayElemAt: ['$journal', 0]},
+                    'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
+                }
+            }, {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : 'journal.creditAccount',
+                    foreignField: '_id',
+                    as          : 'journal.creditAccount'
+                }
+            }, {
+                $project: {
+                    debit                   : 1,
+                    'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
+                    'journal.name'          : 1,
+                    'sourceDocument.subject': '$sourceDocument._id._id'
+                }
+            }];
+
+            if (filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            aggregate = Model.aggregate(query);
+
+            aggregate.options = {allowDiskUse: true};
+
+            aggregate.exec(function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        findPayments = function (cb) {
+            var aggregate;
+            var query = [{
+                $match: matchObject
+            }, {
+                $match: {
+                    'sourceDocument.model': 'Payment',
+                    debit                 : {$gt: 0}
+                }
+            }, {
+                $lookup: {
+                    from        : 'Payment',
+                    localField  : 'sourceDocument._id',
+                    foreignField: '_id',
+                    as          : 'sourceDocument._id'
+                }
+            }, {
+                $lookup: {
+                    from        : 'journals',
+                    localField  : 'journal',
+                    foreignField: '_id',
+                    as          : 'journal'
+                }
+            }, {
+                $project: {
+                    debit               : 1,
+                    journal             : {$arrayElemAt: ['$journal', 0]},
+                    'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
+                }
+            }, {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : 'journal.creditAccount',
+                    foreignField: '_id',
+                    as          : 'journal.creditAccount'
+                }
+            }, {
+                $project: {
+                    debit                   : 1,
+                    'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
+                    'journal.name'          : 1,
+                    'sourceDocument.subject': '$sourceDocument._id._id'
+                }
+            }];
+
+            if (filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            aggregate = Model.aggregate(query);
+
+            aggregate.options = {allowDiskUse: true};
+
+            aggregate.exec(function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        findSalaryPayments = function (cb) {
+            var aggregate;
+            var query = [{
+                $match: matchObject
+            }, {
+                $match: {
+                    'sourceDocument.model': 'salaryPayment',
+                    debit                 : {$gt: 0}
+                }
+            }, {
+                $lookup: {
+                    from        : 'Employees',
+                    localField  : 'sourceDocument._id',
+                    foreignField: '_id',
+                    as          : 'sourceDocument._id'
+                }
+            }, {
+                $lookup: {
+                    from        : 'journals',
+                    localField  : 'journal',
+                    foreignField: '_id',
+                    as          : 'journal'
+                }
+            }, {
+                $project: {
+                    debit               : 1,
+                    journal             : {$arrayElemAt: ['$journal', 0]},
+                    'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
+                }
+            }, {
+                $lookup: {
+                    from        : 'chartOfAccount',
+                    localField  : 'journal.creditAccount',
+                    foreignField: '_id',
+                    as          : 'journal.creditAccount'
+                }
+            }, {
+                $project: {
+                    debit                   : 1,
+                    'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
+                    'journal.name'          : 1,
+                    'sourceDocument.subject': '$sourceDocument._id._id'
+                }
+            }];
+
+            if (filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            aggregate = Model.aggregate(query);
+
+            aggregate.options = {allowDiskUse: true};
+
+            aggregate.exec(function (err, result) {
+                if (err) {
+                    return cb(err);
+                }
+
+                cb(null, result);
+            });
+        };
+
+        var parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments, findSalaryPayments];
+
+        async.parallel(parallelTasks, function (err, result) {
+            if (err) {
+                return mainCallback(err);
+            }
+            var invoices = result[0];
+            var salary = result[1];
+            var jobsFinished = result[3];
+            var salaryEmployee = result[2];
+            var paymentsResult = result[4];
+            var salaryPaymentsResult = result[5];
+            var totalValue = 0;
+            var models = _.union(invoices, salary, jobsFinished, salaryEmployee, paymentsResult, salaryPaymentsResult);
+
+            models.forEach(function (model) {
+                totalValue += model.debit;
+            });
+
+            mainCallback(null, {total: models.length, totalValue: totalValue});
+        });
+    };
+
+    this.exportToXlsx = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var filter = req.params.filter;
+        var filterObj = {};
+        var type = req.query.type;
+        var options;
+        var startDate = filter.startDate.value;
+        var endDate = filter.endDate.value;
+        var matchObject;
+
+        filter = JSON.parse(filter);
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
+        matchObject = {
+            date: {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            }
+        };
+
+        if (filter) {
+            filterObj.$and = caseFilter(filter);
+        }
+
+        options = {
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
+            returnResult: true,
+            fileName    : 'journalEntry'
+        };
+
+        function lookupForWTrack(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+            var i;
+
+            query.push({$match: matchObject});
+
+            for (i = 0; i < lookupWTrackArray.length; i++) {
+                query.push(lookupWTrackArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        function lookupForEmployees(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+            var i;
+
+            query.push({$match: matchObject});
+
+            for (i = 0; i < lookupEmployeesArray.length; i++) {
+                query.push(lookupEmployeesArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        function lookupForInvoice(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+            var i;
+
+            query.push({$match: matchObject});
+
+            for (i = 0; i < lookupInvoiceArray.length; i++) {
+                query.push(lookupInvoiceArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        function lookupForJobs(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+            var i;
+
+            query.push({$match: matchObject});
+
+            for (i = 0; i < lookupJobsArray.length; i++) {
+                query.push(lookupJobsArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        function lookupForPayments(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+            var i;
+
+            query.push({$match: matchObject});
+
+            for (i = 0; i < lookupPaymentsArray.length; i++) {
+                query.push(lookupPaymentsArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToXlsx(options);
+        }
+
+        async.parallel([lookupForWTrack, lookupForEmployees, lookupForInvoice, lookupForJobs, lookupForPayments], function (err, result) {
+            var wTrackResult = result[0];
+            var employeesResult = result[1];
+            var invoiceResult = result[2];
+            var jobsResult = result[3];
+            var paymentsResult = result[4];
+            var resultArray = _.union(wTrackResult, employeesResult, invoiceResult, jobsResult, paymentsResult);
+
+            exporter.exportToXlsx({
+                res        : res,
+                next       : next,
+                Model      : Model,
+                resultArray: resultArray,
+                map        : exportMap,
+                fileName   : 'journalEntry'
+            });
+        });
+
+    };
+
+    this.exportToCsv = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var filter = req.params.filter;
+        var filterObj = {};
+        var type = req.query.type;
+        var options;
+        var query = [];
+        var startDate = filter.startDate.value;
+        var endDate = filter.endDate.value;
+        var matchObject;
+
+        startDate = moment(new Date(startDate)).startOf('day');
+        endDate = moment(new Date(endDate)).endOf('day');
+
+        matchObject = {
+            date: {
+                $gte: new Date(startDate),
+                $lte: new Date(endDate)
+            }
+        };
+
+        filter = JSON.parse(filter);
+
+        if (filter) {
+            filterObj.$and = caseFilter(filter);
+        }
+
+        options = {
+            res         : res,
+            next        : next,
+            Model       : Model,
+            map         : exportMap,
+            returnResult: true,
+            fileName    : 'journalEntry'
+        };
+
+        function lookupForWTrack(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+            var i;
+
+            query.push({$match: matchObject});
+
+            for (i = 0; i < lookupWTrackArray.length; i++) {
+                query.push(lookupWTrackArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToCsv(options);
+        }
+
+        function lookupForEmployees(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+            var i;
+
+            query.push({$match: matchObject});
+
+            for (i = 0; i < lookupEmployeesArray.length; i++) {
+                query.push(lookupEmployeesArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToCsv(options);
+        }
+
+        function lookupForInvoice(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+            var i;
+
+            query.push({$match: matchObject});
+
+            for (i = 0; i < lookupInvoiceArray.length; i++) {
+                query.push(lookupInvoiceArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToCsv(options);
+        }
+
+        function lookupForJobs(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+            var i;
+
+            query.push({$match: matchObject});
+
+            for (i = 0; i < lookupJobsArray.length; i++) {
+                query.push(lookupJobsArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToCsv(options);
+        }
+
+        function lookupForPayments(cb) {
+            var query = [{$match: type ? {type: type} : {}}];
+            var i;
+
+            query.push({$match: matchObject});
+
+            for (i = 0; i < lookupPaymentsArray.length; i++) {
+                query.push(lookupPaymentsArray[i]);
+            }
+
+            if (filterObj && filterObj.$and && filterObj.$and.length) {
+                query.push({$match: filterObj});
+            }
+
+            options.query = query;
+            options.cb = cb;
+
+            exporter.exportToCsv(options);
+        }
+
+        async.parallel([lookupForWTrack, lookupForEmployees, lookupForInvoice, lookupForJobs, lookupForPayments], function (err, result) {
+            var wTrackResult = result[0];
+            var employeesResult = result[1];
+            var invoiceResult = result[2];
+            var jobsResult = result[3];
+            var paymentsResult = result[4];
+            var resultArray = _.union(wTrackResult, employeesResult, invoiceResult, jobsResult, paymentsResult);
+
+            exporter.exportToCsv({
+                res        : res,
+                next       : next,
+                Model      : Model,
+                resultArray: resultArray,
+                map        : exportMap,
+                fileName   : 'journalEntry'
+            });
+        });
+    };
+
+    this.setReconcileDate = function (req, date) {
+        setReconcileDate(req, date);
+    };
+
+    function setReconcileDate(req, date) {
+        var db = models.connection(req.session.lastDb);
+        db.collection('settings').findOne({name: 'reconcileDate'}, function (err, result) {
+            if (err) {
+                return console.log(err);
+            }
+            var dateResult = result ? result.date : new Date();
+            var newDae = moment(date);
+            var newReconcileDate = moment(dateResult);
+            var lessDate = newDae.isBefore(newReconcileDate) ? true : false;
+
+            if (lessDate) {
+                db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: {date: new Date(newDae)}}, function (err, result) {
+                    if (err) {
+                        return console.log(err);
+                    }
+
+                });
+            }
+        });
+    }
+
+    this.removeBySourceDocument = function (req, sourceId) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+
+        Model.find({'sourceDocument._id': sourceId}, function (err, result) {
+            if (err) {
+                return console.log(err);
+            }
+
+            var ids = [];
+
+            result.forEach(function (el) {
+                setReconcileDate(req, el.date);
+                ids.push(el._id);
+            });
+
+            Model.remove({_id: {$in: ids}}, function (err, result) {
+                if (err) {
+                    return console.log(err);
+                }
+            });
+        });
+    };
+
+    function checkAndCreateForJob(options) {
+        var req = options.req;
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
+        var jobId = options.jobId;
+        var workflow = options.workflow;
+        var remove = false;
+        var bodyFinishedJob = {
+            currency      : CONSTANTS.CURRENCY_USD,
+            journal       : CONSTANTS.FINISHED_JOB_JOURNAL,
+            sourceDocument: {
+                model: 'jobs',
+                _id  : jobId
+            },
+
+            amount: 0
+        };
+
+        var bodyClosedJob = {
+            currency      : CONSTANTS.CURRENCY_USD,
+            journal       : CONSTANTS.CLOSED_JOB,
+            sourceDocument: {
+                model: 'jobs',
+                _id  : jobId
+            },
+
+            amount: 0
+        };
+
+        var date;
+
+        var jobFinshedCb = function () {
+            return false;
+        };
+
+        Job.findById(jobId, {workflow: 1, invoice: 1}).populate('invoice').exec(function (err, result) {
+            if (err) {
+                return console.log(err);
+            }
+
+            if (result) {
+                if (result.workflow.toString() !== CONSTANTS.JOB_FINISHED) {
+                    remove = true;
+                }
+
+                if (remove) {
+                    Model.remove({
+                        journal             : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB, CONSTANTS.SALARY_PAYABLE, CONSTANTS.OVERTIME_PAYABLE, CONSTANTS.OVERHEAD]},
+                        'sourceDocument._id': jobId
+                    }, function (err) {
+                        if (err) {
+                            return console.log(err);
+                        }
+                    });
+                } else {
+
+                    date = result && result.invoice ? moment(result.invoice.date).subtract(1, 'seconds') : null;
+
+                    if (date) {
+                        bodyFinishedJob.date = new Date(date);
+                        bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds'));
+
+                        Model.aggregate([{
+                            $match: {
+                                'sourceDocument._id'  : jobId,
+                                'sourceDocument.model': 'wTrack',
+                                debit                 : {$gt: 0}
+                            }
+                        }, {
+                            $group: {
+                                _id   : null,
+                                amount: {$sum: '$debit'}
+                            }
+                        }], function (err, result) {
+                            if (err) {
+                                return console.log(err);
+                            }
+
+                            bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
+                            bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
+
+                            if (bodyFinishedJob.amount > 0) {
+                                createReconciled(bodyFinishedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
+                            }
+
+                            if (bodyClosedJob.amount > 0) {
+                                createReconciled(bodyClosedJob, req.session.lastDb, jobFinshedCb, req.session.uId);
+                            }
+
+                        });
+
+                    }
+
+                }
+
+            }
+        });
+
+    }
+
+    this.checkAndCreateForJob = function (options) {
+        checkAndCreateForJob(options);
+    };
+
+    this.createIdleByMonth = function (options) {
+        var req = options.req;
+        var callback = options.callback;
+        var month = options.month;
+        var year = options.year;
+        var Holidays = models.get(req.session.lastDb, 'Holiday', holidaysSchema);
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
+        var Vacation = models.get(req.session.lastDb, 'Vacation', vacationSchema);
+        var startDate = moment(new Date()).year(year).month(month - 1).startOf('month');
+        var endDate = moment(new Date()).year(year).month(month - 1).endOf('month');
+        var parallelFuncs;
+        var waterfallFuncs;
+        var wTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var date = endDate;
+        var dateByMonth = year * 100 + month;
+
+        function parallelFuncFind(wfCb) {
+
+            function findHolidays(pCb) {
+                var query = Holidays.find({dateByMonth: year * 100 + month}).lean();
+
+                query.exec(function (err, result) {
+                    if (err) {
+                        return pCb(err);
+                    }
+
+                    pCb(null, result);
+                });
+            }
+
+            function findAllDevs(pCb) {
+                var query = {
+                    $and: [{
+                        $or: [{
+                            $and: [{
+                                isEmployee: true
+                            }, {
+                                $or: [{
+                                    lastFire: null
+                                }, {
+                                    lastFire: {
+                                        $ne : null,
+                                        $gte: new Date(startDate)
+                                    }
+                                }, {
+                                    lastHire: {
+                                        $ne : null,
+                                        $lte: new Date(endDate)
+                                    }
+                                }]
+                            }]
+                        }, {
+                            $and: [{
+                                isEmployee: false
+                            }, {
+                                lastFire: {
+                                    $ne : null,
+                                    $gte: new Date(startDate)
+                                }
+                            }]
+                        }
+                        ]
+                    }]
+                };
+
+                Employee.aggregate([{
+                    $match: {
+                        // 'department': {$nin: notDevArray},
+                        hire: {$ne: []}
+                    }
+                }, {
+                    $project: {
+                        isEmployee: 1,
+                        department: 1,
+                        fire      : 1,
+                        transfer  : 1,
+                        hire      : 1,
+                        lastFire  : 1,
+                        lastHire  : {
+                            $let: {
+                                vars: {
+                                    lastHired: {$arrayElemAt: [{$slice: ['$hire', -1]}, 0]}
+                                },
+
+                                in: {$add: [{$multiply: [{$year: '$$lastHired'}, 100]}, {$week: '$$lastHired'}]}
+                            }
+                        }
+                    }
+                }, /* , {
+                 $match: query
+                 }*/ {
+                    $project: {
+                        _id     : 1,
+                        transfer: 1,
+                        hire    : 1,
+                        fire    : 1
+                    }
+                }, {
+                    $unwind: '$transfer'
+                }, {
+                    $lookup: {
+                        from        : 'weeklySchedulers',
+                        localField  : 'transfer.weeklyScheduler',
+                        foreignField: '_id',
+                        as          : 'transfer.weeklyScheduler'
+                    }
+                }, {
+                    $project: {
+                        'transfer.weeklyScheduler': {$arrayElemAt: ['$transfer.weeklyScheduler', 0]},
+                        'transfer.date'           : 1,
+                        'transfer.salary'         : 1,
+                        'transfer.department'     : 1,
+                        'transfer.status'         : 1,
+                        hire                      : 1,
+                        fire                      : 1
+                    }
+                }, {
+                    $group: {
+                        _id     : '$_id',
+                        transfer: {$addToSet: '$transfer'},
+                        hire    : {$addToSet: '$hire'},
+                        fire    : {$addToSet: '$fire'}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Vacation',
+                        localField  : '_id',
+                        foreignField: 'employee',
+                        as          : 'vacations'
+                    }
+                }, {
+                    $project: {
+                        vacations: 1,
+                        transfer : 1,
+                        hire     : {$arrayElemAt: ['$hire', 0]},
+                        fire     : {$arrayElemAt: ['$fire', 0]}
+                    }
+                }], function (err, employees) {
+                    if (err) {
+                        return pCb(err);
+                    }
+
+                    pCb(null, employees);
+                });
+
+            }
+
+            function findOrdinaryWorked(pCb) {
+                wTrack.aggregate([{
+                    $match: {
+                        month: month,
+                        year : year,
+                        _type: 'ordinary'
+                    }
+                }, {
+                    $group: {
+                        _id        : '$employee',
+                        worked     : {$sum: '$worked'},
+                        dateByMonth: {$addToSet: '$dateByMonth'}
+                    }
+                }, {
+                    $project: {
+                        dateByMonth: {$arrayElemAt: ['$dateByMonth', 0]},
+                        worked     : 1
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return pCb(err);
+                    }
+
+                    pCb(null, result);
+                });
+            }
+
+            function removeIdleAndVacation(pCb) {
+                Model.remove({
+                    journal: {$in: [objectId(CONSTANTS.VACATION_PAYABLE), objectId(CONSTANTS.IDLE_PAYABLE)]},
+                    date   : {$gte: new Date(startDate), $lte: new Date(endDate)}
+                }, function (err, result) {
+                    if (err) {
+                        return pCb(err);
+                    }
+
+                    pCb(null, result);
+                });
+            }
+
+            parallelFuncs = [findHolidays, findAllDevs, findOrdinaryWorked, removeIdleAndVacation];
+
+            async.parallel(parallelFuncs, function (err, result) {
+                if (err) {
+                    return wfCb(err);
+                }
+
+                wfCb(null, {holidays: result[0], employees: result[1], employeeWorked: result[2]});
+            });
+        }
+
+        function forEachEmployee(result, wfCb) {
+            var holidays = result.holidays;
+            var employeeWorked = result.employeeWorked;
+            var employees = result.employees;
+
+            async.each(employees, function (empObject, asyncCb) {
+                var employeeId = empObject._id;
+                var transfer = empObject.transfer;
+                var hire = empObject.hire;
+                var fire = empObject.fire;
+                var salaryForDate = 0;
+                var hoursInMonth = 0;
+                var weeklyScheduler = {};
+                var hoursToRemove = 0;
+                var costForHour;
+                var checkDate;
+                var vacationObject;
+                var transferLength = empObject.transfer.length;
+                var vacationDate;
+                var dayOfWeek;
+                var vacationHours = 0;
+                var vacationCost = 0;
+                var employeeWorkedObject = _.find(employeeWorked, function (el) {
+                    return el._id.toString() === employeeId.toString()
+                });
+                var vacations = empObject && empObject.vacations ? empObject.vacations : [];
+                var localEndDate = moment(endDate).date();
+                var localStartKey = 1;
+                var i;
+                var department = '';
+                var vacationBody = {
+                    currency      : CONSTANTS.CURRENCY_USD,
+                    journal       : CONSTANTS.VACATION_PAYABLE,
+                    date          : new Date(date),
+                    sourceDocument: {
+                        model: 'Employees',
+                        _id  : employeeId
+                    },
+
+                    amount: 0
+                };
+
+                var cb = _.after(2, asyncCb);
+
+                var salaryIdleBody = {
+                    currency: CONSTANTS.CURRENCY_USD,
+                    journal : CONSTANTS.IDLE_PAYABLE,
+                    date    : new Date(date),
+
+                    sourceDocument: {
+                        model: 'Employees',
+                        _id  : employeeId
+                    }
+                };
+                var worked = employeeWorkedObject && employeeWorkedObject.worked ? employeeWorkedObject.worked : 0;
+                var idleHours;
+                var transferObj;
+                var totalInMonth = 0;
+                var hireKey = moment(new Date(hire[hire.length - 1])).year() * 100 + moment(new Date(hire[hire.length - 1])).month() + 1;
+                var fireKey = fire[0] ? moment(new Date(fire[fire.length - 1])).year() * 100 + moment(new Date(fire[fire.length - 1])).month() + 1 : Infinity;
+                var localKey = moment(endDate).year() * 100 + moment(endDate).month() + 1;
+
+                if (hireKey === localKey) {
+                    localStartKey = moment(new Date(hire[hire.length - 1])).date();
+                    startDate = moment(new Date(hire[hire.length - 1]));
+                }
+
+                if (fireKey === localKey) {
+                    localEndDate = moment(new Date(fire[fire.length - 1])).date();
+                } else if (fireKey < localKey) {
+                    localEndDate = localStartKey - 1;
+                }
+
+                transfer = _.sortBy(transfer, 'date');
+
+                for (i = transferLength - 1; i >= 0; i--) {
+                    transferObj = transfer[i];
+
+                    if ((moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
+                        if (transferObj.status === 'fired') {
+                            if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
+                                salaryForDate = transferObj.salary;
+                                weeklyScheduler = transferObj.weeklyScheduler;
+                                department = transferObj.department;
+                                break;
+                            }
+                        } else if (transferObj.status !== 'transfer') {
+                            salaryForDate = transferObj.salary;
+                            weeklyScheduler = transferObj.weeklyScheduler;
+                            department = transferObj.department;
+                            break;
+                        }
+                    }
+                }
+
+                if (notDevArray.indexOf(department.toString()) !== -1) {
+                    salaryForDate = 0;
+                }
+
+                weeklyScheduler = weeklyScheduler || {};
+
+                holidays.forEach(function (holiday) {
+                    if ((holiday.day !== 0) && (holiday.day !== 6)) {
+                        hoursToRemove += parseInt(weeklyScheduler[holiday.day], 10) || 0;
+                    }
+                });
+
+                for (i = localEndDate; i >= localStartKey; i--) {
+                    checkDate = moment(endDate).date(i).day();
+
+                    if (checkDate === 0) {
+                        checkDate = 7;
+                    }
+                    hoursInMonth += parseInt(weeklyScheduler[checkDate], 10) || 0;
+
+                }
+
+                for (i = moment(endDate).date(); i >= 1; i--) {
+                    checkDate = moment(endDate).date(i).day();
+
+                    if (checkDate === 0) {
+                        checkDate = 7;
+                    }
+                    totalInMonth += parseInt(weeklyScheduler[checkDate], 10) || 0;
+
+                }
+                totalInMonth -= hoursToRemove;
+                hoursInMonth -= hoursToRemove;
+                idleHours = hoursInMonth - worked;
+
+                costForHour = isFinite(salaryForDate / totalInMonth) ? salaryForDate / totalInMonth : 0;
+
+                if (idleHours >= 0) {
+
+                    vacationObject = _.find(vacations, function (vacation) {
+                        return ((vacation.employee.toString() === employeeId.toString()) && (vacation.dateByMonth === dateByMonth));
+                    });
+
+                    if (vacationObject && vacationObject.vacArray) {
+                        vacationObject.vacArray.forEach(function (vac, index) {
+                            vacationDate = moment(startDate).date(index + 1);
+                            dayOfWeek = vacationDate.day();
+
+                            if (vac && (vac !== 'P') && (vac !== 'E') && (dayOfWeek !== 6) && (dayOfWeek !== 0)) {
+                                vacationHours += parseInt(weeklyScheduler[dayOfWeek], 10) || 0;
+                            }
+                        });
+                    }
+
+                    vacationCost = vacationHours * costForHour * 100;
+
+                    salaryIdleBody.amount = (idleHours - vacationHours) * costForHour * 100;
+                    vacationBody.amount = vacationCost;
+
+                    if (vacationBody.amount > 0) {
+                        createReconciled(vacationBody, req.session.lastDb, cb, req.session.uId);
+                    } else {
+                        cb();
+                    }
+
+                    if (salaryIdleBody.amount > 0) {
+                        createReconciled(salaryIdleBody, req.session.lastDb, cb, req.session.uId);
+                    } else {
+                        cb();
+                    }
+
+                } else if (idleHours < 0) {
+                    console.log('bad employees wTracks', employeeId, localKey, hoursInMonth);
+                    asyncCb();
+                }
+
+            }, function () {
+                wfCb();
+            });
+
+        }
+
+        waterfallFuncs = [parallelFuncFind, forEachEmployee];
+
+        async.waterfall(waterfallFuncs, function (err) {
+            if (err) {
+                return callback(err);
+            }
+
+            callback();
+        });
+    };
+
+    function closeMonth(req, res, next, dateObject, cb) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var query = dateObject || req.body;
+        var month = parseInt(query.month, 10);
+        var year = parseInt(query.year, 10);
+        var startDate = moment().year(year).month(month - 1).startOf('month');
+        var localDate = moment().year(year).month(month - 1).endOf('month');
+        var jeDate = moment(localDate).subtract(3, 'hours');
+        var waterlallTasks;
+        var productSales;
+        var COGS;
+
+        var parallelCreate = function (wfCb) {
+            var parallelTasks;
+
+            var createIncomeSummary = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: new Date(startDate),
+                            $lte: new Date(localDate)
+                        },
+
+                        account: objectId(CONSTANTS.PRODUCT_SALES)
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    var debit;
+                    var credit;
+                    var balance;
+                    var body;
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    debit = result[0] ? result[0].debit : 0;
+                    credit = result[0] ? result[0].credit : 0;
+                    balance = Math.abs(debit - credit);
+
+                    productSales = balance;
+
+                    body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.CREDIT_IS,
+                        date          : new Date(jeDate),
+                        sourceDocument: {
+                            model: 'closeMonth',
+                            _id  : null
+                        },
+
+                        amount: balance
+                    };
+
+                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                });
+            };
+
+            var createCloseCOGS = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: new Date(startDate),
+                            $lte: new Date(localDate)
+                        },
+
+                        account: objectId(CONSTANTS.COGS)
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    var debit;
+                    var credit;
+                    var balance;
+                    var body;
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    debit = result[0] ? result[0].debit : 0;
+                    credit = result[0] ? result[0].credit : 0;
+                    balance = debit - credit;
+
+                    COGS = balance;
+
+                    body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.CLOSE_COGS,
+                        date          : new Date(jeDate),
+                        sourceDocument: {
+                            model: 'closeMonth',
+                            _id  : null
+                        },
+
+                        amount: balance
+                    };
+
+                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                });
+            };
+
+            var cretaeCloseVacation = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: new Date(startDate),
+                            $lte: new Date(localDate)
+                        },
+
+                        account: objectId(CONSTANTS.VACATION_EXPENSES)
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    var debit;
+                    var credit;
+                    var balance;
+                    var body;
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    debit = result[0] ? result[0].debit : 0;
+                    credit = result[0] ? result[0].credit : 0;
+                    balance = debit - credit;
+
+                    body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.CLOSE_VAC_EXP,
+                        date          : new Date(jeDate),
+                        sourceDocument: {
+                            model: 'closeMonth'
+                        },
+
+                        amount: balance,
+                        _id   : null
+                    };
+
+                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                });
+            };
+
+            var createCloseIdle = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date                  : {$gte: new Date(startDate), $lte: new Date(localDate)},
+                        'sourceDocument.model': 'Employees',
+                        journal               : objectId(CONSTANTS.IDLE_PAYABLE),
+                        credit                : {$gt: 0}
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    var debit;
+                    var credit;
+                    var balance;
+                    var body;
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    debit = result[0] ? result[0].debit : 0;
+                    credit = result[0] ? result[0].credit : 0;
+                    balance = Math.abs(debit - credit);
+
+                    body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.CLOSE_IDLE_EXP,
+                        date          : new Date(jeDate),
+                        sourceDocument: {
+                            model: 'closeMonth'
+                        },
+
+                        amount: balance
+                    };
+
+                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                });
+            };
+
+            var createCloseAdminSalary = function (cb) {
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: new Date(startDate),
+                            $lte: new Date(localDate)
+                        },
+
+                        account: objectId(CONSTANTS.ADMIN_SALARY_EXPENSES)
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, result) {
+                    var debit;
+                    var credit;
+                    var balance;
+                    var body;
+
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    debit = result[0] ? result[0].debit : 0;
+                    credit = result[0] ? result[0].credit : 0;
+                    balance = debit - credit;
+
+                    body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.CLOSE_ADMIN_EXP,
+                        date          : new Date(jeDate),
+                        sourceDocument: {
+                            model: 'closeMonth'
+                        },
+
+                        amount: balance
+                    };
+
+                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+                });
+            };
+
+            parallelTasks = [createIncomeSummary, createCloseCOGS, cretaeCloseVacation, createCloseIdle, createCloseAdminSalary];
+            async.parallel(parallelTasks, function (err, result) {
+                if (err) {
+                    return wfCb(err);
+                }
+
+                Model.aggregate([{
+                    $match: {
+                        date: {
+                            $gte: new Date(startDate),
+                            $lte: new Date(localDate)
+                        },
+
+                        account: objectId(CONSTANTS.TOTAL_EXPENSES)
+                    }
+                }, {
+                    $group: {
+                        _id   : null,
+                        debit : {$sum: '$debit'},
+                        credit: {$sum: '$credit'}
+                    }
+                }], function (err, je) {
+                    var debit;
+                    var credit;
+                    var balance;
+                    var body;
+                    var cb;
+
+                    if (err) {
+                        return wfCb(err);
+                    }
+
+                    debit = je[0] ? je[0].debit : 0;
+                    credit = je[0] ? je[0].credit : 0;
+                    balance = Math.abs(debit - credit);
+
+                    body = {
+                        currency      : CONSTANTS.CURRENCY_USD,
+                        journal       : CONSTANTS.CLOSE_ADMIN_BUD,
+                        date          : new Date(jeDate),
+                        sourceDocument: {
+                            model: 'closeMonth'
+                        },
+
+                        amount: balance
+                    };
+
+                    cb = function () {
+                        wfCb(null, result);
+                    };
+
+                    createReconciled(body, req.session.lastDb, cb, req.session.uId);
+
+                });
+            });
+        };
+
+        var createRE = function (result, wfCb) {
+            Model.aggregate([{
+                $match: {
+                    date: {
+                        $gte: new Date(startDate),
+                        $lte: new Date(localDate)
+                    },
+
+                    account: objectId(CONSTANTS.INCOME_SUMMARY_ACCOUNT)
+                }
+            }, {
+                $group: {
+                    _id   : null,
+                    debit : {$sum: '$debit'},
+                    credit: {$sum: '$credit'}
+                }
+            }], function (err, result) {
+                var debit;
+                var credit;
+                var balance;
+                var body;
+
+                if (err) {
+                    return wfCb(err);
+                }
+
+                debit = result[0] ? result[0].debit : 0;
+                credit = result[0] ? result[0].credit : 0;
+                balance = Math.abs(debit - credit);
+
+                if (productSales - COGS < 0) {
+                    balance = balance * (-1);
+                }
+
+                body = {
+                    currency      : CONSTANTS.CURRENCY_USD,
+                    journal       : CONSTANTS.RETAINED_EARNINGS,
+                    date          : new Date(jeDate),
+                    sourceDocument: {
+                        model: 'closeMonth'
+                    },
+
+                    amount: balance
+                };
+
+                createReconciled(body, req.session.lastDb, wfCb, req.session.uId);
+            });
+        };
+
+        waterlallTasks = [parallelCreate, createRE];
+
+        async.waterfall(waterlallTasks, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            if (cb) {
+                cb(null, result);
+            } else {
+                res.status(200).send({success: true});
+            }
+        });
+    }
+
+    this.closeMonth = function (req, res, next) {
+        closeMonth(req, res, next);
+    };
+
+    this.recloseMonth = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var body = req.body;
+
+        async.each(body, function (date, cb) {
+            var endDate = moment(date).endOf('month');
+            var startDate = moment(date).startOf('month');
+
+            Model.remove({
+                journal: {$in: CONSTANTS.CLOSE_MONTH_JOURNALS},
+                date   : {$gte: new Date(startDate), $lte: new Date(endDate)}
+            }, function () {
+                var month = moment(date).month() + 1;
+                var year = moment(date).year();
+                closeMonth(req, res, next, {month: month, year: year}, cb);
+            });
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
+        });
+    };
+
+    this.createCostsForJob = function (options) {
+
+    };
+
+    this.reconcile = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
+        var WTrack = models.get(req.session.lastDb, 'wTrack', wTrackSchema);
+        var Invoice = models.get(req.session.lastDb, 'Invoice', invoiceSchema);
+        var Job = models.get(req.session.lastDb, 'jobs', jobsSchema);
+        var body = req.body;
+        var month = parseInt(body.month, 10);
+        var year = parseInt(body.year, 10);
+        var date = body.date ? moment(new Date(body.date)) : moment().year(year).month(month - 1).endOf('month');
+        var jobIds = body.jobs;
+        var reconcileSalaryEntries;
+        var reconcileInvoiceEntries;
+        var timeToSet = {hour: 15, minute: 1, second: 0};
+        var parallelTasks;
+        var resultArray = [];
+        var parallelFunction;
+        var reconcileJobs;
+        var removeEntries;
+        var createForJob;
+        var mainWaterfallTasks;
+        var getJobsToCreateExpenses;
+        var waterfallTasks;
+        var match = {};
+
+        if (jobIds && !Array.isArray(jobIds)) {
+            jobIds = [jobIds];
+            match = {
+                jobs: {$in: jobIds.objectID()}
+            };
+        }
+
+        getJobsToCreateExpenses = function (mainCb) {
+            WTrack.aggregate([{
+                $match: match
+            }, {
+                $group: {
+                    _id: '$jobs'
+                }
+            }], function (err, result) {
+                if (err) {
+                    return mainCb(err);
+                }
+
+                jobIds = _.pluck(result, '_id');
+
+                res.status(200).send({success: true});
+                mainCb();
+            });
+        };
+
+        parallelFunction = function (mainCb) {
+            reconcileInvoiceEntries = function (mainCallback) {
+                Invoice.find({reconcile: true, approved: true, _type: 'wTrackInvoice'}, function (err, result) {
+                    var parallelRemove;
+                    var parallelCreate;
+
+                    if (err) {
+                        return mainCallback(err);
+                    }
+
+                    result.forEach(function (el) {
+                        resultArray.push(el._id);
+                    });
+
+                    parallelRemove = function (cb) {
+                        Model.remove({
+                            'sourceDocument._id': {$in: resultArray}
+                        }, function (err) {
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            cb(null, resultArray);
+                        });
+                    };
+
+                    function findProformaPayments(resultArray, cb) {
+                        Invoice.aggregate([{
+                            $match: {
+                                _id: {$in: resultArray}
+                            }
+                        }, {
+                            $project: {
+                                payments: 1,
+                                _id     : 0
+                            }
+                        }, {
+                            $unwind: '$payments'
+                        }, {
+                            $lookup: {
+                                from        : 'Payment',
+                                localField  : 'payments',
+                                foreignField: '_id',
+                                as          : 'payment'
+                            }
+                        }, {
+                            $project: {
+                                payment: {$arrayElemAt: ['$payment', 0]}
+                            }
+                        }, {
+                            $lookup: {
+                                from        : 'Invoice',
+                                localField  : 'payment.invoice',
+                                foreignField: '_id',
+                                as          : 'invoice'
+                            }
+                        }, {
+                            $project: {
+                                payment: 1,
+                                invoice: {$arrayElemAt: ['$invoice', 0]}
+                            }
+                        }, {
+                            $match: {
+                                'invoice._type': 'Proforma'
+                            }
+                        }], function (err, result) {
+                            if (err) {
+                                return cb(err);
+                            }
+
+                            cb(null, result);
+                        });
+                    }
+
+                    parallelCreate = function (result, cb) {
+                        async.each(resultArray, function (element, asyncCb) {
+                            Invoice.findById(element, function (err, invoice) {
+                                var cb = asyncCb;
+                                var proformaPayments = [];
+                                var proforma;
+                                var paidAmount = 0;
+                                var beforeInvoiceBody = {};
+                                var journalEntryBody = {};
+
+                                if (err) {
+                                    return asyncCb(err);
+                                }
+
+                                proforma = _.find(result, function (el) {
+                                    var payments = invoice.payments || [];
+                                    payments.forEach(function (payment) {
+                                        if (el.payment && el.payment._id && (payment.toString() === el.payment._id.toString())) {
+                                            proformaPayments.push(el);
+                                        }
+                                    });
+                                });
+
+                                if (proformaPayments.length) {
+                                    proformaPayments.forEach(function (el) {
+                                        var paymentInfo = el.payment;
+                                        var paid = paymentInfo.paidAmount;
+                                        var paidInUSD = paid / paymentInfo.currency.rate;
+
+                                        paidAmount += paidInUSD;
+                                    });
+
+                                    if (paidAmount) {
+                                        cb = _.after(2, asyncCb);
+
+                                        beforeInvoiceBody.date = invoice.invoiceDate;
+                                        beforeInvoiceBody.journal = CONSTANTS.BEFORE_INVOICE;
+                                        beforeInvoiceBody.currency = invoice.currency ? invoice.currency._id : 'USD';
+                                        beforeInvoiceBody.amount = invoice.paymentInfo ? paidAmount : 0;
+                                        beforeInvoiceBody.sourceDocument = {};
+                                        beforeInvoiceBody.sourceDocument._id = invoice._id;
+                                        beforeInvoiceBody.sourceDocument.model = 'Proforma';
+
+                                        if (beforeInvoiceBody.amount > 0) {
+                                            createReconciled(beforeInvoiceBody, req.session.lastDb, cb, req.session.uId);
+                                        } else {
+                                            cb();
+                                        }
+
+                                    }
+                                }
+
+                                journalEntryBody.date = invoice.invoiceDate;
+                                journalEntryBody.journal = invoice.journal || CONSTANTS.INVOICE_JOURNAL;
+                                journalEntryBody.currency = invoice.currency ? invoice.currency._id : 'USD';
+                                journalEntryBody.amount = invoice.paymentInfo ? invoice.paymentInfo.total : 0;
+                                journalEntryBody.sourceDocument = {};
+                                journalEntryBody.sourceDocument._id = invoice._id;
+                                journalEntryBody.sourceDocument.model = 'Invoice';
+
+                                if (journalEntryBody.amount > 0) {
+                                    createReconciled(journalEntryBody, req.session.lastDb, cb, req.session.uId);
+                                } else {
+                                    cb();
+                                }
+
+                            });
+                        }, function () {
+                            cb();
+                        });
+
+                    };
+
+                    waterfallTasks = [parallelRemove, findProformaPayments, parallelCreate];
+
+                    async.waterfall(waterfallTasks, function (err) {
+                        if (err) {
+                            return mainCallback(err);
+                        }
+
+                        Invoice.update({_id: {$in: resultArray}}, {$set: {reconcile: false}}, {multi: true}, function (err, result) {
+                            if (err) {
+                                return mainCallback(err);
+                            }
+
+                            // res.status(200).send({success: true});
+                            event.emit('sendMessage', {
+                                view   : 'journalEntry',
+                                message: 'Invoices and Proformas were reconciled'
+                            });
+                            mainCallback();
+                        });
+                    });
+                });
+            };
+
+            reconcileSalaryEntries = function (mainCallback) {
+                WTrack.aggregate([{
+                    $match: {
+                        jobs: {$in: jobIds}
+                    }
+                }, {
+                    $group: {
+                        _id: {
+                            employee   : '$employee',
+                            _type      : '$_type',
+                            dateByMonth: '$dateByMonth',
+                            jobs       : '$jobs'
+                        },
+
+                        hours: {$sum: '$worked'}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'MonthHours',
+                        localField  : '_id.dateByMonth',
+                        foreignField: 'dateByMonth',
+                        as          : 'dateByMonth'
+                    }
+                }, {
+                    $project: {
+                        dateByMonth: {$arrayElemAt: ['$dateByMonth', 0]},
+                        hours      : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Vacation',
+                        localField  : '_id.dateByMonth',
+                        foreignField: 'dateByMonth',
+                        as          : 'vacations'
+                    }
+                }, {
+                    $project: {
+                        overheadRate: '$dateByMonth.overheadRate',
+                        hoursInMonth: '$dateByMonth.hours',
+                        dateByMonth : '$dateByMonth.dateByMonth',
+                        hours       : 1
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : '_id.employee',
+                        foreignField: '_id',
+                        as          : 'employee'
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Holiday',
+                        localField  : 'dateByMonth',
+                        foreignField: 'dateByMonth',
+                        as          : 'holidays'
+                    }
+                }, {
+                    $project: {
+                        employee    : {$arrayElemAt: ['$employee', 0]},
+                        overheadRate: 1,
+                        hoursInMonth: 1,
+                        dateByMonth : 1,
+                        holidays    : 1,
+                        hours       : 1
+                    }
+                }, {
+                    $project: {
+                        transfer    : '$employee.transfer',
+                        employee    : '$employee._id',
+                        dateByMonth : 1,
+                        hoursInMonth: 1,
+                        overheadRate: 1,
+                        holidays    : 1,
+                        hours       : 1
+                    }
+                }, {
+                    $unwind: '$transfer'
+                }, {
+                    $lookup: {
+                        from        : 'weeklySchedulers',
+                        localField  : 'transfer.weeklyScheduler',
+                        foreignField: '_id',
+                        as          : 'transfer.weeklyScheduler'
+                    }
+                }, {
+                    $project: {
+                        'transfer.weeklyScheduler': {$arrayElemAt: ['$transfer.weeklyScheduler', 0]},
+                        'transfer.date'           : 1,
+                        'transfer.salary'         : 1,
+                        'transfer.status'         : 1,
+                        employee                  : 1,
+                        dateByMonth               : 1,
+                        hoursInMonth              : 1,
+                        overheadRate              : 1,
+                        holidays                  : 1,
+                        hours                     : 1
+                    }
+                }, {
+                    $group: {
+                        _id: {
+                            employee   : '$_id.employee',
+                            _type      : '$_id._type',
+                            dateByMonth: '$_id.dateByMonth',
+                            jobs       : '$_id.jobs'
+                        },
+
+                        transfer    : {$addToSet: '$transfer'},
+                        employee    : {$addToSet: '$employee'},
+                        dateByMonth : {$addToSet: '$dateByMonth'},
+                        hoursInMonth: {$addToSet: '$hoursInMonth'},
+                        overheadRate: {$addToSet: '$overheadRate'},
+                        holidays    : {$addToSet: '$holidays'},
+                        hours       : {$addToSet: '$hours'}
+                    }
+                }, {
+                    $project: {
+                        transfer    : 1,
+                        employee    : {$arrayElemAt: ['$employee', 0]},
+                        dateByMonth : {$arrayElemAt: ['$dateByMonth', 0]},
+                        hoursInMonth: {$arrayElemAt: ['$hoursInMonth', 0]},
+                        overheadRate: {$arrayElemAt: ['$overheadRate', 0]},
+                        holidays    : {$arrayElemAt: ['$holidays', 0]},
+                        hours       : {$arrayElemAt: ['$hours', 0]}
+                    }
+                }], function (err, result) {
+                    if (err) {
+                        return mainCallback(err);
+                    }
+
+                    async.each(result, function (item, cb) {
+                        var employee = item.employee;
+                        var hours = item.hours;
+                        var jobId = item._id.jobs;
+                        var _type = item._id._type;
+                        var overheadRate = item.overheadRate;
+                        var dateByMonth = item.dateByMonth || item._id.dateByMonth;
+                        var holidays = item.holidays;
+                        var transfer = item.transfer;
+                        var transferLength = transfer.length;
+                        var salaryForDate = 0;
+                        var hoursInMonth = 0;
+                        var costForHour = 0;
+                        var weeklyScheduler = {};
+                        var hoursToRemove = 0;
+                        var year = dateByMonth.toString().slice(0, 4);
+                        var month = dateByMonth.toString().slice(4);
+                        var endDate = moment().year(year).month(month - 1).endOf('month');
+                        var checkDate;
+                        var startDate = moment().year(year).month(month - 1).startOf('month');
+                        var entryDate = moment(endDate);
+
+                        var bodySalary = {
+                            currency      : CONSTANTS.CURRENCY_USD,
+                            journal       : CONSTANTS.SALARY_PAYABLE,
+                            date          : entryDate.set(timeToSet),
+                            sourceDocument: {
+                                model   : 'wTrack',
+                                _id     : jobId,
+                                employee: employee
+                            }
+                        };
+
+                        var bodyOvertime = {
+                            currency      : CONSTANTS.CURRENCY_USD,
+                            journal       : CONSTANTS.OVERTIME_PAYABLE,
+                            date          : entryDate.set(timeToSet),
+                            sourceDocument: {
+                                model   : 'wTrack',
+                                _id     : jobId,
+                                employee: employee
+                            }
+                        };
+
+                        var bodyOverhead = {
+                            currency      : CONSTANTS.CURRENCY_USD,
+                            journal       : CONSTANTS.OVERHEAD,
+                            date          : entryDate.set(timeToSet),
+                            sourceDocument: {
+                                model   : 'wTrack',
+                                _id     : jobId,
+                                employee: employee
+                            }
+                        };
+                        var i;
+                        var transferObj;
+
+                        if (!dateByMonth) {
+                            console.log('notDateBymonth');
+                            return cb();
+                        }
+
+                        transfer = _.sortBy(transfer, 'date');
+
+                        if ((parseInt(year, 10) * 100 + parseInt(month, 10)) === (moment(transfer[0].date).year() * 100 + moment(transfer[0].date).month() + 1)) {
+                            startDate = moment(transfer[transferLength - 1].date);
+                        }
+                        for (i = transferLength - 1; i >= 0; i--) {
+                            transferObj = transfer[i];
+
+                            if ((moment(moment(startDate).add(12, 'hours')).isAfter(moment(transferObj.date))) || (moment(moment(startDate)).isSame(moment(transferObj.date)))) {
+                                if (transferObj.status === 'fired') {
+                                    if (transfer[i - 1] && moment(startDate).isAfter(transfer[i - 1].date)) {
+                                        salaryForDate = transferObj.salary;
+                                        weeklyScheduler = transferObj.weeklyScheduler;
+                                        break;
+                                    }
+                                } else if (transferObj.status !== 'transfer') {
+                                    salaryForDate = transferObj.salary;
+                                    weeklyScheduler = transferObj.weeklyScheduler;
+                                    break;
+                                }
+                            }
+                        }
+
+                        /*  if (employee.toString() === '55b92ad221e4b7c40f00008a'){
+                         console.dir(weeklyScheduler);
+                         }*/
+
+                        if (!Object.keys(weeklyScheduler).length) {
+                            weeklyScheduler = {
+                                1         : 8,
+                                2         : 8,
+                                3         : 8,
+                                4         : 8,
+                                5         : 8,
+                                6         : 0,
+                                7         : 0,
+                                name      : 'UA-40',
+                                totalHours: 40
+                            };
+                        }
+
+                        holidays.forEach(function (holiday) {
+                            if ((holiday.day !== 0) && (holiday.day !== 6)) {
+                                hoursToRemove += parseInt(weeklyScheduler[holiday.day]) || 0;
+                            }
+                        });
+
+                        for (i = endDate.date(); i >= 1; i--) {
+                            checkDate = moment(endDate).date(i).day();
+
+                            if (checkDate === 0) {
+                                checkDate = 7;
+                            }
+                            hoursInMonth += parseInt(weeklyScheduler[checkDate]) || 0;
+                        }
+
+                        hoursInMonth -= hoursToRemove;
+
+                        costForHour = isFinite(salaryForDate / hoursInMonth) ? salaryForDate / hoursInMonth : 0;
+
+                        Model.remove({
+                            'sourceDocument._id'     : jobId,
+                            date                     : {$gt: new Date(startDate), $lt: new Date(endDate)},
+                            'sourceDocument.employee': objectId(employee)
+                        }, function () {
+
+                            var methodCb = function () {
+                            };
+
+                            if (_type === 'overtime') {
+                                bodyOvertime.amount = hours * costForHour * 100;
+                                bodyOverhead.amount = hours * overheadRate * 100;
+
+                                if (bodyOverhead.amount > 0) {
+                                    createReconciled(bodyOverhead, req.session.lastDb, methodCb, req.session.uId);
+                                }
+                                if (bodyOvertime.amount > 0) {
+                                    createReconciled(bodyOvertime, req.session.lastDb, methodCb, req.session.uId);
+                                }
+
+                            } else if (_type === 'ordinary') {
+                                bodySalary.amount = hours * costForHour * 100;
+                                bodyOverhead.amount = hours * overheadRate * 100;
+
+                                if (bodySalary.amount > 0) {
+                                    createReconciled(bodySalary, req.session.lastDb, methodCb, req.session.uId);
+                                }
+
+                                if (bodyOverhead.amount > 0) {
+                                    createReconciled(bodyOverhead, req.session.lastDb, methodCb, req.session.uId);
+                                }
+                            }
+
+                        });
+
+                        cb();
+                    }, function () {
+                        mainCallback();
+                    });
+
+                });
+            };
+
+            parallelTasks = [reconcileInvoiceEntries, reconcileSalaryEntries];
+
+            async.parallel(parallelTasks, function (err, result) {
+                if (err) {
+                    return mainCb(err);
+                }
+                mainCb(null, result);
+            });
+        };
+
+        reconcileJobs = function (result, mainCb) {
+
+            removeEntries = function (cb) {
+                Model.remove({
+                    journal             : {$in: [CONSTANTS.FINISHED_JOB_JOURNAL, CONSTANTS.CLOSED_JOB]},
+                    'sourceDocument._id': {$in: jobIds}
+                }, function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, result);
+                });
+            };
+
+            createForJob = function (result, cb) {
+
+                Job.find({_id: {$in: jobIds}}, {invoice: 1}).populate('invoice').lean().exec(function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    async.each(result, function (model, asyncCb) {
+                        var date = moment(new Date(model.invoice.invoiceDate)).subtract(1, 'seconds');
+                        var jobId = model._id;
+                        var callback = _.after(3, asyncCb);
+                        var startMonthDate;
+                        var endMonthDate;
+
+                        if (!model.invoice) {
+                            return asyncCb();
+                        }
+
+                        Model.aggregate([{
+                            $match: {
+                                'sourceDocument._id'  : jobId,
+                                'sourceDocument.model': 'wTrack',
+                                debit                 : {$gt: 0}
+                            }
+                        }, {
+                            $group: {
+                                _id   : null,
+                                amount: {$sum: '$debit'}
+                            }
+                        }], function (err, result) {
+                            var bodyFinishedJob;
+                            var bodyClosedJob;
+
+                            if (err) {
+                                return console.log(err);
+                            }
+
+                            bodyFinishedJob = {
+                                currency      : CONSTANTS.CURRENCY_USD,
+                                journal       : CONSTANTS.FINISHED_JOB_JOURNAL,
+                                sourceDocument: {
+                                    model: 'jobs'
+                                },
+
+                                amount: 0
+                            };
+
+                            bodyClosedJob = {
+                                currency      : CONSTANTS.CURRENCY_USD,
+                                journal       : CONSTANTS.CLOSED_JOB,
+                                sourceDocument: {
+                                    model: 'jobs'
+                                },
+
+                                amount: 0
+                            };
+                            bodyFinishedJob.amount = result && result[0] ? result[0].amount : 0;
+                            bodyClosedJob.amount = result && result[0] ? result[0].amount : 0;
+                            bodyFinishedJob.date = new Date(date);
+                            bodyClosedJob.date = new Date(moment(date).subtract(1, 'seconds'));
+                            bodyFinishedJob.sourceDocument._id = jobId;
+                            bodyClosedJob.sourceDocument._id = jobId;
+
+                            startMonthDate = moment(bodyClosedJob.date).startOf('month');
+                            endMonthDate = moment(bodyClosedJob.date).endOf('month');
+
+                            Model.update({
+                                'sourceDocument._id'  : jobId,
+                                'sourceDocument.model': 'wTrack',
+                                date                  : {$gte: new Date(startMonthDate), $lte: new Date(endMonthDate)}
+                            }, {$set: {date: new Date(bodyClosedJob.date)}}, {multi: true}, function (err, result) {
+                                if (err) {
+                                    return callback(err);
+                                }
+
+                                callback();
+                            });
+
+                            if (bodyFinishedJob.amount > 0) {
+                                createReconciled(bodyFinishedJob, req.session.lastDb, callback, req.session.uId);
+                            } else {
+                                callback();
+                            }
+
+                            if (bodyClosedJob.amount > 0) {
+                                createReconciled(bodyClosedJob, req.session.lastDb, callback, req.session.uId);
+                            } else {
+                                callback();
+                            }
+
+                        });
+                    }, function () {
+                        cb();
+                    });
+                });
+            };
+
+            async.waterfall([removeEntries, createForJob], function (err, result) {
+                if (err) {
+                    return mainCb(err);
+                }
+
+                mainCb(null, result);
+            });
+        };
+
+        /*  if (jobIds && jobIds.length) {
+         mainWaterfallTasks = [parallelFunction, reconcileJobs];
+         } else if (month && year) {
+         mainWaterfallTasks = [getJobsToCreateExpenses, parallelFunction, reconcileJobs];
+         }*/
+
+        mainWaterfallTasks = [getJobsToCreateExpenses, parallelFunction, reconcileJobs];
+        async.waterfall(mainWaterfallTasks, function (err, resut) {
+            var db;
+            var setObj;
+
+            if (err) {
+                return next(err);
+            }
+            db = models.connection(req.session.lastDb);
+            setObj = {date: date};
+
+            console.log('Success');
+            event.emit('sendMessage', {view: 'journalEntry', message: 'Please, refresh browser, data was changed.'});
+
+            /* jobIds.forEach(function (job) {
+             checkAndCreateForJob({
+             req  : req,
+             jobId: job
+             })
+             });*/
+
+            Job.update({_id: {$in: jobIds}}, {$set: {reconcile: false}}, {multi: true}, function () {
+
+            });
+
+            db.collection('settings').findOneAndUpdate({name: 'reconcileDate'}, {$set: setObj}, function () {
+                if (err) {
+                    return next(err);
+                }
+
+            });
+        });
+    };
+
+    this.getReconcileDate = function (req, res, next) {
+        var db = models.connection(req.session.lastDb);
+
+        db.collection('settings').findOne({name: 'reconcileDate'}, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            if (result && result.length) {
+                res.status(200).send({date: result.date});
+            } else {
+                res.status(200).send({date: new Date('14 Jul 2014')});
+            }
+        });
+    };
+
+    this.create = function (body, dbIndex, cb, uId) {
+        var Journal = models.get(dbIndex, 'journal', journalSchema);
+        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
+        var Currency = models.get(dbIndex, 'currency', CurrencySchema);
+        var journalId = body.journal;
+        var now = moment();
+        var date = body.date ? moment(body.date) : now;
+        var currency;
+        var amount = body.amount;
+        var rates;
+
+        var waterfallTasks;
+
+        date = date.format('YYYY-MM-DD');
+
+        function currencyNameFinder(waterfallCb) {
+
+            Currency.findById(body.currency, function (err, result) {
+                if (err) {
+                    waterfallCb(err);
+                }
+
+                waterfallCb(null, result.name);
+            });
+        }
+
+        function journalFinder(currencyName, waterfallCb) {
+            var err;
+
+            if (!journalId) {
+                err = new Error('Journal id is required field');
+                err.status = 400;
+
+                return waterfallCb(err);
+            }
+
+            currency = {
+                name: currencyName
+            };
+
+            Journal.findById(journalId, waterfallCb);
+
+        }
+
+        function journalEntrySave(journal, waterfallCb) {
+            var err;
+            var debitObject;
+            var creditObject;
+            var parallelTasks = {
+                debitSaver : function (parallelCb) {
+                    var journalEntry;
+
+                    debitObject.debit = amount;
+                    debitObject.account = journal.debitAccount;
+
+                    debitObject.editedBy = {
+                        user: uId,
+                        date: new Date(date)
+                    };
+
+                    debitObject.createdBy = {
+                        user: uId,
+                        date: new Date(date)
+                    };
+
+                    if (debitObject.currency && debitObject.currency.rate) {
+                        debitObject.debit *= debitObject.currency.rate;
+                    }
+
+                    if (amount && moment(debitObject.date).isBefore(now)) {
+                        journalEntry = new Model(debitObject);
+                        journalEntry.save(parallelCb);
+                    } else {
+                        parallelCb();
+                    }
+
+                },
+                creditSaver: function (parallelCb) {
+                    var journalEntry;
+
+                    creditObject.credit = amount;
+                    creditObject.account = journal.creditAccount;
+
+                    creditObject.editedBy = {
+                        user: uId,
+                        date: new Date(date)
+                    };
+
+                    creditObject.createdBy = {
+                        user: uId,
+                        date: new Date(date)
+                    };
+
+                    if (creditObject.currency && creditObject.currency.rate) {
+                        creditObject.credit *= creditObject.currency.rate;
+                    }
+
+                    if (amount && moment(creditObject.date).isBefore(now)) {
+                        journalEntry = new Model(creditObject);
+                        journalEntry.save(parallelCb);
+                    } else {
+                        parallelCb();
+                    }
+                }
+            };
+
+            if (!journal || !journal._id) {
+                err = new Error('Invalid Journal');
+                err.status = 400;
+
+                return waterfallCb(err);
+            }
+
+            currency = {
+                name: 'USD',
+                rate: 1
+            };
+
+            body.currency = currency;
+            body.journal = journal._id;
+
+            debitObject = _.extend({}, body);
+            creditObject = _.extend({}, body);
+
+            async.parallel(parallelTasks, function (err, result) {
+                if (err) {
+                    return waterfallCb(err);
+                }
+
+                waterfallCb(null, result);
+            });
+        };
+
+        async.waterfall(waterfallTasks, function (err, response) {
+            if (err) {
+                return cb(err);
+            }
+
+            if (cb) {
+                cb(null, response);
+            }
+        });
     };
 
     this.createReconciled = function (body, dbIndex, cb, uId) {
@@ -5026,7 +7605,7 @@ var Module = function (models, event) {
      });
      };*/
 
-    this.getForView = function (req, res, next) {
+    function getForView(req, mainCallback) {
         var dbIndex = req.session.lastDb;
         var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
         var data = req.query;
@@ -5034,9 +7613,9 @@ var Module = function (models, event) {
         var findInvoice;
         var findSalary;
         var findByEmployee;
-        var count = parseInt(data.count, 10) / 2 || 50;
-        var page = parseInt(data.page, 10);
-        var skip = (page - 1) > 0 ? (page - 1) * count : 0;
+        var paginationObject = pageHelper(data);
+        var limit = paginationObject.limit;
+        var skip = paginationObject.skip;
         var filter = data.filter;
         var filterObj = {};
         var key;
@@ -5153,11 +7732,21 @@ var Module = function (models, event) {
                 }, {
                     $match: filterObj
                 }, {
+                    $project: {
+                        debit                        : 1,
+                        currency                     : 1,
+                        journal                      : 1,
+                        date                         : 1,
+                        'sourceDocument.model'       : 1,
+                        'sourceDocument._id'         : 1,
+                        'sourceDocument.subject.name': '$sourceDocument.subject.name'
+                    }
+                }, {
                     $sort: sort
                 }, {
                     $skip: skip
                 }, {
-                    $limit: count
+                    $limit: limit
                 }], function (err, result) {
                     if (err) {
                         return cb(err);
@@ -5261,11 +7850,21 @@ var Module = function (models, event) {
                 }, {
                     $match: filterObj
                 }, {
+                    $project: {
+                        debit                        : 1,
+                        currency                     : 1,
+                        journal                      : 1,
+                        date                         : 1,
+                        'sourceDocument.model'       : 1,
+                        'sourceDocument._id'         : 1,
+                        'sourceDocument.subject.name': '$sourceDocument.subject.name'
+                    }
+                }, {
                     $sort: sort
                 }, {
                     $skip: skip
                 }, {
-                    $limit: count
+                    $limit: limit
                 }]);
 
             query.options = {allowDiskUse: true};
@@ -5370,12 +7969,23 @@ var Module = function (models, event) {
                 }, {
                     $match: filterObj
                 }, {
+                    $project: {
+                        debit                        : 1,
+                        currency                     : 1,
+                        journal                      : 1,
+                        date                         : 1,
+                        'sourceDocument.model'       : 1,
+                        'sourceDocument._id'         : 1,
+                        'sourceDocument.subject.name': '$sourceDocument.subject.name'
+                    }
+                }, {
                     $sort: sort
                 }, {
                     $skip: skip
                 }, {
-                    $limit: count
-                }]);
+                    $limit: limit
+                }
+                ]);
 
             query.options = {allowDiskUse: true};
 
@@ -5386,7 +7996,8 @@ var Module = function (models, event) {
 
                 cb(null, result);
             });
-        };
+        }
+        ;
 
         findJobsFinished = function (cb) {
             var query = Model
@@ -5480,11 +8091,21 @@ var Module = function (models, event) {
                 }, {
                     $match: filterObj
                 }, {
+                    $project: {
+                        debit                        : 1,
+                        currency                     : 1,
+                        journal                      : 1,
+                        date                         : 1,
+                        'sourceDocument.model'       : 1,
+                        'sourceDocument._id'         : 1,
+                        'sourceDocument.subject.name': '$sourceDocument.subject.name'
+                    }
+                }, {
                     $sort: sort
                 }, {
                     $skip: skip
                 }, {
-                    $limit: count
+                    $limit: limit
                 }]);
 
             query.options = {allowDiskUse: true};
@@ -5589,11 +8210,21 @@ var Module = function (models, event) {
                 }, {
                     $match: filterObj
                 }, {
+                    $project: {
+                        debit                        : 1,
+                        currency                     : 1,
+                        journal                      : 1,
+                        date                         : 1,
+                        'sourceDocument.model'       : 1,
+                        'sourceDocument._id'         : 1,
+                        'sourceDocument.subject.name': '$sourceDocument.subject.name'
+                    }
+                }, {
                     $sort: sort
                 }, {
                     $skip: skip
                 }, {
-                    $limit: count
+                    $limit: limit
                 }]);
 
             query.options = {allowDiskUse: true};
@@ -5697,11 +8328,21 @@ var Module = function (models, event) {
                 }, {
                     $match: filterObj
                 }, {
+                    $project: {
+                        debit                        : 1,
+                        currency                     : 1,
+                        journal                      : 1,
+                        date                         : 1,
+                        'sourceDocument.model'       : 1,
+                        'sourceDocument._id'         : 1,
+                        'sourceDocument.subject.name': '$sourceDocument.subject.name'
+                    }
+                }, {
                     $sort: sort
                 }, {
                     $skip: skip
                 }, {
-                    $limit: count
+                    $limit: limit
                 }]);
 
             query.options = {allowDiskUse: true};
@@ -5727,7 +8368,7 @@ var Module = function (models, event) {
             var models;
 
             if (err) {
-                return next(err);
+                return mainCallback(err);
             }
             invoices = result[0];
             salary = result[1];
@@ -5737,8 +8378,30 @@ var Module = function (models, event) {
             salaryPaymentResult = result[5];
             models = _.union(invoices, salary, salaryEmployee, jobsResult, paymentsResult, salaryPaymentResult);
 
-            res.status(200).send(models);
+            mainCallback(null, models);
         });
+    }
+
+    this.getForView = function (req, res, next) {
+        var getData;
+        var getTotal;
+
+        getTotal = function (mainCallback) {
+            totalCollectionLength(res, mainCallback);
+        };
+
+        getData = function (mainCallback) {
+            getForView(req, mainCallback);
+        };
+
+        async.parallel([getTotal, getData], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({total: result[0].total || 0, data: result[1], totalValue: result[0].totalValue});
+        });
+
     };
 
     this.removeByDocId = function (docId, dbIndex, callback) {
@@ -5767,4 +8430,3 @@ var Module = function (models, event) {
 };
 
 module.exports = Module;
-
