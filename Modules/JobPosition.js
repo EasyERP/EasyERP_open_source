@@ -208,7 +208,7 @@ var JobPosition = function (event, models) {
 
     function getJobPositionById(req, id, res) {
         var query = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema).findById(id);
-        query.populate("department", "departmentName _id");
+        query.populate("department", "name _id");
         query.populate("workflow", "name _id").
             populate('createdBy.user').
             populate('editedBy.user').
@@ -270,7 +270,7 @@ var JobPosition = function (event, models) {
         query
             .populate('createdBy.user')
             .populate('editedBy.user')
-            .populate('department', '_id departmentName')
+            .populate('department', '_id name')
             .populate('workflow', 'name _id status')
             .sort(sort)
             .skip((data.page - 1) * data.count)
@@ -429,7 +429,7 @@ var JobPosition = function (event, models) {
                                 query.select("_id createdBy editedBy name department totalForecastedEmployees numberOfEmployees expectedRecruitment workflow").
                                     populate('createdBy.user', 'login').
                                     populate('editedBy.user', 'login').
-                                    populate('department', 'departmentName').
+                                    populate('department', 'name').
                                     populate('workflow', 'name _id status').
                                     //skip((data.page - 1) * data.count).
                                     //limit(data.count).

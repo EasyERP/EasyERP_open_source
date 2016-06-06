@@ -423,7 +423,7 @@ var Products = function (models) {
 
             query
                 .populate('info.productType', 'name _id')
-                .populate('department', '_id departmentName')
+                .populate('department', '_id name')
                 .populate('createdBy.user')
                 .populate('editedBy.user')
                 .populate('groups.users')

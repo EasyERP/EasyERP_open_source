@@ -2913,6 +2913,8 @@ define([
                 server.respond();
                 server.respond();
 
+                expect(applicationCollection).to.have.lengthOf(2);
+
                 topBarView = new TopBarView({
                     collection: applicationCollection
                 });
@@ -2925,10 +2927,8 @@ define([
 
         });
 
-
         describe('Application KanbanView', function () {
             var server;
-            var mainSpy;
             var windowConfirmStub;
             var clock;
             var $thisEl;
@@ -2962,7 +2962,7 @@ define([
                         showMore      : false,
                         arrayOfObjects: [
                             {
-                                _id  : "52d2c1369b57890814000005",
+                                _id  : '52d2c1369b57890814000005',
                                 count: 3
                             },
                             {
@@ -2985,7 +2985,11 @@ define([
 
                     $thisEl = kanbanView.$el;
                     expect($thisEl.find('.kanban')).to.exist;
-                    expect($thisEl.find('.kanban .item').length).to.be.not.equals(0);
+                    expect($thisEl.find('.kanban .item').length).to.be.equals(3);
+                    expect($thisEl.find('.item').first().find('.application-header > p').text().trim())
+                        .to.not.equals('[object Object]');
+                    expect($thisEl.find('.item').first().find('.application-header > p').text().trim())
+                        .to.not.equals('undefined');
 
                     // bind ev events to topBarView
                     topBarView.bind('createEvent', kanbanView.createItem, kanbanView);
@@ -3127,7 +3131,6 @@ define([
                     server.respond();
 
                     expect(historyNavigateSpy.calledOnce).to.be.true;
-                    expect(window.location.hash).to.be.equals('#easyErp');
                 });
 
                 it('Try to edit kanban settings view with 200 server response', function () {
@@ -3207,7 +3210,7 @@ define([
                     $thisEl = listView.$el;
 
                     expect($thisEl.find('table')).to.have.class('list');
-                    expect($thisEl.find('#listTable > tr').length).to.be.not.equals(0);
+                    expect($thisEl.find('#listTable > tr').length).to.be.equals(2);
 
                     topBarView.bind('copyEvent', listView.copy, listView);
                     topBarView.bind('generateEvent', listView.generate, listView);

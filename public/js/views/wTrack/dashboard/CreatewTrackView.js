@@ -13,7 +13,8 @@ define([
     'helpers/employeeHelper',
     'helpers/keyCodeHelper',
     'helpers/overTime',
-    'helpers/isOverTime'
+    'helpers/isOverTime',
+    'constants'
 ], function (Backbone,
              $,
              _,
@@ -28,7 +29,8 @@ define([
              employeeHelper,
              keyCodes,
              setOverTime,
-             isOverTime) {
+             isOverTime,
+             CONSTANTS) {
     'use strict';
     var CreateView = Backbone.View.extend({
         template   : _.template(template),
@@ -654,14 +656,8 @@ define([
             data.wTrack = data.wTrack.toJSON();
             formString = this.template(data);
 
-            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, {inProgress: true}, function (projects) {
-                projects = _.map(projects.data, function (project) {
-                    project.name = project.projectName;
-
-                    return project;
-                });
-
-                self.responseObj['#project'] = projects;
+            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, {inProgress: true}, function (response) {
+                self.responseObj['#project'] = response.data;
 
                 App.stopPreload();
             });

@@ -597,29 +597,37 @@ define([
             var $thisEl = this.$el;
             var $pageList = $thisEl.find('#pageList');
             var $curPageInput = $thisEl.find('#currentShowPage');
-            var $itemsNumber = $thisEl.find('#itemsNumber');
-
-            var currentPage = parseInt(options.currentPage, 10) || parseInt($curPageInput.val(), 10);
-            var itemsNumber = parseInt(options.itemsNumber, 10) || parseInt($itemsNumber.text(), 10);
+            var $itemsNumber = $thisEl.find('.itemsNumber');
 
             var $gridStart = $thisEl.find('#gridStart');
+
             var $gridEnd = $thisEl.find('#gridEnd');
             var $gridCount = $thisEl.find('#gridCount');
 
             var gridCount;
+            var currentPage;
+            var tottalRecords;
+            var itemsNumber;
             var gridStartValue;
             var gridEndValue;
             var pageNumber;
             var $lastPage;
             var i;
 
+            options = options || {};
+
+            currentPage = parseInt(options.currentPage, 10) || parseInt($curPageInput.val(), 10);
+            itemsNumber = parseInt(options.pageSize, 10) || parseInt($($itemsNumber[0]).text(), 10);
+            tottalRecords = parseInt(options.totalRecords, 10) || parseInt($($itemsNumber[0]).text(), 10);
+
             currentPage = isNaN(currentPage) ? 1 : currentPage;
+            tottalRecords = isNaN(tottalRecords) ? 0 : tottalRecords;
 
             if (isNaN(itemsNumber)) {
                 itemsNumber = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
             }
 
-            gridCount = (options.length >= 0) ? options.length : parseInt($gridCount.text(), 10);
+            gridCount = tottalRecords >= 0 ? tottalRecords : parseInt($gridCount.text(), 10);
             gridStartValue = (currentPage - 1) * itemsNumber;
             gridEndValue = gridStartValue + itemsNumber;
 
@@ -632,7 +640,7 @@ define([
             $gridStart.text((gridCount === 0) ? 0 : gridStartValue + 1);
             $gridEnd.text(gridEndValue);
 
-            if (options.length || options.length === 0) {
+            if (tottalRecords === 0) {
                 $lastPage = $thisEl.find('#lastPage');
                 pageNumber = Math.ceil(gridCount / itemsNumber);
                 $pageList.html('');

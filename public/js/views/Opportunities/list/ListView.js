@@ -12,7 +12,19 @@ define([
     'common',
     'dataService',
     'text!templates/stages.html'
-], function ($, _, listViewBase, listTemplate, createView, listItemView, editView, currentModel, contentCollection, filterView, common, dataService, stagesTemplate) {
+], function ($,
+             _,
+             listViewBase,
+             listTemplate,
+             createView,
+             listItemView,
+             editView,
+             currentModel,
+             contentCollection,
+             filterView,
+             common,
+             dataService,
+             stagesTemplate) {
     'use strict';
 
     var OpportunitiesListView = listViewBase.extend({
@@ -26,7 +38,7 @@ define([
         contentType             : 'Opportunities', // needs in view.prototype.changeLocationHash
 
         initialize: function (options) {
-            $(document).off("click");
+            $(document).off('click');
             this.startTime = options.startTime;
             this.collection = options.collection;
             _.bind(this.collection.showMore, this.collection);
@@ -46,22 +58,21 @@ define([
         },
 
         events: {
-
-            "click .list td:not(.notForm)": "goToEditDialog",
-            "click .stageSelect"          : "showNewSelect",
-            "click .newSelectList li"     : "chooseOption"
+            'click .list td:not(.notForm)': 'goToEditDialog',
+            'click .stageSelect'          : 'showNewSelect',
+            'click .newSelectList li'     : 'chooseOption'
         },
 
         chooseOption: function (e) {
             var self = this;
-            var targetElement = $(e.target).parents("td");
-            var id = targetElement.attr("id");
+            var targetElement = $(e.target).parents('td');
+            var id = targetElement.attr('id');
             var obj = this.collection.get(id);
             obj.save({
-                workflow     : $(e.target).attr("id"),
-                workflowStart: targetElement.find(".stageSelect").attr("data-id"),
+                workflow     : $(e.target).attr('id'),
+                workflowStart: targetElement.find('.stageSelect').attr('data-id'),
                 sequence     : -1,
-                sequenceStart: targetElement.attr("data-sequence")
+                sequenceStart: targetElement.attr('data-sequence')
             }, {
                 headers: {
                     mid: 39
@@ -77,11 +88,11 @@ define([
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").hide();
+            $('.newSelectList').remove(); // change after ui tests
         },
 
         showNewSelect: function (e) {
-            if ($(".newSelectList").is(":visible")) {
+            if ($('.newSelectList').is(':visible')) {
                 this.hideNewSelect();
                 return false;
             } else {
@@ -117,7 +128,7 @@ define([
 
             itemView.bind('incomingStages', this.pushStages, this);
 
-            common.populateWorkflowsList("Opportunities", ".filter-check-list", "", "/Workflows", null, function (stages) {
+            common.populateWorkflowsList('Opportunities', '.filter-check-list', '', '/Workflows', null, function (stages) {
                 var stage = (self.filter) ? self.filter.workflow : null;
                 itemView.trigger('incomingStages', stages);
             });
@@ -130,14 +141,14 @@ define([
 
             this.renderPagination($currentEl, this);
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
         goToEditDialog: function (e) {
             e.preventDefault();
-            var id = $(e.target).closest('tr').data("id");
+            var id = $(e.target).closest('tr').data('id');
             var model = new currentModel({validate: false});
-            model.urlRoot = '/Opportunities/form';
+            model.urlRoot = '/Opportunities';
             model.fetch({
                 data   : {id: id},
                 success: function (model) {
@@ -146,7 +157,7 @@ define([
                 error  : function () {
                     App.render({
                         type   : 'error',
-                        message: "Please refresh browser"
+                        message: 'Please refresh browser'
                     });
                 }
             });

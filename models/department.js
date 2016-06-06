@@ -3,7 +3,7 @@
     var ObjectId = mongoose.Schema.Types.ObjectId;
 
     var DepartmentSchema = mongoose.Schema({
-        departmentName   : {type: String, default: 'emptyDepartment'},
+        name             : {type: String, default: 'emptyDepartment'},
         parentDepartment : {type: ObjectId, ref: 'Department', default: null},
         departmentManager: {type: ObjectId, ref: 'Employees', default: null},
         isDevelopment    : Boolean,

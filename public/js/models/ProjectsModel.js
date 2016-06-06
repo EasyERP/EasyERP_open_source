@@ -25,7 +25,7 @@ define([
             validate   : function (attrs) {
                 var errors = [];
 
-                Validation.checkGroupsNameField(errors, true, attrs.projectName, "Project name");
+                Validation.checkGroupsNameField(errors, true, attrs.name, "Project name");
                 Validation.checkGroupsNameField(errors, true, attrs.projectShortDesc, "Short description");
 
                 if (errors.length > 0) {
@@ -33,7 +33,7 @@ define([
                 }
             },
             defaults   : {
-                projectName     : '',
+                name            : '',
                 projectShortDesc: '',
                 task            : [],
                 privacy         : 'All Users',

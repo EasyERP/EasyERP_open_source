@@ -392,20 +392,14 @@ define([
 
                 if (this.forSales) {
                     this.$el.find('#supplierDd').removeClass('current-selected');
-                    populate.get('#projectDd', '/projects/getForDd', {}, 'projectName', this, false, false);
+                    populate.get('#projectDd', '/projects/getForDd', {}, 'name', this, false, false);
                     //populate.get2name("#supplierDd", "/supplier", {}, this, false, true);
                 } else {
                     populate.get2name("#supplierDd", CONSTANTS.URLS.SUPPLIER, {}, this, false, true);
                 }
 
-                dataService.getData("/projects/getForWtrack", null, function (projects) {
-                    projects = _.map(projects.data, function (project) {
-                        project.name = project.projectName;
-
-                        return project
-                    });
-
-                    self.responseObj['#project'] = projects;
+                dataService.getData("/projects/getForWtrack", null, function (response) {
+                    self.responseObj['#project'] = response.data;
                 });
 
                 populate.fetchWorkflow({

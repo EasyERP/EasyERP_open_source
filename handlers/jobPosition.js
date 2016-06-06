@@ -100,7 +100,7 @@ var Module = function (models) {
 
         JobPosition
             .findById(id)
-            .populate('department', 'departmentName _id')
+            .populate('department', 'name _id')
             .populate('workflow', 'name _id')
             .populate('createdBy.user')
             .populate('editedBy.user')
@@ -155,7 +155,7 @@ var Module = function (models) {
                 .find({})
                 .populate('createdBy.user')
                 .populate('editedBy.user')
-                .populate('department', '_id departmentName')
+                .populate('department', '_id name')
                 .populate('workflow', 'name _id status')
                 .count(function (err, result) {
                     if (err) {
@@ -171,7 +171,7 @@ var Module = function (models) {
                 .find({})
                 .populate('createdBy.user')
                 .populate('editedBy.user')
-                .populate('department', '_id departmentName')
+                .populate('department', '_id name')
                 .populate('workflow', 'name _id status')
                 .sort(sort)
                 .skip(skip)
