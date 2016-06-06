@@ -23,8 +23,8 @@ module.exports = function (models, event) {
                 handler.getAll(req, res, next);
         }
     });
-    
-   // router.get('/',  authStackMiddleware, accessStackMiddlware, handler.getAll);
+
+    // router.get('/',  authStackMiddleware, accessStackMiddlware, handler.getAll);
     router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddlware, handler.getFilterValues);
     router.get('/generateName', authStackMiddleware, accessStackMiddlware, handler.generateName);
@@ -54,7 +54,6 @@ module.exports = function (models, event) {
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
     router.post('/receive', authStackMiddleware, accessStackMiddlware, handler.receive);
     router.post('/attach', authStackMiddleware, accessStackMiddlware, multipartMiddleware, handler.attach);
-
 
     return router;
 };

@@ -14,7 +14,7 @@ module.exports = function (models, event) {
 
     router.use(authStackMiddleware);
     router.use(accessStackMiddlware);
-    
+
     router.get('/', iHandler.getForView);
     router.post('/create', handler.create);
     router.get('/totalCollectionLength', iHandler.totalCollectionLength);

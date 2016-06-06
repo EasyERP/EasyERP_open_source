@@ -7,7 +7,7 @@ var prioritySchema = mongoose.Schemas.Priority;
 var objectId = mongoose.Types.ObjectId;
 var _ = require('underscore');
 
-var Tasks = function (models, event) {
+var Module = function (models, event) {
     'use strict';
 
     var validator = require('../helpers/validator');
@@ -44,7 +44,7 @@ var Tasks = function (models, event) {
 
                 task = new TasksModel(body);
 
-                event.emit('updateSequence', TasksModel,'sequence', 0, 0, task.workflow._id, task.workflow._id, true, false, function (sequence) {
+                event.emit('updateSequence', TasksModel, 'sequence', 0, 0, task.workflow._id, task.workflow._id, true, false, function (sequence) {
                     task.sequence = sequence;
                     task.save(function (err, result) {
                         if (err) {
@@ -59,7 +59,7 @@ var Tasks = function (models, event) {
 
     };
 
-    //ToDo refactor and move this to helpers (and pull out from everywhere)
+    // ToDo refactor and move this to helpers (and pull out from everywhere)
     function calculateTaskEndDate(startDate, estimated) {
         var iWeeks = 0;
         var iDateDiff = 0;
@@ -100,7 +100,7 @@ var Tasks = function (models, event) {
             iDateDiff = (iWeeks * 2) + 2 * (iWeekday1 - iWeekday2);
         }
 
-        //iDateDiff++;
+        // iDateDiff++;
         iDateDiff = iDateDiff * 1000 * 60 * 60 * 24;
         endDate = endDate.getTime() + iDateDiff;
         endDate = new Date(endDate);
@@ -146,30 +146,26 @@ var Tasks = function (models, event) {
                 var newDirname;
 
                 if (err) {
-                    next(err);
+                    return next(err);
                 }
 
                 if (fileName) {
                     switch (osType) {
-                        case "Windows":
-                        {
-                            newDirname = __dirname.replace("\\Modules", "");
-                            while (newDirname.indexOf("\\") !== -1) {
-                                newDirname = newDirname.replace("\\", "\/");
+                        case 'Windows':
+                            newDirname = __dirname.replace('\\Modules', '');
+                            while (newDirname.indexOf('\\') !== -1) {
+                                newDirname = newDirname.replace('\\', '\/');
                             }
-                            path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                            dir = newDirname + "\/uploads\/" + _id;
-                        }
+                            path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                            dir = newDirname + '\/uploads\/' + _id;
                             break;
-                        case "Linux":
-                        {
-                            newDirname = __dirname.replace("/Modules", "");
-                            while (newDirname.indexOf("\\") !== -1) {
-                                newDirname = newDirname.replace("\\", "\/");
+                        case 'Linux':
+                            newDirname = __dirname.replace('/Modules', '');
+                            while (newDirname.indexOf('\\') !== -1) {
+                                newDirname = newDirname.replace('\\', '\/');
                             }
-                            path = newDirname + "\/uploads\/" + _id + "\/" + fileName;
-                            dir = newDirname + "\/uploads\/" + _id;
-                        }
+                            path = newDirname + '\/uploads\/' + _id + '\/' + fileName;
+                            dir = newDirname + '\/uploads\/' + _id;
                     }
 
                     fs.unlink(path, function (err) {
@@ -495,7 +491,7 @@ var Tasks = function (models, event) {
 
                         if (data.sort) {
                             keys = Object.keys(data.sort)[0];
-                            data.sort[keys] = parseInt(data.sort[keys]);
+                            data.sort[keys] = parseInt(data.sort[keys], 10);
                             sort = data.sort;
                         } else {
                             sort = {'editedBy.date': -1};
@@ -590,7 +586,7 @@ var Tasks = function (models, event) {
                                     taskCount       : '$root.taskCount',
                                     total           : 1
                                 }
-                            },  {
+                            }, {
                                 $match: obj
                             }, {
                                 $sort: sort
@@ -805,4 +801,4 @@ var Tasks = function (models, event) {
 
 };
 
-module.exports = Tasks;
+module.exports = Module;

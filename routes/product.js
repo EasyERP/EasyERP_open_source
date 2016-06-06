@@ -23,7 +23,7 @@ module.exports = function (models) {
     // router.get('/exportToXlsx',handler.exportToXlsx);
     // router.get('/exportToCsv',handler.exportToCsv);
     router.post('/', handler.create);
-    /* router.post('/uploadProductFiles', multipartMiddleware, handler.uploadProductFiles);*///FixMe
+    /* router.post('/uploadProductFiles', multipartMiddleware, handler.uploadProductFiles);*/// FixMe
     router.patch('/:_id', handler.productsUpdateOnlySelectedFields);
     router.delete('/:_id', handler.removeProduct);
 

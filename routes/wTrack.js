@@ -23,7 +23,7 @@ module.exports = function (event, models) {
     router.delete('/:id', accessStackMiddleware, handler.remove);
     router.patch('/', accessStackMiddleware, handler.putchBulk);
     router.patch('/:id', accessStackMiddleware, handler.putchModel);
-   /* router.put('/:id', handler.updateModel);*/
+    /* router.put('/:id', handler.updateModel);*/
 
     return router;
 };

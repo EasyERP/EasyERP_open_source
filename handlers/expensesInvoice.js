@@ -5,8 +5,8 @@ var CONSTANTS = require('../constants/mainConstants');
 var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
-var fs = require("fs");
-var pathMod = require("path");
+var fs = require('fs');
+var pathMod = require('path');
 
 var Proforma = function (models) {
     'use strict';
@@ -14,9 +14,8 @@ var Proforma = function (models) {
     var async = require('async');
 
     var ExpensesInvoiceSchema = mongoose.Schemas.expensesInvoice;
-    var objectId = mongoose.Types.ObjectId;
-    var workflowHandler = new WorkflowHandler(models);
 
+    var workflowHandler = new WorkflowHandler(models);
     var JournalEntryHandler = require('./journalEntry');
     var _journalEntryHandler = new JournalEntryHandler(models);
 
@@ -41,9 +40,10 @@ var Proforma = function (models) {
 
         function fetchFirstWorkflow(callback) {
             request = {
-                query  : {
+                query: {
                     wId: 'Sales Invoice'
                 },
+
                 session: req.session
             };
             workflowHandler.getFirstForConvert(request, callback);
@@ -115,8 +115,9 @@ var Proforma = function (models) {
                     model: 'expensesInvoice',
                     _id  : expensesInvoice._id
                 },
-                amount        : 0,
-                date          : expensesInvoice.invoiceDate
+
+                amount: 0,
+                date  : expensesInvoice.invoiceDate
             };
 
             var amount = expensesInvoice.currency.rate * expensesInvoice.paymentInfo.total;
@@ -142,3 +143,4 @@ var Proforma = function (models) {
 };
 
 module.exports = Proforma;
+

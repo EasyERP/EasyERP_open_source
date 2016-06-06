@@ -6,25 +6,25 @@ var authStackMiddleware = require('../helpers/checkAuth');
 
 module.exports = function (models) {
     'use strict';
-    
+
     var handler = new SalaryHandler(models);
 
-    function cacheRetriver(req, res, next){
+    function cacheRetriver(req, res, next) {
         var query = req.query;
         var filter = query.filter;
         var startDate = query.startDate;
         var endDate = query.endDate;
         var dateKey = '';
 
-        if (startDate && endDate){
+        if (startDate && endDate) {
             dateKey = startDate.toString() + endDate.toString();
         }
         var key = 'salaryReport' + JSON.stringify(filter) + dateKey;
 
-        redisStore.readFromStorage('salaryReport', key, function(err, reportStringObject){
+        redisStore.readFromStorage('salaryReport', key, function (err, reportStringObject) {
             var report;
 
-            if(!reportStringObject || err) {
+            if (!reportStringObject || err) {
                 return next();
             }
 

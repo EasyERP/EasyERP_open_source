@@ -8,7 +8,7 @@ var Module = function (models) {
         var query = models.get(req.session.lastDb, 'projectPosition', projectPositionSchema).find();
 
         query.select('_id name');
-        query.sort({'name': 1});
+        query.sort({name: 1});
         query.exec(function (err, result) {
             if (err) {
                 return next(err);

@@ -6,7 +6,7 @@ var MODULES = require('../constants/modules');
 
 module.exports = function (models, event) {
     'use strict';
-    
+
     var handler = new CustomerHandler(models, event);
     var moduleId = MODULES.COMPANIES;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);

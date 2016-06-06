@@ -22,6 +22,6 @@ module.exports = function (models) {
     router.patch('/:id', accessStackMiddlware, handler.update);
     router.put('/:id', accessStackMiddlware, handler.update);
     router.delete('/:id', accessStackMiddlware, handler.remove);
-    
+
     return router;
 };

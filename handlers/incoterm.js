@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
-var Incoterm = function (models) {
+var Module = function (models) {
     var IncotermSchema = mongoose.Schemas.Incoterm;
 
     this.getForDd = function (req, res, next) {
@@ -20,4 +20,4 @@ var Incoterm = function (models) {
 
 };
 
-module.exports = Incoterm;
+module.exports = Module;

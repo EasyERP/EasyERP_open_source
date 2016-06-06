@@ -12,10 +12,10 @@ module.exports = function (models) {
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
 
     router.get('/', authStackMiddleware, accessStackMiddlware, handler.getByViewType);
-    //router.get('/', authStackMiddleware, handler.get);
+    // router.get('/', authStackMiddleware, handler.get);
     router.get('/getForDD', authStackMiddleware, handler.getForDD);
     /* router.get('/exportToXlsx',authStackMiddleware, accessStackMiddlware, handler.exportToXlsx);
-    router.get('/exportToCsv',authStackMiddleware, accessStackMiddlware, handler.exportToCsv); */
+     router.get('/exportToCsv',authStackMiddleware, accessStackMiddlware, handler.exportToCsv); */
     router.get('/getDepartmentsForEditDd', authStackMiddleware, handler.getDepartmentsForEditDd);
 
     router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);

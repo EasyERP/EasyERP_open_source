@@ -64,4 +64,3 @@ describe('InvoicingControl Specs', function () {
     });
 
 });
-

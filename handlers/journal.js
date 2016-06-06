@@ -1,12 +1,8 @@
 var mongoose = require('mongoose');
-var journalSchema = mongoose.Schemas['journal'];
+var journalSchema = mongoose.Schemas.journal;
 var async = require('async');
 
-var _ = require('underscore');
-
 var Module = function (models) {
-    var access = require("../Modules/additions/access.js")(models);
-
     this.create = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journal', journalSchema);
         var body = req.body;
@@ -23,52 +19,37 @@ var Module = function (models) {
 
     this.getForView = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journal', journalSchema);
-        var body = req.body;
-        var journal = new Model(body);
-
         var data = req.query;
         var sort = data.sort || {_id: 1};
 
-        access.getReadAccess(req, req.session.uId, 85, function (access) {
-            if (access) {
-                Model
-                    .find({})
-                    .sort(sort)
-                    .populate('debitAccount', '_id name')
-                    .populate('creditAccount', '_id name')
-                    .exec(function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
+        Model
+            .find({})
+            .sort(sort)
+            .populate('debitAccount', '_id name')
+            .populate('creditAccount', '_id name')
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
 
-                        res.status(200).send(result);
-                    });
-            } else {
-                res.status(403).send();
-            }
-        });
+                res.status(200).send(result);
+            });
     };
 
     this.getForDd = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journal', journalSchema);
         var query = req.query;
 
-        access.getReadAccess(req, req.session.uId, 85, function (access) {
-            if (access) {
-                Model
-                    .find(query, {_id: 1, name: 1})
-                    .sort({name: 1})
-                    .exec(function (err, result) {
-                        if (err) {
-                            return next(err);
-                        }
+        Model
+            .find(query, {_id: 1, name: 1})
+            .sort({name: 1})
+            .exec(function (err, result) {
+                if (err) {
+                    return next(err);
+                }
 
-                        res.status(200).send({data: result});
-                    });
-            } else {
-                res.status(403).send();
-            }
-        });
+                res.status(200).send({data: result});
+            });
     };
 
     this.putchBulk = function (req, res, next) {

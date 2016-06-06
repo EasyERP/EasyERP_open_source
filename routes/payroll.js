@@ -7,7 +7,7 @@ var MODULES = require('../constants/modules');
 
 module.exports = function (models) {
     'use strict';
-    
+
     var handler = new PayRollHandler(models);
     var moduleId = MODULES.PAYROLLEXPENSES;
     var accessStackMiddlware = require('../helpers/access')(moduleId, models);
@@ -34,7 +34,7 @@ module.exports = function (models) {
 
     router.get('/', cacheRetriver, handler.getForView);
 
-    //router.get('/', handler.getSorted);
+    // router.get('/', handler.getSorted);
     router.get('/getAsyncData', handler.getAsyncData);
     router.post('/', handler.create);
     router.post('/generate', handler.generate);
