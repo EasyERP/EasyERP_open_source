@@ -88,7 +88,7 @@ define([
 
             model.save({workflow: target$.attr('id')}, {
                 headers: {
-                    mid: 39
+                    mid: 24
                 },
                 patch  : true,
                 success: function () {
