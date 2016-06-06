@@ -600,52 +600,69 @@ define([
             var $itemsNumber = $thisEl.find('.itemsNumber');
 
             var $gridStart = $thisEl.find('#gridStart');
-
             var $gridEnd = $thisEl.find('#gridEnd');
             var $gridCount = $thisEl.find('#gridCount');
 
+            var $lastPage = $thisEl.find('#lastPage');
+            var $nextPage = $thisEl.find('#nextPage');
+            var $previousPage = $thisEl.find('#previousPage');
+            var $firstShowPage = $thisEl.find('#firstShowPage');
+            var $lastShowPage = $thisEl.find('#lastShowPage');
+
+            var itemsOnPage = 7;
+
             var gridCount;
             var currentPage;
-            var tottalRecords;
+            var totalRecords;
             var itemsNumber;
             var gridStartValue;
             var gridEndValue;
             var pageNumber;
-            var $lastPage;
             var i;
 
             options = options || {};
 
             currentPage = parseInt(options.currentPage, 10) || parseInt($curPageInput.val(), 10);
             itemsNumber = parseInt(options.pageSize, 10) || parseInt($($itemsNumber[0]).text(), 10);
-            tottalRecords = parseInt(options.totalRecords, 10) || parseInt($($itemsNumber[0]).text(), 10);
+            totalRecords = parseInt(options.totalRecords, 10) || parseInt($($itemsNumber[0]).text(), 10);
 
             currentPage = isNaN(currentPage) ? 1 : currentPage;
-            tottalRecords = isNaN(tottalRecords) ? 0 : tottalRecords;
+            totalRecords = isNaN(totalRecords) ? 0 : totalRecords;
 
             if (isNaN(itemsNumber)) {
                 itemsNumber = CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
             }
 
-            gridCount = tottalRecords >= 0 ? tottalRecords : parseInt($gridCount.text(), 10);
+            gridCount = totalRecords >= 0 ? totalRecords : parseInt($gridCount.text(), 10);
             gridStartValue = (currentPage - 1) * itemsNumber;
             gridEndValue = gridStartValue + itemsNumber;
-
-            $gridCount.text(gridCount);
 
             if (gridEndValue > gridCount) {
                 gridEndValue = gridCount;
             }
 
-            $gridStart.text((gridCount === 0) ? 0 : gridStartValue + 1);
-            $gridEnd.text(gridEndValue);
+            if (totalRecords === 0) {
+                $gridStart.text(0);
+                $gridEnd.text(0);
+                $gridCount.text(0);
 
-            if (tottalRecords === 0) {
-                $lastPage = $thisEl.find('#lastPage');
+                $nextPage.prop('disabled', true);
+                $previousPage.prop('disabled', true);
+                $firstShowPage.prop('disabled', true);
+                $lastShowPage.prop('disabled', true);
+
+                $pageList.empty();
+                $curPageInput.val(0);
+                $lastPage.text(0);
+            } else {
                 pageNumber = Math.ceil(gridCount / itemsNumber);
                 $pageList.html('');
 
                 pageNumber = pageNumber || 1;
+
+                $gridCount.text(gridCount);
+                $gridStart.text((gridCount === 0) ? 0 : gridStartValue + 1);
+                $gridEnd.text(gridEndValue);
 
                 for (i = 1; i <= pageNumber; i++) {
                     $pageList.append('<li class="showPage">' + i + '</li>');
@@ -654,11 +671,11 @@ define([
                 $lastPage.text(pageNumber);
 
                 if (pageNumber <= 1) {
-                    $thisEl.find('#nextPage').prop('disabled', true);
-                    $thisEl.find('#previousPage').prop('disabled', true);
+                    $nextPage.prop('disabled', true);
+                    $previousPage.prop('disabled', true);
                 } else {
-                    $thisEl.find('#previousPage').prop('disabled', gridStartValue + 1 === 1);
-                    $thisEl.find('#nextPage').prop('disabled', gridEndValue === gridCount);
+                    $previousPage.prop('disabled', gridStartValue + 1 === 1);
+                    $nextPage.prop('disabled', gridEndValue === gridCount);
                 }
             }
 
