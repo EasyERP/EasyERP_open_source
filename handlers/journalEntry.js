@@ -14,6 +14,7 @@ var oxr = require('open-exchange-rates');
 var _ = require('underscore');
 var async = require('async');
 var moment = require('../public/js/libs/moment/moment');
+var pageHelper = require('../helpers/pageHelper');
 
 var Module = function (models, event) {
     'use strict';
@@ -2692,429 +2693,6 @@ var Module = function (models, event) {
         });
     };
 
-    this.totalCollectionLength = function (req, res, next) {
-        var dbIndex = req.session.lastDb;
-        var Model = models.get(dbIndex, 'journalEntry', journalEntrySchema);
-
-        var data = req.query;
-        var findInvoice;
-        var findSalary;
-        var findByEmployee;
-        var filter = data.filter;
-        var filterObj = {};
-        var startDate = data.startDate || filter.startDate.value;
-        var endDate = data.endDate || filter.endDate.value;
-        var findJobsFinished;
-        var findPayments;
-        var findSalaryPayments;
-        var matchObject;
-        var filterArray;
-
-        startDate = moment(new Date(startDate)).startOf('day');
-        endDate = moment(new Date(endDate)).endOf('day');
-
-        matchObject = {
-            date: {
-                $gte: new Date(startDate),
-                $lte: new Date(endDate)
-            }
-        };
-
-        if (filter) {
-            filterArray = caseFilterForTotalCount(filter);
-
-            if (filterArray.length) {
-                filterObj.$and = filterArray;
-            }
-        }
-
-        findInvoice = function (cb) {
-            Model
-                .aggregate([{
-                    $match: matchObject
-                }, {
-                    $match: {
-                        'sourceDocument.model': {$in: ['Invoice', 'Proforma', 'dividendInvoice']},
-                        debit                 : {$gt: 0}
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'chartOfAccount',
-                        localField  : 'account',
-                        foreignField: '_id',
-                        as          : 'account'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'Invoice',
-                        localField  : 'sourceDocument._id',
-                        foreignField: '_id',
-                        as          : 'sourceDocument._id'
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'journals',
-                        localField  : 'journal',
-                        foreignField: '_id',
-                        as          : 'journal'
-                    }
-                }, {
-                    $project: {
-                        debit               : 1,
-                        currency            : 1,
-                        journal             : {$arrayElemAt: ['$journal', 0]},
-                        'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-                    }
-                }, {
-                    $project: {
-                        debit                   : 1,
-                        'journal.name'          : 1,
-                        'journal.creditAccount' : 1,
-                        'sourceDocument._id'    : 1,
-                        'sourceDocument.subject': '$sourceDocument._id.supplier'
-                    }
-                }, {
-                    $match: filterObj
-                }, {
-                    $project: {
-                        _id  : 1,
-                        debit: 1
-                    }
-                }], function (err, result) {
-                    if (err) {
-                        return next(err);
-                    }
-
-                    cb(null, result);
-                });
-        };
-
-        findSalary = function (cb) {
-            var aggregate;
-            var query = [{
-                $match: matchObject
-            }, {
-                $match: {
-                    'sourceDocument.model': 'wTrack',
-                    debit                 : {$gt: 0}
-                }
-            }, {
-                $lookup: {
-                    from        : 'journals',
-                    localField  : 'journal',
-                    foreignField: '_id',
-                    as          : 'journal'
-                }
-            }, {
-                $project: {
-                    debit         : 1,
-                    journal       : {$arrayElemAt: ['$journal', 0]},
-                    sourceDocument: 1
-                }
-            }, {
-                $project: {
-                    debit                   : 1,
-                    'journal.creditAccount' : 1,
-                    'journal.name'          : 1,
-                    'sourceDocument.subject': '$sourceDocument.employee'
-                }
-            }];
-
-            if (filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
-
-            aggregate = Model.aggregate(query);
-
-            aggregate.options = {allowDiskUse: true};
-
-            aggregate.exec(function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                cb(null, result);
-            });
-        };
-
-        findByEmployee = function (cb) {
-            var aggregate;
-            var query = [{
-                $match: matchObject
-            }, {
-                $match: {
-                    'sourceDocument.model': 'Employees',
-                    debit                 : {$gt: 0}
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'sourceDocument._id',
-                    foreignField: '_id',
-                    as          : 'sourceDocument._id'
-                }
-            }, {
-                $lookup: {
-                    from        : 'journals',
-                    localField  : 'journal',
-                    foreignField: '_id',
-                    as          : 'journal'
-                }
-            }, {
-                $project: {
-                    debit               : 1,
-                    journal             : {$arrayElemAt: ['$journal', 0]},
-                    'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.debitAccount',
-                    foreignField: '_id',
-                    as          : 'journal.debitAccount'
-                }
-            }, {
-                $project: {
-                    debit                   : 1,
-                    'journal.creditAccount' : 1,
-                    'journal.name'          : 1,
-                    'sourceDocument.subject': '$sourceDocument._id._id'
-                }
-            }, {
-                $project: {
-                    debit                   : 1,
-                    'journal.creditAccount' : 1,
-                    'journal.name'          : 1,
-                    'sourceDocument.subject': 1
-                }
-            }];
-
-            if (filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
-
-            aggregate = Model.aggregate(query);
-
-            aggregate.options = {allowDiskUse: true};
-
-            aggregate.exec(function (err, result) {
-                if (err) {
-                    return next(err);
-                }
-
-                cb(null, result);
-            });
-        };
-
-        findJobsFinished = function (cb) {
-            var aggregate;
-            var query = [{
-                $match: matchObject
-            }, {
-                $match: {
-                    'sourceDocument.model': 'jobs',
-                    debit                 : {$gt: 0}
-                }
-            }, {
-                $lookup: {
-                    from        : 'jobs',
-                    localField  : 'sourceDocument._id',
-                    foreignField: '_id',
-                    as          : 'sourceDocument._id'
-                }
-            }, {
-                $lookup: {
-                    from        : 'journals',
-                    localField  : 'journal',
-                    foreignField: '_id',
-                    as          : 'journal'
-                }
-            }, {
-                $project: {
-                    debit               : 1,
-                    journal             : {$arrayElemAt: ['$journal', 0]},
-                    'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.creditAccount',
-                    foreignField: '_id',
-                    as          : 'journal.creditAccount'
-                }
-            }, {
-                $project: {
-                    debit                   : 1,
-                    'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-                    'journal.name'          : 1,
-                    'sourceDocument.subject': '$sourceDocument._id._id'
-                }
-            }];
-
-            if (filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
-
-            aggregate = Model.aggregate(query);
-
-            aggregate.options = {allowDiskUse: true};
-
-            aggregate.exec(function (err, result) {
-                if (err) {
-                    return cb(err);
-                }
-
-                cb(null, result);
-            });
-        };
-
-        findPayments = function (cb) {
-            var aggregate;
-            var query = [{
-                $match: matchObject
-            }, {
-                $match: {
-                    'sourceDocument.model': 'Payment',
-                    debit                 : {$gt: 0}
-                }
-            }, {
-                $lookup: {
-                    from        : 'Payment',
-                    localField  : 'sourceDocument._id',
-                    foreignField: '_id',
-                    as          : 'sourceDocument._id'
-                }
-            }, {
-                $lookup: {
-                    from        : 'journals',
-                    localField  : 'journal',
-                    foreignField: '_id',
-                    as          : 'journal'
-                }
-            }, {
-                $project: {
-                    debit               : 1,
-                    journal             : {$arrayElemAt: ['$journal', 0]},
-                    'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.creditAccount',
-                    foreignField: '_id',
-                    as          : 'journal.creditAccount'
-                }
-            }, {
-                $project: {
-                    debit                   : 1,
-                    'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-                    'journal.name'          : 1,
-                    'sourceDocument.subject': '$sourceDocument._id._id'
-                }
-            }];
-
-            if (filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
-
-            aggregate = Model.aggregate(query);
-
-            aggregate.options = {allowDiskUse: true};
-
-            aggregate.exec(function (err, result) {
-                if (err) {
-                    return cb(err);
-                }
-
-                cb(null, result);
-            });
-        };
-
-        findSalaryPayments = function (cb) {
-            var aggregate;
-            var query = [{
-                $match: matchObject
-            }, {
-                $match: {
-                    'sourceDocument.model': 'salaryPayment',
-                    debit                 : {$gt: 0}
-                }
-            }, {
-                $lookup: {
-                    from        : 'Employees',
-                    localField  : 'sourceDocument._id',
-                    foreignField: '_id',
-                    as          : 'sourceDocument._id'
-                }
-            }, {
-                $lookup: {
-                    from        : 'journals',
-                    localField  : 'journal',
-                    foreignField: '_id',
-                    as          : 'journal'
-                }
-            }, {
-                $project: {
-                    debit               : 1,
-                    journal             : {$arrayElemAt: ['$journal', 0]},
-                    'sourceDocument._id': {$arrayElemAt: ['$sourceDocument._id', 0]}
-                }
-            }, {
-                $lookup: {
-                    from        : 'chartOfAccount',
-                    localField  : 'journal.creditAccount',
-                    foreignField: '_id',
-                    as          : 'journal.creditAccount'
-                }
-            }, {
-                $project: {
-                    debit                   : 1,
-                    'journal.creditAccount' : {$arrayElemAt: ['$journal.creditAccount', 0]},
-                    'journal.name'          : 1,
-                    'sourceDocument.subject': '$sourceDocument._id._id'
-                }
-            }];
-
-            if (filterObj.$and && filterObj.$and.length) {
-                query.push({$match: filterObj});
-            }
-
-            aggregate = Model.aggregate(query);
-
-            aggregate.options = {allowDiskUse: true};
-
-            aggregate.exec(function (err, result) {
-                if (err) {
-                    return cb(err);
-                }
-
-                cb(null, result);
-            });
-        };
-
-        var parallelTasks = [findInvoice, findSalary, findByEmployee, findJobsFinished, findPayments, findSalaryPayments];
-
-        async.parallel(parallelTasks, function (err, result) {
-            if (err) {
-                return next(err);
-            }
-            var invoices = result[0];
-            var salary = result[1];
-            var jobsFinished = result[3];
-            var salaryEmployee = result[2];
-            var paymentsResult = result[4];
-            var salaryPaymentsResult = result[5];
-            var totalValue = 0;
-            var models = _.union(invoices, salary, jobsFinished, salaryEmployee, paymentsResult, salaryPaymentsResult);
-
-            models.forEach(function (model) {
-                totalValue += model.debit;
-            });
-
-            res.status(200).send({count: models.length, totalValue: totalValue});
-        });
-    };
-
     this.getAsyncCloseMonth = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var query = req.query;
@@ -3860,32 +3438,29 @@ var Module = function (models, event) {
         var composeReport;
         var waterfallTasks;
         var sort = {name: 1};
-        var count = parseInt(query.count, 10) || CONSTANTS.DEF_LIST_COUNT;
-        var page = parseInt(query.page, 10);
-        var skip;
+        var paginationObject = pageHelper(query);
+        var limit = paginationObject.limit;
+        var skip = paginationObject.skip;
         var sortKey;
 
         if (query.sort) {
             sort = {};
 
             for (sortKey in query.sort) {
-                sort[sortKey] = parseInt(query.sort[sortKey]);
+                sort[sortKey] = parseInt(query.sort[sortKey], 10);
             }
         }
 
         startDate = new Date(moment(new Date(startDate)).startOf('day'));
         endDate = new Date(moment(new Date(endDate)).endOf('day'));
 
-        //count = count > CONSTANTS.MAX_COUNT ? CONSTANTS.MAX_COUNT : count; // special case for getting all
-        skip = (page - 1) > 0 ? (page - 1) * count : 0;
-
         findJobs = function (wfCb) {
             JobsModel.find({}, function (err, result) {
+                var jobs = [];
+
                 if (err) {
                     return wfCb(err);
                 }
-
-                var jobs = [];
 
                 result.forEach(function (el) {
                     jobs.push(el._id);
@@ -3930,6 +3505,13 @@ var Module = function (models, event) {
                     }
                 }, {
                     $lookup: {
+                        from        : 'projectMembers',
+                        localField  : '_id.project',
+                        foreignField: 'projectId',
+                        as          : 'projectMembers'
+                    }
+                }, {
+                    $lookup: {
                         from        : 'Project',
                         localField  : '_id.project',
                         foreignField: '_id',
@@ -3940,14 +3522,36 @@ var Module = function (models, event) {
                         _id    : '$_id._id',
                         name   : '$_id.name',
                         project: {$arrayElemAt: ['$project', 0]},
-                        debit  : 1
+                        debit  : 1,
+
+                        salesManagers: {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : {
+                                    $and: [{
+                                        $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
+                                    }, {
+                                        $eq: ['$$projectMember.endDate', null]
+                                    }]
+                                }
+                            }
+                        }
+                    }
+                }, {
+                    $project: {
+                        salesManager: {$arrayElemAt: ['$salesManagers', 0]},
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1
                     }
                 }, {
                     $lookup: {
                         from        : 'Employees',
-                        localField  : 'project.salesmanager',
+                        localField  : 'salesManager.employeeId',
                         foreignField: '_id',
-                        as          : 'salesmanager'
+                        as          : 'salesManager'
                     }
                 }, {
                     $project: {
@@ -3955,8 +3559,7 @@ var Module = function (models, event) {
                         name        : 1,
                         project     : 1,
                         debit       : 1,
-                        salesmanager: {$arrayElemAt: ['$salesmanager', 0]}
-
+                        salesmanager: {$arrayElemAt: ['$salesManager', 0]}
                     }
                 }, {
                     $project: {
@@ -4021,10 +3624,32 @@ var Module = function (models, event) {
                     }
                 }, {
                     $lookup: {
-                        from        : 'Employees',
-                        localField  : 'project.salesmanager',
-                        foreignField: '_id',
-                        as          : 'salesmanager'
+                        from        : 'projectMembers',
+                        localField  : 'project._id',
+                        foreignField: 'projectId',
+                        as          : 'projectMembers'
+                    }
+                }, {
+                    $project: {
+                        _id    : 1,
+                        name   : 1,
+                        project: 1,
+                        debit  : 1,
+
+                        salesManagers: {
+                            $filter: {
+                                input: '$projectMembers',
+                                as   : 'projectMember',
+                                cond : {
+                                    $and: [{
+                                        $eq: ['$$projectMember.projectPositionId', objectId(CONSTANTS.SALESMANAGER)]
+                                    }, {
+                                        $eq: ['$$projectMember.endDate', null]
+                                    }]
+                                }
+                            }
+                        }
+
                     }
                 }, {
                     $project: {
@@ -4032,8 +3657,22 @@ var Module = function (models, event) {
                         name        : 1,
                         project     : 1,
                         debit       : 1,
-                        salesmanager: {$arrayElemAt: ['$salesmanager', 0]}
-
+                        salesManager: {$arrayElemAt: ['$salesManagers', 0]}
+                    }
+                }, {
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'salesManager.employeeId',
+                        foreignField: '_id',
+                        as          : 'salesManager'
+                    }
+                }, {
+                    $project: {
+                        _id         : 1,
+                        name        : 1,
+                        project     : 1,
+                        debit       : 1,
+                        salesmanager: {$arrayElemAt: ['$salesManager', 0]}
                     }
                 }, {
                     $project: {
@@ -4095,6 +3734,7 @@ var Module = function (models, event) {
             async.parallel(parallelTasks, function (err, result) {
                 var resultArray = [];
                 var sortField;
+                var total;
 
                 if (err) {
                     return wfCb(err);
@@ -4150,15 +3790,16 @@ var Module = function (models, event) {
 
                         if (sort[sortField] === 1) {
                             return compareField(a, b);
-                        } else {
-                            return compareField(b, a);
                         }
+
+                        return compareField(b, a);
                     });
                 }
 
-                resultArray = resultArray.slice(skip, skip + count); // need refactor on aggregate function
+                total = resultArray.length;
+                resultArray = resultArray.slice(skip, skip + limit); // need refactor on aggregate function
 
-                wfCb(null, resultArray);
+                wfCb(null, {total: total, data: resultArray});
             });
         };
 
@@ -4170,215 +3811,6 @@ var Module = function (models, event) {
             }
 
             res.status(200).send(result);
-        });
-
-    };
-
-    this.totalCollectionInventory = function (req, res, next) {
-        var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var JobsModel = models.get(req.session.lastDb, 'jobs', jobsSchema);
-        var query = req.query;
-        var findJobs;
-        var composeReport;
-        var waterfallTasks;
-        var startDate = query.filter.startDate.value;
-        var endDate = query.filter.endDate.value;
-
-        startDate = new Date(moment(new Date(startDate)).startOf('day'));
-        endDate = new Date(moment(new Date(endDate)).endOf('day'));
-
-        findJobs = function (wfCb) {
-            JobsModel.find({}, function (err, result) {
-                var jobs = [];
-
-                if (err) {
-                    return wfCb(err);
-                }
-
-                result.forEach(function (el) {
-                    jobs.push(el._id);
-                });
-
-                wfCb(null, jobs);
-            });
-        };
-
-        composeReport = function (jobs, wfCb) {
-            var parallelTasks;
-
-            var getOpening = function (pCb) {
-                Model.aggregate([{
-                    $match: {
-                        date                : {$lt: startDate},
-                        debit               : {$gt: 0},
-                        'sourceDocument._id': {$in: jobs}
-                    }
-                }, {
-                    $project: {
-                        sourceDocument: 1,
-                        debit         : 1
-                    }
-                }, {
-                    $group: {
-                        _id  : '$sourceDocument._id',
-                        debit: {$sum: '$debit'}
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'jobs',
-                        localField  : '_id',
-                        foreignField: '_id',
-                        as          : '_id'
-                    }
-                }, {
-                    $project: {
-                        _id  : {$arrayElemAt: ['$_id', 0]},
-                        debit: 1
-                    }
-                }, {
-                    $project: {
-                        _id  : '$_id._id',
-                        name : '$_id.name',
-                        debit: 1
-                    }
-                }], function (err, result) {
-                    if (err) {
-                        return pCb(err);
-                    }
-
-                    pCb(null, result || []);
-                });
-            };
-
-            var getInwards = function (pCb) {
-                Model.aggregate([{
-                    $match: {
-                        date                : {$lte: endDate, $gte: startDate},
-                        debit               : {$gt: 0},
-                        'sourceDocument._id': {$in: jobs}
-                    }
-                }, {
-                    $project: {
-                        sourceDocument: 1,
-                        debit         : 1
-                    }
-                }, {
-                    $group: {
-                        _id  : '$sourceDocument._id',
-                        debit: {$sum: '$debit'}
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'jobs',
-                        localField  : '_id',
-                        foreignField: '_id',
-                        as          : '_id'
-                    }
-                }, {
-                    $project: {
-                        _id  : {$arrayElemAt: ['$_id', 0]},
-                        debit: 1
-                    }
-                }, {
-                    $project: {
-                        _id  : '$_id._id',
-                        name : '$_id.name',
-                        debit: 1
-                    }
-                }], function (err, result) {
-                    if (err) {
-                        return pCb(err);
-                    }
-
-                    pCb(null, result || []);
-                });
-            };
-
-            var getOutwards = function (pCb) {
-                Model.aggregate([{
-                    $match: {
-                        date                : {$lte: endDate/*, $gte: startDate*/},
-                        debit               : {$gt: 0},
-                        'sourceDocument._id': {$in: jobs},
-                        journal             : objectId(CONSTANTS.FINISHED_JOB_JOURNAL)
-                    }
-                }, {
-                    $lookup: {
-                        from        : 'jobs',
-                        localField  : 'sourceDocument._id',
-                        foreignField: '_id',
-                        as          : 'sourceDocument'
-                    }
-                }, {
-                    $project: {
-                        sourceDocument: {$arrayElemAt: ['$sourceDocument', 0]},
-                        debit         : 1,
-                        date          : 1
-                    }
-                }, {
-                    $project: {
-                        _id  : '$sourceDocument._id',
-                        name : '$sourceDocument.name',
-                        debit: 1,
-                        date : 1
-                    }
-                }], function (err, result) {
-                    if (err) {
-                        return pCb(err);
-                    }
-
-                    pCb(null, result || []);
-                });
-            };
-
-            parallelTasks = [getOpening, getInwards, getOutwards];
-
-            async.parallel(parallelTasks, function (err, result) {
-                if (err) {
-                    return wfCb(err);
-                }
-
-                var resultArray = [];
-
-                jobs.forEach(function (job) {
-                    var newElement = {};
-
-                    var opening = _.find(result[0], function (el) {
-                        return el._id.toString() === job.toString()
-                    });
-                    var inwards = _.find(result[1], function (el) {
-                        return el._id.toString() === job.toString()
-                    });
-                    var outwards = _.find(result[2], function (el) {
-                        return el._id.toString() === job.toString()
-                    });
-
-                    newElement._id = job;
-                    newElement.name = opening ? opening.name : (inwards ? inwards.name : '');
-
-                    newElement.openingBalance = opening ? opening.debit / 100 : 0;
-                    newElement.inwards = inwards ? inwards.debit / 100 : 0;
-                    newElement.outwards = outwards ? outwards.debit / 100 : 0;
-                    newElement.closingBalance = newElement.openingBalance + newElement.inwards - newElement.outwards;
-
-                    if (newElement.name && !(outwards && outwards.date < startDate)) {
-                        resultArray.push(newElement);
-                    }
-
-                });
-
-                wfCb(null, resultArray);
-            });
-        };
-
-        waterfallTasks = [findJobs, composeReport];
-
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send({count: result.length});
         });
 
     };
@@ -5593,36 +5025,6 @@ var Module = function (models, event) {
      cb(null, response);
      });
      };*/
-
-    function caseFilterForTotalCount(filter) {
-        var condition;
-        var resArray = [];
-        var filtrElement = {};
-        var key;
-        var filterName;
-
-        for (filterName in filter) {
-            condition = filter[filterName].value;
-            key = filter[filterName].key;
-
-            switch (filterName) {
-                case 'journalName':
-                    filtrElement['journal.name'] = {$in: condition};
-                    resArray.push(filtrElement);
-                    break;
-                case 'sourceDocument':
-                    filtrElement['sourceDocument.subject'] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-                case 'creditAccount':
-                    filtrElement['journal.creditAccount'] = {$in: condition.objectID()};
-                    resArray.push(filtrElement);
-                    break;
-            }
-        }
-
-        return resArray;
-    }
 
     this.getForView = function (req, res, next) {
         var dbIndex = req.session.lastDb;

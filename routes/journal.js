@@ -17,8 +17,6 @@ module.exports = function (models, event) {
     router.get('/', _journalHandler.getForView);
     router.get('/getForDd', _journalHandler.getForDd);
     router.get('/getReconcileDate', _journalEntryHandler.getReconcileDate);
-    router.get('/journalEntry/totalCollectionLength', _journalEntryHandler.totalCollectionLength);
-    router.get('/journalEntry/totalCollectionInventory', _journalEntryHandler.totalCollectionInventory);
     router.get('/journalEntry/getForReport', _journalEntryHandler.getForReport);
     router.get('/journalEntry/getAsyncData', _journalEntryHandler.getAsyncData);
     router.get('/journalEntry/getAsyncDataForGL', _journalEntryHandler.getAsyncDataForGL);
