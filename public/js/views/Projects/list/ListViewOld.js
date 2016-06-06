@@ -185,7 +185,7 @@ define([
                         context.fetchSortCollection(context.sort);
                         context.changeLocationHash(page, context.defaultItemsNumber, filter);
                     }
-                    context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
+                    context.pageElementRender(response.count, itemsNumber, page);// prototype in main.js
                 }, this);
             },
 
