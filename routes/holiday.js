@@ -1,4 +1,3 @@
-
 var express = require('express');
 var router = express.Router();
 var HolidayHandler = require('../handlers/holiday');
@@ -11,7 +10,7 @@ module.exports = function (event, models) {
     var accessStackMiddlWare = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    
+
     router.get('/', accessStackMiddlWare, handler.getForView);
 
     router.get('/totalCollectionLength', handler.totalCollectionLength);

@@ -1,4 +1,3 @@
-
 var express = require('express');
 var router = express.Router();
 var PaymentHandler = require('../handlers/payment');
@@ -27,7 +26,3 @@ module.exports = function (models, event) {
 
     return router;
 };
-
-/*
-
-* */
