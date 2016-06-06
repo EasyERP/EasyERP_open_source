@@ -35,7 +35,7 @@ define([
         filterView              : FilterView,
         totalCollectionLengthUrl: '/leads/totalCollectionLength',
         formUrl                 : '#easyErp/Leads/form/',
-        contentType             : CONSTANTS.LEADS, // 'Leads', // needs in view.prototype.changeLocationHash
+        contentType             : CONSTANTS.LEADS,
 
         events: {
             'click .stageSelect'          : 'showNewSelect',
@@ -57,26 +57,9 @@ define([
             this.filter = options.filter;
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
+            this.stages = [];
 
             this.render();
-
-            this.stages = [];
-            /*this.startTime = options.startTime;
-             this.collection = options.collection;
-             _.bind(this.collection.showMore, this.collection);
-             this.parrentContentId = options.collection.parrentContentId;
-             this.filter = options.filter || {};
-             this.sort = options.sort;
-             this.defaultItemsNumber = this.collection.namberToShow || 100;
-             this.newCollection = options.newCollection;
-             this.deleteCounter = 0;
-             this.page = options.collection.page;
-             this.startNumber = (this.page - 1) * this.defaultItemsNumber;
-
-             this.render();
-
-             this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-             this.contentCollection = contentCollection;*/
         },
 
         chooseOption: function (e) {
@@ -159,14 +142,14 @@ define([
 
         goToEditDialog: function (e) {
             var id;
-            var model;
+            var currentModel;
 
             e.preventDefault();
 
             id = $(e.target).closest('tr').data('id');
-            model = new CurrentModel({validate: false});
-            model.urlRoot = '/leads/';
-            model.fetch({
+            currentModel = new CurrentModel({validate: false});
+            currentModel.urlRoot = CONSTANTS.URLS.LEADS;
+            currentModel.fetch({
                 data: {
                     id      : id,
                     viewType: 'form'
