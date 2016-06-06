@@ -16,7 +16,7 @@ define([
              _,
              listViewBase,
              listTemplate,
-             createView,
+             CreateView,
              ListItemView,
              EditView,
              CurrentModel,
@@ -29,9 +29,9 @@ define([
 
     var ApplicationsListView = listViewBase.extend({
 
-        createView              : createView,
+        CreateView              : CreateView,
         listTemplate            : listTemplate,
-        listItemView            : ListItemView,
+        ListItemView            : ListItemView,
         contentCollection       : contentCollection,
         filterView              : filterView,
         contentType             : 'Applications',
@@ -61,7 +61,7 @@ define([
 
             this.render();
 
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+           // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
         },
 
@@ -152,8 +152,9 @@ define([
 
             model.urlRoot = '/applications/';
             model.fetch({
-                success: function (model) {
-                    new EditView({model: model});
+                data   : {id: id},
+                success: function (response) {
+                    new EditView({model: response});
                 },
 
                 error: function () {

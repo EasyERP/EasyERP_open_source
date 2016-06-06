@@ -181,6 +181,7 @@ define([
             this.filter = Object.keys(filter).length === 0 ? {} : filter;
 
             context.changeLocationHash(1, itemsNumber, filter);
+            context.collection.getFirstPage({filter: filter, showMore: true, viewType: this.viewType, contentType : this.contentType});
             // context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
             // context.getTotalLength(null, itemsNumber, filter);
         },
@@ -262,7 +263,7 @@ define([
             $('#check_all').prop('checked', false);
 
             if (this.collection.length > 0) {
-                itemView = new this.listItemView({
+                itemView = new this.ListItemView({
                     collection : this.collection,
                     page       : this.page,
                     itemsNumber: this.collection.namberToShow
@@ -327,8 +328,7 @@ define([
             $('#check_all').prop('checked', false);
 
             this.changeLocationHash(1, itemsNumber, this.filter);
-            this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-            this.getTotalLength(null, itemsNumber, this.filter);
+            this.collection.getFirstPage({filter: this.filter, showMore: true, viewType: this.viewType, contentType : this.contentType});
         },
 
         renderCheckboxes: function () {
