@@ -516,16 +516,14 @@ var Filters = function (models) {
                             name: {
                                 $concat: ['$name.first', ' ', '$name.last']
                             }
-                        },
-
-                        department: {
-                            $addToSet: {
-                                _id : '$department._id',
-                                name: {$ifNull: ['$department.name', 'None']}
-                            }
                         }
                     },
-
+                    department: {
+                        $addToSet: {
+                            _id : '$department._id',
+                            name: {$ifNull: ['$department.name', 'None']}
+                        }
+                    },
                     jobPosition: {
                         $addToSet: {
                             _id : '$jobPosition._id',
