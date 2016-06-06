@@ -39,10 +39,9 @@ define([
         listItemView            : ListItemView,
         filterView              : filterView,
         contentCollection       : contentCollection,
-        totalCollectionLengthUrl: 'journal/journalEntry/totalCollectionLength',
         contentType             : CONSTANTS.JOURNALENTRY,
-        exportToXlsxUrl         : '/journal/journalEntry/exportToXlsx',
-        exportToCsvUrl          : '/journal/journalEntry/exportToCsv',
+        exportToXlsxUrl         : 'journalEntries/exportToXlsx',
+        exportToCsvUrl          : 'journalEntries/exportToCsv',
 
         initialize: function (options) {
             var dateRange = custom.retriveFromCash('journalEntryDateRange');
@@ -246,7 +245,7 @@ define([
                 itemsNumber: this.collection.namberToShow
             });
 
-            dataService.getData('journal/getReconcileDate', {}, function (result) {
+            dataService.getData('journalEntries/getReconcileDate', {}, function (result) {
                 var newDate = moment(new Date());
                 var date = moment(result.date);
                 var same = false;

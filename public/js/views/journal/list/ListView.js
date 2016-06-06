@@ -23,7 +23,6 @@ define([
             listTemplate            : listTemplate,
             listItemView            : ListItemView,
             contentCollection       : contentCollection,
-            totalCollectionLengthUrl: '/journal/totalCollectionLength',
             contentType             : 'journal',
             changedModels           : {},
             responseObj             : {},

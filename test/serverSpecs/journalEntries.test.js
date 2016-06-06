@@ -44,7 +44,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/totalCollectionInventory')
+                .get('journalEntries/totalCollectionInventory')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -71,7 +71,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/getAsyncCloseMonth')
+                .get('journalEntries/getAsyncCloseMonth')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -99,7 +99,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/getTrialBalance')
+                .get('journalEntries/getTrialBalance')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -120,7 +120,7 @@ describe('journalEntries Specs', function () {
         it('should get data for closeMonth view', function (done) {
 
             aggent
-                .get('journal/journalEntry/getCloseMonth')
+                .get('journalEntries/getCloseMonth')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
@@ -144,7 +144,7 @@ describe('journalEntries Specs', function () {
                };
 
             aggent
-                .get('journal/journalEntry/getProfitAndLoss')
+                .get('journalEntries/getProfitAndLoss')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -178,7 +178,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/getBalanceSheet')
+                .get('journalEntries/getBalanceSheet')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -212,7 +212,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/getCashFlow')
+                .get('journalEntries/getCashFlow')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -245,7 +245,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/getPayrollForReport')
+                .get('journalEntries/getPayrollForReport')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -271,7 +271,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/getForReport')
+                .get('journalEntries/getForReport')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -300,7 +300,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/getInventoryReport')
+                .get('journalEntries/getInventoryReport')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -332,7 +332,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/exportToXlsx')
+                .get('journalEntries/exportToXlsx')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -360,7 +360,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/exportToCsv')
+                .get('journalEntries/exportToCsv')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -379,7 +379,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/getAsyncData')
+                .get('journalEntries/getAsyncData')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -406,7 +406,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/getAsyncDataForGL')
+                .get('journalEntries/getAsyncDataForGL')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -433,7 +433,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/totalCollectionLength')
+                .get('journalEntries/totalCollectionLength')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -465,7 +465,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .get('journal/journalEntry/list')
+                .get('journalEntries/list')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -489,7 +489,7 @@ describe('journalEntries Specs', function () {
             };
 
             aggent
-                .post('journal/journalEntry/closeMonth')
+                .post('journalEntries/closeMonth')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -511,7 +511,7 @@ describe('journalEntries Specs', function () {
             var query = ['1 Aug, 2016', '1 Jun, 2016'];
 
             aggent
-                .post('journal/journalEntry/recloseMonth')
+                .post('journalEntries/recloseMonth')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -532,7 +532,7 @@ describe('journalEntries Specs', function () {
         it('should reconcile all changed documents month', function (done) {
 
             aggent
-                .post('journal/reconcile')
+                .post('journalEntries/reconcile')
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;

@@ -55,7 +55,7 @@ define([
                     keys.push(key.toString());
                 });
 
-                new GenerateView({keys: keys, url: '/journal/journalEntry/closeMonth'});
+                new GenerateView({keys: keys, url: 'journalEntries/closeMonth'});
             },
 
             // comment after unit tests
@@ -140,7 +140,7 @@ define([
                 var body = this.$el;
 
                 async.each(asyncKeys, function (asyncId) {
-                    dataService.getData('/journal/journalEntry/getAsyncCloseMonth', {
+                    dataService.getData('journalEntries/getAsyncCloseMonth', {
                         _id: asyncId
                     }, function (result) {
                         var journalEntries = result.journalEntries;

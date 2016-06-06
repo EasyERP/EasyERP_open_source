@@ -175,7 +175,7 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var balanceUrl = new RegExp('journal\/journalEntry\/getBalanceSheet', 'i');
+                var balanceUrl = new RegExp('journalEntries\/getBalanceSheet', 'i');
 
                 server.respondWith('GET', balanceUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 balanceSheetCollection = new BalanceSheetCollection({
@@ -188,7 +188,7 @@ define([
             });
 
             it('Try to create TopBarView', function (done) {
-                var balanceUrl = new RegExp('journal\/journalEntry\/getBalanceSheet', 'i');
+                var balanceUrl = new RegExp('journalEntries\/getBalanceSheet', 'i');
                 var collectionJSON;
 
                 server.respondWith('GET', balanceUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeBalance)]);
@@ -256,7 +256,7 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create BalanceSheetView', function (done) {
-                    var asyncDataUrl = new RegExp('\/journal\/journalEntry\/getAsyncDataForGL', 'i');
+                    var asyncDataUrl = new RegExp('\/journalEntries\/getAsyncDataForGL', 'i');
 
                     server.respondWith('GET', asyncDataUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAsyncData)]);
                     listView = new ListView({
@@ -305,8 +305,8 @@ define([
                     var $topBarEl = topBarView.$el;
                     var $updateDateBtn = $topBarEl.find('#updateDate');
                     var $dateRange = $topBarEl.find('.dateRange');
-                    var asyncDataUrl = new RegExp('\/journal\/journalEntry\/getAsyncDataForGL', 'i');
-                    var balanceUrl = new RegExp('journal\/journalEntry\/getBalanceSheet', 'i');
+                    var asyncDataUrl = new RegExp('\/journalEntries\/getAsyncDataForGL', 'i');
+                    var balanceUrl = new RegExp('journalEntries\/getBalanceSheet', 'i');
                     var $cancelBtn;
                     var $thisMonth;
                     var $finYear;

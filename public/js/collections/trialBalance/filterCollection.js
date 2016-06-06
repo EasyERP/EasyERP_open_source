@@ -11,7 +11,7 @@ define([
     var gLReportCollection = Backbone.Collection.extend({
 
         model       : journalEntryModel,
-        url         : 'journal/journalEntry/getTrialBalance',
+        url         : 'journalEntries/getTrialBalance',
         contentType : null,
         page        : null,
         numberToShow: null,

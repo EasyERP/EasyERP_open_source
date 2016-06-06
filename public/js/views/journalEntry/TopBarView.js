@@ -184,7 +184,7 @@ define([
 
                 var date = this.$el.find('#reconcileDate').text();
 
-                dataService.postData('journal/reconcile', {date: date}, function () {
+                dataService.postData('journalEntries/reconcile', {date: date}, function () {
                     //var location = window.location.hash;
                     //Backbone.history.fragment = '';
                     //Backbone.history.navigate(location, {trigger: true});

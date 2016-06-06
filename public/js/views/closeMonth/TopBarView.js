@@ -41,7 +41,7 @@ define([
                 var checked = $("input.checkbox:checked");
                 var url;
 
-                this.url = '/journal/journalEntry/recloseMonth';
+                this.url = 'journalEntries/recloseMonth';
 
                 checked.each(function (ind, el) {
                     dates.push(el.value);

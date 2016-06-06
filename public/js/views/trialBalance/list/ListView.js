@@ -93,7 +93,7 @@ define([
                 var body = this.$el.find('#listTable');
 
                 async.each(asyncKeys, function (asyncId) {
-                    dataService.getData('/journal/journalEntry/getAsyncDataForGL', {
+                    dataService.getData('journalEntries/getAsyncDataForGL', {
                         startDate  : self.startDate,
                         endDate    : self.endDate,
                         contentType: 'trialBalance',

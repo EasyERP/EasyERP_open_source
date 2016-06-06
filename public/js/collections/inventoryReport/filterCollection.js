@@ -9,7 +9,7 @@ define([
     var invReportCollection = Parent.extend({
 
         model   : invRepModel,
-        url     : '/journal/journalEntry/getInventoryReport',
+        url     : 'journalEntries/getInventoryReport',
         pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
 
         initialize: function (options) {

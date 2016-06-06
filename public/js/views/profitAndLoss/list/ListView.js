@@ -97,7 +97,7 @@ define([
                 var body = this.$el;
 
                 async.each(asyncKeys, function (asyncId) {
-                    dataService.getData('/journal/journalEntry/getAsyncDataForGL', {
+                    dataService.getData('journalEntries/getAsyncDataForGL', {
                         startDate: self.startDate,
                         endDate  : self.endDate,
                         _id      : asyncId

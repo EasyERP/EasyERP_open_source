@@ -9,7 +9,7 @@ define([
     var gLReportCollection = Backbone.Collection.extend({
 
         model       : journalEntryModel,
-        url         : 'journal/journalEntry/getCloseMonth',
+        url         : 'journalEntries/getCloseMonth',
         contentType : null,
         page        : null,
         numberToShow: null,

@@ -1787,7 +1787,7 @@ define([
                     $creditEl = $dialogEl.find('.newSelectList li:nth-child(1)');
                     $creditEl.click();
 
-                    server.respondWith('POST', '/journal/', [201, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
+                    server.respondWith('POST', '/journals/', [201, {"Content-Type": "application/json"}, JSON.stringify({success: 'Created success'})]);
                     $createDialogBtn.click();
                     server.respond();
 
