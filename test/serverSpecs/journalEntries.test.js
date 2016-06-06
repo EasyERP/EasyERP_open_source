@@ -29,41 +29,41 @@ describe('journalEntries Specs', function () {
                 .expect(302, done);
         });
 
-        it('should get totalCount of InventoryReport', function (done) {
-            var query = {
-                filter: {
-                    startDate: {
-                        key  : 'startDate',
-                        value: '1 Feb, 2016'
-                    },
-                    endDate  : {
-                        key  : 'endDate',
-                        value: '2 Feb, 2016'
-                    }
-                }
-            };
+        /* it('should get totalCount of InventoryReport', function (done) {
+         var query = {
+         filter: {
+         startDate: {
+         key  : 'startDate',
+         value: '1 Feb, 2016'
+         },
+         endDate  : {
+         key  : 'endDate',
+         value: '2 Feb, 2016'
+         }
+         }
+         };
 
-            aggent
-                .get('journalEntries/totalCollectionInventory')
-                .query(query)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
+         aggent
+         .get('journalEntries/totalCollectionInventory')
+         .query(query)
+         .expect(200)
+         .end(function (err, res) {
+         var body = res.body;
 
-                    if (err) {
-                        return done(err);
-                    }
+         if (err) {
+         return done(err);
+         }
 
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('count')
-                        .and.to.be.a('number');
+         expect(body)
+         .to.be.instanceOf(Object);
+         expect(body)
+         .to.have.property('count')
+         .and.to.be.a('number');
 
 
-                    done();
-                });
-        });
+         done();
+         });
+         });*/
 
         it('should get async data for closeMonth view', function (done) {
             var query = {
@@ -86,7 +86,6 @@ describe('journalEntries Specs', function () {
                     expect(body)
                         .to.have.property('journalEntries')
                         .and.to.be.a('array');
-
 
                     done();
                 });
@@ -112,7 +111,6 @@ describe('journalEntries Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Array);
 
-
                     done();
                 });
         });
@@ -132,16 +130,15 @@ describe('journalEntries Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Array);
 
-
                     done();
                 });
         });
 
-           it('should get data for balanceSheet view', function (done) {
-               var query = {
-                   'startDate': '1 Feb, 2016',
-                   'endDate'  : '28 Feb, 2016'
-               };
+        it('should get data for balanceSheet view', function (done) {
+            var query = {
+                'startDate': '1 Feb, 2016',
+                'endDate'  : '28 Feb, 2016'
+            };
 
             aggent
                 .get('journalEntries/getProfitAndLoss')
@@ -166,12 +163,11 @@ describe('journalEntries Specs', function () {
                         .to.have.property('dividends')
                         .and.to.be.a('number');
 
-
                     done();
                 });
         });
 
-          it('should get data for balanceSheet view', function (done) {
+        it('should get data for balanceSheet view', function (done) {
             var query = {
                 'startDate': '1 Feb, 2016',
                 'endDate'  : '28 Feb, 2016'
@@ -199,7 +195,6 @@ describe('journalEntries Specs', function () {
                     expect(body)
                         .to.have.property('equity')
                         .and.to.be.a('array');
-
 
                     done();
                 });
@@ -233,7 +228,6 @@ describe('journalEntries Specs', function () {
                     expect(body)
                         .to.have.property('financing')
                         .and.to.be.a('array');
-
 
                     done();
                 });
@@ -311,7 +305,11 @@ describe('journalEntries Specs', function () {
                     }
 
                     expect(body)
-                        .to.be.instanceOf(Array);
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.be.have.property('total');
+                    expect(body)
+                        .to.be.have.property('data');
 
                     done();
                 });
@@ -324,7 +322,8 @@ describe('journalEntries Specs', function () {
                         key  : 'startDate',
                         value: '1 Feb, 2016'
                     },
-                    endDate  : {
+
+                    endDate: {
                         key  : 'endDate',
                         value: '25 Feb, 2016'
                     }
@@ -340,7 +339,6 @@ describe('journalEntries Specs', function () {
                         return done(err);
                     }
 
-
                     done();
                 });
         });
@@ -352,7 +350,8 @@ describe('journalEntries Specs', function () {
                         key  : 'startDate',
                         value: '1 Feb, 2016'
                     },
-                    endDate  : {
+                    
+                    endDate: {
                         key  : 'endDate',
                         value: '25 Feb, 2016'
                     }
@@ -367,7 +366,6 @@ describe('journalEntries Specs', function () {
                     if (err) {
                         return done(err);
                     }
-
 
                     done();
                 });
@@ -426,14 +424,46 @@ describe('journalEntries Specs', function () {
                 });
         });
 
-        it('should get totalCount and total sum', function (done) {
+        /*   it('should get totalCount and total sum', function (done) {
+         var query = {
+         'startDate': '1 Feb, 2016',
+         'endDate'  : '28 Feb, 2016'
+         };
+
+         aggent
+         .get('journalEntries/totalCollectionLength')
+         .query(query)
+         .expect(200)
+         .end(function (err, res) {
+         var body = res.body;
+
+         if (err) {
+         return done(err);
+         }
+
+         expect(body)
+         .to.be.instanceOf(Object);
+         expect(body)
+         .to.have.property('count')
+         .and.to.be.a('number');
+         expect(body)
+         .to.have.property('totalValue')
+         .and.to.be.a('number');
+
+
+         done();
+         });
+         });*/
+
+        it('should get JE for list', function (done) {
             var query = {
                 'startDate': '1 Feb, 2016',
-                'endDate'  : '28 Feb, 2016'
+                'endDate'  : '28 Feb, 2016',
+                viewType   : 'list'
             };
 
             aggent
-                .get('journalEntries/totalCollectionLength')
+                .get('journalEntries/')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -446,37 +476,11 @@ describe('journalEntries Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('count')
-                        .and.to.be.a('number');
+                        .to.be.have.property('total');
                     expect(body)
-                        .to.have.property('totalValue')
-                        .and.to.be.a('number');
-
-
-                    done();
-                });
-        });
-
-        it('should get JE for list', function (done) {
-            var query = {
-                'startDate': '1 Feb, 2016',
-                'endDate'  : '28 Feb, 2016',
-                viewType: 'list'
-            };
-
-            aggent
-                .get('journalEntries/list')
-                .query(query)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Array);
+                        .to.be.have.property('data');
+                    expect(body.data.length)
+                        .to.be.gte(1);
 
                     done();
                 });
@@ -484,7 +488,7 @@ describe('journalEntries Specs', function () {
 
         it('should close month', function (done) {
             var query = {
-                year: 2016,
+                year : 2016,
                 month: 4
             };
 
@@ -550,19 +554,17 @@ describe('journalEntries Specs', function () {
         });
 
         /*it('should create JE', function (done) {
-            var body = {};
-            body.date = '1 Jan, 2015';
-            body.journal = CONSTANTS.INVOICE_JOURNAL;
-            body.currency =  'USD';
-            body.amount = 10000;
-            body.sourceDocument = {};
-            body.sourceDocument._id = '55b92ad621e4b7c40f00064a';
-            body.sourceDocument.model = 'Invoice';
-
-            
-        });*/
+         var body = {};
+         body.date = '1 Jan, 2015';
+         body.journal = CONSTANTS.INVOICE_JOURNAL;
+         body.currency =  'USD';
+         body.amount = 10000;
+         body.sourceDocument = {};
+         body.sourceDocument._id = '55b92ad621e4b7c40f00064a';
+         body.sourceDocument.model = 'Invoice';
 
 
+         });*/
 
     });
 
