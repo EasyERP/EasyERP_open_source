@@ -5,7 +5,7 @@ var CONSTANTS = require('../constants/mainConstants');
 
 var Module = function (event, models) {
     'use strict';
-    var access = require('../Modules/additions/access.js')(models);
+
     var capacityHandler = new CapacityHandler(models);
     var objectId = mongoose.Types.ObjectId;
     var VacationSchema = mongoose.Schemas.Vacation;
@@ -25,7 +25,7 @@ var Module = function (event, models) {
             for (day = array.length; day >= 0; day--) {
                 if (array[day]) {
                     dateValue = moment([year, month - 1, day + 1]);
-                    //weekKey = year * 100 + moment(dateValue).isoWeek();
+                    // weekKey = year * 100 + moment(dateValue).isoWeek();
                     weekKey = dateValue.isoWeekYear() * 100 + dateValue.isoWeek();
 
                     dayNumber = dateValue.day();
@@ -224,7 +224,7 @@ var Module = function (event, models) {
                     startDate = moment([options.year, 1]);
 
                     // queryObject.year = {'$in': [options.year, (options.year - 1).toString()]};
-                    queryObject.year = {'$in': [parseInt(options.year, 10), (options.year - 1)]}; // changed from String to Number
+                    queryObject.year = {$in: [parseInt(options.year, 10), (options.year - 1)]}; // changed from String to Number
                 }
             } else if (options.year) {
                 date = new Date();
@@ -236,15 +236,15 @@ var Module = function (event, models) {
                 endDate = new Date(date);
                 endDate.setMonth(endDate.getMonth() + 1);
 
-                condition1 = {month: {'$lte': parseInt(date.format('M'), 10)}};
-                condition2 = {year: {'$lte': parseInt(date.format('YYYY'), 10)}};
+                condition1 = {month: {$lte: parseInt(date.format('M'), 10)}};
+                condition2 = {year: {$lte: parseInt(date.format('YYYY'), 10)}};
 
-                endQuery = {'$and': [condition1, condition2, employeeQuery]};
+                endQuery = {$and: [condition1, condition2, employeeQuery]};
 
                 date.subtract(12, 'M');
                 startDate = new Date(date);
 
-                //date.subtract(12, 'M');
+                // date.subtract(12, 'M');
 
                 condition1 = {month: {$gte: parseInt(date.format('M'), 10)}};
                 condition2 = {year: {$gte: parseInt(date.format('YYYY'), 10)}};
@@ -257,7 +257,7 @@ var Module = function (event, models) {
             }
         }
 
-        //query = Vacation.find(queryObject);
+        // query = Vacation.find(queryObject);
 
         // query.exec(function (err, result) {
         Vacation.aggregate([{
@@ -308,40 +308,39 @@ var Module = function (event, models) {
                 res.status(200).send(result);
             } else {
                 async.waterfall([
-                        function (callback) {
-                            var resultObj = {
-                                curYear: [],
-                                preYear: []
-                            };
+                    function (callback) {
+                        var resultObj = {
+                            curYear: [],
+                            preYear: []
+                        };
 
-                            result.forEach(function (element) {
-                                date = moment([element.year, element.month]);
+                        result.forEach(function (element) {
+                            date = moment([element.year, element.month]);
 
-                                if (date >= startDate && date <= endDate) {
-                                    resultObj.curYear.push(element);
-                                } else {
-                                    resultObj.preYear.push(element);
-                                }
-                            });
-
-                            callback(null, resultObj);
-                        }, function (result, callback) {
-                            if (options.year !== 'Line Year') {
-                                stat = calculate(result.preYear, options.year - 1);
+                            if (date >= startDate && date <= endDate) {
+                                resultObj.curYear.push(element);
                             } else {
-                                stat = calculate(result.preYear, options.year);
+                                resultObj.preYear.push(element);
                             }
+                        });
 
-                            callback(null, result, stat);
-                        }
-                    ], function (err, object, stat) {
-                        if (err) {
-                            return next(err);
+                        callback(null, resultObj);
+                    }, function (result, callback) {
+                        if (options.year !== 'Line Year') {
+                            stat = calculate(result.preYear, options.year - 1);
+                        } else {
+                            stat = calculate(result.preYear, options.year);
                         }
 
-                        res.status(200).send({data: object.curYear, stat: stat});
+                        callback(null, result, stat);
                     }
-                );
+                ], function (err, object, stat) {
+                    if (err) {
+                        return next(err);
+                    }
+
+                    res.status(200).send({data: object.curYear, stat: stat});
+                });
             }
         });
 
@@ -559,20 +558,20 @@ var Module = function (event, models) {
 
         vacation = new Vacation(body);
 
-        vacation.save(function (err, Vacation) {
+        vacation.save(function (err, vacationResult) {
             if (err) {
                 return next(err);
             }
 
             event.emit('setReconcileTimeCard', {
                 req     : req,
-                month   : Vacation.month,
-                year    : Vacation.year,
-                employee: Vacation.employee
+                month   : vacationResult.month,
+                year    : vacationResult.year,
+                employee: vacationResult.employee
             });
 
             function populateEmployees(cb) {
-                Employee.populate(Vacation, {
+                Employee.populate(vacationResult, {
                     path  : 'employee',
                     select: '_id name fullName',
                     lean  : true
@@ -580,7 +579,7 @@ var Module = function (event, models) {
             }
 
             function populateDeps(cb) {
-                Department.populate(Vacation, {
+                Department.populate(vacationResult, {
                     path  : 'department',
                     select: '_id departmentName',
                     lean  : true
@@ -594,7 +593,7 @@ var Module = function (event, models) {
                     return next(err);
                 }
 
-                res.status(200).send({success: Vacation});
+                res.status(200).send({success: vacationResult});
                 event.emit('recollectVacationDash');
             });
         });

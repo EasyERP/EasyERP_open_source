@@ -1,4 +1,3 @@
-
 var MonthHoursHandler = require('../handlers/monthHours');
 var express = require('express');
 var router = express.Router();
@@ -12,7 +11,7 @@ module.exports = function (event, models) {
 
     router.use(authStackMiddleware);
     router.use(accessStackMiddlware);
-    
+
     router.get('/', function (req, res, next) {
         if (req.query.month) {
             handler.getData(req, res, next);

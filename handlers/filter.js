@@ -152,7 +152,7 @@ var Filters = function (models) {
                 if (err) {
                     return next(err);
                 }
-                
+
                 result = validNames(result);
 
                 res.status(200).send(result);
@@ -517,7 +517,8 @@ var Filters = function (models) {
                                 $concat: ['$name.first', ' ', '$name.last']
                             }
                         },
-                        department : {
+
+                        department: {
                             $addToSet: {
                                 _id : '$department._id',
                                 name: {$ifNull: ['$department.name', 'None']}

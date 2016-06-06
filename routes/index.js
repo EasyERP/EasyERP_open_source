@@ -85,11 +85,11 @@ module.exports = function (app, mainDb) {
     app.get('/', function (req, res, next) {
         res.sendfile('index.html');
     });
-/*
-    app.get('/kill', function (req, res, next) {
-        res.status(200).send('skjdgfjsdgfj');
-        process.exit(1);
-    });*/
+    /*
+     app.get('/kill', function (req, res, next) {
+     res.status(200).send('skjdgfjsdgfj');
+     process.exit(1);
+     });*/
 
     app.use('/filter', filterRouter);
     app.use('/product', productRouter);
@@ -637,115 +637,115 @@ module.exports = function (app, mainDb) {
     });
 
     /*app.post('/login', function (req, res, next) {
-        requestHandler.login(req, res, next);
-    });*/
+     requestHandler.login(req, res, next);
+     });*/
 
     /*app.post('/Users', function (req, res) {
-        var data = {};
-        data.user = req.body;
-        requestHandler.createUser(req, res, data);
-    });*/
+     var data = {};
+     data.user = req.body;
+     requestHandler.createUser(req, res, data);
+     });*/
 
     /*app.get('/UserWithProfile', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.getAllUserWithProfile(req, id, res);
-    });*/
+     var id = req.param('_id');
+     requestHandler.getAllUserWithProfile(req, id, res);
+     });*/
 
     /*app.get('/Users', function (req, res) {
-        var data = {};
-        data.page = req.param('page');
-        data.count = req.param('count');
-        requestHandler.getUsers(req, res, data);
-    });
-*/
+     var data = {};
+     data.page = req.param('page');
+     data.count = req.param('count');
+     requestHandler.getUsers(req, res, data);
+     });
+     */
     /*app.get('/currentUser', function (req, res) {
-        requestHandler.currentUser(req, res);
-    });*/
+     requestHandler.currentUser(req, res);
+     });*/
 
-  /*  app.post('/currentUser', function (req, res) {
-        var data = {};
-        if (req.body.oldpass && req.body.pass) {
-            data.changePass = true;
-        }
-        requestHandler.updateCurrentUser(req, res, data);
-    });*/
+    /*  app.post('/currentUser', function (req, res) {
+     var data = {};
+     if (req.body.oldpass && req.body.pass) {
+     data.changePass = true;
+     }
+     requestHandler.updateCurrentUser(req, res, data);
+     });*/
 
     /*app.patch('/currentUser', function (req, res) {
-        var data = {};
-        if (req.body) {
-            data.savedFilters = req.body;
-        }
+     var data = {};
+     if (req.body) {
+     data.savedFilters = req.body;
+     }
 
-        requestHandler.updateCurrentUser(req, res, data);
-    });*/
+     requestHandler.updateCurrentUser(req, res, data);
+     });*/
 
     app.use('/users', userRouter);
 
-   /* app.patch('/currentUser/:_id', function (req, res) {
-        var data = {};
-        if (req.body.oldpass && req.body.pass) {
-            data.changePass = true;
-        }
-        requestHandler.updateCurrentUser(req, res, data);
-    });*/
+    /* app.patch('/currentUser/:_id', function (req, res) {
+     var data = {};
+     if (req.body.oldpass && req.body.pass) {
+     data.changePass = true;
+     }
+     requestHandler.updateCurrentUser(req, res, data);
+     });*/
 
-   /* app.get('/UsersForDd', function (req, res) {
-        requestHandler.getUsersForDd(req, res);
-    });*/
+    /* app.get('/UsersForDd', function (req, res) {
+     requestHandler.getUsersForDd(req, res);
+     });*/
 
     /*app.get('/Users/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getUserById(req, res, data);
-                break;
-            default:
-                requestHandler.getFilterUsers(req, res);
-                break;
-        }
-    });*/
+     var data = {};
+     for (var i in req.query) {
+     data[i] = req.query[i];
+     }
+     var viewType = req.params.viewType;
+     switch (viewType) {
+     case "form":
+     requestHandler.getUserById(req, res, data);
+     break;
+     default:
+     requestHandler.getFilterUsers(req, res);
+     break;
+     }
+     });*/
 
     /*app.patch('/Users/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.user = req.body;
-        requestHandler.updateUser(req, res, id, data);
-    });*/
+     var data = {};
+     var id = req.param('_id');
+     data.user = req.body;
+     requestHandler.updateUser(req, res, id, data);
+     });*/
 
     /*app.delete('/Users/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeUser(req, res, id);
-    });*/
+     var id = req.param('_id');
+     requestHandler.removeUser(req, res, id);
+     });*/
 
     /*app.post('/Profiles', function (req, res) {
-        var data = {};
-        data.profile = req.body;
-        requestHandler.createProfile(req, res, data);
-    });
+     var data = {};
+     data.profile = req.body;
+     requestHandler.createProfile(req, res, data);
+     });
 
-    app.get('/Profiles', function (req, res) {
-        requestHandler.getProfile(req, res);
-    });
+     app.get('/Profiles', function (req, res) {
+     requestHandler.getProfile(req, res);
+     });
 
-    app.get('/ProfilesForDd', function (req, res) {
-        requestHandler.getProfileForDd(req, res);
-    });
+     app.get('/ProfilesForDd', function (req, res) {
+     requestHandler.getProfileForDd(req, res);
+     });
 
-    app.put('/Profiles/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.profile = req.body;
-        requestHandler.updateProfile(req, res, id, data);
-    });
+     app.put('/Profiles/:_id', function (req, res) {
+     var data = {};
+     var id = req.param('_id');
+     data.profile = req.body;
+     requestHandler.updateProfile(req, res, id, data);
+     });
 
-    app.delete('/Profiles/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeProfile(req, res, id);
-    });*/
+     app.delete('/Profiles/:_id', function (req, res) {
+     var id = req.param('_id');
+     requestHandler.removeProfile(req, res, id);
+     });*/
 
 //-----------------END----Users--and Profiles-----------------------------------------------
 
@@ -762,8 +762,8 @@ module.exports = function (app, mainDb) {
             //    requestHandler.customerTotalCollectionLength(req, res);
             //    break;
             /*case ('Projects'):
-                requestHandler.projectsTotalCollectionLength(req, res);
-                break;*/
+             requestHandler.projectsTotalCollectionLength(req, res);
+             break;*/
             case ('Tasks'):
                 requestHandler.projectsTotalCollectionLength(req, res);
                 break;
@@ -872,85 +872,83 @@ module.exports = function (app, mainDb) {
 //---------------------------Projects--------------------------------------------------------
 
     /*app.get('/projectType', function (req, res) {
-        requestHandler.getProjectType(req, res);
-    });*/
+     requestHandler.getProjectType(req, res);
+     });*/
 
     /*app.get('/Projects/form/:_id', function (req, res) {
-        var data = {};
-        data.id = req.params._id;
-        requestHandler.getProjectsById(req, res, data);
-    });*/
+     var data = {};
+     data.id = req.params._id;
+     requestHandler.getProjectsById(req, res, data);
+     });*/
 
     /*app.get('/getProjectsForDd', requestHandler.getProjectsForDd);*/
 
     //app.get('/getProjectPMForDashboard', function (req, res) {
     //    requestHandler.getProjectPMForDashboard(req, res);
     //});
-   /* app.get('/getProjectStatusCountForDashboard', function (req, res) {
-        requestHandler.getProjectStatusCountForDashboard(req, res);
-    });*/
+    /* app.get('/getProjectStatusCountForDashboard', function (req, res) {
+     requestHandler.getProjectStatusCountForDashboard(req, res);
+     });*/
 
-   /* app.get('/getProjectByEndDateForDashboard', function (req, res) {
-        requestHandler.getProjectByEndDateForDashboard(req, res);
-    });*/
+    /* app.get('/getProjectByEndDateForDashboard', function (req, res) {
+     requestHandler.getProjectByEndDateForDashboard(req, res);
+     });*/
 
-   /* app.post('/Projects', function (req, res) {
-        var data = {};
-        data.project = req.body;
-        requestHandler.createProject(req, res, data);
-    });*/
+    /* app.post('/Projects', function (req, res) {
+     var data = {};
+     data.project = req.body;
+     requestHandler.createProject(req, res, data);
+     });*/
 
-   /* app.patch('/Projects/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.updateOnlySelectedFields(req, res, id, req.body);
-    });*/
+    /* app.patch('/Projects/:_id', function (req, res) {
+     var id = req.param('_id');
+     requestHandler.updateOnlySelectedFields(req, res, id, req.body);
+     });*/
 
     /*app.put('/Projects/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        var remove = req.headers.remove;
-        data.project = req.body;
-        requestHandler.updateProject(req, res, id, data, remove);
-    });*/
-   /* app.delete('/Projects/:_id', function (req, res) {
-        var id = req.params._id;
-        requestHandler.removeProject(req, res, id);
-    });*/
+     var data = {};
+     var id = req.param('_id');
+     var remove = req.headers.remove;
+     data.project = req.body;
+     requestHandler.updateProject(req, res, id, data, remove);
+     });*/
+    /* app.delete('/Projects/:_id', function (req, res) {
+     var id = req.params._id;
+     requestHandler.removeProject(req, res, id);
+     });*/
 
     /*app.get('/Projects/:viewType', function (req, res, next) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getProjectsById(req, res, data);
-                break;
-            case "list":
-                requestHandler.getProjectsForList(req, res, data);
-                break;
-            default:
-                requestHandler.getProjects(req, res, data, next);
-                break;
-        }
-    });*/
+     var data = {};
+     for (var i in req.query) {
+     data[i] = req.query[i];
+     }
+     var viewType = req.params.viewType;
+     switch (viewType) {
+     case "form":
+     requestHandler.getProjectsById(req, res, data);
+     break;
+     case "list":
+     requestHandler.getProjectsForList(req, res, data);
+     break;
+     default:
+     requestHandler.getProjects(req, res, data, next);
+     break;
+     }
+     });*/
 
 //--------------Tasks----------------------------------------------------------
 
-
     /*app.get('/getTasksLengthByWorkflows', function (req, res) {
-        var options = {};
-        for (var i in req.query) {
-            options[i] = req.query[i];
-        }
-        requestHandler.getTasksLengthByWorkflows(req, options, res);
-    });*/
+     var options = {};
+     for (var i in req.query) {
+     options[i] = req.query[i];
+     }
+     requestHandler.getTasksLengthByWorkflows(req, options, res);
+     });*/
 
-   /* app.get('/Priority', function (req, res) {
-        requestHandler.getTasksPriority(req, res);
-    });*/
-
+    /* app.get('/Priority', function (req, res) {
+     requestHandler.getTasksPriority(req, res);
+     });*/
 
     //maybe unused
     /*app.put('/Tasks/:_id', function (req, res) {
@@ -961,53 +959,52 @@ module.exports = function (app, mainDb) {
      requestHandler.updateTask(req, res, id, data, remove);
      });*/
 
+    /* app.post('/Tasks', function (req, res) {
+     var data = {};
+     data.task = req.body;
+     requestHandler.createTask(req, res, data);
+     });
 
-   /* app.post('/Tasks', function (req, res) {
-        var data = {};
-        data.task = req.body;
-        requestHandler.createTask(req, res, data);
-    });
+     app.get('/Tasks/:viewType', function (req, res) {
+     var data = req.query;
+     var viewType = req.params.viewType;
+     switch (viewType) {
+     case "form":
+     requestHandler.getTaskById(req, res, data);
+     break;
+     case "list":
+     requestHandler.getTasksForList(req, res, data);
+     break;
+     case "kanban":
+     requestHandler.getTasksForKanban(req, res, data);
+     break;
+     }
+     });
 
-    app.get('/Tasks/:viewType', function (req, res) {
-        var data = req.query;
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getTaskById(req, res, data);
-                break;
-            case "list":
-                requestHandler.getTasksForList(req, res, data);
-                break;
-            case "kanban":
-                requestHandler.getTasksForKanban(req, res, data);
-                break;
-        }
-    });
+     app.get('/Priority', function (req, res) {
+     requestHandler.getTasksPriority(req, res);
+     });
+     app.get('/Priority/leads', function (req, res) {
+     requestHandler.getLeadsPriority(req, res);
+     });
 
-    app.get('/Priority', function (req, res) {
-        requestHandler.getTasksPriority(req, res);
-    });
-    app.get('/Priority/leads', function (req, res) {
-        requestHandler.getLeadsPriority(req, res);
-    });
+     app.put('/Tasks/:_id', function (req, res) {
+     var data = {};
+     var id = req.param('_id');
+     data.task = req.body;
+     var remove = req.headers.remove;
+     requestHandler.updateTask(req, res, id, data, remove);
+     });
 
-    app.put('/Tasks/:_id', function (req, res) {
-        var data = {};
-        var id = req.param('_id');
-        data.task = req.body;
-        var remove = req.headers.remove;
-        requestHandler.updateTask(req, res, id, data, remove);
-    });
+     app.patch('/Tasks/:_id', function (req, res) {
+     var id = req.param('_id');
+     requestHandler.taskUpdateOnlySelectedFields(req, res, id, req.body);
+     });
 
-    app.patch('/Tasks/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.taskUpdateOnlySelectedFields(req, res, id, req.body);
-    });
-
-    app.delete('/Tasks/:_id', function (req, res) {
-        var id = req.param('_id');
-        requestHandler.removeTask(req, res, id);
-    });*/
+     app.delete('/Tasks/:_id', function (req, res) {
+     var id = req.param('_id');
+     requestHandler.removeTask(req, res, id);
+     });*/
 
 //------------------Workflows---------------------------------------------------
 
@@ -1417,13 +1414,13 @@ module.exports = function (app, mainDb) {
 //        requestHandler.getLeadsForChart(req, res, data);
 //    });
     /*app.get('/LeadsForChart', function (req, res) {
-        var data = {};
-        data.type = req.param('type');
-        data.dataRange = req.param('dataRange');
-        data.dataItem = req.param('dataItem');
-        requestHandler.getLeadsForChart(req, res, data);
-    });
-*/
+     var data = {};
+     data.type = req.param('type');
+     data.dataRange = req.param('dataRange');
+     data.dataItem = req.param('dataItem');
+     requestHandler.getLeadsForChart(req, res, data);
+     });
+     */
     //app.get('/Leads/:viewType', function (req, res) {
     //    var data = {};
     //    for (var i in req.query) {
@@ -1466,34 +1463,34 @@ module.exports = function (app, mainDb) {
 
 //---------------------Opportunities---------------------
     /*app.post('/Opportunities', function (req, res) {
-        var data = {};
-        data.opportunitie = req.body;
-        requestHandler.createOpportunitie(req, res, data);
-    });
-    app.get('/OpportunitiesForChart', function (req, res) {
-        var data = {};
-        data.source = req.param('source');
-        data.dataRange = req.param('dataRange');
-        data.dataItem = req.param('dataItem');
-        requestHandler.getOpportunitiesForChart(req, res, data);
-    });
-    app.get('/Opportunities/:viewType', function (req, res) {
-        var data = {};
-        for (var i in req.query) {
-            data[i] = req.query[i];
-        }
-        var viewType = req.params.viewType;
-        switch (viewType) {
-            case "form":
-                requestHandler.getOpportunityById(req, res, data);
-                break;
-            case "kanban":
-                requestHandler.getFilterOpportunitiesForKanban(req, res, data);
-                break;
-            default:
-                requestHandler.getFilterOpportunities(req, res);
-        }
-    });*/
+     var data = {};
+     data.opportunitie = req.body;
+     requestHandler.createOpportunitie(req, res, data);
+     });
+     app.get('/OpportunitiesForChart', function (req, res) {
+     var data = {};
+     data.source = req.param('source');
+     data.dataRange = req.param('dataRange');
+     data.dataItem = req.param('dataItem');
+     requestHandler.getOpportunitiesForChart(req, res, data);
+     });
+     app.get('/Opportunities/:viewType', function (req, res) {
+     var data = {};
+     for (var i in req.query) {
+     data[i] = req.query[i];
+     }
+     var viewType = req.params.viewType;
+     switch (viewType) {
+     case "form":
+     requestHandler.getOpportunityById(req, res, data);
+     break;
+     case "kanban":
+     requestHandler.getFilterOpportunitiesForKanban(req, res, data);
+     break;
+     default:
+     requestHandler.getFilterOpportunities(req, res);
+     }
+     });*/
 
     //app.get('/OpportunitiesForMiniView', function (req, res) {
     //    var data = {};
@@ -1537,137 +1534,137 @@ module.exports = function (app, mainDb) {
     });
 
     //ToDo remove it after test
-   /* app.get('/unlinkWtracks', function (req, res, next) {
-        require('..//models/index.js');
+    /* app.get('/unlinkWtracks', function (req, res, next) {
+     require('..//models/index.js');
 
-        var mongoose = require('mongoose');
-        var ObjectId = mongoose.Schema.Types.ObjectId;
-        var async = require('async');
-        var _ = require('lodash');
+     var mongoose = require('mongoose');
+     var ObjectId = mongoose.Schema.Types.ObjectId;
+     var async = require('async');
+     var _ = require('lodash');
 
-        var WtrackSchema = mongoose.Schemas['wTrack'];
-        var QuotationSchema = mongoose.Schemas['Quotation'];
-        var JobSchema = mongoose.Schemas['jobs'];
+     var WtrackSchema = mongoose.Schemas['wTrack'];
+     var QuotationSchema = mongoose.Schemas['Quotation'];
+     var JobSchema = mongoose.Schemas['jobs'];
 
-        var dbObject = mongoose.createConnection('localhost', 'production');
-        dbObject.on('error', console.error.bind(console, 'connection error:'));
-        dbObject.once('open', function callback() {
-            console.log("Connection to weTrack is success");
-        });
+     var dbObject = mongoose.createConnection('localhost', 'production');
+     dbObject.on('error', console.error.bind(console, 'connection error:'));
+     dbObject.once('open', function callback() {
+     console.log("Connection to weTrack is success");
+     });
 
-        var Wtrack = dbObject.model("wTrack", WtrackSchema);
-        var Quotation = dbObject.model("Quotation", QuotationSchema);
-        var Job = dbObject.model("jobs", JobSchema);
+     var Wtrack = dbObject.model("wTrack", WtrackSchema);
+     var Quotation = dbObject.model("Quotation", QuotationSchema);
+     var Job = dbObject.model("jobs", JobSchema);
 
-        var query = Job
-            .aggregate([{
-                $lookup: {
-                    from        : 'Quotation',
-                    localField  : 'quotation',
-                    foreignField: '_id',
-                    as          : 'quotation'
-                }
-            }, {
-                $project: {
-                    payments : 1,
-                    quotation: {$arrayElemAt: ["$quotation", 0]},
-                    wTracks  : 1
-                }
-            }, {
-                $unwind: {
-                    path                      : '$wTracks',
-                    preserveNullAndEmptyArrays: true
-                }
-            }, {
-                $lookup: {
-                    from        : 'wTrack',
-                    localField  : 'wTracks',
-                    foreignField: '_id',
-                    as          : 'wTracks'
-                }
-            }, {
-                $project: {
-                    payments : 1,
-                    quotation: 1,
-                    wTracks  : {$arrayElemAt: ["$wTracks", 0]}
-                }
-            }, {
-                $group: {
-                    _id       : '$_id',
-                    totalHours: {$sum: '$wTracks.worked'},
-                    root      : {
-                        $push: {
-                            wTracks  : '$wTracks',
-                            quotation: '$quotation'
-                        }
-                    }
-                }
-            }, {
-                $unwind: '$root'
-            }, {
-                $project: {
-                    totalHours: 1,
-                    _id       : '$root.wTracks._id',
-                    oldRevenue: '$root.wTracks.revenue',
-                    revenue   : {
-                        $multiply: [{$divide: ['$root.wTracks.worked', '$totalHours']}, '$root.quotation.paymentInfo.total', 100]
-                    }
+     var query = Job
+     .aggregate([{
+     $lookup: {
+     from        : 'Quotation',
+     localField  : 'quotation',
+     foreignField: '_id',
+     as          : 'quotation'
+     }
+     }, {
+     $project: {
+     payments : 1,
+     quotation: {$arrayElemAt: ["$quotation", 0]},
+     wTracks  : 1
+     }
+     }, {
+     $unwind: {
+     path                      : '$wTracks',
+     preserveNullAndEmptyArrays: true
+     }
+     }, {
+     $lookup: {
+     from        : 'wTrack',
+     localField  : 'wTracks',
+     foreignField: '_id',
+     as          : 'wTracks'
+     }
+     }, {
+     $project: {
+     payments : 1,
+     quotation: 1,
+     wTracks  : {$arrayElemAt: ["$wTracks", 0]}
+     }
+     }, {
+     $group: {
+     _id       : '$_id',
+     totalHours: {$sum: '$wTracks.worked'},
+     root      : {
+     $push: {
+     wTracks  : '$wTracks',
+     quotation: '$quotation'
+     }
+     }
+     }
+     }, {
+     $unwind: '$root'
+     }, {
+     $project: {
+     totalHours: 1,
+     _id       : '$root.wTracks._id',
+     oldRevenue: '$root.wTracks.revenue',
+     revenue   : {
+     $multiply: [{$divide: ['$root.wTracks.worked', '$totalHours']}, '$root.quotation.paymentInfo.total', 100]
+     }
 
-                }
-            }/!*, {
-             $match: {
-             revenue: null
-             }
-             }*!/]);
+     }
+     }/!*, {
+     $match: {
+     revenue: null
+     }
+     }*!/]);
 
-        query.exec(function (error, response) {
-            if (error) {
-                return console.dir(error);
-            }
+     query.exec(function (error, response) {
+     if (error) {
+     return console.dir(error);
+     }
 
-            async.each(response, function (foundObject, cb) {
-                var revenue = foundObject.revenue || 0;
-                var oldRevenue = foundObject.oldRevenue || 0;
+     async.each(response, function (foundObject, cb) {
+     var revenue = foundObject.revenue || 0;
+     var oldRevenue = foundObject.oldRevenue || 0;
 
-                console.log(revenue);
+     console.log(revenue);
 
-                Wtrack.update({_id: foundObject._id}, {
-                    $set: {
-                        revenue   : revenue,
-                        oldRevenue: oldRevenue
-                    }
-                }, function (err, updated) {
-                    if (err) {
-                        return cb(err);
-                    }
+     Wtrack.update({_id: foundObject._id}, {
+     $set: {
+     revenue   : revenue,
+     oldRevenue: oldRevenue
+     }
+     }, function (err, updated) {
+     if (err) {
+     return cb(err);
+     }
 
-                    cb();
-                });
-            }, function (err) {
-                if (err) {
-                    return next(err);
-                }
+     cb();
+     });
+     }, function (err) {
+     if (err) {
+     return next(err);
+     }
 
-                async.each(response, function (foundObject, cb) {
-                    Wtrack.update({_id: foundObject._id}, {$unset: {rate: ''}}, function (err, updated) {
-                        if (err) {
-                            return cb(err);
-                        }
+     async.each(response, function (foundObject, cb) {
+     Wtrack.update({_id: foundObject._id}, {$unset: {rate: ''}}, function (err, updated) {
+     if (err) {
+     return cb(err);
+     }
 
-                        cb();
-                    });
-                }, function (err) {
-                    if (err) {
-                        return next(err);
-                    }
+     cb();
+     });
+     }, function (err) {
+     if (err) {
+     return next(err);
+     }
 
-                    res.status(200).send({success: 'All updated'});
-                });
-            });
-        });
-    });*/
+     res.status(200).send({success: 'All updated'});
+     });
+     });
+     });
+     });*/
 
-    app.get('/clean', function(req, res, next){
+    app.get('/clean', function (req, res, next) {
         var dbId = req.session.lastDb;
         var db = dbsObject[dbId];
         var collections = ['Project', 'wTrack', 'Invoice', 'Quotation', 'Payment', 'jobs', 'savedFilters', 'payOut'];
@@ -1683,7 +1680,7 @@ module.exports = function (app, mainDb) {
                 cb();
             });
         }, function (err) {
-            if(err){
+            if (err) {
                 return next(err);
             }
 

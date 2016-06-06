@@ -5,8 +5,6 @@ var CONSTANTS = require('../constants/mainConstants');
 var oxr = require('open-exchange-rates');
 var fx = require('money');
 var moment = require('../public/js/libs/moment/moment');
-var fs = require("fs");
-var pathMod = require("path");
 
 var Proforma = function (models) {
     'use strict';
@@ -16,6 +14,7 @@ var Proforma = function (models) {
     var ProformaSchema = mongoose.Schemas.Proforma;
     var QuotationSchema = mongoose.Schemas.Quotation;
     var objectId = mongoose.Types.ObjectId;
+
     var workflowHandler = new WorkflowHandler(models);
 
     var JournalEntryHandler = require('./journalEntry');
@@ -41,35 +40,12 @@ var Proforma = function (models) {
             });
         }
 
-        /*function renameFolder(orderId, invoiceId) {
-            var os = require("os");
-            var osType = (os.type().split('_')[0]);
-            var dir;
-            var oldDir;
-            var newDir;
-            switch (osType) {
-                case "Windows":
-                {
-                    dir = pathMod.join(__dirname, '..\\routes\\uploads\\');
-                }
-                    break;
-                case "Linux":
-                {
-                    dir = pathMod.join(__dirname, '..\/routes\/uploads\/');
-                }
-            }
-
-            oldDir = dir + orderId;
-            newDir = dir + invoiceId;
-
-            fs.rename(oldDir, newDir);
-        }*/
-
         function fetchFirstWorkflow(callback) {
             request = {
-                query  : {
+                query: {
                     wId: 'Proforma'
                 },
+
                 session: req.session
             };
             workflowHandler.getFirstForConvert(request, callback);
@@ -186,7 +162,8 @@ var Proforma = function (models) {
                 if (err) {
                     return next(err);
                 }
-                Quotation.update({_id: objectId(id)}, {$inc: {proformaCounter: 1}}, {new: true}, function(err, res) {
+
+                Quotation.update({_id: objectId(id)}, {$inc: {proformaCounter: 1}}, {new: true}, function (err) {
                     if (err) {
                         return next(err);
                     }
@@ -217,7 +194,6 @@ var Proforma = function (models) {
 
             delete quotation._id;
 
-            //quotation.attachments[0].shortPas = quotation.attachments[0].shortPas.replace('..%2Froutes', '');
             quotation.attachments && delete quotation.attachments;
 
             proforma = new Proforma(quotation);
@@ -254,6 +230,7 @@ var Proforma = function (models) {
         }
 
         function createJournalEntry(proforma, callback) {
+            var amount;
             var body = {
                 currency      : CONSTANTS.CURRENCY_USD,
                 journal       : CONSTANTS.PROFORMA_JOURNAL,
@@ -261,11 +238,12 @@ var Proforma = function (models) {
                     model: 'Proforma',
                     _id  : proforma._id
                 },
-                amount        : 0,
-                date          : proforma.invoiceDate
+
+                amount: 0,
+                date  : proforma.invoiceDate
             };
 
-            var amount = proforma.currency.rate * proforma.paymentInfo.total;
+            amount = proforma.currency.rate * proforma.paymentInfo.total;
 
             body.amount = amount;
 
@@ -276,32 +254,15 @@ var Proforma = function (models) {
         }
 
         parallelTasks = [findQuotation, fetchFirstWorkflow, getRates];
-        waterFallTasks = [parallel, createProforma/*, createJournalEntry*/];
+        waterFallTasks = [parallel, createProforma/* , createJournalEntry*/];
 
         async.waterfall(waterFallTasks, function (err, result) {
-            // var proformaId = result._id.toString();
-            // var orderId = result.sourceDocument.toString();
-
-            // fs.mkdir(pathMod.join(__dirname, '/../routes/uploads/', proformaId));
 
             if (err) {
                 return next(err);
             }
 
-            //result.attachments[0].shortPas = result.attachments[0].shortPas.replace(orderId, proformaId);
-
-            /*Proforma.findByIdAndUpdate(proformaId, {
-                $set: {
-                    attachments: result.attachments
-                }
-            }, {new: true}, function (err) {
-                if (err) {
-                    return next(err);
-                }
-                renameFolder(orderId, proformaId);*/
-
-                res.status(201).send(result);
-            //});
+            res.status(201).send(result);
         });
     };
 };

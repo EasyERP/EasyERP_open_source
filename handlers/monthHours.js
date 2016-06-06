@@ -6,30 +6,26 @@ var MonthHours = function (event, models) {
     'use strict';
 
     var MonthHoursSchema = mongoose.Schemas.MonthHours;
-    var access = require('../Modules/additions/access.js')(models);
     var pageHelper = require('../helpers/pageHelper');
-    var JournalEntryHandler = require('./journalEntry');
-    var journalEntry = new JournalEntryHandler(models);
 
     function composeAndCash(req) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
 
         MonthHoursModel.aggregate([{
-                $group: {
-                    _id : {$sum: [{$multiply: ['$year', 100]}, '$month']},
-                    root: {$push: '$$ROOT'}
-                }
-            }], function (err, result) {
-                if (err) {
-                    return console.log(err);
-                }
-
-                result.forEach(function (el) {
-                    redisStore.writeToStorage('monthHours', el._id, JSON.stringify(el.root));
-                });
-
+            $group: {
+                _id : {$sum: [{$multiply: ['$year', 100]}, '$month']},
+                root: {$push: '$$ROOT'}
             }
-        );
+        }], function (err, result) {
+            if (err) {
+                return console.log(err);
+            }
+
+            result.forEach(function (el) {
+                redisStore.writeToStorage('monthHours', el._id, JSON.stringify(el.root));
+            });
+
+        });
     }
 
     this.create = function (req, res, next) {
@@ -38,8 +34,8 @@ var MonthHours = function (event, models) {
         var dateByMonth = parseInt(body.year, 10) * 100 + parseInt(body.month, 10);
         var monthHours;
 
-        if (!body.month || !body.year){
-          return  res.status(404).send();
+        if (!body.month || !body.year) {
+            return res.status(404).send();
         }
 
         body.dateByMonth = dateByMonth;
@@ -196,7 +192,7 @@ var MonthHours = function (event, models) {
 
     this.totalCollectionLength = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
-        
+
         MonthHoursModel.find().count(function (err, count) {
             if (err) {
                 return next(err);
@@ -210,8 +206,8 @@ var MonthHours = function (event, models) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var id = req.params.id;
 
-        if (!id || (id && id.length < 24)){
-           return res.status(404).send();
+        if (!id || (id && id.length < 24)) {
+            return res.status(404).send();
         }
 
         MonthHoursModel.findByIdAndRemove(id, function (err, result) {

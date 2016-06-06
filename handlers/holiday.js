@@ -31,7 +31,6 @@ var Module = function (models, event) {
         var options = req.query;
         var queryObject = {};
         var sort = {};
-        var query;
         var paginationObject = pageHelper(options);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
@@ -137,7 +136,6 @@ var Module = function (models, event) {
     }
 
     this.getForView = function (req, res, next) {
-        var viewType = req.params.viewType;
 
         if (req.query.week) {
             getHolidayByWeek(req, res, next);

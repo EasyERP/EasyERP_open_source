@@ -44,7 +44,7 @@ module.exports = function (models, event) {
     router.post('/', accessStackMiddlWare, handler.create);
     router.post('/updateAllProjects', accessStackMiddlWare, handler.updateAllProjects);
     router.post('/sendInvoice', accessStackMiddlWare, handler.sendInvoice);
-    
+
     router.patch('/:id', accessStackMiddlWare, handler.updateOnlySelectedFields);
     router.delete('/:id', accessStackMiddlWare, handler.remove);
 

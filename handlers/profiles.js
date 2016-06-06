@@ -7,7 +7,6 @@ var UserSchema = mongoose.Schemas.User;
 var Profiles = function (models) {
     'use strict';
 
-    var access = require('../Modules/additions/access.js')(models);
     var validator = require('../helpers/validator');
 
     this.createProfile = function (req, res, next) {
@@ -118,7 +117,7 @@ var Profiles = function (models) {
                     return next(err);
                 }
                 ProfileModel.remove({_id: _id})
-                    .exec(function (err, result) {
+                    .exec(function (err) {
                         if (err) {
                             err.status = 404;
                             err.message = RESPONSES.PAGE_NOT_FOUND;

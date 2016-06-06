@@ -30,7 +30,7 @@ module.exports = function (event, models) {
     router.get('/nationality', accessStackMiddlware, handler.getNationality);
     router.get('/languages', accessStackMiddlware, handler.getLanguages);
     router.get('/sources', accessStackMiddlware, handler.getSources);
-    /*router.get('/getByMonth', accessStackMiddlware, handler.getSalaryByMonth);*/
+    /* router.get('/getByMonth', accessStackMiddlware, handler.getSalaryByMonth);*/
 
     router.get('/birthdays', accessStackMiddlware, handler.getBirthdays);
     router.get('/getYears', handler.getYears);

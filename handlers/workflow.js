@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var workflows = function (models, event) {
     'use strict';
+
     var WorkflowSchema = mongoose.Schemas.workflow;
     var relatedStatusSchema = mongoose.Schemas.relatedStatus;
     var RESPONSES = require('../constants/responses.js');
@@ -149,11 +150,10 @@ var workflows = function (models, event) {
         var query;
         var objFind = {};
         var objChange = {};
+        var inc = -1;
+        var c;
 
         if (!(isCreate || isDelete)) {
-            var inc = -1;
-            var c;
-
             if (start > end) {
                 inc = 1;
                 c = end;

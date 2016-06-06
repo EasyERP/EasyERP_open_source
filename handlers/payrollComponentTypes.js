@@ -1,10 +1,10 @@
 var mongoose = require('mongoose');
 
 var PayrollComponentType = function (models) {
-    "use strict";
+    'use strict';
 
     var PayrollComponentTypesSchema = mongoose.Schemas.payrollComponentType;
-    var access = require("../Modules/additions/access.js")(models);
+    var access = require('../Modules/additions/access.js')(models);
 
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
@@ -17,7 +17,7 @@ var PayrollComponentType = function (models) {
 
                 if (access) {
 
-                    PayrollComponentType.find({type: type}, function(err, result) {
+                    PayrollComponentType.find({type: type}, function (err, result) {
                         if (err) {
                             return next(err);
                         }
@@ -44,7 +44,7 @@ var PayrollComponentType = function (models) {
 
                 if (access) {
 
-                    PayrollComponentType.find({}, {name: 1}, function(err, result) {
+                    PayrollComponentType.find({}, {name: 1}, function (err, result) {
                         if (err) {
                             return next(err);
                         }
@@ -73,7 +73,7 @@ var PayrollComponentType = function (models) {
                 if (access) {
 
                     PayrollComponentType = new PayrollComponentType(req.body);
-                    PayrollComponentType.save(function(err, result) {
+                    PayrollComponentType.save(function (err, result) {
                         if (err) {
                             return next(err);
                         }
@@ -101,7 +101,7 @@ var PayrollComponentType = function (models) {
 
                 if (access) {
 
-                    PayrollComponentType.findByIdAndRemove(id, function(err, result) {
+                    PayrollComponentType.findByIdAndRemove(id, function (err, result) {
                         if (err) {
                             return next(err);
                         }
@@ -130,7 +130,7 @@ var PayrollComponentType = function (models) {
 
                 if (access) {
 
-                    PayrollComponentType.findByIdAndUpdate(id, data, function(err, result) {
+                    PayrollComponentType.findByIdAndUpdate(id, data, function (err, result) {
                         if (err) {
                             return next(err);
                         }

@@ -1,151 +1,76 @@
 var mongoose = require('mongoose');
 
-var WeeklyScheduler = function (models) {
-    "use strict";
+var Module = function (models) {
+    'use strict';
 
     var WeeklySchedulerSchema = mongoose.Schemas.weeklyScheduler;
-    var access = require("../Modules/additions/access.js")(models);
 
     this.getForView = function (req, res, next) {
         var db = req.session.lastDb;
-        var moduleId = 103;
 
-        if (req.session && req.session.loggedIn && db) {
-            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
-                var WeeklyScheduler = models.get(db, 'weeklyScheduler', WeeklySchedulerSchema);
+        var WeeklyScheduler = models.get(db, 'weeklyScheduler', WeeklySchedulerSchema);
 
-                if (access) {
-
-                    WeeklyScheduler.find({}, function(err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-                        res.status(200).send(result);
-                    });
-
-                } else {
-                    res.status(403).send();
-                }
-            });
-
-        } else {
-            res.status(401).send();
-        }
+        WeeklyScheduler.find({}, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
     };
 
     this.getForDd = function (req, res, next) {
         var db = req.session.lastDb;
-        var moduleId = 103;
+        var WeeklyScheduler = models.get(db, 'weeklyScheduler', WeeklySchedulerSchema);
 
-        if (req.session && req.session.loggedIn && db) {
-            access.getReadAccess(req, req.session.uId, moduleId, function (access) {
-                var WeeklyScheduler = models.get(db, 'weeklyScheduler', WeeklySchedulerSchema);
-
-                if (access) {
-
-                    WeeklyScheduler.find({}, {name: 1}, function(err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-                        res.status(200).send({data: result});
-                    });
-
-                } else {
-                    res.status(403).send();
-                }
-            });
-
-        } else {
-            res.status(401).send();
-        }
+        WeeklyScheduler.find({}, {name: 1}, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send({data: result});
+        });
     };
 
     this.create = function (req, res, next) {
         var db = req.session.lastDb;
-        var moduleId = 103;
+        var WeeklyScheduler = models.get(db, 'weeklyScheduler', WeeklySchedulerSchema);
+        var weeklyScheduler;
 
-        if (req.session && req.session.loggedIn && db) {
-            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
-                var WeeklyScheduler = models.get(db, 'weeklyScheduler', WeeklySchedulerSchema);
-                var weeklyScheduler;
-
-                if (access) {
-
-                    weeklyScheduler = new WeeklyScheduler(req.body);
-                    weeklyScheduler.save(function(err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-                        res.status(200).send(result);
-                    });
-
-                } else {
-                    res.status(403).send();
-                }
-            });
-
-        } else {
-            res.status(401).send();
-        }
+        weeklyScheduler = new WeeklyScheduler(req.body);
+        weeklyScheduler.save(function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
     };
 
     this.delete = function (req, res, next) {
         var db = req.session.lastDb;
-        var moduleId = 103;
+        var WeeklyScheduler = models.get(db, 'weeklyScheduler', WeeklySchedulerSchema);
+        var id = req.params.id;
 
-        if (req.session && req.session.loggedIn && db) {
-            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
-                var WeeklyScheduler = models.get(db, 'weeklyScheduler', WeeklySchedulerSchema);
-                var id = req.params.id;
-
-                if (access) {
-
-                    WeeklyScheduler.findByIdAndRemove(id, function(err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-                        res.status(200).send(result);
-                    });
-
-                } else {
-                    res.status(403).send();
-                }
-            });
-
-        } else {
-            res.status(401).send();
-        }
+        WeeklyScheduler.findByIdAndRemove(id, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
     };
 
     this.update = function (req, res, next) {
         var db = req.session.lastDb;
-        var moduleId = 103;
+        var WeeklyScheduler = models.get(db, 'weeklyScheduler', WeeklySchedulerSchema);
+        var id = req.params.id;
+        var data = req.body;
 
-        if (req.session && req.session.loggedIn && db) {
-            access.getEditWritAccess(req, req.session.uId, moduleId, function (access) {
-                var WeeklyScheduler = models.get(db, 'weeklyScheduler', WeeklySchedulerSchema);
-                var id = req.params.id;
-                var data = req.body;
-
-                if (access) {
-
-                    WeeklyScheduler.findByIdAndUpdate(id, data, function(err, result) {
-                        if (err) {
-                            return next(err);
-                        }
-                        res.status(200).send(result);
-                    });
-
-                } else {
-                    res.status(403).send();
-                }
-            });
-
-        } else {
-            res.status(401).send();
-        }
+        WeeklyScheduler.findByIdAndUpdate(id, data, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+            res.status(200).send(result);
+        });
     };
 
 };
 
-module.exports = WeeklyScheduler;
+module.exports = Module;

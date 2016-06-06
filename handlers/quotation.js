@@ -14,7 +14,6 @@ var Module = function (models, event) {
     var wTrackSchema = mongoose.Schemas.wTrack;
     var objectId = mongoose.Types.ObjectId;
 
-    var access = require('../Modules/additions/access.js')(models);
     var rewriteAccess = require('../helpers/rewriteAccess');
     var accessRoll = require('../helpers/accessRollHelper.js')(models);
     var async = require('async');
@@ -1072,10 +1071,6 @@ var Module = function (models, event) {
         });
     }
 
-    this.getById = function (req, res, next) {
-        getById(req, res, next);
-    };
-
     function getById(req, res, next) {
         var id = req.query.id;
         var Quotation = models.get(req.session.lastDb, 'Quotation', QuotationSchema);
@@ -1167,6 +1162,10 @@ var Module = function (models, event) {
         });
     }
 
+    this.getById = function (req, res, next) {
+        getById(req, res, next);
+    };
+
     this.getByViewType = function (req, res, next) {
         var query = req.query;
         var viewType = query.viewType;
@@ -1200,11 +1199,13 @@ var Module = function (models, event) {
         };
 
         Quotation.findByIdAndRemove(id, function (err, quotation) {
+            var products;
+
             if (err) {
                 return next(err);
             }
 
-            var products = quotation ? quotation.get('products') : [];
+            products = quotation ? quotation.get('products') : [];
 
             async.each(products, function (product, cb) {
 

@@ -91,13 +91,13 @@ var User = function (event, models) {
         if (data.deleteId) {
             SavedFilters.findByIdAndRemove(deleteId, function (err, result) {
                 if (err) {
-                    console.log(err);
+                    return console.log(err);
                 }
                 if (result) {
                     id = result.get('_id');
                     query = {
                         $pull: {
-                            'savedFilters': {
+                            savedFilters: {
                                 _id      : deleteId,
                                 byDefault: byDefault,
                                 viewType : viewType
@@ -148,7 +148,7 @@ var User = function (event, models) {
                                 viewType : viewType
                             });
 
-                            query = {$set: {'savedFilters': savedFilters}};
+                            query = {$set: {savedFilters: savedFilters}};
 
                             updateThisUser(_id, query);
                         });
@@ -159,7 +159,7 @@ var User = function (event, models) {
                             viewType : viewType
                         };
 
-                        query = {$push: {'savedFilters': newSavedFilters}};
+                        query = {$push: {savedFilters: newSavedFilters}};
 
                         updateThisUser(_id, query);
                     }
@@ -412,7 +412,7 @@ var User = function (event, models) {
     };
 
     this.getForDd = function (req, res, next) {
-        //ToDo in feature add count for pagination
+        // ToDo in feature add count for pagination
         var response = {};
         var data = req.query;
         var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
