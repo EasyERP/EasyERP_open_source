@@ -242,12 +242,12 @@
                 active         : active,
                 optout         : optout,
                 reffered       : reffered,
+                whoCanRW       : whoCanRW,
                 groups         : {
                     owner: $('#allUsersSelect').data('id'),
                     users: usersId,
                     group: groupsId
-                },
-                whoCanRW       : whoCanRW
+                }
             };
 
             if (expectedRevenueValue !== (this.currentModel.get('expectedRevenue')).value.toString()) {
