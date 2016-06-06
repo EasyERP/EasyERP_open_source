@@ -10,68 +10,85 @@ define([
     'views/Filter/FilterView',
     'models/LeadsModel',
     'collections/Leads/filterCollection',
-    'common'
+    'common',
+    'constants'
 ], function ($,
              _,
              listViewBase,
              listTemplate,
              stagesTemplate,
-             createView,
+             CreateView,
              ListItemView,
              EditView,
              FilterView,
              CurrentModel,
              contentCollection,
-             common) {
+             common,
+             CONSTANTS) {
     'use strict';
 
     var LeadsListView = listViewBase.extend({
-        createView              : createView,
+        createView              : CreateView,
         listTemplate            : listTemplate,
         listItemView            : ListItemView,
         contentCollection       : contentCollection,
         filterView              : FilterView,
         totalCollectionLengthUrl: '/leads/totalCollectionLength',
         formUrl                 : '#easyErp/Leads/form/',
-        contentType             : 'Leads', // needs in view.prototype.changeLocationHash
+        contentType             : CONSTANTS.LEADS, // 'Leads', // needs in view.prototype.changeLocationHash
 
         events: {
-            'click .list td:not(.notForm)': 'goToEditDialog',
-            'click #convertToOpportunity' : 'openDialog',
             'click .stageSelect'          : 'showNewSelect',
-            'click .newSelectList li'     : 'chooseOption'
+            'click .newSelectList li'     : 'chooseOption',
+            'click .list td:not(.notForm)': 'goToEditDialog',
+            'click #convertToOpportunity' : 'openDialog'
         },
 
         initialize: function (options) {
             $(document).off('click');
+
+            this.EditView = EditView;
+            this.CreateView = CreateView;
+
             this.startTime = options.startTime;
             this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
             this.parrentContentId = options.collection.parrentContentId;
-            this.stages = [];
-            this.filter = options.filter || {};
             this.sort = options.sort;
-            this.defaultItemsNumber = this.collection.namberToShow || 100;
-            this.newCollection = options.newCollection;
-            this.deleteCounter = 0;
-            this.page = options.collection.page;
-            this.startNumber = (this.page - 1) * this.defaultItemsNumber;
+            this.filter = options.filter;
+            this.page = options.collection.currentPage;
+            this.contentCollection = contentCollection;
 
             this.render();
 
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-            this.contentCollection = contentCollection;
+            this.stages = [];
+            /*this.startTime = options.startTime;
+             this.collection = options.collection;
+             _.bind(this.collection.showMore, this.collection);
+             this.parrentContentId = options.collection.parrentContentId;
+             this.filter = options.filter || {};
+             this.sort = options.sort;
+             this.defaultItemsNumber = this.collection.namberToShow || 100;
+             this.newCollection = options.newCollection;
+             this.deleteCounter = 0;
+             this.page = options.collection.page;
+             this.startNumber = (this.page - 1) * this.defaultItemsNumber;
+
+             this.render();
+
+             this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+             this.contentCollection = contentCollection;*/
         },
 
         chooseOption: function (e) {
             var self = this;
-            var targetElement = $(e.target).parents('td');
+            var target$ = $(e.target);
+            var targetElement = target$.parents('td');
             var id = targetElement.attr('id');
-            var obj = this.collection.get(id);
-            obj.set({workflow: $(e.target).attr('id')});
-            obj.save(obj.changed, {
+            var model = this.collection.get(id);
+
+            model.save({workflow: target$.attr('id')}, {
                 headers: {
-                    mid: 39
+                    mid: 24
                 },
                 patch  : true,
                 success: function () {
@@ -154,9 +171,11 @@ define([
                     id      : id,
                     viewType: 'form'
                 },
+
                 success: function (model) {
                     new EditView({model: model});
                 },
+
                 error: function () {
                     App.render({
                         type   : 'error',
