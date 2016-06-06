@@ -16,11 +16,7 @@ define([
 
     var ListViewBase = Pagination.extend({
         el      : '#content-holder',
-        /* defaultItemsNumber: null,
-         listLength        : null,*/
         filter  : null,
-        /* newCollection     : null,
-         page              : null,*/
         viewType: 'list',
 
         events: {
@@ -187,16 +183,25 @@ define([
 
         showPage: function (event) {
             var newRows = this.$el.find('#false');
+            var $targetEl = $(event.target);
+            var $inputPage = this.$el.find('#currentShowPage');
+            var page = $targetEl.text();
+
+            if (!page) {
+                page = $inputPage.val() || 1;
+            }
 
             event.preventDefault();
 
-            if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
+            if ((this.changedModels && Object.keys(this.changedModels).length) ||
+                (this.isNewRow ? this.isNewRow() : newRows.length)) {
                 return App.render({
                     type   : 'notify',
                     message: 'Please, save previous changes or cancel them!'
                 });
             }
-            this.showP(event, {filter: this.filter, newCollection: this.newCollection, sort: this.sort});
+
+            this.getPage(page, {page: page});
         },
 
         showMoreContent: function (newModels) {
@@ -500,23 +505,10 @@ define([
 
     });
 
-    ListViewBase.extend = function () {
+    ListViewBase.extend = function (childView) {
         var view = Backbone.View.extend.apply(this, arguments);
-        var key;
-        var protoEvents = this.prototype.events;
-        var protoKeys = Object.keys(protoEvents);
-        var viewEvents = view.prototype.events;
-        var length = protoKeys.length;
-        var i;
 
-        for (i = 0; i < length; i++) {
-            key = protoKeys[i];
-
-            if (viewEvents.hasOwnProperty(key)) {
-                continue;
-            }
-            viewEvents[key] = protoEvents[key];
-        }
+        view.prototype.events = _.extend({}, this.prototype.events, childView.events);
 
         return view;
     };

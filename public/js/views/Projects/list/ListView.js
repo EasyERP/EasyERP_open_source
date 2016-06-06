@@ -21,9 +21,8 @@ define([
         listItemView            : listItemView,
         contentCollection       : contentCollection,
         filterView              : filterView,
-        totalCollectionLengthUrl: '/totalCollectionLength/Projects',
         formUrl                 : '#easyErp/Projects/form/',
-        contentType             : 'Projects',// needs in view.prototype.changeLocationHash
+        contentType             : 'Projects', //  needs in view.prototype.changeLocationHash
 
         initialize: function (options) {
             $(document).off('click');

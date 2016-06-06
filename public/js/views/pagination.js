@@ -6,12 +6,6 @@ define([
     'common'
 ], function (Backbone, $, _, CONSTANTS, common) {
     var View = Backbone.View.extend({
-        /*listLength        : null,*/
-        /*defaultItemsNumber: null,*/
-        /*newCollection     : null,*/
-        $pagination: null,
-        /*rowClicks         : 0,*/
-
         events: {
             'click .oe_sortable': 'goSort',
             'click #check_all'  : 'checkAll',
@@ -101,18 +95,14 @@ define([
 
             switch (sortClass) {
                 case 'sortDn':
-                {
                     target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
                     target$.removeClass('sortDn').addClass('sortUp');
                     sortConst = 1;
-                }
                     break;
                 case 'sortUp':
-                {
                     target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
                     target$.removeClass('sortUp').addClass('sortDn');
                     sortConst = -1;
-                }
                     break;
                 // skip default case
             }
@@ -140,79 +130,6 @@ define([
             this.changeLocationHash(null, this.collection.pageSize);
             this.collection.getFirstPage({filter: filter, viewType: this.viewType});
             this.collection.getFirstPage(data);
-        },
-
-        makeRender: function (options) {
-            var self = this;
-
-            _.bindAll(this, 'render', 'afterRender', 'beforeRender');
-
-            this.render = _.wrap(this.render, function (render) {
-                self.beforeRender(options);
-                render();
-                self.afterRender(options);
-
-                return self;
-            });
-        },
-
-        beforeRender: function (options) {
-            // this.contentType = options.contentType;
-        },
-
-        afterRender: function (options) {
-            var contentType = options.contentType || null;
-
-            /*$curEl.find('.scrollable').mCustomScrollbar();
-             $curEl.find('.tabs').tabs();
-
-             this.runClickItem = _.debounce(this.clickItem, 300);
-             this.runClickThumbnail = _.debounce(this.clickThumbnail, 300);*/
-        },
-
-        appFiltersCollectionLoaded: function (options) {
-            var $curEl = this.$el;
-            var contentType = options.contentType || null;
-            var $filterBar = $curEl.find('.filterBar');
-            var self = this;
-            var filterHolder;
-
-            if (!$filterBar.length) {
-                $filterBar = $curEl.siblings('.topBarHolder').find('.filterBar');
-            }
-
-            if ($filterBar.length) {
-                if (this.domainsArray.indexOf(contentType) !== -1) {
-                    $filterBar.html(this.filterBarTemplate({
-                        showHeader : false,
-                        showClear  : false,
-                        contentType: contentType
-                    }));
-                } else {
-                    $filterBar.html(this.filterBarTemplate({
-                        contentType: contentType,
-                        showHeader : true,
-                        showClear  : true
-                    }));
-                }
-
-                filterHolder = $filterBar.find('.filtersFullHolder');
-
-                options.el = filterHolder;
-
-                this.filterView = new FilterView(options);
-                this.filterView.render();
-
-                this.filterView.bind('filter', function (filter) {
-                    self.filter = filter;
-
-                    if (!self.$el.hasClass("ui-dialog-content ui-widget-content") && !self.$el.parents(".ui-dialog").length) {
-                        self.changeLocationHash(1, CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE, filter);
-                    }
-
-                    self.trigger('filter');
-                });
-            }
         },
 
         changeLocationHash: function (page, count, filter) {
@@ -298,50 +215,15 @@ define([
         },
 
         firstPage: function (options) {
-            var itemsNumber = $('#itemsNumber').text();
-            var currentShowPage = $('#currentShowPage');
-            var page = 1;
-            var lastPage = $('#lastPage').text();
-            var i;
+            var page = options.page;
+            var count = options.count;
 
-            currentShowPage.val(page);
+            options = options || {count: count};
 
-            $('#firstShowPage').prop('disabled', true);
-
-            $('#pageList').empty();
-
-            if (lastPage >= 7) {
-                for (i = 1;
-                     i <= 7;
-                     i++) {
-                    $("#pageList").append('<li class="showPage">' + i + '</li>');
-                }
-            } else {
-                for (i = 1;
-                     i <= lastPage;
-                     i++) {
-                    $("#pageList").append('<li class="showPage">' + i + '</li>');
-                }
-            }
-            $("#gridStart").text((page - 1) * itemsNumber + 1);
-
-            if (this.listLength <= 1 * itemsNumber) {
-                $("#gridEnd").text(this.listLength);
-            } else {
-                $("#gridEnd").text(page * itemsNumber);
-            }
-
-            $("#previousPage").prop("disabled", true);
-            $("#nextPage").prop("disabled", false);
-            $("#lastShowPage").prop("disabled", false);
-
-            options = options || {
-                    count : itemsNumber,
-                    filter: this.filter
-                };
+            options.filter = this.filter;
 
             this.collection.getFirstPage(options);
-            this.changeLocationHash(1, itemsNumber);
+            this.changeLocationHash(1, count);
         },
 
         lastPage: function (options) {
@@ -392,18 +274,18 @@ define([
         },
 
         getPage: function (options) {
-            var itemsNumber = options.count;
-            var page = options.page;
             var filter = this.filter || {};
             var collectionOptions = {
                 count : itemsNumber,
                 filter: filter
             };
+            var itemsNumber;
+            var page;
 
-            var filterExtension = this.getFilterExtention();
+            options = options || {count: this.collection.pageSize};
 
-            collectionOptions.filter = _.extend(collectionOptions.filter, filterExtension);
-
+            itemsNumber = options.count || this.collection.pageSize;
+            page = options.page;
             /*this.defFilter = $.extend({}, collectionOptions.filter);
              this.filter = $.extend({}, collectionOptions.filter);  */
 
@@ -411,11 +293,11 @@ define([
             this.changeLocationHash(page, itemsNumber);
         },
 
+        // change items per page
         switchPageCounter: function (e) {
-            e.preventDefault();
-
-            var self = this;
             var itemsNumber = e.target.textContent;
+
+            e.preventDefault();
 
             this.defaultItemsNumber = itemsNumber;
             this.$el.find('#checkAll').prop('checked', false);
@@ -664,9 +546,24 @@ define([
                 $gridStart.text((gridCount === 0) ? 0 : gridStartValue + 1);
                 $gridEnd.text(gridEndValue);
 
-                for (i = 1; i <= pageNumber; i++) {
-                    $pageList.append('<li class="showPage">' + i + '</li>');
+                if (pageNumber <= itemsOnPage) {
+                    for (i = 1; i <= pageNumber; i++) {
+                        $pageList.append('<li class="showPage">' + i + '</li>');
+                    }
+                } else if (pageNumber >= itemsOnPage && currentPage <= itemsOnPage) {
+                    for (i = 1; i <= itemsOnPage; i++) {
+                        $pageList.append('<li class="showPage">' + i + '</li>');
+                    }
+                } else if (pageNumber >= itemsOnPage && currentPage > 3 && currentPage <= pageNumber - 3) {
+                    for (i = currentPage - 3; i <= currentPage + 3; i++) {
+                        $pageList.append('<li class="showPage">' + i + '</li>');
+                    }
+                } else if (currentPage >= pageNumber - 3) {
+                    for (i = pageNumber - 6; i <= pageNumber; i++) {
+                        $pageList.append('<li class="showPage">' + i + '</li>');
+                    }
                 }
+
 
                 $lastPage.text(pageNumber);
 
