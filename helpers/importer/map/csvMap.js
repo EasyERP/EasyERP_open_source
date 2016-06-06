@@ -5,7 +5,7 @@ module.exports = (function () {
         schema      : 'Department',
         aliases     : {
             ID               : 'ID',
-            departmentName   : 'Department Name',
+            name             : 'Department Name',
             parentDepartment : 'Parent Department',
             departmentManager: 'Department Manager',
             users            : 'Users',
@@ -260,7 +260,7 @@ module.exports = (function () {
             'employee._id'               : 'Employees',
             'employee.name'              : 'Employees Name',
             'department._id'             : 'Department Id',
-            'department.departmentName'  : 'Department Name',
+            'department.name'            : 'Department Name',
             year                         : 'Year',
             month                        : 'Month',
             week                         : 'Week',

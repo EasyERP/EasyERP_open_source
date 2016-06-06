@@ -375,7 +375,7 @@ var Module = function (models) {
             .populate('company')
             .populate('department')
             .populate('salesPurchases.salesPerson', '_id name')
-            .populate('salesPurchases.salesTeam', '_id departmentName')
+            .populate('salesPurchases.salesTeam', '_id name')
             .populate('createdBy.user', 'login')
             .populate('editedBy.user', 'login')
             .exec(function (err, customers) {
@@ -611,10 +611,10 @@ var Module = function (models) {
             })
             .populate('company', '_id name')
             .populate('salesPurchases.salesPerson', '_id name fullName')
-            .populate('salesPurchases.salesTeam', '_id departmentName')
+            .populate('salesPurchases.salesTeam', '_id name')
             .populate('salesPurchases.implementedBy', '_id name fullName')
             .populate('groups.users', '_id login')
-            .populate('groups.group', '_id departmentName')
+            .populate('groups.group', '_id name')
             .populate('groups.owner', '_id login')
             .exec(function (err, customer) {
                 if (err) {
@@ -712,7 +712,7 @@ var Module = function (models) {
                                 query
                                     .select('_id editedBy createdBy salesPurchases name email phones.phone phones.mobile address.country')
                                     .populate('salesPurchases.salesPerson', '_id name')
-                                    .populate('salesPurchases.salesTeam', '_id departmentName')
+                                    .populate('salesPurchases.salesTeam', '_id name')
                                     .populate('createdBy.user', 'login')
                                     .populate('editedBy.user', 'login');
                                 break;
@@ -729,7 +729,7 @@ var Module = function (models) {
                             case ('list'):
                                 query
                                     .populate('salesPurchases.salesPerson', '_id name')
-                                    .populate('salesPurchases.salesTeam', '_id departmentName')
+                                    .populate('salesPurchases.salesTeam', '_id name')
                                     .populate('createdBy.user')
                                     .populate('editedBy.user');
                                 break;

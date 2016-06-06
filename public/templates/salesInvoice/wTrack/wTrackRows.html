@@ -1,9 +1,9 @@
 ﻿<% wTracks.forEach(function(wTrack, index){ %>
 <tr data-id="<%=wTrack._id%>" class="productItem">
     <td data-content="number"><%= index + 1%></td>
-    <td data-content="project"><%=wTrack.project ? wTrack.project.projectName : ''%></td>
+    <td data-content="project"><%=wTrack.project ? wTrack.project.name : ''%></td>
     <td data-content="employee"><%=wTrack.employee ? wTrack.employee.name : ''%></td>
-    <td data-content="department"><%=wTrack.department ? wTrack.department.departmentName : ''%></td>
+    <td data-content="department"><%=wTrack.department ? wTrack.department.name : ''%></td>
     <td data-type="input" data-content="year"><%=wTrack.year%></td>
     <td data-type="input" data-content="month"><%=wTrack.month%></td>
     <td data-type="input" data-content="week"><%=wTrack.week%></td>

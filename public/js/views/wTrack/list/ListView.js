@@ -814,7 +814,7 @@ define([
                     changedAttr._type = textVal === 'OT' ? 'overtime' : 'ordinary';
                     this.setOverTime(textVal, tr);
                 } else if (elementType === '#employee') {
-                    tr.find('[data-content="department"]').text(element.department.departmentName);
+                    tr.find('[data-content="department"]').text(element.department.name);
 
                     employee = element._id;
 
@@ -1514,7 +1514,7 @@ define([
 
             dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, {devDepartments: true}, function (departments) {
                 departments = _.map(departments.data, function (department) {
-                    department.name = department.departmentName;
+                    department.name = department.name;
 
                     return department;
                 });

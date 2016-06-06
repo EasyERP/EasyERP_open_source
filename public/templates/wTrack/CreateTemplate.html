@@ -7,7 +7,7 @@
         projectModel.salesmanager.name.last : ''%>
     </td>-->
     <td class="<%= projectModel ? '' : 'editable errorContent'%>" data-content="project"
-        data-id="<%= projectModel ? projectModel._id : '' %>"><%= projectModel ? projectModel.projectName : '' %>
+        data-id="<%= projectModel ? projectModel._id : '' %>"><%= projectModel ? projectModel.name : '' %>
     </td>
     <!--<td data-content="workflow"><%= projectModel ? projectModel.workflow.name : ''%></td>-->
     <td data-content="customer"><%= projectModel ? projectModel.customer.name.first + ' ' +

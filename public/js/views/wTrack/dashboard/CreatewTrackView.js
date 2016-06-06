@@ -656,14 +656,8 @@ define([
             data.wTrack = data.wTrack.toJSON();
             formString = this.template(data);
 
-            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, {inProgress: true}, function (projects) {
-                projects = _.map(projects.data, function (project) {
-                    project.name = project.projectName;
-
-                    return project;
-                });
-
-                self.responseObj['#project'] = projects;
+            dataService.getData(CONSTANTS.URLS.PROJECTS_GET_FOR_WTRACK, {inProgress: true}, function (response) {
+                self.responseObj['#project'] = response.data;
 
                 App.stopPreload();
             });

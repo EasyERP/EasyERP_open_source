@@ -193,7 +193,7 @@
                                         <label>Department</label>
                                     </dt>
                                     <dd>
-                                        <span id="department"  data-id="<%=model.department ? model.department._id: ''%>"><%=model.department ? model.department.departmentName: ''%></span>
+                                        <span id="department"  data-id="<%=model.department ? model.department._id: ''%>"><%=model.department ? model.department.name: ''%></span>
                                     </dd>
 
                                     <dt>
@@ -311,7 +311,7 @@
                                            class="current-selected required"
                                            href="javascript:;"
                                            data-id="<%= model.department ? model.department._id : '' %>">
-                                            <%= model.department ? model.department.departmentName : 'select department'%>
+                                            <%= model.department ? model.department.name : 'select department'%>
                                         </a>
                                     </dd>
 
@@ -625,7 +625,7 @@
                                     <a id="departmentsDd" class="current-selected"
                                        data-id="<%=transfer.department ? transfer.department._id : null%>"
                                        href="javascript:;">
-                                        <%=transfer.department ? transfer.department.departmentName :
+                                        <%=transfer.department ? transfer.department.name :
                                         "Select" %>
                                     </a>
                                 </td>

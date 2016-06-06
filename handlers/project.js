@@ -792,7 +792,7 @@ module.exports = function (models, event) {
 
         Project
             .find(filter)
-            .sort({projectName: 1})
+            .sort({name: 1})
             .lean()
             .populate('workflow', '_id name')
             .populate('customer', '_id name')
@@ -931,7 +931,7 @@ module.exports = function (models, event) {
                 $group: {
                     _id      : null,
                     project  : {
-                        $addToSet: '$projectName'
+                        $addToSet: '$name'
                     },
                     startDate: {
                         $addToSet: '$StartDate'
@@ -969,7 +969,7 @@ module.exports = function (models, event) {
             .populate('bonus.employeeId', '_id name')
             .populate('groups.owner', '_id name')
             .populate('groups.users', '_id login')
-            .populate('groups.group', '_id departmentName')
+            .populate('groups.group', '_id name')
             .populate('groups.owner', '_id login')
             .populate('projectmanager', '_id name fullName')
             .populate('salesmanager', '_id name fullName')
@@ -1384,7 +1384,7 @@ module.exports = function (models, event) {
                                 jobPosition: 1,
                                 department : 1
                             })
-                            .populate('department', '_id departmentName')
+                            .populate('department', '_id name')
                             .populate('jobPosition', '_id name')
                             .lean();
                         empQuery.exec(function (err, response) {
@@ -1484,7 +1484,7 @@ module.exports = function (models, event) {
 
         Project
             .find()
-            .sort({projectName: 1})
+            .sort({name: 1})
             .lean()
             .exec(function (err, projects) {
                 if (err) {
@@ -1528,12 +1528,12 @@ module.exports = function (models, event) {
                 'budget.projectTeam': {$arrayElemAt: ['$budget.projectTeam', 0]},
                 salesmanager        : {$arrayElemAt: ['$salesmanager', 0]},
                 'budget.budgetTotal': 1,
-                projectName         : 1
+                name                : 1
             }
         }, {
             $project: {
                 salesmanager        : 1,
-                projectName         : 1,
+                name                : 1,
                 'budget.projectTeam': 1,
                 'budget.budgetTotal': 1
             }
@@ -1549,15 +1549,15 @@ module.exports = function (models, event) {
                 budgetTotal : {
                     $addToSet: '$budget.budgetTotal'
                 },
-                projectName : {
-                    $addToSet: '$projectName'
+                name        : {
+                    $addToSet: '$name'
                 }
             }
         }, {
             $project: {
                 _id                 : 1,
                 salesmanager        : {$arrayElemAt: ['$salesmanager', 0]},
-                projectName         : {$arrayElemAt: ['$projectName', 0]},
+                name                : {$arrayElemAt: ['$name', 0]},
                 'budget.projectTeam': '$projectTeam',
                 'budget.budgetTotal': '$budgetTotal'
             }

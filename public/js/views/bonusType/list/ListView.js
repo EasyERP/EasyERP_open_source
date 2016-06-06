@@ -32,7 +32,7 @@ define([
             viewType           : 'list',
             responseObj        : {},
             modelId            : null,
-            collectionLengthUrl: '/bonusType/list/totalCollectionLength',
+            collectionLengthUrl: '/bonusType/totalCollectionLength',
             $listTable         : null,
             editCollection     : null,
             changedModels      : {},

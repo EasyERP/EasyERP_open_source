@@ -12,7 +12,7 @@ var Department = function (event, models) {
                 res.send(400, {error: 'JobPosition.create Incorrect Incoming Data'});
                 return;
             } else {
-                models.get(req.session.lastDb, 'Department', DepartmentSchema).find({departmentName: data.departmentName}, function (error, doc) {
+                models.get(req.session.lastDb, 'Department', DepartmentSchema).find({name: data.name}, function (error, doc) {
                     if (error) {
                         console.log(error);
                         logWriter.log("Department.js create Department.find ");
@@ -32,8 +32,8 @@ var Department = function (event, models) {
                 try {
                     var _department = new models.get(req.session.lastDb, 'Department', DepartmentSchema)();
 
-                    if (data.departmentName) {
-                        _department.departmentName = data.departmentName;
+                    if (data.name) {
+                        _department.name = data.name;
                     }
                     if (data.uId) {
                         _department.createdBy.user = data.uId;
@@ -104,8 +104,8 @@ var Department = function (event, models) {
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'Department', DepartmentSchema).find();
-        query.select('_id departmentName nestingLevel parentDepartment departmentManager');
-        query.sort({departmentName: 1});
+        query.select('_id name nestingLevel parentDepartment departmentManager');
+        query.sort({name: 1});
         query.exec(function (err, departments) {
             if (err) {
                 console.log(err);
@@ -141,8 +141,8 @@ var Department = function (event, models) {
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'Department', DepartmentSchema).find({});
-        query.select('_id departmentName nestingLevel parentDepartment');
-        query.sort({departmentName: 1});
+        query.select('_id name nestingLevel parentDepartment');
+        query.sort({name: 1});
         query.exec(function (err, departments) {
             if (err) {
                 console.log(err);
@@ -191,7 +191,7 @@ var Department = function (event, models) {
         var res = {};
         res['data'] = [];
         var query = models.get(req.session.lastDb, 'Department', DepartmentSchema).find({});
-        query.populate("parentDepartment", "departmentName _id");
+        query.populate("parentDepartment", "name _id");
         query.populate("departmentManager", "name _id");
         query.populate("users", "login _id");
         query.sort({nestingLevel: 1, sequence: -1});
@@ -304,7 +304,7 @@ var Department = function (event, models) {
                     return item._id;
                 });
             }
-            models.get(req.session.lastDb, 'Department', DepartmentSchema).find({departmentName: data.departmentName}, function (error, doc) {
+            models.get(req.session.lastDb, 'Department', DepartmentSchema).find({name: data.name}, function (error, doc) {
 
                     if (error) {
                     console.log(error);

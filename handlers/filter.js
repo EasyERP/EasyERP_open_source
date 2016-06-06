@@ -435,15 +435,13 @@ var Filters = function (models) {
 
                     department: {
                         $addToSet: {
-                            _id: '$department._id',
-
-                            name: {
-                                $ifNull: ['$department.departmentName', 'None']
-                            }
+                            _id : '$department._id',
+                            name: {'$ifNull': ['$department.name', 'None']}
                         }
                     }
                 }
-            }], function (err, result) {
+            }
+            ], function (err, result) {
                 if (err) {
                     return callback(err);
                 }
@@ -516,16 +514,14 @@ var Filters = function (models) {
                             name: {
                                 $concat: ['$name.first', ' ', '$name.last']
                             }
-                        },
-
-                        department: {
-                            $addToSet: {
-                                _id : '$department._id',
-                                name: {$ifNull: ['$department.name', 'None']}
-                            }
                         }
                     },
-
+                    department: {
+                        $addToSet: {
+                            _id : '$department._id',
+                            name: {$ifNull: ['$department.name', 'None']}
+                        }
+                    },
                     jobPosition: {
                         $addToSet: {
                             _id : '$jobPosition._id',
@@ -843,7 +839,7 @@ var Filters = function (models) {
                         $addToSet: {
                             _id : '$department._id',
                             name: {
-                                $ifNull: ['$department.departmentName', 'None']
+                                $ifNull: ['$department.name', 'None']
                             }
                         }
                     }

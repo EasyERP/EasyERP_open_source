@@ -348,7 +348,7 @@ define([
                         }
                     }
                 });
-                populate.get("#departmentDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "departmentName", this);
+                populate.get("#departmentDd", CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, "name", this);
                 populate.get("#jobPositionDd", CONSTANTS.URLS.JOBPOSITIONS_FORDD, {}, "name", this);
                 populate.get("#jobTypeDd", CONSTANTS.URLS.JOBPOSITIONS_JOBTYPE, {}, "_id", this);
                 populate.get("#nationality", CONSTANTS.URLS.EMPLOYEES_NATIONALITY, {}, "_id", this);

@@ -355,7 +355,7 @@ define([
                         $(e.target).prev('input').remove();
 
                         var filter = {
-                            'projectName': {
+                            'project': {
                                 key  : 'project._id',
                                 value: [_id],
                                 type : 'ObjectId'
@@ -433,7 +433,7 @@ define([
                         self.recalcTotal(id);
 
                         var filter = {
-                            'projectName': {
+                            'project': {
                                 key  : 'project._id',
                                 value: [_id],
                                 type : 'ObjectId'
@@ -586,7 +586,7 @@ define([
                 //var _targetEndDate = $.trim(thisEl.find('#EndDateTarget').val());
                 var description = $.trim(thisEl.find('#description').val());
                 var data = {
-                    projectName     : projectName,
+                    name            : projectName,
                     projectShortDesc: projectShortDesc,
                     customer        : customer ? customer : null,
                     workflow        : workflow ? workflow : null,
@@ -850,7 +850,7 @@ define([
                 var _id = this.id;
 
                 var filter = {
-                    projectName: {
+                    project : {
                         key  : 'project._id',
                         value: [_id],
                         type : 'ObjectId'
@@ -909,7 +909,7 @@ define([
                 var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
 
                 var filter = {
-                    projectName: {
+                    project : {
                         key  : 'project._id',
                         value: [_id],
                         type : 'ObjectId'
@@ -1201,7 +1201,7 @@ define([
                 var self = this;
 
                 var filter = {
-                    projectName: {
+                    project : {
                         key  : 'project._id',
                         value: [_id]
                     }
@@ -1248,7 +1248,7 @@ define([
                 // var _id = window.location.hash.split('form/')[1];
 
                 var filter = {
-                    projectName: {
+                    project : {
                         key  : 'project._id',
                         value: [_id]
                     },
