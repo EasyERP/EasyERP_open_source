@@ -3,7 +3,16 @@ var TEST_REGEXP = /(spec|test)\.js$/i;
 var App = App || {
         savedFilters: {},
         weTrack     : true,
-        render      : function (options) {
+        startPreload: function () {
+            App.preloaderShowFlag = true;
+            $('#loading').show();
+        },
+
+        stopPreload: function () {
+            App.preloaderShowFlag = false;
+            $('#loading').hide();
+        },
+        render     : function (options) {
             "use strict";
             Backbone.Collection.prototype.getElement = function (id) {
                 return (id) ? this.get(id) : ((this.currentElement) ? this.currentElement : this.at(0));
@@ -1156,7 +1165,7 @@ require.config({
         images           : './public/images',
         modules          : './constants/test/modules',
         dashboardVacation: './constants/test/dashboardVacation',
-        filter          : './constants/test/filter'
+        filter           : './constants/test/filter'
     },
     shim   : {
         jQuery       : {

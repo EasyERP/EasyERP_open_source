@@ -10,6 +10,7 @@ define([], function () {
             topBarView.bind('createEvent', contentView.createItem, contentView);
             topBarView.bind('editEvent', contentView.editItem, contentView);
             topBarView.bind('deleteEvent', contentView.deleteItems, contentView);
+            topBarView.bind('saveEvent', contentView.saveItem, contentView);
             topBarView.bind('exportToCsv', contentView.exportToCsv, contentView);
             topBarView.bind('exportToXlsx', contentView.exportToXlsx, contentView);
             topBarView.bind('importEvent', contentView.importFiles, contentView);

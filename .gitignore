@@ -6,7 +6,6 @@
 /EasyErp.njsproj
 /doc
 /Test Results - Unnamed.html
-karma.conf.js
 # Created by .ignore support plugin (hsz.mobi)
 ### Node template
 # Logs
@@ -51,3 +50,4 @@ EasyErp-Desktop.sln
 .vs
 EasyErp-Desktop.iml
 helpers\redisClient.js
+/karma.conf.js
