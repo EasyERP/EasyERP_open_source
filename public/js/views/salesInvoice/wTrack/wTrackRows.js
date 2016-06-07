@@ -1,8 +1,9 @@
 ﻿define([
     'Backbone',
+    'Underscore',
     'text!templates/salesInvoice/wTrack/wTrackRows.html',
     'helpers'
-], function (Backbone, wTrackRowsHeader, helpers) {
+], function (Backbone, _, wTrackRowsHeader, helpers) {
     var ProductItemTemplate = Backbone.View.extend({
         el      : '#linwoiceGenerateTable',
         template: _.template(wTrackRowsHeader),
