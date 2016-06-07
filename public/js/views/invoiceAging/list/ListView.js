@@ -28,16 +28,6 @@ define([
             this.contentCollection = contentCollection;
 
             this.render();
-
-            /* this.startTime = options.startTime;
-            this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
-            this.defaultItemsNumber = this.collection.namberToShow || 100;
-            this.newCollection = options.newCollection;
-            this.page = options.collection.page;
-
-            this.render();
-            this.contentCollection = contentCollection;*/
         },
 
         events: {},
