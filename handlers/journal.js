@@ -1,6 +1,7 @@
 var mongoose = require('mongoose');
 var journalSchema = mongoose.Schemas.journal;
 var async = require('async');
+var pageHelper = require('../helpers/pageHelper');
 
 var Module = function (models) {
     this.create = function (req, res, next) {
@@ -23,6 +24,9 @@ var Module = function (models) {
         var sort = data.sort || {_id: 1};
         var getTotal;
         var getData;
+        var paginationObject = pageHelper(data);
+        var limit = paginationObject.limit;
+        var skip = paginationObject.skip;
 
         getTotal = function (cb) {
             Model
@@ -40,6 +44,8 @@ var Module = function (models) {
             Model
                 .find({})
                 .sort(sort)
+                .skip(skip)
+                .limit(limit)
                 .populate('debitAccount', '_id name')
                 .populate('creditAccount', '_id name')
                 .exec(function (err, result) {
