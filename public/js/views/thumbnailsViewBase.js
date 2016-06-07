@@ -6,8 +6,6 @@
 ], function (Backbone, $, _, Pagination) {
     'use strict';
     var View = Pagination.extend({
-        el      : '#content-holder',
-        filter  : null,
         viewType: 'thumbnails', // needs in view.prototype.changeLocationHash
 
         events: {
@@ -47,17 +45,6 @@
 
             return false;
         },
-
-       /* hide: function (e) {
-            if (!$(e.target).closest('.filter-check-list').length) {
-                $('.allNumberPerPage').hide();
-
-                if ($('.filter-check-list').is(':visible')) {
-                    $('.filter-check-list').hide();
-                    this.showFilteredPage();
-                }
-            }
-        },*/
 
         hideItemsNumber: function (e) {
             var el = e.target;

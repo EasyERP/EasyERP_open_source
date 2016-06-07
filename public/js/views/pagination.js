@@ -6,6 +6,9 @@ define([
     'common'
 ], function (Backbone, $, _, CONSTANTS, common) {
     var View = Backbone.View.extend({
+        el    : '#content-holder',
+        filter: null,
+        
         events: {
             'click .oe_sortable': 'goSort',
             'click #checkAll'   : 'checkAll',
@@ -149,8 +152,8 @@ define([
             return false;
         },
 
-        hide: function (e) { // add by Liliya, hide all popups and selects, filterView and set changes to model
-            var el = $(e.target);
+        hide: function (e) { // hide all popups and selects, filterView and set changes to model
+            var $el = $(e.target);
             var $thisEl = this.$el;
 
             if (this.selectView) {
@@ -158,26 +161,26 @@ define([
             }
 
             $thisEl.find('.allNumberPerPage, .newSelectList').hide();
+            $thisEl.find('span.health-container ul').hide();
 
-            if (!el.closest('.search-view').length) {
-                $('.search-content').removeClass('fa-caret-up');
-                $('.search-options').addClass('hidden');
+            if (!$el.closest('.search-view').length) {
+                $thisEl.find('.search-content').removeClass('fa-caret-up');
+                $thisEl.find('.search-options').addClass('hidden');
             }
 
-            if (!$(e.target).closest('.filter-check-list').length) {
-                $('.allNumberPerPage').hide();
-
-                if ($('.filter-check-list').is(':visible')) {
-                    $('.filter-check-list').hide();
-                    this.showFilteredPage();
-                }
+            if (!$el.closest('.filter-check-list').length) {
+                $thisEl.find('.allNumberPerPage').hide();
+                //  if ($('.filter-check-list').is(':visible')) {
+                //     $('.filter-check-list').hide();
+                //     this.showFilteredPage();
+                // }
             }
 
             if (typeof(this.setChangedValueToModel) === 'function' && el.tagName !== 'SELECT') { // added for SetChangesToModel in ListView
                 this.setChangedValueToModel();
             }
         },
-        
+
         changeLocationHash: function (page, count, filter) {
             var location = Backbone.history.fragment;
             var mainLocation = '#easyErp/' + this.contentType + '/' + this.viewType;
@@ -277,7 +280,7 @@ define([
                 // skip default case
             }
         },
-        
+
         // when click in list of pages
         showPage: function (e) {
             var newRows = this.$el.find('#false');
@@ -303,7 +306,7 @@ define([
 
             this.getPage({page: page, viewType: this.viewType});
         },
-        
+
         nextPage: function (options) {
             var page = options.page;
             var count = options.count;

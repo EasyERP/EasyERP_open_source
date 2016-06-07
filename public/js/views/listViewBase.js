@@ -15,8 +15,6 @@ define([
     'use strict';
 
     var ListViewBase = Pagination.extend({
-        el      : '#content-holder',
-        filter  : null,
         viewType: 'list',
 
         events: {
@@ -167,10 +165,6 @@ define([
                 this.previouslySelected.addClass('selectedItemsNumber');
                 // end
             }
-
-            $(document).on('click', function (e) {
-                self.hide(e);
-            });
         },
 
         renderFilter: function (self, baseFilter) {
