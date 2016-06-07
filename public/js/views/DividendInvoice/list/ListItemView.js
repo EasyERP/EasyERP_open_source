@@ -9,11 +9,8 @@
         el: '#listTable',
 
         initialize: function (options) {
-            this.page = parseInt(options.page, 10);
-
             this.collection = options.collection;
-            this.page = isNaN(this.page) ? 1 : this.page;
-            this.startNumber = (this.page - 1) * options.itemsNumber;
+            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
         },
 
         render: function (options) {

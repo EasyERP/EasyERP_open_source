@@ -13,12 +13,7 @@ define([
 
         initialize: function (options) {
             this.collection = options.collection;
-            this.page = options.page ? parseInt(options.page, 10) : 1;
-            this.startNumber = (this.page - 1) * options.itemsNumber;
-
-            if (!this.startNumber) {
-                this.startNumber = 0;
-            }
+            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
         },
 
         render: function () {
