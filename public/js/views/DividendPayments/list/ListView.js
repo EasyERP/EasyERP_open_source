@@ -460,9 +460,7 @@ define([
             }).render());
 
             self.renderFilter(self);
-
-            self.renderCheckboxes();
-
+            
             self.renderPagination($currentEl, self);
 
             dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {

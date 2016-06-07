@@ -213,9 +213,7 @@ define([
                 });
                 itemView.bind('incomingStages', this.pushStages, this);
                 $currentEl.append(itemView.render());
-
-                this.renderCheckboxes();
-
+                
                 common.populateWorkflowsList("Tasks", ".filter-check-list", "#workflowNamesDd", "/Workflows", null, function (stages) {
                     var stage = (self.filter) ? self.filter.workflow || [] : [];
                     itemView.trigger('incomingStages', stages);

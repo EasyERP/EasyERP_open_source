@@ -124,7 +124,6 @@ define([
 
                 $currentEl.append(new ListTotalView({element: $currentEl.find("#listTable"), cellSpan: 4}).render());
 
-                this.renderCheckboxes();
                 this.renderPagination($currentEl, this);
 
                 $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");

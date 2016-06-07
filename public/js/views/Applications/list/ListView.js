@@ -137,7 +137,6 @@ define([
                 itemView.trigger('incomingStages', stages);
             });
 
-            this.renderCheckboxes();
             this.renderPagination($currentEl, this);
             this.renderFilter(self);
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');

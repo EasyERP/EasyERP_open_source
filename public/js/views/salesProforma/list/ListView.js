@@ -185,7 +185,6 @@ define([
 
                 $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
 
-                self.renderCheckboxes();
                 self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 

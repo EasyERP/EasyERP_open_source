@@ -147,7 +147,6 @@ define([
             //added two parameters page and items number
             $currentEl.append(new ListTotalView({element: this.$el.find("#listTable"), cellSpan: 5}).render());
 
-            this.renderCheckboxes();
             this.renderPagination($currentEl, this);
             this.renderFilter(self);
 

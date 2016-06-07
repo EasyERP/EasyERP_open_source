@@ -161,9 +161,7 @@ define([
             });
 
             $currentEl.prepend(itemView.render());
-
-            this.renderCheckboxes();
-
+            
             this.calcTotal();
 
             this.renderPagination($currentEl, this);

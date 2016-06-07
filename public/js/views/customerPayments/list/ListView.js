@@ -235,9 +235,7 @@ define([
             }).render());
 
             this.recalcTotal();
-
-            this.renderCheckboxes();
-
+            
             this.renderPagination($currentEl, this);
 
             this.renderFilter(self);
