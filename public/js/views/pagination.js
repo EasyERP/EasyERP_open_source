@@ -92,9 +92,6 @@ define([
                 });
             }
 
-            this.collection.unbind('reset');
-            this.collection.unbind('showmore');
-
             target$ = $(e.target).closest('th');
             currentParrentSortClass = target$.attr('class');
             sortClass = currentParrentSortClass.split(' ')[1];
@@ -146,7 +143,7 @@ define([
         },
 
         showPagesPopup: function (e) {
-            $(e.target).closest("button").next("ul").toggle();
+            $(e.target).closest('button').next('ul').toggle();
             return false;
         },
 
