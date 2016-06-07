@@ -47,7 +47,6 @@
                     return jopPosition;
                 });
             }
-           // Parent.prototype.parse.apply(this, arguments);
 
             return Parent.prototype.parse.apply(this, arguments);
         }
