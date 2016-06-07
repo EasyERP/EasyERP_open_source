@@ -691,7 +691,6 @@ var Module = function (models) {
                         switch (viewType) {
                             case ('list'):
                                 query.sort(sort);
-
                                 query
                                     .select('_id createdBy editedBy address.country email name phones.phone')
                                     .populate('createdBy.user', 'login')

@@ -58,16 +58,18 @@
                 newCollection: this.newCollection,
                 contentType  : this.contentType
             }, function (response, context) {
-                var showMore = context.$el.find('#showMoreDiv');
+                var $showMore = context.$el.find('#showMoreDiv');
+                var $created;
+
                 if (response.showMore) {
-                    if (showMore.length === 0) {
-                        var created = context.$el.find('#timeRecivingDataFromServer');
-                        created.before('<div id="showMoreDiv"><input type="button" id="showMore" value="Show More"/></div>');
+                    if ($showMore.length === 0) {
+                        $created = context.$el.find('#timeRecivingDataFromServer');
+                        $created.before('<div id="showMoreDiv"><input type="button" id="showMore" value="Show More"/></div>');
                     } else {
-                        showMore.show();
+                        $showMore.show();
                     }
                 } else {
-                    showMore.hide();
+                    $showMore.hide();
                 }
             }, this);
         },
@@ -81,11 +83,11 @@
 
         alpabeticalRender: function (e) {
             var selectedLetter;
-            var target = $(e.target);
+            var $target;
 
             if (e && e.target) {
-                target = $(e.target);
-                selectedLetter = $(e.target).text();
+                $target = $(e.target);
+                selectedLetter = $target.text();
 
                 if (!this.filter) {
                     this.filter = {};
@@ -96,8 +98,8 @@
                     type : null
                 };
 
-                target.parent().find('.current').removeClass('current');
-                target.addClass('current');
+                $target.parent().find('.current').removeClass('current');
+                $target.addClass('current');
                 if ($(e.target).text() === 'All') {
                     delete this.filter;
                     delete App.filter.letter;
@@ -145,18 +147,19 @@
             $('#check_all').prop('checked', false);
 
             context.startTime = new Date();
-            context.newCollection = false;
+
+            this.$el.find('.thumbnailwithavatar').remove();
+            this.startTime = new Date();
+
+            this.filter = filter;
 
             if (Object.keys(filter).length === 0) {
                 this.filter = {};
             }
 
-            this.defaultItemsNumber = 0;
-            context.$el.find('.thumbnailwithavatar').remove();
-
-            context.changeLocationHash(null, context.defaultItemsNumber, filter);
-            context.collection.showMoreAlphabet({count: context.defaultItemsNumber, page: 1, filter: filter});
-            context.getTotalLength(this.defaultItemsNumber, filter);
+            this.changeLocationHash(null, this.collection.pageSize, filter);
+            this.collection.getFirstPage({filter: filter, showMore: true, viewType: this.viewType, contentType: this.contentType});
+            // context.collection.showMoreAlphabet({count: context.defaultItemsNumber, page: 1, filter: filter});
         },
 
         render: function () {
@@ -214,10 +217,10 @@
         },
 
         hideItemsNumber: function (e) {
-            var el = $(e.target);  // change after ui tests
+            var $el = $(e.target);  // change after ui tests
 
             this.$el.find('.allNumberPerPage, .newSelectList').hide();
-            if (!el.closest('.search-view')) {
+            if (!$el.closest('.search-view')) {
                 $('.search-content').removeClass('fa-caret-up');
                 this.$el.find('.search-options').addClass('hidden');
             }
@@ -250,18 +253,18 @@
          },*/
 
         showMoreAlphabet: function (newModels) {
-            var holder = this.$el;
-            var created = holder.find('#timeRecivingDataFromServer');
-            var showMore = holder.find('#showMoreDiv');
+            var $holder = this.$el;
+            var $created = $holder.find('#timeRecivingDataFromServer');
+            var $showMore = $holder.find('#showMoreDiv');
 
             this.defaultItemsNumber += newModels.length;
 
             this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
             this.getTotalLength(this.defaultItemsNumber, this.filter);
 
-            holder.append(this.template({collection: newModels.toJSON()}));
-            holder.append(created);
-            created.before(showMore);
+            $holder.append(this.template({collection: newModels.toJSON()}));
+            $holder.append($created);
+            $created.before($showMore);
             this.asyncLoadImgs(newModels);
         },
 
@@ -273,7 +276,7 @@
             new EditView({collection: this.collection});
         },
 
-        deleteItems: function () {
+        /*deleteItems: function () {
             var mid = this.mId;
             var model;
             var self = this;
@@ -307,7 +310,7 @@
                     });
                 }
             });
-        },
+        },*/
 
         exportToCsv: function () {
             var tempExportToCsvUrl = '';

@@ -40,7 +40,7 @@ define([
     'use strict';
 
     var fakePersons = {
-        total: 100,
+        total: 6,
         data : [
             {
                 _id     : "55b92ad521e4b7c40f00060c",
@@ -11274,11 +11274,15 @@ define([
         var $fixture;
         var $elFixture;
         var selectSpy;
+        var removeFilterSpy;
+        var saveFilterSpy;
         var debounceStub;
         var historyNavigateSpy;
 
         before(function () {
             selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
             debounceStub = sinon.stub(_, 'debounce', function (debounceFunction) {
                 return debounceFunction;
             });
@@ -11288,13 +11292,15 @@ define([
         after(function () {
             view.remove();
             topBarView.remove();
-            //formView.remove();
-            //thumbnailsView.remove();
+            formView.remove();
+            thumbnailsView.remove();
             //listView.remove();
-            //editView.remove();
+            editView.remove();
             historyNavigateSpy.restore();
             selectSpy.restore();
             debounceStub.restore();
+            removeFilterSpy.restore();
+            saveFilterSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -11392,11 +11398,9 @@ define([
                 var $thumbnailsBtn = $topBarEl.find('a[data-view-type="thumbnails"]');
 
                 $listBtn.click();
-
                 expect(window.location.hash).to.equals('#easyErp/Persons/list');
 
                 $thumbnailsBtn.click();
-
                 expect(window.location.hash).to.equals('#easyErp/Persons/thumbnails');
             });
         });
@@ -11716,6 +11720,113 @@ define([
                 done();
             });
 
+            it('Try to filter Persons ThumbnailsView by FullName and Country', function () {
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var personsThumbUrl = new RegExp('\/persons\/thumbnails', 'i');
+                var $fullName;
+                var $country;
+                var $selectedItem;
+                var $next;
+                var $prev;
+
+                selectSpy.reset();
+
+                // open filter dropdown
+                $searchArrow.click();
+                expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                // select full Person Name
+                $fullName = $searchContainer.find('#nameFullContainer .groupName');
+                $fullName.click();
+                expect($fullName.next('div')).to.have.not.class('hidden');
+                $next = $searchContainer.find('.next');
+                $next.click();
+                $prev = $searchContainer.find('.prev');
+                $prev.click();
+                $selectedItem = $searchContainer.find('li[data-value="55b92ad621e4b7c40f000635"]');
+
+                server.respondWith('GET', personsThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersons)]);
+                $selectedItem.click();
+                server.respond();
+                expect(selectSpy.calledOnce).to.be.true;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                expect($thisEl.find('#startLetter')).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar'))
+                    .to.have.lengthOf(3);
+
+                // select Country
+                $country = $searchContainer.find('#countryFullContainer .groupName');
+                $country.click();
+                expect($country.next('div')).to.have.not.class('hidden');
+                $next = $searchContainer.find('.next');
+                $next.click();
+                $prev = $searchContainer.find('.prev');
+                $prev.click();
+                $selectedItem = $searchContainer.find('li[data-value="Australia"]');
+
+                $selectedItem.click();
+                server.respond();
+                expect(selectSpy.calledTwice).to.be.true;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                expect($thisEl.find('#startLetter')).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar'))
+                    .to.have.lengthOf(3);
+
+                // uncheck Country filter
+                $selectedItem = $searchContainer.find('li[data-value="Australia"]');
+                $selectedItem.click();
+                server.respond();
+                expect(selectSpy.calledThrice).to.be.true;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                expect($thisEl.find('#startLetter')).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar'))
+                    .to.have.lengthOf(3);
+            });
+
+            it('Try to save favorites filters', function () {
+                var userUrl = new RegExp('\/users\/', 'i');
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var $favoritesBtn = $searchContainer.find('li[data-value="#favoritesContent"]');
+                var $filterNameInput;
+                var $saveFilterBtn;
+
+                saveFilterSpy.reset();
+
+                $favoritesBtn.click();
+                expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                $filterNameInput = $searchContainer.find('#forFilterName');
+                $filterNameInput.val('Test');
+                $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                $saveFilterBtn.click();
+                server.respond();
+                expect(saveFilterSpy.called).to.be.true;
+
+                //close filter dropdown
+                $searchArrow.click();
+                expect($searchContainer.find('.search-options')).to.have.class('hidden');
+            });
+
+            it('Try to delete FullName filter', function () {
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
+                var personThumbUrl = new RegExp('\/persons\/thumbnails', 'i');
+
+                removeFilterSpy.reset();
+
+                server.respondWith('GET', personThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersons)]);
+                $closeBtn.click();
+                server.respond();
+
+                expect(removeFilterSpy.called).to.be.true;
+                expect($thisEl).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar').length).to.equals(3);
+            });
+
             it('Try to showMore content', function () {
                 var $showMoreBtn = $thisEl.find('#showMore');
 
@@ -11724,6 +11835,7 @@ define([
 
                 expect($thisEl.find('.thumbnailwithavatar')).to.exist;
                 expect($thisEl.find('.thumbnailwithavatar').length).to.equals(6);
+                expect($thisEl.find('#showMoreDiv')).to.have.css('display', 'none');
             });
 
             it('Try to click alphabetic letter', function () {
@@ -12036,7 +12148,6 @@ define([
                 server.respond();
 
                 expect($('#createOpportunities')).to.exist;
-
             });
 
             it('Try to save opportunity without need data', function () {
@@ -12047,7 +12158,6 @@ define([
                 spyResponse = mainSpy.args[0][0];
 
                 expect(spyResponse).to.have.property('type', 'error');
-
             });
 
             it('Try to save opportunity', function () {

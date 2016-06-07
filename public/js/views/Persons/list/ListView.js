@@ -43,8 +43,6 @@ define([
             this.page = options.collection.page;
 
             this.render();
-
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
         },
 
         exportToXlsx: function () {
