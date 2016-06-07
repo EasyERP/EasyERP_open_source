@@ -1,368 +1,427 @@
 ﻿define([
-        "text!templates/Tasks/EditTemplate.html",
-        'views/selectView/selectView',
-        'views/Notes/NoteView',
-        'views/Notes/AttachView',
-        "common",
-        "populate",
-        "custom",
-        'constants'
-    ],
-    function (EditTemplate, selectView, noteView, attachView, common, populate, custom, CONSTANTS) {
+    'Backbone',
+    'Underscore',
+    'jQuery',
+    'text!templates/Tasks/EditTemplate.html',
+    'views/selectView/selectView',
+    'views/Notes/NoteView',
+    'views/Notes/AttachView',
+    'common',
+    'populate',
+    'custom',
+    'constants'
+], function (Backbone, _, $, EditTemplate, selectView, noteView, attachView, common, populate, custom, CONSTANTS) {
 
-        var EditView = Backbone.View.extend({
-            contentType: "Tasks",
-            template   : _.template(EditTemplate),
-            responseObj: {},
+    var EditView = Backbone.View.extend({
+        contentType: 'Tasks',
+        template   : _.template(EditTemplate),
+        responseObj: {},
+        
+        events: {
+            'click #tabList a'                                 : 'switchTab',
+            'keydown'                                          : 'keydownHandler',
+            'click .current-selected'                          : 'showNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            'click'                                            : 'hideNewSelect',
+            // 'click #projectTopName'                            : 'hideDialog',
+            'keypress #logged, #estimated'                     : 'isNumberKey',
+            'click #projectTopName'                            : 'useProjectFilter'
+        },
 
-            initialize: function (options) {
-                _.bindAll(this, "render", "saveItem", "deleteItem");
-                this.currentModel = (options.model) ? options.model : options.collection.getElement();
-                this.currentModel.urlRoot = '/Tasks';
-                this.responseObj['#type'] = [
-                    {
-                        _id : 'Task',
-                        name: 'Task'
-                    }, {
-                        _id : 'Bug',
-                        name: 'Bug'
-                    }, {
-                        _id : 'Feature',
-                        name: 'Feature'
-                    }
-                ];
-
-                this.render();
-            },
-
-            events: {
-                "click #tabList a"                                 : "switchTab",
-                'keydown'                                          : 'keydownHandler',
-                "click .current-selected"                          : "showNewSelect",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-                "click"                                            : "hideNewSelect",
-                // "click #projectTopName"                            : "hideDialog",
-                "keypress #logged, #estimated"                     : "isNumberKey",
-                "click #projectTopName"                            : "useProjectFilter"
-            },
-
-            useProjectFilter: function (e) {
-                e.preventDefault();
-                var project = this.currentModel.get('project')._id;
-                var filter = {
-                    project: {
-                        key  : 'project._id',
-                        value: [project]
-                    }
-                };
-
-                $(".edit-dialog").remove();
-
-                Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
-            },
-
-            isNumberKey: function (evt) {
-                var charCode = (evt.which) ? evt.which : event.keyCode;
-                if (charCode > 31 && (charCode < 48 || charCode > 57)) {
-                    return false;
+        initialize: function (options) {
+            _.bindAll(this, 'render', 'saveItem', 'deleteItem');
+            this.currentModel = (options.model) ? options.model : options.collection.getElement();
+            this.currentModel.urlRoot = CONSTANTS.URLS.TASKS;
+            this.responseObj['#type'] = [
+                {
+                    _id : 'Task',
+                    name: 'Task'
+                }, {
+                    _id : 'Bug',
+                    name: 'Bug'
+                }, {
+                    _id : 'Feature',
+                    name: 'Feature'
                 }
-                return true;
-            },
+            ];
 
-            hideNewSelect: function (e) {
-                $(".newSelectList").hide();
+            this.render();
+        },
 
-                if (this.selectView) {
-                    this.selectView.remove();
+        useProjectFilter: function (e) {
+            var project;
+            var filter;
+            
+            e.preventDefault();
+            project = this.currentModel.get('project')._id;
+            filter = {
+                project: {
+                    key  : 'project._id',
+                    value: [project]
                 }
-            },
+            };
 
-            chooseOption: function (e) {
-                var target = $(e.target);
-                var endElem = target.parents("dd").find(".current-selected");
-                endElem.text(target.text()).attr("data-id", target.attr("id"));
-                endElem.attr("data-shortdesc", target.data("level"));
-            },
+            $('.edit-dialog').remove();
 
-            keydownHandler: function (e) {
-                switch (e.which) {
-                    case 27:
-                        this.hideDialog();
-                        break;
-                    default:
-                        break;
-                }
-            },
+            Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
+        },
 
-            hideDialog: function () {
-                $(".edit-dialog").remove();
-            },
+        isNumberKey: function (evt) {
+            var charCode = (evt.which) ? evt.which : event.keyCode;
+            
+            return !(charCode > 31 && (charCode < 48 || charCode > 57));
+        },
 
-            /*switchTab: function (e) {
-                e.preventDefault();
-                var link = this.$("#tabList a");
-                if (link.hasClass("selected")) {
-                    link.removeClass("selected");
-                }
-                var index = link.index($(e.target).addClass("selected"));
-                this.$(".tab").hide().eq(index).show();
-            },*/
+        hideNewSelect: function (e) {
+            $('.newSelectList').hide();
 
-            saveItem: function (event) {
-                event.preventDefault();
-                var self = this;
-                var viewType = custom.getCurrentVT();
-                var holder = this.$el;
-                var mid = 39;
-                var summary = $.trim(holder.find("#summaryEdit").val());
-                var project = holder.find("#projectDd").data("id");
-                var assignedTo = holder.find("#assignedToDd").data("id");
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+        },
 
-                var tags = $.trim(holder.find("#tags").val()).split(',');
-                if (tags.length == 0) {
-                    tags = null;
-                }
+        chooseOption: function (e) {
+            var target = $(e.target);
+            var endElem = target.parents('dd').find('.current-selected');
+            
+            endElem.text(target.text()).attr('data-id', target.attr('id'));
+            endElem.attr('data-shortdesc', target.data('level'));
+        },
 
-                var sequence = $.trim(holder.find("#sequence").val());
-                if (!sequence) {
-                    sequence = null;
-                }
-                var workflow = holder.find("#workflowsDd").data("id");
-                var estimated = parseInt($.trim(holder.find("#estimated").val()));
-                if ($.trim(estimated) == "") {
-                    estimated = 0;
-                }
+        keydownHandler: function (e) {
+            switch (e.which) {
+                case 27:
+                    this.hideDialog();
+                    break;
+                default:
+                    break;
+            }
+        },
 
-                var logged = parseInt($.trim(holder.find("#logged").val()));
+        hideDialog: function () {
+            $('.edit-dialog').remove();
+        },
 
-                var priority = holder.find("#priorityDd").data("id");
+        /*switchTab: function (e) {
+         e.preventDefault();
+         var link = this.$("#tabList a");
+         if (link.hasClass("selected")) {
+         link.removeClass("selected");
+         }
+         var index = link.index($(e.target).addClass("selected"));
+         this.$(".tab").hide().eq(index).show();
+         },*/
 
-                var data = {
-                    type         : holder.find("#type").data("id"),
-                    summary      : summary,
-                    assignedTo   : assignedTo ? assignedTo : null,
-                    tags         : tags,
-                    description  : $.trim(holder.find("#description").val()),
-                    priority     : priority,
-                    StartDate    : $.trim(holder.find("#StartDate").val()),
-                    estimated    : estimated,
-                    logged       : logged,
-                    sequenceStart: this.currentModel.toJSON().sequence
-                };
-                var currentWorkflow = this.currentModel.get('workflow');
-                if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id != workflow)) {
-                    data['workflow'] = workflow;
-                    data['sequence'] = -1;
-                    data['workflowStart'] = this.currentModel.toJSON().workflow._id
-                }
-                ;
-                var currentProject = this.currentModel.get('project');
-                if (currentProject && currentProject._id && (currentProject._id != project)) {
-                    data['project'] = project;
-                }
-                ;
+        saveItem: function (event) {
+            var self = this;
+            var viewType;
+            var holder;
+            var mid;
+            var summary;
+            var project;
+            var assignedTo;
+            var tags;
+            var sequence;
+            var workflow;
+            var estimated;
+            var logged;
+            var priority;
+            var data;
+            var currentWorkflow;
+            var currentProject;
+            
+            event.preventDefault();
+            
+            viewType = custom.getCurrentVT();
+            holder = this.$el;
+            mid = 39;
+            summary = $.trim(holder.find('#summaryEdit').val());
+            project = holder.find('#projectDd').data('id');
+            assignedTo = holder.find('#assignedToDd').data('id');
+            tags = $.trim(holder.find('#tags').val()).split(',');
+            
+            if (!tags.length) {
+                tags = null;
+            }
 
-                if (holder.find("#workflowsDd").text() === 'Done') {
-                    data['progress'] = 100;
-                }
+            sequence = $.trim(holder.find('#sequence').val());
+            
+            if (!sequence) {
+                sequence = null;
+            }
+            
+            workflow = holder.find('#workflowsDd').data('id');
+            estimated = parseInt($.trim(holder.find('#estimated').val()), 10);
+            
+            if ($.trim(estimated) === '') {
+                estimated = 0;
+            }
 
-                this.currentModel.save(data, {
-                    headers: {
-                        mid: mid
-                    },
-                    patch  : true,
-                    success: function (model, res) {
-                        model = model.toJSON();
-                        var ids = [];
-                        ids.push(assignedTo);
-                        ids['task_id'] = model._id;
-                        common.getImages(ids, "/employees/getEmployeesImages");
-                        var result = res.result;
-                        self.hideDialog();
-                        switch (viewType) {
-                            case 'list':
+            logged = parseInt($.trim(holder.find('#logged').val()), 10);
+
+            priority = holder.find('#priorityDd').data('id');
+
+            data = {
+                type         : holder.find('#type').data('id'),
+                summary      : summary,
+                assignedTo   : assignedTo || null,
+                tags         : tags,
+                description  : $.trim(holder.find('#description').val()),
+                priority     : priority,
+                StartDate    : $.trim(holder.find('#StartDate').val()),
+                estimated    : estimated,
+                logged       : logged,
+                sequenceStart: this.currentModel.toJSON().sequence
+            };
+            
+            currentWorkflow = this.currentModel.get('workflow');
+            
+            if (currentWorkflow && currentWorkflow._id && (currentWorkflow._id !== workflow)) {
+                data.workflow = workflow;
+                data.sequence = -1;
+                data.workflowStart = this.currentModel.toJSON().workflow._id;
+            }
+            
+            currentProject = this.currentModel.get('project');
+            if (currentProject && currentProject._id && (currentProject._id !== project)) {
+                data.project = project;
+            }
+
+            if (holder.find('#workflowsDd').text() === 'Done') {
+                data.progress = 100;
+            }
+
+            this.currentModel.save(data, {
+                headers: {
+                    mid: mid
+                },
+                patch  : true,
+                success: function (model, res) {
+                    var ids = [];
+                    var result;
+                    var $trHolder;
+                    var editHolder = self.$el;
+                    var estimated;
+                    var logged;
+                    var progress;
+                    var $kanbanHolder;
+                    var counter;
+                    var $workflowStart;
+                    var $workflow;
+
+                    model = model.toJSON();
+                    ids.push(assignedTo);
+                    ids.task_id = model._id;
+                    common.getImages(ids, '/employees/getEmployeesImages');
+                    result = res.result;
+                    self.hideDialog();
+                    
+                    switch (viewType) {
+                        case 'list':
                             {
-                                var tr_holder = $("tr[data-id='" + model._id + "'] td");
-                                var editHolder = self.$el;
-                                tr_holder.eq(3).text(summary);
-                                tr_holder.eq(4).find('a').data('id', project).text(editHolder.find("#projectDd").text());
-                                tr_holder.eq(5).find('a').text(editHolder.find("#workflowsDd").text());
-                                tr_holder.eq(6).text(editHolder.find("#assignedToDd").text());
-                                var estimated = parseInt(editHolder.find("#estimated").val() || 0);
-                                var logged = parseInt(editHolder.find("#logged").val() || 0);
-                                var progress = Math.round(logged / estimated * 100);
+                                $trHolder = $("tr[data-id='" + model._id + "'] td");
+                                $trHolder.eq(3).text(summary);
+                                $trHolder.eq(4).find('a').data('id', project).text(editHolder.find('#projectDd').text());
+                                $trHolder.eq(5).find('a').text(editHolder.find('#workflowsDd').text());
+                                $trHolder.eq(6).text(editHolder.find('#assignedToDd').text());
+                                estimated = parseInt(editHolder.find('#estimated').val() || 0, 10);
+                                logged = parseInt(editHolder.find('#logged').val() || 0, 10);
+                                progress = Math.round(logged / estimated * 100);
+                                
                                 if ((progress === Infinity) || !progress) {
                                     progress = 0;
                                 }
-                                tr_holder.eq(7).text(estimated);
-                                tr_holder.eq(8).text(logged);
-                                tr_holder.eq(9).find('a').text(editHolder.find("#type").text());
-                                tr_holder.eq(10).find('progress').val(progress);
+                                
+                                $trHolder.eq(7).text(estimated);
+                                $trHolder.eq(8).text(logged);
+                                $trHolder.eq(9).find('a').text(editHolder.find('#type').text());
+                                $trHolder.eq(10).find('progress').val(progress);
+                                
                                 if (data.workflow || currentProject._id !== project) { // added condition if changed project, taskId need refresh
-                                    Backbone.history.fragment = "";
-                                    Backbone.history.navigate(window.location.hash.replace("#", ""), {trigger: true});
+                                    Backbone.history.fragment = '';
+                                    Backbone.history.navigate(window.location.hash.replace('#', ''), {trigger: true});
                                 }
                             }
-                                break;
-                            case 'kanban':
+                            break;
+                        case 'kanban':
                             {
-                                var kanban_holder = $("#" + model._id);
-                                var editHolder = self.$el;
-                                kanban_holder.find("#priority_" + model._id).data("id", priority).text(priority);
-                                kanban_holder.find("#shortDesc" + model._id).text(editHolder.find('#projectDd').data("shortdesc"));
-                                kanban_holder.find("#summary" + model._id).text(summary);
-                                kanban_holder.find("#type_" + model._id).text(editHolder.find("#type").text());
-                                $("#" + data.workflowStart).find(".item").each(function () {
-                                    var seq = $(this).find(".inner").data("sequence");
+                                $kanbanHolder = $('#' + model._id);
+                                $kanbanHolder.find('#priority_' + model._id).data('id', priority).text(priority);
+                                $kanbanHolder.find('#shortDesc' + model._id).text(editHolder.find('#projectDd').data('shortdesc'));
+                                $kanbanHolder.find('#summary' + model._id).text(summary);
+                                $kanbanHolder.find('#type_' + model._id).text(editHolder.find('#type').text());
+                                $workflowStart = $('#' + data.workflowStart);
+                                $workflow = $('#' + data.workflow);
+
+                                $workflowStart.find('.item').each(function () {
+                                    var seq = $(this).find('.inner').data('sequence');
+
                                     if (seq > data.sequenceStart) {
-                                        $(this).find(".inner").attr("data-sequence", seq - 1);
+                                        $(this).find('.inner').attr('data-sequence', seq - 1);
                                     }
                                 });
+
                                 if (result && result.sequence) {
-                                    kanban_holder.find(".inner").attr("data-sequence", result.sequence);
+                                    $kanbanHolder.find('.inner').attr('data-sequence', result.sequence);
                                 }
+    
+                                $workflow.find('.columnNameDiv').after($kanbanHolder);
 
-                                $("#" + data.workflow).find(".columnNameDiv").after(kanban_holder);
                                 if (data.workflow) {
-                                    $("#" + data.workflow).find(".columnNameDiv").after(kanban_holder);
-                                    var counter = $("#" + data.workflow).closest(".column").find(".totalCount");
-                                    counter.html(parseInt(counter.html()) + 1);
-                                    counter = $("#" + data.workflowStart).closest(".column").find(".totalCount");
-                                    counter.html(parseInt(counter.html()) - 1);
-
+                                    $workflow.find('.columnNameDiv').after($kanbanHolder);
+                                    counter = $workflow.closest('.column').find('.totalCount');
+                                    counter.html(parseInt(counter.html(), 10) + 1);
+                                    counter = $workflowStart.closest('.column').find('.totalCount');
+                                    counter.html(parseInt(counter.html(), 10) - 1);
                                 }
-
+    
                             }
-                        }
-                    },
-                    error  : function (model, xhr) {
-                        self.errorNotification(xhr);
                     }
-                });
-            },
+                },
 
-            showNewSelect: function (e, prev, next) {
-                var $target = $(e.target);
-                e.stopPropagation();
-
-                if ($target.attr('id') === 'selectInput') {
-                    return false;
+                error: function (model, xhr) {
+                    self.errorNotification(xhr);
                 }
+            });
+        },
 
-                if (this.selectView) {
-                    this.selectView.remove();
-                }
+        showNewSelect: function (e, prev, next) {
+            var $target = $(e.target);
+            
+            e.stopPropagation();
 
-                this.selectView = new selectView({
-                    e          : e,
-                    responseObj: this.responseObj
-                });
-
-                $target.append(this.selectView.render().el);
-
+            if ($target.attr('id') === 'selectInput') {
                 return false;
-            },
+            }
 
-            deleteItem: function (event) {
-                var mid = 39;
-                event.preventDefault();
-                var self = this;
-                var answer = confirm("Really DELETE items ?!");
-                if (answer == true) {
-                    this.currentModel.destroy({
-                        headers: {
-                            mid: mid
-                        },
-                        success: function (model) {
-                            model = model.toJSON();
-                            var viewType = custom.getCurrentVT();
+            if (this.selectView) {
+                this.selectView.remove();
+            }
 
-                            switch (viewType) {
-                                case 'list':
+            this.selectView = new selectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
+
+            $target.append(this.selectView.render().el);
+
+            return false;
+        },
+
+        deleteItem: function (event) {
+            var mid;
+            var self = this;
+            var answer;
+
+            event.preventDefault();
+
+            mid = 39;
+            answer = confirm("Really DELETE items ?!");
+            
+            if (answer === true) {
+                this.currentModel.destroy({
+                    headers: {
+                        mid: mid
+                    },
+                    success: function (model) {
+                        var viewType;
+                        var wId;
+                        var newTotal;
+                        
+                        model = model.toJSON();
+                        viewType = custom.getCurrentVT();
+
+                        switch (viewType) {
+                            case 'list':
                                 {
                                     $("tr[data-id='" + model._id + "'] td").remove();
                                 }
-                                    break;
-                                case 'kanban':
+                                break;
+                            case 'kanban':
                                 {
-                                    $("#" + model._id).remove();
+                                    $('#' + model._id).remove();
                                     //count kanban
-                                    var wId = model.workflow._id;
-                                    var newTotal = ($("td#" + wId + " .totalCount").html() - 1);
-                                    $("td#" + wId + " .totalCount").html(newTotal);
+                                    wId = model.workflow._id;
+                                    newTotal = ($('td#' + wId + ' .totalCount').html() - 1);
+                                    $('td#' + wId + ' .totalCount').html(newTotal);
                                 }
-                            }
-                            self.hideDialog();
-                        },
-                        error  : function (model, xhr) {
-                            self.errorNotification(xhr);
                         }
-                    });
-                }
-            },
-            render    : function () {
-                var formString = this.template({
-                    model: this.currentModel.toJSON()
-                });
-                var self = this;
-                this.$el = $(formString).dialog({
-                    dialogClass: "edit-dialog  task-edit-dialog",
-                    width      : 600,
-                    title      : this.currentModel.toJSON().project.projectShortDesc,
-                    buttons    : {
-                        save  : {
-                            text : "Save",
-                            class: "btn",
-                            click: self.saveItem
-                        },
-                        cancel: {
-                            text : "Cancel",
-                            class: "btn",
-                            click: self.hideDialog
-                        },
-                        delete: {
-                            text : "Delete",
-                            class: "btn",
-                            click: self.deleteItem
-                        }
+                        self.hideDialog();
+                    },
+
+                    error: function (model, xhr) {
+                        self.errorNotification(xhr);
                     }
                 });
-
-                var notDiv = this.$el.find('#divForNote');
-                notDiv.append(
-                    new noteView({
-                        model: this.currentModel
-                    }).render().el);
-                notDiv.append(
-                    new attachView({
-                        model: this.currentModel,
-                        url  : "/uploadTasksFiles"
-                    }).render().el
-                );
-                populate.get('#projectDd', '/projects/getForDd', {}, 'project', this);
-                populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Tasks"}, "name", this);
-                populate.get2name("#assignedToDd", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
-                populate.getPriority("#priorityDd", this);
-                this.delegateEvents(this.events);
-                $('#StartDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
-                $('#deadline').datepicker({
-                    dateFormat : "d M, yy",
-                    changeMonth: true,
-                    changeYear : true,
-                    minDate    : new Date()
-                });
-                //for input type number
-                this.$el.find("#logged").spinner({
-                    min: 0,
-                    max: 1000
-                });
-                this.$el.find("#estimated").spinner({
-                    min: 0,
-                    max: 1000
-                });
-                return this;
             }
+        },
 
-        });
-        return EditView;
+        render: function () {
+            var formString = this.template({
+                model: this.currentModel.toJSON()
+            });
+            var self = this;
+            var notDiv;
+
+            this.$el = $(formString).dialog({
+                dialogClass: 'edit-dialog  task-edit-dialog',
+                width      : 600,
+                title      : this.currentModel.toJSON().project.projectShortDesc,
+                buttons    : {
+                    save: {
+                        text : 'Save',
+                        class: 'btn',
+                        click: self.saveItem
+                    },
+                    
+                    cancel: {
+                        text : 'Cancel',
+                        class: 'btn',
+                        click: self.hideDialog
+                    },
+                    delete: {
+                        text : 'Delete',
+                        class: 'btn',
+                        click: self.deleteItem
+                    }
+                }
+            });
+
+            notDiv = this.$el.find('#divForNote');
+            notDiv.append(
+                new noteView({
+                    model: this.currentModel
+                }).render().el);
+            notDiv.append(
+                new attachView({
+                    model: this.currentModel,
+                    url  : '/uploadTasksFiles'
+                }).render().el
+            );
+            populate.get('#projectDd', '/projects/getForDd', {}, 'name', this);
+            populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Tasks"}, "name", this);
+            populate.get2name("#assignedToDd", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
+            populate.getPriority("#priorityDd", this);
+            this.delegateEvents(this.events);
+            $('#StartDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
+            $('#deadline').datepicker({
+                dateFormat : "d M, yy",
+                changeMonth: true,
+                changeYear : true,
+                minDate    : new Date()
+            });
+            //for input type number
+            this.$el.find("#logged").spinner({
+                min: 0,
+                max: 1000
+            });
+            this.$el.find("#estimated").spinner({
+                min: 0,
+                max: 1000
+            });
+            return this;
+        }
+
     });
+    return EditView;
+});
