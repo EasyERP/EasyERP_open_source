@@ -339,6 +339,24 @@ define([
             this.changeLocationHash(1, count);
         },
 
+        showFilteredPage: function (filter) {
+            this.$el.find('.thumbnailElement').remove();
+            this.startTime = new Date();
+
+            this.filter = filter;
+
+            if (Object.keys(filter).length === 0) {
+                this.filter = {};
+            }
+
+            this.changeLocationHash(null, this.collection.pageSize, filter);
+            this.collection.getFirstPage({
+                filter     : filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            });
+        },
+
         lastPage: function (options) {
             var count = options.count;
             var collection = this.collection;
@@ -510,37 +528,6 @@ define([
             } else {
                 this.listRowClick(e);
             }
-        },
-
-        showFilteredContent: function (tabName) {
-            var itemsNumber = $("#itemsNumber").text();
-            var creationOptions;
-
-            var defaultFilters = new DefFilters(App.currentUser._id);
-            var filter = defaultFilters.getDefFilter(this.contentType, tabName);
-
-            var filterExtension = this.getFilterExtention();
-
-            this.tabName = tabName;
-
-            creationOptions = {
-                viewType     : this.viewType,
-                filter       : filter,
-                parentId     : this.parentId,
-                newCollection: false
-            };
-
-            creationOptions.filter = _.extend(creationOptions.filter, filterExtension);
-
-            this.defFilter = $.extend({}, creationOptions.filter);
-            this.filter = $.extend({}, creationOptions.filter);
-
-            if (this.filterView) {
-                this.filterView.trigger('tabsChanged', this.defFilter);
-            }
-
-            this.changeLocationHash(1, itemsNumber, filter);
-            this.collection.getPage(1, creationOptions);
         },
 
         setPagination: function (options) {
