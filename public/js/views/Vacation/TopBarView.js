@@ -1,64 +1,24 @@
 define([
-        'text!templates/Vacation/TopBarTemplate.html',
-        'custom',
-        'common',
-        'constants'
-    ],
-    function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
-        var TopBarView = Backbone.View.extend({
-            el         : '#top-bar',
-            contentType: CONSTANTS.VACATION,
-            template   : _.template(ContentTopBarTemplate),
+    'views/topBarViewBase',
+    'text!templates/Vacation/TopBarTemplate.html',
+    'custom',
+    'common',
+    'constants'
+], function (BaseView, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+    'use strict';
 
-            events: {
-                "click a.changeContentView": 'changeContentViewType',
-                "click #top-bar-deleteBtn" : "deleteEvent",
-                "click #top-bar-saveBtn"   : "saveEvent",
-                "click #top-bar-editBtn"   : "editEvent",
-                "click #top-bar-createBtn" : "createEvent"
-            },
+    var TopBarView = BaseView.extend({
+        el         : '#top-bar',
+        contentType: CONSTANTS.VACATION,
+        template   : _.template(ContentTopBarTemplate),
 
-            changeContentViewType: function (e) {
-                Custom.changeContentViewType(e, this.contentType, this.collection);
-            },
-
-            initialize: function (options) {
-                if (options.collection) {
-                    this.collection = options.collection;
-                }
-                this.render();
-            },
-
-            createEvent: function (event) {
-                event.preventDefault();
-                this.trigger('createEvent');
-            },
-
-            render: function () {
-                $('title').text(this.contentType);
-                var viewType = Custom.getCurrentVT();
-                this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
-
-                Common.displayControlBtnsByActionType('Content', viewType);
-                return this;
-            },
-
-            /*editEvent: function (event) {
-                event.preventDefault();
-                this.trigger('editEvent');
-            },*/
-
-            deleteEvent: function (event) {
-                event.preventDefault();
-                this.trigger('deleteEvent');
-            },
-
-            saveEvent: function (event) {
-                event.preventDefault();
-
-                this.trigger('saveEvent');
+        initialize: function (options) {
+            if (options.collection) {
+                this.collection = options.collection;
             }
-        });
-
-        return TopBarView;
+            this.render();
+        }
     });
+
+    return TopBarView;
+});

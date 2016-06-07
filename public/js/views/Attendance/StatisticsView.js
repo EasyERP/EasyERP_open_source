@@ -35,14 +35,14 @@ define([
             if (now < last) {
                 onePercent = last / 100;
                 numberPercent = now / onePercent;
-                numberPercent = "DOWN " + Math.abs(Math.ceil(100 - numberPercent)) + "%";
+                numberPercent = 'DOWN ' + Math.abs(Math.ceil(100 - numberPercent)) + '%';
             } else {
                 if (last === 0) {
-                    numberPercent = "UP " + Math.ceil(now * 100) + "%";
+                    numberPercent = 'UP ' + Math.ceil(now * 100) + '%';
                 } else {
                     onePercent = last / 100;
                     numberPercent = (now - last) / onePercent;
-                    numberPercent = "UP " + Math.ceil(numberPercent) + "%";
+                    numberPercent = 'UP ' + Math.ceil(numberPercent) + '%';
                 }
             }
             return numberPercent;
@@ -81,7 +81,7 @@ define([
                 percentEducation: percentEducation
             }));
 
-            $('#timeRecivingDataFromServer').html("Created in " + (new Date() - startTime) + " ms");
+            $('#timeRecivingDataFromServer').html('Created in ' + (new Date() - startTime) + ' ms');
         }
     });
 

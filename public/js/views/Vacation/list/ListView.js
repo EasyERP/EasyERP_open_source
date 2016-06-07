@@ -16,7 +16,9 @@ define([
     'constants',
     'async',
     'moment'
-], function (Backbone, $, _, listTemplate, cancelEdit, listTotal, selectView, createView, listItemView, vacationModel, vacationCollection, editCollection, common, dataService, CONSTANTS, async, moment) {
+], function (Backbone, $, _, listTemplate, cancelEdit, listTotal, SelectView, CreateView, ListItemView, VacationModel, vacationCollection, EditCollection, common, dataService, CONSTANTS, async, moment) {
+    'use strict';
+
     var VacationListView = Backbone.View.extend({
         el                : '#content-holder',
         defaultItemsNumber: null,
@@ -24,9 +26,9 @@ define([
         filter            : null,
         sort              : null,
         newCollection     : null,
-        page              : null, //if reload page, and in url is valid page
-        contentType       : CONSTANTS.VACATION,//needs in view.prototype.changeLocationHash
-        viewType          : 'list',//needs in view.prototype.changeLocationHash
+        page              : null, // if reload page, and in url is valid page
+        contentType       : CONSTANTS.VACATION, // needs in view.prototype.changeLocationHash
+        viewType          : 'list', // needs in view.prototype.changeLocationHash
         changedModels     : {},
         holidayId         : null,
         editCollection    : null,
@@ -37,27 +39,24 @@ define([
         initialize: function (options) {
             this.startTime = options.startTime;
             this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
-            this.filter = options.filter ? options.filter : {};
-            this.sort = options.sort ? options.sort : {};
+            this.filter = options.filter || {};
+            this.sort = options.sort || {};
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.newCollection = options.newCollection;
             this.deleteCounter = 0;
             this.page = options.collection.page;
             this.render();
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = vacationCollection;
-            this.daysCount;
         },
 
         events: {
-            "click .fa-trash-o"                                : "deleteItemPressed",
-            // "blur td.editable input"                                          : "hideInput",
-            "click td.editable, .current-selected"             : "showNewSelect",
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
-            "click .oe_sortable"                               : "goSort",
-            "change .editable "                                : "setEditable",
-            "click"                                            : "hideNewSelect"
+            'click .fa-trash-o'                                : 'deleteItemPressed',
+            // 'blur td.editable input'                                          : 'hideInput',
+            'click td.editable, .current-selected'             : 'showNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
+            'click .oe_sortable'                               : 'goSort',
+            'change .editable '                                : 'setEditable',
+            click                                              : 'hideNewSelect'
         },
 
         hideNewSelect: function () {
@@ -77,13 +76,14 @@ define([
         },
 
         deleteItemPressed: function (e) {
+            var target = $(e.target);
+            var tr = target.closest('tr');
+            var modelId = tr.attr('data-id');
+
             e.stopPropagation();
             e.preventDefault();
-            var target = $(e.target);
-            var tr = target.closest("tr");
-            var modelId = tr.attr('data-id');
-            this.deleteItem(modelId);
 
+            this.deleteItem(modelId);
         },
 
         savedNewModel: function (modelObject) {
@@ -94,10 +94,10 @@ define([
 
             if (modelObject) {
                 this.responseObj['#employee'] = this.responseObj['#employee'].filter(function (item) {
-                    return item.name !== modelObject.employee.name
+                    return item.name !== modelObject.employee.name;
                 });
                 modelId = modelObject._id;
-                savedRow.attr("data-id", modelId);
+                savedRow.attr('data-id', modelId);
                 savedRow.removeAttr('id');
             }
 
@@ -113,17 +113,19 @@ define([
             if (context.editCollection) {
                 context.editCollection.unbind();
             }
-            context.editCollection = new editCollection(context.collection.toJSON());
+            context.editCollection = new EditCollection(context.collection.toJSON());
             context.editCollection.on('saved', context.savedNewModel, context);
             context.editCollection.on('updated', context.updatedOptions, context);
         },
 
         resetCollection: function (model) {
+            var id;
+
             if (model && model._id) {
-                model = new vacationModel(model);
+                model = new VacationModel(model);
                 this.collection.add(model);
             } else {
-                for (var id in this.changedModels) {
+                for (id in this.changedModels) {
                     model = this.editCollection.get(id);
                     model.set(this.changedModels[id]);
                 }
@@ -161,19 +163,20 @@ define([
         saveItem: function () {
             var model;
             var newElements = this.$el.find('#false');
+            var id;
 
             this.editCollection.on('saved', this.savedNewModel, this);
             this.editCollection.on('updated', this.updatedOptions, this);
 
-            if ( newElements && _.isEmpty(this.changedModels)){
+            if (newElements && _.isEmpty(this.changedModels)) {
                 App.render({
-                    type: 'error',
-                    message: "Please choose employee or cancel changes"
+                    type   : 'error',
+                    message: 'Please choose employee or cancel changes'
                 });
                 return false;
             }
 
-            for (var id in this.changedModels) {
+            for (id in this.changedModels) {
                 model = this.editCollection.get(id);
                 model.changed = this.changedModels[id];
                 model.changed.year = this.yearElement.text();
@@ -183,6 +186,7 @@ define([
                     this.deleteItem(id);
                 }
             }
+
             this.editCollection.save();
         },
 
@@ -239,8 +243,9 @@ define([
 
         monthForDD: function (content) {
             var array = [];
+            var i;
 
-            for (var i = 0; i < 12; i++) {
+            for (i = 0; i < 12; i++) {
                 array.push({
                     _id : moment().month(i).format('M'),
                     name: moment().month(i).format('MMMM')
@@ -250,27 +255,30 @@ define([
             content.responseObj['#monthSelect'] = array;
 
         },
-        yearForDD : function (content) {
+
+        yearForDD: function (content) {
             dataService.getData('/vacation/getYears', {}, function (response, context) {
                 context.responseObj['#yearSelect'] = response;
-            }, content)
+            }, content);
         },
 
         filterEmployeesForDD: function (content) {
             var currentNames = [];
+
             this.collection.forEach(function (element) {
                 var employee = element.attributes.employee;
                 currentNames.push(employee.name);
             });
 
-                dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (data) {
-                    var employees = [];
-                    _.each(data.data, function (employee) {
-                        employee.name = employee.name.first + ' ' + employee.name.last;
-                        if (!~currentNames.indexOf(employee.name)) {
-                            employees.push(employee);
-                        }
-                    });
+            dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (data) {
+                var employees = [];
+
+                _.each(data.data, function (employee) {
+                    employee.name = employee.name.first + ' ' + employee.name.last;
+                    if (currentNames.indexOf(employee.name) === -1) {
+                        employees.push(employee);
+                    }
+                });
 
                 content.responseObj['#employee'] = employees;
             });
@@ -298,7 +306,7 @@ define([
 
             if ($target.hasClass('current-selected')) {
 
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj,
                     number     : 12
@@ -307,7 +315,7 @@ define([
 
             } else {
 
-                this.selectView = new selectView({
+                this.selectView = new SelectView({
                     e          : e,
                     responseObj: this.responseObj
                 });
@@ -321,13 +329,13 @@ define([
         },
 
         setEditable: function (td) {
-            var tr;
+            // var tr;
 
             if (!td.parents) {
                 td = $(td.target).closest('td');
             }
 
-            tr = td.parents('tr');
+            // tr = td.parents('tr');
 
             td.addClass('edited');
 
@@ -341,7 +349,7 @@ define([
         setChangedValue: function () {
             if (!this.changed) {
                 this.changed = true;
-                this.showSaveCancelBtns()
+                this.showSaveCancelBtns();
             }
         },
 
@@ -379,22 +387,19 @@ define([
 
             if (!sortClass) {
                 target.addClass('sortUp');
-                sortClass = "sortUp";
+                sortClass = 'sortUp';
             }
+            
             switch (sortClass) {
-                case "sortDn":
-                {
-                    target.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                case 'sortDn':
+                    target.parent().find('th').removeClass('sortDn').removeClass('sortUp');
                     target.removeClass('sortDn').addClass('sortUp');
                     sortConst = 1;
-                }
                     break;
-                case "sortUp":
-                {
-                    target.parent().find("th").removeClass('sortDn').removeClass('sortUp');
+                case 'sortUp':
+                    target.parent().find('th').removeClass('sortDn').removeClass('sortUp');
                     target.removeClass('sortUp').addClass('sortDn');
                     sortConst = -1;
-                }
                     break;
             }
 
@@ -412,43 +417,25 @@ define([
                 return document;
             });
 
-            this.$el.find("#listTable").html('');
-            itemView = new listItemView({
+            this.$el.find('#listTable').html('');
+            itemView = new ListItemView({
                 collection: collection
             });
             this.$el.append(itemView.render());
         },
 
-        getTotalLength: function (currentNumber, itemsNumber, filter) {
-            dataService.getData('/holiday/totalCollectionLength', {
-                contentType  : this.contentType,
-                currentNumber: currentNumber,
-                filter       : filter,
-                newCollection: this.newCollection
-            }, function (response, context) {
-                var page = context.page || 1;
-                var length = context.listLength = response.count || 0;
-                if (itemsNumber * (page - 1) > length) {
-                    context.page = page = Math.ceil(length / itemsNumber);
-                    context.fetchSortCollection(context.sort);
-                    context.changeLocationHash(page, context.defaultItemsNumber, filter);
-                }
-                //context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
-            }, this);
-        },
-
         renderdSubHeader: function ($currentEl) {
             var subHeaderContainer;
-
             var month;
             var year;
-
+            var columnContainer;
+            var width;
             var date;
-
             var daysInMonth;
             var dateDay;
             var daysRow = '';
             var daysNumRow = '';
+            var i;
 
             subHeaderContainer = $currentEl.find('.subHeaderHolder');
 
@@ -459,7 +446,7 @@ define([
             daysInMonth = date.daysInMonth();
             dateDay = date;
 
-            for (var i = 1; i <= daysInMonth; i++) {
+            for (i = 1; i <= daysInMonth; i++) {
                 daysRow += '<th>' + dateDay.format('ddd') + '</th>';
                 daysNumRow += '<th>' + i + '</th>';
                 dateDay = date.add(1, 'd');
@@ -472,12 +459,12 @@ define([
 
             this.daysCount = daysInMonth;
 
-            var columnContainer = $('#columnForDays');
-            var width = 80 / daysInMonth;
+            columnContainer = $('#columnForDays');
+            width = 80 / daysInMonth;
 
             columnContainer.html('');
 
-            for (var i = daysInMonth; i > 0; i--) {
+            for (i = daysInMonth; i > 0; i--) {
                 columnContainer.append('<col width="' + width + '%">');
             }
 
@@ -486,7 +473,7 @@ define([
             $(subHeaderContainer[2]).replaceWith(daysNumRow);
         },
 
-        /*nextSelect: function (e) {
+        /* nextSelect: function (e) {
          this.showNewSelect(e, false, true);
          },
 
@@ -494,13 +481,14 @@ define([
          this.showNewSelect(e, true, false);
          },*/
 
-        /*showNewSelect: function (e, prev, next) {
+        /* showNewSelect: function (e, prev, next) {
          e.stopPropagation();
          populate.showSelect(e, prev, next, this);
 
          return false;
          },
          */
+
         changedDataOptions: function () {
             var month = this.monthElement.attr('data-content');
             var year = this.yearElement.attr('data-content');
@@ -512,7 +500,7 @@ define([
 
             this.changedModels = {};
 
-            this.collection.showMore(searchObject);
+            this.collection.getFirstPage(searchObject);
         },
 
         checkEmptyArray: function (array) {
@@ -522,21 +510,21 @@ define([
         },
 
         chooseOption: function (e) {
-            e.preventDefault();
-            var self = this;
+
+            // var self = this;
             var target = $(e.target);
-            var closestTD = target.closest("td");
+            var closestTD = target.closest('td');
             var targetElement = closestTD.length ? closestTD : target.closest("th").find('a');
-            var tr = target.closest("tr");
+            var tr = target.closest('tr');
             var tdTotalDays = $(tr).find('.totalDays');
             var modelId = tr.attr('data-id');
-            var id = target.attr("id");
-            var attr = targetElement.attr("id") || targetElement.data("content");
+            var id = target.attr('id');
+            var attr = targetElement.attr('id') || targetElement.data('content');
             var elementType = '#' + attr;
             var element = _.find(this.responseObj[elementType], function (el) {
                 return el._id === id;
             });
-            //ToDo refactor
+            // ToDo refactor
             var delHTML = '<span title="Delete" class="fa fa-trash-o"></span>';
 
             var editVacationModel;
@@ -546,7 +534,9 @@ define([
             var dayIndex;
             var dayTotalElement;
 
-            var findEmployee;
+            //  var findEmployee;
+
+            e.preventDefault();
 
             if (modelId) {
                 editVacationModel = this.editCollection.get(modelId);
@@ -577,17 +567,17 @@ define([
             }
 
             if (elementType === '#employee') {
-                //findEmployee = self.collection.filter(function (model) {
-                //    return model.get('employee')._id === element._id;
-                //});
-                //
-                //if (findEmployee.length > 0) {
-                //    tr.remove();
-                //    self.hideSaveCancelBtns();
-                //    self.changedModels[modelId]
-                //    alert(CONSTANTS.RESPONSES.DOUBLE_EMPLOYEE_VACATION);
-                //    return false;
-                //}
+                /* findEmployee = self.collection.filter(function (model) {
+                 return model.get('employee')._id === element._id;
+                 });
+
+                 if (findEmployee.length > 0) {
+                 tr.remove();
+                 self.hideSaveCancelBtns();
+                 self.changedModels[modelId]
+                 alert(CONSTANTS.RESPONSES.DOUBLE_EMPLOYEE_VACATION);
+                 return false;
+                 }*/
 
                 tr.find('[data-content="employee"]').html(delHTML + element.name);
                 tr.find('.department').text(element.department.name);
@@ -602,8 +592,8 @@ define([
 
             function checkDay(element, selectedClass) {
                 var className;
-                var employeesCount = dayTotalElement.text() === '' ? 0 : parseInt(dayTotalElement.text());
-                var vacDaysCount = tdTotalDays.text() === '' ? 0 : parseInt(tdTotalDays.text());
+                var employeesCount = dayTotalElement.text() === '' ? 0 : parseInt(dayTotalElement.text(), 10);
+                var vacDaysCount = tdTotalDays.text() === '' ? 0 : parseInt(tdTotalDays.text(), 10);
 
                 if (element.hasClass('V')) {
                     className = 'V';
@@ -639,7 +629,6 @@ define([
 
                 tdTotalDays.text(vacDaysCount);
                 !employeesCount ? dayTotalElement.text('') : dayTotalElement.text(employeesCount);
-
             }
 
             if (elementType === '#vacType') {
@@ -680,8 +669,9 @@ define([
             var totalArray = new Array(this.daysCount);
 
             async.each(collection, function (document) {
+                var i;
 
-                for (var i = self.daysCount - 1; i >= 0; i--) {
+                for (i = self.daysCount - 1; i >= 0; i--) {
                     if (document.vacArray[i]) {
                         totalArray[i] = totalArray[i] ? totalArray[i] += 1 : 1;
                     }
@@ -693,8 +683,6 @@ define([
         },
 
         render: function () {
-            $('.ui-dialog ').remove();
-
             var self = this;
             var $currentEl = this.$el;
             var collection;
@@ -703,6 +691,8 @@ define([
             var month = {};
 
             var listTotalEl;
+
+            $('.ui-dialog ').remove();
 
             month.number = this.startTime.getMonth() + 1;
             month.name = moment(this.startTime).format('MMMM');
@@ -735,62 +725,58 @@ define([
                 self.$listTable = $('#listTable');
             }, 10);
 
-            $(document).on("click", function (e) {
-                self.hideNewSelect();
-            });
-
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
-            /*renderContent: function () {
-                var $currentEl = this.$el;
-                var tBody = $currentEl.find('#listTable');
-                $("#top-bar-deleteBtn").hide();
-                $('#checkAll').prop('checked', false);
-                tBody.empty();
-                var itemView = new listItemView({
-                    collection : this.collection,
-                    page       : $currentEl.find("#currentShowPage").val(),
-                    itemsNumber: $currentEl.find("span#itemsNumber").text()
-                });
-                tBody.append(itemView.render());
+        /* renderContent: function () {
+         var $currentEl = this.$el;
+         var tBody = $currentEl.find('#listTable');
+         $("#top-bar-deleteBtn").hide();
+         $('#checkAll').prop('checked', false);
+         tBody.empty();
+         var itemView = new listItemView({
+         collection : this.collection,
+         page       : $currentEl.find("#currentShowPage").val(),
+         itemsNumber: $currentEl.find("span#itemsNumber").text()
+         });
+         tBody.append(itemView.render());
 
-            var pagenation = this.$el.find('.pagination');
+         var pagenation = this.$el.find('.pagination');
 
-            if (this.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
-        },
+         if (this.collection.length === 0) {
+         pagenation.hide();
+         } else {
+         pagenation.show();
+         }
+         },
 
-        showFilteredPage: function () {
-            var itemsNumber;
+         showFilteredPage: function () {
+         var itemsNumber;
 
-            this.startTime = new Date();
-            this.newCollection = false;
-            var workflowIdArray = [];
-            $('.filter-check-list input:checked').each(function () {
-                workflowIdArray.push($(this).val());
-            });
-            this.filter = this.filter || {};
-            this.filter['workflow'] = workflowIdArray;
+         this.startTime = new Date();
+         this.newCollection = false;
+         var workflowIdArray = [];
+         $('.filter-check-list input:checked').each(function () {
+         workflowIdArray.push($(this).val());
+         });
+         this.filter = this.filter || {};
+         this.filter['workflow'] = workflowIdArray;
 
-            itemsNumber = $("#itemsNumber").text();
-            $("#top-bar-deleteBtn").hide();
-            $('#checkAll').prop('checked', false);
+         itemsNumber = $("#itemsNumber").text();
+         $("#top-bar-deleteBtn").hide();
+         $('#checkAll').prop('checked', false);
 
-                this.changeLocationHash(1, itemsNumber, this.filter);
-                this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-                this.getTotalLength(null, itemsNumber, this.filter);
-            },*/
+         this.changeLocationHash(1, itemsNumber, this.filter);
+         this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
+         this.getTotalLength(null, itemsNumber, this.filter);
+         },*/
 
         showMoreContent: function (newModels) {
             var holder = this.$el;
             var collection = newModels.toJSON();
             var listTotalEl;
 
-            this.editCollection = new editCollection(collection);
+            this.editCollection = new EditCollection(collection);
 
             this.renderTable(collection);
 
@@ -803,7 +789,7 @@ define([
             this.hideSaveCancelBtns();
 
             holder.find('#timeRecivingDataFromServer').remove();
-            holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
         createItem: function () {
@@ -815,7 +801,7 @@ define([
                 year      : this.yearElement.text()
             };
 
-            var model = new vacationModel(startData);
+            var model = new VacationModel(startData);
 
             startData.cid = model.cid;
 
@@ -823,7 +809,7 @@ define([
                 this.showSaveCancelBtns();
                 this.editCollection.add(model);
 
-                new createView(startData);
+                new CreateView(startData);
             }
         },
 
@@ -833,7 +819,7 @@ define([
             return !!newRow.length;
         },
 
-        deleteItemsRender: function (deleteCounter, deletePage) {
+        deleteItemsRender: function (/* deleteCounter, deletePage*/) {
             this.renderTable(this.collection.toJSON());
 
             this.editCollection.reset(this.collection.models);
@@ -882,11 +868,12 @@ define([
                             delete self.changedModels[id];
                             self.deleteItemsRender(1, 1);
                         },
-                        error  : function (model, res) {
-                            if (res.status === 403 && index === 0) {
+
+                        error: function (model, res) {
+                            if (res.status === 403) {
                                 App.render({
                                     type   : 'error',
-                                    message: "You do not have permission to perform this action"
+                                    message: 'You do not have permission to perform this action'
                                 });
                             }
                             self.deleteItemsRender(1, 1);
@@ -919,7 +906,8 @@ define([
 
                 if (!id) {
                     return cb('Empty id');
-                } else if (id.length < 24) {
+                }
+                if (id.length < 24) {
                     tr.remove();
                     model = self.changedModels;
 
