@@ -48,7 +48,7 @@
             return false;
         },
 
-        hide: function (e) {
+       /* hide: function (e) {
             if (!$(e.target).closest('.filter-check-list').length) {
                 $('.allNumberPerPage').hide();
 
@@ -57,7 +57,7 @@
                     this.showFilteredPage();
                 }
             }
-        },
+        },*/
 
         hideItemsNumber: function (e) {
             var el = e.target;
