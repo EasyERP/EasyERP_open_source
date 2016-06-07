@@ -316,23 +316,9 @@ describe('journalEntries Specs', function () {
         });
 
         it('should get data to export to Xlsx', function (done) {
-            var query = {
-                filter: {
-                    startDate: {
-                        key  : 'startDate',
-                        value: '1 Feb, 2016'
-                    },
-
-                    endDate: {
-                        key  : 'endDate',
-                        value: '25 Feb, 2016'
-                    }
-                }
-            };
 
             aggent
-                .get('journalEntries/exportToXlsx')
-                .query(query)
+                .get('journalEntries/exportToCsv/%7B%22startDate%22%3A%7B%22key%22%3A%22startDate%22%2C%22value%22%3A%222016-05-01T14%3A36%3A15.282Z%22%7D%2C%22endDate%22%3A%7B%22key%22%3A%22endDate%22%2C%22value%22%3A%222016-05-31T20%3A59%3A59.999Z%22%7D%7D')
                 .expect(200)
                 .end(function (err, res) {
                     if (err) {
@@ -344,23 +330,9 @@ describe('journalEntries Specs', function () {
         });
 
         it('should get data to export to Csv', function (done) {
-            var query = {
-                filter: {
-                    startDate: {
-                        key  : 'startDate',
-                        value: '1 Feb, 2016'
-                    },
-                    
-                    endDate: {
-                        key  : 'endDate',
-                        value: '25 Feb, 2016'
-                    }
-                }
-            };
 
             aggent
-                .get('journalEntries/exportToCsv')
-                .query(query)
+                .get('journalEntries/exportToCsv/%7B%22startDate%22%3A%7B%22key%22%3A%22startDate%22%2C%22value%22%3A%222016-05-01T14%3A36%3A15.282Z%22%7D%2C%22endDate%22%3A%7B%22key%22%3A%22endDate%22%2C%22value%22%3A%222016-05-31T20%3A59%3A59.999Z%22%7D%7D')
                 .expect(200)
                 .end(function (err, res) {
                     if (err) {
