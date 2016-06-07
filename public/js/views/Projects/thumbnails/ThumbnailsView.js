@@ -7,14 +7,13 @@
     'views/thumbnailsViewBase',
     'views/Projects/EditView',
     'views/Projects/CreateView',
-    'views/Projects/form/FormView',
     'views/Filter/FilterView',
     'dataService',
     'common',
     'constants',
     'populate',
     'custom'
-], function (Backbone, $, _, thumbnailsItemTemplate, stagesTamplate, BaseView, EditView, CreateView, formView, filterView, dataService, common, CONSTANTS, populate, custom) {
+], function (Backbone, $, _, thumbnailsItemTemplate, stagesTamplate, BaseView, EditView, CreateView, FilterView, dataService, common, CONSTANTS, populate, custom) {
     'use strict';
     var ProjectThumbnalView = BaseView.extend({
         el           : '#content-holder',
@@ -143,11 +142,7 @@
 
             common.getImages(ids, CONSTANTS.URLS.EMPLOYEES + 'getEmployeesImages');
         },
-
-        pushStages: function (stages) {
-            this.stages = stages;
-        },
-
+        
         gotoEditForm: function (e) {
             var id;
 
@@ -184,15 +179,7 @@
             $currentEl.html('');
             $currentEl.append(this.template({collection: this.collection.toJSON()}));
 
-            this.bind('incomingStages', this.pushStages, this);
-
-            common.populateWorkflowsList('Projects', '.filter-check-list', '', '/workflows', null, function (stages) {
-                var stage = (self.filter) ? self.filter.workflow || [] : [];
-
-                self.trigger('incomingStages', stages);
-            });
-
-            self.filterView = new filterView({contentType: self.contentType});
+            self.filterView = new FilterView({contentType: self.contentType});
 
             self.filterView.bind('filter', function (filter) {
                 self.showFilteredPage(filter);

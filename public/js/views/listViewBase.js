@@ -70,9 +70,10 @@ define([
             }
 
             $holder.find('#timeRecivingDataFromServer').remove();
-            $holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
+        // todo fixit
         alpabeticalRender: function (e) {
             var target;
             var itemsNumber = $('#itemsNumber').text();
@@ -95,6 +96,7 @@ define([
 
                 target.parent().find('.current').removeClass('current');
                 target.addClass('current');
+
                 if ($(e.target).text() === 'All') {
                     delete this.filter;
                     delete App.filter.letter;
@@ -111,7 +113,7 @@ define([
                     this.trigger('filter', App.filter);
                 }, 10);
 
-            $("#top-bar-deleteBtn").hide();
+            $('#top-bar-deleteBtn').hide();
             $('#checkAll').prop('checked', false);
 
             this.changeLocationHash(1, itemsNumber, this.filter);
@@ -126,20 +128,20 @@ define([
             this.hasAlphabet = true;
 
             common.buildAphabeticArray(this.collection, function (arr) {
-                $("#startLetter").remove();
+                self.$el.find('#startLetter').remove();
                 self.alphabeticArray = arr;
-                //$currentEl.prepend(_.template(aphabeticTemplate, { alphabeticArray: self.alphabeticArray, selectedLetter: (self.selectedLetter == "" ? "All" : self.selectedLetter), allAlphabeticArray: self.allAlphabeticArray }));
-                $('#searchContainer').after(_.template(aphabeticTemplate, {
+                self.$el.find('#searchContainer').after(_.template(aphabeticTemplate, {
                     alphabeticArray   : self.alphabeticArray,
                     allAlphabeticArray: self.allAlphabeticArray
                 }));
 
-                currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : "All";
+                currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : 'All';
+
                 if (currentLetter) {
                     $('#startLetter').find('a').each(function () {
                         var target = $(this);
-                        if (target.text() == currentLetter) {
-                            target.addClass("current");
+                        if (target.text() === currentLetter) {
+                            target.addClass('current');
                         }
                     });
                 }
@@ -172,7 +174,7 @@ define([
         },
 
         renderFilter: function (self, baseFilter) {
-            self.filterView = new this.filterView({
+            self.filterView = new this.FilterView({
                 contentType: self.contentType
             });
 
@@ -194,6 +196,8 @@ define([
         },
 
         deleteItemsRender: function (deleteCounter, deletePage) {
+            var pagenation;
+
             $('#checkAll').prop('checked', false);
             dataService.getData(this.totalCollectionLengthUrl, {
                 filter       : this.filter,
@@ -209,7 +213,8 @@ define([
                 newCollection: this.newCollection
             });
 
-            var pagenation = this.$el.find('.pagination');
+            pagenation = this.$el.find('.pagination');
+
             if (this.collection.length === 0) {
                 pagenation.hide();
             } else {
@@ -218,7 +223,7 @@ define([
         },
 
         exportToCsv: function () {
-            //todo change after routes refactoring
+            // todo change after routes refactoring
             var filterString = '';
             var tempExportToCsvUrl = '';
 
@@ -239,7 +244,7 @@ define([
         exportToXlsx: function () {
             var filterString = '';
             var tempExportToXlsxUrl = '';
-            //todo change after routes refactoring
+            // todo change after routes refactoring
             if (this.exportToXlsxUrl) {
                 tempExportToXlsxUrl = this.exportToXlsxUrl;
                 if (this.filter) {
@@ -257,14 +262,11 @@ define([
         },
 
         fileSizeIsAcceptable: function (file) {
-            if (!file) {
-                return false;
-            }
-            return file.size < App.File.MAXSIZE;
+            return !!file && file.size < App.File.MAXSIZE;
         },
 
         importFiles: function (context) {
-            new AttachView({
+            return new AttachView({
                 modelName: context.contentType,
                 import   : true
             });

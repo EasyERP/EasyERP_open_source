@@ -7,20 +7,19 @@ define([
     'views/Projects/CreateView',
     'views/Projects/list/ListItemView',
     'views/Projects/EditView',
-    'views/Projects/form/FormView',
     'models/ProjectsModel',
     'collections/Projects/filterCollection',
     'views/Filter/FilterView',
     'common',
     'dataService',
     'custom'
-], function ($, _, listViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, formView, currentModel, contentCollection, filterView, common, dataService, custom) {
-    var ProjectsListView = listViewBase.extend({
+], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, FilterView, common, dataService, custom) {
+    var ProjectsListView = ListViewBase.extend({
         createView       : CreateView,
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
-        contentCollection: contentCollection,
-        filterView       : filterView,
+        ContentCollection: ContentCollection,
+        FilterView       : FilterView,
         formUrl          : '#easyErp/Projects/form/',
         contentType      : 'Projects', //  needs in view.prototype.changeLocationHash
 
@@ -36,7 +35,7 @@ define([
             this.sort = options.sort;
             this.filter = options.filter;
             this.page = options.collection.currentPage;
-            this.contentCollection = contentCollection;
+            this.ContentCollection = ContentCollection;
 
             this.render();
         },
@@ -46,7 +45,6 @@ define([
             'click .newSelectList li'        : 'chooseOption',
             'click #health .health-container': 'showHealthDd',
             'click #health ul li div'        : 'chooseHealthDd'
-            // "click td:not(:has('input[type='checkbox']'))": "goToEditDialog",
         },
 
         chooseHealthDd: function (e) {
@@ -55,7 +53,7 @@ define([
             target.find("div a").attr("class", target$.attr("class")).attr("data-value", target$.attr("class").replace("health", "")).parents("#health").find("ul").toggle();
             var id = target.data("id");
             var model = this.collection.get(id);
-            
+
             model.save({health: target.find("div a").data("value")}, {
                 headers : {
                     mid: 39
@@ -66,7 +64,7 @@ define([
                     target$.parents("#health").find("ul").hide();
                 }
             });
-            
+
             return false;
         },
 
@@ -139,27 +137,26 @@ define([
          },*/
 
         /*renderCheckboxes: function () {
-            this.$el.find('#checkAll').click(function () {
+         this.$el.find('#checkAll').click(function () {
 
-                $(':checkbox:not(.notRemovable)').prop('checked', this.checked);
-                if ($("input.checkbox:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
-                } else {
-                    $("#top-bar-deleteBtn").hide();
-                }
-            });
-        },*/
+         $(':checkbox:not(.notRemovable)').prop('checked', this.checked);
+         if ($("input.checkbox:checked").length > 0) {
+         $("#top-bar-deleteBtn").show();
+         } else {
+         $("#top-bar-deleteBtn").hide();
+         }
+         });
+         },*/
 
         render: function () {
-            var self;
+            var itemView;
             var $currentEl;
+            var self;
 
             $('.ui-dialog ').remove();
-
             self = this;
-            $currentEl = this.$el;
 
-            var itemView;
+            $currentEl = this.$el;
 
             $currentEl.html('');
             $currentEl.append(_.template(listTemplate));
@@ -169,19 +166,14 @@ define([
                 itemsNumber: this.collection.namberToShow
             });
 
-            common.populateWorkflowsList("Projects", ".filter-check-list", "", "/Workflows", null, function (stages) {
-                var stage = (self.filter) ? self.filter.workflow || [] : [];
-                itemView.trigger('incomingStages', stages);
-            });
-
             $currentEl.append(itemView.render()); // added two parameters page and items number
 
             this.renderFilter(self);
 
-            //todo add to after main render
+            // todo add to after main render
             this.renderPagination($currentEl, this);
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
         }
 

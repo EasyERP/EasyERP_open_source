@@ -46,10 +46,10 @@ define([
             },
 
             events: {
-                "click .stageSelect"                       : "showNewSelect",
+                "click .stageSelect"                             : "showNewSelect",
                 "click  .list tbody td:not(.notForm, .validated)": "goToEditDialog",
-                "click .newSelectList li"                  : "chooseOption",
-                "click .selectList"                        : "showSelects"
+                "click .newSelectList li"                        : "chooseOption",
+                "click .selectList"                              : "showSelects"
             },
 
             showSelects: function (e) {
@@ -224,7 +224,7 @@ define([
                     },
                     error  : function () {
                         App.render({
-                            type: 'error',
+                            type   : 'error',
                             message: 'Please refresh browser'
                         });
                     }
