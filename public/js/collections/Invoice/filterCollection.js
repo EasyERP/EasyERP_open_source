@@ -9,7 +9,7 @@
     var InvoiceCollection = Parent.extend({
         model   : InvoiceModel,
         url     : CONSTANTS.URLS.INVOICE,
-        pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
+        pageSize: CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE,
 
         initialize: function (options) {
             var regex = /^sales/;
