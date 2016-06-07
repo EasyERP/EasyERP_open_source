@@ -3883,8 +3883,8 @@ var Module = function (models, event) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
         var JobsModel = models.get(req.session.lastDb, 'jobs', jobsSchema);
         var query = req.query;
-        var startDate = query.startDate;
-        var endDate = query.endDate;
+        var startDate = query.startDate || query.filter.startDate.value;
+        var endDate = query.endDate || query.filter.endDate.value;
         var findJobs;
         var composeReport;
         var waterfallTasks;

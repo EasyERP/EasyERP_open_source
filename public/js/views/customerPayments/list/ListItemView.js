@@ -2,9 +2,8 @@ define([
     'Backbone',
     'Underscore',
     'text!templates/customerPayments/list/ListTemplate.html',
-    'text!templates/customerPayments/list/ListTemplate.html',
     'helpers'
-], function (Backbone, _, PaymentListTemplate, ListTemplateForWTrack, helpers) {
+], function (Backbone, _, PaymentListTemplate, helpers) {
     'use strict';
 
     var PaymentListItemView = Backbone.View.extend({
@@ -19,7 +18,7 @@ define([
         render: function (options) {
             var el = (options && options.thisEl) ? options.thisEl : this.$el;
 
-            el.append(_.template(ListTemplateForWTrack, {
+            el.append(_.template(PaymentListTemplate, {
                 paymentCollection: this.collection.toJSON(),
                 startNumber      : this.startNumber,
                 currencySplitter : helpers.currencySplitter,

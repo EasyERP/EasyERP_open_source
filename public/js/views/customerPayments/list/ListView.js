@@ -3,7 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'views/listViewBase',
-    'text!templates/supplierPayments/list/ListHeader.html',
+    'text!templates/customerPayments/list/ListHeader.html',
     'text!templates/customerPayments/list/cancelTemplate.html',
     'views/customerPayments/list/ListItemView',
     'views/Filter/FilterView',
@@ -21,7 +21,7 @@ define([
     var PaymentListView = ListViewBase.extend({
 
         listTemplate     : listTemplate,
-        listItemView     : ListItemView,
+        ListItemView     : ListItemView,
         filterView       : filterView, // if reload page, and in url is valid page
         contentType      : 'customerPayments', // needs in view.prototype.changeLocationHash
         modelId          : null,

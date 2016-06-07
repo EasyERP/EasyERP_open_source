@@ -17,7 +17,7 @@ define([
 
     var ListView = listViewBase.extend({
         listTemplate            : listTemplate,
-        LstItemView             : ListItemView,
+        ListItemView             : ListItemView,
         filterView              : filterView,
         contentCollection       : contentCollection,
         contentType             : CONSTANTS.INVENTORYREPORT,
