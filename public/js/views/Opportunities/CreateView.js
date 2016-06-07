@@ -87,9 +87,9 @@ define([
                 holder.closest(".dialog-tabs").find("a.active").removeClass("active");
                 holder.addClass("active");
                 var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-                var dialog_holder = $(".dialog-tabs-items");
-                dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
-                dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
+                var dialogHolder = $(".dialog-tabs-items");
+                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
             getWorkflowValue: function (value) {

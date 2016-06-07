@@ -340,7 +340,7 @@ define([
             }
 
             $(document).on("click", function (e) {
-                self.hidePagesPopup(e);
+                self.hide(e);
             });
         },
 

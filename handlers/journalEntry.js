@@ -1052,16 +1052,14 @@ var Module = function (models, event) {
 
     this.exportToXlsx = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var filter = req.query.filter;
+        var filter = JSON.parse(req.params.filter);
         var filterObj = {};
         var type = req.query.type;
         var options;
         var startDate = filter.startDate.value;
         var endDate = filter.endDate.value;
         var matchObject;
-
-       // filter = JSON.parse(filter);
-
+        
         startDate = moment(new Date(startDate)).startOf('day');
         endDate = moment(new Date(endDate)).endOf('day');
 
@@ -1207,7 +1205,7 @@ var Module = function (models, event) {
 
     this.exportToCsv = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'journalEntry', journalEntrySchema);
-        var filter = req.query.filter;
+        var filter = JSON.parse(req.params.filter);
         var filterObj = {};
         var type = req.query.type;
         var options;
@@ -1225,8 +1223,6 @@ var Module = function (models, event) {
                 $lte: new Date(endDate)
             }
         };
-
-       // filter = JSON.parse(filter);
 
         if (filter) {
             filterObj.$and = caseFilter(filter);

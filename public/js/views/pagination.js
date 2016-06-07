@@ -149,7 +149,7 @@ define([
             return false;
         },
 
-        hidePagesPopup: function (e) {
+        hide: function (e) { // add by Liliya, hide all popups and selects, filterView and set changes to model
             var el = $(e.target);
             var $thisEl = this.$el;
 
@@ -159,9 +159,18 @@ define([
 
             $thisEl.find('.allNumberPerPage, .newSelectList').hide();
 
-            if (!el.closest('.search-view')) {
+            if (!el.closest('.search-view').length) {
                 $('.search-content').removeClass('fa-caret-up');
-                $thisEl.find('.search-options').addClass('hidden');
+                $('.search-options').addClass('hidden');
+            }
+
+            if (!$(e.target).closest('.filter-check-list').length) {
+                $('.allNumberPerPage').hide();
+
+                if ($('.filter-check-list').is(':visible')) {
+                    $('.filter-check-list').hide();
+                    this.showFilteredPage();
+                }
             }
 
             if (typeof(this.setChangedValueToModel) === 'function' && el.tagName !== 'SELECT') { // added for SetChangesToModel in ListView
@@ -339,6 +348,24 @@ define([
             this.changeLocationHash(1, count);
         },
 
+        showFilteredPage: function (filter) {
+            this.$el.find('.thumbnailElement').remove();
+            this.startTime = new Date();
+
+            this.filter = filter;
+
+            if (Object.keys(filter).length === 0) {
+                this.filter = {};
+            }
+
+            this.changeLocationHash(null, this.collection.pageSize, filter);
+            this.collection.getFirstPage({
+                filter     : filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            });
+        },
+
         lastPage: function (options) {
             var count = options.count;
             var collection = this.collection;
@@ -510,37 +537,6 @@ define([
             } else {
                 this.listRowClick(e);
             }
-        },
-
-        showFilteredContent: function (tabName) {
-            var itemsNumber = $("#itemsNumber").text();
-            var creationOptions;
-
-            var defaultFilters = new DefFilters(App.currentUser._id);
-            var filter = defaultFilters.getDefFilter(this.contentType, tabName);
-
-            var filterExtension = this.getFilterExtention();
-
-            this.tabName = tabName;
-
-            creationOptions = {
-                viewType     : this.viewType,
-                filter       : filter,
-                parentId     : this.parentId,
-                newCollection: false
-            };
-
-            creationOptions.filter = _.extend(creationOptions.filter, filterExtension);
-
-            this.defFilter = $.extend({}, creationOptions.filter);
-            this.filter = $.extend({}, creationOptions.filter);
-
-            if (this.filterView) {
-                this.filterView.trigger('tabsChanged', this.defFilter);
-            }
-
-            this.changeLocationHash(1, itemsNumber, filter);
-            this.collection.getPage(1, creationOptions);
         },
 
         setPagination: function (options) {

@@ -168,28 +168,6 @@ describe('Holidays Specs', function () {
                 });
         });
 
-        it('should get Holidays length', function (done) {
-
-            aggent
-                .get('holiday/totalCollectionLength')
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('count')
-                        .and.to.be.gte(1);
-
-                    done();
-                });
-        });
-
         it('should delete Holiday', function (done) {
             aggent
                 .delete('holiday/' + id)
