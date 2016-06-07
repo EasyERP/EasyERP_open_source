@@ -1,9 +1,13 @@
-define([], function () {
+define(['jQuery'], function ($) {
     return {
         subscribeCollectionEvents: function (collection, contentView) {
             collection.bind('showmore', contentView.showMoreContent, contentView);
             collection.bind('showmoreAlphabet', contentView.showMoreAlphabet, contentView);
             collection.bind('fetchFinished', contentView.setPagination, contentView);
+
+            $(document).on('click', function (e) {
+                contentView.hide(e);
+            });
         },
 
         subscribeTopBarEvents: function (topBarView, contentView) {
