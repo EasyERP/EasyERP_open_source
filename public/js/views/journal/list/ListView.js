@@ -254,7 +254,7 @@ define([
                         $('#top-bar-deleteBtn').show();
                         $('#top-bar-createBtn').hide();
                     }
-                    $('#check_all').prop('checked', false);
+                    $('#checkAll').prop('checked', false);
                     if (checkLength === this.collection.length) {
                         $('#checkAll').prop('checked', true);
                     }
@@ -539,9 +539,7 @@ define([
             itemView.bind('incomingStages', this.pushStages, this);
 
             $currentEl.append(itemView.render());// added two parameters page and items number
-
-            this.renderCheckboxes();
-
+            
             this.renderPagination($currentEl, this);
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');

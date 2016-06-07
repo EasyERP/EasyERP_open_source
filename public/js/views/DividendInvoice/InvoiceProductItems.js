@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 27.04.2015.
- */
 define([
     'jQuery',
     'Underscore',
@@ -18,9 +15,9 @@ define([
 
         events: {
             'click .addProductItem'                            : 'getProducts',
-            "click .newSelectList li.miniStylePagination"      : "notHide",
+            'click .newSelectList li.miniStylePagination'      : 'notHide',
             'change input.statusInfo'                          : 'recalculateTaxes',
-            "click .newSelectList li:not(.miniStylePagination)": "chooseOption",
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'keyup input.statusInfo'                           : 'recalculateTaxes'
         },
 
@@ -36,7 +33,6 @@ define([
                 this.notAddItem = !!options.notAddItem;
                 this.paid = options.paid;
             }
-            ;
 
             this.forSales = options.forSales;
 
@@ -46,15 +42,15 @@ define([
         template: _.template(productItemTemplate),
 
         getProducts: function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
             var target = $(e.target);
             var parrent = target.closest('tbody');
             var parrentRow = parrent.find('.productItem').last();
-            var rowId = parrentRow.attr("data-id");
+            var rowId = parrentRow.attr('data-id');
             var trEll = parrent.find('tr.productItem');
 
+            e.preventDefault();
+            e.stopPropagation();
+            
             if (rowId === undefined || rowId !== 'false') {
                 if (!trEll.length) {
                     return parrent.prepend(_.template(ProductInputContent));
@@ -67,15 +63,15 @@ define([
 
         chooseOption: function (e) {
             var target = $(e.target);
-            var parrent = target.parents("td");
-            var trEl = target.parents("tr");
-            var _id = target.attr("id");
+            var parrent = target.parents('td');
+            var trEl = target.parents('tr');
+            var _id = target.attr('id');
 
             trEl.attr('data-id', _id);
 
-            parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
+            parrent.find('.current-selected').text(target.text()).attr('data-id', _id);
 
-            $(".newSelectList").hide();
+            $('.newSelectList').hide();
         },
 
         recalculateTaxes: function (parent) {
@@ -100,7 +96,7 @@ define([
             var totalContainer = $thisEl.find('#totalAmount');
             var balanceContainer = $thisEl.find('#balance');
             var resultForCalculate = $thisEl.find('tr.productItem');
-
+            var i;
             var totalUntax = 0;
             var totalEls = resultForCalculate.length;
             var $currentEl;
@@ -108,7 +104,7 @@ define([
             var cost;
 
             if (totalEls) {
-                for (var i = totalEls - 1; i >= 0; i--) {
+                for (i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
                     cost = $currentEl.find('[data-name="price"] input').val();
                     totalUntax += parseFloat(cost);

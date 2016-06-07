@@ -17,7 +17,7 @@ define([
 
     var ListView = listViewBase.extend({
         listTemplate            : listTemplate,
-        LstItemView             : ListItemView,
+        ListItemView             : ListItemView,
         filterView              : filterView,
         contentCollection       : contentCollection,
         contentType             : CONSTANTS.INVENTORYREPORT,
@@ -161,9 +161,7 @@ define([
             });
 
             $currentEl.prepend(itemView.render());
-
-            this.renderCheckboxes();
-
+            
             this.calcTotal();
 
             this.renderPagination($currentEl, this);

@@ -179,7 +179,6 @@ define([
                     //$currentEl.append(itemView.render());
                 }
 
-                self.renderCheckboxes();
                 self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [true]}});
 

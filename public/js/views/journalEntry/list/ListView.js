@@ -177,39 +177,6 @@ define([
             });
         },
 
-        showMoreContent: function (newModels) {
-            var $holder = this.$el;
-            var page = $holder.find('#currentShowPage').val();
-            var itemView;
-            var pagination;
-
-            $holder.find('#listTable').empty();
-
-            itemView = new this.listItemView({
-                collection : newModels,
-                page       : page,
-                itemsNumber: this.defaultItemsNumber
-            });
-
-            $holder.append(itemView.render());
-
-            itemView.undelegateEvents();
-
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-
-            pagination = $holder.find('.pagination');
-            if (newModels.length !== 0) {
-                pagination.show();
-            } else {
-                pagination.hide();
-            }
-            $('#top-bar-deleteBtn').hide();
-            $('#checkAll').prop('checked', false);
-
-            $holder.find('#timeRecivingDataFromServer').remove();
-            $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-        },
-
         render: function () {
             var $currentEl;
             var itemView;
@@ -245,9 +212,7 @@ define([
             });
 
             $currentEl.prepend(itemView.render());
-
-            this.renderCheckboxes();
-
+            
             this.renderFilter(this);
 
             this.renderPagination($currentEl, this);

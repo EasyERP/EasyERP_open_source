@@ -159,7 +159,6 @@ define([
                     cellSpan: 5
                 }).render());
 
-                this.renderCheckboxes();
                 this.renderPagination($currentEl, this);
                 this.renderFilter(self);
 

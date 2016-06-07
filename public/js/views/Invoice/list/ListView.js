@@ -133,9 +133,7 @@ define([
                 $currentEl.append(itemView.render());
 
                 $currentEl.append(new ListTotalView({element: this.$el.find("#listTable"), cellSpan: 7}).render());
-
-                this.renderCheckboxes();
-
+                
                 this.renderPagination($currentEl, this);
                 this.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [false]}});
 
