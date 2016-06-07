@@ -40,8 +40,6 @@ define([
         render: function () {
             var self = this;
             var $currentEl = this.$el;
-            $('title').text(this.contentType);
-
             var start = moment().subtract(11, 'month').date(1);
             var startMonth = start.month() + 1;
             var startYear = start.isoWeekYear();
@@ -51,6 +49,8 @@ define([
             var year;
             var hired = this.dashCollection.get('hired');
             var fired = this.dashCollection.get('fired');
+
+            $('title').text(this.contentType);
 
             if (!arrOfDates || !arrOfDates.length) {
                 for (i = 0; i < 12; i++) {
@@ -83,7 +83,7 @@ define([
                 totalContainer.text(parseInt(hiredContainer.text(), 10) - parseInt(firedContainer.text(), 10));
             });
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
             return this;
         }
     });

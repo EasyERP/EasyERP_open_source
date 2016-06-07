@@ -3,12 +3,12 @@
  */
 define([
     'Backbone',
-    'jQuery',
+   /* 'jQuery',*/
     'Underscore',
     'text!templates/Attendance/monthTemplate.html',
     'views/Attendance/StatisticsView',
     'moment'
-], function (Backbone, $, _, ListTemplate, StatisticsView, moment) {
+], function (Backbone, /* $,*/ _, ListTemplate, StatisticsView, moment) {
     'use strict';
     var MonthView = Backbone.View.extend({
         el: '#attendanceMonth',
@@ -97,7 +97,7 @@ define([
                     self.monthCur = self.days[monthYear] ? self.days[monthYear][monthNumber + 1] : 0;
                 }
 
-                //ToDo review
+                // ToDo review
 
                 for (j = 0; j < startOfMonth; j++) {
                     self.monthArray[i].daysData[j] = {};
@@ -105,7 +105,7 @@ define([
                 }
 
                 for (j = startOfMonth; j < startOfMonth + dayCount; j++) {
-                    var day = new Date(monthYear, i, j - startOfMonth +1);
+                    day = new Date(monthYear, i, j - startOfMonth + 1);
 
                     day = day.getDay();
 
@@ -123,12 +123,13 @@ define([
                 }
 
                 if (self.monthCur) {
-                    var countVacation = self.monthCur[0].vacArray.length;
-                    var vacArray = self.monthCur[0].vacArray;
+                    countVacation = self.monthCur[0].vacArray.length;
+                    vacArray = self.monthCur[0].vacArray;
 
                     for (j = 0; j < countVacation; j++) {
                         for (k = j + startOfMonth - 1; k <= j + startOfMonth - 1; k++) {
-                            self.monthArray[i].daysData[k + 1].type = vacArray[j] ? vacArray[j] : '';
+                            self.monthArray[i].daysData[k + 1].type = vacArray[j] || '';
+
                             switch (vacArray[j]) {
                                 case 'V':
                                     self.vacationDays++;
@@ -161,6 +162,7 @@ define([
 
         render: function (options) {
             var self = this;
+            var statictics;
             var stat = options.statistic;
             var startTime = options.startTime;
             self.labels = options.labels;
@@ -174,7 +176,7 @@ define([
                 months: this.monthArray
             }));
 
-            var statictics = new StatisticsView({
+            statictics = new StatisticsView({
                 leaveDays  : self.daysLeave,
                 workingDays: self.workingDays,
                 vacation   : self.vacationDays,

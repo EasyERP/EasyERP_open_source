@@ -5,11 +5,12 @@ define([
     'views/Vacation/list/ListView',
     'views/Vacation/TopBarView',
     'views/Vacation/CreateView',
+    'helpers/eventsBinder',
     'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (fixtures, VacationsCollection, MainView, ListView, TopBarView, CreateView, $, chai, chaiJquery, sinonChai) {
+], function (fixtures, VacationsCollection, MainView, ListView, TopBarView, CreateView, eventsBinder, $, chai, chaiJquery, sinonChai) {
     'use strict';
     var expect;
 
@@ -4504,7 +4505,7 @@ define([
             });
 
             it('Try to fetch collection with error', function(){
-                var vacationUrl = new RegExp('\/vacation\/list', 'i');
+                var vacationUrl = new RegExp('\/vacation', 'i');
 
                 server.respondWith('GET', vacationUrl, [401, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
 
@@ -4519,7 +4520,7 @@ define([
             });
 
             it('Try to create TopBarView', function () {
-                var vacationUrl = new RegExp('\/vacation\/list', 'i');
+                var vacationUrl = new RegExp('\/vacation', 'i');
 
                 server.respondWith('GET', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
                 vacationsCollection = new VacationsCollection({
@@ -4528,6 +4529,7 @@ define([
                     contentType: 'Vacation'
                 });
                 server.respond();
+               // expect(vacationsCollection).to.have.lengthOf()
 
                 topBarView = new TopBarView({
                     collection: vacationsCollection
@@ -4563,7 +4565,7 @@ define([
 
                 it('Try to create listView', function (done) {
                     var $listHolder;
-                    var vacationUrl = new RegExp('\/vacation\/list', 'i');
+                    var vacationUrl = new RegExp('\/vacation', 'i');
                     var employeeUrl = new RegExp('\/employees\/getForDD', 'i');
 
                     server.respondWith('GET', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
@@ -4577,37 +4579,33 @@ define([
 
                     clock.tick(100);
 
+                    eventsBinder.subscribeCollectionEvents(vacationsCollection, listView);
+                    eventsBinder.subscribeTopBarEvents(topBarView, listView);
+
+                    vacationsCollection.trigger('fetchFinished', {
+                        totalRecords: vacationsCollection.totalRecords,
+                        currentPage : vacationsCollection.currentPage,
+                        pageSize    : vacationsCollection.pageSize
+                    });
+
                     $listHolder = listView.$el;
                     expect($listHolder).to.exist;
 
-                    topBarView.bind('copyEvent', listView.copy, listView);
-                    topBarView.bind('generateEvent', listView.generate, listView);
-                    topBarView.bind('createEvent', listView.createItem, listView);
-                    topBarView.bind('editEvent', listView.editItem, listView);
-                    topBarView.bind('saveEvent', listView.saveItem, listView);
-                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
-                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
-                    topBarView.bind('copyRow', listView.copyRow, listView);
-                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
-                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
-                    topBarView.bind('importEvent', listView.importFiles, listView);
-                    topBarView.bind('pay', listView.newPayment, listView);
-                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
-
-                    vacationsCollection.bind('showmore', listView.showMoreContent, listView);
 
                     done();
                 });
 
-                it('Try to sort list', function () {
+                it('Try to sort list', function (done) {
                     var $thSortEl = listView.$el.find('th[data-sort="employee.name"]');
+
 
                     $thSortEl.click();
                     $thSortEl.click();
                     expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('5717406fc6efb4847a5bc789');
 
                     $thSortEl.click();
-                    expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('570dfce948518bf55f3ef1d5');  //todo find out how it sort
+                    expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('570dfce948518bf55f3ef1d5');
+                    done(); // todo find out how it sort
                 });
 
                 it('Try to create vacation item', function () {
@@ -4620,6 +4618,7 @@ define([
                 });
 
                 it('Try to save item', function () {
+
                     var $prevBtn;
                     var $nextBtn;
                     var $needEmployee;
@@ -4628,6 +4627,8 @@ define([
                     var $needGrid = listView.$el.find('#false > td:nth-child(3)');
                     var $employeeSelect = listView.$el.find('#false > td.editable.employee');
                     var vacationUrl = new RegExp('\/vacation\/', 'i');
+
+                    this.timeout(4000);
 
                     $employeeSelect.click();
 
@@ -4671,6 +4672,7 @@ define([
                 });
 
                 it('Try to cancel changes on item', function(){
+                    windowConfirmStub.returns(true);
                     var $needType;
                     var $deleteBtn;
                     var $needGrid = listView.$el.find('#listTable > tr:nth-child(2) > td.editable:nth-child(3)');
@@ -4686,11 +4688,11 @@ define([
                 });
 
                 it('Try to show more with error', function(){
-                    var vacationUrl = new RegExp('\/vacation\/list', 'i');
+                    var vacationUrl = new RegExp('\/vacation', 'i');
                     var spyResponse;
 
                     server.respondWith('GET', vacationUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
-                    vacationsCollection.showMore();
+                    vacationsCollection.getFirstPage();
                     server.respond();
 
                     spyResponse = mainSpy.args[0][0];
@@ -4699,10 +4701,10 @@ define([
                 });
 
                 it('Try to show more with', function(){
-                    var vacationUrl = new RegExp('\/vacation\/list', 'i');
+                    var vacationUrl = new RegExp('\/vacation', 'i');
 
                     server.respondWith('GET', vacationUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeVacations)]);
-                    vacationsCollection.showMore();
+                    vacationsCollection.getFirstPage();
                     server.respond();
                 });
             });

@@ -3,12 +3,13 @@
  */
 define([
     'Backbone',
+    'collections/parent',
     'models/VacationModel',
     'constants'
-], function (Backbone, VacationModel, CONSTANTS) {
+], function (Backbone, Parent, VacationModel, CONSTANTS) {
     'use strict';
 
-    var VacationCollection = Backbone.Collection.extend({
+    var VacationCollection = Parent.extend({
         model      : VacationModel,
         url        : CONSTANTS.URLS.VACATION,
         viewType   : null,
@@ -65,9 +66,10 @@ define([
             this.sort();
         },
 
-        showMore: function (options) {
+       /* showMore: function (options) {
             var that = this;
             var filterObject = options || {};
+
             filterObject.month = (options && options.month) ? options.month.toString() : this.month.toString();
             filterObject.year = (options && options.year) ? options.year : this.year;
             this.fetch({
@@ -76,49 +78,53 @@ define([
                 success: function (models) {
                     that.trigger('showmore', models);
                 },
-                error  : function () {
+
+                error: function () {
                     App.render({
                         type   : 'error',
-                        message: "Some Error."
+                        message: 'Some Error.'
                     });
                 }
             });
-        },
+        },*/
 
         initialize: function (options) {
+            var page;
+
             this.sortOrder = 1;
             this.startTime = new Date();
             this.month = (this.startTime.getMonth() + 1).toString();
             this.year = (this.startTime.getFullYear()).toString();
             this.viewType = options.viewType;
             this.contentType = options.contentType;
-           /* if (options && options.viewType) {
-                this.url += options.viewType;
-            }*/
+            /* if (options && options.viewType) {
+             this.url += options.viewType;
+             }*/
+            function _errHandler(models, xhr) {
+                if (xhr.status === 401) {
+                    Backbone.history.navigate('#login', {trigger: true});
+                }
+            }
 
-            if (options && options.year) {
-                options.year = options.year;
-            } else {
+            options = options || {};
+
+            if (!options.year) {
                 options.year = this.year;
             }
 
-            if (options && options.month) {
-                options.month = options.month;
-            } else {
+            if (!options.month) {
                 options.month = this.month;
             }
 
-            this.fetch({
-                data   : options,
-                reset  : true,
-                success: function () {
-                },
-                error  : function (models, xhr) {
-                    if (xhr.status === 401) {
-                        Backbone.history.navigate('#login', {trigger: true});
-                    }
-                }
-            });
+
+            options.error = options.error || _errHandler;
+            page = options.page;
+
+            if (page) {
+                return this.getPage(page, options);
+            }
+
+            this.getFirstPage(options);
         }
     });
     return VacationCollection;

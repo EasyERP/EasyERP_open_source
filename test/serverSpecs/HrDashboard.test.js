@@ -21,7 +21,7 @@ describe('Dashboard Vacation Specs', function () {
                 .send({
                     login: 'admin',
                     pass : 'tm2016',
-                    dbId : 'production'
+                    dbId : 'pavlodb'
                 })
                 .expect(200, done);
         });
@@ -35,7 +35,7 @@ describe('Dashboard Vacation Specs', function () {
                 .expect(200)
                 .end(function (err, res) {
                     var body = res.body;
-                    var dateStart = moment().subtract(11, 'month').startOf('month');
+                    var dateStart = moment().subtract(12, 'month').startOf('month');
                     var hiredEmployees;
                     var firedEmployees;
                     var dateStartHired;
@@ -63,17 +63,16 @@ describe('Dashboard Vacation Specs', function () {
                         .and.to.have.deep.property('0')
                         .and.to.have.property('firedEmployees');
 
-                    for (i = 0; i <= 11; i++) {
+                    for (i = 0; i <= 12; i++) {
+
                         if (body[0].data[i].hiredEmployees.length) {
                             hiredEmployees = body[0].data[i].hiredEmployees;
-                            dateStartHired = dateStart.add(i, 'month');
                             break;
                         }
                     }
-                    for (j = 0; j <= 11; j++) {
+                    for (j = 0; j <= 12; j++) {
                         if (body[1].data[j].firedEmployees.length) {
                             firedEmployees = body[1].data[j].firedEmployees;
-                            dateStartFired = dateStart.add(j, 'month');
                             break;
                         }
                     }
@@ -82,7 +81,6 @@ describe('Dashboard Vacation Specs', function () {
                         expect(hiredEmployees[0])
                             .to.be.instanceOf(Object)
                             .and.to.have.property('hireDate')
-                            .and.to.be.gte(dateStartHired.month() + 1 + dateStartHired.year() * 100);
                         expect(hiredEmployees[0])
                             .to.have.property('department')
                             .and.to.be.instanceOf(Object)
@@ -92,7 +90,6 @@ describe('Dashboard Vacation Specs', function () {
                         expect(firedEmployees[0])
                             .to.be.instanceOf(Object)
                             .and.to.have.property('fireDate')
-                            .and.to.be.lte(dateStartFired.month() + 1 + dateStartFired.year() * 100);
                         expect(firedEmployees[0])
                             .to.have.property('department')
                             .and.to.be.instanceOf(Object)
@@ -125,7 +122,7 @@ describe('Dashboard Vacation Specs', function () {
                 .send({
                     login: 'ArturMyhalko',
                     pass : 'thinkmobiles2015',
-                    dbId : 'production'
+                    dbId : 'pavlodb'
                 })
                 .expect(200, done);
         });
