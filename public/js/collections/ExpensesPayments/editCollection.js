@@ -1,14 +1,16 @@
-/**
- * Created by soundstorm on 26.08.15.
- */
-define(['./filterCollection'], function (ParentCollection) {
+define([
+    'Backbone',
+    './filterCollection'
+], function (Backbone, ParentCollection) {
+    'use strict';
+
     var EditableCollection = ParentCollection.extend({
 
         initialize: function () {
             this.on('change', this.change, this);
         },
 
-        save: function (changes) {
+        save: function () {
             var self = this;
             var model;
             var models = [];
@@ -18,6 +20,7 @@ define(['./filterCollection'], function (ParentCollection) {
             var saveObject;
             var updatedOptions;
             var syncObject;
+            var i;
 
             syncObject = {
                 trigger: this.trigger,
@@ -42,12 +45,12 @@ define(['./filterCollection'], function (ParentCollection) {
             };
 
             updatedOptions = {
-                success: function (model, resp, xhr) {
+                success: function () {
                     self.trigger('updated');
                 }
             };
 
-            for (var i = this.models.length - 1; i >= 0; i--) {
+            for (i = this.models.length - 1; i >= 0; i--) {
                 model = this.models[i];
 
                 if (model && model.id && model.hasChanged()) {
@@ -57,12 +60,12 @@ define(['./filterCollection'], function (ParentCollection) {
                 } else if (model && !model.id) {
                     newModel = model.changed;
                     newModel._id = model.id;
-                    Backbone.sync("create", saveObject, options);
+                    Backbone.sync('create', saveObject, options);
                 }
             }
 
             if (models.length) {
-                Backbone.sync("patch", syncObject, updatedOptions);
+                Backbone.sync('patch', syncObject, updatedOptions);
             }
         }
     });

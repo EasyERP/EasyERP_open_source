@@ -12,7 +12,7 @@ define([
     'views/Payment/list/ListHeaderInvoice',
     'dataService',
     'constants'
-], function ($, _, Backbone, CreateTemplate, attachView, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, listHeaderInvoice, dataService, CONSTANTS) {
+], function ($, _, Backbone, CreateTemplate, attachView, InvoiceModel, common, populate, InvoiceItemView, AssigneesView, ListHeaderInvoice, dataService, CONSTANTS) {
     'use strict';
 
     var CreateView = Backbone.View.extend({
@@ -120,11 +120,8 @@ define([
             var groupsId;
             var usersId;
             var description;
-
-            var forSales = (this.forSales) ? true : false;
-
+            var i;
             var supplier = $currentEl.find('#supplier').data('id');
-            var supplierName = $currentEl.find('#supplier').text();
             var invoiceDate = $currentEl.find('#invoice_date').val();
             var dueDate = $currentEl.find('#due_date').val();
 
@@ -148,7 +145,7 @@ define([
             }
 
             if (selectedLength) {
-                for (var i = selectedLength - 1; i >= 0; i--) {
+                for (i = selectedLength - 1; i >= 0; i--) {
                     targetEl = $(selectedProducts[i]);
                     productId = targetEl.data('id');
                     if (productId) {
@@ -180,10 +177,10 @@ define([
             usersId = [];
             groupsId = [];
             $('.groupsAndUser tr').each(function () {
-                if ($(this).data('type') == 'targetUsers') {
+                if ($(this).data('type') === 'targetUsers') {
                     usersId.push($(this).data('id'));
                 }
-                if ($(this).data('type') == 'targetGroups') {
+                if ($(this).data('type') === 'targetGroups') {
                     groupsId.push($(this).data('id'));
                 }
 
@@ -205,8 +202,9 @@ define([
                     users: usersId,
                     group: groupsId
                 },
-                whoCanRW             : whoCanRW,
-                workflow             : this.defaultWorkflow
+
+                whoCanRW: whoCanRW,
+                workflow: this.defaultWorkflow
             };
 
             if (supplier) {
@@ -225,7 +223,8 @@ define([
                         self.hideDialog();
                         Backbone.history.navigate('#easyErp/ExpensesInvoice', {trigger: true});
                     },
-                    error  : function (model, xhr) {
+
+                    error: function (model, xhr) {
                         self.errorNotification(xhr);
                     }
                 });
@@ -269,15 +268,12 @@ define([
                         click: function () {
                             self.saveItem();
                         }
-                    },
-
-                    {
+                    }, {
                         text : 'Cancel',
                         click: function () {
                             self.hideDialog();
                         }
                     }]
-
             });
 
             notDiv = this.$el.find('.assignees-container');
@@ -294,7 +290,7 @@ define([
 
             paymentContainer = this.$el.find('#payments-container');
             paymentContainer.append(
-                new listHeaderInvoice().render().el
+                new ListHeaderInvoice().render().el
             );
 
             populate.get('#currencyDd', '/currency/getForDd', {}, 'name', this, true);

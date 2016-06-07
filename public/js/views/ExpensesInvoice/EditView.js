@@ -20,7 +20,7 @@ define([
              _,
              Backbone,
              EditTemplate,
-             attachView,
+             AttachView,
              AssigneesView,
              InvoiceItemView,
              wTrackRows,
@@ -54,7 +54,6 @@ define([
             'click .sendEmail'                                                : 'sendEmail',
             'click .approve'                                                  : 'approve',
             'click .cancelInvoice'                                            : 'cancelInvoice',
-            // 'click .refund': 'refund',
             'click .setDraft'                                                 : 'setDraft'
 
         },
@@ -90,7 +89,7 @@ define([
             model.currency.name = model.currency._id.name;
             model.currency._id = model.currency._id._id;
 
-            self.currentModel.set({currency:  model.currency});
+            self.currentModel.set({currency: model.currency});
 
             e.preventDefault();
 
@@ -108,12 +107,11 @@ define([
         },
 
         cancelInvoice: function (e) {
-            e.preventDefault();
-
             var wId;
-
             var self = this;
-            var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
+            var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+
+            e.preventDefault();
 
             if (self.forSales) {
                 wId = 'Sales Invoice';
@@ -150,18 +148,17 @@ define([
         },
 
         setDraft: function (e) {
-            e.preventDefault();
-
             var self = this;
             var wId;
+            var redirectUrl = self.forSales ? 'easyErp/salesInvoice' : 'easyErp/Invoice';
+
+            e.preventDefault();
 
             if (self.forSales) {
                 wId = 'Sales Invoice';
             } else {
                 wId = 'Purchase Invoice';
             }
-
-            var redirectUrl = self.forSales ? "easyErp/salesInvoice" : "easyErp/Invoice";
 
             populate.fetchWorkflow({
                 wId: wId
@@ -188,15 +185,18 @@ define([
         },
 
         showDetailsBox: function (e) {
-            $(e.target).parent().find(".details-box").toggle();
+            $(e.target).parent().find('.details-box').toggle();
         },
-        notHide       : function () {
+
+        notHide: function () {
             return false;
         },
-        nextSelect    : function (e) {
+
+        nextSelect: function (e) {
             this.showNewSelect(e, false, true);
         },
-        prevSelect    : function (e) {
+
+        prevSelect: function (e) {
             this.showNewSelect(e, true, false);
         },
 
@@ -210,18 +210,18 @@ define([
             var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
             var itemSelector = '.dialog-tabs-item.' + dataClass;
 
-            closestEl.find("a.active").removeClass("active");
-            holder.addClass("active");
+            closestEl.find('a.active').removeClass('active');
+            holder.addClass('active');
 
-            n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
+            n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
             dialogHolder = $(selector);
 
-            dialogHolder.find(itemActiveSelector).removeClass("active");
-            dialogHolder.find(itemSelector).eq(n).addClass("active");
+            dialogHolder.find(itemActiveSelector).removeClass('active');
+            dialogHolder.find(itemSelector).eq(n).addClass('active');
         },
 
         chooseUser: function (e) {
-            $(e.target).toggleClass("choosen");
+            $(e.target).toggleClass('choosen');
         },
 
         hideDialog: function () {
@@ -234,35 +234,37 @@ define([
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").hide();
+            $('.newSelectList').hide();
         },
-        chooseOption : function (e) {
-            var holder = $(e.target).parents("dd").find(".current-selected");
-            holder.text($(e.target).text()).attr("data-id", $(e.target).attr("id"));
+
+        chooseOption: function (e) {
+            var holder = $(e.target).parents('dd').find('.current-selected');
+            holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
         },
 
         deleteItem: function (event) {
-            var url = window.location.hash;
             var self = this;
-
-            // var redirectUrl = this.forSales ? url : "easyErp/Invoice";
+            var answer = confirm('Really DELETE items ?!');
 
             event.preventDefault();
 
-            var answer = confirm("Really DELETE items ?!");
-            if (answer == true) {
+            if (answer) {
                 this.currentModel.destroy({
                     success: function () {
                         $('.edit-invoice-dialog').remove();
 
                         self.hideDialog();
-                        self.eventChannel && self.eventChannel.trigger('invoiceRemove');
+
+                        if (self.eventChannel) {
+                            self.eventChannel.trigger('invoiceRemove');
+                        }
                     },
-                    error  : function (model, err) {
+
+                    error: function (model, err) {
                         if (err.status === 403) {
                             App.render({
                                 type   : 'error',
-                                message: "You do not have permission to perform this action"
+                                message: 'You do not have permission to perform this action'
                             });
                         }
                     }
@@ -283,13 +285,10 @@ define([
             var assigned;
             var customer;
             var total;
-            var wTracksDom;
             var buttons;
-            var invoiceDate;
             var isFinancial;
 
             model = this.currentModel.toJSON();
-            invoiceDate = model.invoiceDate;
 
             this.isPaid = (model && model.workflow) ? model.workflow.status === 'Done' : false;
 
@@ -321,28 +320,26 @@ define([
                 isFinancial     : isFinancial
             });
 
-
             buttons = [
                 {
-                    text : "Close",
+                    text : 'Close',
                     click: function () {
                         self.hideDialog();
                     }
                 }, {
-                    text : "Delete",
+                    text : 'Delete',
                     click: self.deleteItem
                 }
             ];
-
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
                 autoOpen     : true,
                 resizable    : true,
-                dialogClass  : "edit-invoice-dialog",
-                title        : "Edit Invoice",
+                dialogClass  : 'edit-invoice-dialog',
+                title        : 'Edit Invoice',
                 width        : '900',
-                position     : {my: "center bottom", at: "center", of: window},
+                position     : {my: 'center bottom', at: 'center', of: window},
                 buttons      : buttons
 
             });
@@ -374,9 +371,9 @@ define([
 
             notDiv = this.$el.find('#attach-container');
             notDiv.append(
-                new attachView({
+                new AttachView({
                     model: this.currentModel,
-                    url  : '/uploadInvoiceFiles',
+                    url  : '/uploadInvoiceFiles'
                 }).render().el
             );
 
@@ -387,14 +384,14 @@ define([
 
             if (model.groups) {
                 if (model.groups.users.length > 0 || model.groups.group.length) {
-                    $(".groupsAndUser").show();
+                    $('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
-                        $(".groupsAndUser").append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
-                        $("#targetGroups").append("<li id='" + item._id + "'>" + item.name + "</li>");
+                        $('.groupsAndUser').append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
+                        $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + '</li>');
                     });
                     model.groups.users.forEach(function (item) {
-                        $(".groupsAndUser").append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                        $("#targetUsers").append("<li id='" + item._id + "'>" + item.login + "</li>");
+                        $('.groupsAndUser').append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
+                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + '</li>');
                     });
 
                 }
