@@ -176,7 +176,7 @@ describe('jobPosition Specs', function () {
                 });
         });
 
-        it('should get jobPositions totalCount', function (done) {
+       /* it('should get jobPositions totalCount', function (done) {
             aggent
                 .get('jobPositions/totalCollectionLength')
                 .expect(200)
@@ -194,7 +194,7 @@ describe('jobPosition Specs', function () {
 
                     done();
                 });
-        });
+        });*/
 
         it('should update jobPosition', function (done) {
             var body = {
