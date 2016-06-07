@@ -1,6 +1,3 @@
-/**
- * Created by Liliya_Pikiner on 6/29/2015.
- */
 define([
     'Backbone',
     './filterCollection'

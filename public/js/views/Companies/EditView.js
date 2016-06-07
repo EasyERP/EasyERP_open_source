@@ -80,14 +80,14 @@ define([
             changeTab: function (e) {
                 var holder = $(e.target);
                 var n;
-                var dialog_holder;
+                var dialogHolder;
 
                 holder.closest(".dialog-tabs").find("a.active").removeClass("active");
                 holder.addClass("active");
                 n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-                dialog_holder = $(".dialog-tabs-items");
-                dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
-                dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
+                dialogHolder = $(".dialog-tabs-items");
+                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
             chooseUser: function (e) {

@@ -75,9 +75,9 @@ define([
                 target.closest(".dialog-tabs").find("a.active").removeClass("active");
                 target.addClass("active");
                 var n = target.parents(".dialog-tabs").find("li").index(target.parent());
-                var dialog_holder = $(".dialog-tabs-items");
-                dialog_holder.find(".dialog-tabs-item.active").removeClass("active");
-                dialog_holder.find(".dialog-tabs-item").eq(n).addClass("active");
+                var dialogHolder = $(".dialog-tabs-items");
+                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
+                dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
             },
 
             keydownHandler: function (e) {

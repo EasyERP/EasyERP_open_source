@@ -203,7 +203,7 @@ define([
         changeTab: function (e) {
             var holder = $(e.target);
             var n;
-            var dialog_holder;
+            var dialogHolder;
             var closestEl = holder.closest('.dialog-tabs');
             var dataClass = closestEl.data('class');
             var selector = '.dialog-tabs-items.' + dataClass;
@@ -214,10 +214,10 @@ define([
             holder.addClass("active");
 
             n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-            dialog_holder = $(selector);
+            dialogHolder = $(selector);
 
-            dialog_holder.find(itemActiveSelector).removeClass("active");
-            dialog_holder.find(itemSelector).eq(n).addClass("active");
+            dialogHolder.find(itemActiveSelector).removeClass("active");
+            dialogHolder.find(itemSelector).eq(n).addClass("active");
         },
 
         chooseUser: function (e) {
