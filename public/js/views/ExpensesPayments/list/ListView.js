@@ -133,7 +133,7 @@ define([
             }
             targetW.text(target.text());
 
-            this.hidePagesPopup(e);
+            this.hide(e);
             this.setEditable(targetElement);
 
             return false;

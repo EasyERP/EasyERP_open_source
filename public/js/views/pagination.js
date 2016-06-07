@@ -149,7 +149,7 @@ define([
             return false;
         },
 
-        hidePagesPopup: function (e) {
+        hide: function (e) { // add by Liliya, hide all popups and selects, filterView and set changes to model
             var el = $(e.target);
             var $thisEl = this.$el;
 
@@ -159,9 +159,18 @@ define([
 
             $thisEl.find('.allNumberPerPage, .newSelectList').hide();
 
-            if (!el.closest('.search-view')) {
+            if (!el.closest('.search-view').length) {
                 $('.search-content').removeClass('fa-caret-up');
-                $thisEl.find('.search-options').addClass('hidden');
+                $('.search-options').addClass('hidden');
+            }
+
+            if (!$(e.target).closest('.filter-check-list').length) {
+                $('.allNumberPerPage').hide();
+
+                if ($('.filter-check-list').is(':visible')) {
+                    $('.filter-check-list').hide();
+                    this.showFilteredPage();
+                }
             }
 
             if (typeof(this.setChangedValueToModel) === 'function' && el.tagName !== 'SELECT') { // added for SetChangesToModel in ListView
