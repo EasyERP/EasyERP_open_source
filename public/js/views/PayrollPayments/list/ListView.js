@@ -63,16 +63,6 @@ define([
 
             $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 6}).render());
 
-            $('#check_all').click(function () {
-                $(':checkbox').prop('checked', this.checked);
-
-                if ($('input.checkbox:checked').length > 0) {
-                    $('#top-bar-deleteBtn').show();
-                } else {
-                    $('#top-bar-deleteBtn').hide();
-                }
-            });
-
             $currentEl.append(_.template(paginationTemplate));
 
             pagenation = this.$el.find('.pagination');

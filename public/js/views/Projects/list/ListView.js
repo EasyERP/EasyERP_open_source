@@ -14,16 +14,15 @@ define([
     'common',
     'dataService',
     'custom'
-], function ($, _, listViewBase, listTemplate, stagesTamplate, CreateView, listItemView, EditView, formView, currentModel, contentCollection, filterView, common, dataService, custom) {
+], function ($, _, listViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, formView, currentModel, contentCollection, filterView, common, dataService, custom) {
     var ProjectsListView = listViewBase.extend({
-        createView              : CreateView,
-        listTemplate            : listTemplate,
-        listItemView            : listItemView,
-        contentCollection       : contentCollection,
-        filterView              : filterView,
-        totalCollectionLengthUrl: '/totalCollectionLength/Projects',
-        formUrl                 : '#easyErp/Projects/form/',
-        contentType             : 'Projects',// needs in view.prototype.changeLocationHash
+        createView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        filterView       : filterView,
+        formUrl          : '#easyErp/Projects/form/',
+        contentType      : 'Projects', //  needs in view.prototype.changeLocationHash
 
         initialize: function (options) {
             $(document).off('click');
@@ -56,6 +55,7 @@ define([
             target.find("div a").attr("class", target$.attr("class")).attr("data-value", target$.attr("class").replace("health", "")).parents("#health").find("ul").toggle();
             var id = target.data("id");
             var model = this.collection.get(id);
+            
             model.save({health: target.find("div a").data("value")}, {
                 headers : {
                     mid: 39
@@ -66,8 +66,8 @@ define([
                     target$.parents("#health").find("ul").hide();
                 }
             });
+            
             return false;
-
         },
 
         showHealthDd: function (e) {
@@ -125,21 +125,21 @@ define([
 
          if ($("input.checkbox:checked").length > 0) {
          $("#top-bar-deleteBtn").show();
-         $('#check_all').prop('checked', false);
+         $('#checkAll').prop('checked', false);
 
          if (checkLength == this.collection.length) {
-         $('#check_all').prop('checked', true);
+         $('#checkAll').prop('checked', true);
          }
          }
          else {
          $("#top-bar-deleteBtn").hide();
-         $('#check_all').prop('checked', false);
+         $('#checkAll').prop('checked', false);
          }
          }
          },*/
 
-        renderCheckboxes: function () {
-            this.$el.find('#check_all').click(function () {
+        /*renderCheckboxes: function () {
+            this.$el.find('#checkAll').click(function () {
 
                 $(':checkbox:not(.notRemovable)').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
@@ -148,11 +148,7 @@ define([
                     $("#top-bar-deleteBtn").hide();
                 }
             });
-        },
-
-        pushStages: function (stages) {
-            this.stages = stages;
-        },
+        },*/
 
         render: function () {
             var self;
@@ -167,7 +163,7 @@ define([
 
             $currentEl.html('');
             $currentEl.append(_.template(listTemplate));
-            itemView = new listItemView({
+            itemView = new ListItemView({
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow
@@ -178,12 +174,11 @@ define([
                 itemView.trigger('incomingStages', stages);
             });
 
-            $currentEl.append(itemView.render());//added two parameters page and items number
-
-            this.renderCheckboxes();
+            $currentEl.append(itemView.render()); // added two parameters page and items number
 
             this.renderFilter(self);
 
+            //todo add to after main render
             this.renderPagination($currentEl, this);
 
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");

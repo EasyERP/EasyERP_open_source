@@ -128,7 +128,7 @@ define([
 
                 var itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
                 this.getTotalLength(null, itemsNumber, this.filter);
@@ -180,7 +180,7 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());//added two parameters page and items number
 
-                $('#check_all').click(function () {
+                $('#checkAll').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
@@ -241,7 +241,7 @@ define([
                 var $currentEl = this.$el;
                 var tBody = $currentEl.find('#listTable');
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
                     collection : this.collection,
@@ -259,7 +259,7 @@ define([
 
             previousPage: function (event) {
                 event.preventDefault();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.prevP({
                     sort            : this.sort,
@@ -278,7 +278,7 @@ define([
 
             nextPage: function (event) {
                 event.preventDefault();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.nextP({
                     sort            : this.sort,
@@ -298,7 +298,7 @@ define([
 
             firstPage: function (event) {
                 event.preventDefault();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.firstP({
                     sort         : this.sort,
@@ -315,7 +315,7 @@ define([
 
             lastPage: function (event) {
                 event.preventDefault();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.lastP({
                     sort         : this.sort,
@@ -344,7 +344,7 @@ define([
                 });
                 this.page = 1;
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
@@ -355,7 +355,7 @@ define([
                 var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
 
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
 
                 if (selectedLetter === "All") {
                     selectedLetter = '';
@@ -400,7 +400,7 @@ define([
                     pagenation.hide();
                 }
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
 
                 this.filterView.renderFilterContent();
 
@@ -445,15 +445,15 @@ define([
 
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
-                        $('#check_all').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
 
                         if (checkLength == this.collection.length) {
-                            $('#check_all').prop('checked', true);
+                            $('#checkAll').prop('checked', true);
                         }
                     }
                     else {
                         $("#top-bar-deleteBtn").hide();
-                        $('#check_all').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
                     }
                 }
             },

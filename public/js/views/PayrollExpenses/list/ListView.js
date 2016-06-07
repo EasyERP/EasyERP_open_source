@@ -78,7 +78,7 @@ define([
                 return false;
             }
 
-            if (id && id === 'check_all') {
+            if (id && id === 'checkAll') {
                 status = $target.prop('checked');
                 $allCheckBoxes = $curEl.find('.totalRowCB').not($target);
                 $allCheckBoxes.prop('checked', status);

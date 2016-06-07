@@ -143,7 +143,7 @@ define([
             var tr;
             var listTableCheckedInput;
             var table = this.$el.find('#listTable');
-            listTableCheckedInput = table.find("input:not('#check_all_proforma'):checked");
+            listTableCheckedInput = table.find("input:not('#checkAll_proforma'):checked");
 
             this.collectionLength = this.collection.length;
             async.each(listTableCheckedInput, function (checkbox, cb) {
@@ -164,7 +164,7 @@ define([
                         tr.find('.checkbox').removeClass('notRemovable');
 
                         $("#removeProforma").hide();
-                        $('#check_all_proforma').prop('checked', false);
+                        $('#checkAll_proforma').prop('checked', false);
 
                         that.collection.remove(checkbox.value);
 
@@ -288,7 +288,7 @@ define([
 
             tBody.empty();
             $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
 
             if (this.collection.length > 0) {
                 itemView = new this.listItemView({
@@ -366,7 +366,7 @@ define([
 
             if (this.collection.length > 0) {
                 checkLength = $el.find("input.checkbox:checked:not(.notRemovable)").length;
-                checkAll$ = $el.find('#check_all_proforma');
+                checkAll$ = $el.find('#checkAll_proforma');
                 removeBtnEl = $('#removeProforma');
 
                 if (checkLength > 0) {
@@ -431,7 +431,7 @@ define([
             this.$el.find("#removeProforma").hide();
             this.$el.find("#saveProforma").hide();
 
-            $('#check_all_proforma').click(function () {
+            $('#checkAll_proforma').click(function () {
 
                 self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);
 
@@ -439,7 +439,7 @@ define([
                     self.$el.find("#removeProforma").show();
                 } else {
                     self.$el.find("#removeProforma").hide();
-                    $('#check_all_proforma').prop('checked', false);
+                    $('#checkAll_proforma').prop('checked', false);
                 }
             });
 

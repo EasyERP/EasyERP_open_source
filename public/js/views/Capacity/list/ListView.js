@@ -353,7 +353,7 @@ define([
                 var $currentEl = this.$el;
                 var tBody = $currentEl.find('#listTable');
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
                     collection : this.collection,
@@ -948,7 +948,7 @@ define([
 
                 itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});

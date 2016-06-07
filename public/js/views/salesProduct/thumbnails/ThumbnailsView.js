@@ -170,7 +170,7 @@
                 var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
 
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
 
                 this.startTime = new Date();
                 this.newCollection = false;
