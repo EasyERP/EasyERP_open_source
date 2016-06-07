@@ -6,14 +6,13 @@ define([
     'common',
     'populate',
     'dataService'
-], function (
-    Backbone,
-    $,
-    _,
-    CreateTemplate,
-    common,
-    populate,
-    dataService) {
+], function (Backbone,
+             $,
+             _,
+             CreateTemplate,
+             common,
+             populate,
+             dataService) {
     var EmailView = Backbone.View.extend({
         el      : '#emailHolder',
         template: _.template(CreateTemplate),
@@ -21,10 +20,12 @@ define([
         initialize: function (options) {
             var self = this;
             var url = 'project/emails/';
+            var projectId;
+
             this.model = options.model.toJSON();
             this.attachments = this.model.attachments;
 
-            var projectId = App.projectInfo && App.projectInfo.projectId ? App.projectInfo.projectId :  this.model.project._id;
+            projectId = App.projectInfo && App.projectInfo.projectId ? App.projectInfo.projectId : this.model.project._id;
 
             url = url + projectId;
 
@@ -34,7 +35,7 @@ define([
 
                 emails.Cc = (res.projectmanager || '') + ', ' + (res.salesmanager || '');
                 emails.To = (res.customerCompany || '') + ', ' + res.customerPersons.join(', ');
-                
+
                 self.render(emails);
             });
         },
@@ -115,7 +116,7 @@ define([
             });
 
             this.delegateEvents(this.events);
-           
+
             return this;
         }
     });
