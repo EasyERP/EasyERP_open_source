@@ -16,10 +16,10 @@
             'Undefinded'%></a>
     </td>
     <td><%=(jobPosition.createdBy&&jobPosition.createdBy.date)?( jobPosition.createdBy.date +
-        ((jobPosition.createdBy.user) ?(' (' + jobPosition.createdBy.user + ')') : '')):''%>
+        ((jobPosition.createdBy.user) ?(' (' + jobPosition.createdBy.user.login + ')') : '')):''%>
     </td>
     <td><%=(jobPosition.editedBy&&jobPosition.editedBy.date)?( jobPosition.editedBy.date + ((jobPosition.editedBy.user)
-        ?(' (' + jobPosition.editedBy.user + ')') : '')):''%>
+        ?(' (' + jobPosition.editedBy.user.login + ')') : '')):''%>
     </td>
 </tr>
 <% }) %>

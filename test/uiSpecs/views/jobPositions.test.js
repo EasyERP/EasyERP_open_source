@@ -37,7 +37,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000017",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    name : "Web"
                 },
                 ID                      : 1,
                 editedBy                : {
@@ -362,7 +362,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000018",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    name: "QA"
                 },
                 ID                      : 6,
                 editedBy                : {
@@ -693,7 +693,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000017",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    name: "Web"
                 },
                 ID                      : 1,
                 editedBy                : {
@@ -1067,7 +1067,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000018",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    name: "QA"
                 },
                 ID                      : 6,
                 editedBy                : {
@@ -1433,7 +1433,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000019",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    name: "QA"
                 },
                 ID                      : 11,
                 editedBy                : {
@@ -1799,7 +1799,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f00001a",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    name: ".NET/WP"
                 },
                 ID                      : 16,
                 editedBy                : {
@@ -2165,7 +2165,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f00001b",
                 department              : {
                     _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    name: "PM"
                 },
                 ID                      : 21,
                 editedBy                : {
@@ -2395,7 +2395,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f00001c",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    name: "Web"
                 },
                 ID                      : 2,
                 editedBy                : {
@@ -2761,7 +2761,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f00001d",
                 department              : {
                     _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    name: "iOS"
                 },
                 ID                      : 7,
                 editedBy                : {
@@ -3127,7 +3127,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f00001e",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    name: "Marketing"
                 },
                 ID                      : 12,
                 editedBy                : {
@@ -3493,7 +3493,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f00001f",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    name: "BusinessDev"
                 },
                 ID                      : 17,
                 editedBy                : {
@@ -3859,7 +3859,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000020",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    name: "Android"
                 },
                 ID                      : 22,
                 editedBy                : {
@@ -4225,7 +4225,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000021",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    name: "Android"
                 },
                 ID                      : 3,
                 editedBy                : {
@@ -4591,7 +4591,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000022",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    name: "Android"
                 },
                 ID                      : 8,
                 editedBy                : {
@@ -4957,7 +4957,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000023",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    name: "Marketing"
                 },
                 ID                      : 13,
                 editedBy                : {
@@ -5323,7 +5323,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000024",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    name: "BusinessDev"
                 },
                 ID                      : 18,
                 editedBy                : {
@@ -5689,7 +5689,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000025",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    name: "Marketing"
                 },
                 ID                      : 23,
                 editedBy                : {
@@ -6055,7 +6055,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000026",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    name: "Android"
                 },
                 ID                      : 4,
                 editedBy                : {
@@ -6421,7 +6421,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000027",
                 department              : {
                     _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    name: "iOS"
                 },
                 ID                      : 9,
                 editedBy                : {
@@ -6787,7 +6787,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000028",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    name: "Marketing"
                 },
                 ID                      : 14,
                 editedBy                : {
@@ -7153,7 +7153,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f000029",
                 department: {
                     _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    name: "HR"
                 },
                 ID        : 19,
                 editedBy  : {
@@ -7519,7 +7519,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f00002a",
                 department: {
                     _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    name: "HR"
                 },
                 ID        : 29,
                 editedBy  : {
@@ -7749,7 +7749,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f00002b",
                 department: {
                     _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    name: "Web"
                 },
                 ID        : 5,
                 editedBy  : {
@@ -8115,7 +8115,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f00002c",
                 department: {
                     _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    name: "iOS"
                 },
                 ID        : 10,
                 editedBy  : {
@@ -8481,7 +8481,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f00002d",
                 department: {
                     _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    name: ".NET/WP"
                 },
                 ID        : 15,
                 editedBy  : {
@@ -8847,7 +8847,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f00002e",
                 department: {
                     _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    name: "BusinessDev"
                 },
                 ID        : 20,
                 editedBy  : {
@@ -9213,7 +9213,7 @@ define([
                 _id                     : "55b92acf21e4b7c40f00002f",
                 department: {
                     _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    name: ".NET/WP"
                 },
                 ID        : 30,
                 editedBy  : {
@@ -9525,7 +9525,7 @@ define([
                 __v                     : 0,
                 department              : {
                     _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    name: "PM"
                 },
                 requirements            : "",
                 description             : ""
@@ -9534,7 +9534,7 @@ define([
                 _id                     : "55c32e2a29bd6ccd0b000006",
                 department: {
                     _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    name: ".NET/WP"
                 },
                 editedBy  : {
                     user: {
@@ -9625,7 +9625,7 @@ define([
                 _id                     : "55c98fb0cbb0f4910b000008",
                 department: {
                     _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    name: "Android"
                 },
                 editedBy  : {
                     date: "2015-08-11T06:01:20.541Z",
@@ -9714,7 +9714,7 @@ define([
                 _id                     : "55dd6259f09cc2ec0b000005",
                 department: {
                     _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    name: "Web"
                 },
                 editedBy  : {
                     date: "2015-08-26T06:53:13.854Z",
@@ -9887,14 +9887,14 @@ define([
                 requirements            : "",
                 department              : {
                     _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    name: "Web"
                 }
             },
             {
                 _id                     : "55ded360ae2b22730b000043",
                 department: {
                     _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name: "Design"
                 },
                 editedBy  : {
                     date: "2015-08-27T09:07:44.510Z",
@@ -9983,7 +9983,7 @@ define([
                 _id                     : "55eeeddd6dceaee10b00001f",
                 department: {
                     _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name: "Design"
                 },
                 editedBy  : {
                     date: "2015-09-08T14:17:01.721Z",
@@ -10072,7 +10072,7 @@ define([
                 _id                     : "55effa248f1e10e50b000005",
                 department: {
                     _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    name: ".NET/WP"
                 },
                 editedBy  : {
                     date: "2015-09-09T09:21:40.015Z",
@@ -10161,7 +10161,7 @@ define([
                 _id                     : "55f7c4a36d43203d0c000007",
                 department: {
                     _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    name: "Web"
                 },
                 editedBy  : {
                     date: "2015-09-15T07:11:31.130Z",
@@ -10250,7 +10250,7 @@ define([
                 _id                     : "5600025da36a8ca10c000027",
                 department: {
                     _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    name: "Web"
                 },
                 editedBy  : {
                     date: "2015-09-21T13:13:01.010Z",
@@ -10339,7 +10339,7 @@ define([
                 _id                     : "560114ab386dd9ad28000005",
                 department: {
                     _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    name: "HR"
                 },
                 editedBy  : {
                     date: "2015-09-22T08:43:23.716Z",
@@ -10428,7 +10428,7 @@ define([
                 _id                     : "56011b2d93b361cd28000005",
                 department: {
                     _id           : "560c0b83a5d4a2e20ba5068c",
-                    departmentName: "Finance"
+                    name: "Finance"
                 },
                 editedBy  : {
                     date: "2015-10-22T11:59:39.214Z",
@@ -10519,7 +10519,7 @@ define([
                 _id                     : "5603a84fa5ac49794e00001a",
                 department: {
                     _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    name: "BusinessDev"
                 },
                 editedBy  : {
                     date: "2015-09-24T07:37:51.605Z",
@@ -10608,7 +10608,7 @@ define([
                 _id                     : "560ba3a26f2e91ef2ee305f4",
                 department: {
                     _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    name: "PM"
                 },
                 editedBy  : {
                     date: "2015-09-30T08:56:02.052Z",
@@ -10779,7 +10779,7 @@ define([
                 __v                     : 0,
                 department              : {
                     _id           : "55b92ace21e4b7c40f000016",
-                    departmentName: "Web"
+                    name: "Web"
                 },
                 requirements            : "",
                 description             : ""
@@ -10788,7 +10788,7 @@ define([
                 _id                     : "561b73fb9ebb48212ea838bf",
                 department: {
                     _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    name: "PM"
                 },
                 editedBy  : {
                     date: "2015-10-12T08:48:59.991Z",
@@ -10877,7 +10877,7 @@ define([
                 _id                     : "561b75f89ebb48212ea838c1",
                 department: {
                     _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    name: "PM"
                 },
                 editedBy  : {
                     date: "2015-10-12T08:57:28.612Z",
@@ -10966,7 +10966,7 @@ define([
                 _id                     : "56249299e9576d1728a9ed24",
                 department: {
                     _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name: "Design"
                 },
                 editedBy  : {
                     date: "2015-10-19T06:56:20.019Z",
@@ -11057,7 +11057,7 @@ define([
                 _id                     : "56262666750d38934bfa1312",
                 department: {
                     _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    name: "Marketing"
                 },
                 editedBy  : {
                     date: "2015-10-20T11:32:54.636Z",
@@ -11231,7 +11231,7 @@ define([
                 _id                     : "56433d7c70bbc2b740ce8a15",
                 department: {
                     _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    name: ".NET/WP"
                 },
                 editedBy  : {
                     date: "2015-11-12T06:34:35.738Z",
@@ -11322,7 +11322,7 @@ define([
                 _id                     : "5643483270bbc2b740ce8a16",
                 department: {
                     _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    name: ".NET/WP"
                 },
                 editedBy  : {
                     date: "2015-11-12T06:35:51.526Z",
@@ -11413,7 +11413,7 @@ define([
                 _id                     : "564436a370bbc2b740ce8a17",
                 department: {
                     _id           : "55b92ace21e4b7c40f00000f",
-                    departmentName: "iOS"
+                    name: "iOS"
                 },
                 editedBy  : {
                     date: "2015-11-12T06:50:11.183Z",
@@ -11502,7 +11502,7 @@ define([
                 _id                     : "5644388770bbc2b740ce8a18",
                 department: {
                     _id           : "55b92ace21e4b7c40f000011",
-                    departmentName: "QA"
+                    name: "QA"
                 },
                 editedBy  : {
                     date: "2015-11-12T06:58:15.094Z",
@@ -11591,7 +11591,7 @@ define([
                 _id                     : "564438aa70bbc2b740ce8a19",
                 department: {
                     _id           : "55b92ace21e4b7c40f000010",
-                    departmentName: "Android"
+                    name: "Android"
                 },
                 editedBy  : {
                     date: "2015-11-12T06:58:50.054Z",
@@ -11680,7 +11680,7 @@ define([
                 _id                     : "564438d470bbc2b740ce8a1a",
                 department: {
                     _id           : "55bb1f40cb76ca630b000007",
-                    departmentName: "PM"
+                    name: "PM"
                 },
                 editedBy  : {
                     date: "2015-11-12T06:59:32.190Z",
@@ -11769,7 +11769,7 @@ define([
                 _id                     : "566ee0c68453e8b464b70b72",
                 department: {
                     _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    name: "Ruby on Rails"
                 },
                 editedBy  : {
                     date: "2015-12-14T16:24:58.510Z",
@@ -11860,7 +11860,7 @@ define([
                 _id                     : "5681592f9cceae182b907757",
                 department: {
                     _id           : "55b92ace21e4b7c40f000012",
-                    departmentName: ".NET/WP"
+                    name: ".NET/WP"
                 },
                 editedBy  : {
                     date: "2015-12-28T15:45:51.977Z",
@@ -11949,7 +11949,7 @@ define([
                 _id                     : "56a9cb6eb4dc0d09232bd72c",
                 department: {
                     _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    name: "Ruby on Rails"
                 },
                 editedBy  : {
                     date: "2016-01-28T08:03:58.393Z",
@@ -12038,7 +12038,7 @@ define([
                 _id                     : "56b1b2b0d6ef38a708dfc2a2",
                 department: {
                     _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name: "Design"
                 },
                 editedBy  : {
                     date: "2016-02-03T08:32:55.295Z",
@@ -12129,7 +12129,7 @@ define([
                 _id                     : "56b1bea7d6ef38a708dfc2a3",
                 department: {
                     _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name: "Design"
                 },
                 editedBy  : {
                     date: "2016-02-03T08:47:35.790Z",
@@ -12218,7 +12218,7 @@ define([
                 _id                     : "56b8b2116c411b590588feb8",
                 department: {
                     _id           : "56802ec21afe27f547b7ba53",
-                    departmentName: "PHP/WordPress"
+                    name: "PHP/WordPress"
                 },
                 editedBy  : {
                     date: "2016-02-08T15:19:45.103Z",
@@ -12307,7 +12307,7 @@ define([
                 _id                     : "56b9cd808f23c5696159cd0a",
                 department: {
                     _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    name: "Marketing"
                 },
                 editedBy  : {
                     date: "2016-02-09T11:29:04.564Z",
@@ -12396,7 +12396,7 @@ define([
                 _id                     : "56bde14cdfd8a81466e2f5ed",
                 department: {
                     _id           : "56802ec21afe27f547b7ba53",
-                    departmentName: "PHP/WordPress"
+                    name: "PHP/WordPress"
                 },
                 editedBy  : {
                     date: "2016-02-12T13:42:36.144Z",
@@ -12485,7 +12485,7 @@ define([
                 _id                     : "56c1914adfd8a81466e2f6db",
                 department: {
                     _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    name: "Ruby on Rails"
                 },
                 editedBy  : {
                     date: "2016-02-15T08:50:18.691Z",
@@ -12574,7 +12574,7 @@ define([
                 _id                     : "56c47d6cd2b48ede4ba42200",
                 department: {
                     _id           : "55b92ace21e4b7c40f000014",
-                    departmentName: "BusinessDev"
+                    name: "BusinessDev"
                 },
                 editedBy  : {
                     date: "2016-02-17T14:02:20.868Z",
@@ -12663,7 +12663,7 @@ define([
                 _id                     : "56cc7ba1541812c07197357a",
                 department: {
                     _id           : "55b92ace21e4b7c40f000015",
-                    departmentName: "HR"
+                    name: "HR"
                 },
                 editedBy  : {
                     date: "2016-03-14T08:21:16.073Z",
@@ -12830,7 +12830,7 @@ define([
                 _id                     : "56e6974381046d9741fb66fd",
                 department: {
                     _id           : "566ee11b8453e8b464b70b73",
-                    departmentName: "Ruby on Rails"
+                    name: "Ruby on Rails"
                 },
                 editedBy  : {
                     date: "2016-03-14T10:49:39.098Z",
@@ -12919,7 +12919,7 @@ define([
                 _id                     : "56e6b8b9701f50ac4d0a4974",
                 department: {
                     _id           : "55b92ace21e4b7c40f000013",
-                    departmentName: "Marketing"
+                    name: "Marketing"
                 },
                 editedBy  : {
                     date: "2016-03-14T13:12:25.087Z",
@@ -13010,7 +13010,7 @@ define([
         _id                     : "55b92acf21e4b7c40f000017",
         department: {
             _id           : "55b92ace21e4b7c40f000016",
-            departmentName: "Web"
+            name: "Web"
         },
         ID        : 1,
         __v       : 0,
@@ -13381,7 +13381,7 @@ define([
                     users       : [],
                     departmentManager: null,
                     parentDepartment : "56cebdf6541812c07197358f",
-                    departmentName   : "Android"
+                    name   : "Android"
                 },
                 {
                     _id              : "56e6775c5ec71b00429745a4",
@@ -13399,7 +13399,7 @@ define([
                     users       : [],
                     departmentManager: null,
                     parentDepartment : null,
-                    departmentName   : "Admin"
+                    name   : "Admin"
                 }
             ],
             users: [
@@ -13489,109 +13489,109 @@ define([
                 _id             : "55b92ace21e4b7c40f000012",
                 nestingLevel: 1,
                 parentDepartment: "56cebdf6541812c07197358f",
-                departmentName  : ".NET/WP"
+                name  : ".NET/WP"
             },
             {
                 _id             : "56e6775c5ec71b00429745a4",
                 nestingLevel: 0,
                 parentDepartment: null,
-                departmentName  : "Admin"
+                name  : "Admin"
             },
             {
                 _id             : "55b92ace21e4b7c40f000010",
                 nestingLevel: 1,
                 parentDepartment: "56cebdf6541812c07197358f",
-                departmentName  : "Android"
+                name  : "Android"
             },
             {
                 _id             : "55b92ace21e4b7c40f000014",
                 nestingLevel: 1,
                 parentDepartment: "56e6775c5ec71b00429745a4",
-                departmentName  : "BusinessDev"
+                name  : "BusinessDev"
             },
             {
                 _id             : "56802e9d1afe27f547b7ba51",
                 nestingLevel: 2,
                 parentDepartment: "55b92ace21e4b7c40f000016",
-                departmentName  : "CSS/FrontEnd"
+                name  : "CSS/FrontEnd"
             },
             {
                 _id             : "55bb1f14cb76ca630b000006",
                 nestingLevel: 1,
                 parentDepartment: "56cebdf6541812c07197358f",
-                departmentName  : "Design"
+                name  : "Design"
             },
             {
                 _id             : "56cebdf6541812c07197358f",
                 nestingLevel: 0,
                 parentDepartment: null,
-                departmentName  : "Development"
+                name  : "Development"
             },
             {
                 _id             : "560c0b83a5d4a2e20ba5068c",
                 nestingLevel: 1,
                 parentDepartment: "56e6775c5ec71b00429745a4",
-                departmentName  : "Finance"
+                name  : "Finance"
             },
             {
                 _id             : "55b92ace21e4b7c40f000015",
                 nestingLevel: 1,
                 parentDepartment: "56e6775c5ec71b00429745a4",
-                departmentName  : "HR"
+                name  : "HR"
             },
             {
                 _id             : "56802eb31afe27f547b7ba52",
                 nestingLevel: 2,
                 parentDepartment: "55b92ace21e4b7c40f000016",
-                departmentName  : "JS"
+                name  : "JS"
             },
             {
                 _id             : "55b92ace21e4b7c40f000013",
                 nestingLevel: 1,
                 parentDepartment: "56e6775c5ec71b00429745a4",
-                departmentName  : "Marketing"
+                name  : "Marketing"
             },
             {
                 _id             : "56802ec21afe27f547b7ba53",
                 nestingLevel: 2,
                 parentDepartment: "55b92ace21e4b7c40f000016",
-                departmentName  : "PHP/WordPress"
+                name  : "PHP/WordPress"
             },
             {
                 _id             : "55bb1f40cb76ca630b000007",
                 nestingLevel: 1,
                 parentDepartment: "56cebdf6541812c07197358f",
-                departmentName  : "PM"
+                name  : "PM"
             },
             {
                 _id             : "55b92ace21e4b7c40f000011",
                 nestingLevel: 1,
                 parentDepartment: "56cebdf6541812c07197358f",
-                departmentName  : "QA"
+                name  : "QA"
             },
             {
                 _id             : "566ee11b8453e8b464b70b73",
                 nestingLevel: 2,
                 parentDepartment: "55b92ace21e4b7c40f000016",
-                departmentName  : "Ruby on Rails"
+                name  : "Ruby on Rails"
             },
             {
                 _id             : "56e175c4d62294582e10ca68",
                 nestingLevel: 1,
                 parentDepartment: "56cebdf6541812c07197358f",
-                departmentName  : "Unity"
+                name  : "Unity"
             },
             {
                 _id             : "55b92ace21e4b7c40f000016",
                 nestingLevel: 1,
                 parentDepartment: "56cebdf6541812c07197358f",
-                departmentName  : "Web"
+                name  : "Web"
             },
             {
                 _id             : "55b92ace21e4b7c40f00000f",
                 nestingLevel: 1,
                 parentDepartment: "56cebdf6541812c07197358f",
-                departmentName  : "iOS"
+                name  : "iOS"
             }
         ]
     };
@@ -13934,7 +13934,7 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var jobPositionUrl = new RegExp('\/JobPositions\/list', 'i');
+                var jobPositionUrl = new RegExp('\/JobPositions', 'i');
 
                 server.respondWith('GET', jobPositionUrl, [401, {"Content-Type": "application/json"}, JSON.stringify({})]);
                 jobPositionCollection = new JobPositionCollection({
@@ -13946,7 +13946,7 @@ define([
             });
 
             it('Try to create TopBarView', function () {
-                var jobPositionUrl = new RegExp('\/JobPositions\/list', 'i');
+                var jobPositionUrl = new RegExp('\/JobPositions', 'i');
 
                 server.respondWith('GET', jobPositionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobPositions)]);
 
@@ -13988,15 +13988,13 @@ define([
 
                 it('Try to create JobPosition listView', function () {
                     var $listHolder;
-                    var jobPositionUrl = new RegExp('\/JobPositions\/list', 'i');
+                    var jobPositionUrl = new RegExp('\/JobPositions', 'i');
                     var jobPositionTotalCollectionUrl = new RegExp('\/JobPositions\/totalCollectionLength', 'i');
                     var workflowUrl = new RegExp('\/Workflows', 'i');
 
                     server.respondWith('GET', workflowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeWorkflows)]);
                     server.respondWith('GET', jobPositionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobPositions)]);
-                    server.respondWith('GET', jobPositionTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count: 2
-                    })]);
+
                     listView = new ListView({
                         collection: jobPositionCollection,
                         startTime : new Date()
@@ -14030,7 +14028,7 @@ define([
                     var spyResponse;
                     var $pageListEl = listView.$el.find('.pageList');
                     var $firstPageListEl = $pageListEl.find('a:nth-child(1)');
-                    var jobPositionUrl = new RegExp('\/JobPositions\/list', 'i');
+                    var jobPositionUrl = new RegExp('\/JobPositions', 'i');
 
                     server.respondWith('GET', jobPositionUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeJobPositions)]);
                     $firstPageListEl.click();
@@ -14048,7 +14046,7 @@ define([
                     var $thirdPageListEl = $pageListEl.find('a:nth-child(3)');
                     var $allPageListEl = $pageListEl.find('a:nth-child(4)');
                     var jobPositionTotalCollectionUrl = new RegExp('\/JobPositions\/totalCollectionLength', 'i');
-                    var jobPositionUrl = new RegExp('\/JobPositions\/list', 'i');
+                    var jobPositionUrl = new RegExp('\/JobPositions', 'i');
 
                     server.respondWith('GET', jobPositionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobPositions)]);
                     server.respondWith('GET', jobPositionTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
@@ -14085,20 +14083,20 @@ define([
                 it('Try to go to Edit dialog with error fetch response', function () {
                     var spyResponse;
                     var $needTd = listView.$el.find('tbody tr:nth-child(1) > td:nth-child(3)');
-                    var jobPositionFormUrl = new RegExp('\/JobPositions\/form');
+                    var jobPositionFormUrl = new RegExp('\/JobPositions');
 
                     server.respondWith('GET', jobPositionFormUrl, [400, {"Content-Type": "application/json"}, JSON.stringify(fakeJobPositionForForm)]);
                     $needTd.click();
                     server.respond();
 
-                    spyResponse = mainSpy.args[1][0];
+                    spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'Please refresh browser');
                 });
 
                 it('Try to go to Edit dialog', function () {
                     var $needTd = listView.$el.find('tbody tr:nth-child(1) > td:nth-child(3)');
-                    var jobPositionFormUrl = new RegExp('\/JobPositions\/form');
+                    var jobPositionFormUrl = new RegExp('\/JobPositions');
                     var jobPositionIdUrl = new RegExp('\/JobPositions\/', 'i');
                     var depsForDDUrl = '/departments/getForDD';
 
@@ -14166,12 +14164,16 @@ define([
                     var $recruintment;
                     var $depsSelectEl;
                     var $saveBtn;
-                    var jobPositionUrl = new RegExp('\/JobPositions\/', 'i');
+                    var jobPositionUrl = new RegExp('\/JobPositions', 'i');
+
+
+                    server.respondWith('GET', jobPositionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobPositionId)]);
 
                     $needTd.click();
                     server.respond();
                     server.respond();
-                    server.respond();
+
+                    window.location.hash = '#easyErp/JobPositions/list';
 
                     expect($('.ui-dialog')).to.exist;
 
@@ -14196,7 +14198,7 @@ define([
                     $saveBtn.click();
                     server.respond();
 
-                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions/form/55b92acf21e4b7c40f000017');
+                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions/list');
 
                 });
 
