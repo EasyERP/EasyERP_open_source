@@ -25,7 +25,7 @@ define([
         responseObj  : {},
         createView   : CreateView,
         listTemplate : listTemplate,
-        listItemView : ListItemView,
+        ListItemView : ListItemView,
         changedModels: {},
 
         initialize: function (options) {

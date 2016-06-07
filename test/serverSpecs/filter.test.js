@@ -249,7 +249,7 @@ describe('Filter Specs', function () {
                         .and.to.have.deep.property('[0].name')
                         .and.to.exist;
 
-//------------------------ Sales Proforma  ----------------
+//------------------------ Sales Proforma ----------------
 
                     typeFilter = body.salesProforma;
 

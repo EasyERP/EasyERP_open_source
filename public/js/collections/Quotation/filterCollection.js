@@ -1,32 +1,45 @@
 ﻿define([
         'Backbone',
         'Underscore',
+        'collections/parent',
         'models/QuotationModel',
         'common',
         'constants'
     ],
-    function (Backbone, _, QuotationModel, common, CONSTANTS) {
+    function (Backbone, _, Parent, QuotationModel, common, CONSTANTS) {
         'use strict';
 
-        var QuotationCollection = Backbone.Collection.extend({
+        var QuotationCollection = Parent.extend({
             model       : QuotationModel,
             url         : CONSTANTS.URLS.QUOTATION,
-            page        : null,
-            namberToShow: null,
-            viewType    : null,
-            contentType : null,
+            pageSize: CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE,
+            //page        : null,
+            //namberToShow: null,
+            //viewType    : null,
+            //contentType : null,
 
             initialize: function (options) {
                 var that = this;
                 var regex = /^sales/;
+                var page;
 
                 this.startTime = new Date();
 
-                this.namberToShow = options.count;
-                this.viewType = options.viewType;
+                //this.namberToShow = options.count;
+                //this.viewType = options.viewType;
                 this.contentType = options.contentType;
-                this.count = options.count;
-                this.page = options.page || 1;
+                //this.count = options.count;
+                //this.page = options.page || 1;
+
+                function _errHandler(models, xhr) {
+                    if (xhr.status === 401) {
+                        Backbone.history.navigate('#login', {trigger: true});
+                    }
+                }
+
+                options = options || {};
+                options.error = options.error || _errHandler;
+                page = options.page;
 
                 if (options && options.contentType) {
 
@@ -54,7 +67,13 @@
                     this.url += options.viewType;
                 }*/
 
-                this.fetch({
+                if (page) {
+                    return this.getPage(page, options);
+                }
+
+                this.getFirstPage(options);
+
+                /*this.fetch({
                     data   : options,
                     reset  : true,
                     success: function () {
@@ -65,10 +84,10 @@
                             Backbone.history.navigate('#login', {trigger: true});
                         }
                     }
-                });
+                });*/
             },
 
-            showMore: function (options) {
+            /*showMore: function (options) {
                 var that = this;
                 var regex = /^sales/;
                 var filterObject = options || {};
@@ -110,7 +129,7 @@
                         });
                     }
                 });
-            },
+            },*/
 
             parse: function (response) {
                 var quotations = response.data;

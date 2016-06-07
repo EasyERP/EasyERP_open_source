@@ -84,6 +84,8 @@ define([
             var sortObject;
             var data;
 
+            this.startTime = new Date();
+
             if ((this.changed && this.changedModels && Object.keys(this.changedModels).length) ||
                 (this.isNewRow ? this.isNewRow() : newRows.length)) {
                 return App.render({
@@ -91,9 +93,6 @@ define([
                     message: 'Please, save previous changes or cancel them!'
                 });
             }
-
-            this.collection.unbind('reset');
-            this.collection.unbind('showmore');
 
             target$ = $(e.target).closest('th');
             currentParrentSortClass = target$.attr('class');
@@ -146,7 +145,7 @@ define([
         },
 
         showPagesPopup: function (e) {
-            $(e.target).closest("button").next("ul").toggle();
+            $(e.target).closest('button').next('ul').toggle();
             return false;
         },
 

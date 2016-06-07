@@ -12,29 +12,28 @@ define([
     'views/Filter/FilterView',
     'common',
     'text!templates/stages.html'
-], function (Backbone, $, _, listViewBase, listTemplate, createView, ListItemView, contentCollection, currentModel, EditView, filterView, common, stagesTamplate) {
+], function (Backbone, $, _, listViewBase, listTemplate, CreateView, ListItemView, contentCollection, CurrentModel, EditView, filterView, common, stagesTamplate) {
     'use strict';
 
     var JobPositionsListView = listViewBase.extend({
-        createView              : createView,
+        CreateView              : CreateView,
         listTemplate            : listTemplate,
         listItemView            : ListItemView,
         contentCollection       : contentCollection,
         filterView              : filterView,
         totalCollectionLengthUrl: '/JobPositions/totalCollectionLength',
-        formUrl                 : "#easyErp/JobPositions/form/",
-        contentType             : 'JobPositions',//needs in view.prototype.changeLocationHash
+        formUrl                 : '#easyErp/JobPositions/form/',
+        contentType             : 'JobPositions', // needs in view.prototype.changeLocationHash
 
         events: {
-            "click  .list td:not(.notForm)": "goToEditDialog",
-            "click .stageSelect"           : "showNewSelect",
-            "click .newSelectList li"      : "chooseOption"
+            'click .list td:not(.notForm)': 'goToEditDialog',
+            'click .stageSelect'          : 'showNewSelect',
+            'click .newSelectList li'     : 'chooseOption'
         },
 
         initialize: function (options) {
             this.startTime = options.startTime;
             this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
             this.defaultItemsNumber = this.collection.namberToShow || 100;
             this.newCollection = options.newCollection;
             this.deleteCounter = 0;
@@ -43,17 +42,15 @@ define([
             this.filter = options.filter;
 
             this.render();
-
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
         },
 
         hideNewSelect: function () {
-            $(".newSelectList").remove();  //ui tests
+            $('.newSelectList').remove();  // ui tests
         },
 
         showNewSelect: function (e) {
-            if ($(".newSelectList").is(":visible")) {
+            if ($('.newSelectList').is(':visible')) {
                 this.hideNewSelect();
                 return false;
             }
@@ -67,8 +64,8 @@ define([
             var afterPage = '';
             var location = window.location.hash;
             var pageSplited = location.split('/p=')[1];
-            var targetElement = $(e.target).parents("td");
-            var id = targetElement.attr("id").replace("stages_", '');
+            var targetElement = $(e.target).parents('td');
+            var id = targetElement.attr('id').replace('stages_', '');
             var obj = this.collection.get(id);
 
             if (pageSplited) {
@@ -77,7 +74,7 @@ define([
             }
             obj.urlRoot = '/JobPositions';
             obj.save({
-                workflow                : $(e.target).attr("id"),
+                workflow                : $(e.target).attr('id'),
                 expectedRecruitment     : obj.toJSON().expectedRecruitment,
                 totalForecastedEmployees: obj.toJSON().totalForecastedEmployees,
                 numberOfEmployees       : obj.toJSON().numberOfEmployees
@@ -87,7 +84,7 @@ define([
                 },
                 patch  : true,
                 success: function () {
-                    Backbone.history.fragment = "";
+                    Backbone.history.fragment = '';
                     Backbone.history.navigate(location, {trigger: true});
                 }
             });
@@ -119,29 +116,28 @@ define([
             $currentEl.append(itemView.render());
             itemView.bind('incomingStages', itemView.pushStages, itemView);
 
-            this.renderCheckboxes();
-
-            common.populateWorkflowsList("Job positions", null, null, "/Workflows", null, function (stages) {
+            common.populateWorkflowsList('Job positions', null, null, '/Workflows', null, function (stages) {
                 self.stages = stages;
                 itemView.trigger('incomingStages', stages);
             });
 
             this.renderPagination($currentEl, this);
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 
         goToEditDialog: function (e) {
-            var id = $(e.target).closest('tr').data("id");
-            var model = new currentModel({validate: false});
-            
+            var id = $(e.target).closest('tr').data('id');
+            var model = new CurrentModel({validate: false});
+
             e.preventDefault();
-            model.urlRoot = '/JobPositions/form';
+            model.urlRoot = '/JobPositions';
             model.fetch({
-                data   : {id: id},
-                success: function (model) {
-                    new EditView({model: model});
+                data   : {id: id, viewType: 'form'},
+                success: function (response) {
+                    new EditView({model: response});
                 },
-                error  : function () {
+
+                error: function () {
                     App.render({
                         type   : 'error',
                         message: 'Please refresh browser'

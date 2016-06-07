@@ -1,18 +1,19 @@
 ﻿define([
-        'Backbone',
-        'Underscore',
-        'text!templates/wTrack/list/ListTemplate.html'
+    'Backbone',
+    'Underscore',
+    'text!templates/wTrack/list/ListTemplate.html'
 ], function (Backbone, _, listTemplate) {
-        var QuotationListItemView = Backbone.View.extend({
-            el: '#listTable',
+    'use strict';
+    
+    var QuotationListItemView = Backbone.View.extend({
+        el: '#listTable',
 
         initialize: function (options) {
             this.collection = options.collection;
-            this.page = options.page ? parseInt(options.page) : 1;
-
-            this.startNumber = (this.page - 1 ) * options.itemsNumber || 0;
+            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize;// Counting the start index of list items
         },
-        render    : function () {
+
+        render: function () {
             this.$el.append(_.template(listTemplate, {
                 wTracks    : this.collection.toJSON(),
                 startNumber: this.startNumber

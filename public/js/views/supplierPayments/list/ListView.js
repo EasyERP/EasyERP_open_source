@@ -26,7 +26,7 @@ define([
     var PaymentListView = ListViewBase.extend({
         createView              : CreateView,
         listTemplate            : listTemplate,
-        listItemView            : ListItemView,
+        ListItemView            : ListItemView,
         contentCollection       : paymentCollection,
         filterView              : filterView,
         contentType             : 'supplierPayments', // needs in view.prototype.changeLocationHash
@@ -443,9 +443,7 @@ define([
             }).render());
 
             self.renderFilter(self);
-
-            self.renderCheckboxes();
-
+            
             self.renderPagination($currentEl, self);
 
             dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
@@ -581,7 +579,7 @@ define([
         checked: function (e) {
             var el = this.$el;
             var checkLength = el.find('input.checkbox:checked').length;
-            var checkAll$ = el.find('#check_all');
+            var checkAll$ = el.find('#checkAll');
             var removeBtnEl = $('#top-bar-deleteBtn');
 
             e.stopPropagation();

@@ -143,6 +143,31 @@ define([
 
             this.asyncRenderInfo(asyncKeys);
 
+            $('#checkAll').click(function () {
+                var checkLength;
+
+                allInputs = $('.listCB');
+                allInputs.prop('checked', this.checked);
+                checkedInputs = $('input.listCB:checked');
+
+                if (self.collection.length > 0) {
+                    checkLength = checkedInputs.length;
+
+                    if (checkLength > 0) {
+                        self.reclose.show();
+                        self.close.hide();
+
+                        if (checkLength === self.collection.length) {
+                            $('#checkAll').prop('checked', true);
+                        }
+                    } else {
+                        self.reclose.hide();
+                        self.close.show();
+                        $('#checkAll').prop('checked', false);
+                    }
+                }
+            });
+
             this.reclose = $('#top-bar-reclose');
             this.close = $('#top-bar-generate');
             this.reclose.hide();

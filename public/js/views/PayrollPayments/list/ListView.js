@@ -23,7 +23,7 @@ define([
         contentType  : 'PayrollPayments',
         viewType     : 'list',
         listTemplate : listTemplate,
-        listItemView : ListItemView,
+        ListItemView : ListItemView,
         filterView   : filterView,
         changedModels: {},
         responseObj  : {},
@@ -94,10 +94,6 @@ define([
 
                 self.$listTable = $('#listTable');
             }, 10);
-
-            $(document).on('click', function (e) {
-                self.hideNewSelect(e);
-            });
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },

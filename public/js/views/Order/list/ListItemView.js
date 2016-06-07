@@ -1,27 +1,25 @@
 ﻿define([
-        'Backbone',
-        'Underscore',
-        'text!templates/Order/list/ListTemplate.html',
-        'helpers'
-    ],
+    'Backbone',
+    'Underscore',
+    'text!templates/Order/list/ListTemplate.html',
+    'helpers'
+], function (Backbone, _, listTemplate, helpers) {
+    var OrderListItemView = Backbone.View.extend({
+        el: '#listTable',
 
-    function (Backbone, _, listTemplate, helpers) {
-        var OrderListItemView = Backbone.View.extend({
-            el: '#listTable',
+        initialize: function (options) {
+            this.collection = options.collection;
+            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
+        },
 
-            initialize: function (options) {
-                this.collection = options.collection;
-                this.page = options.page ? parseInt(options.page, 10) : 1;
-                this.startNumber = (this.page - 1) * options.itemsNumber;
-            },
-            render    : function () {
-                this.$el.append(_.template(listTemplate, {
-                    orderCollection: this.collection.toJSON(),
-                    startNumber    : this.startNumber,
-                    currencySplitter: helpers.currencySplitter
-                }));
-            }
-        });
-
-        return OrderListItemView;
+        render: function () {
+            this.$el.append(_.template(listTemplate, {
+                orderCollection : this.collection.toJSON(),
+                startNumber     : this.startNumber,
+                currencySplitter: helpers.currencySplitter
+            }));
+        }
     });
+
+    return OrderListItemView;
+});

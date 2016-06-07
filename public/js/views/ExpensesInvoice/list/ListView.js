@@ -121,7 +121,6 @@ define([
 
                 currentEllistRenderer(self);
 
-                self.renderCheckboxes();
                 self.renderPagination($currentEl, self);
                 self.renderFilter(self, {name: 'forSales', value: {key: 'forSales', value: [false]}});
 

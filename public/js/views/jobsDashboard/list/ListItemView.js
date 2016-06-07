@@ -1,46 +1,36 @@
-/**
- * Created by liliy on 20.01.2016.
- */
 define([
-        "Backbone",
-        'Underscore',
-        "text!templates/jobsDashboard/DashboardTemplate.html",
-        "helpers"
-    ],
+    'Backbone',
+    'Underscore',
+    'text!templates/jobsDashboard/DashboardTemplate.html',
+    'helpers'
+], function (Backbone, _, listTemplate, helpers) {
+    'use strict';
 
-    function (Backbone, _, listTemplate, helpers) {
-        'use strict';
+    var jobsListItemView = Backbone.View.extend({
+        el: '#listTable',
 
-        var jobsListItemView = Backbone.View.extend({
-            el: '#listTable',
+        initialize: function (options) {
+            this.collection = options.collection;
+            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
+        },
 
-            initialize: function (options) {
-                this.collection = options.collection;
-                this.page = options.page ? parseInt(options.page, 10) : 1;
-                this.startNumber = (this.page - 1) * options.itemsNumber;
+        getClass: function (job) {
+            return job.payment && job.invoice && job.invoice.paymentInfo.total !== job.payment.paid && job.workflow.name !== 'In Progress' ? 'redBorder' : '';
+        },
 
-                if (!this.startNumber) {
-                    this.startNumber = 0;
-                }
-            },
+        render: function () {
+            var self = this;
+            var result = this.collection.toJSON();
 
-            getClass: function (job) {
-                return job.payment && job.invoice && job.invoice.paymentInfo.total !== job.payment.paid && job.workflow.name !== 'In Progress' ? 'redBorder' : '';
-            },
+            this.$el.append(_.template(listTemplate, {
+                collection      : result,
+                startNumber     : this.startNumber,
+                currencySplitter: helpers.currencySplitter,
+                getClass        : self.getClass
+            }));
 
-            render: function () {
-                var self = this;
-                var result = this.collection.toJSON();
-
-                this.$el.append(_.template(listTemplate, {
-                    collection      : result,
-                    startNumber     : this.startNumber,
-                    currencySplitter: helpers.currencySplitter,
-                    getClass        : self.getClass
-                }));
-
-            }
-        });
-
-        return jobsListItemView;
+        }
     });
+
+    return jobsListItemView;
+});

@@ -6,14 +6,11 @@
     'use strict';
 
     var LeadsListItemView = Backbone.View.extend({
-        el    : '#listTable',
-        stages: null,
-        events: {},
+        el: '#listTable',
 
         initialize: function (options) {
             this.collection = options.collection;
-            this.page = options.page ? parseInt(options.page, 10) : 1;
-            this.startNumber = (this.page - 1) * options.itemsNumber; //Counting the start index of list items
+            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize; // Counting the start index of list items
         },
 
         pushStages: function (stages) {
