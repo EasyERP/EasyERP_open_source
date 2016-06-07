@@ -35,27 +35,6 @@
             this.getFirstPage(options);
         },
 
-        /* showMore: function (options) {
-         var that = this;
-         var filterObject = options || {};
-         filterObject.page = (options && options.page) ? options.page : this.page;
-         filterObject.count = (options && options.count) ? options.count : this.namberToShow;
-         this.fetch({
-         data   : filterObject,
-         waite  : true,
-         success: function (models) {
-         that.page++;
-         that.trigger('showmore', models);
-         },
-         error  : function () {
-         App.render({
-         type   : 'error',
-         message: "Some Error."
-         });
-         }
-         });
-         },*/
-
         parse: function (response) {
             if (response.data) {
                 _.map(response.data, function (jopPosition) {
