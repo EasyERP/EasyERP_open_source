@@ -49,7 +49,6 @@ define([
             this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
             this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
             this.parrentContentId = options.collection.parrentContentId;
             this.stages = [];
             this.filter = options.filter;
