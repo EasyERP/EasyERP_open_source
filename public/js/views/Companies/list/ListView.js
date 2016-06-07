@@ -89,7 +89,7 @@ define([
                 itemsNumber: this.collection.pageSize
             }).render());
 
-            this.renderCheckboxes();
+            //this.renderCheckboxes();
             this.renderAlphabeticalFilter(this);
             this.renderPagination($currentEl, this);
 

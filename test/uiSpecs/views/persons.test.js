@@ -138,7 +138,7 @@ define([
         ]
     };
     var fakePersonsForList = {
-        total: 10,
+        total: 250,
         data : [
             {
                 _id      : "56d024b4b5057fdb22ff9095",
@@ -11265,6 +11265,7 @@ define([
     var formView;
     var editView;
     var personsCollection;
+    var ajaxSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -11280,6 +11281,7 @@ define([
         var historyNavigateSpy;
 
         before(function () {
+            ajaxSpy = sinon.spy($, 'ajax');
             selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
             removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
             saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
@@ -11296,6 +11298,8 @@ define([
             thumbnailsView.remove();
             listView.remove();
             editView.remove();
+
+            ajaxSpy.restore();
             historyNavigateSpy.restore();
             selectSpy.restore();
             debounceStub.restore();
@@ -11370,12 +11374,13 @@ define([
 
                 server.respondWith('GET', personUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersonsForList)]);
                 personsCollection = new PersonsCollection({
-                    contentType  : 'Persons',
-                    filter       : null,
-                    newCollection: false,
-                    viewType     : 'list',
-                    page         : 1,
-                    count        : 100
+                    contentType: 'Persons',
+                    filter     : null,
+                    viewType   : 'list',
+                    page       : 1,
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false
                 });
                 server.respond();
 
@@ -11445,6 +11450,8 @@ define([
                 var country;
                 var createdBy;
                 var editedBy;
+                var $pagination;
+                var $currentPageList;
 
                 server.respondWith('GET', personsAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlfabetic)]);
                 listView = new ListView({
@@ -11456,6 +11463,12 @@ define([
 
                 eventsBinder.subscribeCollectionEvents(personsCollection, listView);
                 eventsBinder.subscribeTopBarEvents(topBarView, listView);
+
+                personsCollection.trigger('fetchFinished', {
+                    totalRecords: personsCollection.totalRecords,
+                    currentPage : personsCollection.currentPage,
+                    pageSize    : personsCollection.pageSize
+                });
 
                 $thisEl = listView.$el;
 
@@ -11499,7 +11512,41 @@ define([
                 expect(editedBy).not.to.be.empty;
                 expect(editedBy).to.not.match(/object Object|undefined/);
 
+                // pagination testing
+                $pagination = $thisEl.find('.pagination');
+                $currentPageList = $thisEl.find('.currentPageList');
+
+                expect($pagination.find('#gridStart').text().trim()).to.be.equals('1');
+                expect($pagination.find('#gridEnd').text().trim()).to.be.equals('100');
+                expect($pagination.find('#gridCount').text().trim()).to.be.equals('250');
+                expect($pagination.find('#currentShowPage').val().trim()).to.be.equals('1');
+
+                $currentPageList.mouseover();
+                expect($thisEl.find('#pageList')).to.have.css('display', 'block');
+                expect($thisEl.find('#pageList > li')).to.have.lengthOf(3);
+
+                $currentPageList.mouseover();
+                expect($thisEl.find('#pageList')).to.have.css('display', 'none');
+
                 done();
+            });
+
+            it('Try to change page1 to page2', function() {
+                var $currentPageList = $thisEl.find('.currentPageList');
+                var ajaxResponse;
+                var $page2Btn;
+
+                ajaxSpy.reset();
+
+                $currentPageList.mouseover();
+                $page2Btn = $thisEl.find('#pageList > li').eq(1);
+                $page2Btn.click();
+                server.respond();
+
+                ajaxResponse = ajaxSpy.args[0][0];
+                expect(ajaxSpy.called).to.be.true;
+                expect(ajaxResponse).to.have.property('url', '/persons/');
+                expect(ajaxResponse.data).to.have.property('contentType');
             });
 
             it('Try to export to CSV', function () {
