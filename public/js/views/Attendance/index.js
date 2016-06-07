@@ -8,13 +8,13 @@ define([
     'text!templates/Attendance/index.html',
     'models/AttendanceModel',
     'views/Attendance/MonthView',
-    /*'views/Attendance/StatisticsView',
+    /* 'views/Attendance/StatisticsView',
     'populate',*/
     'moment',
     'dataService',
     'views/selectView/selectView',
     'constants'// added view for employees dd list
-], function (Backbone, _, $, mainTemplate, AttendanceModel, MonthView, /*StatisticsView, populate,*/ moment, dataService, SelectView, CONSTANTS) {
+], function (Backbone, _, $, mainTemplate, AttendanceModel, MonthView, /* StatisticsView, populate,*/ moment, dataService, SelectView, CONSTANTS) {
     'use strict';
 
     var View = Backbone.View.extend({
@@ -23,11 +23,11 @@ define([
         template: _.template(mainTemplate),
 
         events: {
-            "click .editable"                                  : "showNewSelect",  // changed dropdown list
+            'click .editable'                                  : 'showNewSelect',  // changed dropdown list
             'change #currentStatus'                            : 'changeStatus',
             'change #currentTime'                              : 'changeTime',
-            "click .newSelectList li:not(.miniStylePagination)": "changeEmployee",  // changed to click for selectView dd
-            "click"                                            : "removeInputs"
+            'click .newSelectList li:not(.miniStylePagination)': 'changeEmployee',  // changed to click for selectView dd
+            click                                              : 'removeInputs'
         },
 
         removeInputs: function () {
@@ -52,8 +52,8 @@ define([
 
             this.model = new AttendanceModel();
             this.listenTo(this.model, 'change:currentEmployee', this.changeEmployee);
-            //this.listenTo(this.model, 'change:currentStatus', this.changeStatus);
-            //this.listenTo(this.model, 'change:currentTime', this.changeTime);
+            // this.listenTo(this.model, 'change:currentStatus', this.changeStatus);
+            // this.listenTo(this.model, 'change:currentTime', this.changeTime);
 
             dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function (result) {
                 var yearToday = moment().year();
@@ -61,7 +61,6 @@ define([
                 employees = result;
                 employees = _.map(employees.data, function (employee) {
                     employee.name = employee.name.first + ' ' + employee.name.last;
-                    employee.isEmployee = employee.isEmployee;
                     return employee;
                 });   // changed for getting proper form of names
 
@@ -109,15 +108,15 @@ define([
             e.stopPropagation();
 
             if (this.currentStatus === 'statusNotHired') {
-                modelsForNewSelect = _.filter(this.model.get("employees"), function (element) {
+                modelsForNewSelect = _.filter(this.model.get('employees'), function (element) {
                     return element.isEmployee === false;
                 });
             } else if (this.currentStatus === 'statusHired') {
-                modelsForNewSelect = _.filter(this.model.get("employees"), function (element) {
+                modelsForNewSelect = _.filter(this.model.get('employees'), function (element) {
                     return element.isEmployee === true;
                 });
             } else {
-                modelsForNewSelect = this.model.get("employees");
+                modelsForNewSelect = this.model.get('employees');
             }
 
             if ($target.attr('id') === 'selectInput') {
@@ -147,33 +146,33 @@ define([
             var keys;
 
             var target = $(e.target);
-            var targetElement = target.closest(".editable").find('span');
+            var targetElement = target.closest('.editable').find('span');
             var tempClass = target.attr('class');
 
             if (tempClass && tempClass === 'fired') {
-                target.closest(".editable").addClass('fired');
+                target.closest('.editable').addClass('fired');
             } else {
-                target.closest(".editable").removeClass('fired');
+                target.closest('.editable').removeClass('fired');
             }
 
             targetElement.text(target.text());
 
             if (target.length) {
-                this.currentEmployee = target.attr("id");  // changed for getting value from selectView dd
+                this.currentEmployee = target.attr('id');  // changed for getting value from selectView dd
             } else {
                 this.$el.find('.editable').find('span').text(self.currentEmployee.name);
                 this.$el.find('.editable').attr('data-id', self.currentEmployee._id);
                 self.currentEmployee = self.currentEmployee._id;
             }
 
-            dataService.getData("/vacation/", {
+            dataService.getData('/vacation/', {
                 year    : self.currentTime,
                 employee: self.currentEmployee
             }, function (result) {
                 labels = self.model.get('labelMonth');
                 month = new MonthView();
 
-                data = _.groupBy(result.data, "year");
+                data = _.groupBy(result.data, 'year');
                 keys = Object.keys(data);
 
                 keys.forEach(function (key) {
@@ -190,12 +189,12 @@ define([
             });
         },
 
-        /*changeStatus: function () {
+        /* changeStatus: function () {
             var self = this;
-            self.currentStatus = this.$el.find("#currentStatus option:selected").attr('id');
+            self.currentStatus = this.$el.find('#currentStatus option:selected').attr('id');
 
             dataService.getData(CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, function () {
-                //ToDo Hired and Not Hired
+                // ToDo Hired and Not Hired
             });
         },*/
 
@@ -207,20 +206,20 @@ define([
             var data;
             var keys;
 
-            self.currentTime = this.$el.find("#currentTime option:selected").text().trim();
+            self.currentTime = this.$el.find('#currentTime option:selected').text().trim();
 
             if (!self.currentTime) {
                 self.currentTime = self.model.get('years')[0].id;
             }
 
-            dataService.getData("/vacation/", {
+            dataService.getData('/vacation/', {
                 year    : self.currentTime,
                 employee: self.currentEmployee
             }, function (result) {
                 labels = self.model.get('labelMonth');
                 month = new MonthView();
 
-                data = _.groupBy(result.data, "year");
+                data = _.groupBy(result.data, 'year');
                 keys = Object.keys(data);
 
                 keys.forEach(function (key) {
