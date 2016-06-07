@@ -261,16 +261,16 @@ define([
                             $("#top-bar-deleteBtn").show();
                             $("#top-bar-createBtn").hide();
                         }
-                        $('#check_all').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
                         if (checkLength === this.collection.length) {
-                            $('#check_all').prop('checked', true);
+                            $('#checkAll').prop('checked', true);
                         }
                     } else {
                         if (!this.changed) {
                             $("#top-bar-deleteBtn").hide();
                             $("#top-bar-createBtn").show();
                         }
-                        $('#check_all').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
                     }
                 }
             },

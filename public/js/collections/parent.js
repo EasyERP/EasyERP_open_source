@@ -59,23 +59,28 @@ define([
             var error;
 
             page = page || this.currentPage;
+            page = parseInt(page, 10);
 
-            if (!page) {
+            if (!page || isNaN(page)) {
                 page = this.currentPage = 1;
             }
-
 
             options = options || {wait: true, reset: true};
 
             wait = !!options.wait;
             reset = !!options.reset;
-            showMore = !!options.showMore;
             isNew = !!options.newCollection;
 
-            if (isNew || !options.data) {
-                _opts.data = options;
+            if (!options.hasOwnProperty('showMore')) {
+                showMore = true;
             } else {
-                _opts.data = options.data || {};
+                showMore = !!options.showMore;
+            }
+
+            if (isNew || !options.data) {
+                _opts.data = _.extend({}, options);
+            } else {
+                _opts.data = _.extend({}, options.data);
                 wait = !!_opts.data.wait;
                 reset = !!_opts.data.reset;
             }
@@ -253,13 +258,14 @@ define([
 
             this.totalRecords = response.total;
             this.totalPages = Math.ceil(this.totalRecords / this.pageSize);
+            this.lastPage = this.totalPages;
 
             this.trigger('fetchFinished', {
                 totalRecords: this.totalRecords,
                 currentPage : this.currentPage,
                 pageSize    : this.pageSize
             });
-            
+
             return response.data;
         }
     });

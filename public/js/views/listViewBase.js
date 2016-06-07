@@ -37,177 +37,10 @@ define([
             return this;
         },
 
-        gotoForm: function (e) {
-            var id = $(e.target).closest('tr').data('id');
-
-            if (!this.formUrl) {
-                return;
-            }
-
-            App.ownContentType = true;
-            Backbone.history.navigate(this.formUrl + id, {trigger: true});
-        },
-
-        checkPage: function (event) {
-            var newRows = this.$el.find('#false');
-            var elementId = $(event.target).attr('id');
-            var data = {
-                sort         : this.sort,
-                filter       : this.filter,
-                newCollection: this.newCollection
-            };
-
-            event.preventDefault();
-            $('#check_all').prop('checked', false);
-
-            if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
-                return App.render({
-                    type   : 'notify',
-                    message: 'Please, save previous changes or cancel them!'
-                });
-            }
-
-            switch (elementId) {
-                case 'previousPage':
-                    this.previousPage(data);
-                    break;
-
-                case 'nextPage':
-                    this.nextPage(data);
-                    break;
-
-                case 'firstShowPage':
-                    this.firstPage(data);
-                    break;
-
-                case 'lastShowPage':
-                    this.lastPage(data);
-                    break;
-
-                // skip default case
-            }
-        },
-
-        switchPageCounter: function (event) {
-            var newRows = this.$el.find('#false');
-
-            event.preventDefault();
-
-            if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
-                return App.render({
-                    type   : 'notify',
-                    message: 'Please, save previous changes or cancel them!'
-                });
-            }
-
-            var targetEl = $(event.target);
-            var itemsNumber;
-
-            if (this.previouslySelected) {
-                this.previouslySelected.removeClass("selectedItemsNumber");
-            }
-
-            this.previouslySelected = targetEl;
-            targetEl.addClass("selectedItemsNumber");
-
-            this.startTime = new Date();
-            itemsNumber = targetEl.text();
-
-            if (itemsNumber === 'all') {
-                itemsNumber = this.listLength;
-            }
-
-            this.defaultItemsNumber = itemsNumber;
-
-            this.getTotalLength(null, itemsNumber, this.filter);
-
-            this.collection.showMore({
-                count        : itemsNumber,
-                page         : 1,
-                filter       : this.filter,
-                newCollection: this.newCollection
-            });
-            this.page = 1;
-
-            $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
-
-            this.changeLocationHash(1, itemsNumber, this.filter);
-        },
-
-        showPagesPopup: function (e) {
-            $(e.target).closest("button").next("ul").toggle();
-            return false;
-        },
-
-        hidePagesPopup: function (e) {
-            var el = $(e.target);
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.$el.find(".allNumberPerPage, .newSelectList").hide();
-            if (!el.closest('.search-view')) {
-                $('.search-content').removeClass('fa-caret-up');
-                this.$el.find('.search-options').addClass('hidden');
-            }
-
-            if (typeof(this.setChangedValueToModel) === "function" && el.tagName !== 'SELECT') { //added for SetChangesToModel in ListView
-                this.setChangedValueToModel();
-            }
-        },
-
-        showFilteredPage: function (filter, context) {
-            var itemsNumber = $("#itemsNumber").text();
-
-            var alphaBet = this.$el.find('#startLetter');
-            var selectedLetter = $(alphaBet).find('.current').length ? $(alphaBet).find('.current')[0].text : '';
-
-            $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
-
-            if (selectedLetter === 'All') {
-                selectedLetter = '';
-            }
-
-            context.startTime = new Date();
-            context.newCollection = false;
-
-            this.filter = Object.keys(filter).length === 0 ? {} : filter;
-
-            context.changeLocationHash(1, itemsNumber, filter);
-            // context.collection.showMore({count: itemsNumber, page: 1, filter: filter});
-            // context.getTotalLength(null, itemsNumber, filter);
-        },
-
-        showPage: function (event) {
-            var newRows = this.$el.find('#false');
-            var $targetEl = $(event.target);
-            var $inputPage = this.$el.find('#currentShowPage');
-            var page = $targetEl.text();
-
-            if (!page) {
-                page = $inputPage.val() || 1;
-            }
-
-            event.preventDefault();
-
-            if ((this.changedModels && Object.keys(this.changedModels).length) ||
-                (this.isNewRow ? this.isNewRow() : newRows.length)) {
-                return App.render({
-                    type   : 'notify',
-                    message: 'Please, save previous changes or cancel them!'
-                });
-            }
-
-            this.getPage(page, {page: page});
-        },
-
+        // triggered by collection, if {showMore: true} passed to collection
         showMoreContent: function (newModels) {
             var $holder = this.$el;
             var itemView;
-            var page = parseInt($holder.find('#currentShowPage').val(), 10) || 1; // if filter give 0 elements
             var pagenation;
 
             this.hideDeleteBtnAndUnSelectCheckAll();
@@ -216,7 +49,7 @@ define([
 
             itemView = new this.ListItemView({
                 collection : newModels,
-                page       : page,
+                page       : this.collection.currentPage,
                 itemsNumber: this.collection.pageSize
             });
 
@@ -238,56 +71,6 @@ define([
 
             $holder.find('#timeRecivingDataFromServer').remove();
             $holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-        },
-
-        /* showMoreAlphabet: function (newModels) {
-         var holder = this.$el;
-         var alphaBet = holder.find('#startLetter');
-         var created = holder.find('#timeRecivingDataFromServer');
-
-         this.countPerPage = newModels.length;
-         content.remove();
-         holder.append(this.template({collection: newModels.toJSON()}));
-         $("#top-bar-deleteBtn").hide();
-         $('#check_all').prop('checked', false);
-         this.getTotalLength(null, itemsNumber, this.filter);
-         created.text("Created in " + (new Date() - this.startTime) + " ms");
-         holder.prepend(alphaBet);
-         holder.append(created);
-         },*/
-
-        renderContent: function () {
-            var $currentEl = this.$el;
-            var tBody = $currentEl.find('#listTable');
-            var itemView;
-            var pagenation;
-
-            tBody.empty();
-            $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
-
-            if (this.collection.length > 0) {
-                itemView = new this.listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                });
-                tBody.append(itemView.render());
-            }
-
-            pagenation = this.$el.find('.pagination');
-
-            if (this.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
-
-            if (this.editCollection) { // add for reset editCollection after sort
-                this.editCollection.reset(this.collection.models);
-            }
-
-            App.stopPreload();
         },
 
         alpabeticalRender: function (e) {
@@ -329,27 +112,11 @@ define([
                 }, 10);
 
             $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
 
             this.changeLocationHash(1, itemsNumber, this.filter);
             this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
             this.getTotalLength(null, itemsNumber, this.filter);
-        },
-
-        renderCheckboxes: function () {
-            var self = this;
-
-            $('#check_all').click(function () {
-                $(':checkbox:not(.notRemovable)').prop('checked', this.checked);
-                if ($("input.checkbox:checked").length > 0) {
-                    $("#top-bar-deleteBtn").show();
-                } else {
-                    $("#top-bar-deleteBtn").hide();
-                }
-                if (typeof(self.setAllTotalVals) === "function") {   // added in case of existing setAllTotalVals method in View
-                    self.setAllTotalVals();
-                }
-            });
         },
 
         renderAlphabeticalFilter: function () {
@@ -427,7 +194,7 @@ define([
         },
 
         deleteItemsRender: function (deleteCounter, deletePage) {
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
             dataService.getData(this.totalCollectionLengthUrl, {
                 filter       : this.filter,
                 newCollection: this.newCollection,

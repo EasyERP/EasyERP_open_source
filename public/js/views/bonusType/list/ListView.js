@@ -164,7 +164,7 @@ define([
                 this.page = 1;
 
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
@@ -457,7 +457,7 @@ define([
                     self.hideItemsNumber(e);
                 });
 
-                $('#check_all').click(function () {
+                $('#checkAll').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
@@ -507,7 +507,7 @@ define([
                 var pagenation;
 
                 this.hideSaveCancelBtns();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
 
                 tBody.empty();
 
@@ -535,7 +535,7 @@ define([
 
             previousPage: function (event) {
                 event.preventDefault();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
 
                 this.prevP({
@@ -555,7 +555,7 @@ define([
 
             nextPage: function (event) {
                 event.preventDefault();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.nextP({
                     sort           : this.sort,
@@ -576,7 +576,7 @@ define([
 
             firstPage: function (event) {
                 event.preventDefault();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.firstP({
                     sort         : this.sort,
@@ -593,7 +593,7 @@ define([
 
             lastPage: function (event) {
                 event.preventDefault();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.lastP({
                     sort         : this.sort,
@@ -627,7 +627,7 @@ define([
                 });
                 this.page = 1;
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },*/
 
@@ -647,7 +647,7 @@ define([
 
                 itemsNumber = $("#itemsNumber").text();
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
 
                 this.changeLocationHash(1, itemsNumber, this.filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
@@ -682,7 +682,7 @@ define([
                 }
 
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
@@ -738,14 +738,14 @@ define([
 
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
-                        $('#check_all').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
 
                         if (checkLength == this.collection.length) {
-                            $('#check_all').prop('checked', true);
+                            $('#checkAll').prop('checked', true);
                         }
                     } else {
                         $("#top-bar-deleteBtn").hide();
-                        $('#check_all').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
                     }
                 }
             },

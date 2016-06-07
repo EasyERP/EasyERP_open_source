@@ -406,13 +406,13 @@ define([
                 });
                 this.page = 1;
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 this.changeLocationHash(1, itemsNumber, this.filter);
             },
 
             previousPage: function (event) {
                 event.preventDefault();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.prevP({
                     sort            : this.sort,
@@ -432,7 +432,7 @@ define([
 
             nextPage: function (event) {
                 event.preventDefault();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.nextP({
                     sort            : this.sort,
@@ -454,7 +454,7 @@ define([
 
             firstPage: function (event) {
                 event.preventDefault();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.firstP({
                     sort         : this.sort,
@@ -472,7 +472,7 @@ define([
 
             lastPage: function (event) {
                 event.preventDefault();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 $("#top-bar-deleteBtn").hide();
                 this.lastP({
                     sort         : this.sort,
@@ -494,15 +494,15 @@ define([
 
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
-                        $('#check_all').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
 
                         if (checkLength == this.collection.length) {
-                            $('#check_all').prop('checked', true);
+                            $('#checkAll').prop('checked', true);
                         }
                     }
                     else {
                         $("#top-bar-deleteBtn").hide();
-                        $('#check_all').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
                     }
                 }
             },
@@ -629,7 +629,7 @@ define([
                 this.filterView.renderFilterContent();
 
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
 
                 holder.find('#timeRecivingDataFromServer').remove();
                 holder.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
@@ -639,7 +639,7 @@ define([
                 var $currentEl = this.$el;
                 var tBody = $currentEl.find('#listTable');
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
                 tBody.empty();
                 var itemView = new listItemView({
                     collection : this.collection,
@@ -675,7 +675,7 @@ define([
 
                 $currentEl.append(new listTotalView({element: this.$el.find("#listTable"), cellSpan: 6}).render());
 
-                $('#check_all').click(function () {
+                $('#checkAll').click(function () {
                     $(':checkbox').prop('checked', this.checked);
 
                     if ($("input.checkbox:checked").length > 0) {
@@ -732,7 +732,7 @@ define([
                 this.newCollection = false;
 
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
 
                 this.changeLocationHash(1, itemsNumber, filter);
                 this.collection.showMore({count: itemsNumber, page: 1, filter: filter});

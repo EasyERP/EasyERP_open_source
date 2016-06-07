@@ -147,7 +147,7 @@ define([
                     pagenation.hide();
                 }
                 $("#top-bar-deleteBtn").hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
 
                 /*if (this.filterView) {
                  this.filterView.renderFilterContent();

@@ -189,7 +189,7 @@ define([
                 var el = this.$el;
                 var $targetEl = $(e.target);
                 var checkLength = el.find("input.checkbox:checked").length;
-                var checkAll$ = el.find('#check_all');
+                var checkAll$ = el.find('#checkAll');
                 var removeBtnEl = $('#top-bar-deleteBtn');
 
                 if ($targetEl.hasClass('notRemovable')) {

@@ -30,7 +30,7 @@ define([
             'click .choseType'                                 : 'showSelect',
             'click .choseEmployee'                             : 'showSelect',
             'click .bonus-checkbox'                            : 'checkBonus',
-            'click #check_all_bonus'                           : 'checkAllBonus',
+            'click #checkAll_bonus'                           : 'checkAllBonus',
             'click .startDate div'                             : 'showDatepicker',
             'click .endDate div'                               : 'showDatepicker',
             'click'                                            : 'hideDatepicker'
@@ -75,9 +75,9 @@ define([
             }
 
             if (totalCount > 0 && totalCount === countCheckbox) {
-                $('#check_all_bonus').prop('checked', true);
+                $('#checkAll_bonus').prop('checked', true);
             } else {
-                $('#check_all_bonus').prop('checked', false);
+                $('#checkAll_bonus').prop('checked', false);
             }
         },
 

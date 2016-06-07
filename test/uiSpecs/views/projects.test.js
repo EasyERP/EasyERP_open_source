@@ -17541,7 +17541,7 @@ define([
          });
 
          it('Check|uncheck all items', function () {
-         var $checkAllItemBtn = $thisEl.find('#check_all_bonus');
+         var $checkAllItemBtn = $thisEl.find('#checkAll_bonus');
 
          $checkAllItemBtn.click();
          expect($thisEl.find('#bonusTable input[type="checkbox"]').prop('checked')).to.be.true;

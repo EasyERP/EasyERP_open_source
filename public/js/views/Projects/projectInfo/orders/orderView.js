@@ -130,7 +130,7 @@ define([
 
             event.preventDefault();
             $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
             this.prevP({
                 sort         : this.sort,
                 filter       : this.filter,
@@ -150,7 +150,7 @@ define([
             event.preventDefault();
 
             $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
 
             this.nextP({
                 sort         : this.sort,
@@ -169,7 +169,7 @@ define([
 
             event.preventDefault();
             $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
             this.firstP({
                 sort         : this.sort,
                 filter       : this.filter,
@@ -187,7 +187,7 @@ define([
 
             event.preventDefault();
             $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
             this.lastP({
                 sort         : this.sort,
                 filter       : this.filter,
@@ -239,7 +239,7 @@ define([
             var pagenation;
 
             $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
 
             if (this.collection.length > 0) {
                 $currentEl.find('#orderTable').html(this.templateList({
@@ -357,7 +357,7 @@ define([
             var count;
             var table = $("#ordersTable");
 
-            listTableCheckedInput = table.find("input:not('#check_all_orders'):checked");
+            listTableCheckedInput = table.find("input:not('#checkAll_orders'):checked");
             count = listTableCheckedInput.length;
             this.collectionLength = this.collection.length;
 
@@ -375,7 +375,7 @@ define([
                             table.find('[data-id="' + id + '"]').remove();
 
                             $("#removeOrder").hide();
-                            $('#check_all_orders').prop('checked', false);
+                            $('#checkAll_orders').prop('checked', false);
 
                             that.eventChannel && that.eventChannel.trigger('elemCountChanged');
 
@@ -417,14 +417,14 @@ define([
 
                 if ($el.find("input.checkbox:checked").length > 0) {
                     $el.find("#removeOrder").show();
-                    $el.find('#check_all_orders').prop('checked', false);
+                    $el.find('#checkAll_orders').prop('checked', false);
 
                     if (checkLength === this.collection.length) {
-                        $el.find('#check_all_orders').prop('checked', true);
+                        $el.find('#checkAll_orders').prop('checked', true);
                     }
                 } else {
                     $el.find("#removeOrder").hide();
-                    $el.find('#check_all_orders').prop('checked', false);
+                    $el.find('#checkAll_orders').prop('checked', false);
                 }
             }
         },
@@ -470,13 +470,13 @@ define([
 
             this.$el.find('.fa.fa-times').hide();
 
-            $('#check_all_orders').click(function () {
+            $('#checkAll_orders').click(function () {
                 self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
                     $("#removeOrder").show();
                 } else {
                     $("#removeOrder").hide();
-                    $('#check_all_orders').prop('checked', false);
+                    $('#checkAll_orders').prop('checked', false);
                 }
             });
 

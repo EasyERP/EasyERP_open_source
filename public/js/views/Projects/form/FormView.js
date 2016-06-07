@@ -110,7 +110,7 @@ define([
                 'click .current-selected:not(.disabled)'                                                : 'showNewSelect',
                 'click #createItem'                                                                     : 'createDialog',
                 'click #createJob'                                                                      : 'createJob',
-                'change input:not(.checkbox, .check_all, .statusCheckbox, #inputAttach, #noteTitleArea)': 'showSaveButton',  // added id for noteView
+                'change input:not(.checkbox, .checkAll, .statusCheckbox, #inputAttach, #noteTitleArea)': 'showSaveButton',  // added id for noteView
                 'change #description'                                                                   : 'showSaveButton',
                 'click #jobsItem td:not(.selects, .remove, a.quotation, a.invoice)'                     : 'renderJobWTracks',
                 'mouseover #jobsItem'                                                                   : 'showRemoveButton',
@@ -323,7 +323,7 @@ define([
                 }
 
                 tempContainer = el.text();
-                el.html('<input class="editing" type="text" maxlength="32" value="' + tempContainer + '">' + "<a href='javascript;' class='fa fa-check' title='Save' id='saveName'></a>");
+                el.html('<input class="editing" type="text" maxlength="32" value="' + tempContainer + '">' + "<a href='javascript:;' class='fa fa-check' title='Save' id='saveName'></a>");
 
                 insertedInput = el.find('input');
                 insertedInput.focus();

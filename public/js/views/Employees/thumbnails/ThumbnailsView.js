@@ -176,7 +176,7 @@
 
            /* showFilteredPage: function (filter, context) {
                 $('#top-bar-deleteBtn').hide();
-                $('#check_all').prop('checked', false);
+                $('#checkAll').prop('checked', false);
 
                 context.startTime = new Date();
                 context.newCollection = false;

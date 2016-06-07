@@ -333,7 +333,7 @@ define([
             });
             var pagenation = this.$el.find('.pagination');
 
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
             tBody.empty();
 
             tBody.append(itemView.render());
