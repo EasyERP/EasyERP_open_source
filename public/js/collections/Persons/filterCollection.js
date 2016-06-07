@@ -8,9 +8,10 @@
     'use strict';
 
     var PersonsCollection = Parent.extend({
-        model   : PersonModel,
-        url     : CONSTANTS.URLS.PERSONS,
-        pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
+        model      : PersonModel,
+        url        : CONSTANTS.URLS.PERSONS,
+        pageSize   : CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
+        contentType: 'Persons',
 
         initialize: function (options) {
             var page;

@@ -1586,11 +1586,11 @@ define([
 
         after(function () {
             view.remove();
-            //thumbnailsView.remove();
+            thumbnailsView.remove();
             //listView.remove();
             topBarView.remove();
-            //formView.remove();
-            //editView.remove();
+            formView.remove();
+            editView.remove();
 
             if ($('.ui-dialog').length) {
                 $('.ui-dialog').remove();
@@ -1886,17 +1886,6 @@ define([
                 expect($thisEl.find('.thumbnailwithavatar').length).to.be.equals(3);
                 expect($thisEl.find('#showMore')).to.exist;
             });
-
-            /*it('Try to go to Company form', function () {
-             var $firsEl = $thisEl.find('.thumbnailwithavatar').first();
-             var $goToFormBtn = $firsEl.find('.gotoForm').first();
-             var id = $goToFormBtn.attr('data-id');
-             var expectedUrl = '#easyErp/Companies/form/' + id;
-
-             $goToFormBtn.click();
-             expect(window.location.hash).to.be.equals(expectedUrl);
-             });*/
-
         });
 
         describe('Form View', function () {

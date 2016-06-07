@@ -1,48 +1,50 @@
 define([
-        'Backbone',
-        'jQuery',
-        "models/PersonsModel",
-        'constants'
-    ],
-    function (Backbone, $, PersonModel, CONSTANTS) {
-        'use strict';
+    'Backbone',
+    'jQuery',
+    'models/PersonsModel',
+    'constants'
+], function (Backbone, $, PersonModel, CONSTANTS) {
+    'use strict';
 
-        var PersonsCollection = Backbone.Collection.extend({
-            model      : PersonModel,
-            idAttribute: "_id",
-            url        : function () {
-                return CONSTANTS.URLS.PERSONS;
-            },
-            initialize : function () {
-                var mid = 39;
+    var PersonsCollection = Backbone.Collection.extend({
+        model      : PersonModel,
+        idAttribute: '_id',
+        url        : function () {
+            return CONSTANTS.URLS.PERSONS;
+        },
 
-                this.fetch({
-                    data   : $.param({
-                        mid: mid
-                    }),
-                    reset  : true,
-                    success: this.fetchSuccess,
-                    error  : this.fetchError
-                });
-            },
+        initialize: function () {
+            var mid = 39;
 
-            filterByLetter: function (letter) {
-                var filtered = this.filter(function (data) {
-                    return data.get("name").last.toUpperCase().startsWith(letter);
-                });
-                return new PersonsCollection(filtered);
-            },
+            this.fetch({
+                data: $.param({
+                    mid: mid
+                }),
 
-            parse: function (response) {
-                return response.data;
-            },
+                reset  : true,
+                success: this.fetchSuccess,
+                error  : this.fetchError
+            });
+        },
 
-            fetchSuccess: function () {
-                console.log("Persons fetchSuccess");
-            },
-            fetchError  : function (error) {
-            }
-        });
+        filterByLetter: function (letter) {
+            var filtered = this.filter(function (data) {
+                return data.get('name').last.toUpperCase().startsWith(letter);
+            });
+            return new PersonsCollection(filtered);
+        },
 
-        return PersonsCollection;
+        parse: function (response) {
+            return response.data;
+        },
+
+        fetchSuccess: function () {
+            console.log('Persons fetchSuccess');
+        },
+
+        fetchError: function (error) {
+        }
     });
+
+    return PersonsCollection;
+});

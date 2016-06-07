@@ -268,9 +268,9 @@
             this.asyncLoadImgs(newModels);
         },
 
-        createItem: function () {
+        /*createItem: function () {
             new CreateView();
-        },
+        },*/
 
         editItem: function () {
             new EditView({collection: this.collection});

@@ -11294,7 +11294,7 @@ define([
             topBarView.remove();
             formView.remove();
             thumbnailsView.remove();
-            //listView.remove();
+            listView.remove();
             editView.remove();
             historyNavigateSpy.restore();
             selectSpy.restore();
@@ -11405,202 +11405,117 @@ define([
             });
         });
 
-        /*describe('Persons list View', function () {
-         var $thisEl;
-         var server;
-         var windowConfirmStub;
-         var clock;
-         var exportToCSVStub;
-         var exportToXlcsStub;
+        describe('Persons list View', function () {
+            var $thisEl;
+            var server;
+            var windowConfirmStub;
+            var clock;
+            var exportToCSVStub;
+            var exportToXlcsStub;
 
-         before(function () {
-         server = sinon.fakeServer.create();
-         windowConfirmStub = sinon.stub(window, 'confirm');
-         windowConfirmStub.returns(true);
-         clock = sinon.useFakeTimers();
-         exportToCSVStub = sinon.stub(ListView.prototype, 'exportToCsv');
-         exportToCSVStub.returns(true);
-         exportToXlcsStub = sinon.stub(ListView.prototype, 'exportToXlsx');
-         exportToXlcsStub.returns(true);
-         });
+            before(function () {
+                server = sinon.fakeServer.create();
+                windowConfirmStub = sinon.stub(window, 'confirm');
+                windowConfirmStub.returns(true);
+                clock = sinon.useFakeTimers();
+                exportToCSVStub = sinon.stub(ListView.prototype, 'exportToCsv');
+                exportToCSVStub.returns(true);
+                exportToXlcsStub = sinon.stub(ListView.prototype, 'exportToXlsx');
+                exportToXlcsStub.returns(true);
+            });
 
-         after(function () {
-         clock.restore();
-         server.restore();
-         windowConfirmStub.restore();
-         exportToCSVStub.restore();
-         exportToXlcsStub.restore();
-         });
+            after(function () {
+                clock.restore();
+                server.restore();
+                windowConfirmStub.restore();
+                exportToCSVStub.restore();
+                exportToXlcsStub.restore();
+            });
 
-         it('Try to create Persons list view', function (done) {
-         var personsAlphabetUrl = new RegExp('\/persons\/getPersonAlphabet', 'i');
-         var $searchContainerEl;
-         var $alphabetEl;
-         var $firstRow;
-         var colCount;
-         var firstName;
-         var lastName;
-         var email;
-         var phone;
-         var country;
-         var createdBy;
-         var editedBy;
+            it('Try to create Persons list view', function (done) {
+                var personsAlphabetUrl = new RegExp('\/persons\/getPersonAlphabet', 'i');
+                var $searchContainerEl;
+                var $alphabetEl;
+                var $firstRow;
+                var colCount;
+                var firstName;
+                var lastName;
+                var email;
+                var phone;
+                var country;
+                var createdBy;
+                var editedBy;
 
-         server.respondWith('GET', personsAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlfabetic)]);
-         listView = new ListView({
-         collection: personsCollection,
-         startTime : new Date()
-         });
-         server.respond();
-         clock.tick(300);
+                server.respondWith('GET', personsAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlfabetic)]);
+                listView = new ListView({
+                    collection: personsCollection,
+                    startTime : new Date()
+                });
+                server.respond();
+                clock.tick(300);
 
-         eventsBinder.subscribeCollectionEvents(personsCollection, listView);
-         eventsBinder.subscribeTopBarEvents(topBarView, listView);
+                eventsBinder.subscribeCollectionEvents(personsCollection, listView);
+                eventsBinder.subscribeTopBarEvents(topBarView, listView);
 
-         $thisEl = listView.$el;
+                $thisEl = listView.$el;
 
-         $searchContainerEl = $thisEl.find('.search-view');
-         $alphabetEl = $thisEl.find('#startLetter');
+                $searchContainerEl = $thisEl.find('.search-view');
+                $alphabetEl = $thisEl.find('#startLetter');
 
-         expect($thisEl).to.exist;
-         expect($searchContainerEl).to.exist;
-         expect($alphabetEl).to.exist;
-         expect($thisEl.find('table')).to.exist;
-         expect($thisEl.find('table')).to.have.class('list');
-         expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
+                expect($thisEl).to.exist;
+                expect($searchContainerEl).to.exist;
+                expect($alphabetEl).to.exist;
+                expect($thisEl.find('table')).to.exist;
+                expect($thisEl.find('table')).to.have.class('list');
+                expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
 
-         $firstRow = $thisEl.find('#listTable > tr').first();
+                $firstRow = $thisEl.find('#listTable > tr').first();
 
-         colCount = $firstRow.find('td').length;
-         expect(colCount).to.be.equals(9);
+                colCount = $firstRow.find('td').length;
+                expect(colCount).to.be.equals(9);
 
-         firstName = $firstRow.find('td:nth-child(3)').text();
-         expect(firstName).not.to.be.empty;
-         expect(firstName).to.not.match(/object Object|undefined/);
+                firstName = $firstRow.find('td:nth-child(3)').text();
+                expect(firstName).not.to.be.empty;
+                expect(firstName).to.not.match(/object Object|undefined/);
 
-         lastName = $firstRow.find('td:nth-child(4)').text();
-         expect(lastName).to.not.match(/object Object|undefined/);
+                lastName = $firstRow.find('td:nth-child(4)').text();
+                expect(lastName).to.not.match(/object Object|undefined/);
 
-         email = $firstRow.find('td:nth-child(5)').text();
-         expect(email).to.not.match(/object Object|undefined/);
+                email = $firstRow.find('td:nth-child(5)').text();
+                expect(email).to.not.match(/object Object|undefined/);
 
-         expect($firstRow.find('td:nth-child(6) > a')).to.exist;
-         phone = $firstRow.find('td:nth-child(6) > a').text();
-         expect(phone).to.not.match(/object Object|undefined/);
+                expect($firstRow.find('td:nth-child(6) > a')).to.exist;
+                phone = $firstRow.find('td:nth-child(6) > a').text();
+                expect(phone).to.not.match(/object Object|undefined/);
 
-         country = $firstRow.find('td:nth-child(7)').text();
-         expect(country).to.not.match(/object Object|undefined/);
+                country = $firstRow.find('td:nth-child(7)').text();
+                expect(country).to.not.match(/object Object|undefined/);
 
-         createdBy = $firstRow.find('td:nth-child(8)').text();
-         expect(createdBy).not.to.be.empty;
-         expect(createdBy).to.not.match(/object Object|undefined/);
+                createdBy = $firstRow.find('td:nth-child(8)').text();
+                expect(createdBy).not.to.be.empty;
+                expect(createdBy).to.not.match(/object Object|undefined/);
 
-         editedBy = $firstRow.find('td:nth-child(9)').text();
-         expect(editedBy).not.to.be.empty;
-         expect(editedBy).to.not.match(/object Object|undefined/);
+                editedBy = $firstRow.find('td:nth-child(9)').text();
+                expect(editedBy).not.to.be.empty;
+                expect(editedBy).to.not.match(/object Object|undefined/);
 
-         done();
-         });
+                done();
+            });
 
-         it('Try to export to CSV', function () {
-         var $exportToCsvBtn = topBarView.$el.find('#top-bar-exportToCsvBtn');
+            it('Try to export to CSV', function () {
+                var $exportToCsvBtn = topBarView.$el.find('#top-bar-exportToCsvBtn');
 
-         $exportToCsvBtn.click();
-         expect(exportToCSVStub.calledOnce).to.be.true;
-         });
+                $exportToCsvBtn.click();
+                expect(exportToCSVStub.calledOnce).to.be.true;
+            });
 
-         it('Try to export to XLSX', function () {
-         var $exportToXlsxBtn = topBarView.$el.find('#top-bar-exportToXlsxBtn');
+            it('Try to export to XLSX', function () {
+                var $exportToXlsxBtn = topBarView.$el.find('#top-bar-exportToXlsxBtn');
 
-         $exportToXlsxBtn.click();
-         expect(exportToXlcsStub.calledOnce).to.be.true;
-         });
-
-         /!* it('Try to filter Persons ListView by FullName and Country', function () {
-         var $fullName;
-         var $country;
-         var $selectedItem;
-         var $next;
-         var $prev;
-         var $searchContainer = $thisEl.find('#searchContainer');
-         var $searchArrow = $searchContainer.find('.search-content');
-         var personsTotalUrl = new RegExp('\/totalCollectionLength\/Persons', 'i');
-         var personsListUrl = new RegExp('\/persons\/list', 'i');
-
-         // open filter dropdown
-         $searchArrow.click();
-         expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
-
-         // select full Person Name
-         $fullName = $searchContainer.find('#nameFullContainer .groupName');
-         $fullName.click();
-         $next = $searchContainer.find('.next');
-         $next.click();
-         $prev = $searchContainer.find('.prev');
-         $prev.click();
-         $selectedItem = $searchContainer.find('li[data-value="55b92ad621e4b7c40f000635"]');
-
-         server.respondWith('GET', personsTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({count: 2})]);
-         server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakePersonsForList.data[0], fakePersonsForList.data[1]]})]);
-         $selectedItem.click();
-         server.respond();
-         server.respond();
-
-         expect(selectSpy.calledOnce).to.be.true;
-         expect($thisEl.find('#listTable > tr').length).to.equals(2);
-
-         // select Country
-         $country = $searchContainer.find('#countryFullContainer .groupName');
-         $country.click();
-         $next = $searchContainer.find('.next');
-         $next.click();
-         $prev = $searchContainer.find('.prev');
-         $prev.click();
-         $selectedItem = $searchContainer.find('li[data-value="Australia"]');
-
-         server.respondWith('GET', personsTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({count: 1})]);
-         server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-         data: [fakePersonsForList.data[0]]
-         })]);
-         $selectedItem.click();
-         server.respond();
-         server.respond();
-
-         expect($thisEl.find('#listTable > tr').length).to.equals(1);
-         expect(selectSpy.calledTwice).to.be.true;
-
-         // uncheck Country filter
-         server.respondWith('GET', personsTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({count: 2})]);
-         server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakePersonsForList.data[0], fakePersonsForList.data[1]]})]);
-         $selectedItem.click();
-         server.respond();
-         server.respond();
-
-         expect($thisEl.find('#listTable > tr').length).to.equals(2);
-         expect(selectSpy.calledThrice).to.be.true;
-
-         //close filter dropdown
-         $searchArrow.click();
-         expect($searchContainer.find('.search-options')).to.have.class('hidden');
-
-         });
-
-         it('Try to delete FullName filter', function () {
-         var $searchContainer = $thisEl.find('#searchContainer');
-         var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
-         var personsListUrl = new RegExp('\/persons\/list', 'i');
-
-         server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersonsForList)]);
-         $closeBtn.click();
-         server.respond();
-
-         expect($thisEl).to.exist;
-         expect($thisEl.find('table')).to.exist;
-         expect($thisEl.find('#listTable')).to.exist;
-         expect($thisEl.find('#listTable > tr').length).to.equals(3);
-
-         });*!/
-         });*/
+                $exportToXlsxBtn.click();
+                expect(exportToXlcsStub.calledOnce).to.be.true;
+            });
+        });
 
         describe('Persons thumbnail view', function () {
             var personsCollection;

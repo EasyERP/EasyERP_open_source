@@ -9,15 +9,15 @@ define([
     'views/Filter/FilterView',
     'common',
     'constants'
-], function ($, _, listViewBase, listTemplate, createView, listItemView, contentCollection, filterView, common, CONSTANTS) {
+], function ($, _, listViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {
     'use strict';
     var CompaniesListView = listViewBase.extend({
 
-        createView              : createView,
+        CreateView              : CreateView,
         listTemplate            : listTemplate,
-        listItemView            : listItemView,
+        ListItemView            : ListItemView,
         contentCollection       : contentCollection,
-        filterView              : filterView,
+        filterView              : FilterView,
         contentType             : 'Companies',
         totalCollectionLengthUrl: '/companies/totalCollectionLength',
         formUrl                 : '#easyErp/Companies/form/',
@@ -40,11 +40,11 @@ define([
             this.newCollection = options.newCollection;
 
             this.deleteCounter = 0;
-            this.page = options.collection.page;
+            this.page = options.collection.currentPage;
 
             this.render();
 
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+            // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
             this.contentCollection = contentCollection;
         },
 
@@ -83,10 +83,10 @@ define([
 
             $currentEl.html('');
             $currentEl.append(_.template(this.listTemplate));
-            $currentEl.append(new this.listItemView({
+            $currentEl.append(new this.ListItemView({
                 collection : this.collection,
                 page       : this.page,
-                itemsNumber: this.collection.namberToShow
+                itemsNumber: this.collection.pageSize
             }).render());
 
             this.renderCheckboxes();

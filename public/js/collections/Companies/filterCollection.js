@@ -8,9 +8,10 @@
     'use strict';
 
     var CompaniesCollection = Parent.extend({
-        model   : CompanyModel,
-        url     : CONSTANTS.URLS.COMPANIES,
-        pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
+        model      : CompanyModel,
+        url        : CONSTANTS.URLS.COMPANIES,
+        pageSize   : CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
+        contentType: 'Companies',
 
         initialize: function (options) {
             var page;
@@ -43,6 +44,7 @@
         showMoreAlphabet: function (options) {
             var that = this;
             var filterObject = options || {};
+
             that.page = 1;
             filterObject.page = (options && options.page) ? options.page : this.page;
             filterObject.count = (options && options.count) ? options.count : this.namberToShow;
