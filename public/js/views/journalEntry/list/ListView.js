@@ -204,7 +204,7 @@ define([
                 pagination.hide();
             }
             $('#top-bar-deleteBtn').hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
 
             $holder.find('#timeRecivingDataFromServer').remove();
             $holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');

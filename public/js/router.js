@@ -914,7 +914,8 @@ define([
                         count           : count,
                         filter          : savedFilter,
                         parrentContentId: parrentContentId,
-                        contentType     : contentType
+                        contentType     : contentType,
+                        showMore        : false
                     });
 
                     collection.bind('reset', _.bind(createViews, self));

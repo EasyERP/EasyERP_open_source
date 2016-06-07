@@ -134,7 +134,7 @@ define([
                         ui.item.attr("data-sequence", sequence);
                     }
                 });
-                $('#check_all').click(function () {
+                $('#checkAll').click(function () {
                     $(':checkbox').prop('checked', this.checked);
                     if ($("input.checkbox:checked").length > 0) {
                         $("#top-bar-deleteBtn").show();
@@ -166,7 +166,7 @@ define([
                         $("#top-bar-deleteBtn").show();
                     } else {
                         $("#top-bar-deleteBtn").hide();
-                        $('#check_all').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
                     }
                 }
             },

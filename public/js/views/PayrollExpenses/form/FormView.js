@@ -167,9 +167,9 @@ define([
             var $currentEl = this.$el;
             var tBody = $currentEl.find('#payRoll-TableBody');
 
-            tBody.empty();
-            $('#top-bar-deleteBtn').hide();
-            $('#check_all').prop('checked', false);
+                tBody.empty();
+                $('#top-bar-deleteBtn').hide();
+                $('#checkAll').prop('checked', false);
 
             if (this.collection.length > 0) {
                 tBody.append(_.template(sortTemplate, {
@@ -300,7 +300,7 @@ define([
 
             $('#top-bar-deleteBtn').hide();
             $('#topBarPaymentGenerate').hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
 
             if (this.filterView) {
                 this.filterView.renderFilterContent();
@@ -908,12 +908,12 @@ define([
                         $('#top-bar-copy').hide();
                     }
                     if (checkLength === this.collection.length) {
-                        this.$el.find('.check_all').prop('checked', true);
+                        this.$el.find('.checkAll').prop('checked', true);
                     } else {
-                        this.$el.find('.check_all').prop('checked', false);
+                        this.$el.find('.checkAll').prop('checked', false);
                     }
                 } else {
-                    this.$el.find('.check_all').prop('checked', false);
+                    this.$el.find('.checkAll').prop('checked', false);
                     $('#top-bar-deleteBtn').hide();
                     $('#topBarPaymentGenerate').hide();
                     $('#top-bar-copy').hide();
@@ -1094,7 +1094,7 @@ define([
 
             this.filterEmployeesForDD(this);
 
-            $('.check_all').click(function () {
+            $('.checkAll').click(function () {
                 var totalOld = 0;
                 var totalNew = 0;
                 var totalCalc = 0;

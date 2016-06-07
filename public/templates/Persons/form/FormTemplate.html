@@ -22,7 +22,7 @@
             <span title="<%=name.first%> <%=name.last%>">
               <%=(name.first.length>16)?(name.first.substring(0,16)+"..."):name.first%> <%=(name.last.length>16)?(name.last.substring(0,16)+"..."):name.last%>
               <% if (company && company.name){%>at <a class="bold company" title="<%=company.name.first%>"
-                                                      data-id="<%=company._id%>" href="javascript;"><%=company.name.first%></a><%}%>
+                                                      data-id="<%=company._id%>" href="javascript:;"><%=company.name.first%></a><%}%>
             </span>
                     </h3>
 

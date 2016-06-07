@@ -70,7 +70,12 @@
             }
 
             this.changeLocationHash(null, this.collection.pageSize, filter);
-            this.collection.getFirstPage({filter: filter, showMore: true, viewType: this.viewType, contentType : this.contentType});
+            this.collection.getFirstPage({
+                filter     : filter,
+                showMore   : true,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            });
         },
 
         hideItemsNumber: function (e) {
@@ -86,10 +91,11 @@
 
         showMore: function (e) {
             e.preventDefault();
-            
-            this.collection.getNextPage({filter: this.filter, showMore: true, viewType: this.viewType, contentType: this.contentType});
+
+            this.collection.getNextPage({filter: this.filter, viewType: this.viewType, contentType: this.contentType});
         },
 
+        // trigger by collection
         showMoreContent: function (newModels) {
             var $holder = this.$el;
             var $showMore = $holder.find('#showMoreDiv');
@@ -105,18 +111,6 @@
             }
             this.asyncLoadImgs(newModels);
             // this.filterView.renderFilterContent();
-        },
-
-        createItem: function () {
-            var CreateView = this.CreateView || Backbone.View.extend({});
-
-            return new CreateView();
-        },
-
-        editItem: function () {
-            var EditView = this.EditView || Backbone.View.extend({});
-
-            return new EditView({collection: this.collection});
         },
 
         setPagination: function () {

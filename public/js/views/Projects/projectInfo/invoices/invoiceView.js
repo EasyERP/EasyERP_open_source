@@ -123,7 +123,7 @@ define([
             var listTableCheckedInput;
             var payments;
             var table = this.$el.find('#listTable');
-            listTableCheckedInput = table.find("input:not('#check_all_invoice'):checked");
+            listTableCheckedInput = table.find("input:not('#checkAll_invoice'):checked");
 
             this.collectionLength = this.collection.length;
             async.each(listTableCheckedInput, function (checkbox, cb) {
@@ -145,7 +145,7 @@ define([
                         tr.find('.checkbox').removeClass('notRemovable');
 
                         $("#removeInvoice").hide();
-                        $('#check_all_invoice').prop('checked', false);
+                        $('#checkAll_invoice').prop('checked', false);
 
                         that.eventChannel && that.eventChannel.trigger('invoiceRemove');
                         that.collection.remove(checkbox.value);
@@ -265,7 +265,7 @@ define([
 
             tBody.empty();
             $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
 
             if (this.collection.length > 0) {
                 itemView = new this.listItemView({
@@ -343,7 +343,7 @@ define([
 
             if (this.collection.length > 0) {
                 checkLength = $el.find("input.checkbox:checked:not(.notRemovable)").length;
-                checkAll$ = $el.find('#check_all_invoice');
+                checkAll$ = $el.find('#checkAll_invoice');
                 removeBtnEl = $('#removeInvoice');
 
                 if (checkLength > 0) {
@@ -416,7 +416,7 @@ define([
             this.$el.find("#removeInvoice").hide();
             this.$el.find("#saveInvoice").hide();
 
-            $('#check_all_invoice').click(function () {
+            $('#checkAll_invoice').click(function () {
 
                 self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);
 
@@ -424,7 +424,7 @@ define([
                     self.$el.find("#removeInvoice").show();
                 } else {
                     self.$el.find("#removeInvoice").hide();
-                    $('#check_all_invoice').prop('checked', false);
+                    $('#checkAll_invoice').prop('checked', false);
                 }
             });
 

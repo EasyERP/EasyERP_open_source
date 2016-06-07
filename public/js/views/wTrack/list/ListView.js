@@ -238,7 +238,7 @@ define([
 
         copyRow: function (e) {
             var self = this;
-            var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
+            var checkedRows = this.$el.find('input.listCB:checked:not(#checkAll)');
             var length = checkedRows.length;
             var selectedWtrack;
             var target;
@@ -253,7 +253,7 @@ define([
             var projectWorkflow;
             var i;
 
-            this.$el.find('#check_all').prop('checked', false);
+            this.$el.find('#checkAll').prop('checked', false);
 
             this.hideGenerateCopy();
             this.changed = true;
@@ -948,14 +948,14 @@ define([
                     $("#top-bar-deleteBtn").show();
                     $("#top-bar-createBtn").hide();
 
-                    $('#check_all').prop('checked', false);
+                    $('#checkAll').prop('checked', false);
                     if (checkLength === this.collection.length) {
-                        $('#check_all').prop('checked', true);
+                        $('#checkAll').prop('checked', true);
                     }
                 } else {
                     $("#top-bar-deleteBtn").hide();
                     $("#top-bar-createBtn").show();
-                    $('#check_all').prop('checked', false);
+                    $('#checkAll').prop('checked', false);
                 }
 
                 if (rawRows.length !== 0 && rawRows.length !== checkLength) {
@@ -1464,7 +1464,7 @@ define([
 
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
 
-            $('#check_all').click(function () {
+            $('#checkAll').click(function () {
                 var checkLength;
 
                 allInputs = $('.listCB');
@@ -1484,14 +1484,14 @@ define([
                                 self.checkProjectId(element, checkLength);
                             });
 
-                            $('#check_all').prop('checked', true);
+                            $('#checkAll').prop('checked', true);
                         }
                     } else {
                         $('#top-bar-deleteBtn').hide();
                         $('#top-bar-createBtn').show();
                         // self.genInvoiceEl.hide();
                         self.copyEl.hide();
-                        $('#check_all').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
                     }
                 }
 
