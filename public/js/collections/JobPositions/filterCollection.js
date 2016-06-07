@@ -47,15 +47,8 @@
                     return jopPosition;
                 });
             }
-            this.totalRecords = response.total;
-            this.totalPages = Math.ceil(this.totalRecords / this.pageSize);
 
-            this.trigger('fetchFinished', {
-                totalRecords: this.totalRecords,
-                currentPage : this.currentPage,
-                pageSize    : this.pageSize
-            });
-            return response.data;
+            return Parent.prototype.parse.apply(this, arguments);
         }
     });
     return JobPositionsCollection;
