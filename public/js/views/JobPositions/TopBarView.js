@@ -1,9 +1,8 @@
 define([
     'Underscore',
     'views/topBarViewBase',
-    'text!templates/JobPositions/TopBarTemplate.html',
-    'custom'
-], function (_, BaseView, ContentTopBarTemplate, Custom) {
+    'text!templates/JobPositions/TopBarTemplate.html'
+], function (_, BaseView, ContentTopBarTemplate) {
     'use strict';
 
     var TopBarView = BaseView.extend({
@@ -11,19 +10,7 @@ define([
         contentType  : 'JobPositions',
         contentHeader: 'Job Positions',
         actionType   : null,
-        template     : _.template(ContentTopBarTemplate),
-
-        initialize: function (options) {
-            this.actionType = options.actionType;
-            if (this.actionType !== 'Content') {
-                Custom.setCurrentVT('form');
-            }
-            if (options.collection) {
-                this.collection = options.collection;
-                this.collection.bind('reset', _.bind(this.render, this));
-            }
-            this.render();
-        }
+        template     : _.template(ContentTopBarTemplate)
     });
     return TopBarView;
 });
