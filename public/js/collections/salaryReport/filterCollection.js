@@ -1,37 +1,38 @@
-/**
- * Created by liliy on 20.01.2016.
- */
-'use strict';
 define([
     'Backbone',
     'models/EmployeeDashboardItem',
     'custom'
 ], function (Backbone, EmpModel, Custom) {
-    var salatyCollection = Backbone.Collection.extend({
+    'use strict';
+
+    var salaryCollection = Backbone.Collection.extend({
 
         model       : EmpModel,
-        url         : '/salaryReport/list',
+        url         : '/salaryReport/',
         contentType : null,
         page        : null,
         numberToShow: null,
         viewType    : 'list',
 
         initialize: function (options) {
+            var dateRange;
+            var startDate = new Date();
+            var endDate = new Date();
+
             options = options || {};
 
             this.startTime = new Date();
             this.filter = options.filter || Custom.retriveFromCash('salaryReport.filter');
-            var startDate = new Date();
-            var endDate = new Date();
+
             startDate.setMonth(0);
             startDate.setDate(1);
             endDate.setMonth(11);
             endDate.setDate(31);
-            var dateRange = Custom.retriveFromCash('salaryReportDateRange') || {};
+            dateRange = Custom.retriveFromCash('salaryReportDateRange') || {};
             this.startDate = dateRange.startDate;
             this.endDate = dateRange.endDate;
 
-            this.startDate = dateRange.startDate ||  startDate;
+            this.startDate = dateRange.startDate || startDate;
             this.endDate = dateRange.endDate || endDate;
 
             options.startDate = this.startDate;
@@ -49,7 +50,8 @@ define([
                 success: function () {
 
                 },
-                error  : function (err, xhr) {
+
+                error: function (err, xhr) {
                     console.log(xhr);
                 }
             });
@@ -75,9 +77,8 @@ define([
                         return self.sortOrder;
                     } else if (nameA < nameB) {
                         return self.sortOrder * (-1);
-                    } else {
-                        return 0;
                     }
+                    return 0;
                 }
             };
 
@@ -97,15 +98,16 @@ define([
                     that.page += 1;
                     that.trigger('showmore', models);
                 },
-                error  : function () {
+
+                error: function () {
                     App.render({
-                        type: 'error',
-                        message: "Some Error."
+                        type   : 'error',
+                        message: 'Some Error.'
                     });
                 }
             });
         }
     });
 
-    return salatyCollection;
+    return salaryCollection;
 });

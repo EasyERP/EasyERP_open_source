@@ -89,7 +89,6 @@ define([
                     itemsNumber: this.collection.namberToShow
                 }).render());
 
-                this.renderCheckboxes();
                 this.renderAlphabeticalFilter(this);
                 this.renderPagination($currentEl, this);
 

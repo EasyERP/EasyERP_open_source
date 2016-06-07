@@ -1,7 +1,6 @@
 var request = require('supertest');
 var expect = require('chai').expect;
 var url = 'http://localhost:8089/';
-var host = process.env.HOST;
 var aggent;
 var dbId = 'production';
 var admin = {
@@ -117,7 +116,7 @@ describe('BonusType Specs', function () {
                     expect(body)
                         .to.be.instanceOf(Object);
                     expect(body)
-                        .to.have.property('total')
+                        .to.have.property('total');
                     expect(body.data.length)
                         .to.be.lte(100);
                     if (body.data.length > 1) { // test sorting
@@ -168,7 +167,7 @@ describe('BonusType Specs', function () {
                     expect(body)
                         .to.have.property('data')
                         .and.to.be.instanceOf(Array)
-                        .and.to.have.deep.property('[0]')
+                        .and.to.have.deep.property('[0]');
 
                     done();
                 });

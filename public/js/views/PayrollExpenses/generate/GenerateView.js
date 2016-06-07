@@ -1,199 +1,181 @@
-/**
- * Created by lilya on 10/11/15.
- */
 define([
-        'Backbone',
-        'jQuery',
-        'Underscore',
-        "text!templates/PayrollExpenses/generate/generate.html",
-        "moment",
-        "populate"
-    ],
-    function (Backbone, $, _, GenetareTemplate, moment, populate) {
-        "use strict";
-        var CreateView = Backbone.View.extend({
-            template: _.template(GenetareTemplate),
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/PayrollExpenses/generate/generate.html',
+    'moment'
+], function (Backbone, $, _, GenetareTemplate, moment) {
+    'use strict';
 
-            events: {
-                "click input"   : "setAttr",
-                "keyup input"   : "onKeyUpInput",
-                "focusout input": "onChangeInput",
-                "keydown input" : "onKeyDownInput"
-            },
+    var CreateView = Backbone.View.extend({
+        template: _.template(GenetareTemplate),
 
-            initialize: function (options) {
+        events: {
+            'click input'   : 'setAttr',
+            'keyup input'   : 'onKeyUpInput',
+            'focusout input': 'onChangeInput',
+            'keydown input' : 'onKeyDownInput'
+        },
 
-                this.keys = options.keys;
+        initialize: function (options) {
 
-                this.url = options.url || '/payroll/generate/';
+            this.keys = options.keys;
 
-                this.title = options.url ? 'Close Month': "Generate Payroll Expenses";
+            this.url = options.url || '/payroll/generate/';
 
-                this.render();
-            },
+            this.title = options.url ? 'Close Month' : 'Generate Payroll Expenses';
 
-            setAttr       : function (e) {
-                var input = $(e.target);
-                var id = input.attr('id');
+            this.render();
+        },
 
-                if (id === 'month') {
-                    input.attr({
-                        "min"      : 1,
-                        "max"      : 12,
-                        "maxLength": 2
+        setAttr: function (e) {
+            var input = $(e.target);
+            var id = input.attr('id');
+
+            if (id === 'month') {
+                input.attr({
+                    min      : 1,
+                    max      : 12,
+                    maxLength: 2
+                });
+            } else if (id === 'year') {
+                input.attr({
+                    min      : 1980,
+                    maxLength: 4
+                });
+            }
+        },
+        
+        onKeyDownInput: function (e) {
+            if ($.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 || (e.keyCode >= 35 && e.keyCode <= 39)) {
+                return;
+            }
+
+            if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
+                e.preventDefault();
+            }
+        },
+
+        onKeyUpInput: function (e) {
+            var element = e.target;
+
+            if (element.maxLength && element.value.length > element.maxLength) {
+                element.value = element.value.slice(0, element.maxLength);
+            }
+        },
+
+        onChangeInput: function (e) {
+            var element = e.target;
+            var max = parseInt(element.max, 10);
+            var min = parseInt(element.min, 10);
+            var value = parseInt(element.value, 10);
+
+            if (max && value > max) {
+                element.value = max;
+            }
+
+            if (min && value < min) {
+                element.value = min;
+            }
+        },
+
+        generate: function () {
+            this.generateItems();
+        },
+
+        generateItems: function () {
+            var self = this;
+            var data = {};
+            var url;
+            var key;
+
+            var editedElement = $('.edit');
+
+            if (editedElement.length) {
+                self.month = $('#month').val();
+                self.year = $('#year').val();
+            }
+
+            key = parseInt(self.year, 10) * 100 + parseInt(self.month, 10);
+
+            if (this.keys.indexOf(key.toString()) > -1) {
+                return App.render({
+                    type   : 'error',
+                    message: 'Please, choose empty month!'
+                });
+            }
+
+            data.month = this.month;
+            data.year = this.year;
+
+            $.ajax({
+                type       : 'POST',
+                url        : this.url,
+                contentType: 'application/json',
+                data       : JSON.stringify(data),
+
+                success: function () {
+                    $('.edit-dialog').remove();
+
+                    url = window.location.hash;
+
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate(url, {trigger: true});
+
+                },
+
+                error: function () {
+                    App.render({
+                        type   : 'error',
+                        message: 'error'
                     });
-                } else if (id === 'year') {
-                    input.attr({
-                        "min"      : 1980,
-                        "maxLength": 4
-                    });
                 }
-            },
-            onKeyDownInput: function (e) {
-                if (// Allow: backspace, delete, tab, escape, enter
-                $.inArray(e.keyCode, [46, 8, 9, 27, 13]) !== -1 ||
-                    // Allow: home, end, left, right
-                (e.keyCode >= 35 && e.keyCode <= 39)) {
-                    return;
-                }
+            });
+        },
 
-                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) {
-                    e.preventDefault();
-                }
-            },
+        hideDialog: function () {
+            $('.edit-dialog').remove();
+        },
 
-            onKeyUpInput: function (e) {
-                var element = e.target;
+        render: function () {
+            var self = this;
+            var month = moment(new Date()).get('month');
+            var year = moment(new Date()).get('year');
+            var newDialog;
 
-                if (element.maxLength && element.value.length > element.maxLength) {
-                    element.value = element.value.slice(0, element.maxLength);
-                }
-            },
+            var dialog = this.template({
+                month: month,
+                year : year
+            });
 
-            onChangeInput: function (e) {
-                var element = e.target;
-                var max = parseInt(element.max);
-                var min = parseInt(element.min);
-                var value = parseInt(element.value);
+            newDialog = $(dialog);
 
-                if (max && value > max) {
-                    element.value = max;
-                }
-
-                if (min && value < min) {
-                    element.value = min;
-                }
-            },
-
-            /*setChangedValue: function () {
-                var editedElement = $('.edit');
-                var self = this;
-
-                if (editedElement.length) {
-
-                    self.month = $('#month').val();
-                    self.year = $('#year').val();
-
-                }
-            },*/
-
-            generate: function () {
-                this.generateItems();
-            },
-
-            generateItems: function () {
-                var self = this;
-                var data = {};
-                var url;
-                var key;
-
-                var editedElement = $('.edit');
-
-                if (editedElement.length) {
-                    self.month = $('#month').val();
-                    self.year = $('#year').val();
-                }
-
-                key = parseInt(self.year, 10) * 100 + parseInt(self.month, 10);
-
-                if (this.keys.indexOf(key.toString()) > -1) {
-                    return App.render({
-                        type: 'error',
-                        message: "Please, choose empty month!"
-                    });
-                }
-
-                data.month = this.month;
-                data.year = this.year;
-
-                $.ajax({
-                    type       : 'POST',
-                    url        : this.url,
-                    contentType: "application/json",
-                    data       : JSON.stringify(data),
-
-                    success: function () {
-                        $('.edit-dialog').remove();
-
-                        url = window.location.hash;
-
-                        Backbone.history.fragment = '';
-                        Backbone.history.navigate(url, {trigger: true});
-
+            this.$el = newDialog.dialog({
+                dialogClass: 'edit-dialog',
+                width      : 300,
+                title      : self.title,
+                buttons    : {
+                    save: {
+                        text : 'Generate',
+                        class: 'btn',
+                        id   : 'generateBtn',
+                        click: function () {
+                            self.generate();
+                        }
                     },
-                    error  : function () {
-                        App.render({
-                            type: 'error',
-                            message: "error"
-                        });
-                    }
-                });
-            },
 
-            hideDialog: function () {
-                $('.edit-dialog').remove();
-            },
-
-            render: function () {
-                var self = this;
-                var month = moment(new Date()).get('month');
-                var year = moment(new Date()).get('year');
-                var newDialog;
-
-                var dialog = this.template({
-                    month: month,
-                    year : year
-                });
-
-                newDialog = $(dialog);
-
-                this.$el = newDialog.dialog({
-                    dialogClass: "edit-dialog",
-                    width      : 300,
-                    title      : self.title,
-                    buttons    : {
-                        save  : {
-                            text : "Generate",
-                            class: "btn",
-                            id   : "generateBtn",
-                            click: function () {
-                                // self.generateItems()
-                                self.generate()
-                            }
-                        },
-                        cancel: {
-                            text : "Cancel",
-                            class: "btn",
-                            click: function () {
-                                self.hideDialog();
-                            }
+                    cancel: {
+                        text : 'Cancel',
+                        class: 'btn',
+                        click: function () {
+                            self.hideDialog();
                         }
                     }
-                });
+                }
+            });
 
-                return this;
-            }
-        });
-        return CreateView;
-    })
-;
+            return this;
+        }
+    });
+    return CreateView;
+});

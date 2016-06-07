@@ -7,10 +7,10 @@ var MODULES = require('../constants/modules');
 module.exports = function (models, event) {
     var _journalHandler = new journalHandler(models, event);
     var moduleId = MODULES.JOURNAL;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddlware);
+    router.use(accessStackMiddleware);
 
     router.get('/', _journalHandler.getForView);
     router.get('/getForDd', _journalHandler.getForDd);

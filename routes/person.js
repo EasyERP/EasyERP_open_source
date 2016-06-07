@@ -8,19 +8,19 @@ module.exports = function (models, event) {
     'use strict';
     var handler = new CustomerHandler(models, event);
     var moduleId = MODULES.PERSONS;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
 
-    router.get('/', accessStackMiddlware, handler.getByViewType);
-    router.get('/getPersonAlphabet', accessStackMiddlware, handler.getCompaniesAlphabet);
+    router.get('/', accessStackMiddleware, handler.getByViewType);
+    router.get('/getPersonAlphabet', accessStackMiddleware, handler.getCompaniesAlphabet);
     router.get('/getPersonsForMiniView', handler.getFilterPersonsForMiniView);
-    router.get('/totalCollectionLength', accessStackMiddlware, handler.getTotalCount);
+    router.get('/totalCollectionLength', accessStackMiddleware, handler.getTotalCount);
 
-    router.post('/', accessStackMiddlware, handler.create);
-    router.put('/:id', accessStackMiddlware, handler.update);
-    router.patch('/:id', accessStackMiddlware, handler.udateOnlySelectedFields);
-    router.delete('/:id', accessStackMiddlware, handler.remove);
+    router.post('/', accessStackMiddleware, handler.create);
+    router.put('/:id', accessStackMiddleware, handler.update);
+    router.patch('/:id', accessStackMiddleware, handler.udateOnlySelectedFields);
+    router.delete('/:id', accessStackMiddleware, handler.remove);
 
     return router;
 };

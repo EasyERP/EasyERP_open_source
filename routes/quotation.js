@@ -7,17 +7,17 @@ var MODULES = require('../constants/modules');
 module.exports = function (models, event) {
     var handler = new QuotationHandler(models, event);
     var moduleId = MODULES.QUOTATION;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
 
-    router.get('/', accessStackMiddlware, handler.getByViewType);
-    router.get('/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
-    router.get('/getFilterValues', accessStackMiddlware, handler.getFilterValues);
-    router.post('/', accessStackMiddlware, handler.create);
-    router.delete('/:id', accessStackMiddlware, handler.remove);
-    router.patch('/:id', accessStackMiddlware, handler.putchModel);
-    router.put('/:id', accessStackMiddlware, handler.updateModel);
+    router.get('/', accessStackMiddleware, handler.getByViewType);
+    router.get('/totalCollectionLength', accessStackMiddleware, handler.totalCollectionLength);
+    router.get('/getFilterValues', accessStackMiddleware, handler.getFilterValues);
+    router.post('/', accessStackMiddleware, handler.create);
+    router.delete('/:id', accessStackMiddleware, handler.remove);
+    router.patch('/:id', accessStackMiddleware, handler.putchModel);
+    router.put('/:id', accessStackMiddleware, handler.updateModel);
 
     return router;
 };

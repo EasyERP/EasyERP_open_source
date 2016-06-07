@@ -118,9 +118,7 @@ define([
             });
             $currentEl.append(itemView.render());
             itemView.bind('incomingStages', itemView.pushStages, itemView);
-
-            this.renderCheckboxes();
-
+            
             common.populateWorkflowsList("Job positions", null, null, "/Workflows", null, function (stages) {
                 self.stages = stages;
                 itemView.trigger('incomingStages', stages);

@@ -23,7 +23,7 @@ define([
              CreateView,
              ListItemView,
              HolidayModel,
-             holidayCollection,
+             contentCollection,
              EditCollection,
              dataService,
              CONSTANTS,
@@ -44,22 +44,22 @@ define([
         editCollection          : null,
 
         initialize: function (options) {
+            $(document).off('click');
+
+            this.CreateView = CreateView;
+
             this.startTime = options.startTime;
             this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
-            this.filter = options.filter || {};
-            this.sort = options.sort || {};
-            this.defaultItemsNumber = this.collection.namberToShow || 100;
-            this.newCollection = options.newCollection;
-            this.deleteCounter = 0;
-            this.page = options.collection.page;
+            this.parrentContentId = options.collection.parrentContentId;
+            this.sort = options.sort;
+            this.filter = options.filter;
+            this.page = options.collection.currentPage;
+            this.contentCollection = contentCollection;
+
             this.render();
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-            this.contentCollection = holidayCollection;
         },
 
         events: {
-
             'click .checkbox'      : 'checked',
             'click td.editable'    : 'editRow',
             'click .oe_sortable'   : 'goSort',
@@ -306,7 +306,6 @@ define([
                 itemsNumber: this.collection.namberToShow
             }).render()); // added two parameters page and items number
 
-
             setTimeout(function () {
                 self.editCollection = new EditCollection(self.collection.toJSON());
                 self.editCollection.on('saved', self.savedNewModel, self);
@@ -315,9 +314,7 @@ define([
 
                 self.$listTable = $('#listTable');
             }, 10);
-
-            this.renderCheckboxes();
-
+            
             this.renderPagination($currentEl, this);
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
@@ -333,7 +330,7 @@ define([
             });
             var pagenation = this.$el.find('.pagination');
 
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
             tBody.empty();
 
             tBody.append(itemView.render());
@@ -422,63 +419,62 @@ define([
             var localCounter = 0;
             var listTableChecked = $('#listTable input:checked');
             var count = listTableChecked.length;
+            var value;
+
             this.collectionLength = this.collection.length;
 
             if (!this.changed) {
-                var answer = confirm('Really DELETE items ?!');
-                var value;
 
-                if (answer === true) {
-                    $.each(listTableChecked, function (index, checkbox) {
-                        value = checkbox.value;
-                        that.changedModels = {};
+                $.each(listTableChecked, function (index, checkbox) {
+                    value = checkbox.value;
+                    that.changedModels = {};
 
-                        if (value.length < 24) {
-                            that.editCollection.remove(value);
-                            that.editCollection.on('remove', function () {
-                                this.listLength--;
+                    if (value.length < 24) {
+                        that.editCollection.remove(value);
+                        that.editCollection.on('remove', function () {
+                            this.listLength--;
+                            localCounter++;
+
+                            if (index === count - 1) {
+                                that.triggerDeleteItemsRender(localCounter);
+                            }
+
+                        }, that);
+                    } else {
+                        model = that.collection.get(value);
+                        model.destroy({
+                            headers: {
+                                mid: mid
+                            },
+                            wait   : true,
+                            success: function () {
+                                that.listLength--;
                                 localCounter++;
 
                                 if (index === count - 1) {
                                     that.triggerDeleteItemsRender(localCounter);
                                 }
+                            },
 
-                            }, that);
-                        } else {
-                            model = that.collection.get(value);
-                            model.destroy({
-                                headers: {
-                                    mid: mid
-                                },
-                                wait   : true,
-                                success: function () {
-                                    that.listLength--;
-                                    localCounter++;
-
+                            error: function (model, res) {
+                                if (res.status === 403 && index === 0) {
+                                    App.render({
+                                        type   : 'error',
+                                        message: 'You do not have permission to perform this action'
+                                    });
+                                }
+                                that.listLength--;
+                                localCounter++;
+                                if (index === count - 1) {
                                     if (index === count - 1) {
                                         that.triggerDeleteItemsRender(localCounter);
                                     }
-                                },
-                                error  : function (model, res) {
-                                    if (res.status === 403 && index === 0) {
-                                        App.render({
-                                            type   : 'error',
-                                            message: 'You do not have permission to perform this action'
-                                        });
-                                    }
-                                    that.listLength--;
-                                    localCounter++;
-                                    if (index === count - 1) {
-                                        if (index === count - 1) {
-                                            that.triggerDeleteItemsRender(localCounter);
-                                        }
-                                    }
-
                                 }
-                            });
-                        }
-                    });
-                }
+
+                            }
+                        });
+                    }
+                });
             } else {
                 this.cancelChanges();
             }

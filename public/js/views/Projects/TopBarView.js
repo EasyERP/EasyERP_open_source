@@ -1,10 +1,8 @@
 define([
     'Underscore',
     'views/topBarViewBase',
-    'text!templates/Projects/TopBarTemplate.html',
-    'custom',
-    'common'
-], function (_, BaseView, ContentTopBarTemplate, Custom, common) {
+    'text!templates/Projects/TopBarTemplate.html'
+], function (_, BaseView, ContentTopBarTemplate) {
     var TopBarView = BaseView.extend({
         contentType: 'Projects',
         actionType : null, // Content, Edit, Create

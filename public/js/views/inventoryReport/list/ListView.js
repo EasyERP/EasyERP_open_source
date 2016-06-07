@@ -17,7 +17,7 @@ define([
 
     var ListView = listViewBase.extend({
         listTemplate            : listTemplate,
-        LstItemView             : ListItemView,
+        ListItemView             : ListItemView,
         filterView              : filterView,
         contentCollection       : contentCollection,
         contentType             : CONSTANTS.INVENTORYREPORT,
@@ -120,41 +120,6 @@ define([
             });
         },
 
-        showMoreContent: function (newModels) {
-            var holder = this.$el;
-            var itemView;
-            var pagenation;
-            var page = parseInt(holder.find('#currentShowPage').val(), 10) || 1; // if filter give 0 elements
-
-            holder.find('#listTable').empty();
-
-            itemView = new this.ListItemView({
-                collection : newModels,
-                page       : page,
-                itemsNumber: this.defaultItemsNumber
-            });
-
-            holder.append(itemView.render());
-
-            itemView.undelegateEvents();
-
-            pagenation = holder.find('.pagination');
-
-            if (newModels.length !== 0) {
-                pagenation.show();
-            } else {
-                pagenation.hide();
-            }
-
-            $('#top-bar-deleteBtn').hide();
-            $('#check_all').prop('checked', false);
-
-            this.calcTotal();
-
-            holder.find('#timeRecivingDataFromServer').remove();
-            holder.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-        },
-
         calcTotal: function () {
             var $curEl = this.$el;
             var $rows = $curEl.find('#listTable tr').not('#listFooter');
@@ -196,9 +161,7 @@ define([
             });
 
             $currentEl.prepend(itemView.render());
-
-            this.renderCheckboxes();
-
+            
             this.calcTotal();
 
             this.renderPagination($currentEl, this);

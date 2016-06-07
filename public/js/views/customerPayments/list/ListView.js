@@ -3,7 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'views/listViewBase',
-    'text!templates/supplierPayments/list/ListHeader.html',
+    'text!templates/customerPayments/list/ListHeader.html',
     'text!templates/customerPayments/list/cancelTemplate.html',
     'views/customerPayments/list/ListItemView',
     'views/Filter/FilterView',
@@ -21,7 +21,7 @@ define([
     var PaymentListView = ListViewBase.extend({
 
         listTemplate     : listTemplate,
-        listItemView     : ListItemView,
+        ListItemView     : ListItemView,
         filterView       : filterView, // if reload page, and in url is valid page
         contentType      : 'customerPayments', // needs in view.prototype.changeLocationHash
         modelId          : null,
@@ -148,7 +148,7 @@ define([
             var el = this.$el;
             var $targetEl = $(e.target);
             var checkLength = el.find('input.checkbox:checked').length;
-            var checkAll$ = el.find('#check_all');
+            var checkAll$ = el.find('#checkAll');
             var removeBtnEl = $('#top-bar-deleteBtn');
 
             e.stopPropagation();
@@ -235,9 +235,7 @@ define([
             }).render());
 
             this.recalcTotal();
-
-            this.renderCheckboxes();
-
+            
             this.renderPagination($currentEl, this);
 
             this.renderFilter(self);

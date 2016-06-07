@@ -1,48 +1,49 @@
 define([
-        'Backbone',
-        'jQuery',
-        'Underscore',
-        "text!templates/Applications/kanban/KanbanItemTemplate.html",
-        "common",
-        'moment'
-    ],
-    function (Backbone, $, _, KanbanItemTemplate, common, moment) {
-        'use strict';
-        var ApplicationsItemView = Backbone.View.extend({
-            className: "item",
-            id       : function () {
-                return this.model.get("_id");
-            },
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/Applications/kanban/KanbanItemTemplate.html',
+    'common',
+    'moment'
+], function (Backbone, $, _, KanbanItemTemplate, common, moment) {
+    'use strict';
+    var ApplicationsItemView = Backbone.View.extend({
+        className: 'item',
+        id       : function () {
+            return this.model.get('_id');
+        },
 
-            template: _.template(KanbanItemTemplate),
+        template: _.template(KanbanItemTemplate),
 
-            gotoEditForm: function (e) {
-                e.preventDefault();
-                var itemIndex = $(e.target).closest(".item").data("index") + 1;
-                window.location.hash = "#home/action-Tasks/Edit/" + itemIndex;
-            },
+        gotoEditForm: function (e) {
+            var itemIndex = $(e.target).closest('.item').data('index') + 1;
 
-            gotoForm: function (e) {
-                var id = $(e.target).closest(".item").attr("id");
-                App.ownContentType = true;
-                window.location.hash = "home/content-Applications/form/" + id;
-            },
+            e.preventDefault();
 
-            deleteEvent: function (e) {
-                common.deleteEvent(e, this);
-            },
+            window.location.hash = '#home/action-Tasks/Edit/' + itemIndex;
+        },
 
-            render: function () {
-                var index = this.model.collection.indexOf(this.model);
-                this.$el.html(this.template(this.model.toJSON()));
-                this.$el.attr("data-index", index);
+        gotoForm: function (e) {
+            var id = $(e.target).closest('.item').attr('id');
+            App.ownContentType = true;
+            window.location.hash = 'home/content-Applications/form/' + id;
+        },
 
-                if (this.model.toJSON().nextAction && moment(new Date(this.model.toJSON().nextAction)).isBefore(this.date)) {
-                    this.$el.addClass("errorContent");
-                }
+        deleteEvent: function (e) {
+            common.deleteEvent(e, this);
+        },
 
-                return this;
+        render: function () {
+            var index = this.model.collection.indexOf(this.model);
+            this.$el.html(this.template(this.model.toJSON()));
+            this.$el.attr('data-index', index);
+
+            if (this.model.toJSON().nextAction && moment(new Date(this.model.toJSON().nextAction)).isBefore(this.date)) {
+                this.$el.addClass('errorContent');
             }
-        });
-        return ApplicationsItemView;
+
+            return this;
+        }
     });
+    return ApplicationsItemView;
+});

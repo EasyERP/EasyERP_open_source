@@ -66,7 +66,7 @@ define([
                 if (checkLength > 0) {
                     this.reclose.show();
                     this.close.hide();
-                    checkAll$ = $('#check_all');
+                    checkAll$ = $('#checkAll');
                     checkAll$.prop('checked', false);
 
                     if (checkLength === this.collection.length) {
@@ -75,7 +75,7 @@ define([
                 } else {
                     this.reclose.hide();
                     this.close.show();
-                    checkAll$ = $('#check_all');
+                    checkAll$ = $('#checkAll');
                     checkAll$.prop('checked', false);
                 }
             }
@@ -143,11 +143,7 @@ define([
 
             this.asyncRenderInfo(asyncKeys);
 
-            this.reclose = $('#top-bar-reclose');
-            this.close = $('#top-bar-generate');
-            this.reclose.hide();
-
-            $('#check_all').click(function () {
+            $('#checkAll').click(function () {
                 var checkLength;
 
                 allInputs = $('.listCB');
@@ -162,15 +158,19 @@ define([
                         self.close.hide();
 
                         if (checkLength === self.collection.length) {
-                            $('#check_all').prop('checked', true);
+                            $('#checkAll').prop('checked', true);
                         }
                     } else {
                         self.reclose.hide();
                         self.close.show();
-                        $('#check_all').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
                     }
                 }
             });
+
+            this.reclose = $('#top-bar-reclose');
+            this.close = $('#top-bar-generate');
+            this.reclose.hide();
 
             return this;
         }

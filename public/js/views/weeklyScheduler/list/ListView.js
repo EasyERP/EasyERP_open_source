@@ -100,9 +100,7 @@ define([
 
                 $currentEl.html('');
                 currentEllistRenderer(self);
-
-                self.renderCheckboxes();
-
+                
                 function currentEllistRenderer(self) {
                     var itemView;
 

@@ -10,10 +10,10 @@ module.exports = function (models, event) {
     var iHandler = new InvoiceHandler(models, event);
 
     var moduleId = MODULES.PROFORMA;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddlware);
+    router.use(accessStackMiddleware);
 
     router.get('/', iHandler.getForView);
     router.post('/create', handler.create);

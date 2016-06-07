@@ -1,93 +1,64 @@
 define([
-        'text!templates/PayrollExpenses/TopBarTemplate.html',
-        'custom',
-        'common',
-        'constants'
-    ],
-    function (ContentTopBarTemplate, Custom, Common, CONSTANTS) {
-        var TopBarView = Backbone.View.extend({
-            el         : '#top-bar',
-            contentType: CONSTANTS.PAYROLLEXPENSES,
-            template   : _.template(ContentTopBarTemplate),
+    'Underscore',
+    'views/topBarViewBase',
+    'text!templates/PayrollExpenses/TopBarTemplate.html',
+    'custom',
+    'common',
+    'constants'
+], function (_, BaseView, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
+    'use strict';
 
-            events: {
-                "click a.changeContentView"   : 'changeContentViewType',
-                "click #top-bar-deleteBtn"    : "deleteEvent",
-                "click #top-bar-saveBtn"      : "saveEvent",
-                "click #top-bar-editBtn"      : "editEvent",
-                "click #top-bar-createBtn"    : "createEvent",
-                "click #top-bar-generate"     : "generateEvent",
-                "click #top-bar-recount"      : "recountEvent",
-                "click #top-bar-copy"         : "copyEvent",
-                "click #topBarPaymentGenerate": "createPayment"
-            },
+    var TopBarView = BaseView.extend({
+        el         : '#top-bar',
+        contentType: CONSTANTS.PAYROLLEXPENSES,
+        template   : _.template(ContentTopBarTemplate),
 
-            changeContentViewType: function (e) {
-                Custom.changeContentViewType(e, this.contentType, this.collection);
-            },
+        events: {
+            'click a.changeContentView'   : 'changeContentViewType',
+            'click #top-bar-deleteBtn'    : 'deleteEvent',
+            'click #top-bar-saveBtn'      : 'saveEvent',
+            'click #top-bar-editBtn'      : 'editEvent',
+            'click #top-bar-createBtn'    : 'createEvent',
+            'click #top-bar-generate'     : 'generateEvent',
+            'click #top-bar-recount'      : 'recountEvent',
+            'click #top-bar-copy'         : 'copyEvent',
+            'click #topBarPaymentGenerate': 'createPayment'
+        },
 
-            initialize: function (options) {
-                if (options.collection) {
-                    this.collection = options.collection;
-                }
-                this.render();
-            },
-
-            createEvent: function (event) {
-                event.preventDefault();
-                this.trigger('createEvent');
-            },
-
-            generateEvent: function (event) {
-                event.preventDefault();
-                this.trigger('generateEvent');
-            },
-
-            copyEvent: function (event) {
-                event.preventDefault();
-                this.trigger('copyEvent');
-            },
-
-            editEvent: function (event) {
-                event.preventDefault();
-                this.trigger('editEvent');
-            },
-
-            deleteEvent: function (event) {
-                event.preventDefault();
-                this.trigger('deleteEvent');
-            },
-
-            saveEvent: function (event) {
-                event.preventDefault();
-
-                this.trigger('saveEvent');
-            },
-
-            recountEvent: function (event) {
-                event.preventDefault();
-
-                this.trigger('recountEvent');
-            },
-
-            createPayment: function (event) {
-                event.preventDefault();
-
-                this.trigger('pay');
-            },
-
-            render: function () {
-                var viewType;
-
-                $('title').text(this.contentType);
-
-                viewType = Custom.getCurrentVT();
-                this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
-
-                Common.displayControlBtnsByActionType('Content', viewType);
-                return this;
+        initialize: function (options) {
+            this.actionType = options.actionType;
+            if (this.actionType !== 'Content') {
+                Custom.setCurrentVT('form');
             }
-        });
+            if (options.collection) {
+                this.collection = options.collection;
+                this.collection.bind('reset', _.bind(this.render, this));
+            }
+            this.render();
+        },
 
-        return TopBarView;
+        generateEvent: function (event) {
+            event.preventDefault();
+            this.trigger('generateEvent');
+        },
+
+        copyEvent: function (event) {
+            event.preventDefault();
+            this.trigger('copyEvent');
+        },
+
+        recountEvent: function (event) {
+            event.preventDefault();
+
+            this.trigger('recountEvent');
+        },
+
+        createPayment: function (event) {
+            event.preventDefault();
+
+            this.trigger('pay');
+        }
     });
+
+    return TopBarView;
+});

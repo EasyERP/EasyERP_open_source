@@ -312,38 +312,6 @@ var Module = function (models) {
         });
     };
 
-    this.totalCollectionLength = function (req, res, next) {
-        var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
-        var accessRollSearcher;
-        var contentSearcher;
-        var waterfallTasks;
-
-        accessRollSearcher = function (cb) {
-            accessRoll(req, JobPosition, cb);
-        };
-
-        contentSearcher = function (ids, cb) {
-            var queryObject = {};
-
-            queryObject.$and = [];
-
-            queryObject.$and.push({_id: {$in: ids}});
-
-            JobPosition.find(queryObject, cb);
-        };
-
-        waterfallTasks = [accessRollSearcher, contentSearcher];
-
-        async.waterfall(waterfallTasks, function (err, result) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send({count: result.length});
-        });
-
-    };
-
     this.remove = function (req, res, next) {
         var JobPosition = models.get(req.session.lastDb, 'JobPosition', jobPositionSchema);
         var id = req.params.id;

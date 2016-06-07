@@ -143,7 +143,7 @@ define([
                 pagenation.hide();
             }
             $('#top-bar-deleteBtn').hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
         },
 
         goSort: function (e) {
@@ -292,7 +292,7 @@ define([
             this.collection.unbind('showmore');
 
 
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
             switch (elementId) {
                 case 'previousPage':
                     this.prevPProject(data, true, this);
@@ -409,7 +409,7 @@ define([
 
                                 table.find('[data-id="' + id + '"]').remove();
 
-                                that.$el.find('#check_all').prop('checked', false);
+                                that.$el.find('#checkAll').prop('checked', false);
 
                                 cb();
                             },
@@ -554,7 +554,7 @@ define([
             this.page = 1;
 
             $('#top-bar-deleteBtn').hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
 
             //   this.changeLocationHash(1, itemsNumber, this.filter);
         },
@@ -607,17 +607,17 @@ define([
                     this.copyEl.show();
                     $('#deletewTrack').show();
 
-                    el.find('#check_all').prop('checked', false);
+                    el.find('#checkAll').prop('checked', false);
 
                     if (checkLength === this.collection.length) {
-                        el.find('#check_all').prop('checked', true);
+                        el.find('#checkAll').prop('checked', true);
                     }
                 }
                 else {
                     $('#deletewTrack').hide();
                     this.copyEl.hide();
                     this.$createBtn.show();
-                    el.find('#check_all').prop('checked', false);
+                    el.find('#checkAll').prop('checked', false);
                 }
             }
 
@@ -684,7 +684,7 @@ define([
 
         copyRow: function (e) {
 
-            var checkedRows = this.$el.find('input.listCB:checked:not(#check_all)');
+            var checkedRows = this.$el.find('input.listCB:checked:not(#checkAll)');
             var length = checkedRows.length;
             var self = this;
             var _model;
@@ -781,7 +781,7 @@ define([
             $('#savewTrack').hide();
             $('#deletewTrack').hide();
 
-            $('#check_all').click(function () {
+            $('#checkAll').click(function () {
                 var checkLength;
 
                 allInputs = self.$el.find('.listCB');
@@ -800,13 +800,13 @@ define([
                             //    self.checkProjectId(element, checkLength);
                             //});
 
-                            $('#check_all').prop('checked', true);
+                            $('#checkAll').prop('checked', true);
                         }
                     } else {
                         $('#deletewTrack').hide();
                         self.$createBtn.show();
 
-                        $('#check_all').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
                         self.$el.find('#top-bar-copyBtn').hide();
                     }
                 }

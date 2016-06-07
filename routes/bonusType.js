@@ -7,17 +7,16 @@ var MODULES = require('../constants/modules');
 module.exports = function (models) {
     var handler = new bonusTypeHandler(models);
     var moduleId = MODULES.BONUSTYPE;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
 
-    router.get('/', accessStackMiddlware, handler.getList);
-    router.get('/getForDD', accessStackMiddlware, handler.getForDD);
-    router.get('/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
+    router.get('/', accessStackMiddleware, handler.getList);
+    router.get('/getForDD', accessStackMiddleware, handler.getForDD);
 
-    router.post('/', accessStackMiddlware, handler.create);
-    router.patch('/', accessStackMiddlware, handler.patchM);
-    router.delete('/:_id', accessStackMiddlware, handler.remove);
+    router.post('/', accessStackMiddleware, handler.create);
+    router.patch('/', accessStackMiddleware, handler.patchM);
+    router.delete('/:_id', accessStackMiddleware, handler.remove);
 
     return router;
 };

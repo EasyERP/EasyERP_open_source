@@ -299,7 +299,7 @@ define([
         },
         department     : {
             _id           : "55bb1f14cb76ca630b000006",
-            departmentName: "Design"
+            name          : "Design"
         },
         visibility     : "Public",
         relatedUser    : null,
@@ -349,7 +349,7 @@ define([
                 },
                 department     : {
                     _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name          : "Design"
                 },
                 status         : "hired"
             },
@@ -378,7 +378,7 @@ define([
                 },
                 department     : {
                     _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name: "Design"
                 },
                 status         : "updated"
             },
@@ -407,7 +407,7 @@ define([
                 },
                 department     : {
                     _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name: "Design"
                 },
                 status         : "updated"
             },
@@ -436,7 +436,7 @@ define([
                 },
                 department     : {
                     _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name: "Design"
                 },
                 status         : "updated"
             },
@@ -465,7 +465,7 @@ define([
                 },
                 department     : {
                     _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name: "Design"
                 },
                 status         : "updated"
             },
@@ -494,7 +494,7 @@ define([
                 },
                 department     : {
                     _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name: "Design"
                 },
                 status         : "updated"
             },
@@ -523,7 +523,7 @@ define([
                 },
                 department     : {
                     _id           : "55bb1f14cb76ca630b000006",
-                    departmentName: "Design"
+                    name: "Design"
                 },
                 status         : "fired"
             }
@@ -1657,7 +1657,7 @@ define([
                     users            : [],
                     departmentManager: null,
                     parentDepartment : "56cebdf6541812c07197358f",
-                    departmentName   : "Web",
+                    name   : "Web",
                     __v              : 0
                 },
                 skype        : "michael.kapustey",
@@ -2182,7 +2182,7 @@ define([
                     users       : [],
                     departmentManager: null,
                     parentDepartment : "56cebdf6541812c07197358f",
-                    departmentName   : "Android",
+                    name   : "Android",
                     __v              : 0
                 },
                 skype        : "ok-zet",
@@ -2881,7 +2881,7 @@ define([
             });
 
             it('Try to fetch application collection with error', function () {
-                var applicationListUrl = new RegExp('\/applications\/list', 'i');
+                var applicationListUrl = new RegExp('\/applications', 'i');
 
                 historyNavigateSpy.reset();
 
@@ -2897,20 +2897,16 @@ define([
             });
 
             it('Try to create TopBarView', function () {
-                var applicationListUrl = new RegExp('\/applications\/list', 'i');
-                var applicationTotalUrl = new RegExp('\/applications\/totalCollectionLength', 'i');
+                var applicationListUrl = new RegExp('\/applications', 'i');
 
                 server.respondWith('GET', applicationListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeApplicationsForList)]);
-                server.respondWith('GET', applicationTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                    count: 2
-                })]);
+
                 applicationCollection = new ApplicationCollection({
                     contentType: 'Applications',
                     viewType   : 'list',
                     page       : 1,
                     count      : 2
                 });
-                server.respond();
                 server.respond();
 
                 expect(applicationCollection).to.have.lengthOf(2);
@@ -2954,7 +2950,7 @@ define([
 
                 it('Try to application KanBanView', function (done) {
                     var workflowsUrl = new RegExp('\/Workflows', 'i');
-                    var applicationUrl = '/applications/kanban?workflowId=52d2c1369b57890814000005&viewType=kanban';
+                    var applicationUrl = '/applications/?workflowId=52d2c1369b57890814000005&viewType=kanban';
                     var applicationLengthUrl = new RegExp('\/applications\/getApplicationsLengthByWorkflows', 'i');
 
                     server.respondWith('GET', workflowsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeWorkflows)]);
@@ -3233,7 +3229,7 @@ define([
                     var spyResponse;
                     var $pageList = $thisEl.find('.pageList');
                     var $needBtn = $pageList.find('a:nth-child(2)');
-                    var applicationListUrl = new RegExp('\/applications\/list', 'i');
+                    var applicationListUrl = new RegExp('\/applications', 'i');
 
                     server.respondWith('GET', applicationListUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeApplicationsForList)]);
                     $needBtn.click();
@@ -3247,7 +3243,7 @@ define([
                 it('Try to showMore applications', function () {
                     var $pageList = $thisEl.find('.pageList');
                     var $needBtn = $pageList.find('a:nth-child(2)');
-                    var applicationListUrl = new RegExp('\/applications\/list', 'i');
+                    var applicationListUrl = new RegExp('\/applications', 'i');
 
                     server.respondWith('GET', applicationListUrl, [200, {'Content-Type': 'application/json'},
                         JSON.stringify(fakeApplicationsForList)]);
@@ -3262,8 +3258,6 @@ define([
                     var $stageTd = $stageSelect.closest('td');
                     var applicationUrl = new RegExp('\/applications\/', 'i');
                     var $selectedItem;
-                    var applicationListUrl = new RegExp('\/applications\/list', 'i');
-                    var applicationTotalUrl = new RegExp('\/applications\/totalCollectionLength', 'i');
 
                     // open select list
                     $stageSelect.click();
@@ -3281,13 +3275,10 @@ define([
                     server.respondWith('PATCH', applicationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         _id: '56b9d49d8f23c5696159cd0c'
                     })]);
-                    server.respondWith('GET', applicationListUrl, [200, {'Content-Type': 'application/json'},
+                    server.respondWith('GET', applicationUrl, [200, {'Content-Type': 'application/json'},
                         JSON.stringify(fakeApplicationsForList)]);
-                    server.respondWith('GET', applicationTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                        count: 2
-                    })]);
+
                     $selectedItem.click();
-                    server.respond();
                     server.respond();
                     server.respond();
 
@@ -3351,14 +3342,14 @@ define([
 
                 });
 
-                it('Try to delete row in job table', function () {
+                /*it('Try to delete row in job table', function () {
                     var $dialogEl = $('.ui-dialog');
                     var $deleteRowBtn = $dialogEl.find('.fa-trash');
 
                     windowConfirmStub.returns(true);
 
                     $deleteRowBtn.click();
-                });
+                });*/
 
                 it('Try to edit job row', function () {
                     var $needInput;
@@ -3399,7 +3390,7 @@ define([
                     server.respond();
 
                     expect($('.ui-dialog')).to.not.exist;
-                    expect(window.location.hash).to.be.equals('#easyErp/Applications');
+                    expect(window.location.hash).to.be.equals('#easyErp/Employees');
 
                 });
 
@@ -3407,6 +3398,8 @@ define([
                     var $deleteBtn;
                     var $needTd = listView.$el.find('#listTable > tr:nth-child(1) > td:nth-child(2)');
                     var applicationUrl = new RegExp('\/applications\/', 'i');
+
+                    window.location.hash = '#easyErp/Applications';
 
                     windowConfirmStub.returns(true);
 
@@ -3416,6 +3409,7 @@ define([
 
                     $deleteBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(3)');
                     server.respondWith('DELETE', applicationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Delete success'})]);
+
                     $deleteBtn.click();
                     server.respond();
 

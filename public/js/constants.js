@@ -807,6 +807,6 @@ define([], function () {
         END_OF_PROJECT  : 'To end of project',
 
         DEFAULT_SCREEN_WIDTH: 1349,
-        PAGINATION_ARRAY    : [50, 100, 200, 500]
+        PAGINATION_ARRAY    : [25, 50, 100, 200]
     };
 });

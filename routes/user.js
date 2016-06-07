@@ -8,22 +8,22 @@ module.exports = function (event, models) {
     'use strict';
     var moduleId = MODULES.USERS;
     var handler = new UserHandler(event, models);
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
-    router.get('/', authStackMiddleware, accessStackMiddlware, handler.getAll);
-    router.get('/profiles/:id', authStackMiddleware, accessStackMiddlware, handler.getByProfile);
+    router.get('/', authStackMiddleware, accessStackMiddleware, handler.getAll);
+    router.get('/profiles/:id', authStackMiddleware, accessStackMiddleware, handler.getByProfile);
     router.get('/forDd', authStackMiddleware, handler.getForDd);
     router.get('/current', authStackMiddleware, handler.getById);
-    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddlware, handler.totalCollectionLength);
+    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddleware, handler.totalCollectionLength);
     router.get('/:id', authStackMiddleware, handler.getById);
 
-    router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
+    router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
     router.post('/login', handler.login);
-    router.post('/current', authStackMiddleware, accessStackMiddlware, handler.putchModel);
+    router.post('/current', authStackMiddleware, accessStackMiddleware, handler.putchModel);
 
-    router.patch('/:id', authStackMiddleware, accessStackMiddlware, handler.putchModel);
-    router.patch('/current/:id', authStackMiddleware, accessStackMiddlware, handler.putchModel);
-    router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
+    router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.putchModel);
+    router.patch('/current/:id', authStackMiddleware, accessStackMiddleware, handler.putchModel);
+    router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
 
     return router;
 };

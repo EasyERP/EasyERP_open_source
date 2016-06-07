@@ -36,7 +36,7 @@ define([
                 {
                     this.$el.html(_.template(ListTemplate, {degreesCollection: this.collection.toJSON()}));
 
-                    $('#check_all').click(function () {
+                    $('#checkAll').click(function () {
                         var c = this.checked;
                         $(':checkbox').prop('checked', c);
                     });

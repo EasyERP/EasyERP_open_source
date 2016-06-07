@@ -32,10 +32,11 @@ describe('Employee Specs', function () {
 
         it('should create employee', function (done) {
             var body = {
-                name       : {
+                name: {
                     first: 'test',
                     last : 'test'
                 },
+                
                 department : '55b92ace21e4b7c40f00000f',
                 jobPosition: '55b92acf21e4b7c40f00001d',
                 dateBirth  : '28 Dec, 1990',
@@ -536,24 +537,24 @@ describe('Employee Specs', function () {
         });
 
         /*  it('should get employees min hire date of employees', function (done) {
-              aggent
-                  .get('employees/getMinHireDate')
-                  .expect(200)
-                  .end(function (err, res) {
-                      var body = res.body;
-  
-                      if (err) {
-                          return done(err);
-                      }
-  
-                      expect(body)
-                          .to.be.instanceOf(Object);
-                      expect(body)
-                          .to.have.property('min');
-  
-                      done();
-                  });
-          });*/
+         aggent
+         .get('employees/getMinHireDate')
+         .expect(200)
+         .end(function (err, res) {
+         var body = res.body;
+
+         if (err) {
+         return done(err);
+         }
+
+         expect(body)
+         .to.be.instanceOf(Object);
+         expect(body)
+         .to.have.property('min');
+
+         done();
+         });
+         });*/
 
         it('should get employee for related user', function (done) {
             aggent

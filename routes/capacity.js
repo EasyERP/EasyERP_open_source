@@ -7,17 +7,17 @@ var MODULES = require('../constants/modules');
 module.exports = function (models) {
     var handler = new CapacityHandler(models);
     var moduleId = MODULES.CAPACITY;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
 
-    router.get('/', accessStackMiddlware, handler.getForType);
-    router.post('/', accessStackMiddlware, handler.create);
-    router.post('/createNextMonth', accessStackMiddlware, handler.createNextMonth);
-    router.post('/create', accessStackMiddlware, handler.createAll);
-    router.patch('/', accessStackMiddlware, handler.putchBulk);
-    router.patch('/:id', accessStackMiddlware, handler.putchModel);
-    router.delete('/:id', accessStackMiddlware, handler.remove);
+    router.get('/', accessStackMiddleware, handler.getForType);
+    router.post('/', accessStackMiddleware, handler.create);
+    router.post('/createNextMonth', accessStackMiddleware, handler.createNextMonth);
+    router.post('/create', accessStackMiddleware, handler.createAll);
+    router.patch('/', accessStackMiddleware, handler.putchBulk);
+    router.patch('/:id', accessStackMiddleware, handler.putchModel);
+    router.delete('/:id', accessStackMiddleware, handler.remove);
 
     return router;
 };

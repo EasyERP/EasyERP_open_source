@@ -126,7 +126,7 @@ define([
             var pagenation;
 
             $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
 
             if (this.collection.length > 0) {
                 $currentEl.find('#listTableQuotation').html(this.templateList({
@@ -250,7 +250,7 @@ define([
             var count;
             var table = $("#quotationTable");
 
-            listTableCheckedInput = table.find("input:not('#check_all_quotations'):checked");
+            listTableCheckedInput = table.find("input:not('#checkAll_quotations'):checked");
             count = listTableCheckedInput.length;
             this.collectionLength = this.collection.length;
 
@@ -268,7 +268,7 @@ define([
                             table.find('[data-id="' + id + '"]').remove();
 
                             $("#removeQuotation").hide();
-                            $('#check_all_quotations').prop('checked', false);
+                            $('#checkAll_quotations').prop('checked', false);
 
                             that.eventChannel && that.eventChannel.trigger('elemCountChanged');
 
@@ -301,7 +301,7 @@ define([
             var el = this.$el;
             var $targetEl = $(e.target);
             var checkLength = el.find("input.checkbox:checked").length;
-            var checkAll$ = el.find('#check_all_quotations');
+            var checkAll$ = el.find('#checkAll_quotations');
             var removeBtnEl = $('#removeQuotation');
 
             if ($targetEl.hasClass('notRemovable')) {
@@ -358,7 +358,7 @@ define([
 
             this.$el.find('#removeQuotation').hide();
 
-            $('#check_all_quotations').click(function () {
+            $('#checkAll_quotations').click(function () {
                 self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);
                 if ($("input.checkbox:checked").length > 0) {
                     $("#removeQuotation").show();

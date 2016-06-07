@@ -55,7 +55,7 @@ define([
             var itemsNumber = $("#itemsNumber").text();
             
             $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
 
             this.startTime = new Date();
             this.newCollection = false;
@@ -147,7 +147,6 @@ define([
             //added two parameters page and items number
             $currentEl.append(new ListTotalView({element: this.$el.find("#listTable"), cellSpan: 5}).render());
 
-            this.renderCheckboxes();
             this.renderPagination($currentEl, this);
             this.renderFilter(self);
 

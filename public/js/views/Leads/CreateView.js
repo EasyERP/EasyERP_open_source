@@ -112,7 +112,7 @@ define([
         chooseOption: function (e) {
             var holder = $(e.target).parents('dd').find('.current-selected');
             holder.text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
-            if (holder.attr('id') == 'customerDd') {
+            if (holder.attr('id') === 'customerDd') {
                 this.selectCustomer($(e.target).attr('id'));
             }
         },
@@ -129,15 +129,15 @@ define([
 
         changeTab: function (e) {
             var n;
-            var dialog_holder;
+            var dialogHolder;
             var holder = $(e.target);
 
             holder.closest('.dialog-tabs').find('a.active').removeClass('active');
             holder.addClass('active');
             n = holder.parents('.dialog-tabs').find('li').index(holder.parent());
-            dialog_holder = $('.dialog-tabs-items');
-            dialog_holder.find('.dialog-tabs-item.active').removeClass('active');
-            dialog_holder.find('.dialog-tabs-item').eq(n).addClass('active');
+            dialogHolder = $('.dialog-tabs-items');
+            dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+            dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
         },
 
         changeWorkflows: function () {
@@ -162,13 +162,9 @@ define([
             var afterPage = '';
             var location = window.location.hash;
             var pageSplited = location.split('/p=')[1];
-            if (pageSplited) {
-                afterPage = pageSplited.split('/')[1];
-                location = location.split('/p=')[0] + '/p=1' + '/' + afterPage;
-            }
             var self = this;
             var $company = this.$('#company');
-            var mid = 39;
+            var mid = 24;
             var name = $.trim(this.$el.find('#name').val());
             var company = {
                 name: $company.val(),
@@ -176,13 +172,9 @@ define([
             };
             var idCustomer = this.$('#customerDd').data('id');
             var address = {};
-            $('dd').find('.address').each(function () {
-                var el = $(this);
-                address[el.attr('name')] = $.trim(el.val());
-            });
-
             var salesPersonId = this.$('#salesPerson').data('id');
             var salesTeamId = this.$('#salesTeam option:selected').val();
+
             var first = $.trim(this.$el.find('#first').val());
             var last = $.trim(this.$el.find('#last').val());
             var contactName = {
@@ -191,9 +183,9 @@ define([
             };
             var email = $.trim(this.$el.find('#e-mail').val());
             var func = $.trim(this.$el.find('#func').val());
-
             var phone = $.trim(this.$el.find('#phone').val());
             var mobile = $.trim(this.$el.find('#mobile').val());
+
             var fax = $.trim(this.$el.find('#fax').val());
             var phones = {
                 phone : phone,
@@ -203,12 +195,21 @@ define([
             var workflow = this.$('#workflowsDd').data('id');
             var priority = $('#priorityDd').data('id');
             var internalNotes = $.trim(this.$el.find('#internalNotes').val());
-            var active = (this.$el.find('#active').is(':checked')) ? true : false;
-            var optout = (this.$el.find('#optout').is(':checked')) ? true : false;
+            var active = (this.$el.find('#active').is(':checked'));
+            var optout = (this.$el.find('#optout').is(':checked'));
             var reffered = $.trim(this.$el.find('#reffered').val());
-
             var usersId = [];
             var groupsId = [];
+
+            var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
+            if (pageSplited) {
+                afterPage = pageSplited.split('/')[1];
+                location = location.split('/p=')[0] + '/p=1' + '/' + afterPage;
+            }
+            $('dd').find('.address').each(function () {
+                var el = $(this);
+                address[el.attr('name')] = $.trim(el.val());
+            });
             $('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
                     usersId.push($(this).data('id'));
@@ -218,7 +219,6 @@ define([
                 }
 
             });
-            var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
             this.model.save({
                 name         : name,
                 company      : company || null,
@@ -244,7 +244,8 @@ define([
                     users: usersId,
                     group: groupsId
                 },
-                whoCanRW     : whoCanRW
+
+                whoCanRW: whoCanRW
             }, {
                 headers: {
                     mid: mid
@@ -255,7 +256,8 @@ define([
                     Backbone.history.navigate(location, {trigger: true});
                     // Backbone.history.navigate('easyErp/users', { trigger: true });
                 },
-                error  : function (model, xhr) {
+
+                error: function (model, xhr) {
                     self.errorNotification(xhr);
                 }
 

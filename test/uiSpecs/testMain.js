@@ -1000,7 +1000,7 @@ var App = App || {
                         this.collection.showMore(serchObject);
                         this.changeLocationHash(deletePage, itemsNumber);
                     }
-                    $('#check_all').prop('checked', false);
+                    $('#checkAll').prop('checked', false);
                 } else {
                     var newFetchModels = new this.contentCollection({
                         viewType        : 'list',

@@ -91,18 +91,6 @@ var BonusType = function (models) {
 
     };
 
-    this.totalCollectionLength = function (req, res, next) {
-        var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
-
-        bonusTypeModel.find().count(function (err, count) {
-            if (err) {
-                return next(err);
-            }
-            res.status(200).send({count: count});
-
-        });
-    };
-
     this.remove = function (req, res, next) {
         var id = req.params._id;
         var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);

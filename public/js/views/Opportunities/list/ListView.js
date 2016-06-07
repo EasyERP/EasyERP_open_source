@@ -131,9 +131,7 @@ define([
             });
 
             $currentEl.append(itemView.render());
-
-            this.renderCheckboxes();
-
+            
             this.renderFilter(self);
 
             this.renderPagination($currentEl, this);
