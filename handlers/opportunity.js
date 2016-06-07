@@ -753,11 +753,11 @@ var Module = function (models, event) {
                     if (data.reffered) {
                         _opportunitie.reffered = data.reffered;
                     }
-                    if (data.uId) {
-                        _opportunitie.createdBy.user = data.uId;
-                        //uId for edited by field on creation
-                        _opportunitie.editedBy.user = data.uId;
-                    }
+
+                    _opportunitie.createdBy.user = req.session.uId;
+                    //uId for edited by field on creation
+                    _opportunitie.editedBy.user = req.session.uId;
+
                     if (data.campaign) {
                         _opportunitie.campaign = data.campaign;
                     }
@@ -1825,29 +1825,32 @@ var Module = function (models, event) {
         var query;
 
         query = Opportunities.findById({_id: id}, {
-            company         : 1,
+            name            : 1,
+            expectedRevenue : 1,
             customer        : 1,
             salesPerson     : 1,
+            nextAction      : 1,
+            expectedClosing : 1,
+            priority        : 1,
             workflow        : 1,
+            address         : 1,
+            whoCanRW        : 1,
             groups          : 1,
             createdBy       : 1,
-            name            : 1,
-            tempCompanyField: 1,
-            address         : 1,
-            contactName     : 1,
-            email           : 1,
             phones          : 1,
-            priority        : 1,
-            campaign        : 1,
-            source          : 1,
             internalNotes   : 1,
-            nextAction      : 1,
             editedBy        : 1,
             notes           : 1
+            /*company         : 1,
+            tempCompanyField: 1,
+            contactName     : 1,
+            email           : 1,
+            campaign        : 1,
+            source          : 1*/
         });
 
         query
-            .populate('company', 'name')
+            //.populate('company', 'name')
             .populate('customer', 'name')
             .populate('salesPerson', 'name')
             .populate('workflow', 'name')

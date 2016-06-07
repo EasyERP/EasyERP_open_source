@@ -41,7 +41,7 @@
 
             _.bindAll(this, 'render', 'saveItem', 'deleteItem');
             this.currentModel = options.model;
-            this.currentModel.urlRoot = '/Opportunities';
+            this.currentModel.urlRoot = CONSTANTS.URLS.OPPORTUNITIES;
             this.responseObj = {};
             this.elementId = options.elementId || null;
 
@@ -394,10 +394,11 @@
         countTotalAmountForWorkflow: function (workflowId) {
             var column = $('td[data-id="' + workflowId + '"]');
             var oldColumnContainer = $('td[data-id="' + workflowId + '"] #forContent h3');
-
             var sum = 0;
+
             oldColumnContainer.each(function (item) {
                 var value = $(this).text().replace(/\s/g, '');
+                
                 sum += parseFloat(value) || 0;
             });
             column.find('.totalAmount').text(helpers.currencySplitter(sum.toString()));
@@ -554,12 +555,12 @@
                 if (model.groups.users.length > 0 || model.groups.group.length) {
                     $('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
-                        $('.groupsAndUser').append("<tr data-type='targetGroups' data-id='" + item._id + "'><td>" + item.name + "</td><td class='text-right'></td></tr>");
+                        $('.groupsAndUser').append('<tr data-type="targetGroups" data-id="' + item._id + '"><td>' + item.name + '</td><td class="text-right"></td></tr>');
                         $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + '</li>');
                     });
                     model.groups.users.forEach(function (item) {
-                        $('.groupsAndUser').append("<tr data-type='targetUsers' data-id='" + item._id + "'><td>" + item.login + "</td><td class='text-right'></td></tr>");
-                        $('#targetUsers').append("<li id='" + item._id + "'>" + item.login + '</li>');
+                        $('.groupsAndUser').append('<tr data-type="targetUsers" data-id="' + item._id + '"><td>' + item.login + '</td><td class="text-right"></td></tr>');
+                        $('#targetUsers').append('<li id="' + item._id + '">' + item.login + '</li>');
                     });
                 }
             }
