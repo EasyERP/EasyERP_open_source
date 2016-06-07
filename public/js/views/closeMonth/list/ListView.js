@@ -66,7 +66,7 @@ define([
                 if (checkLength > 0) {
                     this.reclose.show();
                     this.close.hide();
-                    checkAll$ = $('#check_all');
+                    checkAll$ = $('#checkAll');
                     checkAll$.prop('checked', false);
 
                     if (checkLength === this.collection.length) {
@@ -75,7 +75,7 @@ define([
                 } else {
                     this.reclose.hide();
                     this.close.show();
-                    checkAll$ = $('#check_all');
+                    checkAll$ = $('#checkAll');
                     checkAll$.prop('checked', false);
                 }
             }
@@ -146,31 +146,6 @@ define([
             this.reclose = $('#top-bar-reclose');
             this.close = $('#top-bar-generate');
             this.reclose.hide();
-
-            $('#check_all').click(function () {
-                var checkLength;
-
-                allInputs = $('.listCB');
-                allInputs.prop('checked', this.checked);
-                checkedInputs = $('input.listCB:checked');
-
-                if (self.collection.length > 0) {
-                    checkLength = checkedInputs.length;
-
-                    if (checkLength > 0) {
-                        self.reclose.show();
-                        self.close.hide();
-
-                        if (checkLength === self.collection.length) {
-                            $('#check_all').prop('checked', true);
-                        }
-                    } else {
-                        self.reclose.hide();
-                        self.close.show();
-                        $('#check_all').prop('checked', false);
-                    }
-                }
-            });
 
             return this;
         }

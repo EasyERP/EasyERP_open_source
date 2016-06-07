@@ -1059,7 +1059,7 @@ define([
                 });
 
                 it('Try to check|uncheck all checckboxes', function(){
-                    var $checkAllBtn = listView.$el.find('#check_all');
+                    var $checkAllBtn = listView.$el.find('#checkAll');
 
                     $checkAllBtn.click();
                     expect(listView.$el.find('input[type=checkbox]').prop('checked')).to.be.true;

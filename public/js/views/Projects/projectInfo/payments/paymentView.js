@@ -62,7 +62,7 @@ define([
             var that = this;
             var model;
             var listTableCheckedInput;
-            listTableCheckedInput = $('#paymentsTable').find("input:not('#check_all_payments'):checked");
+            listTableCheckedInput = $('#paymentsTable').find("input:not('#checkAll_payments'):checked");
 
             this.collectionLength = this.collection.length;
 
@@ -78,7 +78,7 @@ define([
                         that.$listTable.find('[data-id="' + id + '"]').remove();
 
                         $("#removePayment").hide();
-                        $('#check_all_payments').prop('checked', false);
+                        $('#checkAll_payments').prop('checked', false);
 
                         that.collection.remove(checkbox.value);
 
@@ -195,7 +195,7 @@ define([
 
             tBody.empty();
             $("#top-bar-deleteBtn").hide();
-            $('#check_all').prop('checked', false);
+            $('#checkAll').prop('checked', false);
 
             if (this.collection.length > 0) {
                 itemView = new this.listItemView({
@@ -264,7 +264,7 @@ define([
             var el = this.$el;
             var $targetEl = $(e.target);
             var checkLength = el.find("input.checkbox:checked").length;
-            var checkAll$ = el.find('#check_all_payments');
+            var checkAll$ = el.find('#checkAll_payments');
             var removeBtnEl = $('#removePayment');
 
             if ($targetEl.hasClass('notRemovable')) {
@@ -363,7 +363,7 @@ define([
             this.$el.find("#savePayment").hide();
             this.$el.find("#removePayment").hide();
 
-            $('#check_all_payments').click(function () {
+            $('#checkAll_payments').click(function () {
                 self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);
                 if (self.$el.find("input.checkbox:checked").length > 0) {
                     self.$el.find("#removePayment").show();

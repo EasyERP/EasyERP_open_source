@@ -309,7 +309,7 @@ define([
                 });
 
                 it('Try check|uncheck all checkboxes', function () {
-                    var $checkAllBtn = $thisEl.find('#check_all');
+                    var $checkAllBtn = $thisEl.find('#checkAll');
 
                     // check all
                     $checkAllBtn.click();

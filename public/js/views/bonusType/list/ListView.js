@@ -238,8 +238,6 @@ define([
 
             this.renderPagination(this.$el);
 
-            this.renderCheckboxes();
-
             setTimeout(function () {
                 self.editCollection = new EditCollection(self.collection.toJSON());
                 self.editCollection.on('saved', self.savedNewModel, self);
