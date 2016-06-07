@@ -1,165 +1,164 @@
 ﻿define([
-        'Backbone',
-        'jQuery',
-        'Underscore',
-        'text!templates/invoiceAging/list/ListTemplate.html',
-        'helpers',
-        'async',
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/invoiceAging/list/ListTemplate.html',
+    'helpers',
+    'async',
     'common'
 ], function (Backbone, $, _, listTemplate, helpers, async, common) {
-        "use strict";
+    'use strict';
 
-        var ListItemView = Backbone.View.extend({
-            el: '#listTable',
+    var ListItemView = Backbone.View.extend({
+        el: '#listTable',
 
-            initialize: function (options) {
-                this.collection = options.collection;
-                this.page = options.page ? parseInt(options.page, 10) : 1;
-                this.startNumber = (this.page - 1) * options.itemsNumber; //Counting the start index of list items
-            },
+        initialize: function (options) {
+            this.collection = options.collection;
+            this.startNumber = (parseInt(this.collection.currentPage, 10) - 1) * this.collection.pageSize;
+        },
 
-            render: function () {
-                var $thisEl = this.$el;
+        render: function () {
+            var $thisEl = this.$el;
 
-                function calcTotalZero(cb) {
-                    var total = 0;
-                    var $zeroContainer = $thisEl.find('#zeroTotal');
-                    var _$zeroContainer = $thisEl.find('td[data-content="zeroTotal"]');
+            function calcTotalZero(cb) {
+                var total = 0;
+                var $zeroContainer = $thisEl.find('#zeroTotal');
+                var _$zeroContainer = $thisEl.find('td[data-content="zeroTotal"]');
 
-                    _$zeroContainer.each(function () {
-                        var val = $.trim($(this).text());
+                _$zeroContainer.each(function () {
+                    var val = $.trim($(this).text());
 
-                        val = val.replace(' ', '') || 0;
+                    val = val.replace(' ', '') || 0;
 
-                        total += parseInt(val, 10);
-                    });
+                    total += parseInt(val, 10);
+                });
 
-                    total = total.toFixed(2);
-                    total = helpers.currencySplitter(total);
-                    $zeroContainer.text(total);
+                total = total.toFixed(2);
+                total = helpers.currencySplitter(total);
+                $zeroContainer.text(total);
 
-                    cb();
-                }
+                cb();
+            }
 
-                function calcTotalThirty(cb) {
-                    var total = 0;
+            function calcTotalThirty(cb) {
+                var total = 0;
 
-                    var $thirtyTotal = $thisEl.find('#thirtyTotal');
-                    var _$thirtyTotal = $thisEl.find('td[data-content="thirtyTotal"]');
+                var $thirtyTotal = $thisEl.find('#thirtyTotal');
+                var _$thirtyTotal = $thisEl.find('td[data-content="thirtyTotal"]');
 
-                    _$thirtyTotal.each(function () {
-                        var val = $.trim($(this).text());
+                _$thirtyTotal.each(function () {
+                    var val = $.trim($(this).text());
 
-                        val = val.replace(' ', '') || 0;
+                    val = val.replace(' ', '') || 0;
 
-                        total += parseInt(val, 10);
-
-                    });
-
-                    total = total.toFixed(2);
-                    total = helpers.currencySplitter(total);
-                    $thirtyTotal.text(total);
-
-                    cb();
-                }
-
-                function calcTotalFifteen(cb) {
-                    var total = 0;
-
-                    var $fifteenTotal = $thisEl.find('#fifteenTotal');
-                    var _$fifteenTotal = $thisEl.find('td[data-content="fifteenTotal"]');
-
-                    _$fifteenTotal.each(function () {
-                        var val = $.trim($(this).text());
-
-                        val = val.replace(' ', '') || 0;
-
-                        total += parseInt(val, 10);
-
-                    });
-
-                    total = total.toFixed(2);
-                    total = helpers.currencySplitter(total);
-                    $fifteenTotal.text(total);
-
-                    cb();
-                }
-
-                function calcTotalSixty(cb) {
-                    var total = 0;
-
-                    var $sixtyTotal = $thisEl.find('#sixtyTotal');
-                    var _$sixtyTotal = $thisEl.find('td[data-content="sixtyTotal"]');
-
-                    _$sixtyTotal.each(function () {
-                        var val = $.trim($(this).text());
-
-                        val = val.replace(' ', '') || 0;
-
-                        total += parseInt(val, 10);
-                    });
-
-                    total = total.toFixed(2);
-                    total = helpers.currencySplitter(total);
-                    $sixtyTotal.text(total);
-
-                    cb();
-                }
-
-                function calcTotalNinety(cb) {
-                    var total = 0;
-
-                    var $ninetyTotal = $thisEl.find('#ninetyTotal');
-                    var _$ninetyTotal = $thisEl.find('td[data-content="ninetyTotal"]');
-
-                    _$ninetyTotal.each(function () {
-                        var val = $.trim($(this).text());
-
-                        val = val.replace(' ', '') || 0;
-
-                        total += parseInt(val, 10);
-                    });
-
-                    total = total.toFixed(2);
-                    total = helpers.currencySplitter(total);
-                    $ninetyTotal.text(total);
-
-                    cb();
-                }
-
-                function calcTotalMore(cb) {
-                    var total = 0;
-
-                    var $moreTotal = $thisEl.find('#moreTotal');
-                    var _$moreTotal = $thisEl.find('td[data-content="moreTotal"]');
-
-                    _$moreTotal.each(function () {
-                        var val = $.trim($(this).text());
-
-                        val = val.replace(' ', '') || 0;
-
-                        total += parseInt(val, 10);
-                    });
-
-                    total = total.toFixed(2);
-                    total = helpers.currencySplitter(total);
-                    $moreTotal.text(total);
-
-                    cb();
-                }
-
-                this.$el.append(_.template(listTemplate, {
-                    currencySplitter: helpers.currencySplitter,
-                    collection      : this.collection.toJSON(),
-                    dateToLocaleDate: common.utcDateToLocaleDate,
-                    startNumber     : this.startNumber
-                }));
-
-                async.parallel([calcTotalZero, calcTotalFifteen, calcTotalThirty, calcTotalSixty, calcTotalNinety, calcTotalMore], function () {
+                    total += parseInt(val, 10);
 
                 });
-            }
-        });
 
-        return ListItemView;
+                total = total.toFixed(2);
+                total = helpers.currencySplitter(total);
+                $thirtyTotal.text(total);
+
+                cb();
+            }
+
+            function calcTotalFifteen(cb) {
+                var total = 0;
+
+                var $fifteenTotal = $thisEl.find('#fifteenTotal');
+                var _$fifteenTotal = $thisEl.find('td[data-content="fifteenTotal"]');
+
+                _$fifteenTotal.each(function () {
+                    var val = $.trim($(this).text());
+
+                    val = val.replace(' ', '') || 0;
+
+                    total += parseInt(val, 10);
+
+                });
+
+                total = total.toFixed(2);
+                total = helpers.currencySplitter(total);
+                $fifteenTotal.text(total);
+
+                cb();
+            }
+
+            function calcTotalSixty(cb) {
+                var total = 0;
+
+                var $sixtyTotal = $thisEl.find('#sixtyTotal');
+                var _$sixtyTotal = $thisEl.find('td[data-content="sixtyTotal"]');
+
+                _$sixtyTotal.each(function () {
+                    var val = $.trim($(this).text());
+
+                    val = val.replace(' ', '') || 0;
+
+                    total += parseInt(val, 10);
+                });
+
+                total = total.toFixed(2);
+                total = helpers.currencySplitter(total);
+                $sixtyTotal.text(total);
+
+                cb();
+            }
+
+            function calcTotalNinety(cb) {
+                var total = 0;
+
+                var $ninetyTotal = $thisEl.find('#ninetyTotal');
+                var _$ninetyTotal = $thisEl.find('td[data-content="ninetyTotal"]');
+
+                _$ninetyTotal.each(function () {
+                    var val = $.trim($(this).text());
+
+                    val = val.replace(' ', '') || 0;
+
+                    total += parseInt(val, 10);
+                });
+
+                total = total.toFixed(2);
+                total = helpers.currencySplitter(total);
+                $ninetyTotal.text(total);
+
+                cb();
+            }
+
+            function calcTotalMore(cb) {
+                var total = 0;
+
+                var $moreTotal = $thisEl.find('#moreTotal');
+                var _$moreTotal = $thisEl.find('td[data-content="moreTotal"]');
+
+                _$moreTotal.each(function () {
+                    var val = $.trim($(this).text());
+
+                    val = val.replace(' ', '') || 0;
+
+                    total += parseInt(val, 10);
+                });
+
+                total = total.toFixed(2);
+                total = helpers.currencySplitter(total);
+                $moreTotal.text(total);
+
+                cb();
+            }
+
+            this.$el.append(_.template(listTemplate, {
+                currencySplitter: helpers.currencySplitter,
+                collection      : this.collection.toJSON(),
+                dateToLocaleDate: common.utcDateToLocaleDate,
+                startNumber     : this.startNumber
+            }));
+
+            async.parallel([calcTotalZero, calcTotalFifteen, calcTotalThirty, calcTotalSixty, calcTotalNinety, calcTotalMore], function () {
+
+            });
+        }
     });
+
+    return ListItemView;
+});
