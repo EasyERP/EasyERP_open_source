@@ -84,6 +84,8 @@ define([
             var sortObject;
             var data;
 
+            this.startTime = new Date();
+
             if ((this.changed && this.changedModels && Object.keys(this.changedModels).length) ||
                 (this.isNewRow ? this.isNewRow() : newRows.length)) {
                 return App.render({

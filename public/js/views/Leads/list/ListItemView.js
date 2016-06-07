@@ -6,9 +6,7 @@
     'use strict';
 
     var LeadsListItemView = Backbone.View.extend({
-        el    : '#listTable',
-        stages: null,
-        events: {},
+        el: '#listTable',
 
         initialize: function (options) {
             this.collection = options.collection;

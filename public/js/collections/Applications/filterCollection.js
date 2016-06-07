@@ -1,80 +1,38 @@
 ﻿define([
-        'Backbone',
-        'models/ApplicationsModel',
-        'constants'
-    ],
-    function (Backbone, ApplicationModel, CONSTANTS) {
-        'use strict';
+    'Backbone',
+    'collections/parent',
+    'models/ApplicationsModel',
+    'constants'
+], function (Backbone, Parent, ApplicationModel, CONSTANTS) {
+    'use strict';
 
-        var TasksCollection = Backbone.Collection.extend({
-            model       : ApplicationModel,
-            url         : CONSTANTS.URLS.APPLICATIONS,
-            page        : null,
-            namberToShow: null,
-            contentType : null,
-            viewType    : null,
+    var TasksCollection = Parent.extend({
+        model   : ApplicationModel,
+        url     : CONSTANTS.URLS.APPLICATIONS,
+        pageSize: CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE,
 
-            initialize: function (options) {
-                var that = this;
-                this.startTime = new Date();
-                this.contentType = options.contentType;
-                this.viewType = options.viewType;
-                this.wfStatus = options.status || [];
+        initialize: function (options) {
+            var page;
 
-                /*if (options && options.viewType) {
-                    this.url += options.viewType;
-                }*/
-                
-                if (options && options.count) {
-                    this.namberToShow = options.count;
-                    this.count = options.count;
-                    this.page = options.page || 1;
+            function _errHandler(models, xhr) {
+                if (xhr.status === 401) {
+                    Backbone.history.navigate('#login', {trigger: true});
                 }
-                this.fetch({
-                    data   : options,
-                    reset  : true,
-                    success: function () {
-                        that.page++;
-
-                    },
-                    error  : function (models, xhr) {
-                        if (xhr.status === 401) {
-                            Backbone.history.navigate('#login', {trigger: true});
-                        }
-                    }
-                });
-            },
-
-            showMore: function (options) {
-                var that = this;
-
-                var filterObject = options || {};
-
-                filterObject.page = (options && options.page) ? options.page : this.page;
-                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
-                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
-                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
-                this.fetch({
-                    data   : filterObject,
-                    waite  : true,
-                    success: function (models) {
-                        that.page++;
-                        that.trigger('showmore', models);
-                    },
-                    error  : function () {
-                        App.render({
-                            type   : 'error',
-                            message: "Some Error."
-                        });
-                    }
-                });
-
-            },
-
-            parse: function (response) {
-                return response.data;
             }
-        });
 
-        return TasksCollection;
+            options = options || {};
+            options.error = options.error || _errHandler;
+            page = options.page;
+
+            this.startTime = new Date();
+
+            if (page) {
+                return this.getPage(page, options);
+            }
+
+            this.getFirstPage(options);
+        }
     });
+
+    return TasksCollection;
+});

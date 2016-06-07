@@ -201,33 +201,6 @@ describe('Application Specs', function () {
                 });
         });
 
-        it('should get total collection length', function (done) {
-            var body = {
-                contentType: 'Applications'
-            };
-
-            aggent
-                .get('applications/totalCollectionLength')
-                .query(body)
-                .expect(200)
-                .end(function (err, res) {
-                    var body = res.body;
-
-                    if (err) {
-                        return done(err);
-                    }
-
-                    expect(body)
-                        .to.be.instanceOf(Object);
-                    expect(body)
-                        .to.have.property('showMore');
-                    expect(body)
-                        .to.have.property('count');
-
-                    done();
-                });
-        });
-
         it('should update application', function (done) {
             var body = {
                 social: {
