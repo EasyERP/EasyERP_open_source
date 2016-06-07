@@ -29,7 +29,7 @@ define([
              CreateView,
              filterView,
              CurrentModel,
-             listItemView,
+             ListItemView,
              listTotalView,
              paymentCollection,
              EditCollection,
@@ -41,9 +41,8 @@ define([
              helpers,
              CONSTANTS) {
     var PaymentListView = ListViewBase.extend({
-        createView       : CreateView,
         listTemplate     : listTemplate,
-        listItemView     : listItemView,
+        ListItemView     : ListItemView,
         contentCollection: paymentCollection,
         filterView       : filterView,
         contentType      : 'DividendPayments',
@@ -447,7 +446,7 @@ define([
 
             $currentEl.html('');
             $currentEl.append(_.template(ListHeaderForWTrack));
-            $currentEl.append(new listItemView({
+            $currentEl.append(new ListItemView({
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow

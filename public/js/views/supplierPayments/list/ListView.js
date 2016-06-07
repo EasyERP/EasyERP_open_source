@@ -26,7 +26,7 @@ define([
     var PaymentListView = ListViewBase.extend({
         createView              : CreateView,
         listTemplate            : listTemplate,
-        listItemView            : ListItemView,
+        ListItemView            : ListItemView,
         contentCollection       : paymentCollection,
         filterView              : filterView,
         contentType             : 'supplierPayments', // needs in view.prototype.changeLocationHash

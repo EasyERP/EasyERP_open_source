@@ -19,7 +19,7 @@ define([
     var ListView = listViewBase.extend({
         createView       : CreateView,
         listTemplate     : listTemplate,
-        listItemView     : ListItemView,
+        ListItemView     : ListItemView,
         contentCollection: contentCollection,
         contentType      : 'journal',
         changedModels    : {},

@@ -36,7 +36,7 @@ define([
         sort                    : null,
         createView              : CreateView,
         listTemplate            : listTemplate,
-        listItemView            : ListItemView,
+        ListItemView            : ListItemView,
         contentType             : CONSTANTS.HOLIDAY, // needs in view.prototype.changeLocationHash
         changedModels           : {},
         totalCollectionLengthUrl: '/holiday/totalCollectionLength',
@@ -314,31 +314,10 @@ define([
 
                 self.$listTable = $('#listTable');
             }, 10);
-            
+
             this.renderPagination($currentEl, this);
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-        },
-
-        renderContent: function () {
-            var $currentEl = this.$el;
-            var tBody = $currentEl.find('#listTable');
-            var itemView = new ListItemView({
-                collection : this.collection,
-                page       : $currentEl.find('#currentShowPage').val(),
-                itemsNumber: $currentEl.find('span#itemsNumber').text()
-            });
-            var pagenation = this.$el.find('.pagination');
-
-            $('#checkAll').prop('checked', false);
-            tBody.empty();
-
-            tBody.append(itemView.render());
-            if (this.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
         },
 
         createItem: function () {

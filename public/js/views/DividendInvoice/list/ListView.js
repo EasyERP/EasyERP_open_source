@@ -13,32 +13,30 @@ define([
     'dataService',
     'constants',
     'helpers'
-], function ($, _, listViewBase, listTemplate, CreateView, EditView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
+], function ($, _, listViewBase, listTemplate, CreateView, EditView, invoiceModel, ListItemView, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
     var InvoiceListView = listViewBase.extend({
-        createView       : CreateView,
         listTemplate     : listTemplate,
-        listItemView     : listItemView,
+        ListItemView     : ListItemView,
         contentCollection: contentCollection,
         filterView       : filterView,
         contentType      : 'DividendInvoice',
         changedModels    : {},
 
         initialize: function (options) {
+            $(document).off('click');
+
+            this.EditView = EditView;
+            this.CreateView = CreateView;
+
             this.startTime = options.startTime;
             this.collection = options.collection;
-            _.bind(this.collection.showMore, this.collection);
             this.parrentContentId = options.collection.parrentContentId;
-            this.filter = options.filter ? options.filter : {};
-            this.filter.forSales = {key: 'forSales', value: [false]};
             this.sort = options.sort;
-            this.defaultItemsNumber = this.collection.namberToShow || 100;
-            this.newCollection = options.newCollection;
-            this.deleteCounter = 0;
-            this.page = options.collection.page;
+            this.filter = options.filter;
+            this.page = options.collection.currentPage;
+            this.contentCollection = contentCollection;
 
             this.render();
-
-            this.contentCollection = contentCollection;
         },
 
         events: {
@@ -69,7 +67,7 @@ define([
                     headers: {
                         mid: 55
                     },
-                    
+
                     patch   : true,
                     validate: false,
                     success : function () {
@@ -130,7 +128,7 @@ define([
 
             function currentEllistRenderer(self) {
                 $currentEl.append(_.template(listTemplate, {currentDb: true}));
-                itemView = new listItemView({
+                itemView = new ListItemView({
                     collection : self.collection,
                     page       : self.page,
                     itemsNumber: self.collection.namberToShow
@@ -203,7 +201,7 @@ define([
             if (deleteCounter !== this.collectionLength) {
                 var holder = this.$el;
                 var created = holder.find('#timeRecivingDataFromServer');
-                created.before(new listItemView({
+                created.before(new ListItemView({
                     collection : this.collection,
                     page       : holder.find('#currentShowPage').val(),
                     itemsNumber: holder.find('span#itemsNumber').text()

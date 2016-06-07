@@ -36,7 +36,7 @@ define([
 
     var ListView = listViewBase.extend({
         listTemplate     : listTemplate,
-        listItemView     : ListItemView,
+        ListItemView     : ListItemView,
         filterView       : filterView,
         contentCollection: contentCollection,
         contentType      : CONSTANTS.JOURNALENTRY,
