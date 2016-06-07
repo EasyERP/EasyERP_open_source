@@ -839,7 +839,7 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var profitAndLossUrl = new RegExp('journal\/journalEntry\/getProfitAndLoss', 'i');
+                var profitAndLossUrl = new RegExp('journalEntries\/getProfitAndLoss', 'i');
 
                 server.respondWith('GET', profitAndLossUrl, [401, {"Content-Type": "application/json"}, JSON.stringify({})]);
                 profitAndLossCollection = new ProfitAndLossCollection({
@@ -852,7 +852,7 @@ define([
             });
 
             it('Try to create TopBarView', function (done) {
-                var profitAndLossUrl = new RegExp('journal\/journalEntry\/getProfitAndLoss', 'i');
+                var profitAndLossUrl = new RegExp('journalEntries\/getProfitAndLoss', 'i');
 
                 server.respondWith('GET', profitAndLossUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeProfitAndLoss)]);
                 profitAndLossCollection = new ProfitAndLossCollection({
@@ -912,7 +912,7 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create ProfitAndLossListView', function (done) {
-                    var asyncDataUrl = new RegExp('\/journal\/journalEntry\/getAsyncDataForGL', 'i');
+                    var asyncDataUrl = new RegExp('\/journalEntries\/getAsyncDataForGL', 'i');
 
                     server.respondWith('GET', asyncDataUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAsyncData)]);
                     listView = new ListView({
@@ -960,8 +960,8 @@ define([
                     var $topBarEl = topBarView.$el;
                     var $updateDateBtn = $topBarEl.find('#updateDate');
                     var $dateRange = $topBarEl.find('.dateRange');
-                    var asyncDataUrl = new RegExp('\/journal\/journalEntry\/getAsyncDataForGL', 'i');
-                    var profitAndLossUrl = new RegExp('journal\/journalEntry\/getProfitAndLoss', 'i');
+                    var asyncDataUrl = new RegExp('\/journalEntries\/getAsyncDataForGL', 'i');
+                    var profitAndLossUrl = new RegExp('journalEntries\/getProfitAndLoss', 'i');
                     var $cancelBtn;
                     var $thisMonth;
                     var $finYear;

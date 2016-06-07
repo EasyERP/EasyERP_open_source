@@ -39,7 +39,7 @@ describe('Journal Specs', function () {
             };
 
             aggent
-                .post('journal')
+                .post('journals')
                 .send(body)
                 .expect(201)
                 .end(function (err, res) {
@@ -70,7 +70,7 @@ describe('Journal Specs', function () {
             };
 
             aggent
-                .get('journal')
+                .get('journals')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -81,8 +81,12 @@ describe('Journal Specs', function () {
                     }
 
                     expect(body)
-                        .to.be.instanceOf(Array);
-                    expect(body.length)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.be.have.property('total');
+                    expect(body)
+                        .to.be.have.property('data');
+                    expect(body.data.length)
                         .to.be.gte(1);
 
                     done();
@@ -95,7 +99,7 @@ describe('Journal Specs', function () {
             };
 
             aggent
-                .get('journal/getForDd')
+                .get('journals/getForDd')
                 .query(query)
                 .expect(200)
                 .end(function (err, res) {
@@ -119,7 +123,7 @@ describe('Journal Specs', function () {
 
         it('should delete journal', function (done) {
             aggent
-                .delete('journal/' + id)
+                .delete('journals/' + id)
                 .expect(200, done);
         });
 
@@ -130,7 +134,7 @@ describe('Journal Specs', function () {
         it('should fail get Journal for Dd', function (done) {
 
             aggent
-                .get('journal/getForDd')
+                .get('journals/getForDd')
                 .expect(404, done);
         });
 

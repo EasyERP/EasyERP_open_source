@@ -8,38 +8,37 @@ module.exports = function (event, models) {
     'use strict';
     var moduleId = MODULES.EMPLOYEES;
     var handler = new EmployeeHandler(event, models);
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
     var multipart = require('connect-multiparty');
     var multipartMiddleware = multipart();
 
     router.use(authStackMiddleware);
 
-    router.get('/', accessStackMiddlware, handler.getByViewTpe);
-    router.get('/getForProjectDetails', accessStackMiddlware, handler.getForProjectDetails);
-    router.get('/getForDD', accessStackMiddlware, handler.getForDD);
-    router.get('/bySales', accessStackMiddlware, handler.getBySales);
-    router.get('/byDepartment', accessStackMiddlware, handler.byDepartment);
-    router.get('/exportToXlsx', accessStackMiddlware, handler.exportToXlsx);
-    // router.get('/exportToCsv', accessStackMiddlware, handler.exportToCsv);
-    // router.get('/getMinHireDate', accessStackMiddlware, handler.getMinHireDate);
-    router.get('/getForDdByRelatedUser', accessStackMiddlware, handler.getForDdByRelatedUser);
-    router.get('/getPersonsForDd', accessStackMiddlware, handler.getSalesPerson);
-    router.get('/getEmployeesAlphabet', accessStackMiddlware, handler.getEmployeesAlphabet);
-    router.get('/getEmployeesImages', accessStackMiddlware, handler.getEmployeesImages);
-    router.get('/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
-    router.get('/nationality', accessStackMiddlware, handler.getNationality);
-    router.get('/languages', accessStackMiddlware, handler.getLanguages);
-    router.get('/sources', accessStackMiddlware, handler.getSources);
-    /* router.get('/getByMonth', accessStackMiddlware, handler.getSalaryByMonth);*/
+    router.get('/', accessStackMiddleware, handler.getByViewTpe);
+    router.get('/getForProjectDetails', accessStackMiddleware, handler.getForProjectDetails);
+    router.get('/getForDD', accessStackMiddleware, handler.getForDD);
+    router.get('/bySales', accessStackMiddleware, handler.getBySales);
+    router.get('/byDepartment', accessStackMiddleware, handler.byDepartment);
+    router.get('/exportToXlsx', accessStackMiddleware, handler.exportToXlsx);
+    // router.get('/exportToCsv', accessStackMiddleware, handler.exportToCsv);
+    router.get('/getForDdByRelatedUser', accessStackMiddleware, handler.getForDdByRelatedUser);
+    router.get('/getPersonsForDd', accessStackMiddleware, handler.getSalesPerson);
+    router.get('/getEmployeesAlphabet', accessStackMiddleware, handler.getEmployeesAlphabet);
+    router.get('/getEmployeesImages', accessStackMiddleware, handler.getEmployeesImages);
+    router.get('/totalCollectionLength', accessStackMiddleware, handler.totalCollectionLength);
+    router.get('/nationality', accessStackMiddleware, handler.getNationality);
+    router.get('/languages', accessStackMiddleware, handler.getLanguages);
+    router.get('/sources', accessStackMiddleware, handler.getSources);
+    /* router.get('/getByMonth', accessStackMiddleware, handler.getSalaryByMonth);*/
 
-    router.get('/birthdays', accessStackMiddlware, handler.getBirthdays);
+    router.get('/birthdays', accessStackMiddleware, handler.getBirthdays);
     router.get('/getYears', handler.getYears);
     router.get('/getEmployeesCount', handler.getEmployeesCount);
 
-    router.post('/', accessStackMiddlware, handler.create);
-    router.post('/uploadEmployeesFiles', accessStackMiddlware, multipartMiddleware, handler.uploadEmployeesFiles);
-    router.patch('/:id', accessStackMiddlware, handler.updateOnlySelectedFields);
-    router.delete('/:id', accessStackMiddlware, handler.remove);
+    router.post('/', accessStackMiddleware, handler.create);
+    router.post('/uploadEmployeesFiles', accessStackMiddleware, multipartMiddleware, handler.uploadEmployeesFiles);
+    router.patch('/:id', accessStackMiddleware, handler.updateOnlySelectedFields);
+    router.delete('/:id', accessStackMiddleware, handler.remove);
 
     return router;
 };

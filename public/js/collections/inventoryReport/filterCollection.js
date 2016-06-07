@@ -1,30 +1,24 @@
-define(['Backbone',
+define([
+    'Backbone',
+    'collections/parent',
     'models/invReportModel',
     'custom',
-    'moment'
-], function (Backbone, invRepModel, custom, moment) {
-    var invReportCollection = Backbone.Collection.extend({
+    'moment',
+    'constants'
+], function (Backbone, Parent, invRepModel, custom, moment, CONSTANTS) {
+    var invReportCollection = Parent.extend({
 
-        model       : invRepModel,
-        url         : '/journal/journalEntry/getInventoryReport',
-        contentType : null,
-        page        : null,
-        numberToShow: null,
-        viewType    : 'list',
+        model   : invRepModel,
+        url     : 'journalEntries/getInventoryReport',
+        pageSize: CONSTANTS.DEFAULT_THUMBNAILS_PER_PAGE,
 
         initialize: function (options) {
-            var that = this;
+            var page;
             var startDate = moment(new Date());
             var endDate = moment(new Date());
             var dateRange = custom.retriveFromCash('inventoryReportDateRange') || {};
 
-            this.namberToShow = options.count;
-            this.viewType = options.viewType;
-            this.contentType = options.contentType;
-            this.count = options.count;
-            this.page = options.page || 1;
             this.filter = options.filter || custom.retriveFromCash('inventoryReport.filter');
-
 
             startDate.month(startDate.month() - 1);
             startDate.date(1);
@@ -43,18 +37,23 @@ define(['Backbone',
                 endDate  : this.endDate
             });
 
-            this.fetch({
-                data   : options,
-                reset  : true,
-                success: function (collection) {
-                    that.page++;
-                },
-                error  : function (models, xhr) {
-                    if (xhr.status === 401) {
-                        Backbone.history.navigate('#login', {trigger: true});
-                    }
+            function _errHandler(models, xhr) {
+                if (xhr.status === 401) {
+                    Backbone.history.navigate('#login', {trigger: true});
                 }
-            });
+            }
+
+            options = options || {};
+            options.error = options.error || _errHandler;
+            page = options.page;
+
+            this.startTime = new Date();
+
+            if (page) {
+                return this.getPage(page, options);
+            }
+
+            this.getFirstPage(options);
         },
 
         showMore: function (options) {
@@ -71,7 +70,6 @@ define(['Backbone',
 
             filterObject.startDate = dateRange.startDate || new Date(startDate);
             filterObject.endDate = dateRange.endDate || new Date(endDate);
-
 
             filterObject.page = (options && options.page) ? options.page : this.page;
             filterObject.count = (options && options.count) ? options.count : this.namberToShow;

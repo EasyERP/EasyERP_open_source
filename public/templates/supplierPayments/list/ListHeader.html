@@ -1,12 +1,13 @@
+<div id="searchContainer"></div>
 <div>
     <table class="list payment-list">
         <col width="2%">
         <col width="2%">
+        <col width="15%">
+        <col width="10%">
+        <col width="15%">
         <col width="10%">
         <col width="10%">
-        <col width="12%">
-        <col width="10%">
-        <col width="18%">
         <col width="5%">
         <col width="10%">
 
@@ -14,18 +15,20 @@
         <tr>
             <th class="centerCell"><input type="checkbox" id="check_all"/></th>
             <th class="centerCell">N</th>
-            <th class="oe_sortable" data-sort="number">Number<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="supplier.name.first">Employee<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paymentRef">Reference<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="paymentRef">Bonus Type<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="supplier">Partner<span class="arrow down">7</span><span class="arrow up">v</span>
-            </th>
-            <th class="oe_sortable" data-sort="journal">Journal<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="year">Year<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
-            <th class="oe_sortable" data-sort="paidAmount">Total<span class="arrow down">7</span><span class="arrow up">v</span>
-            </th>
+            <th class="oe_sortable" data-sort="month">Month<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paidAmount">Paid<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
+            <th class="oe_sortable" data-sort="paidAmount">Amount<span class="arrow down">7</span><span
+                    class="arrow up">v</span></th>
             <!--<th class="oe_sortable" data-sort="workflow">Status<span class="arrow down">7</span><span class="arrow up">v</span></th>-->
-            <th class="oe_sortable" data-sort="date">Date<span class="arrow down">7</span><span
+            <th class="oe_sortable" data-sort="date">Date of Paid<span class="arrow down">7</span><span
                     class="arrow up">v</span></th>
         </tr>
         </thead>
@@ -33,4 +36,3 @@
         <tfoot id="listTotal"></tfoot>
     </table>
 </div>
-

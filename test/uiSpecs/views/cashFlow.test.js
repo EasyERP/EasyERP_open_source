@@ -842,7 +842,7 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var cashFlowUrl = new RegExp('journal\/journalEntry\/getCashFlow', 'i');
+                var cashFlowUrl = new RegExp('journalEntries\/getCashFlow', 'i');
 
                 server.respondWith('GET', cashFlowUrl, [401, {"Content-Type": "application/json"}, JSON.stringify({})]);
                 cashFlowCollection = new CashFlowCollection({
@@ -855,7 +855,7 @@ define([
             });
 
             it('Try to create TopBarView', function (done) {
-                var cashFlowUrl = new RegExp('journal\/journalEntry\/getCashFlow', 'i');
+                var cashFlowUrl = new RegExp('journalEntries\/getCashFlow', 'i');
 
                 server.respondWith('GET', cashFlowUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeCashFlow)]);
                 cashFlowCollection = new CashFlowCollection({
@@ -915,7 +915,7 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create CashFlowView', function (done) {
-                    var asyncDataUrl = new RegExp('\/journal\/journalEntry\/getAsyncDataForGL', 'i');
+                    var asyncDataUrl = new RegExp('\/journalEntries\/getAsyncDataForGL', 'i');
 
                     server.respondWith('GET', asyncDataUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeAsyncData)]);
                     listView = new ListView({
@@ -964,8 +964,8 @@ define([
                     var $topBarEl = topBarView.$el;
                     var $updateDateBtn = $topBarEl.find('#updateDate');
                     var $dateRange = $topBarEl.find('.dateRange');
-                    var asyncDataUrl = new RegExp('\/journal\/journalEntry\/getAsyncDataForGL', 'i');
-                    var cashFlowUrl = new RegExp('journal\/journalEntry\/getCashFlow', 'i');
+                    var asyncDataUrl = new RegExp('\/journalEntries\/getAsyncDataForGL', 'i');
+                    var cashFlowUrl = new RegExp('journalEntries\/getCashFlow', 'i');
                     var $cancelBtn;
                     var $thisMonth;
                     var $finYear;

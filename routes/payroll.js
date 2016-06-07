@@ -10,10 +10,10 @@ module.exports = function (models) {
 
     var handler = new PayRollHandler(models);
     var moduleId = MODULES.PAYROLLEXPENSES;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddlware);
+    router.use(accessStackMiddleware);
 
     function cacheRetriver(req, res, next) {
         var query = req.query;

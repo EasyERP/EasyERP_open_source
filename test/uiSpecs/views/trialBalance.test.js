@@ -189,7 +189,7 @@ define([
             });
 
             it('Try to fetch collection with error', function () {
-                var trialBalUrl = new RegExp('journal\/journalEntry\/getTrialBalance', 'i');
+                var trialBalUrl = new RegExp('journalEntries\/getTrialBalance', 'i');
 
                 server.respondWith('GET', trialBalUrl, [401, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                 trialBalanceCollection = new TrialBalanceCollection({
@@ -202,7 +202,7 @@ define([
             });
 
             it('Try to create TopBarView', function (done) {
-                var trialBalUrl = new RegExp('journal\/journalEntry\/getTrialBalance', 'i');
+                var trialBalUrl = new RegExp('journalEntries\/getTrialBalance', 'i');
 
                 server.respondWith('GET', trialBalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTrialBalance)]);
                 trialBalanceCollection = new TrialBalanceCollection({
@@ -262,7 +262,7 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to TrialBalance ListView', function (done) {
-                    var journalUrl = new RegExp('\/journal\/journalEntry\/getAsyncDataForGL', 'i');
+                    var journalUrl = new RegExp('\/journalEntries\/getAsyncDataForGL', 'i');
 
                     server.respondWith('GET', journalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJournalEntry)]);
                     listView = new ListView({
@@ -312,8 +312,8 @@ define([
                     var $topBarEl = topBarView.$el;
                     var $updateDateBtn = $topBarEl.find('#updateDate');
                     var $dateRange = $topBarEl.find('.dateRange');
-                    var journalUrl = new RegExp('\/journal\/journalEntry\/getAsyncDataForGL', 'i');
-                    var trialBalUrl = new RegExp('journal\/journalEntry\/getTrialBalance', 'i');
+                    var journalUrl = new RegExp('\/journalEntries\/getAsyncDataForGL', 'i');
+                    var trialBalUrl = new RegExp('journalEntries\/getTrialBalance', 'i');
                     var $cancelBtn;
                     var $thisMonth;
                     var $finYear;

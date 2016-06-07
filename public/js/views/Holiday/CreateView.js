@@ -1,28 +1,27 @@
 define([
-        'Backbone',
-        'Underscore',
-        "text!templates/Holiday/CreateTemplate.html"
-    ],
-    function (Backbone, _, CreateTemplate) {
-        'use strict';
+    'Backbone',
+    'Underscore',
+    'text!templates/Holiday/CreateTemplate.html'
+], function (Backbone, _, CreateTemplate) {
+    'use strict';
 
-        var CreateView = Backbone.View.extend({
-            el      : '#listTable',
-            template: _.template(CreateTemplate),
+    var CreateView = Backbone.View.extend({
+        el      : '#listTable',
+        template: _.template(CreateTemplate),
 
-            initialize: function (options) {
-                this.render(options);
-            },
+        initialize: function (options) {
+            this.render(options);
+        },
 
-            events: {},
+        events: {},
 
-            render: function (options) {
-                this.$el.prepend(this.template(options));
+        render: function (options) {
+            this.$el.prepend(this.template(options));
 
-                return this;
-            }
+            return this;
+        }
 
-        });
-
-        return CreateView;
     });
+
+    return CreateView;
+});

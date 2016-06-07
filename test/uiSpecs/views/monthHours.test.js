@@ -337,7 +337,7 @@ define([
                     var $fixedInput = listView.$el.find('tr[data-id="55b92ace21e4b7c40f000005"] > td[data-content="fixedExpense"]');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var keyDownEvent = $.Event('keydown', {which: 13});
-                    var journalEntryUrl = new RegExp('journal\/journalEntry\/getExpenses', 'i');
+                    var journalEntryUrl = new RegExp('journalEntries\/getExpenses', 'i');
 
                     server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         actualHours     : 4148,
@@ -458,7 +458,7 @@ define([
                     var $fixedInput = listView.$el.find('td[data-content="fixedExpense"]')[0];
                     var $saveBtn = topBarView.$el.find('#top-bar-saveBtn');
                     var $tableContainer = listView.$el.find('table');
-                    var journalEntryUrl = new RegExp('journal\/journalEntry\/getExpenses', 'i');
+                    var journalEntryUrl = new RegExp('journalEntries\/getExpenses', 'i');
 
                     server.respondWith('GET', journalEntryUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         actualHours     : 4148,

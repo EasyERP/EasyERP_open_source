@@ -1,6 +1,3 @@
-/**
- * Created by Liliya_Pikiner on 7/1/2015.
- */
 define([
     'Underscore',
     'views/topBarViewBase',
@@ -12,7 +9,7 @@ define([
     var topBarView = BaseView.extend({
         el           : '#top-bar',
         contentType  : CONSTANTS.BONUSTYPE,
-        contentHeader: "BonusType",
+        contentHeader: 'BonusType',
         viewType     : null,
         template     : _.template(ContentTopBarTemplate),
 

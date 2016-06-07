@@ -7,10 +7,10 @@ var MODULES = require('../constants/modules');
 module.exports = function (models, event) {
     var handler = new QuotationHandler(models, event);
     var moduleId = MODULES.ORDER;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddlware);
+    router.use(accessStackMiddleware);
 
     router.get('/', handler.getByViewType);
 

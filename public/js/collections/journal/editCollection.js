@@ -1,6 +1,3 @@
-/**
- * Created by Liliya_Pikiner on 6/29/2015.
- */
 define([
     'Backbone',
     './filterCollection'
@@ -59,16 +56,15 @@ define([
                     modelObject = model.changed;
                     modelObject._id = model.id;
                     models.push(modelObject);
-                    //model.set(modelObject);
                 } else if (model && !model.id) {
                     newModel = model.changed;
                     newModel._id = model.id;
-                    Backbone.sync("create", saveObject, options);
+                    Backbone.sync('create', saveObject, options);
                 }
             }
 
             if (models.length) {
-                Backbone.sync("patch", syncObject, updatedOptions);
+                Backbone.sync('patch', syncObject, updatedOptions);
             }
         }
     });

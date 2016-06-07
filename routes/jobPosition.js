@@ -8,20 +8,19 @@ module.exports = function (models) {
     'use strict';
     var handler = new jobPositionHandler(models);
     var moduleId = MODULES.JOBPOSITIONS;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
 
-    router.get('/', accessStackMiddlware, handler.getByViewType);
-    router.get('/getFilterValues', accessStackMiddlware, handler.getFilterValues);
+    router.get('/', accessStackMiddleware, handler.getByViewType);
+    router.get('/getFilterValues', accessStackMiddleware, handler.getFilterValues);
     router.get('/getForDd', handler.getForDd);
     router.get('/jobType', handler.jobType);
-    router.get('/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
 
-    router.post('/', accessStackMiddlware, handler.create);
-    router.patch('/:id', accessStackMiddlware, handler.update);
-    router.put('/:id', accessStackMiddlware, handler.update);
-    router.delete('/:id', accessStackMiddlware, handler.remove);
+    router.post('/', accessStackMiddleware, handler.create);
+    router.patch('/:id', accessStackMiddleware, handler.update);
+    router.put('/:id', accessStackMiddleware, handler.update);
+    router.delete('/:id', accessStackMiddleware, handler.remove);
 
     return router;
 };

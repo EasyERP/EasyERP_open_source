@@ -8,17 +8,17 @@ module.exports = function (event, models) {
     'use strict';
     var handler = new EmployeeHandler(event, models);
     var moduleId = MODULES.APPLICATIONS;
-    var accessStackMiddlWare = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleWare = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
 
-    router.get('/', accessStackMiddlWare, handler.getByViewTpe);
+    router.get('/', accessStackMiddleWare, handler.getByViewTpe);
     router.get('/getApplicationsLengthByWorkflows', handler.getCollectionLengthByWorkflows);
-    router.get('/totalCollectionLength', accessStackMiddlWare, handler.totalCollectionLength);
+    router.get('/totalCollectionLength', accessStackMiddleWare, handler.totalCollectionLength);
 
-    router.post('/', accessStackMiddlWare, handler.create);
-    router.patch('/:id', accessStackMiddlWare, handler.updateOnlySelectedFields);
-    router.delete('/:id', accessStackMiddlWare, handler.remove);
+    router.post('/', accessStackMiddleWare, handler.create);
+    router.patch('/:id', accessStackMiddleWare, handler.updateOnlySelectedFields);
+    router.delete('/:id', accessStackMiddleWare, handler.remove);
 
     return router;
 };

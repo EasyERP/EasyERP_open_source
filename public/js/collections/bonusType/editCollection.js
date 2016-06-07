@@ -1,6 +1,3 @@
-/**
- * Created by Liliya_Pikiner on 7/1/2015.
- */
 define([
     'Backbone',
     './filterCollection'
@@ -21,6 +18,7 @@ define([
             var saveObject;
             var updatedOptions;
             var syncObject;
+            var i;
 
             syncObject = {
                 trigger: this.trigger,
@@ -50,7 +48,7 @@ define([
                 }
             };
 
-            for (var i = this.models.length - 1; i >= 0; i--) {
+            for (i = this.models.length - 1; i >= 0; i--) {
                 model = this.models[i];
 
                 if (model && model.id && model.hasChanged()) {
@@ -60,12 +58,12 @@ define([
                 } else if (model && !model.id) {
                     newModel = model.changed;
                     newModel._id = model.id;
-                    Backbone.sync("create", saveObject, options);
+                    Backbone.sync('create', saveObject, options);
                 }
             }
 
             if (models.length) {
-                Backbone.sync("patch", syncObject, updatedOptions);
+                Backbone.sync('patch', syncObject, updatedOptions);
             }
         }
     });

@@ -1,31 +1,29 @@
 ﻿define([
-        'Backbone',
-        'Underscore',
-        'text!templates/journalEntry/list/ListTemplate.html',
-        'helpers'
-    ],
+    'Backbone',
+    'Underscore',
+    'text!templates/journalEntry/list/ListTemplate.html',
+    'helpers'
+], function (Backbone, _, listTemplate, helpers) {
+    'use strict';
 
-    function (Backbone, _, listTemplate, helpers) {
-        "use strict";
+    var ListItemView = Backbone.View.extend({
+        el: '#listTable',
 
-        var ListItemView = Backbone.View.extend({
-            el: '#listTable',
+        initialize: function (options) {
+            this.collection = options.collection;
+            this.page = options.page ? parseInt(options.page, 10) : 1;
+            this.startNumber = (this.page - 1) * options.itemsNumber; //Counting the start index of list items
+        },
 
-            initialize: function (options) {
-                this.collection = options.collection;
-                this.page = options.page ? parseInt(options.page, 10) : 1;
-                this.startNumber = (this.page - 1) * options.itemsNumber; //Counting the start index of list items
-            },
-
-            render: function () {
-                this.$el.append(_.template(listTemplate, {
-                    currencySplitter: helpers.currencySplitter,
-                    currencyClass: helpers.currencyClass,
-                    collection      : this.collection.toJSON(),
-                    startNumber     : this.startNumber
-                }));
-            }
-        });
-
-        return ListItemView;
+        render: function () {
+            this.$el.append(_.template(listTemplate, {
+                currencySplitter: helpers.currencySplitter,
+                currencyClass   : helpers.currencyClass,
+                collection      : this.collection.toJSON(),
+                startNumber     : this.startNumber
+            }));
+        }
     });
+
+    return ListItemView;
+});
