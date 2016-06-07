@@ -1,6 +1,3 @@
-/**
- * Created by Liliya_Pikiner on 7/1/2015.
- */
 define([
     'Backbone',
     'Underscore',

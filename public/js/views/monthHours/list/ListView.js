@@ -183,7 +183,7 @@ define([
                 if (isSelect) {
                     populate.showSelect(e, prev, next, this);
                 } else if (year && month) {
-                    dataService.getData('journal/journalEntry/getExpenses', {
+                    dataService.getData('journalEntries/getExpenses', {
                         month: month,
                         year : year
                     }, function (result) {

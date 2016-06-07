@@ -1,28 +1,27 @@
 define([
-        'Backbone',
-        'Underscore',
-        "text!templates/PayrollExpenses/CreateTemplate.html",
-    ],
-    function (Backbone, _, CreateTemplate) {
+    'Backbone',
+    'Underscore',
+    'text!templates/PayrollExpenses/CreateTemplate.html'
+], function (Backbone, _, CreateTemplate) {
 
-        var CreateView = Backbone.View.extend({
-            el      : '#payRoll-listTable',
-            template: _.template(CreateTemplate),
+    var CreateView = Backbone.View.extend({
+        el      : '#payRoll-listTable',
+        template: _.template(CreateTemplate),
 
-            initialize: function (options) {
-                this.model = options.model;
-                this.render();
-            },
+        initialize: function (options) {
+            this.model = options.model;
+            this.render();
+        },
 
-            events: {},
+        events: {},
 
-            render: function () {
-                this.$el.prepend(this.template(this.model));
+        render: function () {
+            this.$el.prepend(this.template(this.model));
 
-                return this;
-            }
+            return this;
+        }
 
-        });
-
-        return CreateView;
     });
+
+    return CreateView;
+});

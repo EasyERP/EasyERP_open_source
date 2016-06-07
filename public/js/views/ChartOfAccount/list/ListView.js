@@ -1,578 +1,568 @@
-/**
- * Created by lilya on 27/11/15.
- */
 define([
-        'Backbone',
-        'jQuery',
-        'Underscore',
-        'text!templates/ChartOfAccount/list/ListHeader.html',
-        'text!templates/ChartOfAccount/list/ListTemplate.html',
-        'text!templates/ChartOfAccount/list/cancelEdit.html',
-        'views/ChartOfAccount/CreateView',
-        'collections/ChartOfAccount/filterCollection',
-        'collections/ChartOfAccount/editCollection',
-        'models/chartOfAccount',
-        "async"
-    ],
-    function (Backbone, $, _, listHeaderTemplate, listTemplate, cancelEdit, CreateView, ContentCollection, EditCollection, CurrentModel, async) {
-        'use strict';
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/ChartOfAccount/list/ListHeader.html',
+    'text!templates/ChartOfAccount/list/ListTemplate.html',
+    'text!templates/ChartOfAccount/list/cancelEdit.html',
+    'views/ChartOfAccount/CreateView',
+    'collections/ChartOfAccount/filterCollection',
+    'collections/ChartOfAccount/editCollection',
+    'models/chartOfAccount',
+    'async'
+], function (Backbone, $, _, listHeaderTemplate, listTemplate, cancelEdit, CreateView, ContentCollection, EditCollection, CurrentModel, async) {
+    'use strict';
 
-        var ProjectsListView = Backbone.View.extend({
-            el           : '#content-holder',
-            contentType  : "ChartOfAccount",
-            changedModels: {},
+    var ProjectsListView = Backbone.View.extend({
+        el           : '#content-holder',
+        contentType  : 'ChartOfAccount',
+        changedModels: {},
 
-            events: {
-                "click .oe_sortable"                               : "goSort",
-                "click td.editable"                                : "editRow",
-                "change .editable"                                 : "setEditable",
-                "click .checkbox"                                  : "checked",
-                "keydown input.editing "                           : "keyDown",
-                "click .newSelectList li:not(.miniStylePagination)": "chooseOption"
-            },
+        events: {
+            'click .oe_sortable'                               : 'goSort',
+            'click td.editable'                                : 'editRow',
+            'change .editable'                                 : 'setEditable',
+            'click .checkbox'                                  : 'checked',
+            'keydown input.editing '                           : 'keyDown',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
+        },
 
-            initialize: function (options) {
+        initialize: function (options) {
 
-                this.collection = options.collection;
+            this.collection = options.collection;
 
-                this.render();
-            },
+            this.render();
+        },
 
-            chooseOption: function (e) {
-                var target = $(e.target);
-                var targetElement = target.parents("td");
-                var tr = target.parents("tr");
-                var modelId = tr.attr('data-id');
-                var attr = targetElement.data("content");
-                var changedAttr;
+        chooseOption: function (e) {
+            var target = $(e.target);
+            var targetElement = target.parents('td');
+            var tr = target.parents('tr');
+            var modelId = tr.attr('data-id');
+            var attr = targetElement.data('content');
+            var changedAttr;
 
-                var editModel = this.editCollection.get(modelId) || this.collection.get(modelId);
+            var editModel = this.editCollection.get(modelId) || this.collection.get(modelId);
 
-                if (!this.changedModels[modelId]) {
-                    if (!editModel.id) {
-                        this.changedModels[modelId] = editModel.attributes;
-                    } else {
-                        this.changedModels[modelId] = {};
-                    }
+            if (!this.changedModels[modelId]) {
+                if (!editModel.id) {
+                    this.changedModels[modelId] = editModel.attributes;
+                } else {
+                    this.changedModels[modelId] = {};
                 }
+            }
 
-                changedAttr = this.changedModels[modelId];
-                if (attr === 'accountType') {
+            changedAttr = this.changedModels[modelId];
+            if (attr === 'accountType') {
 
-                    changedAttr.accountType = target.text();
-                }
+                changedAttr.accountType = target.text();
+            }
 
-                targetElement.text(target.text());
+            targetElement.text(target.text());
 
-                this.hideNewSelect();
-                this.setEditable(targetElement);
+            this.hideNewSelect();
+            this.setEditable(targetElement);
 
-                return false;
-            },
+            return false;
+        },
 
-            hideNewSelect: function () {
-                this.$el.find('.newSelectList').hide();
-            },
+        hideNewSelect: function () {
+            this.$el.find('.newSelectList').hide();
+        },
 
-            keyDown: function (e) {
-                if (e.which === 13) {
-                    this.setChangedValueToModel();
-                }
-            },
+        keyDown: function (e) {
+            if (e.which === 13) {
+                this.setChangedValueToModel();
+            }
+        },
 
-            deleteItems: function () {
-                var self = this;
-                var mid = 82;
-                var model;
-                var localCounter = 0;
-                var count = $("#chartOfAccount input:checked").length;
+        deleteItems: function () {
+            var self = this;
+            var mid = 82;
+            var model;
+            var localCounter = 0;
+            var count = $('#chartOfAccount input:checked').length;
+            var answer = confirm('Really DELETE items ?!');
+            var value;
 
-                this.collectionLength = this.collection.length;
+            this.collectionLength = this.collection.length;
 
-                if (!this.changed) {
-                    var answer = confirm("Really DELETE items ?!");
-                    var value;
+            if (!this.changed) {
 
-                    if (answer === true) {
-                        $.each($("#chartOfAccount input:checked"), function (index, checkbox) {
-                            value = checkbox.value;
+                if (answer === true) {
+                    $.each($('#chartOfAccount input:checked'), function (index, checkbox) {
+                        value = checkbox.value;
 
-                            model = self.collection.get(value) || self.editCollection.get(value);
-                            model.destroy({
-                                headers: {
-                                    mid: mid
-                                },
-                                wait   : true,
-                                success: function () {
-                                    self.listLength--;
-                                    localCounter++;
+                        model = self.collection.get(value) || self.editCollection.get(value);
+                        model.destroy({
+                            headers: {
+                                mid: mid
+                            },
+                            wait   : true,
+                            success: function () {
+                                self.listLength--;
+                                localCounter++;
 
-                                    delete self.changedModels[value];
+                                delete self.changedModels[value];
 
-                                    if (index === count - 1) {
-                                        self.deleteItemsRender(localCounter);
-                                    }
-                                },
-                                error  : function (model, res) {
-                                    if (res.status === 403 && index === 0) {
-                                        App.render({
-                                            type   : 'error',
-                                            message: "You do not have permission to perform this action"
-                                        });
-                                    }
-                                    self.listLength--;
-                                    localCounter++;
-                                    if (index === count - 1) {
-                                        self.deleteItemsRender(localCounter);
-                                    }
+                                if (index === count - 1) {
+                                    self.deleteItemsRender(localCounter);
                                 }
-                            });
+                            },
+
+                            error: function (model, res) {
+                                if (res.status === 403 && index === 0) {
+                                    App.render({
+                                        type   : 'error',
+                                        message: 'You do not have permission to perform this action'
+                                    });
+                                }
+                                self.listLength--;
+                                localCounter++;
+                                if (index === count - 1) {
+                                    self.deleteItemsRender(localCounter);
+                                }
+                            }
                         });
-                    }
-                } else {
-                    this.cancelChanges();
+                    });
                 }
-            },
-
-            deleteItemsRender: function (deleteCounter) {
-                var holder;
-                var template = _.template(listTemplate);
-
-                holder = this.$el;
-
-                if (deleteCounter !== this.collectionLength) {
-                    holder.find('#chartOfAccount').html(template({
-                        collection: this.collection.toJSON()
-                    }));
-                }
-
-                this.editCollection.reset(this.collection.models);
-
-                this.hideSaveCancelBtns();
-            },
-
-            cancelChanges: function () {
-                var self = this;
-                var edited = this.edited;
-                var collection = this.collection;
-                var createItem;
-                var dataId;
-
-                async.each(edited, function (el, cb) {
-                    var tr = $(el).closest('tr');
-                    var rowNumber = tr.find('[data-content="number"]').text();
-                    var id = tr.attr('data-id');
-                    var template = _.template(cancelEdit);
-                    var model;
-
-                    if (!id || id.length < 24) {
-                        return cb('Empty id');
-                    }
-
-                    model = collection.get(id);
-                    model = model.toJSON();
-                    model.startNumber = rowNumber;
-                    tr.replaceWith(template({chart: model}));
-
-                    delete self.changedModels[id];
-
-                    cb();
-                }, function (err) {
-                    if (!err) {
-                        self.bindingEventsToEditedCollection(self);
-                    }
-                    self.hideSaveCancelBtns();
-                });
-
-                if (this.createdItem) {
-                    createItem = this.$el.find('#false');
-                    dataId = createItem.data('id');
-                    this.editCollection.remove(dataId);
-                    delete this.changedModels[dataId];
-                    createItem.remove();
-
-                    this.createdItem = false;
-                }
-            },
-
-            hideSaveCancelBtns: function () {
-                var createBtnEl = $('#top-bar-createBtn');
-                var saveBtnEl = $('#top-bar-saveBtn');
-                var cancelBtnEl = $('#top-bar-deleteBtn');
-
-                this.changed = false;
-
-                saveBtnEl.hide();
-                cancelBtnEl.hide();
-                createBtnEl.show();
-
-                return false;
-            },
-
-            isNewRow: function () {
-                var newRow = $('#false');
-
-                return !!newRow.length;
-            },
-
-            bindingEventsToEditedCollection: function (context) {
-                if (context.editCollection) {
-                    context.editCollection.unbind();
-                }
-                context.editCollection = new EditCollection(context.collection.toJSON());
-                context.editCollection.on('saved', context.savedNewModel, context);
-                context.editCollection.on('updated', context.updatedOptions, context);
-            },
-
-            resetCollection: function (model) {
-                if (model && model._id) {
-                    model = new CurrentModel(model);
-                    this.collection.add(model);
-                } else {
-                    this.collection.set(this.editCollection.models, {remove: false});
-                }
-            },
-
-            updatedOptions: function () {
-                this.hideSaveCancelBtns();
-                this.resetCollection();
-            },
-
-            checked: function () {
-                var checkLength;
-                var newRows = this.$listTable.find('#false');
-
-                if (newRows.length) {
-                    return false;
-                }
-
-                if (this.collection.length > 0) {
-                    checkLength = $("input.listCB:checked").length;
-
-                    if (checkLength > 0) {
-                        if (!this.changed) {
-                            $("#top-bar-deleteBtn").show();
-                            $("#top-bar-createBtn").hide();
-                        }
-                        $('#check_all').prop('checked', false);
-                        if (checkLength === this.collection.length) {
-                            $('#check_all').prop('checked', true);
-                        }
-                    } else {
-                        if (!this.changed) {
-                            $("#top-bar-deleteBtn").hide();
-                            $("#top-bar-createBtn").show();
-                        }
-                        $('#check_all').prop('checked', false);
-                    }
-                }
-            },
-
-            createItem: function () {
-                var startData = {};
-                var model = new CurrentModel(startData);
-
-                startData.cid = model.cid;
-
-                if (!this.isNewRow()) {
-                    this.showSaveCancelBtns();
-                    this.editCollection.add(model);
-
-                    new CreateView(startData);
-                }
-
-                this.changed = true;
-                this.createdItem = true;
-            },
-
-            showSaveCancelBtns: function () {
-                var createBtnEl = $('#top-bar-createBtn');
-                var saveBtnEl = $('#top-bar-saveBtn');
-                var cancelBtnEl = $('#top-bar-deleteBtn');
-
-                //if (this.changed) {
-                createBtnEl.hide();
-                //}
-                saveBtnEl.show();
-                cancelBtnEl.show();
-
-                return false;
-            },
-
-            editRow: function (e) {
-                //$(".newSelectList").hide();
-
-                var el = $(e.target);
-                var tr = $(e.target).closest('tr');
-                var trId = tr.data('id');
-                var colType = el.data('type');
-                var isSelect = colType !== 'input' && el.prop("tagName") !== 'INPUT';
-                var tempContainer;
-                var width;
-
-                if(el.attr('id') === 'selectInput'){
-                    return false;
-                }
-
-                if (trId && el.prop('tagName') !== 'INPUT') {
-                    this.modelId = trId;
-                    this.setChangedValueToModel();
-                }
-
-                if (isSelect) {
-                    el.append("<ul class='newSelectList'><li>Debit</li><li>Credit</li></ul>");
-                } else {
-                    tempContainer = el.text();
-                    width = el.width() - 6;
-                    el.html('<input class="editing" type="text" value="' + tempContainer + '"  style="width:' + width + 'px">');
-                }
-
-                return false;
-            },
-
-            setEditable: function (td) {
-
-                if (!td.parents) {
-                    td = $(td.target).closest('td');
-                }
-
-                td.addClass('edited');
-
-                if (this.isEditRows()) {
-                    this.setChangedValue();
-                }
-
-                return false;
-            },
-
-            setChangedValue: function () {
-                if (!this.changed) {
-                    this.changed = true;
-                    this.showSaveCancelBtns();
-                }
-            },
-
-            isEditRows: function () {
-                var edited = this.$listTable.find('.edited');
-
-                this.edited = edited;
-
-                return !!edited.length;
-            },
-
-            setChangedValueToModel: function () {
-                var editedElement = this.$listTable.find('.editing');
-                var editedCol;
-                var editedElementRowId;
-                var editedElementContent;
-                var editedElementValue;
-
-                if (editedElement.length) {
-                    editedCol = editedElement.closest('td');
-                    editedElementRowId = editedElement.closest('tr').data('id');
-                    editedElementContent = editedCol.data('content');
-                    editedElementValue = editedElement.val();
-
-                    if (!this.changedModels[editedElementRowId]) {
-                        this.changedModels[editedElementRowId] = {};
-                    }
-
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-
-                    if (editedElementContent === 'code') {
-                        editedElementValue = parseInt(editedElementValue, 10);
-
-                        if (isNaN(editedElementValue)) {
-                            editedCol.addClass('errorContent');
-                            editedElementValue = '';
-                        } else {
-                            editedCol.removeClass('errorContent');
-                        }
-                    }
-
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-
-                    editedCol.text(editedElementValue);
-                    editedElement.remove();
-                }
-            },
-
-            goSort: function (e) {
-                var target$;
-                var currentParrentSortClass;
-                var sortClass;
-                var sortConst;
-                var sortBy;
-                var sortObject;
-
-                this.collection.unbind('reset');
-                this.collection.unbind('showmore');
-
-                target$ = $(e.target).closest('th');
-                currentParrentSortClass = target$.attr('class');
-                sortClass = currentParrentSortClass.split(' ')[1];
-                sortConst = 1;
-                sortBy = target$.data('sort');
-                sortObject = {};
-
-                if (!sortClass) {
-                    target$.addClass('sortUp');
-                    sortClass = "sortUp";
-                }
-                switch (sortClass) {
-                    case "sortDn":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortDn').addClass('sortUp');
-                        sortConst = 1;
-                    }
-                        break;
-                    case "sortUp":
-                    {
-                        target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                        target$.removeClass('sortUp').addClass('sortDn');
-                        sortConst = -1;
-                    }
-                        break;
-                }
-                sortObject[sortBy] = sortConst;
-
-                this.fetchSortCollection(sortObject);
-                this.hideSaveCancelBtns();
-            },
-
-            fetchSortCollection: function (sortObject) {
-                this.sort = sortObject;
-                this.collection = new ContentCollection({
-                    viewType        : 'list',
-                    sort            : sortObject,
-                    page            : this.page,
-                    count           : this.defaultItemsNumber,
-                    filter          : this.filter,
-                    parrentContentId: this.parrentContentId,
-                    contentType     : this.contentType,
-                    newCollection   : this.newCollection
-                });
-                this.collection.bind('reset', this.renderContent, this);
-                this.collection.bind('showmore', this.showMoreContent, this);
-            },
-
-            renderContent: function () {
-                var currentEl = this.$el;
-                var template = _.template(listTemplate);
-                var tBody = currentEl.find('#chartOfAccount');
-
-                tBody.empty();
-
-                if (this.collection.length > 0) {
-                    this.$el.find('#chartOfAccount').html(template({
-                        collection: this.collection.toJSON()
-                    }));
-                }
-            },
-
-            hideSaveCancelButtons: function () {
-                var saveBtn = $("#top-bar-saveBtn");
-                var cancelBtn = $("#top-bar-deleteBtn");
-
-                saveBtn.hide();
-                cancelBtn.hide();
-            },
-
-            saveItem: function () {
-                var model;
-                var code;
-                var account;
-                var id;
-                var errors = this.$el.find('.errorContent');
-
-                for (id in this.changedModels) {
-                    model = this.editCollection.get(id) || this.collection.get(id);
-                    if (model) {
-                        model.changed = this.changedModels[id];
-                        code = this.changedModels[id].code || model.get('code');
-                        account = this.changedModels[id].account || model.get('account');
-                        model.changed.name = code + ' ' + account;
-                    }
-                }
-
-                if (errors.length) {
-                    return;
-                }
-                this.editCollection.save();
-
-                for (id in this.changedModels) {
-                    delete this.changedModels[id];
-                    this.editCollection.remove(id);
-                }
-
-                this.deleteEditable();
-            },
-
-            deleteEditable: function(){
-                this.$el.find('.edited').removeClass('edited');
-            },
-
-            savedNewModel: function (modelObject) {
-                var savedRow = this.$listTable.find('#false');
-                var modelId;
-                var checkbox = savedRow.find('input[type=checkbox]');
-
-                modelObject = modelObject.success;
-
-                if (modelObject) {
-                    modelId = modelObject._id;
-                    savedRow.attr("data-id", modelId);
-                    checkbox.val(modelId);
-                    savedRow.removeAttr('id');
-                }
-
-                this.hideSaveCancelBtns();
-                this.resetCollection(modelObject);
-            },
-
-            errorFunction: function () {
-                App.render({
-                    type   : 'error',
-                    message: "Some error"
-                });
-            },
-
-            render: function () {
-                var self = this;
-                var currentEl;
-                var template = _.template(listTemplate);
-                currentEl = this.$el;
-
-                currentEl.html('');
-                currentEl.html(_.template(listHeaderTemplate));
-                currentEl.find('#chartOfAccount').html(template({
+            } else {
+                this.cancelChanges();
+            }
+        },
+
+        deleteItemsRender: function (deleteCounter) {
+            var holder;
+            var template = _.template(listTemplate);
+
+            holder = this.$el;
+
+            if (deleteCounter !== this.collectionLength) {
+                holder.find('#chartOfAccount').html(template({
                     collection: this.collection.toJSON()
                 }));
-
-                this.hideSaveCancelButtons();
-
-                $('#check_all').click(function () {
-                    $(':checkbox').prop('checked', this.checked);
-                    if ($("input.checkbox:checked").length > 0) {
-                        $("#top-bar-deleteBtn").show();
-                    } else {
-                        $("#top-bar-deleteBtn").hide();
-                    }
-                });
-
-                setTimeout(function () {
-                    self.editCollection = new EditCollection(self.collection.toJSON());
-                    self.$listTable = currentEl.find('#chartOfAccount');
-
-                    self.editCollection.on('saved', self.savedNewModel, self);
-                    self.editCollection.on('error', self.errorFunction, self);
-                    self.editCollection.on('updated', self.updatedOptions, self);
-                }, 10);
-
-                return this;
             }
-        });
 
-        return ProjectsListView;
+            this.editCollection.reset(this.collection.models);
+
+            this.hideSaveCancelBtns();
+        },
+
+        cancelChanges: function () {
+            var self = this;
+            var edited = this.edited;
+            var collection = this.collection;
+            var createItem;
+            var dataId;
+
+            async.each(edited, function (el, cb) {
+                var tr = $(el).closest('tr');
+                var rowNumber = tr.find('[data-content="number"]').text();
+                var id = tr.attr('data-id');
+                var template = _.template(cancelEdit);
+                var model;
+
+                if (!id || id.length < 24) {
+                    return cb('Empty id');
+                }
+
+                model = collection.get(id);
+                model = model.toJSON();
+                model.startNumber = rowNumber;
+                tr.replaceWith(template({chart: model}));
+
+                delete self.changedModels[id];
+
+                cb();
+            }, function (err) {
+                if (!err) {
+                    self.bindingEventsToEditedCollection(self);
+                }
+                self.hideSaveCancelBtns();
+            });
+
+            if (this.createdItem) {
+                createItem = this.$el.find('#false');
+                dataId = createItem.data('id');
+                this.editCollection.remove(dataId);
+                delete this.changedModels[dataId];
+                createItem.remove();
+
+                this.createdItem = false;
+            }
+        },
+
+        hideSaveCancelBtns: function () {
+            var createBtnEl = $('#top-bar-createBtn');
+            var saveBtnEl = $('#top-bar-saveBtn');
+            var cancelBtnEl = $('#top-bar-deleteBtn');
+
+            this.changed = false;
+
+            saveBtnEl.hide();
+            cancelBtnEl.hide();
+            createBtnEl.show();
+
+            return false;
+        },
+
+        isNewRow: function () {
+            var newRow = $('#false');
+
+            return !!newRow.length;
+        },
+
+        bindingEventsToEditedCollection: function (context) {
+            if (context.editCollection) {
+                context.editCollection.unbind();
+            }
+            context.editCollection = new EditCollection(context.collection.toJSON());
+            context.editCollection.on('saved', context.savedNewModel, context);
+            context.editCollection.on('updated', context.updatedOptions, context);
+        },
+
+        resetCollection: function (model) {
+            if (model && model._id) {
+                model = new CurrentModel(model);
+                this.collection.add(model);
+            } else {
+                this.collection.set(this.editCollection.models, {remove: false});
+            }
+        },
+
+        updatedOptions: function () {
+            this.hideSaveCancelBtns();
+            this.resetCollection();
+        },
+
+        checked: function () {
+            var checkLength;
+            var newRows = this.$listTable.find('#false');
+
+            if (newRows.length) {
+                return false;
+            }
+
+            if (this.collection.length > 0) {
+                checkLength = $('input.listCB:checked').length;
+
+                if (checkLength > 0) {
+                    if (!this.changed) {
+                        $('#top-bar-deleteBtn').show();
+                        $('#top-bar-createBtn').hide();
+                    }
+                    $('#check_all').prop('checked', false);
+                    if (checkLength === this.collection.length) {
+                        $('#check_all').prop('checked', true);
+                    }
+                } else {
+                    if (!this.changed) {
+                        $('#top-bar-deleteBtn').hide();
+                        $('#top-bar-createBtn').show();
+                    }
+                    $('#check_all').prop('checked', false);
+                }
+            }
+        },
+
+        createItem: function () {
+            var startData = {};
+            var model = new CurrentModel(startData);
+
+            startData.cid = model.cid;
+
+            if (!this.isNewRow()) {
+                this.showSaveCancelBtns();
+                this.editCollection.add(model);
+
+                new CreateView(startData);
+            }
+
+            this.changed = true;
+            this.createdItem = true;
+        },
+
+        showSaveCancelBtns: function () {
+            var createBtnEl = $('#top-bar-createBtn');
+            var saveBtnEl = $('#top-bar-saveBtn');
+            var cancelBtnEl = $('#top-bar-deleteBtn');
+
+            createBtnEl.hide();
+
+            saveBtnEl.show();
+            cancelBtnEl.show();
+
+            return false;
+        },
+
+        editRow: function (e) {
+            var el = $(e.target);
+            var tr = $(e.target).closest('tr');
+            var trId = tr.data('id');
+            var colType = el.data('type');
+            var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
+            var tempContainer;
+            var width;
+
+            if (el.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (trId && el.prop('tagName') !== 'INPUT') {
+                this.modelId = trId;
+                this.setChangedValueToModel();
+            }
+
+            if (isSelect) {
+                el.append("<ul class='newSelectList'><li>Debit</li><li>Credit</li></ul>");
+            } else {
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html('<input class="editing" type="text" value=sle' + tempContainer + '"  style="width:' + width + 'px">');
+            }
+
+            return false;
+        },
+
+        setEditable: function (td) {
+
+            if (!td.parents) {
+                td = $(td.target).closest('td');
+            }
+
+            td.addClass('edited');
+
+            if (this.isEditRows()) {
+                this.setChangedValue();
+            }
+
+            return false;
+        },
+
+        setChangedValue: function () {
+            if (!this.changed) {
+                this.changed = true;
+                this.showSaveCancelBtns();
+            }
+        },
+
+        isEditRows: function () {
+            var edited = this.$listTable.find('.edited');
+
+            this.edited = edited;
+
+            return !!edited.length;
+        },
+
+        setChangedValueToModel: function () {
+            var editedElement = this.$listTable.find('.editing');
+            var editedCol;
+            var editedElementRowId;
+            var editedElementContent;
+            var editedElementValue;
+
+            if (editedElement.length) {
+                editedCol = editedElement.closest('td');
+                editedElementRowId = editedElement.closest('tr').data('id');
+                editedElementContent = editedCol.data('content');
+                editedElementValue = editedElement.val();
+
+                if (!this.changedModels[editedElementRowId]) {
+                    this.changedModels[editedElementRowId] = {};
+                }
+
+                this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+
+                if (editedElementContent === 'code') {
+                    editedElementValue = parseInt(editedElementValue, 10);
+
+                    if (isNaN(editedElementValue)) {
+                        editedCol.addClass('errorContent');
+                        editedElementValue = '';
+                    } else {
+                        editedCol.removeClass('errorContent');
+                    }
+                }
+
+                this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+
+                editedCol.text(editedElementValue);
+                editedElement.remove();
+            }
+        },
+
+        goSort: function (e) {
+            var target$;
+            var currentParrentSortClass;
+            var sortClass;
+            var sortConst;
+            var sortBy;
+            var sortObject;
+
+            this.collection.unbind('reset');
+            this.collection.unbind('showmore');
+
+            target$ = $(e.target).closest('th');
+            currentParrentSortClass = target$.attr('class');
+            sortClass = currentParrentSortClass.split(' ')[1];
+            sortConst = 1;
+            sortBy = target$.data('sort');
+            sortObject = {};
+
+            if (!sortClass) {
+                target$.addClass('sortUp');
+                sortClass = 'sortUp';
+            }
+            switch (sortClass) {
+                case 'sortDn':
+                    target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortDn').addClass('sortUp');
+                    sortConst = 1;
+                    break;
+                case 'sortUp':
+                    target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
+                    target$.removeClass('sortUp').addClass('sortDn');
+                    sortConst = -1;
+                    break;
+            }
+            sortObject[sortBy] = sortConst;
+
+            this.fetchSortCollection(sortObject);
+            this.hideSaveCancelBtns();
+        },
+
+        fetchSortCollection: function (sortObject) {
+            this.sort = sortObject;
+            this.collection = new ContentCollection({
+                viewType        : 'list',
+                sort            : sortObject,
+                page            : this.page,
+                count           : this.defaultItemsNumber,
+                filter          : this.filter,
+                parrentContentId: this.parrentContentId,
+                contentType     : this.contentType,
+                newCollection   : this.newCollection
+            });
+            this.collection.bind('reset', this.renderContent, this);
+            this.collection.bind('showmore', this.showMoreContent, this);
+        },
+
+        renderContent: function () {
+            var currentEl = this.$el;
+            var template = _.template(listTemplate);
+            var tBody = currentEl.find('#chartOfAccount');
+
+            tBody.empty();
+
+            if (this.collection.length > 0) {
+                this.$el.find('#chartOfAccount').html(template({
+                    collection: this.collection.toJSON()
+                }));
+            }
+        },
+
+        hideSaveCancelButtons: function () {
+            var saveBtn = $('#top-bar-saveBtn');
+            var cancelBtn = $('#top-bar-deleteBtn');
+
+            saveBtn.hide();
+            cancelBtn.hide();
+        },
+
+        saveItem: function () {
+            var model;
+            var code;
+            var account;
+            var id;
+            var errors = this.$el.find('.errorContent');
+
+            for (id in this.changedModels) {
+                model = this.editCollection.get(id) || this.collection.get(id);
+                if (model) {
+                    model.changed = this.changedModels[id];
+                    code = this.changedModels[id].code || model.get('code');
+                    account = this.changedModels[id].account || model.get('account');
+                    model.changed.name = code + ' ' + account;
+                }
+            }
+
+            if (errors.length) {
+                return;
+            }
+            this.editCollection.save();
+
+            for (id in this.changedModels) {
+                delete this.changedModels[id];
+                this.editCollection.remove(id);
+            }
+
+            this.deleteEditable();
+        },
+
+        deleteEditable: function () {
+            this.$el.find('.edited').removeClass('edited');
+        },
+
+        savedNewModel: function (modelObject) {
+            var savedRow = this.$listTable.find('#false');
+            var modelId;
+            var checkbox = savedRow.find('input[type=checkbox]');
+
+            modelObject = modelObject.success;
+
+            if (modelObject) {
+                modelId = modelObject._id;
+                savedRow.attr('data-id', modelId);
+                checkbox.val(modelId);
+                savedRow.removeAttr('id');
+            }
+
+            this.hideSaveCancelBtns();
+            this.resetCollection(modelObject);
+        },
+
+        errorFunction: function () {
+            App.render({
+                type   : 'error',
+                message: 'Some error'
+            });
+        },
+
+        render: function () {
+            var self = this;
+            var currentEl;
+            var template = _.template(listTemplate);
+            currentEl = this.$el;
+
+            currentEl.html('');
+            currentEl.html(_.template(listHeaderTemplate));
+            currentEl.find('#chartOfAccount').html(template({
+                collection: this.collection.toJSON()
+            }));
+
+            this.hideSaveCancelButtons();
+
+            $('#check_all').click(function () {
+                $(':checkbox').prop('checked', this.checked);
+                if ($('input.checkbox:checked').length > 0) {
+                    $('#top-bar-deleteBtn').show();
+                } else {
+                    $('#top-bar-deleteBtn').hide();
+                }
+            });
+
+            setTimeout(function () {
+                self.editCollection = new EditCollection(self.collection.toJSON());
+                self.$listTable = currentEl.find('#chartOfAccount');
+
+                self.editCollection.on('saved', self.savedNewModel, self);
+                self.editCollection.on('error', self.errorFunction, self);
+                self.editCollection.on('updated', self.updatedOptions, self);
+            }, 10);
+
+            return this;
+        }
     });
+
+    return ProjectsListView;
+});

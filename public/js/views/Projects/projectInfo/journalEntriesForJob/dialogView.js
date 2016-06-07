@@ -26,7 +26,7 @@ define([
                     var self = this;
                     this._id = options._id;
 
-                    dataService.getData('journal/journalEntry/getForReport', {_id: self._id}, function (result) {
+                    dataService.getData('journalEntries/getForReport', {_id: self._id}, function (result) {
                         self.render(result);
                     });
                 },
@@ -57,7 +57,7 @@ define([
                     var body = this.$el.find('#report-TableBody');
 
                     async.each(asyncKeys, function (asyncDate) {
-                        dataService.getData('/journal/journalEntry/getAsyncData', {
+                        dataService.getData('journalEntries/getAsyncData', {
                             date: asyncDate,
                             _id : self._id
                         }, function (result) {

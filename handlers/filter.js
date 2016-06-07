@@ -522,6 +522,7 @@ var Filters = function (models) {
                             name: {$ifNull: ['$department.name', 'None']}
                         }
                     },
+                    
                     jobPosition: {
                         $addToSet: {
                             _id : '$jobPosition._id',

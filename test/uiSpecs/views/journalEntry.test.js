@@ -1582,8 +1582,8 @@ define([
             });
 
             it('Try to create TopBarView', function (done) {
-                var journalEntryUrl = new RegExp('\/journal\/journalEntry\/list', 'i');
-                var journalTotalUrl = new RegExp('\/journal\/journalEntry\/totalCollectionLength', 'i');
+                var journalEntryUrl = new RegExp('journalEntries\/list', 'i');
+                var journalTotalUrl = new RegExp('journalEntries\/totalCollectionLength', 'i');
 
                 server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                     count     : 3,
@@ -1636,8 +1636,8 @@ define([
             describe('INITIALIZE', function () {
 
                 it('Try to create JournalEntry list view', function (done) {
-                    var journalEntryUrl = new RegExp('\/journal\/journalEntry\/list', 'i');
-                    var journalTotalUrl = new RegExp('\/journal\/journalEntry\/totalCollectionLength', 'i');
+                    var journalEntryUrl = new RegExp('journalEntries\/list', 'i');
+                    var journalTotalUrl = new RegExp('journalEntries\/totalCollectionLength', 'i');
 
                     server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         count     : 3,
@@ -1679,8 +1679,8 @@ define([
                 it('Try to filter ListView', function () {
                     var $searchContainer = $thisEl.find('#searchContainer');
                     var $searchArrow = $searchContainer.find('.search-content');
-                    var journalEntryUrl = new RegExp('\/journal\/journalEntry\/list', 'i');
-                    var journalTotalUrl = new RegExp('\/journal\/journalEntry\/totalCollectionLength', 'i');
+                    var journalEntryUrl = new RegExp('journalEntries\/list', 'i');
+                    var journalTotalUrl = new RegExp('journalEntries\/totalCollectionLength', 'i');
                     var $journal;
                     var $subject;
                     var $next;
@@ -1761,8 +1761,8 @@ define([
                 it('Try to remove Journal filter', function () {
                     var $searchContainer = $thisEl.find('#searchContainer');
                     var $closeBtn = $searchContainer.find('.removeValues');
-                    var journalEntryUrl = new RegExp('\/journal\/journalEntry\/list', 'i');
-                    var journalTotalUrl = new RegExp('\/journal\/journalEntry\/totalCollectionLength', 'i');
+                    var journalEntryUrl = new RegExp('journalEntries\/list', 'i');
+                    var journalTotalUrl = new RegExp('journalEntries\/totalCollectionLength', 'i');
 
                     server.respondWith('GET', journalTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
                         count     : 3,
@@ -1780,8 +1780,8 @@ define([
                     var $topBarEl = topBarView.$el;
                     var $updateDateBtn = $topBarEl.find('#updateDate');
                     var $dateRange = $topBarEl.find('.dateRange');
-                    var journalEntryUrl = new RegExp('\/journal\/journalEntry\/list', 'i');
-                    var journalTotalUrl = new RegExp('\/journal\/journalEntry\/totalCollectionLength', 'i');
+                    var journalEntryUrl = new RegExp('journalEntries\/list', 'i');
+                    var journalTotalUrl = new RegExp('journalEntries\/totalCollectionLength', 'i');
                     var $cancelBtn;
                     var $thisMonth;
                     var $finYear;
@@ -1877,7 +1877,7 @@ define([
                 it('Try to reconcile JournalEntry', function (done) {
                     var $topBarEl = topBarView.$el;
                     var $reconcileBtn = $topBarEl.find('#reconcileBtn');
-                    var reconcileUrl = '/journal/reconcile';
+                    var reconcileUrl = '/journalEntries/reconcile';
                     var spyResponse;
 
                     mainSpy.reset();

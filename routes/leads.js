@@ -9,18 +9,18 @@ module.exports = function (models, event) {
 
     var handler = new OpportunityHandler(models, event);
     var moduleId = MODULES.LEADS;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
 
-    router.get('/', accessStackMiddlware, handler.getByViewType);
-    router.get('/totalCollectionLength', accessStackMiddlware, handler.totalCollectionLength);
-    router.get('/getLeadsForChart', accessStackMiddlware, handler.getLeadsForChart);
-    router.get('/priority', accessStackMiddlware, handler.getLeadsPriority);
-    router.post('/', accessStackMiddlware, handler.create);
-    router.patch('/:id', accessStackMiddlware, handler.updateLead);
-    router.put('/:id', accessStackMiddlware, handler.updateLead);
-    router.delete('/:id', accessStackMiddlware, handler.remove);
+    router.get('/', accessStackMiddleware, handler.getByViewType);
+    router.get('/totalCollectionLength', accessStackMiddleware, handler.totalCollectionLength);
+    router.get('/getLeadsForChart', accessStackMiddleware, handler.getLeadsForChart);
+    router.get('/priority', accessStackMiddleware, handler.getLeadsPriority);
+    router.post('/', accessStackMiddleware, handler.create);
+    router.patch('/:id', accessStackMiddleware, handler.updateLead);
+    router.put('/:id', accessStackMiddleware, handler.updateLead);
+    router.delete('/:id', accessStackMiddleware, handler.remove);
 
     return router;
 };

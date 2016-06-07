@@ -1,92 +1,70 @@
 define([
-        'Backbone',
-        'models/journalEntry',
-        'custom',
-        'moment',
-        'constants'
-    ],
-    function (Backbone, JournalEntryModel, custom, moment, CONSTANTS) {
-        'use strict';
-        var JournalEntryCollection = Backbone.Collection.extend({
-            model: JournalEntryModel,
-            url  : CONSTANTS.URLS.JOURNAL_ENTRY,
+    'Backbone',
+    'collections/parent',
+    'models/journalEntry',
+    'custom',
+    'moment',
+    'constants'
+], function (Backbone, Parent, JournalEntryModel, custom, moment, CONSTANTS) {
+    'use strict';
+    var JournalEntryCollection = Parent.extend({
+        model   : JournalEntryModel,
+        url     : CONSTANTS.URLS.JOURNAL_ENTRY,
+        pageSize: CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE,
 
-            showMore: function (options) {
-                var that = this;
-                var filterObject = options || {};
+        initialize: function (options) {
+            var dateRange;
+            var page;
+            var startDate = moment(new Date());
+            var endDate = moment(new Date());
 
-                this.startTime = new Date();
+            this.namberToShow = options.count;
+            this.viewType = options.viewType;
+            this.contentType = options.contentType;
+            this.count = options.count;
+            this.page = options.page || 1;
+            this.filter = options.filter || custom.retriveFromCash('journalEntry.filter');
 
-                filterObject.page = (options && options.page) ? options.page : this.page;
-                filterObject.count = (options && options.count) ? options.count : this.namberToShow;
-                filterObject.viewType = (options && options.viewType) ? options.viewType : this.viewType;
-                filterObject.contentType = (options && options.contentType) ? options.contentType : this.contentType;
+            startDate.month(startDate.month() - 1);
+            startDate.date(1);
+            endDate.month(startDate.month());
+            endDate.endOf('month');
 
-                this.fetch({
-                    data   : filterObject,
-                    waite  : true,
-                    success: function (models) {
-                        that.page += 1;
-                        that.trigger('showmore', models);
-                    },
-                    error  : function () {
-                        App.render({
-                            type   : 'error',
-                            message: 'Some Error.'
-                        });
-                    }
-                });
-            },
+            dateRange = custom.retriveFromCash('journalEntryDateRange') || {};
+            this.startDate = dateRange.startDate;
+            this.endDate = dateRange.endDate;
 
-            initialize: function (options) {
-                var that = this;
-                this.namberToShow = options.count;
-                this.viewType = options.viewType;
-                this.contentType = options.contentType;
-                this.count = options.count;
-                this.page = options.page || 1;
-                this.filter = options.filter || custom.retriveFromCash('journalEntry.filter');
-                var startDate = moment(new Date());
-                var endDate = moment(new Date());
+            this.startDate = dateRange.startDate || new Date(startDate);
+            this.endDate = dateRange.endDate || new Date(endDate);
 
-                startDate.month(startDate.month() - 1);
-                startDate.date(1);
-                endDate.month(startDate.month());
-                endDate.endOf('month');
+            options.startDate = this.startDate;
+            options.endDate = this.endDate;
+            options.filter = this.filter;
 
-                var dateRange = custom.retriveFromCash('journalEntryDateRange') || {};
-                this.startDate = dateRange.startDate;
-                this.endDate = dateRange.endDate;
+            custom.cacheToApp('journalEntryDateRange', {
+                startDate: this.startDate,
+                endDate  : this.endDate
+            });
 
-                this.startDate = dateRange.startDate || new Date(startDate);
-                this.endDate = dateRange.endDate || new Date(endDate);
-
-                options.startDate = this.startDate;
-                options.endDate = this.endDate;
-                options.filter = this.filter;
-
-                custom.cacheToApp('journalEntryDateRange', {
-                    startDate: this.startDate,
-                    endDate  : this.endDate
-                });
-
-                /*if (options && options.viewType) {
-                    this.url += options.viewType;
-                }*/
-
-                this.fetch({
-                    data   : options,
-                    reset  : true,
-                    success: function () {
-                        that.page++;
-                    },
-                    error  : function (models, xhr) {
-                        if (xhr.status === 401) {
-                            Backbone.history.navigate('#login', {trigger: true});
-                        }
-                    }
-                });
+            function _errHandler(models, xhr) {
+                if (xhr.status === 401) {
+                    Backbone.history.navigate('#login', {trigger: true});
+                }
             }
-        });
-        return JournalEntryCollection;
+
+            options = options || {};
+            options.error = options.error || _errHandler;
+            page = options.page;
+
+            this.startTime = new Date();
+
+            if (page) {
+                return this.getPage(page, options);
+            }
+
+            this.getFirstPage(options);
+        }
     });
+
+    return JournalEntryCollection;
+});

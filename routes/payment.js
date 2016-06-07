@@ -7,10 +7,10 @@ var MODULES = require('../constants/modules');
 module.exports = function (models, event) {
     var handler = new PaymentHandler(models, event);
     var moduleId = MODULES.CUSTOMER_PAYMENTS;
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
-    router.use(accessStackMiddlware);
+    router.use(accessStackMiddleware);
 
     router.get('/', handler.getForView);
     router.get('/:byType/', handler.getForView);

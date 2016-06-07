@@ -2055,7 +2055,7 @@ define([
 
                 it('Try to open report', function () {
                     var $jobNameBtn = $thisEl.find('#listTable > tr:nth-child(1) > td:nth-child(4) > a');
-                    var journalEntryUrl = new RegExp('journal\/journalEntry\/getForReport', 'i');
+                    var journalEntryUrl = new RegExp('journalEntries\/getForReport', 'i');
 
                     server.respondWith('GET', journalEntryUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
                         data: {

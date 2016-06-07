@@ -21,19 +21,43 @@ var Module = function (models) {
         var Model = models.get(req.session.lastDb, 'journal', journalSchema);
         var data = req.query;
         var sort = data.sort || {_id: 1};
+        var getTotal;
+        var getData;
 
-        Model
-            .find({})
-            .sort(sort)
-            .populate('debitAccount', '_id name')
-            .populate('creditAccount', '_id name')
-            .exec(function (err, result) {
-                if (err) {
-                    return next(err);
-                }
+        getTotal = function (cb) {
+            Model
+                .find({})
+                .count(function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
 
-                res.status(200).send(result);
-            });
+                    cb(null, result || 0);
+                });
+        };
+
+        getData = function (cb) {
+            Model
+                .find({})
+                .sort(sort)
+                .populate('debitAccount', '_id name')
+                .populate('creditAccount', '_id name')
+                .exec(function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, result);
+                });
+        };
+
+        async.parallel([getTotal, getData], function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({total: result[0], data: result[1]});
+        });
     };
 
     this.getForDd = function (req, res, next) {

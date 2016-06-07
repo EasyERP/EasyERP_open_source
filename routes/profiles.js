@@ -8,14 +8,14 @@ module.exports = function (models) {
     'use strict';
     var moduleId = MODULES.PROFILES;
     var handler = new ProfilesHandler(models);
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
-    router.get('/', authStackMiddleware, accessStackMiddlware, handler.getProfile);
-    router.get('/forDd', authStackMiddleware, accessStackMiddlware, handler.getProfileForDd); // added middleware by Liliya
+    router.get('/', authStackMiddleware, accessStackMiddleware, handler.getProfile);
+    router.get('/forDd', authStackMiddleware, accessStackMiddleware, handler.getProfileForDd); // added middleware by Liliya
 
-    router.post('/', authStackMiddleware, accessStackMiddlware, handler.createProfile);
-    router.put('/:_id', authStackMiddleware, accessStackMiddlware, handler.updateProfile);
-    router.delete('/:_id', authStackMiddleware, accessStackMiddlware, handler.removeProfile);
+    router.post('/', authStackMiddleware, accessStackMiddleware, handler.createProfile);
+    router.put('/:_id', authStackMiddleware, accessStackMiddleware, handler.updateProfile);
+    router.delete('/:_id', authStackMiddleware, accessStackMiddleware, handler.removeProfile);
 
     return router;
 };

@@ -1,69 +1,65 @@
-/**
- * Created by lilya on 30/11/15.
- */
 define([
-        'Backbone',
-        'jQuery',
-        'Underscore',
-        "text!templates/Payment/EditTemplate.html",
-        "helpers"
-    ],
-    function (Backbone, $, _, EditTemplate, helpers) {
-        "use strict";
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/Payment/EditTemplate.html',
+    'helpers'
+], function (Backbone, $, _, EditTemplate, helpers) {
+    'use strict';
 
-        var EditView = Backbone.View.extend({
-            contentType: "customerPayment",
-            template   : _.template(EditTemplate),
+    var EditView = Backbone.View.extend({
+        contentType: 'customerPayment',
+        template   : _.template(EditTemplate),
 
-            events: {},
+        events: {},
 
-            initialize: function (options) {
-                this.currentModel = options.model || options.collection.getElement();
-                this.currentModel.urlRoot = "/customerPayments";
+        initialize: function (options) {
+            this.currentModel = options.model || options.collection.getElement();
+            this.currentModel.urlRoot = '/customerPayments';
 
-                this.render();
-            },
+            this.render();
+        },
 
-            hideDialog: function () {
-                $('.edit-payment-dialog').remove();
-            },
+        hideDialog: function () {
+            $('.edit-payment-dialog').remove();
+        },
 
-            render: function () {
-                var self = this;
-                var formString;
-                var buttons;
-                var model = this.currentModel.toJSON();
+        render: function () {
+            var self = this;
+            var formString;
+            var buttons;
+            var model = this.currentModel.toJSON();
 
-                formString = this.template({
-                    model           : model,
-                    currencySplitter: helpers.currencySplitter,
-                    currencyClass: helpers.currencyClass
-                });
+            formString = this.template({
+                model           : model,
+                currencySplitter: helpers.currencySplitter,
+                currencyClass   : helpers.currencyClass
+            });
 
-                buttons = [
-                    {
-                        text : "Close",
-                        click: function () {
-                            self.hideDialog();
-                        }
+            buttons = [
+                {
+                    text : 'Close',
+                    click: function () {
+                        self.hideDialog();
                     }
-                ];
+                }
+            ];
 
-                this.$el = $(formString).dialog({
-                    closeOnEscape: false,
-                    autoOpen     : true,
-                    resizable    : true,
-                    dialogClass  : "edit-payment-dialog",
-                    title        : "Edit Payment",
-                    width        : self.isWtrack ? '1200' : '900',
-                    position     : {my: "center bottom", at: "center", of: window},
-                    buttons      : buttons
+            this.$el = $(formString).dialog({
+                closeOnEscape: false,
+                autoOpen     : true,
+                resizable    : true,
+                dialogClass  : 'edit-payment-dialog',
+                title        : 'Edit Payment',
+                width        : self.isWtrack ? '1200' : '900',
+                position     : {my: 'center bottom', at: 'center', of: window},
+                buttons      : buttons
 
-                });
-                return this;
-            }
+            });
+            return this;
+        }
 
-        });
-
-        return EditView;
     });
+
+    return EditView;
+});

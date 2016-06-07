@@ -1,68 +1,67 @@
-/**
- * Created by liliy on 19.02.2016.
- */
 define([
-        "Backbone",
-        'Underscore',
-        'jQuery',
-        "text!templates/PayrollExpenses/form/dialogTemplate.html",
-        'dataService',
-        'helpers',
-        'common',
-        'async'
-    ],
-    function (Backbone, _, $, template, dataService, helpers, common, async) {
-        "use strict";
-        var CreateView = Backbone.View.extend({
-                el         : '#content-holder',
-                template   : _.template(template),
-                responseObj: {},
+    'Backbone',
+    'Underscore',
+    'jQuery',
+    'text!templates/PayrollExpenses/form/dialogTemplate.html',
+    'dataService',
+    'helpers',
+    'common'
+], function (Backbone, _, $, template, dataService, helpers, common) {
+    'use strict';
 
-                initialize: function (options) {
-                    var self = this;
-                    this._id = options._id;
-                    this.dataKey = options.dataKey;
+    var CreateView = Backbone.View.extend({
+        el         : '#content-holder',
+        template   : _.template(template),
+        responseObj: {},
 
-                    dataService.getData('journal/journalEntry/getPayrollForReport', {_id: self._id, dataKey: self.dataKey}, function (result) {
-                        self.render(result);
-                    });
-                },
+        initialize: function (options) {
+            var self = this;
+            this._id = options._id;
+            this.dataKey = options.dataKey;
 
-                hideDialog: function () {
-                    $(".reportDialog").remove();
-                },
+            dataService.getData('journalEntries/getPayrollForReport', {
+                _id    : self._id,
+                dataKey: self.dataKey
+            }, function (result) {
+                self.render(result);
+            });
+        },
 
-                render: function (options) {
-                    var self = this;
-                    this.data = options.data;
-                    var wagesPayable = this.data;
-                    var dialog = this.template({
-                        wagesPayable    : wagesPayable,
-                        currencySplitter: helpers.currencySplitter,
-                        dateFormat      : common.utcDateToLocaleFullDateTime
-                    });
+        hideDialog: function () {
+            $('.reportDialog').remove();
+        },
 
-                    this.$el = $(dialog).dialog({
-                        dialogClass: "reportDialog",
-                        width      : 1200,
-                        title      : "Report",
-                        buttons    : {
-                            cancel: {
-                                text : "Close",
-                                class: "btn",
-                                click: function () {
-                                    self.hideDialog();
-                                }
-                            }
+        render: function (options) {
+            var self = this;
+            var wagesPayable = this.data;
+            var dialog = this.template({
+                wagesPayable    : wagesPayable,
+                currencySplitter: helpers.currencySplitter,
+                dateFormat      : common.utcDateToLocaleFullDateTime
+            });
+
+            this.data = options.data;
+
+            this.$el = $(dialog).dialog({
+                dialogClass: 'reportDialog',
+                width      : 1200,
+                title      : 'Report',
+                buttons    : {
+                    cancel: {
+                        text : 'Close',
+                        class: 'btn',
+                        click: function () {
+                            self.hideDialog();
                         }
-                    });
-
-                    this.delegateEvents(this.events);
-                    App.stopPreload();
-
-                    return this;
+                    }
                 }
-            })
-            ;
-        return CreateView;
+            });
+
+            this.delegateEvents(this.events);
+            App.stopPreload();
+
+            return this;
+        }
     });
+    return CreateView;
+});

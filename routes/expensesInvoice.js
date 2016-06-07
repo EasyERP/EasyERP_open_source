@@ -9,11 +9,11 @@ module.exports = function (models, event) {
     
     var handler = new ExpensesInvoiceHandler(models, event);
     var moduleId = MODULES.EXPENSESINVOICE;
-    var accessStackMiddlWare = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleWare = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
 
-    router.post('/', accessStackMiddlWare, handler.create);
+    router.post('/', accessStackMiddleWare, handler.create);
 
     return router;
 };

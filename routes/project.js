@@ -19,34 +19,34 @@ module.exports = function (models, event) {
     var paymentsHandler = new PaymentsHandler(models);
 
     var moduleId = MODULES.PROJECTS;
-    var accessStackMiddlWare = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleWare = require('../helpers/access')(moduleId, models);
 
     router.use(authStackMiddleware);
 
-    router.get('/', accessStackMiddlWare, handler.getByViewType);
-    router.get('/test', accessStackMiddlWare, handler.getByViewTypeTest);
-    router.get('/getProjectPMForDashboard', accessStackMiddlWare, handler.getProjectPMForDashboard);
-    router.get('/getForQuotation', accessStackMiddlWare, handler.getForQuotation);
-    router.get('/projectType', accessStackMiddlWare, handler.getProjectType);
-    router.get('/getForDd', accessStackMiddlWare, handler.getForDd);
+    router.get('/', accessStackMiddleWare, handler.getByViewType);
+    router.get('/test', accessStackMiddleWare, handler.getByViewTypeTest);
+    router.get('/getProjectPMForDashboard', accessStackMiddleWare, handler.getProjectPMForDashboard);
+    router.get('/getForQuotation', accessStackMiddleWare, handler.getForQuotation);
+    router.get('/projectType', accessStackMiddleWare, handler.getProjectType);
+    router.get('/getForDd', accessStackMiddleWare, handler.getForDd);
     // router.get('/getForDashboard', handler.getForDashboard);
-    router.get('/getForWtrack', accessStackMiddlWare, handler.getForWtrack);
-    router.get('/getFilterValues', accessStackMiddlWare, handler.getFilterValues);
-    router.get('/emails/:id', accessStackMiddlWare, handler.getEmails);
-    router.get('/:id', accessStackMiddlWare, handler.getById);
-    router.get('/:id/invoices', accessStackMiddlWare, invoiceHandler.getForProject);
-    router.get('/:id/weTracks', accessStackMiddlWare, wTrackHandler.getForProject);
-    router.get('/:id/info', accessStackMiddlWare, jobsHandler.getForOverview);
-    router.get('/:id/quotations', accessStackMiddlWare, quotationHandler.getForProject);
-    router.get('/:id/orders', accessStackMiddlWare, quotationHandler.getForProject);
-    router.get('/:id/payments', accessStackMiddlWare, paymentsHandler.getForProject);
+    router.get('/getForWtrack', accessStackMiddleWare, handler.getForWtrack);
+    router.get('/getFilterValues', accessStackMiddleWare, handler.getFilterValues);
+    router.get('/emails/:id', accessStackMiddleWare, handler.getEmails);
+    router.get('/:id', accessStackMiddleWare, handler.getById);
+    router.get('/:id/invoices', accessStackMiddleWare, invoiceHandler.getForProject);
+    router.get('/:id/weTracks', accessStackMiddleWare, wTrackHandler.getForProject);
+    router.get('/:id/info', accessStackMiddleWare, jobsHandler.getForOverview);
+    router.get('/:id/quotations', accessStackMiddleWare, quotationHandler.getForProject);
+    router.get('/:id/orders', accessStackMiddleWare, quotationHandler.getForProject);
+    router.get('/:id/payments', accessStackMiddleWare, paymentsHandler.getForProject);
 
-    router.post('/', accessStackMiddlWare, handler.create);
-    router.post('/updateAllProjects', accessStackMiddlWare, handler.updateAllProjects);
-    router.post('/sendInvoice', accessStackMiddlWare, handler.sendInvoice);
+    router.post('/', accessStackMiddleWare, handler.create);
+    router.post('/updateAllProjects', accessStackMiddleWare, handler.updateAllProjects);
+    router.post('/sendInvoice', accessStackMiddleWare, handler.sendInvoice);
 
-    router.patch('/:id', accessStackMiddlWare, handler.updateOnlySelectedFields);
-    router.delete('/:id', accessStackMiddlWare, handler.remove);
+    router.patch('/:id', accessStackMiddleWare, handler.updateOnlySelectedFields);
+    router.delete('/:id', accessStackMiddleWare, handler.remove);
 
     return router;
 };

@@ -9,18 +9,18 @@ module.exports = function (models) {
     var moduleId = MODULES.DEPARTMENTS;
 
     var handler = new DepartmentHandler(models);
-    var accessStackMiddlware = require('../helpers/access')(moduleId, models);
+    var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
-    router.get('/', authStackMiddleware, accessStackMiddlware, handler.getByViewType);
+    router.get('/', authStackMiddleware, accessStackMiddleware, handler.getByViewType);
     // router.get('/', authStackMiddleware, handler.get);
     router.get('/getForDD', authStackMiddleware, handler.getForDD);
-    /* router.get('/exportToXlsx',authStackMiddleware, accessStackMiddlware, handler.exportToXlsx);
-     router.get('/exportToCsv',authStackMiddleware, accessStackMiddlware, handler.exportToCsv); */
+    /* router.get('/exportToXlsx',authStackMiddleware, accessStackMiddleware, handler.exportToXlsx);
+     router.get('/exportToCsv',authStackMiddleware, accessStackMiddleware, handler.exportToCsv); */
     router.get('/getDepartmentsForEditDd', authStackMiddleware, handler.getDepartmentsForEditDd);
 
-    router.post('/', authStackMiddleware, accessStackMiddlware, handler.create);
-    router.put('/:id', authStackMiddleware, accessStackMiddlware, handler.update);
-    router.delete('/:id', authStackMiddleware, accessStackMiddlware, handler.remove);
+    router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
+    router.put('/:id', authStackMiddleware, accessStackMiddleware, handler.update);
+    router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
 
     return router;
 };
