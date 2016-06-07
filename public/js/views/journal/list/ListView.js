@@ -254,7 +254,7 @@ define([
                         $('#top-bar-deleteBtn').show();
                         $('#top-bar-createBtn').hide();
                     }
-                    $('#check_all').prop('checked', false);
+                    $('#checkAll').prop('checked', false);
                     if (checkLength === this.collection.length) {
                         $('#checkAll').prop('checked', true);
                     }

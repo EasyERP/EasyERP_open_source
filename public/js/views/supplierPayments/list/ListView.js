@@ -581,7 +581,7 @@ define([
         checked: function (e) {
             var el = this.$el;
             var checkLength = el.find('input.checkbox:checked').length;
-            var checkAll$ = el.find('#check_all');
+            var checkAll$ = el.find('#checkAll');
             var removeBtnEl = $('#top-bar-deleteBtn');
 
             e.stopPropagation();
