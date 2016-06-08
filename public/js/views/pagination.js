@@ -261,7 +261,8 @@ define([
             var data = {
                 sort    : this.sort,
                 filter  : this.filter,
-                viewType: this.viewType
+                viewType: this.viewType,
+                contentType: this.contentType
             };
 
             this.startTime = new Date();
@@ -452,10 +453,11 @@ define([
             // hide delete & deselect checkAll
 
             this.collection.getPage(1, {
-                count   : itemsNumber,
-                page    : 1,
-                filter  : this.filter,
-                viewType: this.viewType
+                count      : itemsNumber,
+                page       : 1,
+                filter     : this.filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
             });
 
             this.changeLocationHash(1, itemsNumber);

@@ -134,19 +134,18 @@ var Module = function (models) {
         var Employee = models.get(req.session.lastDb, 'Employees', employeeSchema);
         var sort = req.query.sort;
         var data = req.query;
-        var i;
         var parallelTasks;
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
         var getCount;
         var getData;
+        var i;
 
         function compareSort(personA, personB) {
-            if (sort[i] === 1) {
+            if (sort[i] === '1') {
                 return personA[i] - personB[i];
             }
-
             return personB[i] - personA[i];
         }
 
@@ -197,7 +196,7 @@ var Module = function (models) {
                         }
 
                         for (i in sort) {
-                            if (typeof result[0][i] === 'number') {
+                            if (result.length && typeof result[0][i] === 'number') {
                                 result.sort(compareSort);
                             }
                         }

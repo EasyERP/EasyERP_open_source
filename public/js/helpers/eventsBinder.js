@@ -6,7 +6,10 @@ define(['jQuery'], function ($) {
             collection.bind('fetchFinished', contentView.setPagination, contentView);
 
             $(document).on('click', function (e) {
-                contentView.hide(e);
+                if (contentView && typeof (contentView.hide) === 'function'){
+                    contentView.hide(e);
+                }
+
             });
         },
 

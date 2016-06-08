@@ -8,7 +8,6 @@ define([
     'views/Applications/EditView',
     'models/ApplicationsModel',
     'collections/Applications/filterCollection',
-    'views/Filter/FilterView',
     'common',
     'text!templates/stages.html',
     'constants'
@@ -21,7 +20,6 @@ define([
              EditView,
              CurrentModel,
              contentCollection,
-             FilterView,
              common,
              stagesTamplate,
              CONSTANTS) {
@@ -33,7 +31,6 @@ define([
         listTemplate            : listTemplate,
         ListItemView            : ListItemView,
         contentCollection       : contentCollection,
-        FilterView              : FilterView,
         contentType             : 'Applications',
         totalCollectionLengthUrl: '/applications/totalCollectionLength',
         formUrl                 : '#easyErp/Applications/',
