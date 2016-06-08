@@ -20,7 +20,7 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         CurrentModel     : CurrentModel,
-        EditCollection   : EditCollection,
+        editCollection   : EditCollection,
         contentCollection: contentCollection,
         contentType      : 'journal',
         changedModels    : {},
@@ -101,7 +101,7 @@ define([
                 return el._id === id;
             });
 
-            var editModel = this.EditCollection.get(modelId) || this.collection.get(modelId);
+            var editModel = this.editCollection.get(modelId) || this.collection.get(modelId);
 
             if (!this.changedModels[modelId]) {
                 if (!editModel.id) {
@@ -180,10 +180,10 @@ define([
             }];
 
             setTimeout(function () {
-                self.EditCollection = new EditCollection(self.collection.toJSON());
-                self.EditCollection.on('saved', self.savedNewModel, self);
-                self.EditCollection.on('error', self.errorFunction, self);
-                self.EditCollection.on('updated', self.updatedOptions, self);
+                self.editCollection = new EditCollection(self.collection.toJSON());
+                self.editCollection.on('saved', self.savedNewModel, self);
+                self.editCollection.on('error', self.errorFunction, self);
+                self.editCollection.on('updated', self.updatedOptions, self);
 
                 self.$listTable = $currentEl.find('#listTable');
             }, 10);

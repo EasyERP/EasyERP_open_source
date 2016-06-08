@@ -43,6 +43,7 @@ define([
             $(document).off('click');
 
             this.EditView = EditView;
+            this.CurrentModel = CurrentModel;
 
             this.startTime = options.startTime;
             this.collection = options.collection;
@@ -133,7 +134,7 @@ define([
             }).render());
 
             this.recalcTotal();
-            
+
             this.renderPagination($currentEl, this);
 
             this.renderFilter(self);

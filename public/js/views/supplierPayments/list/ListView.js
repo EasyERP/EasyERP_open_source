@@ -20,15 +20,14 @@ define([
     'views/listViewBase',
     'helpers',
     'constants'
-], function ($, _, paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, CreateView, FilterView, currentModel, ListItemView, ListTotalView, paymentCollection, EditCollection, dataService, populate, async, keyCodes, ListViewBase, helpers, CONSTANTS) {
+], function ($, _, paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, CreateView, FilterView, CurrentModel, ListItemView, ListTotalView, paymentCollection, EditCollection, dataService, populate, async, keyCodes, ListViewBase, helpers, CONSTANTS) {
     'use strict';
 
     var PaymentListView = ListViewBase.extend({
-        createView              : CreateView,
+        CreateView              : CreateView,
         listTemplate            : listTemplate,
         ListItemView            : ListItemView,
         contentCollection       : paymentCollection,
-        FilterView              : FilterView,
         contentType             : 'supplierPayments', // needs in view.prototype.changeLocationHash
         modelId                 : null,
         $listTable              : null,
@@ -49,6 +48,7 @@ define([
             $(document).off('click');
 
             this.CreateView = CreateView;
+            this.CurrentModel = CurrentModel;
 
             this.startTime = options.startTime;
             this.collection = options.collection;
@@ -117,12 +117,6 @@ define([
             this.setEditable(targetElement);
 
             return false;
-        },
-
-        isNewRow: function () {
-            var newRow = $('#false');
-
-            return !!newRow.length;
         },
 
         editRow: function (e) {
@@ -195,28 +189,6 @@ define([
             this.$el.find('#totalAmount').text(helpers.currencySplitter(amount.toFixed(2)));
         },
 
-        showNewSelect: function (e) {
-            var $target = $(e.target);
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new selectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },
-
         onKeyDownInput: function (e) {
             var code = e.keyCode;
             if (keyCodes.isEnter(e.keyCode)) {
@@ -241,185 +213,28 @@ define([
             }
         },
 
-        setChangedValue: function () {
-            if (!this.changed) {
-                this.changed = true;
-                this.showSaveCancelBtns()
-            }
-        },
-
         saveItem: function () {
             var self = this;
             var model;
             var errors = this.$el.find('.errorContent');
-            var keys = Object.keys(this.changedModels);
-            var changedModelsId;
+            var id;
 
             this.setChangedValueToModel();
 
-            keys.forEach(function (id) {
-                changedModelsId = self.changedModels[id];
-                model = self.editCollection.get(id) || self.collection.get(id);
-                model.changed = changedModelsId;
-                model.changed.differenceAmount = parseFloat(changedModelsId.paidAmount) - parseFloat(changedModelsId.paid);
-            });
+            for (id in this.changedModels) {
+                model = this.editCollection.get(id) || this.collection.get(id);
+                model.changed = this.changedModels[id];
+                model.changed.differenceAmount = parseFloat(model.changed.paidAmount || model.paidAmount) - parseFloat(model.changed.paid || model.paid);
+            }
 
             if (errors.length) {
                 return;
             }
 
             this.editCollection.save();
+            this.changedModels = {};
 
-            keys.forEach(function (id) {
-                delete self.changedModels[id];
-                self.editCollection.remove(id);
-            });
-        },
-
-        updatedOptions: function () {
-            var savedRow = this.$listTable.find('#false');
-            var editedEl = savedRow.find('.editing');
-            var editedCol = editedEl.closest('td');
-            this.hideSaveCancelBtns();
-
-            editedCol.text(editedEl.val());
-            editedEl.remove();
-
-            this.resetCollection();
-        },
-
-        resetCollection: function (model) {
-            if (model && model._id) {
-                model = new currentModel(model);
-                this.collection.add(model);
-            } else {
-                this.collection.set(this.editCollection.models, {remove: false});
-            }
-            this.bindingEventsToEditedCollection(this);
-        },
-
-        bindingEventsToEditedCollection: function (context) {
-            if (context.editCollection) {
-                context.editCollection.unbind();
-            }
-            context.editCollection = new EditCollection(context.collection.toJSON());
-            context.editCollection.on('saved', context.savedNewModel, context);
-            context.editCollection.on('updated', context.updatedOptions, context);
-        },
-
-        createItem: function () {
-            var now = new Date();
-            var cid;
-            var year = now.getFullYear();
-            var month = now.getMonth() + 1;
-            var startData = {
-                year : year,
-                month: month
-            };
-
-            var model = new currentModel(startData);
-            cid = model.cid;
-
-            startData.cid = cid;
-
-            if (!this.isNewRow()) {
-                this.showSaveCancelBtns();
-                this.editCollection.add(model);
-
-                new CreateView(startData);
-            }
-
-            this.changed = true;
-            this.createdItem = true;
-        },
-
-        showSaveCancelBtns: function () {
-            var createBtnEl = $('#top-bar-createBtn');
-            var saveBtnEl = $('#top-bar-saveBtn');
-            var cancelBtnEl = $('#top-bar-deleteBtn');
-
-            if (!this.changed) {
-                createBtnEl.hide();
-            }
-            saveBtnEl.show();
-            cancelBtnEl.show();
-
-            return false;
-        },
-
-        hideSaveCancelBtns: function () {
-            var createBtnEl = $('#top-bar-createBtn');
-            var saveBtnEl = $('#top-bar-saveBtn');
-            var cancelBtnEl = $('#top-bar-deleteBtn');
-
-            this.changed = false;
-
-            saveBtnEl.hide();
-            cancelBtnEl.hide();
-            createBtnEl.show();
-
-            return false;
-        },
-
-        setChangedValueToModel: function () {
-            var editedElement = this.$listTable.find('.editing');
-            var editedCol;
-            var editedElementRowId;
-            var editedElementContent;
-            var editedElementValue;
-            var editModel;
-            var editValue;
-
-            if (editedElement.length) {
-                editedCol = editedElement.closest('td');
-                editedElementRowId = editedElement.closest('tr').data('id');
-                editedElementContent = editedCol.data('content');
-                editedElementValue = editedElement.val();
-
-                if (editedElementRowId.length >= 24) {
-                    editModel = this.collection.get(editedElementRowId) || this.editCollection.get(editedElementRowId);
-                    editValue = editModel.get(editedElementContent);
-
-                    if (editedElementValue !== editValue) {
-                        if (!this.changedModels[editedElementRowId]) {
-                            this.changedModels[editedElementRowId] = {};
-                        }
-                        this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-                    }
-                } else {
-                    if (!this.changedModels[editedElementRowId]) {
-                        this.changedModels[editedElementRowId] = {};
-                    }
-                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-                }
-                editedCol.text(editedElementValue);
-                editedElement.remove();
-            }
-        },
-
-        setEditable: function (td) {
-            var tr;
-
-            if (!td.parents) {
-                td = $(td.target).closest('td');
-            }
-
-            tr = td.parents('tr');
-
-            td.addClass('edited');
-
-            if (this.isEditRows()) {
-                this.setChangedValue();
-            }
-
-            return false;
-        },
-
-        isEditRows: function () {
-            var edited = this.$listTable.find('.edited');
-
-            this.edited = edited;
-            return !!edited.length;
+            this.deleteEditable();
         },
 
         render: function () {
@@ -443,7 +258,7 @@ define([
             }).render());
 
             self.renderFilter(self);
-            
+
             self.renderPagination($currentEl, self);
 
             dataService.getData(CONSTANTS.URLS.EMPLOYEES_GETFORDD, null, function (employees) {
@@ -456,7 +271,7 @@ define([
                 self.responseObj['#employee'] = employees;
             });
 
-            dataService.getData('/bonusType/getForDD', null, function (bonusTypes) {
+            dataService.getData(CONSTANTS.URLS.BONUSTYPE_FORDD, null, function (bonusTypes) {
                 self.responseObj['#bonusType'] = bonusTypes.data;
             });
 
@@ -469,160 +284,6 @@ define([
             }, 10);
 
             $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
-        },
-
-        triggerDeleteItemsRender: function (deleteCounter) {
-            this.deleteCounter = deleteCounter;
-            this.deletePage = $('#currentShowPage').val();
-
-            this.deleteItemsRender(deleteCounter, this.deletePage);
-        },
-
-        cancelChanges: function () {
-            var self = this;
-            var edited = this.edited;
-            var collection = this.collection;
-            var createItem;
-            var dataId;
-
-            async.each(edited, function (el, cb) {
-                var tr = $(el).closest('tr');
-                var rowNumber = tr.find('[data-content="number"]').text();
-                var id = tr.attr('data-id');
-                var template = _.template(cancelEdit);
-                var model;
-
-                if (!id || id.length < 24) {
-                    return cb('Empty id');
-                }
-
-                model = self.editCollection.get(id) || collection.get(id);
-                model = model.toJSON();
-                model.startNumber = rowNumber;
-                tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter}));
-
-                delete self.changedModels[id];
-
-                cb();
-            }, function (err) {
-                if (!err) {
-                    self.bindingEventsToEditedCollection(self);
-                }
-                self.hideSaveCancelBtns();
-            });
-
-            if (this.createdItem) {
-                createItem = this.$el.find('#false');
-                dataId = createItem.data('id');
-                this.editCollection.remove(dataId);
-                delete this.changedModels[dataId];
-                createItem.remove();
-
-                this.createdItem = false;
-            }
-        },
-
-        deleteItems: function () {  // method from listViewBase,  cancelChanges added
-            var that = this;
-            var mid = 39;
-            var model;
-            var localCounter = 0;
-            var listTableCheckedInput;
-            var count;
-            listTableCheckedInput = $('#listTable').find('input:checked');
-
-            count = listTableCheckedInput.length;
-            this.collectionLength = this.collection.length;
-            if (!this.createdItem) {
-                $.each(listTableCheckedInput, function (index, checkbox) {
-                    model = that.collection.get(checkbox.value);
-                    model.destroy({
-                        headers: {
-                            mid: mid
-                        },
-                        wait   : true,
-                        success: function () {
-                            that.listLength--;
-                            localCounter++;
-                            count--;
-                            if (count === 0) {
-                                that.deleteCounter = localCounter;
-                                that.deletePage = $('#currentShowPage').val();
-                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
-                            }
-                        },
-
-                        error: function (model, res) {
-                            if (res.status === 403 && index === 0) {
-                                App.render({
-                                    type   : 'error',
-                                    message: 'You do not have permission to perform this action'
-                                });
-                            }
-                            that.listLength--;
-                            count--;
-
-                            if (count === 0) {
-                                that.deleteCounter = localCounter;
-                                that.deletePage = $('#currentShowPage').val();
-                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
-
-                            }
-                        }
-                    });
-                });
-            } else {
-                this.cancelChanges();
-            }
-        },
-
-        checked: function (e) {
-            var el = this.$el;
-            var checkLength = el.find('input.checkbox:checked').length;
-            var checkAll$ = el.find('#checkAll');
-            var removeBtnEl = $('#top-bar-deleteBtn');
-
-            e.stopPropagation();
-
-            if (this.collection.length > 0) {
-                if (checkLength > 0) {
-                    checkAll$.prop('checked', false);
-
-                    removeBtnEl.show();
-
-                    if (checkLength === this.collection.length) {
-
-                        checkAll$.prop('checked', true);
-                    }
-                } else {
-                    removeBtnEl.hide();
-                    checkAll$.prop('checked', false);
-                }
-            }
-        },
-
-        savedNewModel: function (modelObject) {
-            var savedRow = this.$listTable.find('#false');
-            var modelId;
-            var checkbox = savedRow.find('input[type=checkbox]');
-            var editedEl = savedRow.find('.editing');
-            var editedCol = editedEl.closest('td');
-
-            savedRow.find('[data-content="employee"]').removeClass('editable');
-            savedRow.find('[data-content="bonusType"]').removeClass('editable');
-
-            if (modelObject) {
-                modelId = modelObject._id;
-                savedRow.attr('data-id', modelId);
-                checkbox.val(modelId);
-                savedRow.removeAttr('id');
-            }
-
-            this.hideSaveCancelBtns();
-            editedCol.text(editedEl.val());
-            editedEl.remove();
-            this.changedModels = {};
-            this.resetCollection(modelObject);
         }
     });
 

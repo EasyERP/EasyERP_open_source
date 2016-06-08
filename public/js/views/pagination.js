@@ -463,8 +463,15 @@ define([
 
         createItem: function () {
             var CreateView = this.CreateView || Backbone.View.extend({});
+            var startData = {};
+            var cid;
+            var model = new this.CurrentModel();
 
-            return new CreateView();
+            cid = model.cid;
+
+            startData.cid = cid;
+
+            return new CreateView(startData);
         },
 
         editItem: function () {

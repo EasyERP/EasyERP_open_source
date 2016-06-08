@@ -754,6 +754,7 @@ define([], function () {
             WTRACK                    : '/wTrack/',
             BIRTHDAYS                 : '/employees/birthdays/',
             BONUSTYPE                 : '/bonusType/',
+            BONUSTYPE_FORDD           : '/bonusType/getForDD',
             CAPACITY                  : '/capacity/',
             PAYMENTCUSTOMERS          : '/payment/customers/',
             EMPLOYEES_PERSONSFORDD    : '/employees/getPersonsForDd',

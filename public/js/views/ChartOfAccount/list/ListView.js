@@ -18,7 +18,7 @@ define([
         contentType   : 'ChartOfAccount',
         listTemplate  : listTemplate,
         ListItemView  : ListItemView,
-        EditCollection: EditCollection,
+        editCollection: EditCollection,
         CurrentModel  : CurrentModel,
         changedModels : {},
 
@@ -33,7 +33,7 @@ define([
             $(document).off('click');
 
             this.CreateView = CreateView;
-            this.EditCollection = EditCollection;
+            this.editCollection = EditCollection;
 
             this.startTime = options.startTime;
             this.collection = options.collection;
@@ -54,7 +54,7 @@ define([
             var attr = targetElement.data('content');
             var changedAttr;
 
-            var editModel = this.EditCollection.get(modelId) || this.collection.get(modelId);
+            var editModel = this.editCollection.get(modelId) || this.collection.get(modelId);
 
             if (!this.changedModels[modelId]) {
                 if (!editModel.id) {
@@ -123,7 +123,7 @@ define([
             var errors = this.$el.find('.errorContent');
 
             for (id in this.changedModels) {
-                model = this.EditCollection.get(id) || this.collection.get(id);
+                model = this.editCollection.get(id) || this.collection.get(id);
                 if (model) {
                     model.changed = this.changedModels[id];
                     code = this.changedModels[id].code || model.get('code');
@@ -135,11 +135,11 @@ define([
             if (errors.length) {
                 return;
             }
-            this.EditCollection.save();
+            this.editCollection.save();
 
             for (id in this.changedModels) {
                 delete this.changedModels[id];
-                this.EditCollection.remove(id);
+                this.editCollection.remove(id);
             }
 
             this.deleteEditable();
@@ -166,11 +166,11 @@ define([
             this.renderPagination($currentEl);
 
             setTimeout(function () {
-                self.EditCollection = new EditCollection(self.collection.toJSON());
+                self.editCollection = new EditCollection(self.collection.toJSON());
 
-                self.EditCollection.on('saved', self.savedNewModel, self);
-                self.EditCollection.on('error', self.errorFunction, self);
-                self.EditCollection.on('updated', self.updatedOptions, self);
+                self.editCollection.on('saved', self.savedNewModel, self);
+                self.editCollection.on('error', self.errorFunction, self);
+                self.editCollection.on('updated', self.updatedOptions, self);
             }, 10);
 
             return this;
