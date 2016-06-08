@@ -11,23 +11,34 @@ define([
     'views/salesOrder/EditView',
     'models/QuotationModel',
     'collections/salesQuotation/filterCollection',
-    'views/Filter/FilterView',
     'dataService',
     'constants',
     'helpers',
     'helpers'
-], function ($, _, listViewBase, listTemplate, listForWTrack, stagesTamplate, createView, ListItemView, ListTotalView, EditView, QuotationModel, contentCollection, FilterView, dataService, CONSTANTS, helpers) {
+], function ($, 
+             _,
+             ListViewBase, 
+             listTemplate, 
+             listForWTrack, 
+             stagesTemplate,
+             createView, 
+             ListItemView, 
+             ListTotalView, 
+             EditView, 
+             QuotationModel,
+             contentCollection,
+             dataService, 
+             CONSTANTS, 
+             helpers) {
     'use strict';
 
-    var OrdersListView = listViewBase.extend({
+    var OrdersListView = ListViewBase.extend({
 
         createView              : createView,
         listTemplate            : listTemplate,
-        listItemView            : ListItemView,
+        ListItemView            : ListItemView,
         contentCollection       : contentCollection,
-        FilterView              : FilterView,
         contentType             : 'salesOrder', // needs in view.prototype.changeLocationHash
-        totalCollectionLengthUrl: '/order/totalCollectionLength',
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -44,17 +55,15 @@ define([
             this.newCollection = options.newCollection;
             this.deleteCounter = 0;
             this.page = options.collection.page;
+            this.contentCollection = contentCollection;
 
             this.render();
-
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-            this.contentCollection = contentCollection;
         },
 
         showFilteredPage: function (filter) {
             var itemsNumber = $("#itemsNumber").text();
             
-            $("#top-bar-deleteBtn").hide();
+            $('#top-bar-deleteBtn').hide();
             $('#checkAll').prop('checked', false);
 
             this.startTime = new Date();
@@ -73,24 +82,25 @@ define([
         },
 
         events: {
-            "click .stageSelect"                 : "showNewSelect",
-            "click  .list tbody td:not(.notForm)": "goToEditDialog",
-            "click .newSelectList li"            : "chooseOption"
+            'click .stageSelect'                 : 'showNewSelect',
+            'click  .list tbody td:not(.notForm)': 'goToEditDialog',
+            'click .newSelectList li'            : 'chooseOption'
         },
 
         chooseOption: function (e) {
             var self = this;
-            var target$ = $(e.target);
-            var targetElement = target$.parents("td");
-            var id = targetElement.attr("id");
+            var $target = $(e.target);
+            var $targetElement = $target.parents('td');
+            var id = $targetElement.attr('id');
             var model = this.collection.get(id);
 
             model.save({
-                workflow: target$.attr("id")
+                workflow: $target.attr('id')
             }, {
-                headers : {
+                headers: {
                     mid: 55
                 },
+
                 patch   : true,
                 validate: false,
                 success : function () {
@@ -112,20 +122,6 @@ define([
             this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
         },
 
-        showNewSelect: function (e) {
-            if ($(".newSelectList").is(":visible")) {
-                this.hideNewSelect();
-                return false;
-            }
-
-            $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $(".newSelectList").remove();
-        },
-
         render: function () {
             var self;
             var $currentEl;
@@ -144,13 +140,13 @@ define([
                 itemsNumber: this.collection.namberToShow
             }).render());
 
-            //added two parameters page and items number
-            $currentEl.append(new ListTotalView({element: this.$el.find("#listTable"), cellSpan: 5}).render());
+            // added two parameters page and items number
+            $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 5}).render());
 
             this.renderPagination($currentEl, this);
             this.renderFilter(self);
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                 wId         : 'Sales Order',
@@ -162,13 +158,13 @@ define([
         },
 
         goToEditDialog: function (e) {
-            e.preventDefault();
-
-            var tr = $(e.target).closest('tr');
-            var id = tr.data("id");
-            var notEditable = tr.hasClass('notEditable');
+            var $tr = $(e.target).closest('tr');
+            var id = $tr.data('id');
+            var notEditable = $tr.hasClass('notEditable');
             var onlyView;
             var model = new QuotationModel({validate: false});
+
+            e.preventDefault();
 
             if (notEditable) {
                 onlyView = true;
@@ -178,9 +174,13 @@ define([
             model.fetch({
                 data   : {contentType: this.contentType},
                 success: function (model) {
-                    new EditView({model: model, onlyView: onlyView});
+                    return new EditView({
+                        model: model, 
+                        onlyView: onlyView
+                    });
                 },
-                error  : function () {
+                
+                error: function () {
                     App.render({
                         type   : 'error',
                         message: 'Please refresh browser'

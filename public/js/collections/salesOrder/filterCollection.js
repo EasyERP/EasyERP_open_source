@@ -1,8 +1,8 @@
 ﻿define([
-        'collections/Order/filterCollection'
-    ],
-    function (ParrentCollection) {
-        'use strict';
+    'collections/Order/filterCollection'
+], function (ParentCollection) {
+    'use strict';
 
-        return ParrentCollection;
-    });
+    return ParentCollection;
+
+});
