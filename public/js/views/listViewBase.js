@@ -218,6 +218,8 @@ define([
             }
         },
 
+        // added methods for edit in listView
+
         savedNewModel: function (modelObject) {
             var savedRow = this.$listTable.find('#false');
             var modelId;
@@ -244,6 +246,7 @@ define([
         resetCollection: function (model) {
             if (model && model._id) {
                 model = new this.CurrentModel(model);
+                
                 this.collection.add(model);
             } else {
                 this.collection.set(this.editCollection.models, {remove: false});
@@ -345,7 +348,7 @@ define([
             if (errors.length) {
                 return;
             }
-            
+
             this.editCollection.save();
             this.changedModels = {};
 
