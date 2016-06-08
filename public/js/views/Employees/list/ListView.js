@@ -6,19 +6,17 @@ define([
     'views/Employees/CreateView',
     'views/Employees/EditView',
     'views/Employees/list/ListItemView',
-    'views/Filter/FilterView',
     'views/Employees/form/FormView',
     'collections/Employees/filterCollection',
     'models/EmployeesModel',
     'common'
-], function ($, _, listViewBase, listTemplate, CreateView, EditView, ListItemView, FilterView, FormView, contentCollection, CurrentModel, common) {
+], function ($, _, listViewBase, listTemplate, CreateView, EditView, ListItemView, FormView, contentCollection, CurrentModel, common) {
     'use strict';
     var EmployeesListView = listViewBase.extend({
         CreateView       : CreateView,
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        FilterView       : FilterView,
         contentType      : 'Employees',
         formUrl          : '#easyErp/Employees/',
         formView         : FormView,

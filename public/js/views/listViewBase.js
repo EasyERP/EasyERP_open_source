@@ -7,17 +7,19 @@ define([
     'text!templates/Notes/importTemplate.html',
     'views/pagination',
     'views/selectView/selectView',
+    'views/Filter/FilterView',
     'views/Notes/AttachView',
     'common',
     'dataService',
     'constants',
     'helpers'
-], function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS, helpers) {
+], function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, Pagination, SelectView, FilterView, AttachView, common, dataService, CONSTANTS, helpers) {
     'use strict';
 
     var ListViewBase = Pagination.extend({
         viewType  : 'list',
         SelectView: SelectView,
+        FilterView: FilterView,
 
         events: {
             'click #previousPage, #nextPage, #firstShowPage, #lastShowPage': 'checkPage',
@@ -76,7 +78,7 @@ define([
         // todo fixit
         alpabeticalRender: function (e) {
             var target;
-            var itemsNumber = $('#itemsNumber').text();
+            var itemsNumber = $('.selectedItemsNumber').text();
             var selectedLetter;
 
             this.startTime = new Date();
@@ -117,8 +119,12 @@ define([
             $('#checkAll').prop('checked', false);
 
             this.changeLocationHash(1, itemsNumber, this.filter);
-            this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-            this.getTotalLength(null, itemsNumber, this.filter);
+            this.collection.getFirstPage({
+                count      : itemsNumber,
+                filter     : this.filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            });
         },
 
         renderAlphabeticalFilter: function () {

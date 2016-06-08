@@ -206,6 +206,7 @@
                 patch  : true,
                 success: function (model) {
                     var viewType = custom.getCurrentVT();
+
                     model = model.toJSON();
 
                     switch (viewType) {
