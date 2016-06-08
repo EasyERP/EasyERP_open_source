@@ -176,7 +176,7 @@ define([
                 // }
             }
 
-            if (typeof(this.setChangedValueToModel) === 'function' && el.tagName !== 'SELECT') { // added for SetChangesToModel in ListView
+            if (typeof(this.setChangedValueToModel) === 'function' && $el.tagName !== 'SELECT') { // added for SetChangesToModel in ListView
                 this.setChangedValueToModel();
             }
         },
