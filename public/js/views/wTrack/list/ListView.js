@@ -9,7 +9,6 @@ define([
     'text!templates/wTrack/list/forWeek.html',
     'views/wTrack/CreateView',
     'views/wTrack/list/ListItemView',
-    'views/wTrack/EditView',
     'views/salesInvoice/wTrack/CreateView',
     'models/wTrackModel',
     'collections/wTrack/filterCollection',
@@ -31,13 +30,12 @@ define([
              _,
              $,
              ListViewBase,
-             selectView,
+             SelectView,
              listTemplate,
              cancelEdit,
              forWeek,
              CreateView,
              ListItemView,
-             EditView,
              WTrackCreateView,
              CurrentModel,
              ContentCollection,
@@ -62,7 +60,7 @@ define([
         listTemplate            : listTemplate,
         ListItemView            : ListItemView,
         ContentCollection       : ContentCollection,
-        filterView              : FilterView,
+        FilterView              : FilterView,
         setOverTime             : setOverTime,
         contentType             : 'wTrack',
         viewType                : 'list',
@@ -366,15 +364,15 @@ define([
         },
 
         setEditable: function (td) {
-            var tr;
+            var $tr;
 
             if (!td.parents) {
                 td = $(td.target).closest('td');
             }
 
-            tr = td.parents('tr');
+            $tr = td.parents('tr');
 
-            tr.addClass('edited');
+            $tr.addClass('edited');
             // td.addClass('edited');
 
             if (this.isEditRows()) {
@@ -929,12 +927,13 @@ define([
         },
 
         checked: function (e) {
-            e.stopPropagation();
             var $thisEl = this.$el;
+            var changedRows = Object.keys(this.changedModels);
             var rawRows;
             var $checkedEls;
             var checkLength;
-            var changedRows = Object.keys(this.changedModels);
+
+            e.stopPropagation();
 
             if (this.collection.length > 0) {
                 $checkedEls = $thisEl.find('input.listCB:checked');
@@ -1059,7 +1058,7 @@ define([
                 this.selectView.remove();
             }
 
-            this.selectView = new selectView({
+            this.selectView = new SelectView({
                 e          : e,
                 responseObj: this.responseObj
             });
@@ -1109,7 +1108,7 @@ define([
                 year        : year,
                 month       : month,
                 week        : week,
-                //rate        : rate,
+                // rate        : rate,
                 projectModel: null,
                 _type       : 'ordinary'
             };
@@ -1222,7 +1221,7 @@ define([
         },
 
         setAllTotalVals: function (e) {
-            //e.stopPropagation();
+            // e.stopPropagation();
 
             this.getAutoCalcField('hours', 'worked');
             this.getAutoCalcField('monHours', '1');
@@ -1237,26 +1236,27 @@ define([
         deleteItemsRender: function (deleteCounter, deletePage) {
             var pagenation;
             var holder;
+            var created;
 
             dataService.getData(this.collectionLengthUrl, {
                 filter       : this.filter,
                 newCollection: this.newCollection
             }, function (response, context) {
                 context.listLength = response.count || 0;
-                //context.getTotalLength(null, context.defaultItemsNumber, context.filter);
+                // context.getTotalLength(null, context.defaultItemsNumber, context.filter);
                 context.fetchSortCollection({});
 
             }, this);
-            //this.deleteRender(deleteCounter, deletePage, {
+            // this.deleteRender(deleteCounter, deletePage, {
             //    filter: this.filter,
             //    newCollection: this.newCollection,
             //    parrentContentId: this.parrentContentId
-            //});
+            // });
 
             holder = this.$el;
 
             if (deleteCounter !== this.collectionLength) {
-                var created = holder.find('#timeRecivingDataFromServer');
+                created = holder.find('#timeRecivingDataFromServer');
                 created.before(
                     new ListItemView({
                         collection : this.collection,
