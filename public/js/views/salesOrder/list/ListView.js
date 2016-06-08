@@ -52,7 +52,7 @@ define([
         },
 
         showFilteredPage: function (filter) {
-            var itemsNumber = $('#itemsNumber').text();
+            var $itemsNumber = $('#itemsNumber').text();
             
             $('#top-bar-deleteBtn').hide();
             $('#checkAll').prop('checked', false);
@@ -67,9 +67,9 @@ define([
                 value: ['true']
             };
 
-            this.changeLocationHash(1, itemsNumber, filter);
-            this.collection.showMore({count: itemsNumber, page: 1, filter: filter});
-            this.getTotalLength(null, itemsNumber, filter);
+            this.changeLocationHash(1, $itemsNumber, filter);
+            this.collection.showMore({count: $itemsNumber, page: 1, filter: filter});
+            this.getTotalLength(null, $itemsNumber, filter);
         },
 
         events: {
@@ -80,13 +80,13 @@ define([
 
         chooseOption: function (e) {
             var self = this;
-            var target$ = $(e.target);
-            var targetElement = target$.parents('td');
-            var id = targetElement.attr('id');
+            var $target = $(e.target);
+            var $targetElement = $target.parents('td');
+            var id = $targetElement.attr('id');
             var model = this.collection.get(id);
 
             model.save({
-                workflow: target$.attr('id')
+                workflow: $target.attr('id')
             }, {
                 headers: {
                     mid: 55
@@ -163,13 +163,13 @@ define([
         },
 
         goToEditDialog: function (e) {
-            e.preventDefault();
+            var $tr = $(e.target).closest('tr');
+            var id = $tr.data('id');
+            var notEditable = $tr.hasClass('notEditable');
+            var onlyView;
+            var model = new QuotationModel({validate: false});
 
-            var tr = $(e.target).closest('tr'); // eslint-disable-line
-            var id = tr.data('id'); // eslint-disable-line
-            var notEditable = tr.hasClass('notEditable'); // eslint-disable-line
-            var onlyView; // eslint-disable-line
-            var model = new QuotationModel({validate: false}); // eslint-disable-line
+            e.preventDefault();
 
             if (notEditable) {
                 onlyView = true;
