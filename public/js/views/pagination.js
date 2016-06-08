@@ -177,7 +177,7 @@ define([
             }
 
             $thisEl.find('.allNumberPerPage, .newSelectList').hide();
-            $thisEl.find('span.health-container ul').hide();
+            $thisEl.find('.health-container ul').hide();
 
             if (!$el.closest('.search-view').length) {
                 $thisEl.find('.search-content').removeClass('fa-caret-up');
@@ -261,7 +261,8 @@ define([
             var data = {
                 sort    : this.sort,
                 filter  : this.filter,
-                viewType: this.viewType
+                viewType: this.viewType,
+                contentType: this.contentType
             };
 
             this.startTime = new Date();
@@ -371,15 +372,13 @@ define([
             this.$el.find('.thumbnailElement').remove();
             this.startTime = new Date();
 
-            this.filter = filter;
-
-            if (Object.keys(filter).length === 0) {
-                this.filter = {};
+            if (filter && Object.keys(filter).length !== 0) {
+                this.filter = filter;
             }
 
-            this.changeLocationHash(null, this.collection.pageSize, filter);
+            this.changeLocationHash(null, this.collection.pageSize, this.filter);
             this.collection.getFirstPage({
-                filter     : filter,
+                filter     : this.filter,
                 viewType   : this.viewType,
                 contentType: this.contentType
             });
@@ -452,10 +451,11 @@ define([
             // hide delete & deselect checkAll
 
             this.collection.getPage(1, {
-                count   : itemsNumber,
-                page    : 1,
-                filter  : this.filter,
-                viewType: this.viewType
+                count      : itemsNumber,
+                page       : 1,
+                filter     : this.filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
             });
 
             this.changeLocationHash(1, itemsNumber);

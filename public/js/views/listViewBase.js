@@ -75,7 +75,7 @@ define([
         // todo fixit
         alpabeticalRender: function (e) {
             var target;
-            var itemsNumber = $('#itemsNumber').text();
+            var itemsNumber = $('.selectedItemsNumber').text();
             var selectedLetter;
 
             this.startTime = new Date();
@@ -116,8 +116,12 @@ define([
             $('#checkAll').prop('checked', false);
 
             this.changeLocationHash(1, itemsNumber, this.filter);
-            this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-            this.getTotalLength(null, itemsNumber, this.filter);
+            this.collection.getFirstPage({
+                count      : itemsNumber,
+                filter     : this.filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            });
         },
 
         renderAlphabeticalFilter: function () {

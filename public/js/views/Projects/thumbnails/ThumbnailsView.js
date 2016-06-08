@@ -3,17 +3,16 @@
     'jQuery',
     'Underscore',
     'text!templates/Projects/thumbnails/ThumbnailsItemTemplate.html',
-    'text!templates/stages.html',
     'views/thumbnailsViewBase',
     'views/Projects/EditView',
     'views/Projects/CreateView',
     'views/Filter/FilterView',
+    'services/projects',
     'dataService',
     'common',
     'constants',
-    'populate',
-    'custom'
-], function (Backbone, $, _, thumbnailsItemTemplate, stagesTamplate, BaseView, EditView, CreateView, FilterView, dataService, common, CONSTANTS, populate, custom) {
+    'populate'
+], function (Backbone, $, _, thumbnailsItemTemplate, BaseView, EditView, CreateView, FilterView, projects, dataService, common, CONSTANTS, populate) {
     'use strict';
     var ProjectThumbnalView = BaseView.extend({
         el           : '#content-holder',
@@ -37,10 +36,10 @@
         },
 
         events: {
-            'click .health-wrapper .health-container': 'showHealthDd',
-            'click .health-wrapper ul li div'        : 'chooseHealthDd',
+            'click .health-wrapper .health-container': projects.showHealthDd,
+            'click .health-wrapper ul li div'        : projects.chooseHealthDd,
             'click .tasksByProject'                  : 'dropDown',
-            'click .stageSelect'                     : 'showNewSelect',
+            'click .stageSelect'                     : projects.showNewSelect,
             'click .project'                         : 'useProjectFilter'
         },
 
@@ -58,17 +57,8 @@
             Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
         },
 
-        showNewSelect: function (e) {
-            if ($('.newSelectList').is(':visible')) {
-                this.hideHealth();
-                return false;
-            }
-            $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
-
-            return false;
-        },
-
         chooseOption: function (e) {
+            var self = this;
             var $targetElement = $(e.target);
             var $thumbnail = $targetElement.parents('.thumbnail');
             var id = $thumbnail.attr('id');
@@ -82,14 +72,16 @@
                 patch   : true,
                 validate: false,
                 success : function () {
-                    var filter = window.location.hash.split('filter=')[1];
-                    var url = '#easyErp/Projects/thumbnails';
+                    /*var filter = window.location.hash.split('filter=')[1];
+                     var url = '#easyErp/Projects/thumbnails';
 
-                    if (filter) {
-                        url += '/filter=' + filter;
-                    }
-                    Backbone.history.fragment = '';
-                    Backbone.history.navigate(url, {trigger: true});
+                     if (filter) {
+                     url += '/filter=' + filter;
+                     }
+                     Backbone.history.fragment = '';
+                     Backbone.history.navigate(url, {trigger: true});*/
+
+                    self.showFilteredPage();
                 }
             });
 
@@ -97,39 +89,11 @@
             return false;
         },
 
-        chooseHealthDd: function (e) {
-            var target$ = $(e.target);
-            var target = target$.parents('.health-wrapper');
-            var currTargetHealth = target$.attr('class').replace('health', '');
-            var id = target.parents('.thumbnail').attr('id');
-            var model = this.collection.get(id);
-            var health = parseInt(currTargetHealth, 10);
-
-            target.find('.health-container a').attr('class', target$.attr('class')).attr('data-value', currTargetHealth);
-
-            model.save({health: health}, {
-                headers: {
-                    mid: 39
-                },
-
-                patch   : true,
-                validate: false,
-                success : function () {
-                    $('.health-wrapper ul').hide();
-                }
-            });
-        },
-
         hideHealth: function () {
             var $thisEl = this.$el;
 
             $thisEl.find('.health-wrapper ul').hide();
             $thisEl.find('.newSelectList').hide();
-        },
-
-        showHealthDd: function (e) {
-            $(e.target).parents('.health-wrapper').find('ul').toggle();
-            return false;
         },
 
         asyncLoadImgs: function (collection) {
@@ -142,7 +106,7 @@
 
             common.getImages(ids, CONSTANTS.URLS.EMPLOYEES + 'getEmployeesImages');
         },
-        
+
         gotoEditForm: function (e) {
             var id;
 
