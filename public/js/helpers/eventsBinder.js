@@ -10,7 +10,10 @@ define([
             collection.bind('remove', _.debounce(contentView.deleteItemsRender, 500), contentView);
 
             $(document).on('click', function (e) {
-                contentView.hide(e);
+                if (contentView && typeof (contentView.hide) === 'function'){
+                    contentView.hide(e);
+                }
+
             });
         },
 

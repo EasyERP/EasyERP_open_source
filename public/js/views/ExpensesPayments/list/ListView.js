@@ -52,7 +52,7 @@ define([
         contentType      : 'ExpensesPayments',
         modelId          : null,
         $listTable       : null,
-        EditCollection   : null,
+        editCollection   : null,
         changedModels    : {},
         responseObj      : {},
 
@@ -99,7 +99,7 @@ define([
             });
 
             if (modelId) {
-                editModel = this.EditCollection.get(modelId);
+                editModel = this.editCollection.get(modelId);
 
                 if (!this.changedModels[modelId]) {
                     if (!editModel.id) {
@@ -278,7 +278,7 @@ define([
 
             keys.forEach(function (id) {
                 changedModelsId = self.changedModels[id];
-                model = self.EditCollection.get(id) || self.collection.get(id);
+                model = self.editCollection.get(id) || self.collection.get(id);
                 model.changed = changedModelsId;
                 model.changed.differenceAmount = parseFloat(changedModelsId.paidAmount) - parseFloat(changedModelsId.paid);
             });
@@ -287,11 +287,11 @@ define([
                 return;
             }
 
-            this.EditCollection.save();
+            this.editCollection.save();
 
             keys.forEach(function (id) {
                 delete self.changedModels[id];
-                self.EditCollection.remove(id);
+                self.editCollection.remove(id);
             });
         },
 
@@ -312,7 +312,7 @@ define([
 
             if (!this.isNewRow()) {
                 this.showSaveCancelBtns();
-                this.EditCollection.add(model);
+                this.editCollection.add(model);
 
                 new CreateView(startData);
             }
@@ -365,7 +365,7 @@ define([
                 editedElementValue = editedElement.val();
 
                 if (editedElementRowId.length >= 24) {
-                    editModel = this.collection.get(editedElementRowId) || this.EditCollection.get(editedElementRowId);
+                    editModel = this.collection.get(editedElementRowId) || this.editCollection.get(editedElementRowId);
                     editValue = editModel.get(editedElementContent);
 
                     if (editedElementValue !== editValue) {
@@ -450,9 +450,9 @@ define([
             });
 
             setTimeout(function () {
-                self.EditCollection = new EditCollection(self.collection.toJSON());
-                self.EditCollection.on('saved', self.savedNewModel, self);
-                self.EditCollection.on('updated', self.updatedOptions, self);
+                self.editCollection = new EditCollection(self.collection.toJSON());
+                self.editCollection.on('saved', self.savedNewModel, self);
+                self.editCollection.on('updated', self.updatedOptions, self);
 
                 self.$listTable = $('#listTable');
             }, 10);
@@ -485,7 +485,7 @@ define([
                     return cb('Empty id');
                 }
 
-                model = self.EditCollection.get(id) || collection.get(id);
+                model = self.editCollection.get(id) || collection.get(id);
                 model = model.toJSON();
                 model.startNumber = rowNumber;
                 tr.replaceWith(template({model: model, currencySplitter: helpers.currencySplitter}));
@@ -503,7 +503,7 @@ define([
             if (this.createdItem) {
                 createItem = this.$el.find('#false');
                 dataId = createItem.data('id');
-                this.EditCollection.remove(dataId);
+                this.editCollection.remove(dataId);
                 delete this.changedModels[dataId];
                 createItem.remove();
 

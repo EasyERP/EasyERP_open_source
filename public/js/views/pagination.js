@@ -2,12 +2,14 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/Filter/FilterView',
     'constants',
     'common'
-], function (Backbone, $, _, CONSTANTS, common) {
+], function (Backbone, $, _, FilterView, CONSTANTS, common) {
     var View = Backbone.View.extend({
-        el    : '#content-holder',
-        filter: null,
+        el        : '#content-holder',
+        filter    : null,
+        FilterView: FilterView,
 
         events: {
             'click .oe_sortable': 'goSort',
@@ -175,7 +177,7 @@ define([
             }
 
             $thisEl.find('.allNumberPerPage, .newSelectList').hide();
-            $thisEl.find('span.health-container ul').hide();
+            $thisEl.find('.health-container ul').hide();
 
             if (!$el.closest('.search-view').length) {
                 $thisEl.find('.search-content').removeClass('fa-caret-up');
@@ -370,15 +372,13 @@ define([
             this.$el.find('.thumbnailElement').remove();
             this.startTime = new Date();
 
-            this.filter = filter;
-
-            if (Object.keys(filter).length === 0) {
-                this.filter = {};
+            if (filter && Object.keys(filter).length !== 0) {
+                this.filter = filter;
             }
 
-            this.changeLocationHash(null, this.collection.pageSize, filter);
+            this.changeLocationHash(null, this.collection.pageSize, this.filter);
             this.collection.getFirstPage({
-                filter     : filter,
+                filter     : this.filter,
                 viewType   : this.viewType,
                 contentType: this.contentType
             });
@@ -463,8 +463,20 @@ define([
 
         createItem: function () {
             var CreateView = this.CreateView || Backbone.View.extend({});
+            var startData = {};
+            var cid;
+            var model = new this.CurrentModel();
 
-            return new CreateView();
+            cid = model.cid;
+
+            startData.cid = cid;
+
+            if (!this.isNewRow()) {
+                this.showSaveCancelBtns();
+                this.editCollection.add(model);
+            }
+
+            return new CreateView(startData);
         },
 
         editItem: function () {

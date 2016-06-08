@@ -9,6 +9,15 @@ define([
         template: _.template(CreateTemplate),
 
         initialize: function (options) {
+            var now = new Date();
+            var year = now.getFullYear();
+            var month = now.getMonth() + 1;
+
+            options = options || {};
+
+            options.month = month;
+            options.year = year;
+            
             this.render(options);
         },
 

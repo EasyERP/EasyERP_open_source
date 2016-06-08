@@ -18,7 +18,7 @@ define([
     var JobPositionsListView = listViewBase.extend({
         CreateView              : CreateView,
         listTemplate            : listTemplate,
-        listItemView            : ListItemView,
+        ListItemView            : ListItemView,
         contentCollection       : contentCollection,
         FilterView              : FilterView,
         totalCollectionLengthUrl: '/JobPositions/totalCollectionLength',

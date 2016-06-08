@@ -25,7 +25,7 @@ module.exports = function (event, models) {
     router.get('/getPersonsForDd', accessStackMiddleware, handler.getSalesPerson);
     router.get('/getEmployeesAlphabet', accessStackMiddleware, handler.getEmployeesAlphabet);
     router.get('/getEmployeesImages', accessStackMiddleware, handler.getEmployeesImages);
-    router.get('/totalCollectionLength', accessStackMiddleware, handler.totalCollectionLength);
+    // router.get('/totalCollectionLength', accessStackMiddleware, handler.totalCollectionLength);
     router.get('/nationality', accessStackMiddleware, handler.getNationality);
     router.get('/languages', accessStackMiddleware, handler.getLanguages);
     router.get('/sources', accessStackMiddleware, handler.getSources);

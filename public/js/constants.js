@@ -716,7 +716,7 @@ define([], function () {
         DASH_VAC_WEEK_AFTER     : 8,
         DASH_VAC_RANGE_WEEKS_MIN: 6,
 
-        DEFAULT_ELEMENTS_PER_PAGE  : 3,
+        DEFAULT_ELEMENTS_PER_PAGE  : 100,
         DEFAULT_THUMBNAILS_PER_PAGE: 50,
 
         URLS: {
@@ -754,6 +754,7 @@ define([], function () {
             WTRACK                    : '/wTrack/',
             BIRTHDAYS                 : '/employees/birthdays/',
             BONUSTYPE                 : '/bonusType/',
+            BONUSTYPE_FORDD           : '/bonusType/getForDD',
             CAPACITY                  : '/capacity/',
             PAYMENTCUSTOMERS          : '/payment/customers/',
             EMPLOYEES_PERSONSFORDD    : '/employees/getPersonsForDd',

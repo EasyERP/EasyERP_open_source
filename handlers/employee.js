@@ -451,7 +451,7 @@ var Employee = function (event, models) {
 
     }
 
-    this.totalCollectionLength = function (req, res, next) {
+   /* this.totalCollectionLength = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
         var data = req.query;
         var contentType = data.contentType;
@@ -662,7 +662,7 @@ var Employee = function (event, models) {
             response.count = result.length;
             res.status(200).send(response);
         });
-    };
+    };*/
 
     function getFilter(req, res, next) {
         var Model = models.get(req.session.lastDb, 'Employees', EmployeeSchema);
@@ -970,9 +970,9 @@ var Employee = function (event, models) {
             }, {
                 $unwind: '$root'
             }, {
-                $sort: sort
-            }, {
                 $project: projectAfterRoot
+            }, {
+                $sort: sort
             }, {
                 $skip: skip
             }, {
@@ -1382,7 +1382,8 @@ var Employee = function (event, models) {
             Model
                 .aggregate([{
                     $match: {
-                        _id: {$in: deps}
+                        _id: {$in: deps},
+                        isEmployee : false
                     }
                 }, {
                     $project: {

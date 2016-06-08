@@ -7,18 +7,16 @@ define([
     'text!templates/Notes/importTemplate.html',
     'views/pagination',
     'views/selectView/selectView',
-    'views/Filter/FilterView',
     'views/Notes/AttachView',
     'common',
     'dataService',
     'constants'
-], function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, Pagination, SelectView, FilterView, AttachView, common, dataService, CONSTANTS) {
+], function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS) {
     'use strict';
 
     var ListViewBase = Pagination.extend({
         viewType  : 'list',
         SelectView: SelectView,
-        FilterView: FilterView,
 
         events: {
             'click #previousPage, #nextPage, #firstShowPage, #lastShowPage': 'checkPage',
@@ -77,7 +75,7 @@ define([
         // todo fixit
         alpabeticalRender: function (e) {
             var target;
-            var itemsNumber = $('#itemsNumber').text();
+            var itemsNumber = $('.selectedItemsNumber').text();
             var selectedLetter;
 
             this.startTime = new Date();
@@ -118,8 +116,12 @@ define([
             $('#checkAll').prop('checked', false);
 
             this.changeLocationHash(1, itemsNumber, this.filter);
-            this.collection.showMore({count: itemsNumber, page: 1, filter: this.filter});
-            this.getTotalLength(null, itemsNumber, this.filter);
+            this.collection.getFirstPage({
+                count      : itemsNumber,
+                filter     : this.filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            });
         },
 
         renderAlphabeticalFilter: function () {
@@ -250,17 +252,8 @@ define([
 
                 this.collection.add(model);
             } else {
-                this.collection.set(this.EditCollection.models, {remove: false});
+                this.collection.set(this.editCollection.models, {remove: false});
             }
-        },
-
-        bindingEventsToEditedCollection: function (context) {
-            if (context.EditCollection) {
-                context.EditCollection.unbind();
-            }
-            context.EditCollection = new this.EditCollection(context.collection.toJSON());
-            context.EditCollection.on('saved', context.savedNewModel, context);
-            context.EditCollection.on('updated', context.updatedOptions, context);
         },
 
         keyDown: function (e) {
@@ -336,13 +329,49 @@ define([
             return !!edited.length;
         },
 
+        setChangedValueToModel: function () {
+            var editedElement = this.$el.find('.editing');
+            var editedCol;
+            var editedElementRowId;
+            var editedElementContent;
+            var editedElementValue;
+            var editModel;
+            var editValue;
+
+            if (editedElement.length) {
+                editedCol = editedElement.closest('td');
+                editedElementRowId = editedElement.closest('tr').data('id');
+                editedElementContent = editedCol.data('content');
+                editedElementValue = editedElement.val();
+
+                if (editedElementRowId.length >= 24) {
+                    editModel = this.collection.get(editedElementRowId) || this.editCollection.get(editedElementRowId);
+                    editValue = editModel.get(editedElementContent);
+
+                    if (editedElementValue !== editValue) {
+                        if (!this.changedModels[editedElementRowId]) {
+                            this.changedModels[editedElementRowId] = {};
+                        }
+                        this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                    }
+                } else {
+                    if (!this.changedModels[editedElementRowId]) {
+                        this.changedModels[editedElementRowId] = {};
+                    }
+                    this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
+                }
+                editedCol.text(editedElementValue);
+                editedElement.remove();
+            }
+        },
+
         saveItem: function () {
             var model;
             var id;
             var errors = this.$el.find('.errorContent');
 
             for (id in this.changedModels) {
-                model = this.EditCollection.get(id) || this.collection.get(id);
+                model = this.editCollection.get(id) || this.collection.get(id);
                 model.changed = this.changedModels[id];
             }
 
@@ -350,7 +379,7 @@ define([
                 return;
             }
 
-            this.EditCollection.save();
+            this.editCollection.save();
             this.changedModels = {};
 
             this.deleteEditable();

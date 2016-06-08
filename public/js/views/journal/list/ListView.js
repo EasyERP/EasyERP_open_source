@@ -20,7 +20,7 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         CurrentModel     : CurrentModel,
-        EditCollection   : EditCollection,
+        editCollection   : EditCollection,
         contentCollection: contentCollection,
         contentType      : 'journal',
         changedModels    : {},
