@@ -51,11 +51,12 @@ define([
 
         inputClick: function (e) {
             var $thisEl = this.$el;
+            var $topBar = $('#top-bar');
             var $checkBoxes = $thisEl.find('input[type="checkbox"]:checked:not(#checkAll,notRemovable)');
             var $currentChecked = e ? $(e.target) : $thisEl.find('#checkAll');
             var checkAllBool = ($checkBoxes.length === this.collection.length);
-            var $deleteButton = $('#top-bar-deleteBtn');
-            var $createButton = $('#top-bar-createBtn');
+            var $deleteButton = $topBar.find('#top-bar-deleteBtn');
+            var $createButton = $topBar.find('#top-bar-createBtn');
 
             if ($currentChecked.attr('id') !== 'checkAll') {
                 if (checkAllBool) {

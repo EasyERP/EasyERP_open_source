@@ -123,7 +123,7 @@ define([
 
             targetElement.text(target.text());
 
-            this.hideNewSelect();
+            this.hide(e);
             this.setEditable(targetElement);
 
             return false;
