@@ -1,66 +1,65 @@
 ﻿define([
-        'Backbone',
-        'jQuery',
-        'Underscore',
-        "text!templates/Opportunities/compactContentTemplate.html",
-        'views/Opportunities/EditView',
-        'models/OpportunitiesModel'
-    ],
-    function (Backbone, $, _, compactContentTemplate, editView, currentModel) {
-        var compactContentView = Backbone.View.extend({
-            className: "form",
+    'Backbone',
+    'jQuery',
+    'Underscore',
+    'text!templates/Opportunities/compactContentTemplate.html',
+    'views/Opportunities/EditView',
+    'models/OpportunitiesModel'
+], function (Backbone, $, _, compactContentTemplate, editView, currentModel) {
+    var compactContentView = Backbone.View.extend({
+        className: 'form',
+        template : _.template(compactContentTemplate),
 
-            initialize: function (options) {
-                this.personsCollection = (options && options.personsCollection) ? options.personsCollection : null;
-            },
+        events: {
+            'click p > a': 'goToEditDialog'
+        },
 
-            events: {
-                "click p > a": "goToEditDialog"
-            },
+        initialize: function (options) {
+            this.personsCollection = (options && options.personsCollection) ? options.personsCollection : null;
+        },
 
-            template: _.template(compactContentTemplate),
+        goToEditDialog: function (e) {
+            var id = $(e.target).closest('a').attr('id');
+            var model = new currentModel({validate: false});
 
-            goToEditDialog: function (e) {
-                var id = $(e.target).closest("a").attr("id");
-                var model = new currentModel({validate: false});
+            e.preventDefault();
 
-                e.preventDefault();
+            model.urlRoot = '/Opportunities/form';
+            model.fetch({
+                data   : {id: id},
+                success: function (model) {
+                    new editView({
+                        model    : model,
+                        elementId: 'personAttach'
+                    });
+                },
 
-                model.urlRoot = '/Opportunities/form';
-                model.fetch({
-                    data   : {id: id},
-                    success: function (model) {
-                        new editView({
-                            model    : model,
-                            elementId: 'personAttach'
-                        });
-                    },
-                    error  : function () {
-                        App.render({
-                            type: 'error',
-                            message: "Please refresh browser"
-                        });
-                    }
-                });
-            },
+                error: function () {
+                    App.render({
+                        type   : 'error',
+                        message: 'Please refresh browser'
+                    });
+                }
+            });
+        },
 
-            gotoOpportunitieForm: function (e) {
-                var itemIndex = $(e.target).closest("a").attr("id");
+        gotoOpportunitieForm: function (e) {
+            var itemIndex = $(e.target).closest('a').attr('id');
 
-                e.preventDefault();
+            e.preventDefault();
 
-                window.location.hash = "#easyErp/Opportunities/form/" + itemIndex;
-            },
+            window.location.hash = '#easyErp/Opportunities/form/' + itemIndex;
+        },
 
-            render: function (options) {
-                this.$el.html(this.template({
-                    collection: this.collection,
-                    options   : options
-                }));
+        render: function (options) {
+            this.$el.html(this.template({
+                collection: this.collection,
+                options   : options
+            }));
 
-                return this;
-            }
-        });
-
-        return compactContentView;
+            return this;
+        }
     });
+
+    return compactContentView;
+});

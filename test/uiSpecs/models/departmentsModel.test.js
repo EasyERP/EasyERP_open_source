@@ -52,9 +52,9 @@ define([
             expect(spyResponse).to.have.property('type', 'error');
         });
 
-        it('Change departmentName value', function (done) {
-            server.respondWith('POST', '/Departments/', [200, {"Content-Type": "application/json"}, JSON.stringify([{
-                name: 'WEB_JS'
+        it ('Change name value', function(done){
+            server.respondWith('POST', '/departments/', [200, {"Content-Type": "application/json"}, JSON.stringify([{
+                name  : 'WEB_JS'
             }])]);
 
             department.set({name: 'WEB_JS'});
