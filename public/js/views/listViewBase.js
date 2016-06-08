@@ -25,7 +25,7 @@ define([
             'click .showPage'                                              : 'showPage',
             'change #currentShowPage'                                      : 'showPage',
             'click .checkbox'                                              : 'checked',
-            'click .list td:not(.notForm)'                                 : 'gotoForm',
+            'click .list td:not(.notForm, .checkbox)'                      : 'gotoForm',
             'mouseover .currentPageList'                                   : 'showPagesPopup'
         },
 
@@ -246,7 +246,7 @@ define([
         resetCollection: function (model) {
             if (model && model._id) {
                 model = new this.CurrentModel(model);
-                
+
                 this.collection.add(model);
             } else {
                 this.collection.set(this.editCollection.models, {remove: false});

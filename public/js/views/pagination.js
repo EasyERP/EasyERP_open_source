@@ -45,6 +45,10 @@ define([
             var $checkbox = $targetDivContainer.find('input[type="checkbox"]');
             // var checked = $checkbox.prop('checked');
 
+            if (e) {
+                e.stopPropagation();
+            }
+
             // $checkbox.prop('checked', !checked); //commented by Liliya
             this.inputClick(e);
         },
@@ -52,7 +56,7 @@ define([
         inputClick: function (e) {
             var $thisEl = this.$el;
             var $topBar = $('#top-bar');
-            var $checkBoxes = $thisEl.find('input[type="checkbox"]:checked:not(#checkAll,notRemovable)');
+            var $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll,notRemovable)');
             var $currentChecked = e ? $(e.target) : $thisEl.find('#checkAll');
             var checkAllBool = ($checkBoxes.length === this.collection.length);
             var $deleteButton = $topBar.find('#top-bar-deleteBtn');
