@@ -25,7 +25,7 @@ define([
             var $el = e ? $(e.target) : $thisEl.find('#checkAll');
             var $checkedContent = (this.viewType === 'thumbnails') ?
                 $thisEl.find('.thumbnailsItems') :
-                $thisEl.find('#listTable');
+                $thisEl.find('.list');
 
             var $checkboxes = $checkedContent.find(':checkbox:not(.notRemovable)');
             var check = $el.prop('checked');

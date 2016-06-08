@@ -299,7 +299,7 @@ define([
             } else {
                 tempContainer = el.text();
                 width = el.width() - 6;
-                el.html("<input class='editing' type='text' value='" + tempContainer + "  style='width:'" + width + "px'>");
+                el.html("<input class='editing' type='text' value='" + tempContainer + " ' style='width:'" + width + "px'>");
             }
 
             return false;
@@ -328,7 +328,7 @@ define([
         },
 
         isEditRows: function () {
-            var edited = this.$listTable.find('.edited');
+            var edited = this.$el.find('.edited');
 
             this.edited = edited;
 
