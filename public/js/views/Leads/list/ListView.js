@@ -30,7 +30,7 @@ define([
     var LeadsListView = listViewBase.extend({
         createView              : CreateView,
         listTemplate            : listTemplate,
-        listItemView            : ListItemView,
+        ListItemView            : ListItemView,
         contentCollection       : contentCollection,
         FilterView              : FilterView,
         totalCollectionLengthUrl: '/leads/totalCollectionLength',
@@ -103,7 +103,7 @@ define([
             $currentEl.html('');
             $currentEl.append(_.template(listTemplate));
 
-            itemView = new this.listItemView({
+            itemView = new this.ListItemView({
                 collection : this.collection,
                 page       : this.page,
                 itemsNumber: this.collection.namberToShow

@@ -120,7 +120,7 @@ define([
             });
         },
 
-        calcTotal: function () {
+        recalcTotal: function () {
             var $curEl = this.$el;
             var $rows = $curEl.find('#listTable tr').not('#listFooter');
 
@@ -162,7 +162,7 @@ define([
 
             $currentEl.prepend(itemView.render());
 
-            this.calcTotal();
+            this.recalcTotal();
 
             this.renderPagination($currentEl, this);
 
