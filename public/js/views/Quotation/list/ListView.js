@@ -14,7 +14,7 @@ define([
         'dataService',
         'constants',
         'helpers'
-], function ($, _, listViewBase, listTemplate, stagesTemplate, createView, listItemView, ListTotalView, EditView, CurrentModel, contentCollection, filterView, dataService, CONSTANTS, helpers) {
+], function ($, _, listViewBase, listTemplate, stagesTemplate, createView, listItemView, ListTotalView, EditView, CurrentModel, contentCollection, FilterView, dataService, CONSTANTS, helpers) {
         'use strict';
 
         var QuotationListView = listViewBase.extend({
@@ -25,7 +25,7 @@ define([
             contentType             : 'Quotation',//needs in view.prototype.changeLocationHash
             viewType                : 'list',//needs in view.prototype.changeLocationHash
             totalCollectionLengthUrl: '/quotation/totalCollectionLength',
-            filterView              : filterView,
+            FilterView              : FilterView,
 
             initialize: function (options) {
                 this.startTime = options.startTime;

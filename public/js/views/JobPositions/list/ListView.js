@@ -12,7 +12,7 @@ define([
     'views/Filter/FilterView',
     'common',
     'text!templates/stages.html'
-], function (Backbone, $, _, listViewBase, listTemplate, CreateView, ListItemView, contentCollection, CurrentModel, EditView, filterView, common, stagesTamplate) {
+], function (Backbone, $, _, listViewBase, listTemplate, CreateView, ListItemView, contentCollection, CurrentModel, EditView, FilterView, common, stagesTamplate) {
     'use strict';
 
     var JobPositionsListView = listViewBase.extend({
@@ -20,7 +20,7 @@ define([
         listTemplate            : listTemplate,
         listItemView            : ListItemView,
         contentCollection       : contentCollection,
-        filterView              : filterView,
+        FilterView              : FilterView,
         totalCollectionLengthUrl: '/JobPositions/totalCollectionLength',
         formUrl                 : '#easyErp/JobPositions/form/',
         contentType             : 'JobPositions', // needs in view.prototype.changeLocationHash

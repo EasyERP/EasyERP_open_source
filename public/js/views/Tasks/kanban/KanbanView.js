@@ -15,7 +15,7 @@
     'common',
     'populate',
     'constants'
-], function (Backbone, _, $, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, TasksCollection, CurrentModel, dataService, filterView, common, populate, CONSTANTS) {
+], function (Backbone, _, $, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, TasksCollection, CurrentModel, dataService, FilterView, common, populate, CONSTANTS) {
     "use strict";
 
     var collection = new TasksCollection();
@@ -538,7 +538,7 @@
             this.$el.unbind();
 
             dataService.getData('/tasks/getFilterValues', null, function (values) {
-                FilterView = new filterView({collection: workflows, customCollection: values});
+                FilterView = new FilterView({collection: workflows, customCollection: values});
                 // Filter custom event listen ------begin
                 FilterView.bind('filter', function () {
                     self.foldUnfiltredItems(workflows)

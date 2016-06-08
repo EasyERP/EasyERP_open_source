@@ -22,7 +22,7 @@ define([
              ListItemView,
              EditView,
              DividendEditView,
-             filterView,
+             FilterView,
              InvoiceModel,
              contentCollection,
              CONSTANTS,
@@ -37,7 +37,7 @@ define([
     var ListView = listViewBase.extend({
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
-        filterView       : filterView,
+        FilterView       : FilterView,
         contentCollection: contentCollection,
         contentType      : CONSTANTS.JOURNALENTRY,
         exportToXlsxUrl  : 'journalEntries/exportToXlsx',

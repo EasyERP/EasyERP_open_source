@@ -11,7 +11,7 @@ define([
         'constants'
     ],
 
-    function ($, _, listViewBase, listTemplate, createView, listItemView, contentCollection, filterView, common, CONSTANTS) {
+    function ($, _, listViewBase, listTemplate, createView, listItemView, contentCollection, FilterView, common, CONSTANTS) {
         'use strict';
         var CompaniesListView = listViewBase.extend({
 
@@ -19,7 +19,7 @@ define([
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            filterView              : filterView,
+            FilterView              : FilterView,
             contentType             : "Companies",
             totalCollectionLengthUrl: '/companies/totalCollectionLength',
             formUrl                 : "#easyErp/Companies/form/",

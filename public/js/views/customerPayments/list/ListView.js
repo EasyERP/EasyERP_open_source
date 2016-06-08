@@ -15,14 +15,14 @@ define([
     'populate',
     'async',
     'helpers'
-], function (Backbone, $, _, ListViewBase, listTemplate, cancelEdit, ListItemView, filterView, EditView, paymentCollection, EditCollection, CurrentModel, dataService, populate, async, helpers) {
+], function (Backbone, $, _, ListViewBase, listTemplate, cancelEdit, ListItemView, FilterView, EditView, paymentCollection, EditCollection, CurrentModel, dataService, populate, async, helpers) {
     'use strict';
 
     var PaymentListView = ListViewBase.extend({
 
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
-        filterView       : filterView, // if reload page, and in url is valid page
+        FilterView       : FilterView, // if reload page, and in url is valid page
         contentType      : 'customerPayments', // needs in view.prototype.changeLocationHash
         modelId          : null,
         $listTable       : null,

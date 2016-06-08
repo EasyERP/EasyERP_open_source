@@ -21,7 +21,7 @@ define([
              editView,
              currentModel,
              contentCollection,
-             filterView,
+             FilterView,
              common,
              dataService,
              stagesTemplate) {
@@ -32,7 +32,7 @@ define([
         listTemplate            : listTemplate,
         listItemView            : listItemView,
         contentCollection       : contentCollection,
-        filterView              : filterView,
+        FilterView              : FilterView,
         totalCollectionLengthUrl: '/opportunities/totalCollectionLength',
         formUrl                 : '#easyErp/Opportunities/form/',
         contentType             : 'Opportunities', // needs in view.prototype.changeLocationHash

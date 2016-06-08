@@ -11,14 +11,14 @@ define([
         'constants'
     ],
 
-    function ($, _, listViewBase, listTemplate, createView, listItemView, contentCollection, filterView, common, CONSTANTS) {
+    function ($, _, listViewBase, listTemplate, createView, listItemView, contentCollection, FilterView, common, CONSTANTS) {
         'use strict';
         var PersonsListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            filterView              : filterView,
+            FilterView              : FilterView,
             totalCollectionLengthUrl: 'persons/totalCollectionLength',
             formUrl                 : "#easyErp/Persons/form/",
             contentType             : 'Persons',//needs in view.prototype.changeLocationHash

@@ -14,14 +14,14 @@ define([
         'common',
     ],
 
-    function (listViewBase, paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, filterView, common) {
+    function (listViewBase, paginationTemplate, listTemplate, stagesTamplate, createView, listItemView, editView, currentModel, projectEditView, projectModel, contentCollection, FilterView, common) {
         var TasksListView = listViewBase.extend({
 
             createView              : createView,
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            filterView              : filterView,
+            FilterView              : FilterView,
             contentType             : "Tasks",
             totalCollectionLengthUrl: '/totalCollectionLength/Tasks',
             // formUrl                 : "#easyErp/Tasks/form/",

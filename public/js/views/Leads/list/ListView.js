@@ -32,7 +32,7 @@ define([
         listTemplate            : listTemplate,
         listItemView            : ListItemView,
         contentCollection       : contentCollection,
-        filterView              : FilterView,
+        FilterView              : FilterView,
         totalCollectionLengthUrl: '/leads/totalCollectionLength',
         formUrl                 : '#easyErp/Leads/form/',
         contentType             : CONSTANTS.LEADS,

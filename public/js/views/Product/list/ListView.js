@@ -14,13 +14,13 @@ define([
         'dataService'
     ],
 
-    function ($, _, listViewBase, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, filterView, common, dataService) {
+    function ($, _, listViewBase, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, FilterView, common, dataService) {
         var ProductsListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            filterView              : filterView,
+            FilterView              : FilterView,
             totalCollectionLengthUrl: '/product/totalCollectionLength',
             page                    : null, //if reload page, and in url is valid page
             contentType             : 'Product',//needs in view.prototype.changeLocationHash

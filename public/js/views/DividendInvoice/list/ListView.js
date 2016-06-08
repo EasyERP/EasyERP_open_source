@@ -13,12 +13,12 @@ define([
     'dataService',
     'constants',
     'helpers'
-], function ($, _, listViewBase, listTemplate, CreateView, EditView, invoiceModel, ListItemView, contentCollection, filterView, common, dataService, CONSTANTS, helpers) {
+], function ($, _, listViewBase, listTemplate, CreateView, EditView, invoiceModel, ListItemView, contentCollection, FilterView, common, dataService, CONSTANTS, helpers) {
     var InvoiceListView = listViewBase.extend({
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        filterView       : filterView,
+        FilterView       : FilterView,
         contentType      : 'DividendInvoice',
         changedModels    : {},
 

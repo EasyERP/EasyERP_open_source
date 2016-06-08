@@ -12,13 +12,13 @@ define([
     'common',
     'moment',
     'custom'
-], function (_, $, listViewBase, listTemplate, ListItemView, filterView, contentCollection, CONSTANTS, helpers, dataService, common, moment, custom) {
+], function (_, $, listViewBase, listTemplate, ListItemView, FilterView, contentCollection, CONSTANTS, helpers, dataService, common, moment, custom) {
     'use strict';
 
     var ListView = listViewBase.extend({
         listTemplate            : listTemplate,
         ListItemView             : ListItemView,
-        filterView              : filterView,
+        FilterView              : FilterView,
         contentCollection       : contentCollection,
         contentType             : CONSTANTS.INVENTORYREPORT,
 
