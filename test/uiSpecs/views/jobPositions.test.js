@@ -3,6 +3,7 @@ define([
     'text!fixtures/index.html',
     'models/JobPositionsModel',
     'collections/JobPositions/filterCollection',
+    'helpers/eventsBinder',
     'views/main/MainView',
     'views/JobPositions/list/ListView',
     'views/JobPositions/form/FormView',
@@ -19,6 +20,7 @@ define([
              fixtures,
              JobPositionModel,
              JobPositionCollection,
+             eventsBinder,
              MainView,
              ListView,
              FormView,
@@ -32,6 +34,7 @@ define([
     'use strict';
     var expect;
     var fakeJobPositions = {
+        count : 100,
         data: [
             {
                 _id                     : "55b92acf21e4b7c40f000017",
@@ -14007,21 +14010,8 @@ define([
                     expect($listHolder.find('#searchContainer')).to.exist;
                     expect($listHolder.find('.pagination')).to.exist;
 
-                    topBarView.bind('copyEvent', listView.copy, listView);
-                    topBarView.bind('generateEvent', listView.generate, listView);
-                    topBarView.bind('createEvent', listView.createItem, listView);
-                    topBarView.bind('editEvent', listView.editItem, listView);
-                    topBarView.bind('saveEvent', listView.saveItem, listView);
-                    topBarView.bind('deleteEvent', listView.deleteItems, listView);
-                    topBarView.bind('generateInvoice', listView.generateInvoice, listView);
-                    topBarView.bind('copyRow', listView.copyRow, listView);
-                    topBarView.bind('exportToCsv', listView.exportToCsv, listView);
-                    topBarView.bind('exportToXlsx', listView.exportToXlsx, listView);
-                    topBarView.bind('importEvent', listView.importFiles, listView);
-                    topBarView.bind('pay', listView.newPayment, listView);
-                    topBarView.bind('changeDateRange', listView.changeDateRange, listView);
-
-                    jobPositionCollection.bind('showmore', listView.showMoreContent, listView);
+                    eventsBinder.subscribeCollectionEvents(jobPositionCollection, listView);
+                    eventsBinder.subscribeTopBarEvents(topBarView, listView);
                 });
 
                 it('Try to showMore with error response', function () {
@@ -14036,7 +14026,7 @@ define([
 
                     spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'Some Error.');
+                    expect(spyResponse).to.have.property('message', 'Bad Request');
                 });
 
                 it('Try to click on paginations buttons', function () {
@@ -14049,16 +14039,13 @@ define([
                     var jobPositionUrl = new RegExp('\/JobPositions', 'i');
 
                     server.respondWith('GET', jobPositionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify(fakeJobPositions)]);
-                    server.respondWith('GET', jobPositionTotalCollectionUrl, [200, {"Content-Type": "application/json"}, JSON.stringify({
-                        count: 2
-                    })]);
 
                     expect($firstPageListEl).to.have.class('selectedItemsNumber');
 
                     $secondPageListEl.click();
                     server.respond();
                     expect($pageListEl.find('a:nth-child(2)')).to.have.class('selectedItemsNumber');
-                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions/list/p=1/c=200');
+                    expect(window.location.hash).to.be.equals('#easyErp/JobPositions/list/p=1/c=50');
                 });
 
                 it('Try to change status in listView', function () {
@@ -14091,7 +14078,7 @@ define([
 
                     spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'Please refresh browser');
+                    expect(spyResponse).to.have.property('message', 'Bad Request');
                 });
 
                 it('Try to go to Edit dialog', function () {

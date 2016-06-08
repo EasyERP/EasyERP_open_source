@@ -729,7 +729,7 @@ define([], function () {
             CHARTOFACCOUNT            : '/ChartOfAccount/',
             COMPANIES                 : '/companies/',
             DEGREES                   : '/Degrees/',
-            DEPARTMENTS               : '/Departments/',
+            DEPARTMENTS               : '/departments/',
             EVENTS                    : '/Events/',
             HOLIDAY                   : '/Holiday/',
             INVOICE                   : '/Invoice/',
