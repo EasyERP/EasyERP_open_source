@@ -29,7 +29,7 @@
         "props": false
       }
     ],
-//    "default-case": ["error", { "commentPattern": "^skip\\sdefault" }],
+    "default-case": ["error", { "commentPattern": "^skip\\sdefault" }],
     "no-extend-native": ["error", { "exceptions": ["Object", "Date"] }]
   }
 }
