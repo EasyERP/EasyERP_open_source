@@ -36,14 +36,14 @@ define([
             expect(department.get('departmentManager')).to.be.equal('Roman');
         });
 
-        it ('Get model urlRoot', function(){
+        it('Get model urlRoot', function () {
             var urlRoot = department.urlRoot();
 
             expect(urlRoot).to.be.a('string');
             expect(urlRoot).to.be.equals('/Departments/');
         });
 
-        it ('Check validation', function(){
+        it('Check validation', function () {
             var spyResponse;
 
             department.set({departmentName: ',>dfdssdf'}, {validate: true});
@@ -52,25 +52,25 @@ define([
             expect(spyResponse).to.have.property('type', 'error');
         });
 
-        it ('Change departmentName value', function(done){
-            server.respondWith('POST', '/Departments/', [200, {"Content-Type": "application/json"}, JSON.stringify([{
-                departmentName  : 'WEB_JS'
+        it ('Change name value', function(done){
+            server.respondWith('POST', '/departments/', [200, {"Content-Type": "application/json"}, JSON.stringify([{
+                name  : 'WEB_JS'
             }])]);
 
-            department.set({departmentName: 'WEB_JS'});
+            department.set({name: 'WEB_JS'});
             department.save(null, {
-                editMode   : false,
-                success    : function () {
+                editMode: false,
+                success : function () {
                     done();
                 },
-                error: function(model, xhr){
+                error   : function (model, xhr) {
                     done(xhr);
                 }
             });
 
             server.respond();
 
-            expect(department.departmentName).to.be.equal('WEB_JS');
+            expect(department.name).to.be.equal('WEB_JS');
         });
 
     });

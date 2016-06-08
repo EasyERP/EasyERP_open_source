@@ -3177,6 +3177,7 @@ define([
                     page       : 1
                 });
                 server.respond();
+
                 expect(historyNavigateSpy.calledOnce).to.be.true;
             });
 
@@ -3225,10 +3226,12 @@ define([
             var chooseOptionSpy;
 
             before(function () {
+                App.currentViewType = 'list';
+
                 server = sinon.fakeServer.create();
                 mainSpy = sinon.spy(App, 'render');
-                App.currentViewType = 'list';
                 windowConfirmStub = sinon.stub(window, 'confirm');
+                windowConfirmStub.returns(true);
                 alertStub = sinon.stub(window, 'alert');
                 alertStub.returns(true);
                 ajaxSpy = sinon.spy($, 'ajax');
@@ -3271,6 +3274,7 @@ define([
                         startTime : new Date()
                     });
                     server.respond();
+
                     $thisEl = listView.$el;
 
                     eventsBinder.subscribeCollectionEvents(opportunitiesCollection, listView);
@@ -3545,6 +3549,48 @@ define([
                     expect(alertStub.called).to.be.true;
                 });
 
+                it('Try to change Customer AssignedTo Stages Priority', function () {
+                    var $customerDd = $('#customerDd');
+                    var $assignedDd = $('#salesPersonDd');
+                    var $stagesDd = $('#workflowDd');
+                    var $priorityDd = $('#priorityDd');
+                    var $newSelectList;
+                    var $firstEl;
+
+                    $customerDd.click();
+                    $newSelectList = $customerDd.find('.newSelectList');
+                    expect($newSelectList).have.to.exist;
+                    $firstEl = $newSelectList.find('ul > li').first();
+                    $firstEl.click();
+                    expect($customerDd.find('.newSelectList')).to.not.exist;
+                    expect($customerDd).to.have.attr('data-id');
+
+                    $assignedDd.click();
+                    $newSelectList = $assignedDd.find('.newSelectList');
+                    expect($newSelectList).have.to.exist;
+                    $firstEl = $newSelectList.find('ul > li').first();
+                    $firstEl.click();
+                    expect($assignedDd.find('.newSelectList')).to.not.exist;
+                    expect($assignedDd).to.have.attr('data-id');
+
+                    $stagesDd.click();
+                    $newSelectList = $stagesDd.find('.newSelectList');
+                    expect($newSelectList).have.to.exist;
+                    $firstEl = $newSelectList.find('ul > li').first();
+                    $firstEl.click();
+                    expect($stagesDd.find('.newSelectList')).to.not.exist;
+                    expect($stagesDd).to.have.attr('data-id');
+
+                    $priorityDd.click();
+                    $newSelectList = $priorityDd.find('.newSelectList');
+                    expect($newSelectList).have.to.exist;
+                    $firstEl = $newSelectList.find('ul > li').first();
+                    $firstEl.click();
+                    expect($priorityDd.find('.newSelectList')).to.not.exist;
+                    expect($priorityDd).to.have.attr('data-id');
+
+                });
+
                 it('Try to create item', function () {
                     var $saveBtn = $('div.ui-dialog.ui-widget.ui-widget-content.ui-corner-all.ui-front.edit-dialog.ui-dialog-buttons.ui-draggable > div.ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix > div > button:nth-child(1)');
                     var opportunitiesUrl = new RegExp('\/Opportunities\/', 'i');
@@ -3563,6 +3609,29 @@ define([
 
                     expect($('.ui-dialog')).to.not.exist;
                 });
+
+                /*it('Try to cancel dialog by keydown', function () {
+                    var keyPresEvent = $.Event('keydown', {which: 27});
+                    var $dialog;
+                    var $createBtn = topBarView.$el.find('#top-bar-createBtn');
+                    var customerUrl = new RegExp('\/customers\/', 'i');
+                    var opportunityPriorityUrl = '/opportunities/priority';
+                    var employeesForDDUrl = '/employees/getForDD?isEmployee=true';
+
+                    server.respondWith('GET', customerUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCustomers)]);
+                    server.respondWith('GET', opportunityPriorityUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeOpportunitiesPriority)]);
+                    server.respondWith('GET', employeesForDDUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployeesForDD)]);
+                    $createBtn.click();
+                    server.respond();
+                    server.respond();
+
+                    $dialog = $('.ui-dialog');
+
+                    expect($dialog).to.exist;
+
+                    $dialog.keydown(keyPresEvent);
+                    expect($dialog).to.not.exist;
+                });*/
             });
         });
 
