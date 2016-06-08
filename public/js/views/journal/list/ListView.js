@@ -148,7 +148,7 @@ define([
                 collection: this.collection.toJSON()
             }));
 
-            this.hideSaveCancelButtons();
+            this.hideSaveCancelBtns();
 
             itemView = new ListItemView({
                 collection : this.collection,

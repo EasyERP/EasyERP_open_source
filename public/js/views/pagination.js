@@ -526,24 +526,33 @@ define([
             });
         },
 
-        hideSaveCancelButtons: function () {
-            var saveBtn = $('#top-bar-saveBtn');
-            var cancelBtn = $('#top-bar-deleteBtn');
-
-            saveBtn.hide();
-            cancelBtn.hide();
-        },
-
         showSaveCancelBtns: function () {
-            var createBtnEl = $('#top-bar-createBtn');
-            var saveBtnEl = $('#top-bar-saveBtn');
-            var cancelBtnEl = $('#top-bar-deleteBtn');
+            var $topBar = $('#top-bar');
+            var saveBtnEl = $topBar.find('#top-bar-saveBtn');
+            var cancelBtnEl = $topBar.find('#top-bar-deleteBtn');
+            var createBtnEl = $topBar.find('#top-bar-createBtn');
 
-            if (this.changed) {
+            if (!this.changed) {
                 createBtnEl.hide();
             }
             saveBtnEl.show();
             cancelBtnEl.show();
+            createBtnEl.hide();
+
+            return false;
+        },
+
+        hideSaveCancelBtns: function () {
+            var $topBar = $('#top-bar');
+            var createBtnEl = $topBar.find('#top-bar-createBtn');
+            var saveBtnEl = $topBar.find('#top-bar-saveBtn');
+            var cancelBtnEl = $topBar.find('#top-bar-deleteBtn');
+
+            this.changed = false;
+
+            saveBtnEl.hide();
+            cancelBtnEl.hide();
+            createBtnEl.show();
 
             return false;
         },

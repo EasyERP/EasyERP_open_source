@@ -461,14 +461,6 @@ define([
             }
         },
 
-        hideSaveCancelButtons: function () {
-            var saveBtn = $('#top-bar-saveBtn');
-            var cancelBtn = $('#top-bar-deleteBtn');
-
-            saveBtn.hide();
-            cancelBtn.hide();
-        },
-
         saveItem: function () {
             var model;
             var code;
@@ -540,7 +532,7 @@ define([
                 collection: this.collection.toJSON()
             }));
 
-            this.hideSaveCancelButtons();
+            this.hideSaveCancelBtns();
 
             setTimeout(function () {
                 self.editCollection = new EditCollection(self.collection.toJSON());
