@@ -8,7 +8,7 @@ define([
     var View = Backbone.View.extend({
         el    : '#content-holder',
         filter: null,
-        
+
         events: {
             'click .oe_sortable': 'goSort',
             'click #checkAll'   : 'checkAll',
@@ -355,15 +355,13 @@ define([
             this.$el.find('.thumbnailElement').remove();
             this.startTime = new Date();
 
-            this.filter = filter;
-
-            if (Object.keys(filter).length === 0) {
-                this.filter = {};
+            if (filter && Object.keys(filter).length !== 0) {
+                this.filter = filter;
             }
 
-            this.changeLocationHash(null, this.collection.pageSize, filter);
+            this.changeLocationHash(null, this.collection.pageSize, this.filter);
             this.collection.getFirstPage({
-                filter     : filter,
+                filter     : this.filter,
                 viewType   : this.viewType,
                 contentType: this.contentType
             });
