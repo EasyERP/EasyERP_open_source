@@ -1233,161 +1233,212 @@ define([
             this.getAutoCalcField('sunHours', '7');
         },
 
-        deleteItemsRender: function (deleteCounter, deletePage) {
-            var pagenation;
-            var holder;
-            var created;
+        /*deleteItemsRender: function (deleteCounter, deletePage) {
+         var pagenation;
+         var holder;
+         var created;
 
-            dataService.getData(this.collectionLengthUrl, {
-                filter       : this.filter,
-                newCollection: this.newCollection
-            }, function (response, context) {
-                context.listLength = response.count || 0;
-                // context.getTotalLength(null, context.defaultItemsNumber, context.filter);
-                context.fetchSortCollection({});
+         dataService.getData(this.collectionLengthUrl, {
+         filter       : this.filter,
+         newCollection: this.newCollection
+         }, function (response, context) {
+         context.listLength = response.count || 0;
+         // context.getTotalLength(null, context.defaultItemsNumber, context.filter);
+         context.fetchSortCollection({});
 
-            }, this);
-            // this.deleteRender(deleteCounter, deletePage, {
-            //    filter: this.filter,
-            //    newCollection: this.newCollection,
-            //    parrentContentId: this.parrentContentId
-            // });
+         }, this);
+         // this.deleteRender(deleteCounter, deletePage, {
+         //    filter: this.filter,
+         //    newCollection: this.newCollection,
+         //    parrentContentId: this.parrentContentId
+         // });
 
-            holder = this.$el;
+         holder = this.$el;
 
-            if (deleteCounter !== this.collectionLength) {
-                created = holder.find('#timeRecivingDataFromServer');
-                created.before(
-                    new ListItemView({
-                        collection : this.collection,
-                        page       : holder.find("#currentShowPage").val(),
-                        itemsNumber: holder.find("span#itemsNumber").text()
-                    }).render());//added two parameters page and items number
-            }
+         if (deleteCounter !== this.collectionLength) {
+         created = holder.find('#timeRecivingDataFromServer');
+         created.before(
+         new ListItemView({
+         collection : this.collection,
+         page       : holder.find("#currentShowPage").val(),
+         itemsNumber: holder.find("span#itemsNumber").text()
+         }).render());//added two parameters page and items number
+         }
 
-            pagenation = this.$el.find('.pagination');
+         pagenation = this.$el.find('.pagination');
 
-            if (this.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
+         if (this.collection.length === 0) {
+         pagenation.hide();
+         } else {
+         pagenation.show();
+         }
 
-            this.editCollection.reset(this.collection.models);
+         this.editCollection.reset(this.collection.models);
 
-            this.hideGenerateCopy();
+         this.hideGenerateCopy();
+         },
+
+         triggerDeleteItemsRender: function (deleteCounter) {
+         this.deleteCounter = deleteCounter;
+         this.deletePage = $("#currentShowPage").val();
+
+         this.deleteItemsRender(deleteCounter, this.deletePage);
+         },*/
+
+        deleteItemsRender: function () {
+            this.getPage({
+                remove: false
+            });
         },
 
-        triggerDeleteItemsRender: function (deleteCounter) {
-            this.deleteCounter = deleteCounter;
-            this.deletePage = $("#currentShowPage").val();
-
-            this.deleteItemsRender(deleteCounter, this.deletePage);
-        },
-
-        /*deleteItems: function() {
-            var $currentEl = this.$el;
-            var self = this;
-        },
-*/
         deleteItems: function () {
-            var $currentEl = this.$el;
-            var that = this;
-            var mid = 39;
+            var self = this;
+            var $thisEl = this.$el;
+            var $table = $thisEl.find('#listTable');
+            var mid = CONSTANTS.MID[this.contentType];
             var model;
-            var localCounter = 0;
-            var $checked = $('#listTable input:checked');
-            var count = $checked.length;
-            var message;
-            var enableDelete = true;
-
-            this.collectionLength = this.collection.length;
+            var $checkedInputs;
+            var value;
 
             if (!this.changed) {
-                var answer = confirm('Really DELETE items ?!');
-                var value;
+                $checkedInputs = $table.find('input:checked');
 
-                if (answer === true) {
+                $.each($checkedInputs, function (index, checkbox) {
+                    value = checkbox.value;
 
-                    App.startPreload();
+                    if (value.length < 24) {
+                        self.editCollection.remove(value);
+                        self.editCollection.on('remove', function () {
 
-                    $.each($checked, function (index, checkbox) {
-                        value = checkbox.value;
+                        }, self);
 
-                        if (value.length < 24) {
-                            that.editCollection.remove(value);
-                            that.editCollection.on('remove', function () {
-                                this.listLength--;
-                                localCounter++;
+                    } else {
+                        model = self.collection.get(value);
+                        model.destroy({
+                            headers: {
+                                mid: mid
+                            },
+                            wait   : true,
+                            success: function () {
+                                //self.collection.remove(model);
+                                // self.deleteItemsRender(self.deleteCounter, self.deletePage);
+                            },
 
-                                if (localCounter === count) {
-                                    that.triggerDeleteItemsRender(localCounter);
-                                }
-
-                            }, that);
-                        } else {
-                            model = that.collection.get(value);
-                            enableDelete = model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed';
-
-                            if (!model.toJSON().workflow) {
-                                if ($.trim($currentEl.find('[data-id="' + value + '"]').find('[data-content="workflow"]').text()) !== 'Closed') {
-                                    enableDelete = true;
-                                }
-                            }
-
-                            if (enableDelete) {
-                                model.destroy({
-                                    headers: {
-                                        mid: mid
-                                    },
-                                    wait   : true,
-                                    success: function () {
-                                        that.listLength--;
-                                        localCounter++;
-
-                                        if (localCounter === count) {
-                                            that.triggerDeleteItemsRender(localCounter);
-                                        }
-                                    },
-                                    error  : function (model, res) {
-                                        if (res.status === 403 && index === 0) {
-                                            App.render({
-                                                type   : 'error',
-                                                message: "You do not have permission to perform this action"
-                                            });
-                                        }
-                                        that.listLength--;
-                                        localCounter++;
-
-                                        if (localCounter === count) {
-                                            that.triggerDeleteItemsRender(localCounter);
-                                        }
-                                    }
-                                });
-                            } else {
-                                message = "You can't delete tCard with closed project.";
-
-                                App.render({
-                                    type   : 'error',
-                                    message: message
-                                });
-
-                                localCounter++;
-
-                                if (localCounter === count) {
-                                    that.triggerDeleteItemsRender(localCounter);
+                            error: function (_model, xhr) {
+                                if (xhr.status === 403) {
+                                    App.render({
+                                        type   : 'error',
+                                        message: 'You do not have permission to perform this action'
+                                    });
                                 }
                             }
-
-                        }
-                    });
-
-
-                }
+                        });
+                    }
+                });
             } else {
                 this.cancelChanges();
             }
+
         },
+
+        //deleteItems: function () {
+        //    var $currentEl = this.$el;
+        //    var that = this;
+        //    var mid = 39;
+        //    var model;
+        //    var localCounter = 0;
+        //    var $checked = $('#listTable input:checked');
+        //    var count = $checked.length;
+        //    var message;
+        //    var enableDelete = true;
+        //
+        //    this.collectionLength = this.collection.length;
+        //
+        //    if (!this.changed) {
+        //        var answer = confirm('Really DELETE items ?!');
+        //        var value;
+        //
+        //        if (answer === true) {
+        //
+        //            App.startPreload();
+        //
+        //            $.each($checked, function (index, checkbox) {
+        //                value = checkbox.value;
+        //
+        //                if (value.length < 24) {
+        //                    that.editCollection.remove(value);
+        //                    that.editCollection.on('remove', function () {
+        //                        this.listLength--;
+        //                        localCounter++;
+        //
+        //                        if (localCounter === count) {
+        //                            that.triggerDeleteItemsRender(localCounter);
+        //                        }
+        //
+        //                    }, that);
+        //                } else {
+        //                    model = that.collection.get(value);
+        //                    enableDelete = model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed';
+        //
+        //                    if (!model.toJSON().workflow) {
+        //                        if ($.trim($currentEl.find('[data-id="' + value + '"]').find('[data-content="workflow"]').text()) !== 'Closed') {
+        //                            enableDelete = true;
+        //                        }
+        //                    }
+        //
+        //                    if (enableDelete) {
+        //                        model.destroy({
+        //                            headers: {
+        //                                mid: mid
+        //                            },
+        //                            wait   : true,
+        //                            success: function () {
+        //                                that.listLength--;
+        //                                localCounter++;
+        //
+        //                                if (localCounter === count) {
+        //                                    that.triggerDeleteItemsRender(localCounter);
+        //                                }
+        //                            },
+        //                            error  : function (model, res) {
+        //                                if (res.status === 403 && index === 0) {
+        //                                    App.render({
+        //                                        type   : 'error',
+        //                                        message: "You do not have permission to perform this action"
+        //                                    });
+        //                                }
+        //                                that.listLength--;
+        //                                localCounter++;
+        //
+        //                                if (localCounter === count) {
+        //                                    that.triggerDeleteItemsRender(localCounter);
+        //                                }
+        //                            }
+        //                        });
+        //                    } else {
+        //                        message = "You can't delete tCard with closed project.";
+        //
+        //                        App.render({
+        //                            type   : 'error',
+        //                            message: message
+        //                        });
+        //
+        //                        localCounter++;
+        //
+        //                        if (localCounter === count) {
+        //                            that.triggerDeleteItemsRender(localCounter);
+        //                        }
+        //                    }
+        //
+        //                }
+        //            });
+        //
+        //
+        //        }
+        //    } else {
+        //        this.cancelChanges();
+        //    }
+        //},
 
         cancelChanges: function () {
             var self = this;

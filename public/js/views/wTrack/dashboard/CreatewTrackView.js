@@ -384,7 +384,7 @@ define([
 
         autoHoursPerDay: function (e) {
             var targetEl = $(e.target);
-            var isInput = targetEl.prop("tagName") === 'INPUT';
+            var isInput = targetEl.prop('tagName') === 'INPUT';
             var tr = targetEl.closest('tr');
             var edited = tr.find('input.editing');
             var days = tr.find('.autoCalc');
@@ -670,11 +670,12 @@ define([
                 dialogClass  : 'edit-dialog',
                 width        : '900px',
                 buttons      : {
-                    save  : {
+                    save: {
                         text : 'Save',
                         class: 'btn',
                         click: self.saveItem
                     },
+
                     cancel: {
                         text : 'Cancel',
                         class: 'btn',
@@ -693,5 +694,6 @@ define([
             return this;
         }
     });
+
     return CreateView;
 });

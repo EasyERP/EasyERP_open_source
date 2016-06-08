@@ -7,7 +7,6 @@ define([
     'views/wTrack/list/createJob',
     'views/wTrack/TopBarView',
     'views/wTrack/CreateView',
-    'views/wTrack/EditView',
     'helpers/eventsBinder',
     'jQuery',
     'chai',
@@ -21,13 +20,13 @@ define([
              createJob,
              TopBarView,
              CreateView,
-             EditView,
              eventsBinder,
              $,
              chai,
              chaiJquery,
              sinonChai) {
     'use strict';
+
     var expect;
     var fakeTCard = {
         total: 9309,

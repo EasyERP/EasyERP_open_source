@@ -4,6 +4,7 @@ define(['jQuery'], function ($) {
             collection.bind('showmore', contentView.showMoreContent, contentView);
             collection.bind('showmoreAlphabet', contentView.showMoreAlphabet, contentView);
             collection.bind('fetchFinished', contentView.setPagination, contentView);
+            collection.bind('remove', contentView.deleteItemsRender, contentView);
 
             $(document).on('click', function (e) {
                 contentView.hide(e);

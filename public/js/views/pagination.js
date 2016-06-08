@@ -243,9 +243,10 @@ define([
             var newRows = this.$el.find('#false');
             var elementId = $(event.target).attr('id');
             var data = {
-                sort    : this.sort,
-                filter  : this.filter,
-                viewType: this.viewType
+                sort       : this.sort,
+                filter     : this.filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
             };
 
             this.startTime = new Date();
@@ -304,13 +305,13 @@ define([
                 });
             }
 
-            this.getPage({page: page, viewType: this.viewType});
+            this.getPage({page: page, viewType: this.viewType, contentType: this.contentType});
         },
 
         nextPage: function (options) {
-            var page = options.page;
-            var count = options.count;
             var collection = this.collection;
+            var count = options.count;
+            var page = options.page || collection.currentPage + 1;
 
             options = options || {};
             count = count || collection.pageSize;
@@ -324,9 +325,9 @@ define([
         },
 
         previousPage: function (options) {
-            var page = options.page;
-            var count = options.count;
             var collection = this.collection;
+            var count = options.count;
+            var page = options.page || collection.currentPage - 1;
 
             options = options || {};
             count = count || collection.pageSize;
@@ -436,10 +437,11 @@ define([
             // hide delete & deselect checkAll
 
             this.collection.getPage(1, {
-                count   : itemsNumber,
-                page    : 1,
-                filter  : this.filter,
-                viewType: this.viewType
+                count      : itemsNumber,
+                page       : 1,
+                filter     : this.filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
             });
 
             this.changeLocationHash(1, itemsNumber);
