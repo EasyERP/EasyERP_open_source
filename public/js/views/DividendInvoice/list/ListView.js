@@ -40,17 +40,7 @@ define([
         },
 
         events: {
-            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog',
-            'click .newSelectList li'                        : 'chooseOption',
-            'click .selectList'                              : 'showSelects'
-        },
-
-        showSelects: function (e) {
-            e.preventDefault();
-
-            $(e.target).parent('td').append('<ul class="newSelectList"><li>Draft</li><li>Done</li></ul>');
-
-            e.stopPropagation();
+            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
         },
 
         saveItem: function () {
@@ -79,30 +69,6 @@ define([
             for (id in this.changedModels) {
                 delete this.changedModels[id];
             }
-        },
-
-        chooseOption: function (e) {
-            var target$ = $(e.target);
-            var targetElement = target$.parents('td');
-            var targetTr = target$.parents('tr');
-            var id = targetTr.attr('data-id');
-
-            if (!this.changedModels[id]) {
-                this.changedModels[id] = {};
-            }
-
-            if (!this.changedModels[id].hasOwnProperty('validated')) {
-                this.changedModels[id].validated = target$.text();
-                this.changesCount++;
-            }
-
-            targetElement.find('.selectList').text(target$.text());
-
-            this.hideNewSelect();
-
-            $('#top-bar-saveBtn').show();
-            return false;
-
         },
 
         render: function () {
@@ -184,38 +150,7 @@ define([
                     });
                 }
             });
-        },
-
-        deleteItemsRender: function (deleteCounter, deletePage) {
-            dataService.getData('/Invoice/totalCollectionLength', {
-                filter       : this.filter,
-                newCollection: this.newCollection
-            }, function (response, context) {
-                context.listLength = response.count || 0;
-            }, this);
-            this.deleteRender(deleteCounter, deletePage, {
-                filter          : this.filter,
-                newCollection   : this.newCollection,
-                parrentContentId: this.parrentContentId
-            });
-            if (deleteCounter !== this.collectionLength) {
-                var holder = this.$el;
-                var created = holder.find('#timeRecivingDataFromServer');
-                created.before(new ListItemView({
-                    collection : this.collection,
-                    page       : holder.find('#currentShowPage').val(),
-                    itemsNumber: holder.find('span#itemsNumber').text()
-                }).render());
-            }
-
-            var pagenation = this.$el.find('.pagination');
-            if (this.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
         }
-
     });
 
     return InvoiceListView;
