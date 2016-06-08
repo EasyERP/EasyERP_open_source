@@ -243,12 +243,7 @@ define([
                 url += '/c=' + count;
             }
 
-            if (!filter) {
-                locationFilter = location.split('/filter=')[1];
-                if (locationFilter) {
-                    url += '/filter=' + locationFilter;
-                }
-            } else {
+            if (filter) {
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
             }
 
@@ -374,6 +369,8 @@ define([
 
             if (filter && Object.keys(filter).length !== 0) {
                 this.filter = filter;
+            } else {
+                this.filter = null;
             }
 
             this.changeLocationHash(null, this.collection.pageSize, this.filter);

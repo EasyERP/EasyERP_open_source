@@ -375,6 +375,7 @@ var Module = function (models, event) {
 
                                 responseData.remaining = localRemaining;
                                 responseData.data = result;
+                                responseData.total = result.length;
                                 responseData.time = (new Date() - startTime);
                                 responseData.fold = (req.session.kanbanSettings.tasks.foldWorkflows && req.session.kanbanSettings.tasks.foldWorkflows.indexOf(data.workflowId.toString()) !== -1);
                                 res.send(responseData);
@@ -498,103 +499,115 @@ var Module = function (models, event) {
                         }
 
                         Task
-                            .aggregate([{
-                                $lookup: {
-                                    from        : 'Employees',
-                                    localField  : 'assignedTo',
-                                    foreignField: '_id',
-                                    as          : 'assignedTo'
+                            .aggregate([
+                                {
+                                    $lookup: {
+                                        from        : 'Employees',
+                                        localField  : 'assignedTo',
+                                        foreignField: '_id',
+                                        as          : 'assignedTo'
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from        : 'Project',
+                                        localField  : 'project',
+                                        foreignField: '_id',
+                                        as          : 'project'
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from        : 'Users',
+                                        localField  : 'createdBy.user',
+                                        foreignField: '_id',
+                                        as          : 'createdBy.user'
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from        : 'Users',
+                                        localField  : 'editedBy.user',
+                                        foreignField: '_id',
+                                        as          : 'editedBy.user'
+                                    }
+                                },
+                                {
+                                    $lookup: {
+                                        from        : 'workflows',
+                                        localField  : 'workflow',
+                                        foreignField: '_id',
+                                        as          : 'workflow'
+                                    }
+                                },
+                                {
+                                    $project: {
+                                        _id             : 1,
+                                        summary         : 1,
+                                        type            : 1,
+                                        workflow        : {$arrayElemAt: ['$workflow', 0]},
+                                        assignedTo      : {$arrayElemAt: ['$assignedTo', 0]},
+                                        project         : {$arrayElemAt: ['$project', 0]},
+                                        'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
+                                        'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
+                                        'createdBy.date': 1,
+                                        'editedBy.date' : 1,
+                                        StartDate       : 1,
+                                        EndDate         : 1,
+                                        logged          : 1,
+                                        tags            : 1,
+                                        progress        : 1,
+                                        status          : 1,
+                                        estimated       : 1,
+                                        sequence        : 1,
+                                        taskCount       : 1
+                                    }
+                                },
+                                {
+                                    $match: obj
+                                },
+                                {
+                                    $group: {
+                                        _id  : null,
+                                        total: {$sum: 1},
+                                        root : {$push: '$$ROOT'}
+                                    }
+                                },
+                                {
+                                    $unwind: '$root'
+                                },
+                                {
+                                    $project: {
+                                        _id             : '$root._id',
+                                        summary         : '$root.summary',
+                                        type            : '$root.type',
+                                        workflow        : '$root.workflow',
+                                        assignedTo      : '$root.assignedTo',
+                                        project         : '$root.project',
+                                        'editedBy.user' : '$root.editedBy.user',
+                                        'createdBy.user': '$root.createdBy.user',
+                                        'editedBy.date' : '$root.editedBy.date',
+                                        'createdBy.date': '$root.createdBy.date',
+                                        StartDate       : '$root.StartDate',
+                                        EndDate         : '$root.EndDate',
+                                        logged          : '$root.logged',
+                                        tags            : '$root.tags',
+                                        progress        : '$root.progress',
+                                        status          : '$root.status',
+                                        estimated       : '$root.estimated',
+                                        sequence        : '$root.sequence',
+                                        taskCount       : '$root.taskCount',
+                                        total           : 1
+                                    }
+                                },
+                                {
+                                    $sort: sort
+                                }, {
+                                    $skip: skip
+                                }, {
+                                    $limit: limit
                                 }
-                            }, {
-                                $lookup: {
-                                    from        : 'Project',
-                                    localField  : 'project',
-                                    foreignField: '_id',
-                                    as          : 'project'
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'Users',
-                                    localField  : 'createdBy.user',
-                                    foreignField: '_id',
-                                    as          : 'createdBy.user'
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'Users',
-                                    localField  : 'editedBy.user',
-                                    foreignField: '_id',
-                                    as          : 'editedBy.user'
-                                }
-                            }, {
-                                $lookup: {
-                                    from        : 'workflows',
-                                    localField  : 'workflow',
-                                    foreignField: '_id',
-                                    as          : 'workflow'
-                                }
-                            }, {
-                                $project: {
-                                    _id             : 1,
-                                    summary         : 1,
-                                    type            : 1,
-                                    workflow        : {$arrayElemAt: ['$workflow', 0]},
-                                    assignedTo      : {$arrayElemAt: ['$assignedTo', 0]},
-                                    project         : {$arrayElemAt: ['$project', 0]},
-                                    'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
-                                    'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
-                                    'createdBy.date': 1,
-                                    'editedBy.date' : 1,
-                                    StartDate       : 1,
-                                    EndDate         : 1,
-                                    logged          : 1,
-                                    tags            : 1,
-                                    progress        : 1,
-                                    status          : 1,
-                                    estimated       : 1,
-                                    sequence        : 1,
-                                    taskCount       : 1
-                                }
-                            }, {
-                                $group: {
-                                    _id  : null,
-                                    total: {$sum: 1},
-                                    root : {$push: '$$ROOT'}
-                                }
-                            }, {
-                                $unwind: '$root'
-                            }, {
-                                $project: {
-                                    _id             : '$root._id',
-                                    summary         : '$root.summary',
-                                    type            : '$root.type',
-                                    workflow        : '$root.workflow',
-                                    assignedTo      : '$root.assignedTo',
-                                    project         : '$root.project',
-                                    'editedBy.user' : '$root.editedBy.user',
-                                    'createdBy.user': '$root.createdBy.user',
-                                    'editedBy.date' : '$root.editedBy.date',
-                                    'createdBy.date': '$root.createdBy.date',
-                                    StartDate       : '$root.StartDate',
-                                    EndDate         : '$root.EndDate',
-                                    logged          : '$root.logged',
-                                    tags            : '$root.tags',
-                                    progress        : '$root.progress',
-                                    status          : '$root.status',
-                                    estimated       : '$root.estimated',
-                                    sequence        : '$root.sequence',
-                                    taskCount       : '$root.taskCount',
-                                    total           : 1
-                                }
-                            }, {
-                                $match: obj
-                            }, {
-                                $sort: sort
-                            }, {
-                                $skip: skip
-                            }, {
-                                $limit: limit
-                            }], function (err, result) {
+                            ], function (err, result) {
                                 var count;
                                 var response = {};
 
