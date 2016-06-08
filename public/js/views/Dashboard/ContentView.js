@@ -116,7 +116,8 @@ define([
             },
 
             getDateFromDayOfYear: function (index) {
-                return dateFormat(new Date(this.numberToDate[index]).toString('MMMM ,yyyy'), "mmmm dd, yyyy");
+                //return dateFormat(new Date(this.numberToDate[index]).toString('MMMM ,yyyy'), "mmmm dd, yyyy");
+                return moment(new Date(this.numberToDate[index])).format('MMM DD, YYYY');
             },
 
             getDay: function (index) {
