@@ -79,7 +79,7 @@ define([
             });
 
             if (modelId) {
-                editModel = this.editCollection.get(modelId);
+                editModel = this.editCollection.get(modelId) || {};
 
                 if (!this.changedModels[modelId]) {
                     if (!editModel.id) {
@@ -161,7 +161,7 @@ define([
             } else {
                 tempContainer = el.text();
                 width = el.width() - 6;
-                el.html("<input class='editing' type='text' value=''" + tempContainer + "style='width:'" + width + 'px>');
+                el.html("<input class='editing' type='text' value='" + tempContainer + "' style='width:'" + width + "px'>");
 
                 dataContent = el.attr('data-content');
                 editingEl = el.find('.editing');
