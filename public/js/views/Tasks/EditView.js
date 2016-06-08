@@ -102,7 +102,7 @@
             $('.edit-dialog').remove();
         },
 
-        /*switchTab: function (e) {
+        /* switchTab: function (e) {
          e.preventDefault();
          var link = this.$("#tabList a");
          if (link.hasClass("selected")) {
@@ -183,6 +183,7 @@
             }
             
             currentProject = this.currentModel.get('project');
+
             if (currentProject && currentProject._id && (currentProject._id !== project)) {
                 data.project = project;
             }
@@ -201,8 +202,8 @@
                     var result;
                     var $trHolder;
                     var editHolder = self.$el;
-                    var estimated;
-                    var logged;
+                    var newEstimated;
+                    var newLogged;
                     var progress;
                     var $kanbanHolder;
                     var counter;
@@ -224,16 +225,16 @@
                                 $trHolder.eq(4).find('a').data('id', project).text(editHolder.find('#projectDd').text());
                                 $trHolder.eq(5).find('a').text(editHolder.find('#workflowsDd').text());
                                 $trHolder.eq(6).text(editHolder.find('#assignedToDd').text());
-                                estimated = parseInt(editHolder.find('#estimated').val() || 0, 10);
-                                logged = parseInt(editHolder.find('#logged').val() || 0, 10);
-                                progress = Math.round(logged / estimated * 100);
+                                newEstimated = parseInt(editHolder.find('#estimated').val() || 0, 10);
+                                newLogged = parseInt(editHolder.find('#logged').val() || 0, 10);
+                                progress = Math.round(newLogged / newEstimated * 100);
                                 
                                 if ((progress === Infinity) || !progress) {
                                     progress = 0;
                                 }
                                 
-                                $trHolder.eq(7).text(estimated);
-                                $trHolder.eq(8).text(logged);
+                                $trHolder.eq(7).text(newEstimated);
+                                $trHolder.eq(8).text(newLogged);
                                 $trHolder.eq(9).find('a').text(editHolder.find('#type').text());
                                 $trHolder.eq(10).find('progress').val(progress);
                                 
@@ -316,7 +317,7 @@
             event.preventDefault();
 
             mid = 39;
-            answer = confirm("Really DELETE items ?!");
+            answer = confirm('Really DELETE items ?!');
             
             if (answer === true) {
                 this.currentModel.destroy({
@@ -327,6 +328,7 @@
                         var viewType;
                         var wId;
                         var newTotal;
+                        var $totalCount;
                         
                         model = model.toJSON();
                         viewType = custom.getCurrentVT();
@@ -340,10 +342,12 @@
                             case 'kanban':
                                 {
                                     $('#' + model._id).remove();
-                                    //count kanban
+                                    // count kanban
                                     wId = model.workflow._id;
-                                    newTotal = ($('td#' + wId + ' .totalCount').html() - 1);
-                                    $('td#' + wId + ' .totalCount').html(newTotal);
+                                    $totalCount = $('td#' + wId + ' .totalCount');
+                                    
+                                    newTotal = ($totalCount.html() - 1);
+                                    $totalCount.html(newTotal);
                                 }
                         }
                         self.hideDialog();
@@ -392,33 +396,40 @@
                 new noteView({
                     model: this.currentModel
                 }).render().el);
+
             notDiv.append(
                 new attachView({
                     model: this.currentModel,
                     url  : '/uploadTasksFiles'
                 }).render().el
             );
+
             populate.get('#projectDd', '/projects/getForDd', {}, 'name', this);
-            populate.getWorkflow("#workflowsDd", "#workflowNamesDd", CONSTANTS.URLS.WORKFLOWS_FORDD, {id: "Tasks"}, "name", this);
-            populate.get2name("#assignedToDd", CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
-            populate.getPriority("#priorityDd", this);
+            populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Tasks'}, 'name', this);
+            populate.get2name('#assignedToDd', CONSTANTS.URLS.EMPLOYEES_PERSONSFORDD, {}, this);
+            populate.getPriority('#priorityDd', this);
+
             this.delegateEvents(this.events);
-            $('#StartDate').datepicker({dateFormat: "d M, yy", minDate: new Date()});
-            $('#deadline').datepicker({
+
+            this.$el.find('#StartDate').datepicker({dateFormat: 'd M, yy', minDate: new Date()});
+            
+            /* $('#deadline').datepicker({
                 dateFormat : "d M, yy",
                 changeMonth: true,
                 changeYear : true,
                 minDate    : new Date()
-            });
-            //for input type number
-            this.$el.find("#logged").spinner({
+            });*/
+            
+            // for input type number
+            this.$el.find('#logged').spinner({
                 min: 0,
                 max: 1000
             });
-            this.$el.find("#estimated").spinner({
+            this.$el.find('#estimated').spinner({
                 min: 0,
                 max: 1000
             });
+
             return this;
         }
 

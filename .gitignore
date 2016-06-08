@@ -50,5 +50,5 @@ EasyErp-Desktop.sln
 .vs
 EasyErp-Desktop.iml
 helpers\redisClient.js
-/karma.conf.js
+karma.conf.js
 /.eslintrc

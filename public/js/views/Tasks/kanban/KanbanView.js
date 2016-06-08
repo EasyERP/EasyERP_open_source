@@ -44,7 +44,7 @@
             
             this.render();
             this.asyncFetch(options.workflowCollection, options.parrentContentId);
-            //this.getCollectionLengthByWorkflows(this, options.parrentContentId);
+            // this.getCollectionLengthByWorkflows(this, options.parrentContentId);
             
         },
 
@@ -66,6 +66,7 @@
             var w;
             var k;
             var idx;
+            var $closestTable;
 
             if (id) {
                 el = $('#' + id);
@@ -83,7 +84,7 @@
                     k = -2 - k;
                 }
                 k = -k;
-                el.find('.columnName .text').css({'left': k + 'px', 'top': Math.abs(w / 2 + 47) + 'px'});
+                el.find('.columnName .text').css({left: k + 'px', top: Math.abs(w / 2 + 47) + 'px'});
                 this.foldWorkflows.push(el.attr('id'));
             } else {
                 idx = this.foldWorkflows.indexOf(el.attr('id'));
@@ -95,16 +96,18 @@
             if (!id) {
                 this.updateFoldWorkflow();
             }
+
+            $closestTable = el.closest('table');
             
-            if (el.closest('table').find('.fold').length === el.closest('table').find('.column').length) {
-                el.closest('table').css({'min-width': 'inherit'});
+            if ($closestTable.find('.fold').length === $closestTable.find('.column').length) {
+                $closestTable.css({'min-width': 'inherit'});
             } else {
-                el.closest('table').css({'min-width': '100%'});
+                $closestTable.css({'min-width': '100%'});
             }
 
-            el.closest('table').css({'min-height': ($(window).height() - 110) + 'px'});
-            this.$('.column').sortable('enable');
-            this.$('.column.fold').sortable('disable');
+            $closestTable.css({'min-height': ($(window).height() - 110) + 'px'});
+            this.$el.find('.column').sortable('enable');
+            this.$el.find('.column.fold').sortable('disable');
         },
 
         nextSelect: function (e) {
@@ -184,6 +187,7 @@
             var countPerPage = $(this).find('#cPerPage').val();
             var id;
             var url;
+            var self = this;
 
             if (countPerPage === 0) {
                 countPerPage = 5;
@@ -194,7 +198,7 @@
 
             dataService.postData(CONSTANTS.URLS.CURRENT_USER, {'kanbanSettings.tasks.countPerPage': countPerPage}, function (error, success) {
                 if (success) {
-                    $('.edit-dialog').remove();
+                    self.hideDialog();
                     Backbone.history.fragment = '';
                     Backbone.history.navigate(url, {trigger: true});
                 }
@@ -252,8 +256,10 @@
         },
 
         selectItem: function (e) {
-            $(e.target).parents('.item').parents('table').find('.active').removeClass('active');
-            $(e.target).parents('.item').addClass('active');
+            var $itemParents = $(e.target).parents('.item');
+
+            $itemParents.parents('table').find('.active').removeClass('active');
+            $itemParents.addClass('active');
         },
 
         gotoEditForm: function (e) {
@@ -301,7 +307,7 @@
             var ids = _.map(arr, function (item) {
                 return item.assignedTo._id;
             });
-            //added condition(ids.length>0)  if no ids don't run common code)
+            // added condition(ids.length>0)  if no ids don't run common code)
             if (ids.length > 0) {
                 common.getImages(ids, '/employees/getEmployeesImages');
             }
@@ -340,12 +346,12 @@
         },
 
         editItem: function () {
-            //create editView in dialog here
+            // create editView in dialog here
             new EditView({collection: this.collection});
         },
 
         createItem: function () {
-            //create editView in dialog here
+            // create editView in dialog here
             new CreateView();
         },
 
@@ -353,6 +359,7 @@
             var a;
             var b;
             var inc;
+            var $workflowItems = this.$el.find('#' + workflow).find('.item');
 
             if (workflow === workflowStart) {
                 if (sequence > sequenceStart) {
@@ -369,7 +376,7 @@
                     inc = 1;
                 }
 
-                $('#' + workflow).find('.item').each(function () {
+                $workflowItems.each(function () {
                     var sec = parseInt($(this).find('.inner').attr('data-sequence'), 10);
                     
                     if (sec >= a && sec <= b) {
@@ -380,7 +387,7 @@
                 item.find('.inner').attr('data-sequence', sequence);
 
             } else {
-                $('#' + workflow).find('.item').each(function () {
+                $workflowItems.each(function () {
                     if (parseInt($(this).find('.inner').attr('data-sequence'), 10) >= sequence) {
                         $(this).find('.inner').attr('data-sequence', parseInt($(this).find('.inner').attr('data-sequence'), 10) + 1);
                     }
@@ -494,7 +501,6 @@
         render: function () {
             var self = this;
             var filterView;
-            var showList;
             var itemCount;
             var workflows = this.workflowsCollection.toJSON();
 
@@ -509,9 +515,10 @@
                 total = ' <span><span class="totalCount">' + itemCount + '</span> </span>';
                 column.find('.columnNameDiv h2').append(total);
             }, this);
+
             populate.getPriority('#priority', this);
 
-            this.$('.column').sortable({
+            this.$el.find('.column').sortable({
                 connectWith: '.column',
                 cancel     : 'h2',
                 cursor     : 'move',
@@ -525,7 +532,6 @@
                     var model = collection.get(id);
                     var column = ui.item.closest('.column');
 
-                    column.find('.totalCount').html(parseInt(column.find('.totalCount').html(), 10) - 1);
                     column.find('.totalCount').html(parseInt(column.find('.totalCount').html(), 10) - 1);
                     column.find('.remaining').html(parseInt(column.find('.remaining').html(), 10) - parseInt(model.get('remaining'), 10));
                 },
@@ -561,7 +567,6 @@
                                     collection.add(model2, {merge: true});
                                 }
                             });
-                        column.find('.totalCount').html(parseInt(column.find('.totalCount').html(), 10) + 1);
                         column.find('.totalCount').html(parseInt(column.find('.totalCount').html(), 10) + 1);
                         column.find('.remaining').html(parseInt(column.find('.remaining').html(), 10) + parseInt(model.get('remaining'), 10));
                     }
