@@ -16,14 +16,13 @@ define([
     'async',
     'constants',
     'helpers/keyCodeHelper'
-], function (Backbone, $, _, ListViewBase, listTemplate, cancelEdit, CreateView, ListItemView, currentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, keyCodes) {
+], function (Backbone, $, _, ListViewBase, listTemplate, cancelEdit, CreateView, ListItemView, CurrentModel, contentCollection, EditCollection, common, dataService, populate, async, CONSTANTS, keyCodes) {
     'use strict';
 
     var bonusTypeListView = ListViewBase.extend({
         contentType  : CONSTANTS.BONUSTYPE,
         viewType     : 'list',
         responseObj  : {},
-        createView   : CreateView,
         listTemplate : listTemplate,
         ListItemView : ListItemView,
         changedModels: {},
@@ -32,6 +31,7 @@ define([
             $(document).off('click');
 
             this.CreateView = CreateView;
+            this.CurrentModel = CurrentModel;
 
             this.startTime = options.startTime;
             this.collection = options.collection;
@@ -52,62 +52,13 @@ define([
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
-        setChangedValueToModel: function () {
-            var editedElement = this.$listTable.find('.editing');
-            var editedCol;
-            var editedElementRowId;
-            var editedElementContent;
-            var editedElementValue;
-
-            if (navigator.userAgent.indexOf('Firefox') > -1) {
-                this.setEditable(editedElement);
-            }
-
-            if (editedElement.length) {
-                editedCol = editedElement.closest('td');
-                editedElementRowId = editedElement.closest('tr').data('id');
-                editedElementContent = editedCol.data('content');
-                editedElementValue = editedElement.val();
-
-                if (!this.changedModels[editedElementRowId]) {
-                    this.changedModels[editedElementRowId] = {};
-                }
-                this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-
-                editedCol.text(editedElementValue);
-                editedElement.remove();
-            }
-        },
-
-        setEditable: function (td) {
-            if (!td.parents) {
-                td = $(td.target).closest('td');
-            }
-
-            td.addClass('edited');
-
-            if (this.isEditRows()) {
-                this.setChangedValue();
-            }
-
-            return false;
-        },
-
-        isEditRows: function () {
-            var edited = this.$listTable.find('.edited');
-
-            this.edited = edited;
-
-            return !!edited.length;
-        },
-
         editRow: function (e) {
             var el = $(e.target);
             var tr = $(e.target).closest('tr');
             var Ids = tr.data('id');
             var colContent = el.data('content');
             var isType = (colContent === 'bonusType');
-            var isPercent = (colContent === 'isPercent' );
+            var isPercent = (colContent === 'isPercent');
             var self = this;
             var isName = false;
             var prevValue;
@@ -192,34 +143,10 @@ define([
 
             changedAttr[datacontent] = target.text();
 
-            this.hideNewSelect();
+            this.hide(e);
             this.setEditable(targetElement);
 
             return false;
-        },
-
-        saveItem: function () {
-            var id;
-            var model;
-            var filled = true;
-
-            $('.editable').each(function (index, elem) {
-                if (!$(elem).html()) {
-                    filled = false;
-                    return false;
-                }
-            });
-
-            if (!filled) {
-                return App.render({type: 'error', message: 'Fill all fields please'});
-            }
-
-            this.setChangedValueToModel();
-            for (id in this.changedModels) {
-                model = this.editCollection.get(id);
-                model.changed = this.changedModels[id];
-            }
-            this.editCollection.save();
         },
 
         render: function () {
@@ -246,39 +173,7 @@ define([
                 self.$listTable = $('#listTable');
             }, 10);
 
-            this.createBtnEl = $('#top-bar-createBtn');
-            this.saveBtnEl = $('#top-bar-saveBtn');
-            this.cancelBtnEl = $('#top-bar-deleteBtn');
-
             return this;
-        },
-
-        setChangedValue: function () {
-            if (!this.changed) {
-                this.changed = true;
-                this.showSaveCancelBtns();
-            }
-        },
-
-        isNewRow: function () {
-            var newRow = $('#false');
-
-            return !!newRow.length;
-        },
-
-        createItem: function () {
-            var startData = {};
-
-            var model = new currentModel(startData);
-
-            startData.cid = model.cid;
-
-            this.showSaveCancelBtns();
-            this.editCollection.add(model);
-
-            new CreateView(startData);
-
-            this.changed = true;
         }
     });
 

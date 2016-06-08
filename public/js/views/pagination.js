@@ -476,7 +476,7 @@ define([
                 this.editCollection.add(model);
             }
 
-            return new CreateView(startData);
+            return new CreateView(model);
         },
 
         editItem: function () {
