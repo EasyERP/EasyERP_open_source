@@ -2,12 +2,14 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/Filter/FilterView',
     'constants',
     'common'
-], function (Backbone, $, _, CONSTANTS, common) {
+], function (Backbone, $, _, FilterView, CONSTANTS, common) {
     var View = Backbone.View.extend({
-        el    : '#content-holder',
-        filter: null,
+        el        : '#content-holder',
+        filter    : null,
+        FilterView: FilterView,
 
         events: {
             'click .oe_sortable': 'goSort',

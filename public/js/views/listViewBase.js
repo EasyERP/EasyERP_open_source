@@ -7,18 +7,16 @@ define([
     'text!templates/Notes/importTemplate.html',
     'views/pagination',
     'views/selectView/selectView',
-    'views/Filter/FilterView',
     'views/Notes/AttachView',
     'common',
     'dataService',
     'constants'
-], function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, Pagination, SelectView, FilterView, AttachView, common, dataService, CONSTANTS) {
+], function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS) {
     'use strict';
 
     var ListViewBase = Pagination.extend({
         viewType  : 'list',
         SelectView: SelectView,
-        FilterView: FilterView,
 
         events: {
             'click #previousPage, #nextPage, #firstShowPage, #lastShowPage': 'checkPage',
