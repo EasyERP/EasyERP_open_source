@@ -6,16 +6,17 @@ define([
     'text!templates/Alpabet/AphabeticTemplate.html',
     'text!templates/Notes/importTemplate.html',
     'views/pagination',
+    'views/selectView/selectView',
     'views/Notes/AttachView',
     'common',
     'dataService',
-    'constants',
-    'helpers'
-], function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, Pagination, AttachView, common, dataService, CONSTANTS, helpers) {
+    'constants'
+], function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS) {
     'use strict';
 
     var ListViewBase = Pagination.extend({
-        viewType: 'list',
+        viewType  : 'list',
+        SelectView: SelectView,
 
         events: {
             'click #previousPage, #nextPage, #firstShowPage, #lastShowPage': 'checkPage',
@@ -23,7 +24,7 @@ define([
             'click .showPage'                                              : 'showPage',
             'change #currentShowPage'                                      : 'showPage',
             'click .checkbox'                                              : 'checked',
-            'click .list td:not(.notForm)'                                 : 'gotoForm',
+            'click .list td:not(.notForm, .checkbox)'                      : 'gotoForm',
             'mouseover .currentPageList'                                   : 'showPagesPopup'
         },
 
@@ -214,6 +215,176 @@ define([
             } else {
                 pagenation.show();
             }
+        },
+
+        // added methods for edit in listView
+
+        savedNewModel: function (modelObject) {
+            var savedRow = this.$listTable.find('#false');
+            var modelId;
+            var checkbox = savedRow.find('input[type=checkbox]');
+
+            modelObject = modelObject.success;
+
+            if (modelObject) {
+                modelId = modelObject._id;
+                savedRow.attr('data-id', modelId);
+                checkbox.val(modelId);
+                savedRow.removeAttr('id');
+            }
+
+            this.hideSaveCancelBtns();
+            this.resetCollection(modelObject);
+        },
+
+        updatedOptions: function () {
+            this.hideSaveCancelBtns();
+            this.resetCollection();
+        },
+
+        resetCollection: function (model) {
+            if (model && model._id) {
+                model = new this.CurrentModel(model);
+
+                this.collection.add(model);
+            } else {
+                this.collection.set(this.EditCollection.models, {remove: false});
+            }
+        },
+
+        bindingEventsToEditedCollection: function (context) {
+            if (context.EditCollection) {
+                context.EditCollection.unbind();
+            }
+            context.EditCollection = new this.EditCollection(context.collection.toJSON());
+            context.EditCollection.on('saved', context.savedNewModel, context);
+            context.EditCollection.on('updated', context.updatedOptions, context);
+        },
+
+        keyDown: function (e) {
+            if (e.which === 13) {
+                this.setChangedValueToModel();
+            }
+        },
+
+        isNewRow: function () {
+            var newRow = $('#false');
+
+            return !!newRow.length;
+        },
+
+        editRow: function (e) {
+            var el = $(e.target);
+            var tr = $(e.target).closest('tr');
+            var trId = tr.data('id');
+            var colType = el.data('type');
+            var isSelect = colType !== 'input' && el.prop('tagName') !== 'INPUT';
+            var tempContainer;
+            var width;
+
+            e.stopPropagation();
+
+            if (el.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (trId && el.prop('tagName') !== 'INPUT') {
+                this.modelId = trId;
+                this.setChangedValueToModel();
+            }
+
+            if (isSelect) {
+                this.showNewSelect(e);
+            } else {
+                tempContainer = el.text();
+                width = el.width() - 6;
+                el.html("<input class='editing' type='text' value='" + tempContainer + " ' style='width:'" + width + "px'>");
+            }
+
+            return false;
+        },
+
+        setEditable: function (td) {
+
+            if (!td.parents) {
+                td = $(td.target).closest('td');
+            }
+
+            td.addClass('edited');
+
+            if (this.isEditRows()) {
+                this.setChangedValue();
+            }
+
+            return false;
+        },
+
+        setChangedValue: function () {
+            if (!this.changed) {
+                this.changed = true;
+                this.showSaveCancelBtns();
+            }
+        },
+
+        isEditRows: function () {
+            var edited = this.$el.find('.edited');
+
+            this.edited = edited;
+
+            return !!edited.length;
+        },
+
+        saveItem: function () {
+            var model;
+            var id;
+            var errors = this.$el.find('.errorContent');
+
+            for (id in this.changedModels) {
+                model = this.EditCollection.get(id) || this.collection.get(id);
+                model.changed = this.changedModels[id];
+            }
+
+            if (errors.length) {
+                return;
+            }
+
+            this.EditCollection.save();
+            this.changedModels = {};
+
+            this.deleteEditable();
+        },
+
+        deleteEditable: function () {
+            this.$el.find('.edited').removeClass('edited');
+        },
+
+        errorFunction: function () {
+            App.render({
+                type   : 'error',
+                message: 'Some error'
+            });
+        },
+
+        showNewSelect: function (e) {
+            var $target = $(e.target);
+            e.stopPropagation();
+
+            if ($target.attr('id') === 'selectInput') {
+                return false;
+            }
+
+            if (this.selectView) {
+                this.selectView.remove();
+            }
+
+            this.selectView = new this.SelectView({
+                e          : e,
+                responseObj: this.responseObj
+            });
+
+            $target.append(this.selectView.render().el);
+
+            return false;
         },
 
         exportToCsv: function () {

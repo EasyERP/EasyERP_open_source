@@ -22,7 +22,7 @@ define([
              invoiceModel,
              listItemView,
              contentCollection,
-             filterView,
+             FilterView,
              common,
              dataService,
              helpers,
@@ -34,7 +34,7 @@ define([
         listTemplate            : listTemplate,
         listItemView            : listItemView,
         contentCollection       : contentCollection,
-        filterView              : filterView,
+        FilterView              : FilterView,
         totalCollectionLengthUrl: '/Invoice/totalCollectionLength',
         contentType             : CONSTANTS.SALESINVOICE, // 'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
         changedModels           : {},

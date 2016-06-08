@@ -2,13 +2,15 @@ define([
     'Backbone',
     'jQuery',
     'Underscore',
+    'views/Filter/FilterView',
     'constants',
     'common'
-], function (Backbone, $, _, CONSTANTS, common) {
+], function (Backbone, $, _, FilterView, CONSTANTS, common) {
     var View = Backbone.View.extend({
-        el    : '#content-holder',
-        filter: null,
-        
+        el        : '#content-holder',
+        filter    : null,
+        FilterView: FilterView,
+
         events: {
             'click .oe_sortable': 'goSort',
             'click #checkAll'   : 'checkAll',
@@ -23,35 +25,44 @@ define([
         checkAll: function (e) {
             var $thisEl = this.$el;
             var $el = e ? $(e.target) : $thisEl.find('#checkAll');
-            var self = this;
             var $checkedContent = (this.viewType === 'thumbnails') ?
                 $thisEl.find('.thumbnailsItems') :
-                $thisEl.find('.listTable');
+                $thisEl.find('.list');
 
             var $checkboxes = $checkedContent.find(':checkbox:not(.notRemovable)');
             var check = $el.prop('checked');
 
+            if (e) {
+                e.stopPropagation();
+            }
+
             $checkboxes.prop('checked', check);
 
-            // todo change for this.$topBar...
-            if ($checkboxes.length > 0) {
-                $('#top-bar-deleteBtn').show();
-            } else {
-                $('#top-bar-deleteBtn').hide();
+            this.inputClick(e);
+        },
+
+        checked: function (e) {
+            var $targetEl = $(e.target);
+            var $targetDivContainer = $targetEl.closest('.listRow') && $targetEl.closest('.listRow').length ? $targetEl.closest('.listRow') : $targetEl.closest('tr'); // add or option
+            var $checkbox = $targetDivContainer.find('input[type="checkbox"]');
+            // var checked = $checkbox.prop('checked');
+
+            if (e) {
+                e.stopPropagation();
             }
 
-            if (typeof(self.setAllTotalVals) === 'function') {   // added in case of existing setAllTotalVals method in View
-                self.setAllTotalVals();
-            }
-
+            // $checkbox.prop('checked', !checked); //commented by Liliya
             this.inputClick(e);
         },
 
         inputClick: function (e) {
             var $thisEl = this.$el;
-            var $checkBoxes = $thisEl.find('input[type="checkbox"]:checked:not(#checkAll,notRemovable)');
+            var $topBar = $('#top-bar');
+            var $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll,notRemovable)');
             var $currentChecked = e ? $(e.target) : $thisEl.find('#checkAll');
             var checkAllBool = ($checkBoxes.length === this.collection.length);
+            var $deleteButton = $topBar.find('#top-bar-deleteBtn');
+            var $createButton = $topBar.find('#top-bar-createBtn');
 
             if ($currentChecked.attr('id') !== 'checkAll') {
                 if (checkAllBool) {
@@ -59,6 +70,15 @@ define([
                 } else {
                     this.$el.find('#checkAll').prop('checked', false);
                 }
+
+            }
+
+            if ($checkBoxes.length > 0) {
+                $deleteButton.show();
+                $createButton.hide();
+            } else {
+                $deleteButton.hide();
+                $createButton.show();
             }
 
             this.trigger('selectedElementsChanged', {
@@ -69,10 +89,6 @@ define([
 
             if (typeof(this.setAllTotalVals) === 'function') {   // added in case of existing setAllTotalVals in View
                 this.setAllTotalVals();
-            }
-
-            if (e) {
-                e.stopPropagation();
             }
         },
 
@@ -445,20 +461,6 @@ define([
             this.changeLocationHash(1, itemsNumber);
         },
 
-        checked: function (e) {
-            e.stopPropagation();
-        },
-
-        checklistRow: function (e) {
-            var $targetEl = $(e.target);
-            var $targetDivContainer = $targetEl.closest('.listRow');
-            var $checkbox = $targetDivContainer.find('input[type="checkbox"]');
-            var checked = $checkbox.prop('checked');
-
-            $checkbox.prop('checked', !checked);
-            this.inputClick(e);
-        },
-
         createItem: function () {
             var CreateView = this.CreateView || Backbone.View.extend({});
 
@@ -528,6 +530,37 @@ define([
                     }
                 });
             });
+        },
+
+        showSaveCancelBtns: function () {
+            var $topBar = $('#top-bar');
+            var saveBtnEl = $topBar.find('#top-bar-saveBtn');
+            var cancelBtnEl = $topBar.find('#top-bar-deleteBtn');
+            var createBtnEl = $topBar.find('#top-bar-createBtn');
+
+            if (!this.changed) {
+                createBtnEl.hide();
+            }
+            saveBtnEl.show();
+            cancelBtnEl.show();
+            createBtnEl.hide();
+
+            return false;
+        },
+
+        hideSaveCancelBtns: function () {
+            var $topBar = $('#top-bar');
+            var createBtnEl = $topBar.find('#top-bar-createBtn');
+            var saveBtnEl = $topBar.find('#top-bar-saveBtn');
+            var cancelBtnEl = $topBar.find('#top-bar-deleteBtn');
+
+            this.changed = false;
+
+            saveBtnEl.hide();
+            cancelBtnEl.hide();
+            createBtnEl.show();
+
+            return false;
         },
 
         clickItem: function (e) {
@@ -630,7 +663,6 @@ define([
                         $pageList.append('<li class="showPage">' + i + '</li>');
                     }
                 }
-
 
                 $lastPage.text(pageNumber);
 

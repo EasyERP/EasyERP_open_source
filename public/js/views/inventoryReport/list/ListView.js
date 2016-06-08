@@ -12,15 +12,15 @@ define([
     'common',
     'moment',
     'custom'
-], function (_, $, listViewBase, listTemplate, ListItemView, filterView, contentCollection, CONSTANTS, helpers, dataService, common, moment, custom) {
+], function (_, $, listViewBase, listTemplate, ListItemView, FilterView, contentCollection, CONSTANTS, helpers, dataService, common, moment, custom) {
     'use strict';
 
     var ListView = listViewBase.extend({
-        listTemplate            : listTemplate,
-        ListItemView             : ListItemView,
-        filterView              : filterView,
-        contentCollection       : contentCollection,
-        contentType             : CONSTANTS.INVENTORYREPORT,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        FilterView       : FilterView,
+        contentCollection: contentCollection,
+        contentType      : CONSTANTS.INVENTORYREPORT,
 
         initialize: function (options) {
             var dateRange;
@@ -120,7 +120,7 @@ define([
             });
         },
 
-        calcTotal: function () {
+        recalcTotal: function () {
             var $curEl = this.$el;
             var $rows = $curEl.find('#listTable tr').not('#listFooter');
 
@@ -161,8 +161,8 @@ define([
             });
 
             $currentEl.prepend(itemView.render());
-            
-            this.calcTotal();
+
+            this.recalcTotal();
 
             this.renderPagination($currentEl, this);
 

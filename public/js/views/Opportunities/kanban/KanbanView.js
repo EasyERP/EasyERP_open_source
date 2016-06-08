@@ -15,11 +15,11 @@
     'collections/Opportunities/filterCollection',
     'constants',
     'helpers'
-], function (Backbone, _, $, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, OpportunitiesCollection, CurrentModel, dataService, filterView, contentCollection, CONSTANTS, helpers) {
+], function (Backbone, _, $, WorkflowsTemplate, kanbanSettingsTemplate, WorkflowsCollection, KanbanItemView, EditView, CreateView, OpportunitiesCollection, CurrentModel, dataService, FilterView, contentCollection, CONSTANTS, helpers) {
     var collection = new OpportunitiesCollection();
     var OpportunitiesKanbanView = Backbone.View.extend({
         el               : '#content-holder',
-        filterView       : filterView,
+        FilterView       : FilterView,
         contentCollection: contentCollection,
         contentType      : 'Opportunities',
         viewType         : 'kanban',
@@ -40,7 +40,7 @@
 
             this.render();
 
-            this.filterView.trigger('filter', App.filter);
+            this.FilterView.trigger('filter', App.filter);
 
             // this.asyncFetc(options.workflowCollection.toJSON());
             // this.getCollectionLengthByWorkflows(this);
@@ -437,19 +437,19 @@
         renderFilter: function () {
             var self = this;
 
-            self.filterView = new this.filterView({
+            self.FilterView = new this.FilterView({
                 contentType: self.contentType
             });
 
-            self.filterView.bind('filter', function (filter) {
+            self.FilterView.bind('filter', function (filter) {
                 self.showFilteredPage(filter);
             });
 
-            self.filterView.bind('defaultFilter', function () {
+            self.FilterView.bind('defaultFilter', function () {
                 self.showFilteredPage({});
             });
 
-            self.filterView.render();
+            self.FilterView.render();
         },
 
         showFilteredPage: function (filter) {

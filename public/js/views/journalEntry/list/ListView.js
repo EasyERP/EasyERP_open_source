@@ -6,7 +6,6 @@ define([
     'views/journalEntry/list/ListItemView',
     'views/salesInvoice/EditView',
     'views/DividendInvoice/EditView',
-    'views/Filter/FilterView',
     'models/InvoiceModel',
     'collections/journalEntry/filterCollection',
     'constants',
@@ -22,7 +21,6 @@ define([
              ListItemView,
              EditView,
              DividendEditView,
-             filterView,
              InvoiceModel,
              contentCollection,
              CONSTANTS,
@@ -37,7 +35,6 @@ define([
     var ListView = listViewBase.extend({
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
-        filterView       : filterView,
         contentCollection: contentCollection,
         contentType      : CONSTANTS.JOURNALENTRY,
         exportToXlsxUrl  : 'journalEntries/exportToXlsx',
@@ -115,7 +112,7 @@ define([
                 filter   : this.filter
             };
 
-            this.collection.showMore(searchObject);
+            this.collection.getFirstPage(searchObject);
             this.changeLocationHash(1, itemsNumber, this.filter);
 
             App.filter = this.filter;
@@ -134,14 +131,13 @@ define([
             custom.cacheToApp('journalEntry.filter', this.filter);
 
             this.changeLocationHash(1, itemsNumber, filter);
-            this.collection.showMore({
+            this.collection.getFirstPage({
                 count    : itemsNumber,
                 page     : 1,
                 filter   : filter,
                 startDate: this.startDate,
                 endDate  : this.endDate
             });
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
         },
 
         viewSourceDocument: function (e) {
@@ -212,7 +208,7 @@ define([
             });
 
             $currentEl.prepend(itemView.render());
-            
+
             this.renderFilter(this);
 
             this.renderPagination($currentEl, this);

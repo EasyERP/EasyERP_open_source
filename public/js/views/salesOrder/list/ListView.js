@@ -16,7 +16,7 @@ define([
     'constants',
     'helpers',
     'helpers'
-], function ($, _, listViewBase, listTemplate, listForWTrack, stagesTamplate, createView, ListItemView, ListTotalView, EditView, QuotationModel, contentCollection, filterView, dataService, CONSTANTS, helpers) {
+], function ($, _, listViewBase, listTemplate, listForWTrack, stagesTamplate, createView, ListItemView, ListTotalView, EditView, QuotationModel, contentCollection, FilterView, dataService, CONSTANTS, helpers) {
     'use strict';
 
     var OrdersListView = listViewBase.extend({
@@ -25,7 +25,7 @@ define([
         listTemplate            : listTemplate,
         listItemView            : ListItemView,
         contentCollection       : contentCollection,
-        filterView              : filterView,
+        FilterView              : FilterView,
         contentType             : 'salesOrder', // needs in view.prototype.changeLocationHash
         totalCollectionLengthUrl: '/order/totalCollectionLength',
 

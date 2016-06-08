@@ -25,7 +25,7 @@ define([
         contentType       : CONSTANTS.SALARYREPORT, // needs in view.prototype.changeLocationHash
         viewType          : 'list', // needs in view.prototype.changeLocationHash
         yearElement       : null,
-        filterView        : FilterView,
+        FilterView        : FilterView,
 
         initialize: function (options) {
             var dateRange;

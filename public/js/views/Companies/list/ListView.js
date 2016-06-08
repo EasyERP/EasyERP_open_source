@@ -17,7 +17,7 @@ define([
         listTemplate            : listTemplate,
         ListItemView            : ListItemView,
         contentCollection       : contentCollection,
-        filterView              : FilterView,
+        FilterView              : FilterView,
         contentType             : 'Companies',
         totalCollectionLengthUrl: '/companies/totalCollectionLength',
         formUrl                 : '#easyErp/Companies/form/',
