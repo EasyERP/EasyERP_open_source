@@ -1,103 +1,101 @@
 define([
-        'jQuery',
-        'Underscore',
-        'views/listViewBase',
-        'text!templates/Companies/list/ListHeader.html',
-        'views/Companies/CreateView',
-        'views/Companies/list/ListItemView',
-        'collections/Companies/filterCollection',
-        'views/Filter/FilterView',
-        'common',
-        'constants'
-    ],
+    'jQuery',
+    'Underscore',
+    'views/listViewBase',
+    'text!templates/Companies/list/ListHeader.html',
+    'views/Companies/CreateView',
+    'views/Companies/list/ListItemView',
+    'collections/Companies/filterCollection',
+    'views/Filter/FilterView',
+    'common',
+    'constants'
+], function ($, _, listViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {
+    'use strict';
+    var CompaniesListView = listViewBase.extend({
 
-    function ($, _, listViewBase, listTemplate, createView, listItemView, contentCollection, filterView, common, CONSTANTS) {
-        'use strict';
-        var CompaniesListView = listViewBase.extend({
+        CreateView              : CreateView,
+        listTemplate            : listTemplate,
+        ListItemView            : ListItemView,
+        contentCollection       : contentCollection,
+        filterView              : FilterView,
+        contentType             : 'Companies',
+        totalCollectionLengthUrl: '/companies/totalCollectionLength',
+        formUrl                 : '#easyErp/Companies/form/',
+        exportToXlsxUrl         : '/Customers/exportToXlsx/?type=Companies',
+        exportToCsvUrl          : '/Customers/exportToCsv/?type=Companies',
 
-            createView              : createView,
-            listTemplate            : listTemplate,
-            listItemView            : listItemView,
-            contentCollection       : contentCollection,
-            filterView              : filterView,
-            contentType             : "Companies",
-            totalCollectionLengthUrl: '/companies/totalCollectionLength',
-            formUrl                 : "#easyErp/Companies/form/",
-            exportToXlsxUrl         : '/Customers/exportToXlsx/?type=Companies',
-            exportToCsvUrl          : '/Customers/exportToCsv/?type=Companies',
+        events: {
+            'click .letter:not(.empty)': 'alpabeticalRender'
+        },
 
-            events: {
-                "click .letter:not(.empty)": "alpabeticalRender"
-            },
+        initialize: function (options) {
+            this.mId = CONSTANTS.MID[this.contentType];
+            this.startTime = options.startTime;
+            this.collection = options.collection;
+            //_.bind(this.collection.showMore, this.collection);
+            _.bind(this.collection.showMoreAlphabet, this.collection);
+            this.allAlphabeticArray = common.buildAllAphabeticArray();
+            this.filter = options.filter;
+            this.defaultItemsNumber = this.collection.namberToShow || 100;
+            this.newCollection = options.newCollection;
 
-            initialize: function (options) {
-                this.mId = CONSTANTS.MID[this.contentType];
-                this.startTime = options.startTime;
-                this.collection = options.collection;
-                _.bind(this.collection.showMore, this.collection);
-                _.bind(this.collection.showMoreAlphabet, this.collection);
-                this.allAlphabeticArray = common.buildAllAphabeticArray();
-                this.filter = options.filter;
-                this.defaultItemsNumber = this.collection.namberToShow || 100;
-                this.newCollection = options.newCollection;
+            this.deleteCounter = 0;
+            this.page = options.collection.currentPage;
 
-                this.deleteCounter = 0;
-                this.page = options.collection.page;
+            this.render();
 
-                this.render();
+            // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+            this.contentCollection = contentCollection;
+        },
 
-                this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-                this.contentCollection = contentCollection;
-            },
+        exportToXlsx: function () {
+            var tempExportToXlsxUrl = '';
 
-            exportToXlsx: function () {
-                var tempExportToXlsxUrl = '';
-
-                if (this.exportToXlsxUrl) {
-                    tempExportToXlsxUrl = this.exportToXlsxUrl;
-                    if (this.filter) {
-                        tempExportToXlsxUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
-                    }
-                    window.location = tempExportToXlsxUrl;
+            if (this.exportToXlsxUrl) {
+                tempExportToXlsxUrl = this.exportToXlsxUrl;
+                if (this.filter) {
+                    tempExportToXlsxUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
                 }
-            },
+                window.location = tempExportToXlsxUrl;
+            }
+        },
 
-            exportToCsv: function () {
-                var tempExportToCsvUrl = '';
+        exportToCsv: function () {
+            var tempExportToCsvUrl = '';
 
-                if (this.exportToCsvUrl) {
-                    tempExportToCsvUrl = this.exportToCsvUrl;
-                    if (this.filter) {
-                        tempExportToCsvUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
-                    }
-                    window.location = tempExportToCsvUrl;
+            if (this.exportToCsvUrl) {
+                tempExportToCsvUrl = this.exportToCsvUrl;
+                if (this.filter) {
+                    tempExportToCsvUrl += '&filter=' + encodeURIComponent(JSON.stringify(this.filter));
                 }
-            },
+                window.location = tempExportToCsvUrl;
+            }
+        },
 
-            render: function () {
-                var self;
-                var $currentEl;
+        render: function () {
+            var self;
+            var $currentEl;
 
-                $('.ui-dialog ').remove();
+            $('.ui-dialog ').remove();
 
-                self = this;
-                $currentEl = this.$el;
+            self = this;
+            $currentEl = this.$el;
 
-                $currentEl.html('');
-                $currentEl.append(_.template(this.listTemplate));
-                $currentEl.append(new this.listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                }).render());
+            $currentEl.html('');
+            $currentEl.append(_.template(this.listTemplate));
+            $currentEl.append(new this.ListItemView({
+                collection : this.collection,
+                page       : this.page,
+                itemsNumber: this.collection.pageSize
+            }).render());
 
                 this.renderAlphabeticalFilter(this);
                 this.renderPagination($currentEl, this);
 
-                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
-                this.renderFilter(self);
-            }
-        });
-        return CompaniesListView;
+            this.renderFilter(self);
+        }
     });
+    return CompaniesListView;
+});

@@ -40,7 +40,7 @@ define([
     'use strict';
 
     var fakePersons = {
-        total: 100,
+        total: 6,
         data : [
             {
                 _id     : "55b92ad521e4b7c40f00060c",
@@ -84,10 +84,6 @@ define([
                 id      : "55d37d50226ed3280b000006"
             }
         ]
-    };
-    var fakeCollectionTotal = {
-        showMore: false,
-        count   : 98
     };
     var fakeAlfabetic = {
         data: [
@@ -142,7 +138,7 @@ define([
         ]
     };
     var fakePersonsForList = {
-        total: 10,
+        total: 250,
         data : [
             {
                 _id      : "56d024b4b5057fdb22ff9095",
@@ -11269,6 +11265,7 @@ define([
     var formView;
     var editView;
     var personsCollection;
+    var ajaxSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -11278,11 +11275,16 @@ define([
         var $fixture;
         var $elFixture;
         var selectSpy;
+        var removeFilterSpy;
+        var saveFilterSpy;
         var debounceStub;
         var historyNavigateSpy;
 
         before(function () {
+            ajaxSpy = sinon.spy($, 'ajax');
             selectSpy = sinon.spy(FilterView.prototype, 'selectValue');
+            removeFilterSpy = sinon.spy(FilterView.prototype, 'removeFilter');
+            saveFilterSpy = sinon.spy(FilterView.prototype, 'saveFilter');
             debounceStub = sinon.stub(_, 'debounce', function (debounceFunction) {
                 return debounceFunction;
             });
@@ -11292,13 +11294,17 @@ define([
         after(function () {
             view.remove();
             topBarView.remove();
-            //formView.remove();
-            //thumbnailsView.remove();
-            //listView.remove();
-            //editView.remove();
+            formView.remove();
+            thumbnailsView.remove();
+            listView.remove();
+            editView.remove();
+
+            ajaxSpy.restore();
             historyNavigateSpy.restore();
             selectSpy.restore();
             debounceStub.restore();
+            removeFilterSpy.restore();
+            saveFilterSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -11368,12 +11374,13 @@ define([
 
                 server.respondWith('GET', personUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersonsForList)]);
                 personsCollection = new PersonsCollection({
-                    contentType  : 'Persons',
-                    filter       : null,
-                    newCollection: false,
-                    viewType     : 'list',
-                    page         : 1,
-                    count        : 100
+                    contentType: 'Persons',
+                    filter     : null,
+                    viewType   : 'list',
+                    page       : 1,
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false
                 });
                 server.respond();
 
@@ -11396,211 +11403,166 @@ define([
                 var $thumbnailsBtn = $topBarEl.find('a[data-view-type="thumbnails"]');
 
                 $listBtn.click();
-
                 expect(window.location.hash).to.equals('#easyErp/Persons/list');
 
                 $thumbnailsBtn.click();
-
                 expect(window.location.hash).to.equals('#easyErp/Persons/thumbnails');
             });
         });
 
-        /*describe('Persons list View', function () {
-         var $thisEl;
-         var server;
-         var windowConfirmStub;
-         var clock;
-         var exportToCSVStub;
-         var exportToXlcsStub;
+        describe('Persons list View', function () {
+            var $thisEl;
+            var server;
+            var windowConfirmStub;
+            var clock;
+            var exportToCSVStub;
+            var exportToXlcsStub;
 
-         before(function () {
-         server = sinon.fakeServer.create();
-         windowConfirmStub = sinon.stub(window, 'confirm');
-         windowConfirmStub.returns(true);
-         clock = sinon.useFakeTimers();
-         exportToCSVStub = sinon.stub(ListView.prototype, 'exportToCsv');
-         exportToCSVStub.returns(true);
-         exportToXlcsStub = sinon.stub(ListView.prototype, 'exportToXlsx');
-         exportToXlcsStub.returns(true);
-         });
+            before(function () {
+                server = sinon.fakeServer.create();
+                windowConfirmStub = sinon.stub(window, 'confirm');
+                windowConfirmStub.returns(true);
+                clock = sinon.useFakeTimers();
+                exportToCSVStub = sinon.stub(ListView.prototype, 'exportToCsv');
+                exportToCSVStub.returns(true);
+                exportToXlcsStub = sinon.stub(ListView.prototype, 'exportToXlsx');
+                exportToXlcsStub.returns(true);
+            });
 
-         after(function () {
-         clock.restore();
-         server.restore();
-         windowConfirmStub.restore();
-         exportToCSVStub.restore();
-         exportToXlcsStub.restore();
-         });
+            after(function () {
+                clock.restore();
+                server.restore();
+                windowConfirmStub.restore();
+                exportToCSVStub.restore();
+                exportToXlcsStub.restore();
+            });
 
-         it('Try to create Persons list view', function (done) {
-         var personsAlphabetUrl = new RegExp('\/persons\/getPersonAlphabet', 'i');
-         var $searchContainerEl;
-         var $alphabetEl;
-         var $firstRow;
-         var colCount;
-         var firstName;
-         var lastName;
-         var email;
-         var phone;
-         var country;
-         var createdBy;
-         var editedBy;
+            it('Try to create Persons list view', function (done) {
+                var personsAlphabetUrl = new RegExp('\/persons\/getPersonAlphabet', 'i');
+                var $searchContainerEl;
+                var $alphabetEl;
+                var $firstRow;
+                var colCount;
+                var firstName;
+                var lastName;
+                var email;
+                var phone;
+                var country;
+                var createdBy;
+                var editedBy;
+                var $pagination;
+                var $currentPageList;
 
-         server.respondWith('GET', personsAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlfabetic)]);
-         listView = new ListView({
-         collection: personsCollection,
-         startTime : new Date()
-         });
-         server.respond();
-         clock.tick(300);
+                server.respondWith('GET', personsAlphabetUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeAlfabetic)]);
+                listView = new ListView({
+                    collection: personsCollection,
+                    startTime : new Date()
+                });
+                server.respond();
+                clock.tick(300);
 
-         eventsBinder.subscribeCollectionEvents(personsCollection, listView);
-         eventsBinder.subscribeTopBarEvents(topBarView, listView);
+                eventsBinder.subscribeCollectionEvents(personsCollection, listView);
+                eventsBinder.subscribeTopBarEvents(topBarView, listView);
 
-         $thisEl = listView.$el;
+                personsCollection.trigger('fetchFinished', {
+                    totalRecords: personsCollection.totalRecords,
+                    currentPage : personsCollection.currentPage,
+                    pageSize    : personsCollection.pageSize
+                });
 
-         $searchContainerEl = $thisEl.find('.search-view');
-         $alphabetEl = $thisEl.find('#startLetter');
+                $thisEl = listView.$el;
 
-         expect($thisEl).to.exist;
-         expect($searchContainerEl).to.exist;
-         expect($alphabetEl).to.exist;
-         expect($thisEl.find('table')).to.exist;
-         expect($thisEl.find('table')).to.have.class('list');
-         expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
+                $searchContainerEl = $thisEl.find('.search-view');
+                $alphabetEl = $thisEl.find('#startLetter');
 
-         $firstRow = $thisEl.find('#listTable > tr').first();
+                expect($thisEl).to.exist;
+                expect($searchContainerEl).to.exist;
+                expect($alphabetEl).to.exist;
+                expect($thisEl.find('table')).to.exist;
+                expect($thisEl.find('table')).to.have.class('list');
+                expect($thisEl.find('#listTable > tr').length).to.be.equals(3);
 
-         colCount = $firstRow.find('td').length;
-         expect(colCount).to.be.equals(9);
+                $firstRow = $thisEl.find('#listTable > tr').first();
 
-         firstName = $firstRow.find('td:nth-child(3)').text();
-         expect(firstName).not.to.be.empty;
-         expect(firstName).to.not.match(/object Object|undefined/);
+                colCount = $firstRow.find('td').length;
+                expect(colCount).to.be.equals(9);
 
-         lastName = $firstRow.find('td:nth-child(4)').text();
-         expect(lastName).to.not.match(/object Object|undefined/);
+                firstName = $firstRow.find('td:nth-child(3)').text();
+                expect(firstName).not.to.be.empty;
+                expect(firstName).to.not.match(/object Object|undefined/);
 
-         email = $firstRow.find('td:nth-child(5)').text();
-         expect(email).to.not.match(/object Object|undefined/);
+                lastName = $firstRow.find('td:nth-child(4)').text();
+                expect(lastName).to.not.match(/object Object|undefined/);
 
-         expect($firstRow.find('td:nth-child(6) > a')).to.exist;
-         phone = $firstRow.find('td:nth-child(6) > a').text();
-         expect(phone).to.not.match(/object Object|undefined/);
+                email = $firstRow.find('td:nth-child(5)').text();
+                expect(email).to.not.match(/object Object|undefined/);
 
-         country = $firstRow.find('td:nth-child(7)').text();
-         expect(country).to.not.match(/object Object|undefined/);
+                expect($firstRow.find('td:nth-child(6) > a')).to.exist;
+                phone = $firstRow.find('td:nth-child(6) > a').text();
+                expect(phone).to.not.match(/object Object|undefined/);
 
-         createdBy = $firstRow.find('td:nth-child(8)').text();
-         expect(createdBy).not.to.be.empty;
-         expect(createdBy).to.not.match(/object Object|undefined/);
+                country = $firstRow.find('td:nth-child(7)').text();
+                expect(country).to.not.match(/object Object|undefined/);
 
-         editedBy = $firstRow.find('td:nth-child(9)').text();
-         expect(editedBy).not.to.be.empty;
-         expect(editedBy).to.not.match(/object Object|undefined/);
+                createdBy = $firstRow.find('td:nth-child(8)').text();
+                expect(createdBy).not.to.be.empty;
+                expect(createdBy).to.not.match(/object Object|undefined/);
 
-         done();
-         });
+                editedBy = $firstRow.find('td:nth-child(9)').text();
+                expect(editedBy).not.to.be.empty;
+                expect(editedBy).to.not.match(/object Object|undefined/);
 
-         it('Try to export to CSV', function () {
-         var $exportToCsvBtn = topBarView.$el.find('#top-bar-exportToCsvBtn');
+                // pagination testing
+                $pagination = $thisEl.find('.pagination');
+                $currentPageList = $thisEl.find('.currentPageList');
 
-         $exportToCsvBtn.click();
-         expect(exportToCSVStub.calledOnce).to.be.true;
-         });
+                expect($pagination.find('#gridStart').text().trim()).to.be.equals('1');
+                expect($pagination.find('#gridEnd').text().trim()).to.be.equals('100');
+                expect($pagination.find('#gridCount').text().trim()).to.be.equals('250');
+                expect($pagination.find('#currentShowPage').val().trim()).to.be.equals('1');
 
-         it('Try to export to XLSX', function () {
-         var $exportToXlsxBtn = topBarView.$el.find('#top-bar-exportToXlsxBtn');
+                $currentPageList.mouseover();
+                expect($thisEl.find('#pageList')).to.have.css('display', 'block');
+                expect($thisEl.find('#pageList > li')).to.have.lengthOf(3);
 
-         $exportToXlsxBtn.click();
-         expect(exportToXlcsStub.calledOnce).to.be.true;
-         });
+                $currentPageList.mouseover();
+                expect($thisEl.find('#pageList')).to.have.css('display', 'none');
 
-         /!* it('Try to filter Persons ListView by FullName and Country', function () {
-         var $fullName;
-         var $country;
-         var $selectedItem;
-         var $next;
-         var $prev;
-         var $searchContainer = $thisEl.find('#searchContainer');
-         var $searchArrow = $searchContainer.find('.search-content');
-         var personsTotalUrl = new RegExp('\/totalCollectionLength\/Persons', 'i');
-         var personsListUrl = new RegExp('\/persons\/list', 'i');
+                done();
+            });
 
-         // open filter dropdown
-         $searchArrow.click();
-         expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+            it('Try to change page1 to page2', function() {
+                var $currentPageList = $thisEl.find('.currentPageList');
+                var ajaxResponse;
+                var $page2Btn;
 
-         // select full Person Name
-         $fullName = $searchContainer.find('#nameFullContainer .groupName');
-         $fullName.click();
-         $next = $searchContainer.find('.next');
-         $next.click();
-         $prev = $searchContainer.find('.prev');
-         $prev.click();
-         $selectedItem = $searchContainer.find('li[data-value="55b92ad621e4b7c40f000635"]');
+                ajaxSpy.reset();
 
-         server.respondWith('GET', personsTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({count: 2})]);
-         server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakePersonsForList.data[0], fakePersonsForList.data[1]]})]);
-         $selectedItem.click();
-         server.respond();
-         server.respond();
+                $currentPageList.mouseover();
+                $page2Btn = $thisEl.find('#pageList > li').eq(1);
+                $page2Btn.click();
+                server.respond();
 
-         expect(selectSpy.calledOnce).to.be.true;
-         expect($thisEl.find('#listTable > tr').length).to.equals(2);
+                ajaxResponse = ajaxSpy.args[0][0];
+                expect(ajaxSpy.called).to.be.true;
+                expect(ajaxResponse).to.have.property('url', '/persons/');
+                expect(ajaxResponse.data).to.have.property('contentType');
+            });
 
-         // select Country
-         $country = $searchContainer.find('#countryFullContainer .groupName');
-         $country.click();
-         $next = $searchContainer.find('.next');
-         $next.click();
-         $prev = $searchContainer.find('.prev');
-         $prev.click();
-         $selectedItem = $searchContainer.find('li[data-value="Australia"]');
+            it('Try to export to CSV', function () {
+                var $exportToCsvBtn = topBarView.$el.find('#top-bar-exportToCsvBtn');
 
-         server.respondWith('GET', personsTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({count: 1})]);
-         server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-         data: [fakePersonsForList.data[0]]
-         })]);
-         $selectedItem.click();
-         server.respond();
-         server.respond();
+                $exportToCsvBtn.click();
+                expect(exportToCSVStub.calledOnce).to.be.true;
+            });
 
-         expect($thisEl.find('#listTable > tr').length).to.equals(1);
-         expect(selectSpy.calledTwice).to.be.true;
+            it('Try to export to XLSX', function () {
+                var $exportToXlsxBtn = topBarView.$el.find('#top-bar-exportToXlsxBtn');
 
-         // uncheck Country filter
-         server.respondWith('GET', personsTotalUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({count: 2})]);
-         server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({data: [fakePersonsForList.data[0], fakePersonsForList.data[1]]})]);
-         $selectedItem.click();
-         server.respond();
-         server.respond();
-
-         expect($thisEl.find('#listTable > tr').length).to.equals(2);
-         expect(selectSpy.calledThrice).to.be.true;
-
-         //close filter dropdown
-         $searchArrow.click();
-         expect($searchContainer.find('.search-options')).to.have.class('hidden');
-
-         });
-
-         it('Try to delete FullName filter', function () {
-         var $searchContainer = $thisEl.find('#searchContainer');
-         var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
-         var personsListUrl = new RegExp('\/persons\/list', 'i');
-
-         server.respondWith('GET', personsListUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersonsForList)]);
-         $closeBtn.click();
-         server.respond();
-
-         expect($thisEl).to.exist;
-         expect($thisEl.find('table')).to.exist;
-         expect($thisEl.find('#listTable')).to.exist;
-         expect($thisEl.find('#listTable > tr').length).to.equals(3);
-
-         });*!/
-         });*/
+                $exportToXlsxBtn.click();
+                expect(exportToXlcsStub.calledOnce).to.be.true;
+            });
+        });
 
         describe('Persons thumbnail view', function () {
             var personsCollection;
@@ -11681,7 +11643,6 @@ define([
                 expect($thisEl.find('.thumbnailwithavatar'))
                     .to.have.lengthOf(3);
 
-                $thisEl = thumbnailsView.$el;
                 $firstEl = $thisEl.find('.thumbnailwithavatar').first();
 
                 $avatarHolder = $firstEl.find('.avatar');
@@ -11721,6 +11682,113 @@ define([
                 done();
             });
 
+            it('Try to filter Persons ThumbnailsView by FullName and Country', function () {
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var personsThumbUrl = new RegExp('\/persons\/thumbnails', 'i');
+                var $fullName;
+                var $country;
+                var $selectedItem;
+                var $next;
+                var $prev;
+
+                selectSpy.reset();
+
+                // open filter dropdown
+                $searchArrow.click();
+                expect($searchContainer.find('.search-options')).to.have.not.class('hidden');
+
+                // select full Person Name
+                $fullName = $searchContainer.find('#nameFullContainer .groupName');
+                $fullName.click();
+                expect($fullName.next('div')).to.have.not.class('hidden');
+                $next = $searchContainer.find('.next');
+                $next.click();
+                $prev = $searchContainer.find('.prev');
+                $prev.click();
+                $selectedItem = $searchContainer.find('li[data-value="55b92ad621e4b7c40f000635"]');
+
+                server.respondWith('GET', personsThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersons)]);
+                $selectedItem.click();
+                server.respond();
+                expect(selectSpy.calledOnce).to.be.true;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                expect($thisEl.find('#startLetter')).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar'))
+                    .to.have.lengthOf(3);
+
+                // select Country
+                $country = $searchContainer.find('#countryFullContainer .groupName');
+                $country.click();
+                expect($country.next('div')).to.have.not.class('hidden');
+                $next = $searchContainer.find('.next');
+                $next.click();
+                $prev = $searchContainer.find('.prev');
+                $prev.click();
+                $selectedItem = $searchContainer.find('li[data-value="Australia"]');
+
+                $selectedItem.click();
+                server.respond();
+                expect(selectSpy.calledTwice).to.be.true;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                expect($thisEl.find('#startLetter')).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar'))
+                    .to.have.lengthOf(3);
+
+                // uncheck Country filter
+                $selectedItem = $searchContainer.find('li[data-value="Australia"]');
+                $selectedItem.click();
+                server.respond();
+                expect(selectSpy.calledThrice).to.be.true;
+                expect($thisEl.find('#searchContainer')).to.exist;
+                expect($thisEl.find('#startLetter')).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar'))
+                    .to.have.lengthOf(3);
+            });
+
+            it('Try to save favorites filters', function () {
+                var userUrl = new RegExp('\/users\/', 'i');
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var $searchArrow = $searchContainer.find('.search-content');
+                var $favoritesBtn = $searchContainer.find('li[data-value="#favoritesContent"]');
+                var $filterNameInput;
+                var $saveFilterBtn;
+
+                saveFilterSpy.reset();
+
+                $favoritesBtn.click();
+                expect($searchContainer.find('#filtersContent')).to.have.class('hidden');
+
+                $filterNameInput = $searchContainer.find('#forFilterName');
+                $filterNameInput.val('Test');
+                $saveFilterBtn = $searchContainer.find('#saveFilterButton');
+
+                server.respondWith('PATCH', userUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
+                $saveFilterBtn.click();
+                server.respond();
+                expect(saveFilterSpy.called).to.be.true;
+
+                //close filter dropdown
+                $searchArrow.click();
+                expect($searchContainer.find('.search-options')).to.have.class('hidden');
+            });
+
+            it('Try to delete FullName filter', function () {
+                var $searchContainer = $thisEl.find('#searchContainer');
+                var $closeBtn = $searchContainer.find('span[data-value="name"]').next();
+                var personThumbUrl = new RegExp('\/persons\/thumbnails', 'i');
+
+                removeFilterSpy.reset();
+
+                server.respondWith('GET', personThumbUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakePersons)]);
+                $closeBtn.click();
+                server.respond();
+
+                expect(removeFilterSpy.called).to.be.true;
+                expect($thisEl).to.exist;
+                expect($thisEl.find('.thumbnailwithavatar').length).to.equals(3);
+            });
+
             it('Try to showMore content', function () {
                 var $showMoreBtn = $thisEl.find('#showMore');
 
@@ -11729,6 +11797,7 @@ define([
 
                 expect($thisEl.find('.thumbnailwithavatar')).to.exist;
                 expect($thisEl.find('.thumbnailwithavatar').length).to.equals(6);
+                expect($thisEl.find('#showMoreDiv')).to.have.css('display', 'none');
             });
 
             it('Try to click alphabetic letter', function () {
@@ -12041,7 +12110,6 @@ define([
                 server.respond();
 
                 expect($('#createOpportunities')).to.exist;
-
             });
 
             it('Try to save opportunity without need data', function () {
@@ -12052,7 +12120,6 @@ define([
                 spyResponse = mainSpy.args[0][0];
 
                 expect(spyResponse).to.have.property('type', 'error');
-
             });
 
             it('Try to save opportunity', function () {
