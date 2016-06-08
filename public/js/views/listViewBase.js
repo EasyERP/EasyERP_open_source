@@ -365,6 +365,7 @@ define([
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                 }
                 editedCol.text(editedElementValue);
+                editedCol.removeClass('errorContent');
                 editedElement.remove();
             }
         },

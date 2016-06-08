@@ -131,6 +131,7 @@ define([
             }
 
             targetElement.text(target.text());
+            targetElement.removeClass('errorContent');
 
             changedAttr = this.changedModels[modelId];
             targetElement.attr('data-id', id);
