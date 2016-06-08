@@ -30,37 +30,38 @@ describe('Project Specs', function () {
 
         it('should create Project', function (done) {
             var body = {
-                "projectName"     : "testProject",
-                "projectShortDesc": "esttest",
-                "task"            : [],
-                "privacy"         : "All Users",
-                "customer"        : "55b92ad621e4b7c40f000635",
-                "projectmanager"  : {"_id": "", "name": ""},
-                "teams"           : {"users": [], "Teams": []},
-                "info"            : {
-                    "StartDate": null,
-                    "duration" : 0,
-                    "EndDate"  : null,
-                    "sequence" : 0,
-                    "parent"   : null
+                projectName     : 'testProject',
+                projectShortDesc: 'esttest',
+                task            : [],
+                privacy         : 'All Users',
+                customer        : '55b92ad621e4b7c40f000635',
+                projectmanager  : {_id: '', name: ''},
+                teams           : {users: [], Teams: []},
+                info            : {
+                    StartDate: null,
+                    duration : 0,
+                    EndDate  : null,
+                    sequence : 0,
+                    parent   : null
                 },
-                "estimated"       : 0,
-                "logged"          : 0,
-                "remaining"       : 0,
-                "progress"        : 0,
-                "notes"           : [],
-                "bonus"           : [],
-                "budget"          : {"bonus": [], "projectTeam": []},
-                "workflow"        : "528ce7d0f3f67bc40b000021",
-                "projecttype"     : "mixed",
-                "paymentMethod"   : "565f2e05ab70d49024242e07",
-                "paymentTerms"    : "55536e52475b7be475f335f6",
-                "description"     : "",
-                "groups"          : {"owner": "560c099da5d4a2e20ba5068b", "users": [], "group": []},
-                "whoCanRW"        : "everyOne",
-                "health"          : 1,
-                "StartDate"       : "",
-                "TargetEndDate"   : ""
+
+                estimated    : 0,
+                logged       : 0,
+                remaining    : 0,
+                progress     : 0,
+                notes        : [],
+                bonus        : [],
+                budget       : {bonus: [], projectTeam: []},
+                workflow     : '528ce7d0f3f67bc40b000021',
+                projecttype  : 'mixed',
+                paymentMethod: '565f2e05ab70d49024242e07',
+                paymentTerms : '55536e52475b7be475f335f6',
+                description  : '',
+                groups       : {owner: '560c099da5d4a2e20ba5068b', users: [], group: []},
+                whoCanRW     : 'everyOne',
+                health       : 1,
+                StartDate    : '',
+                TargetEndDate: ''
             };
 
             aggent
@@ -91,7 +92,7 @@ describe('Project Specs', function () {
         });
 
         it('should update Project', function (done) {
-            var body = {"workflow": "528ce82df3f67bc40b000025"};
+            var body = {workflow: '528ce82df3f67bc40b000025'};
 
             aggent
                 .patch('projects/' + id)
@@ -212,9 +213,9 @@ describe('Project Specs', function () {
                         .and.to.be.instanceOf(Array);
 
                     firstProject = body.data[0];
-                    
+
                     console.log(firstProject);
-                    
+
                     expect(firstProject)
                         .and.to.have.property('_id')
                         .and.to.have.lengthOf(24);
@@ -280,6 +281,26 @@ describe('Project Specs', function () {
                 });
         });
 
+        it('should get projects for form', function (done) {
+            var query = {
+                viewType: 'form'
+            };
+
+            aggent
+                .get('projects/' + id)
+                .query(query)
+                .expect(200)
+                .end(function (err, res) {
+                    var body = res.body;
+
+                    if (err) {
+                        return done(err);
+                    }
+
+                    done();
+                });
+        });
+
         it('should delete Project', function (done) {
             aggent
                 .delete('projects/' + id)
@@ -315,63 +336,63 @@ describe('Project Specs', function () {
                 .expect(302, done);
         });
 
-        /* it("should fail create quotation", function (done) {
-             var body = {
-                 "supplier"         : CONSTANTS.SUPPLIER,
-                 "project"          : CONSTANTS.PROJECT,
-                 "workflow"         : CONSTANTS.WORKFLOW,
-                 "supplierReference": null,
-                 "orderDate"        : "28 Dec, 2015",
-                 "expectedDate"     : "Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))",
-                 "name"             : "PO",
-                 "invoiceControl"   : null,
-                 "invoiceRecived"   : false,
-                 "paymentTerm"      : null,
-                 "fiscalPosition"   : null,
-                 "destination"      : null,
-                 "incoterm"         : null,
-                 "products"         : [
-                     {
-                         "product"      : CONSTANTS.PRODUCT,
-                         "unitPrice"    : "500",
-                         "quantity"     : "1",
-                         "scheduledDate": "28 Dec, 2015",
-                         "taxes"        : "0.00",
-                         "description"  : "",
-                         "subTotal"     : "500",
-                         "jobs"         : CONSTANTS.JOB
-                     }
-                 ],
-                 "currency"         : {
-                     _id : CONSTANTS.EURO,
-                     name: 'EUR'
-                 },
-                 "forSales"         : true,
-                 "deliverTo"        : CONSTANTS.DELIVERTO,
-                 "populate"         : true,
-                 "paymentInfo"      : {
-                     "total"  : "500.00",
-                     "unTaxed": "500.00",
-                     "taxes"  : "0.00"
-                 },
-                 "groups"           : {
-                     "owner": CONSTANTS.OWNER,
-                     "users": [],
-                     "group": []
-                 },
-                 "whoCanRW"         : "everyOne"
-             };
+        /* it('should fail create quotation', function (done) {
+         var body = {
+         'supplier'         : CONSTANTS.SUPPLIER,
+         'project'          : CONSTANTS.PROJECT,
+         'workflow'         : CONSTANTS.WORKFLOW,
+         'supplierReference': null,
+         'orderDate'        : '28 Dec, 2015',
+         'expectedDate'     : 'Mon Dec 28 2015 00:00:00 GMT+0200 (Фінляндія (зима))',
+         'name'             : 'PO',
+         'invoiceControl'   : null,
+         'invoiceRecived'   : false,
+         'paymentTerm'      : null,
+         'fiscalPosition'   : null,
+         'destination'      : null,
+         'incoterm'         : null,
+         'products'         : [
+         {
+         'product'      : CONSTANTS.PRODUCT,
+         'unitPrice'    : '500',
+         'quantity'     : '1',
+         'scheduledDate': '28 Dec, 2015',
+         'taxes'        : '0.00',
+         'description'  : '',
+         'subTotal'     : '500',
+         'jobs'         : CONSTANTS.JOB
+         }
+         ],
+         'currency'         : {
+         _id : CONSTANTS.EURO,
+         name: 'EUR'
+         },
+         'forSales'         : true,
+         'deliverTo'        : CONSTANTS.DELIVERTO,
+         'populate'         : true,
+         'paymentInfo'      : {
+         'total'  : '500.00',
+         'unTaxed': '500.00',
+         'taxes'  : '0.00'
+         },
+         'groups'           : {
+         'owner': CONSTANTS.OWNER,
+         'users': [],
+         'group': []
+         },
+         'whoCanRW'         : 'everyOne'
+         };
 
-             aggent
-                 .post('quotation')
-                 .set('type', 'sales')
-                 .send(body)
-                 .expect(403, done);
+         aggent
+         .post('quotation')
+         .set('type', 'sales')
+         .send(body)
+         .expect(403, done);
          });*/
     });
 
     describe('Project with no authorise', function () {
-        it("should fail get Project for list", function (done) {
+        it('should fail get Project for list', function (done) {
             var query = {
                 page    : 1,
                 count   : 4,
