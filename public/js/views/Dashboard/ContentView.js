@@ -1671,7 +1671,8 @@ define([
                                 var oneDay = 1000 * 60 * 60 * 24;
                                 var day = Math.floor(diff / oneDay);
 
-                                return dateFormat(new Date(d.year, parseInt(d.mounth) - 1, d.day).toString('MMMM ,yyyy'), "mmmm dd, yyyy");
+                                //return dateFormat(new Date(d.year, parseInt(d.mounth) - 1, d.day).toString('MMMM ,yyyy'), "mmmm dd, yyyy");
+                                return moment(new Date(d.year, parseInt(d.mounth) - 1, d.day)).format('MMM DD, YYYY');
                             };
                             break;
                     }
