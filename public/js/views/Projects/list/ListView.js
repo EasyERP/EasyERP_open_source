@@ -10,10 +10,8 @@ define([
     'models/ProjectsModel',
     'collections/Projects/filterCollection',
     'views/Filter/FilterView',
-    'common',
-    'dataService',
-    'custom'
-], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, FilterView, common, dataService, custom) {
+    'services/projects'
+], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, FilterView, projects) {
     var ProjectsListView = ListViewBase.extend({
         createView       : CreateView,
         listTemplate     : listTemplate,
@@ -41,55 +39,16 @@ define([
         },
 
         events: {
-            'click .stageSelect'                     : 'showNewSelect',
+            'click .stageSelect'                     : projects.showNewSelect,
             'click .newSelectList li'                : 'chooseOption',
-            'click .health-wrapper .health-container': 'showHealthDd',
-            'click #health ul li div'                : 'chooseHealthDd'
-        },
-
-        chooseHealthDd: function (e) {
-            var target$ = $(e.target);
-            var target = target$.parents('.health-wrapper');
-            var currTargetHealth = target$.attr('class').replace('health', '');
-            var id = target.parents('.thumbnail').attr('id');
-            var model = this.collection.get(id);
-            var health = parseInt(currTargetHealth, 10);
-
-            target.find('.health-container a').attr('class', target$.attr('class')).attr('data-value', currTargetHealth);
-
-            model.save({health: health}, {
-                headers: {
-                    mid: 39
-                },
-
-                patch   : true,
-                validate: false,
-                success : function () {
-                    $('.health-wrapper ul').hide();
-                }
-            });
-        },
-
-        showHealthDd: function (e) {
-            $(e.target).parents('.health-wrapper').find('ul').toggle();
-
-            return false;
+            'click .health-wrapper .health-container': projects.showHealthDd,
+            'click .health-wrapper ul li div'        : projects.chooseHealthDd
         },
 
         hideNewSelect: function (e) {
             $('.newSelectList').remove();
         },
-
-        showNewSelect: function (e) {
-            if ($('.newSelectList').is(':visible')) {
-                this.hideHealth();
-                return false;
-            }
-            $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
-
-            return false;
-        },
-
+        
         hideHealth: function () {
             var $thisEl = this.$el;
 
@@ -99,19 +58,20 @@ define([
 
         chooseOption: function (e) {
             var self = this;
-            var target$ = $(e.target);
-            var targetElement = target$.parents("td");
-            var id = targetElement.attr("id");
+            var $targetElement = $(e.target);
+            var $td = $targetElement.parents('td');
+            var id = $td.attr('id');
             var model = this.collection.get(id);
 
-            model.save({'workflow': target$.attr("id")}, {
-                headers : {
+            model.save({workflow: $targetElement.attr('id')}, {
+                headers: {
                     mid: 39
                 },
+
                 patch   : true,
                 validate: false,
                 success : function () {
-                    self.showFilteredPage({}, self/*_.pluck(self.stages, '_id')*/);
+                    self.showFilteredPage({}, self);
                 }
             });
 
