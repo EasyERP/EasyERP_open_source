@@ -1,48 +1,21 @@
 define([
-    'Backbone',
     'Underscore',
+    'views/topBarViewBase',
     'text!templates/wTrack/TopBarTemplate.html',
     'custom',
-    'common',
-    'constants'
-], function (Backbone, _, ContentTopBarTemplate, Custom, Common, CONSTANTS) {
-    var TopBarView = Backbone.View.extend({
+    'common'
+], function (_, BaseView, ContentTopBarTemplate, Custom, Common) {
+    var TopBarView = BaseView.extend({
         el         : '#top-bar',
         contentType: 'tCard', // todo change on COSTANT
         template   : _.template(ContentTopBarTemplate),
 
         events: {
-            'click a.changeContentView'     : 'changeContentViewType',
-            'click #top-bar-deleteBtn'      : 'deleteEvent',
-            'click #top-bar-saveBtn'        : 'saveEvent',
-            'click #top-bar-editBtn'        : 'editEvent',
-            'click #top-bar-createBtn'      : 'createEvent',
-            'click #top-bar-generateBtn'    : 'generateInvoice',
-            'click #top-bar-copyBtn'        : 'copyRow',
-            'click #top-bar-exportToCsvBtn' : 'exportToCsv',
-            'click #top-bar-exportToXlsxBtn': 'exportToXlsx'
+            'click #top-bar-copyBtn': 'copyRow'
         },
 
-        generateInvoice: function (e) {
-            this.trigger('generateInvoice');
-        },
-
-        copyRow: function (e) {
+        copyRow: function () {
             this.trigger('copyRow');
-        },
-
-        changeContentViewType: function (e) {
-            Custom.changeContentViewType(e, this.contentType, this.collection);
-        },
-
-        exportToCsv: function (event) {
-            event.preventDefault();
-            this.trigger('exportToCsv');
-        },
-
-        exportToXlsx: function (event) {
-            event.preventDefault();
-            this.trigger('exportToXlsx');
         },
 
         initialize: function (options) {
@@ -52,15 +25,9 @@ define([
             this.render();
         },
 
-        createEvent: function (event) {
-            event.preventDefault();
-
-            this.trigger('createEvent');
-        },
-
         render: function () {
-            $('title').text(this.contentType);
             var viewType = Custom.getCurrentVT();
+            this.$el.find('title').text(this.contentType);
 
             this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
 
@@ -69,23 +36,6 @@ define([
             this.$el.find('#top-bar-copyBtn').hide();
 
             return this;
-        },
-
-        editEvent: function (event) {
-            event.preventDefault();
-
-            this.trigger('editEvent');
-        },
-
-        deleteEvent: function (event) {
-            event.preventDefault();
-            this.trigger('deleteEvent');
-        },
-
-        saveEvent: function (event) {
-            event.preventDefault();
-
-            this.trigger('saveEvent');
         }
     });
 
