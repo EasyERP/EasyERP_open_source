@@ -104,7 +104,7 @@
         parse: function (response) {
             var quotations = response.data;
 
-            _.map(quotations, function (quotation) {
+            response.data = _.map(quotations, function (quotation) {
                 quotation.orderDate = common.utcDateToLocaleDate(quotation.orderDate);
                 if (quotation.expectedDate) {
                     quotation.expectedDate = common.utcDateToLocaleDate(quotation.expectedDate);
