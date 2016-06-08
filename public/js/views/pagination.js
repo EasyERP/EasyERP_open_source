@@ -249,7 +249,9 @@ define([
                     url += '/filter=' + locationFilter;
                 }
             } else {
-                url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
+                if (Object.keys(filter).length) {
+                    url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
+                }
             }
 
             Backbone.history.navigate(url, {replace: true});

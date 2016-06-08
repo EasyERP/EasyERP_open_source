@@ -91,7 +91,11 @@ define([
 
             url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
         } else if (kanbanFilter && (viewType === 'kanban') && (this.contentType === 'Tasks')) {
-            url = '#easyErp/' + this.contentType + '/' + viewType + '/' + kanbanFilter.project.value[0];
+            if (kanbanFilter.project) {
+                url = '#easyErp/' + this.contentType + '/' + viewType + '/' + kanbanFilter.project.value[0];
+            } else {
+                url = '#easyErp/' + this.contentType + '/' + viewType;
+            }
         }
 
         App.ownContentType = true;
