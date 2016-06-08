@@ -227,7 +227,7 @@ define([
 
             App.filter = this.filter;
 
-            this.renderFilter(self);
+            this.renderFilter();
 
             this.getMinDate(this);
 

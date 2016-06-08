@@ -16,7 +16,7 @@ define([
     'custom'
 ], function (_,
              $,
-             listViewBase,
+             ListViewBase,
              listTemplate,
              ListItemView,
              EditView,
@@ -32,7 +32,7 @@ define([
 
     'use strict';
 
-    var ListView = listViewBase.extend({
+    var ListView = ListViewBase.extend({
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
@@ -209,7 +209,7 @@ define([
 
             $currentEl.prepend(itemView.render());
 
-            this.renderFilter(this);
+            this.renderFilter();
 
             this.renderPagination($currentEl, this);
 

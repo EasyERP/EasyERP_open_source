@@ -144,7 +144,7 @@ define([
             $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 5}).render());
 
             this.renderPagination($currentEl, this);
-            this.renderFilter(self);
+            this.renderFilter();
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 

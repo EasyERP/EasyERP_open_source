@@ -497,24 +497,6 @@
             });
         },
 
-        renderFilter: function () {
-            var self = this;
-
-            self.FilterView = new this.FilterView({
-                contentType: self.contentType
-            });
-
-            self.FilterView.bind('filter', function (filter) {
-                self.showFilteredPage(filter);
-            });
-
-            self.FilterView.bind('defaultFilter', function () {
-                self.showFilteredPage({});
-            });
-
-            self.FilterView.render();
-        },
-
         showFilteredPage: function (filter) {
             var self = this;
             var workflows = this.workflowsCollection.toJSON();
@@ -624,7 +606,7 @@
                 self.hideItemsNumber(e);
             });
 
-            this.renderFilter(self);
+            this.renderFilter();
 
             return this;
         }

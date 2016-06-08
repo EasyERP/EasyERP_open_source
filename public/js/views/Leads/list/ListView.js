@@ -118,7 +118,7 @@ define([
 
             $currentEl.append(itemView.render());
             
-            this.renderFilter(self);
+            this.renderFilter();
 
             this.renderPagination($currentEl, this);
 
