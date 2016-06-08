@@ -8,7 +8,7 @@ define([
     var View = Backbone.View.extend({
         el    : '#content-holder',
         filter: null,
-        
+
         events: {
             'click .oe_sortable': 'goSort',
             'click #checkAll'   : 'checkAll',
@@ -23,27 +23,29 @@ define([
         checkAll: function (e) {
             var $thisEl = this.$el;
             var $el = e ? $(e.target) : $thisEl.find('#checkAll');
-            var self = this;
             var $checkedContent = (this.viewType === 'thumbnails') ?
                 $thisEl.find('.thumbnailsItems') :
-                $thisEl.find('.listTable');
+                $thisEl.find('#listTable');
 
             var $checkboxes = $checkedContent.find(':checkbox:not(.notRemovable)');
             var check = $el.prop('checked');
 
+            if (e) {
+                e.stopPropagation();
+            }
+
             $checkboxes.prop('checked', check);
 
-            // todo change for this.$topBar...
-            if ($checkboxes.length > 0) {
-                $('#top-bar-deleteBtn').show();
-            } else {
-                $('#top-bar-deleteBtn').hide();
-            }
+            this.inputClick(e);
+        },
 
-            if (typeof(self.setAllTotalVals) === 'function') {   // added in case of existing setAllTotalVals method in View
-                self.setAllTotalVals();
-            }
+        checked: function (e) {
+            var $targetEl = $(e.target);
+            var $targetDivContainer = $targetEl.closest('.listRow') && $targetEl.closest('.listRow').length ? $targetEl.closest('.listRow') : $targetEl.closest('tr'); // add or option
+            var $checkbox = $targetDivContainer.find('input[type="checkbox"]');
+            // var checked = $checkbox.prop('checked');
 
+            // $checkbox.prop('checked', !checked); //commented by Liliya
             this.inputClick(e);
         },
 
@@ -52,6 +54,8 @@ define([
             var $checkBoxes = $thisEl.find('input[type="checkbox"]:checked:not(#checkAll,notRemovable)');
             var $currentChecked = e ? $(e.target) : $thisEl.find('#checkAll');
             var checkAllBool = ($checkBoxes.length === this.collection.length);
+            var $deleteButton = $('#top-bar-deleteBtn');
+            var $createButton = $('#top-bar-createBtn');
 
             if ($currentChecked.attr('id') !== 'checkAll') {
                 if (checkAllBool) {
@@ -59,6 +63,15 @@ define([
                 } else {
                     this.$el.find('#checkAll').prop('checked', false);
                 }
+
+            }
+
+            if ($checkBoxes.length > 0) {
+                $deleteButton.show();
+                $createButton.hide();
+            } else {
+                $deleteButton.hide();
+                $createButton.show();
             }
 
             this.trigger('selectedElementsChanged', {
@@ -69,10 +82,6 @@ define([
 
             if (typeof(this.setAllTotalVals) === 'function') {   // added in case of existing setAllTotalVals in View
                 this.setAllTotalVals();
-            }
-
-            if (e) {
-                e.stopPropagation();
             }
         },
 
@@ -445,20 +454,6 @@ define([
             this.changeLocationHash(1, itemsNumber);
         },
 
-        checked: function (e) {
-            e.stopPropagation();
-        },
-
-        checklistRow: function (e) {
-            var $targetEl = $(e.target);
-            var $targetDivContainer = $targetEl.closest('.listRow');
-            var $checkbox = $targetDivContainer.find('input[type="checkbox"]');
-            var checked = $checkbox.prop('checked');
-
-            $checkbox.prop('checked', !checked);
-            this.inputClick(e);
-        },
-
         createItem: function () {
             var CreateView = this.CreateView || Backbone.View.extend({});
 
@@ -528,6 +523,28 @@ define([
                     }
                 });
             });
+        },
+
+        hideSaveCancelButtons: function () {
+            var saveBtn = $('#top-bar-saveBtn');
+            var cancelBtn = $('#top-bar-deleteBtn');
+
+            saveBtn.hide();
+            cancelBtn.hide();
+        },
+
+        showSaveCancelBtns: function () {
+            var createBtnEl = $('#top-bar-createBtn');
+            var saveBtnEl = $('#top-bar-saveBtn');
+            var cancelBtnEl = $('#top-bar-deleteBtn');
+
+            if (this.changed) {
+                createBtnEl.hide();
+            }
+            saveBtnEl.show();
+            cancelBtnEl.show();
+
+            return false;
         },
 
         clickItem: function (e) {
@@ -630,7 +647,6 @@ define([
                         $pageList.append('<li class="showPage">' + i + '</li>');
                     }
                 }
-
 
                 $lastPage.text(pageNumber);
 
