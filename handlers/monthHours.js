@@ -190,18 +190,6 @@ var MonthHours = function (event, models) {
             });
     };
 
-    this.totalCollectionLength = function (req, res, next) {
-        var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
-
-        MonthHoursModel.find().count(function (err, count) {
-            if (err) {
-                return next(err);
-            }
-
-            res.status(200).send({count: count});
-        });
-    };
-
     this.remove = function (req, res, next) {
         var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
         var id = req.params.id;

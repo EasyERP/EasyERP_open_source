@@ -20,7 +20,6 @@ define([
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         contentCollection: contentCollection,
-        FilterView       : FilterView,
         contentType      : 'ExpensesInvoice',
         changedModels    : {},
 
@@ -42,17 +41,7 @@ define([
         },
 
         events: {
-            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog',
-            'click .newSelectList li'                        : 'chooseOption',
-            'click .selectList'                              : 'showSelects'
-        },
-
-        showSelects: function (e) {
-            e.preventDefault();
-
-            $(e.target).parent('td').append("<ul class='newSelectList'><li>Draft</li><li>Done</li></ul>");
-
-            e.stopPropagation();
+            'click  .list tbody td:not(.notForm, .validated)': 'goToEditDialog'
         },
 
         saveItem: function () {
@@ -81,30 +70,6 @@ define([
             for (id in this.changedModels) {
                 delete this.changedModels[id];
             }
-        },
-
-        chooseOption: function (e) {
-            var target$ = $(e.target);
-            var targetElement = target$.parents('td');
-            var targetTr = target$.parents('tr');
-            var id = targetTr.attr('data-id');
-
-            if (!this.changedModels[id]) {
-                this.changedModels[id] = {};
-            }
-
-            if (!this.changedModels[id].hasOwnProperty('validated')) {
-                this.changedModels[id].validated = target$.text();
-                this.changesCount++;
-            }
-
-            targetElement.find('.selectList').text(target$.text());
-
-            this.hideNewSelect();
-
-            $('#top-bar-saveBtn').show();
-            return false;
-
         },
 
         render: function () {
@@ -190,4 +155,3 @@ define([
 
     return InvoiceListView;
 });
-

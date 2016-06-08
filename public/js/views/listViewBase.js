@@ -316,9 +316,11 @@ define([
 
             if (editedElement.length) {
                 editedCol = editedElement.closest('td');
-                editedElementRowId = editedElement.closest('tr').data('id');
+                editedElementRowId = editedElement.closest('tr').attr('data-id');
                 editedElementContent = editedCol.data('content');
                 editedElementValue = editedElement.val();
+
+                // editedElementValue = editedElementValue.replace(/\s+/g, '');
 
                 if (editedElementRowId.length >= 24) {
                     editModel = this.collection.get(editedElementRowId) || this.editCollection.get(editedElementRowId);
@@ -337,8 +339,11 @@ define([
                     this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
                 }
                 editedCol.text(editedElementValue);
-                editedCol.removeClass('errorContent');
                 editedElement.remove();
+
+                if (editedElementValue) {
+                    editedCol.removeClass('errorContent');
+                }
             }
         },
 
