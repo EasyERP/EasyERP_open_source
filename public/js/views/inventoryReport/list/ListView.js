@@ -16,11 +16,11 @@ define([
     'use strict';
 
     var ListView = listViewBase.extend({
-        listTemplate            : listTemplate,
-        ListItemView             : ListItemView,
-        FilterView              : FilterView,
-        contentCollection       : contentCollection,
-        contentType             : CONSTANTS.INVENTORYREPORT,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        FilterView       : FilterView,
+        contentCollection: contentCollection,
+        contentType      : CONSTANTS.INVENTORYREPORT,
 
         initialize: function (options) {
             var dateRange;
@@ -161,7 +161,7 @@ define([
             });
 
             $currentEl.prepend(itemView.render());
-            
+
             this.calcTotal();
 
             this.renderPagination($currentEl, this);
