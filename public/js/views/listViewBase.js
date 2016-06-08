@@ -262,12 +262,6 @@ define([
             }
         },
 
-        isNewRow: function () {
-            var newRow = $('#false');
-
-            return !!newRow.length;
-        },
-
         editRow: function (e) {
             var el = $(e.target);
             var tr = $(e.target).closest('tr');

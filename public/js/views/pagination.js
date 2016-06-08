@@ -481,6 +481,12 @@ define([
             return new CreateView(model);
         },
 
+        isNewRow: function () {
+            var newRow = this.$el.find('#false');
+
+            return !!newRow.length;
+        },
+
         editItem: function () {
             var EditView = this.EditView || Backbone.View.extend({});
 
