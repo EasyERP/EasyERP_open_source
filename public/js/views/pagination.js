@@ -259,9 +259,9 @@ define([
             var newRows = this.$el.find('#false');
             var elementId = $(event.target).attr('id');
             var data = {
-                sort    : this.sort,
-                filter  : this.filter,
-                viewType: this.viewType,
+                sort       : this.sort,
+                filter     : this.filter,
+                viewType   : this.viewType,
                 contentType: this.contentType
             };
 
