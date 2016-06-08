@@ -541,7 +541,6 @@
 
         render: function () {
             var self = this;
-            var filterView;
             var showList;
             var el;
             var workflows = this.workflowsCollection.toJSON();
