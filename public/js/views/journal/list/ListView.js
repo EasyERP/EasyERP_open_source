@@ -144,9 +144,6 @@ define([
 
             $currentEl.html('');
             $currentEl.html(_.template(listHeaderTemplate));
-            $currentEl.find('#itemTable').html(template({
-                collection: this.collection.toJSON()
-            }));
 
             this.hideSaveCancelBtns();
 

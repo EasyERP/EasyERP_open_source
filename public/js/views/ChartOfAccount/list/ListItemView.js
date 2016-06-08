@@ -13,8 +13,8 @@ define([
 
         render: function () {
             this.$el.append(_.template(listTemplate, {
-                projectsCollection: this.collection.toJSON(),
-                startNumber       : this.startNumber
+                collection : this.collection.toJSON(),
+                startNumber: this.startNumber
             }));
         }
     });

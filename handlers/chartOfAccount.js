@@ -3,7 +3,7 @@ var chartOfAccountSchema = mongoose.Schemas.chartOfAccount;
 var async = require('async');
 
 var Chart = function (models) {
-    var access = require('../Modules/additions/access.js')(models);
+    var pageHelper = require('../helpers/pageHelper');
 
     this.create = function (req, res, next) {
         var Model = models.get(req.session.lastDb, 'chartOfAccount', chartOfAccountSchema);
@@ -30,13 +30,45 @@ var Chart = function (models) {
         var Model = models.get(req.session.lastDb, 'chartOfAccount', chartOfAccountSchema);
         var data = req.query;
         var sort = data.sort ? data.sort : {_id: 1};
+        var paginationObject = pageHelper(data);
+        var limit = paginationObject.limit;
+        var skip = paginationObject.skip;
+        var getTotal;
+        var getData;
 
-        Model.find({}).sort(sort).exec(function (err, result) {
+        getTotal = function (cb) {
+            Model
+                .find({})
+                .count(function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, result || 0);
+                });
+        };
+
+        getData = function (cb) {
+            Model
+                .find({})
+                .sort(sort)
+                .skip(skip)
+                .limit(limit)
+                .exec(function (err, result) {
+                    if (err) {
+                        return cb(err);
+                    }
+
+                    cb(null, result);
+                });
+        };
+
+        async.parallel([getTotal, getData], function (err, result) {
             if (err) {
                 return next(err);
             }
 
-            res.status(200).send(result);
+            res.status(200).send({total: result[0], data: result[1]});
         });
     };
 

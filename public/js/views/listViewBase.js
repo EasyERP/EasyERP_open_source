@@ -249,17 +249,17 @@ define([
 
                 this.collection.add(model);
             } else {
-                this.collection.set(this.editCollection.models, {remove: false});
+                this.collection.set(this.EditCollection.models, {remove: false});
             }
         },
 
         bindingEventsToEditedCollection: function (context) {
-            if (context.editCollection) {
-                context.editCollection.unbind();
+            if (context.EditCollection) {
+                context.EditCollection.unbind();
             }
-            context.editCollection = new this.EditCollection(context.collection.toJSON());
-            context.editCollection.on('saved', context.savedNewModel, context);
-            context.editCollection.on('updated', context.updatedOptions, context);
+            context.EditCollection = new this.EditCollection(context.collection.toJSON());
+            context.EditCollection.on('saved', context.savedNewModel, context);
+            context.EditCollection.on('updated', context.updatedOptions, context);
         },
 
         keyDown: function (e) {
@@ -341,7 +341,7 @@ define([
             var errors = this.$el.find('.errorContent');
 
             for (id in this.changedModels) {
-                model = this.editCollection.get(id) || this.collection.get(id);
+                model = this.EditCollection.get(id) || this.collection.get(id);
                 model.changed = this.changedModels[id];
             }
 
@@ -349,7 +349,7 @@ define([
                 return;
             }
 
-            this.editCollection.save();
+            this.EditCollection.save();
             this.changedModels = {};
 
             this.deleteEditable();
