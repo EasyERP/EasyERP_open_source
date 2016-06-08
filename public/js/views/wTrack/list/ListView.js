@@ -363,7 +363,7 @@ define([
             this.changedModels[wTrackId].worked = worked;
         },
 
-        setEditable: function (td) {
+        /*setEditable: function (td) {
             var $tr;
 
             if (!td.parents) {
@@ -380,15 +380,15 @@ define([
             }
 
             return false;
-        },
+        },*/
 
-        isEditRows: function () {
+        /*isEditRows: function () {
             var edited = this.$listTable.find('.edited');
 
             this.edited = edited;
 
             return !!edited.length;
-        },
+        },*/
 
         setChangedValueToModel: function ($tr) {
             var editedElement = this.$listTable.find('.editing');
@@ -842,7 +842,7 @@ define([
                 self.generateJob(e);
             }
 
-            this.hideNewSelect();
+            this.hide(e);
             this.setEditable(targetElement);
 
             if (needCheckVacHol) {
@@ -941,7 +941,7 @@ define([
                 checkLength = $checkedEls.length;
                 rawRows = $checkedEls.closest('.false');
 
-                this.checkProjectId(e, checkLength);
+                //this.checkProjectId(e, checkLength);
 
                 if (checkLength > 0) {
                     $('#top-bar-deleteBtn').show();
@@ -973,7 +973,7 @@ define([
             this.setAllTotalVals();
         },
 
-        saveItem: function () {
+        /*saveItem: function () {
             var errors = this.$el.find('.errorContent');
             var model;
             var id;
@@ -995,9 +995,9 @@ define([
 
             this.editCollection.save();
             this.$el.find('.edited').removeClass('edited');
-        },
+        },*/
 
-        savedNewModel: function (modelObjects) {
+        /*savedNewModel: function (modelObjects) {
             var $savedRow = this.$listTable.find(".false[data-id='" + modelObjects.cid + "']"); // additional selector for finding old row by cid (in case of multiply copying)
             var $checkbox = $savedRow.find('input[type=checkbox]');
             var modelId;
@@ -1015,14 +1015,14 @@ define([
             this.hideSaveCancelBtns();
             // this.hideOvertime();
             this.resetCollection(modelObjects);
-        },
+        },*/
 
         /* hideOvertime: function () {
          this.$el.find('#overtime input').attr('checked', false);
          this.$el.find('#overtime').hide();
          }, */
 
-        resetCollection: function (models) {
+        /*resetCollection: function (models) {
             var id;
 
             if (models && models.length) {
@@ -1043,9 +1043,9 @@ define([
         updatedOptions: function () {
             this.hideSaveCancelBtns();
             this.resetCollection();
-        },
+        },*/
 
-        showNewSelect: function (e, prev, next) {
+        /*showNewSelect: function (e, prev, next) {
             var $target = $(e.target);
 
             e.stopPropagation();
@@ -1074,7 +1074,7 @@ define([
             if (this.selectView) {
                 this.selectView.remove();
             }
-        },
+        },*/
 
         bindingEventsToEditedCollection: function (context) {
             if (context.editCollection) {
@@ -1085,7 +1085,7 @@ define([
             context.editCollection.on('updated', context.updatedOptions, context);
         },
 
-        setChangedValue: function () {
+        /*setChangedValue: function () {
             if (!this.changed) {
                 this.changed = true;
                 this.showSaveCancelBtns();
@@ -1096,7 +1096,7 @@ define([
             var newRow = $('.false');
 
             return !!newRow.length;
-        },
+        },*/
 
         createItem: function () {
             var now = new Date();
@@ -1135,7 +1135,7 @@ define([
             this.changed = true;
         },
 
-        showSaveCancelBtns: function () {
+        /*showSaveCancelBtns: function () {
             var saveBtnEl = $('#top-bar-saveBtn');
             var cancelBtnEl = $('#top-bar-deleteBtn');
             var createBtnEl = $('#top-bar-createBtn');
@@ -1162,9 +1162,9 @@ define([
             createBtnEl.show();
 
             return false;
-        },
+        },*/
 
-        checkProjectId: function (e, checkLength) {
+        /*checkProjectId: function (e, checkLength) {
             var totalCheckLength = $('input.checkbox:checked').length;
             var element = e.target ? e.target : e;
             var checked = element ? element.checked : true;
@@ -1194,7 +1194,7 @@ define([
             }
 
             this.selectedProjectId = _.uniq(this.selectedProjectId);
-        },
+        },*/
 
         getAutoCalcField: function (idTotal, dataRow, money) {
             var footerRow = this.$el.find('#listFooter');
@@ -1299,6 +1299,8 @@ define([
             var model;
             var $checkedInputs;
             var value;
+            var enableDelete;
+            var message;
 
             if (!this.changed) {
                 $checkedInputs = $table.find('input:checked');
@@ -1314,31 +1316,48 @@ define([
 
                     } else {
                         model = self.collection.get(value);
-                        model.destroy({
-                            headers: {
-                                mid: mid
-                            },
-                            wait   : true,
-                            success: function () {
-                                //self.collection.remove(model);
-                                // self.deleteItemsRender(self.deleteCounter, self.deletePage);
-                            },
 
-                            error: function (_model, xhr) {
-                                if (xhr.status === 403) {
-                                    App.render({
-                                        type   : 'error',
-                                        message: 'You do not have permission to perform this action'
-                                    });
-                                }
+                        enableDelete = model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed';
+
+                        if (!model.toJSON().workflow) {
+                            if ($.trim($thisEl.find('[data-id="' + value + '"]').find('[data-content="workflow"]').text()) !== 'Closed') {
+                                enableDelete = true;
                             }
-                        });
+                        }
+
+                        if (enableDelete) {
+                            model.destroy({
+                                headers: {
+                                    mid: mid
+                                },
+
+                                wait   : true,
+                                success: function () {
+
+                                },
+
+                                error: function (_model, xhr) {
+                                    if (xhr.status === 403) {
+                                        App.render({
+                                            type   : 'error',
+                                            message: 'You do not have permission to perform this action'
+                                        });
+                                    }
+                                }
+                            });
+                        } else {
+                            message = "You can't delete tCard with closed project.";
+
+                            App.render({
+                                type   : 'error',
+                                message: message
+                            });
+                        }
                     }
                 });
             } else {
                 this.cancelChanges();
             }
-
         },
 
         //deleteItems: function () {

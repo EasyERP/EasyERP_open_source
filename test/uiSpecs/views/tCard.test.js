@@ -179,7 +179,7 @@ define([
                 },
                 workflow  : {
                     _id : "528ce7f2f3f67bc40b000023",
-                    name: "In Progress"
+                    name: "Closed"
                 },
                 dateByWeek: 201622,
                 createdBy : {
@@ -1282,6 +1282,8 @@ define([
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
                     var wTrackUrl = new RegExp('\/wTrack\/', 'i');
 
+                    mainSpy.reset();
+
                     $needCheckBtn.click();
 
                     server.respondWith('DELETE', wTrackUrl, [403, {'Content-Type': 'application/json'}, JSON.stringify({})]);
@@ -1296,14 +1298,13 @@ define([
 
                 it('Try to delete item with closed project error', function () {
                     var spyResponse;
-                    var $needCheckBtn = listView.$el.find('#listTable > tr:nth-child(2) > td.notForm > input');
+                    var $needCheckBtn = listView.$el.find('#listTable > tr:nth-child(3) > td.notForm > input');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
-                    var wTrackUrl = new RegExp('\/wTrack\/', 'i');
 
                     $needCheckBtn.click();
                     $deleteBtn.click();
 
-                    spyResponse = mainSpy.args[1][0];
+                    spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', "You can't delete tCard with closed project.");
                     expect(mainSpy.calledTwice).to.be.true;

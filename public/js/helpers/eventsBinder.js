@@ -1,10 +1,13 @@
-define(['jQuery'], function ($) {
+define([
+    'Underscore',
+    'jQuery'
+], function (_, $) {
     return {
         subscribeCollectionEvents: function (collection, contentView) {
             collection.bind('showmore', contentView.showMoreContent, contentView);
             collection.bind('showmoreAlphabet', contentView.showMoreAlphabet, contentView);
             collection.bind('fetchFinished', contentView.setPagination, contentView);
-            collection.bind('remove', contentView.deleteItemsRender, contentView);
+            collection.bind('remove', _.debounce(contentView.deleteItemsRender, 500), contentView);
 
             $(document).on('click', function (e) {
                 contentView.hide(e);
