@@ -161,7 +161,7 @@ define([
             }
 
             $thisEl.find('.allNumberPerPage, .newSelectList').hide();
-            $thisEl.find('span.health-container ul').hide();
+            $thisEl.find('.health-container ul').hide();
 
             if (!$el.closest('.search-view').length) {
                 $thisEl.find('.search-content').removeClass('fa-caret-up');

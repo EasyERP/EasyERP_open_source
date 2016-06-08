@@ -41,50 +41,60 @@ define([
         },
 
         events: {
-            'click .stageSelect'             : 'showNewSelect',
-            'click .newSelectList li'        : 'chooseOption',
-            'click #health .health-container': 'showHealthDd',
-            'click #health ul li div'        : 'chooseHealthDd'
+            'click .stageSelect'                     : 'showNewSelect',
+            'click .newSelectList li'                : 'chooseOption',
+            'click .health-wrapper .health-container': 'showHealthDd',
+            'click #health ul li div'                : 'chooseHealthDd'
         },
 
         chooseHealthDd: function (e) {
             var target$ = $(e.target);
-            var target = target$.parents("#health");
-            target.find("div a").attr("class", target$.attr("class")).attr("data-value", target$.attr("class").replace("health", "")).parents("#health").find("ul").toggle();
-            var id = target.data("id");
+            var target = target$.parents('.health-wrapper');
+            var currTargetHealth = target$.attr('class').replace('health', '');
+            var id = target.parents('.thumbnail').attr('id');
             var model = this.collection.get(id);
+            var health = parseInt(currTargetHealth, 10);
 
-            model.save({health: target.find("div a").data("value")}, {
-                headers : {
+            target.find('.health-container a').attr('class', target$.attr('class')).attr('data-value', currTargetHealth);
+
+            model.save({health: health}, {
+                headers: {
                     mid: 39
                 },
+
                 patch   : true,
                 validate: false,
                 success : function () {
-                    target$.parents("#health").find("ul").hide();
+                    $('.health-wrapper ul').hide();
                 }
             });
-
-            return false;
         },
 
         showHealthDd: function (e) {
-            $(e.target).parents("#health").find("ul").toggle();
+            $(e.target).parents('.health-wrapper').find('ul').toggle();
+
             return false;
         },
 
         hideNewSelect: function (e) {
-            $(".newSelectList").remove();
+            $('.newSelectList').remove();
         },
 
         showNewSelect: function (e) {
-            if ($(".newSelectList").is(":visible")) {
-                this.hideNewSelect();
-                return false;
-            } else {
-                $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
+            if ($('.newSelectList').is(':visible')) {
+                this.hideHealth();
                 return false;
             }
+            $(e.target).parent().append(_.template(stagesTamplate, {stagesCollection: this.stages}));
+
+            return false;
+        },
+
+        hideHealth: function () {
+            var $thisEl = this.$el;
+
+            $thisEl.find('.health-wrapper ul').hide();
+            $thisEl.find('.newSelectList').hide();
         },
 
         chooseOption: function (e) {
