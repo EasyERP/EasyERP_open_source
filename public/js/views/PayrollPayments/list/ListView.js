@@ -15,7 +15,7 @@ define([
     'populate',
     'async',
     'constants'
-], function ($, _, listViewBase, paginationTemplate, listTemplate, filterView, DialogView, currentModel, ListItemView, ListTotalView, paymentCollection, editCollection, dataService, populate, async, CONSTANTS) {
+], function ($, _, listViewBase, paginationTemplate, listTemplate, FilterView, DialogView, currentModel, ListItemView, ListTotalView, paymentCollection, editCollection, dataService, populate, async, CONSTANTS) {
     'use strict';
 
     var PaymentListView = listViewBase.extend({
@@ -24,7 +24,7 @@ define([
         viewType     : 'list',
         listTemplate : listTemplate,
         ListItemView : ListItemView,
-        filterView   : filterView,
+        FilterView   : FilterView,
         changedModels: {},
         responseObj  : {},
 

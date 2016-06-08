@@ -20,7 +20,7 @@ define([
     'views/listViewBase',
     'helpers',
     'constants'
-], function ($, _, paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, CreateView, filterView, currentModel, ListItemView, ListTotalView, paymentCollection, EditCollection, dataService, populate, async, keyCodes, ListViewBase, helpers, CONSTANTS) {
+], function ($, _, paginationTemplate, listTemplate, ListHeaderForWTrack, cancelEdit, selectView, CreateView, FilterView, currentModel, ListItemView, ListTotalView, paymentCollection, EditCollection, dataService, populate, async, keyCodes, ListViewBase, helpers, CONSTANTS) {
     'use strict';
 
     var PaymentListView = ListViewBase.extend({
@@ -28,7 +28,7 @@ define([
         listTemplate            : listTemplate,
         ListItemView            : ListItemView,
         contentCollection       : paymentCollection,
-        filterView              : filterView,
+        FilterView              : FilterView,
         contentType             : 'supplierPayments', // needs in view.prototype.changeLocationHash
         modelId                 : null,
         $listTable              : null,

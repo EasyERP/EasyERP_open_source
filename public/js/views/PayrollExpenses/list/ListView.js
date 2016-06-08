@@ -20,7 +20,7 @@ define([
     'async',
     'moment',
     'helpers'
-], function (Backbone, $, _, headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, filterView, GenerateView, createView, PaymentCreateView, editCollection, PaymentCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
+], function (Backbone, $, _, headerTemplate, cancelEditTemplate, totalTemplate, listViewBase, FilterView, GenerateView, createView, PaymentCreateView, editCollection, PaymentCollection, monthCollection, employeesCollection, currentModel, populate, dataService, async, moment, helpers) {
     var payRollListView = Backbone.View.extend({
         el            : '#content-holder',
         contentType   : 'PayrollExpenses',

@@ -32,7 +32,7 @@ define([
         listTemplate            : listTemplate,
         ListItemView            : ListItemView,
         contentCollection       : contentCollection,
-        filterView              : FilterView,
+        FilterView              : FilterView,
         totalCollectionLengthUrl: '/opportunities/totalCollectionLength',
         formUrl                 : '#easyErp/Opportunities/form/',
         contentType             : 'Opportunities', // needs in view.prototype.changeLocationHash

@@ -22,7 +22,7 @@ define([
             changedModels           : {},
             totalCollectionLengthUrl: '/jobs/totalCollectionLength',
             contentCollection       : JobsCollection,
-            filterView              : FilterView,
+            FilterView              : FilterView,
             exportToXlsxUrl         : '/jobs/exportToXlsx',
 
             events: {

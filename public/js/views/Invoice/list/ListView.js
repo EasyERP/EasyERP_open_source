@@ -14,7 +14,7 @@ define([
         'dataService',
         'constants',
         'helpers'
-], function (_, $, listViewBase, listTemplate, stagesTemplate, CreateView, EditView, InvoiceModel, ListItemView, ListTotalView, contentCollection, filterView, dataService, CONSTANTS, helpers) {
+], function (_, $, listViewBase, listTemplate, stagesTemplate, CreateView, EditView, InvoiceModel, ListItemView, ListTotalView, contentCollection, FilterView, dataService, CONSTANTS, helpers) {
         'use strict';
 
         var InvoiceListView = listViewBase.extend({
@@ -22,7 +22,7 @@ define([
             listTemplate            : listTemplate,
             listItemView            : ListItemView,
             contentCollection       : contentCollection,
-            filterView              : filterView,
+            FilterView              : FilterView,
             totalCollectionLengthUrl: '/Invoice/totalCollectionLength',
             contentType             : 'Invoice', //
 

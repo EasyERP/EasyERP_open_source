@@ -15,14 +15,14 @@ define([
     'populate',
     'async',
     'helpers'
-], function (Backbone, $, _, ListViewBase, listTemplate, cancelEdit, ListItemView, filterView, EditView, paymentCollection, EditCollection, CurrentModel, dataService, populate, async, helpers) {
+], function (Backbone, $, _, ListViewBase, listTemplate, cancelEdit, ListItemView, FilterView, EditView, paymentCollection, EditCollection, CurrentModel, dataService, populate, async, helpers) {
     'use strict';
 
     var PaymentListView = ListViewBase.extend({
 
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
-        filterView       : filterView, // if reload page, and in url is valid page
+        FilterView       : FilterView, // if reload page, and in url is valid page
         contentType      : 'customerPayments', // needs in view.prototype.changeLocationHash
         modelId          : null,
         $listTable       : null,
@@ -36,7 +36,7 @@ define([
             'click td.editable'                                : 'editRow',
             'change .editable '                                : 'setEditable',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click tbody td:not(.checkbox, .date)'             : 'goToEditDialog'
+            'click tbody td:not(.checkbox, .date)'             : 'editItem'
         },
 
         initialize: function (options) {
@@ -55,7 +55,7 @@ define([
             this.render();
         },
 
-        goToEditDialog: function (e) {
+        editItem: function (e) {
             var id = $(e.target).closest('tr').data('id');
             var model = this.collection.get(id);
 
@@ -72,108 +72,6 @@ define([
             });
 
             this.$el.find('#totalPaidAmount').text(helpers.currencySplitter(amount.toFixed(2)));
-        },
-
-        deleteItems: function () {
-            var that = this;
-            var mid = 68;
-            var model;
-            var localCounter = 0;
-            var checked = this.$el.find('#listTable input:checked');
-            var count = checked.length;
-            var value;
-
-            this.collectionLength = this.collection.length;
-
-            if (!this.changed) {
-
-                $.each(checked, function (index, checkbox) {
-                    value = checkbox.value;
-
-                    if (value.length < 24) {
-                        that.editCollection.remove(value);
-                        that.editCollection.on('remove', function () {
-                            this.listLength--;
-                            localCounter++;
-
-                            that.deleteCounter = localCounter;
-                            that.deletePage = $('#currentShowPage').val();
-                            that.deleteItemsRender(that.deleteCounter, that.deletePage);
-
-                        }, that);
-                    } else {
-
-                        model = that.collection.get(value);
-                        model.urlRoot = 'payment';
-                        model.destroy({
-                            headers: {
-                                mid: mid
-                            },
-                            wait   : true,
-                            success: function () {
-                                that.listLength--;
-                                localCounter++;
-
-                                that.deleteCounter = localCounter;
-                                that.deletePage = $('#currentShowPage').val();
-                                that.deleteItemsRender(that.deleteCounter, that.deletePage);
-                            },
-
-                            error: function (model, res) {
-                                if (res.status === 403 && index === 0) {
-                                    App.render({
-                                        type   : 'error',
-                                        message: 'You do not have permission to perform this action'
-                                    });
-                                }
-                                that.listLength--;
-                                localCounter++;
-                                if (index === count - 1) {
-
-                                    that.deleteCounter = localCounter;
-                                    that.deletePage = $('#currentShowPage').val();
-                                    that.deleteItemsRender(that.deleteCounter, that.deletePage);
-                                }
-
-                            }
-                        });
-                    }
-                });
-            } else {
-                this.cancelChanges();
-            }
-        },
-
-        checked: function (e) {
-            var el = this.$el;
-            var $targetEl = $(e.target);
-            var checkLength = el.find('input.checkbox:checked').length;
-            var checkAll$ = el.find('#checkAll');
-            var removeBtnEl = $('#top-bar-deleteBtn');
-
-            e.stopPropagation();
-
-            if ($targetEl.hasClass('notRemovable')) {
-                $targetEl.prop('checked', false);
-
-                return false;
-            }
-
-            if (this.collection.length > 0) {
-                if (checkLength > 0) {
-                    checkAll$.prop('checked', false);
-
-                    removeBtnEl.show();
-
-                    if (checkLength === this.collection.length) {
-
-                        checkAll$.prop('checked', true);
-                    }
-                } else {
-                    removeBtnEl.hide();
-                    checkAll$.prop('checked', false);
-                }
-            }
         },
 
         cancelChanges: function () {

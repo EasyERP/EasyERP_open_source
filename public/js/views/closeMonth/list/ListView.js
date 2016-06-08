@@ -28,7 +28,7 @@ define([
         contentType       : CONSTANTS.CLOSEMONTH, // needs in view.prototype.changeLocationHash
         viewType          : 'list', // needs in view.prototype.changeLocationHash
         yearElement       : null,
-        filterView        : FilterView,
+        FilterView        : FilterView,
 
         events: {
             'click .mainTr': 'showHidden'

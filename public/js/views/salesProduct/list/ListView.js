@@ -13,13 +13,13 @@ define([
         'constants'
     ],
 
-    function (listViewBase, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, filterView, common, dataService, CONSTANT) {
+    function (listViewBase, listTemplate, createView, listItemView, editView, productModel, aphabeticTemplate, contentCollection, FilterView, common, dataService, CONSTANT) {
         var ProductsListView = listViewBase.extend({
             createView              : createView,
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            filterView              : filterView,
+            FilterView              : FilterView,
             totalCollectionLengthUrl: '/product/totalCollectionLength',
             page                    : null, //if reload page, and in url is valid page
             contentType             : CONSTANT.SALESPRODUCT,//needs in view.prototype.changeLocationHash

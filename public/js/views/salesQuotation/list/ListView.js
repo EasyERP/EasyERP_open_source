@@ -27,7 +27,7 @@ define([
              EditView,
              CurrentModel,
              contentCollection,
-             filterView,
+             FilterView,
              dataService,
              CONSTANTS,
              helpers) {
@@ -38,7 +38,7 @@ define([
         listTemplate            : listTemplate,
         listItemView            : ListItemView,
         contentCollection       : contentCollection,
-        filterView              : filterView,
+        FilterView              : FilterView,
         totalCollectionLengthUrl: '/quotation/totalCollectionLength',
         viewType                : 'list', // needs in view.prototype.changeLocationHash
         contentType             : CONSTANTS.SALESQUOTATION, // needs in view.prototype.changeLocationHash

@@ -13,13 +13,13 @@ define([
         'constants'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, filterView, common, dataService, CONSTANTS) {
+    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, FilterView, common, dataService, CONSTANTS) {
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
             listItemView            : listItemView,
             contentCollection       : contentCollection,
-            filterView              : filterView,
+            FilterView              : FilterView,
             totalCollectionLengthUrl: '/Invoice/totalCollectionLength',
             contentType             : 'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
             changedModels           : {},
@@ -42,7 +42,6 @@ define([
                 this.getTotalLength(null, this.defaultItemsNumber, this.filter);
                 this.contentCollection = contentCollection;
                 this.stages = [];
-                this.filterView;
             },
 
             events: {

@@ -1,44 +1,37 @@
-/**
- * Created by lilya on 27/11/15.
- */
 define([
     'Backbone',
+    'collections/parent',
     'models/chartOfAccount',
     'constants'
-], function (Backbone, JobsModel, CONSTANTS) {
+], function (Backbone, Parent, Model, CONSTANTS) {
     'use strict';
 
-    var JobsCollection = Backbone.Collection.extend({
-
-        model       : JobsModel,
-        url         : CONSTANTS.URLS.CHARTOFACCOUNT,
-        contentType : null,
-        page        : null,
-        numberToShow: null,
-        viewType    : null,
+    var JournalCollection = Parent.extend({
+        model   : Model,
+        url     : CONSTANTS.URLS.CHARTOFACCOUNT,
+        pageSize: CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE,
 
         initialize: function (options) {
-            this.startTime = new Date();
-            var that = this;
+            var page;
 
-            this.filter = options ? options.filter : {};
-
-            this.fetch({
-                data   : options,
-                reset  : true,
-                success: function (newCollection) {
-                    that.page++;
-
-                    if (App.currectCollection) {
-                        App.currectCollection.reset(newCollection.models);
-                    }
-                },
-                error  : function (err, xhr) {
-                    console.log(xhr);
+            function _errHandler(models, xhr) {
+                if (xhr.status === 401) {
+                    Backbone.history.navigate('#login', {trigger: true});
                 }
-            });
+            }
+
+            options = options || {};
+            options.error = options.error || _errHandler;
+            page = options.page;
+
+            this.startTime = new Date();
+
+            if (page) {
+                return this.getPage(page, options);
+            }
+
+            this.getFirstPage(options);
         }
     });
-
-    return JobsCollection;
+    return JournalCollection;
 });

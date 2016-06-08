@@ -27,7 +27,7 @@ define([
              listItemView,
              listTotalView,
              contentCollection,
-             filterView,
+             FilterView,
              common,
              dataService,
              CONSTANTS) {
@@ -36,7 +36,7 @@ define([
         listTemplate            : listTemplate,
         listItemView            : listItemView,
         contentCollection       : contentCollection,
-        filterView              : filterView,
+        FilterView              : FilterView,
         totalCollectionLengthUrl: '/Proforma/totalCollectionLength',
         contentType             : CONSTANTS.SALESPROFORMA, // 'salesProforma', //'Invoice',//needs in view.prototype.changeLocationHash
         changedModels           : {},
