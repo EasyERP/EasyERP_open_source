@@ -88,10 +88,10 @@ var Module = function (models, event) {
         var name = body.name ? validator.escape(body.name) : '';
         var email = body.email ? validator.escape(body.email) : '';
         var message = body.message ? validator.escape(body.message) : '';
-        var utm_medium = body.utm_medium ? validator.escape(body.utm_medium) : '';
-        var utm_source = body.utm_source ? validator.escape(body.utm_source) : '';
-        var utm_term = body.utm_term ? validator.escape(body.utm_term) : '';
-        var utm_campaign = body.utm_campaign ? validator.escape(body.utm_campaign) : '';
+        var utmMedium = body.utm_medium ? validator.escape(body.utm_medium) : '';
+        var utmSource = body.utm_source ? validator.escape(body.utm_source) : '';
+        var utmTerm = body.utm_term ? validator.escape(body.utm_term) : '';
+        var utmCampaign = body.utm_campaign ? validator.escape(body.utm_campaign) : '';
         var isEmailValid = EMAIL_REGEXP.test(email);
 
         var waterfallTasks = [getCampaignSource, createLead];
@@ -105,9 +105,9 @@ var Module = function (models, event) {
             var sourceModel;
             var campaignModel;
 
-            if (utm_source) {
+            if (utmSource) {
                 parralelTasks.source = function (parallelCB) {
-                    Source.findOne({_id: utm_source}, function (err, result) {
+                    Source.findOne({_id: utmSource}, function (err, result) {
                         if (err) {
                             return parallelCB(err);
                         }
@@ -116,7 +116,7 @@ var Module = function (models, event) {
                             return parallelCB(null, result);
                         }
 
-                        sourceModel = new Source({_id: utm_source, name: utm_source});
+                        sourceModel = new Source({_id: utmSource, name: utmSource});
 
                         sourceModel.save(function (err, sourceResult) {
                             if (err) {
@@ -128,9 +128,9 @@ var Module = function (models, event) {
                 };
             }
 
-            if (utm_medium) {
+            if (utmMedium) {
                 parralelTasks.campaign = function (parallelCB) {
-                    var loverCampaign = utm_medium.toLowerCase();
+                    var loverCampaign = utmMedium.toLowerCase();
 
                     Campaign.findOne({_id: loverCampaign}, function (err, result) {
                         if (err) {
@@ -141,7 +141,7 @@ var Module = function (models, event) {
                             return parallelCB(null, result);
                         }
 
-                        campaignModel = new Campaign({_id: loverCampaign, name: utm_medium});
+                        campaignModel = new Campaign({_id: loverCampaign, name: utmMedium});
 
                         campaignModel.save(function (err, campaignResult) {
                             if (err) {
@@ -174,8 +174,8 @@ var Module = function (models, event) {
             };
 
             var messageString = 'message:' + message;
-            var utm_termString = '\nutm_term: ' + utm_term;
-            var utm_campaignString = '\nutm_campaign: ' + utm_campaign;
+            var utmTermString = '\nutm_term: ' + utmTerm;
+            var utmCampaignString = '\nutm_campaign: ' + utmCampaign;
 
             var internalNotes = '';
 
@@ -183,12 +183,12 @@ var Module = function (models, event) {
                 internalNotes += messageString;
             }
 
-            if (utm_term) {
-                internalNotes += utm_termString;
+            if (utmTerm) {
+                internalNotes += utmTermString;
             }
 
-            if (utm_campaign) {
-                internalNotes += utm_campaignString;
+            if (utmCampaign) {
+                internalNotes += utmCampaignString;
             }
 
             if (result.campaign && result.campaign._id) {
@@ -819,41 +819,6 @@ var Module = function (models, event) {
 
     };
 
-    /*  this.create = function (req, res, next) {
-     var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
-     var body = req.body;
-     var opportunity;
-     var err;
-
-     if (!validBody(body)) {
-     err = new Error();
-     err.status = 404;
-
-     return next(err);
-     }
-     if (body.company) {
-     if (body.company.id) {
-     body.company = body.company.id;
-     } else if (body.company.name) {
-     body.tempCompanyField = body.company.name;
-     body.company = null;
-     }
-     }
-     opportunity = new Opportunity(body);
-
-     event.emit('updateSequence', Opportunity, 'sequence', 0, 0, opportunity.workflow, opportunity.workflow, true, false, function (sequence) {
-     opportunity.sequence = sequence;
-
-     opportunity.save(function (err, result) {
-     if (err) {
-     return next(err);
-     }
-
-     res.status(201).send({success: 'A new Opportunities create success', id: result._id});
-     });
-     });
-     };*/
-
     this.getLeadsForChart = function (req, res, next) {
         var data = req.query;
         var response = {};
@@ -959,16 +924,16 @@ var Module = function (models, event) {
                 res.send(response);
             });
         } else if (type === 'date') {
-            myItem["$project"] = {isOpportunitie: 1, convertedDate: 1};
-            myItem["$project"]["dateBy"] = {};
-            myItem["$project"]["dateBy"][data.dataItem] = "$convertedDate";
-            if (data.dataItem == "$dayOfYear") {
-                myItem["$project"]["year"] = {};
-                myItem["$project"]["year"]["$year"] = "$convertedDate";
+            myItem['$project'] = {isOpportunitie: 1, convertedDate: 1};
+            myItem['$project']['dateBy'] = {};
+            myItem['$project']['dateBy'][data.dataItem] = '$convertedDate';
+            if (data.dataItem == '$dayOfYear') {
+                myItem['$project']['year'] = {};
+                myItem['$project']['year']['$year'] = '$convertedDate';
             }
             fromDateTicks = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
             fromDate = new Date(fromDateTicks);
-            models.get(req.session.lastDb, "Opportunities", opportunitiesSchema).aggregate(
+            models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema).aggregate(
                 {
                     $match: {
                         $and: [{
@@ -983,18 +948,18 @@ var Module = function (models, event) {
                 myItem,
                 {
                     $group: {
-                        _id  : {dateBy: "$dateBy", isOpportunitie: "$isOpportunitie", year: "$year"},
+                        _id  : {dateBy: '$dateBy', isOpportunitie: '$isOpportunitie', year: '$year'},
                         count: {$sum: 1},
-                        date : {$push: "$convertedDate"}
+                        date : {$push: '$convertedDate'}
                     }
                 },
                 {
                     $project: {
-                        "source": "$_id.dateBy",
+                        'source': '$_id.dateBy',
                         count   : 1,
                         date    : 1,
-                        year    : "$_id.year",
-                        "isOpp" : "$_id.isOpportunitie",
+                        year    : '$_id.year',
+                        'isOpp' : '$_id.isOpportunitie',
                         _id     : 0
                     }
                 },
@@ -1022,46 +987,46 @@ var Module = function (models, event) {
         var fromDate;
 
         data.dataRange = parseInt(data.dataRange, 10) || 365;
-        data.dataItem = data.dataItem || "M";
+        data.dataItem = data.dataItem || 'M';
 
         switch (data.dataItem) {
-            case "M":
-                data.dataItem = "$month";
+            case 'M':
+                data.dataItem = '$month';
                 dateFormat = {
-                    year  : {$dateToString: {format: "%Y", date: "$date"}},
-                    mounth: {$dateToString: {format: "%m", date: "$date"}}
+                    year  : {$dateToString: {format: '%Y', date: '$date'}},
+                    mounth: {$dateToString: {format: '%m', date: '$date'}}
                 };
                 break;
-            case "W":
-                data.dataItem = "$week";
+            case 'W':
+                data.dataItem = '$week';
                 dateFormat = {
-                    year: {$dateToString: {format: "%Y", date: "$date"}},
-                    week: {$dateToString: {format: "%U", date: "$date"}}
+                    year: {$dateToString: {format: '%Y', date: '$date'}},
+                    week: {$dateToString: {format: '%U', date: '$date'}}
                 };
                 break;
-            case "D":
-                data.dataItem = "$dayOfYear";
+            case 'D':
+                data.dataItem = '$dayOfYear';
                 dateFormat = {
-                    year  : {$dateToString: {format: "%Y", date: "$date"}},
-                    mounth: {$dateToString: {format: "%m", date: "$date"}},
-                    day   : {$dateToString: {format: "%d", date: "$date"}}
+                    year  : {$dateToString: {format: '%Y', date: '$date'}},
+                    mounth: {$dateToString: {format: '%m', date: '$date'}},
+                    day   : {$dateToString: {format: '%d', date: '$date'}}
                 };
                 break;
-            case "DW":
-                data.dataItem = "$dayOfWeek";
+            case 'DW':
+                data.dataItem = '$dayOfWeek';
                 dateFormat = {
-                    year  : {$dateToString: {format: "%Y", date: "$date"}},
-                    mounth: {$dateToString: {format: "%m", date: "$date"}},
-                    day   : {$dateToString: {format: "%d", date: "$date"}}
+                    year  : {$dateToString: {format: '%Y', date: '$date'}},
+                    mounth: {$dateToString: {format: '%m', date: '$date'}},
+                    day   : {$dateToString: {format: '%d', date: '$date'}}
                 };
                 data.dataRange = 7;
                 break;
-            case "DM":
-                data.dataItem = "$dayOfMonth";
+            case 'DM':
+                data.dataItem = '$dayOfMonth';
                 dateFormat = {
-                    year  : {$dateToString: {format: "%Y", date: "$date"}},
-                    mounth: {$dateToString: {format: "%m", date: "$date"}},
-                    day   : {$dateToString: {format: "%d", date: "$date"}}
+                    year  : {$dateToString: {format: '%Y', date: '$date'}},
+                    mounth: {$dateToString: {format: '%m', date: '$date'}},
+                    day   : {$dateToString: {format: '%d', date: '$date'}}
                 };
                 break;
         }
@@ -1676,124 +1641,6 @@ var Module = function (models, event) {
         });
     };
 
-    /* this.getLeadsForChart = function (req, res, next) {
-     var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
-     var data = {};
-
-     data.source = req.param('source');
-     data.dataRange = req.param('dataRange');
-     data.dataItem = req.param('dataItem');
-
-     if (!data.dataRange) {
-     data.dataRange = 365;
-     }
-     if (!data.dataItem) {
-     data.dataItem = 'M';
-     }
-     switch (data.dataItem) {
-     case 'M':
-     data.dataItem = '$month';
-     break;
-     case 'W':
-     data.dataItem = '$week';
-     break;
-     case 'D':
-     data.dataItem = '$dayOfYear';
-     break;
-     case 'DW':
-     data.dataItem = '$dayOfWeek';
-     break;
-     case 'DM':
-     data.dataItem = '$dayOfMonth';
-     break;
-
-     }
-     if (data.source) {
-
-     var c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
-     var a = new Date(c);
-     Opportunity.aggregate({
-     $match: {
-     $and: [{
-     createdBy: {$ne: null},
-     source   : {$ne: ''},
-     $or      : [{isConverted: true}, {isOpportunitie: false}]
-     }, {'createdBy.date': {$gte: a}}]
-     }
-     }, {
-     $group: {
-     _id  : {source: '$source', isOpportunitie: '$isOpportunitie'},
-     count: {$sum: 1}
-     }
-     }, {
-     $project: {
-     source: '$_id.source',
-     count : 1,
-     isOpp : '$_id.isOpportunitie',
-     _id   : 0
-     }
-     }).exec(function (err, result) {
-     if (err) {
-     return next(err);
-     }
-
-     res.status(200).send({data: result});
-
-     });
-     } else {
-     var myItem = {};
-     myItem.$project = {isOpportunitie: 1, convertedDate: 1};
-     myItem.$project.dateBy = {};
-     myItem.$project.dateBy[data.dataItem] = '$convertedDate';
-     if (data.dataItem === '$dayOfYear') {
-     myItem.$project.year = {};
-     myItem.$project.year.$year = '$convertedDate';
-     }
-     var c = new Date() - data.dataRange * 24 * 60 * 60 * 1000;
-     var a = new Date(c);
-     Opportunity.aggregate(
-     {
-     $match: {
-     $and: [{
-     createdBy: {$ne: null},
-     $or      : [{isConverted: true}, {isOpportunitie: false}]
-     },
-     {
-     'createdBy.date': {$gte: a}
-     }]
-     }
-     },
-     myItem,
-     {
-     $group: {
-     _id  : {dateBy: '$dateBy', isOpportunitie: '$isOpportunitie', year: '$year'},
-     count: {$sum: 1},
-     date : {$push: '$convertedDate'}
-     }
-     },
-     {
-     $project: {
-     source: '$_id.dateBy',
-     count : 1,
-     date  : 1,
-     year  : '$_id.year',
-     isOpp : '$_id.isOpportunitie',
-     _id   : 0
-     }
-     },
-     {
-     $sort: {year: 1, source: 1}
-     }
-     ).exec(function (err, result) {
-     if (err) {
-     return next(err);
-     }
-
-     res.send({data: result});
-     });
-     }
-     };*/
-
     this.updateLead = function (req, res, next) {
         var Opportunity = models.get(req.session.lastDb, 'Opportunitie', opportunitiesSchema);
         var Customer = models.get(req.session.lastDb, 'Customers', CustomerSchema);
@@ -1812,8 +1659,9 @@ var Module = function (models, event) {
 
         function updateOpp() {
             var createPersonCustomer = function (company) {
+                var _person;
                 if (data.contactName && (data.contactName.first || data.contactName.last)) {
-                    var _person = {
+                    _person = {
                         name   : data.contactName,
                         email  : data.email,
                         phones : data.phones,
@@ -1828,6 +1676,8 @@ var Module = function (models, event) {
                         createdBy: {user: req.session.uId}
                     };
                     Opportunity.find({$and: [{'name.first': data.contactName.first}, {'name.last': data.contactName.last}]}, function (err, _persons) {
+                        var _Person;
+
                         if (err) {
                             return next(err);
                         }
@@ -1841,7 +1691,7 @@ var Module = function (models, event) {
                                 });
                             }
                         } else {
-                            var _Person = new Customer(_person);
+                            _Person = new Customer(_person);
 
                             _Person.save(function (err) {
                                 if (err) {
@@ -1978,14 +1828,6 @@ var Module = function (models, event) {
             updateOpp();
         }
     };
-
-    function ConvertType(array, type) {
-        if (type === 'integer') {
-            for (var i = array.length - 1; i >= 0; i--) {
-                array[i] = parseInt(array[i]);
-            }
-        }
-    }
 
     function caseFilter(filter) {
         var condition;
@@ -2664,7 +2506,7 @@ var Module = function (models, event) {
             internalNotes  : 1,
             editedBy       : 1,
             notes          : 1
-            /*company         : 1,
+            /* company         : 1,
              tempCompanyField: 1,
              contactName     : 1,
              email           : 1,
@@ -2673,7 +2515,7 @@ var Module = function (models, event) {
         });
 
         query
-            //.populate('company', 'name')
+            // .populate('company', 'name')
             .populate('customer', 'name')
             .populate('salesPerson', 'name')
             .populate('workflow', 'name')
