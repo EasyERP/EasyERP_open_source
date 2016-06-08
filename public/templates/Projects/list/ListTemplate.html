@@ -19,21 +19,21 @@
     <td id='<%=project._id%>'>
         <a href="javascript:;" class="stageSelect"><%=(project.workflow) ? project.workflow.name : 'Undefinded'%></a>
     </td>
-    <td id="health" data-id="<%=project._id%>">
+    <td class="health-wrapper" data-id="<%=project._id%>">
         <div class="health-container">
             <a href="javascript:;" data-value="<%=project.health%>" class="health<%=project.health%>"></a>
+            <ul class="with-div">
+                <li>
+                    <div class="health1"></div>
+                </li>
+                <li>
+                    <div class="health2"></div>
+                </li>
+                <li>
+                    <div class="health3"></div>
+                </li>
+            </ul>
         </div>
-        <ul class="with-div">
-            <li>
-                <div class="health1"></div>
-            </li>
-            <li>
-                <div class="health2"></div>
-            </li>
-            <li>
-                <div class="health3"></div>
-            </li>
-        </ul>
     </td>
     <td><%=project.createdBy.user?(project.createdBy.date + ' (' + project.createdBy.user +
         ')'):(project.createdBy.date?project.createdBy.date:'')%>
