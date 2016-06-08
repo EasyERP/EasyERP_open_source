@@ -15,6 +15,9 @@ module.exports = function (models, event) {
     router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddleware, handler.totalCollectionLength);
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddleware, handler.getFilterValues);
     router.get('/OpportunitiesForMiniView', authStackMiddleware, accessStackMiddleware, handler.opportunitiesForMiniView);
+    router.get('/OpportunitiesForChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesForChart);
+    router.get('/OpportunitiesConversionForChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesConversionForChart);
+    router.get('/OpportunitiesAgingChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesAgingChart);
     router.get('/getLengthByWorkflows', authStackMiddleware, accessStackMiddleware, handler.getLengthByWorkflows);
     router.get('/priority', authStackMiddleware, accessStackMiddleware, handler.getLeadsPriority);
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
