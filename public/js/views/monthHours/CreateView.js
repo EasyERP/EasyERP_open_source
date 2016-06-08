@@ -21,18 +21,18 @@ define([
             var tds;
 
             if ($row.length) {
-                this.$el.prepend("<tr id='false' data-id='" + options.cid + " '>" + $row.html() + '</tr>');
+                this.$el.prepend("<tr id='false' data-id='" + options.cid + "'>" + $row.html() + '</tr>');
                 $newRow = this.$el.find('#false');
                 tds = $newRow.find('td');
 
                 $(tds[0]).find('input').attr('value', options.cid);
                 $(tds[1]).text('New');
                 $(tds[2]).text('');
-                $(tds[2]).addClass('editable');
+                $(tds[2]).addClass('editable errorContent');
                 $(tds[3]).text('');
-                $(tds[3]).addClass('editable');
+                $(tds[3]).addClass('editable errorContent');
                 $(tds[4]).text('');
-                $(tds[4]).addClass('editable');
+                $(tds[4]).addClass('editable errorContent');
             } else {
                 this.$el.prepend(this.template(options));
             }
