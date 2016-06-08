@@ -472,9 +472,8 @@ define([
             startData.cid = cid;
 
             if (!this.isNewRow()) {
-                this.showSaveCancelBtns();
-
                 if (this.editCollection) {
+                    this.showSaveCancelBtns();
                     this.editCollection.add(model);
                 }
             }
