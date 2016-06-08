@@ -71,7 +71,7 @@ define([
             wait = !!options.wait;
             reset = !!options.reset;
             isNew = !!options.newCollection;
-            remove = !!options.remove;
+            remove = !options.remove;
 
             if (!options.hasOwnProperty('showMore')) {
                 showMore = true;

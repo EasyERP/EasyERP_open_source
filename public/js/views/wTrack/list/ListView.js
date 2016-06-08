@@ -945,6 +945,7 @@ define([
 
                 if (checkLength > 0) {
                     $('#top-bar-deleteBtn').show();
+                    $('#top-bar-copyBtn').show();
                     $('#top-bar-createBtn').hide();
 
                     $('#checkAll').prop('checked', false);
@@ -953,6 +954,7 @@ define([
                     }
                 } else {
                     $('#top-bar-deleteBtn').hide();
+                    $('#top-bar-copyBtn').hide();
                     $('#top-bar-createBtn').show();
                     $('#checkAll').prop('checked', false);
                 }

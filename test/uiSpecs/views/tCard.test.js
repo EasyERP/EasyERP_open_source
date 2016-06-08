@@ -1,4 +1,5 @@
 define([
+    'jQuery',
     'modules',
     'text!fixtures/index.html',
     'collections/wTrack/filterCollection',
@@ -8,11 +9,11 @@ define([
     'views/wTrack/TopBarView',
     'views/wTrack/CreateView',
     'helpers/eventsBinder',
-    'jQuery',
     'chai',
     'chai-jquery',
     'sinon-chai'
-], function (modules,
+], function ($,
+             modules,
              fixtures,
              TCardCollection,
              MainView,
@@ -21,7 +22,6 @@ define([
              TopBarView,
              CreateView,
              eventsBinder,
-             $,
              chai,
              chaiJquery,
              sinonChai) {
@@ -992,6 +992,7 @@ define([
     var view;
     var topBarView;
     var listView;
+    var ajaxSpy;
 
     chai.use(chaiJquery);
     chai.use(sinonChai);
@@ -1001,6 +1002,9 @@ define([
         var $fixture;
         var $elFixture;
 
+        before(function () {
+            ajaxSpy = sinon.spy($, 'ajax');
+        });
         after(function () {
             view.remove();
             listView.remove();
@@ -1009,6 +1013,8 @@ define([
             if ($('.ui-dialog').length) {
                 $('.ui-dialog').remove();
             }
+
+            ajaxSpy.restore();
         });
 
         describe('#initialize()', function () {
@@ -1120,6 +1126,7 @@ define([
             var goToCreateJobSpy;
             var createJobSpy;
             var $thisEl;
+            var sortSpy;
 
             before(function () {
                 App.startPreload = function () {
@@ -1142,6 +1149,8 @@ define([
 
                 goToCreateJobSpy = sinon.spy(ListView.prototype, 'generateJob');
                 createJobSpy = sinon.spy(createJob.prototype, 'initialize');
+
+                sortSpy = sinon.spy(ListView.prototype, 'goSort');
             });
 
             after(function () {
@@ -1151,6 +1160,7 @@ define([
                 clock.restore();
                 deleteSpy.restore();
                 saveSpy.restore();
+                sortSpy.restore();
             });
 
             describe('INITIALIZE', function () {
@@ -1178,6 +1188,7 @@ define([
                     var friday;
                     var saturday;
                     var sunday;
+                    var $pagination;
 
                     server.respondWith('GET', projectsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeProjectForWTrack)]);
                     server.respondWith('GET', employeeUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeEmployee)]);
@@ -1273,7 +1284,100 @@ define([
                     sunday = $firstRow.find('td:nth-child(19)').text().trim();
                     expect(sunday).to.not.match(/object Object|undefined/);
 
+                    $pagination = $thisEl.find('.pagination');
+                    expect($pagination.find('.pageList')).to.exist;
+                    expect($pagination.find('.nextPrev')).to.exist;
+
                     done();
+                });
+
+                it('Try to choose 25 items for list', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needItemsBtn = $pagination.find('.pageList > a').first();
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needItemsBtn.click();
+                    server.respond();
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '25');
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                });
+
+                it('Try to select page 2', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $currentPageList = $pagination.find('.currentPageList');
+                    var $pageList;
+                    var $needPageBtn;
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $currentPageList.mouseover();
+                    $pageList = $pagination.find('#pageList');
+                    expect($pageList).to.have.css('display', 'block');
+
+                    $needPageBtn = $pageList.find('li').eq(1);
+
+                    $needPageBtn.click();
+                    server.respond();
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '25');
+                    expect(ajaxResponse.data).to.have.property('page', 2);
+                });
+
+                it('Try to choose 50 items for list', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needItemsBtn = $pagination.find('.pageList > a').eq(1);
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needItemsBtn.click();
+                    server.respond();
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '50');
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                });
+
+                it('Try to choose 100 items for list', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needItemsBtn = $pagination.find('.pageList > a').eq(2);
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needItemsBtn.click();
+                    server.respond();
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '100');
+                    expect(ajaxResponse.data).to.have.property('page', 1);
+                });
+
+                it('Try to choose 200 items for list', function () {
+                    var $pagination = $thisEl.find('.pagination');
+                    var $needItemsBtn = $pagination.find('.pageList > a').eq(3);
+                    var ajaxResponse;
+
+                    ajaxSpy.reset();
+
+                    $needItemsBtn.click();
+                    server.respond();
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(ajaxResponse.data).to.exist;
+                    expect(ajaxResponse.data).to.have.property('count', '200');
+                    expect(ajaxResponse.data).to.have.property('page', 1);
                 });
 
                 it('Try to delete item with 403 error', function () {
@@ -1301,13 +1405,14 @@ define([
                     var $needCheckBtn = listView.$el.find('#listTable > tr:nth-child(3) > td.notForm > input');
                     var $deleteBtn = topBarView.$el.find('#top-bar-deleteBtn');
 
+                    mainSpy.reset();
+
                     $needCheckBtn.click();
                     $deleteBtn.click();
 
                     spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', "You can't delete tCard with closed project.");
-                    expect(mainSpy.calledTwice).to.be.true;
                 });
 
                 it('Try to delete item', function () {
@@ -1322,45 +1427,38 @@ define([
                 });
 
                 it('Try to go sort', function () {
-                    var $sortEl = listView.$el.find('th[data-sort="project.projectName"]');
+                    var $sortEl = listView.$el.find('th[data-sort="project.name"]');
                     var tCardUrl = new RegExp('\/wTrack\/list', 'i');
+                    var ajaxResponse;
+
+                    sortSpy.reset();
+                    ajaxSpy.reset();
 
                     server.respondWith('GET', tCardUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTCard)]);
                     $sortEl.click();
                     server.respond();
-                    expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('573d74907d366307357e4323');
+
+                    ajaxResponse = ajaxSpy.args[0][0];
+
+                    expect(sortSpy.calledOnce).to.be.true;
+                    expect(ajaxResponse).to.have.property('data');
+                    expect(ajaxResponse.data).to.have.property('contentType', 'wTrack');
+                    expect(ajaxResponse.data).to.have.property('count', '200');
+                    expect(ajaxResponse.data.sort).to.be.exist;
+                    expect(ajaxResponse.data.sort).to.have.property('project.name', 1);
 
                     server.respondWith('GET', tCardUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify([fakeTCard[1], fakeTCard[0]])]);
                     $sortEl.click();
                     server.respond();
-                    expect(listView.$el.find('#listTable > tr:nth-child(1)').attr('data-id')).to.be.equals('573d7486ad8f152235a27952');
+                    expect(sortSpy.calledTwice).to.be.true;
 
-                });
+                    ajaxResponse = ajaxSpy.args[1][0];
 
-                it('Try to showMore tCard with error response', function () {
-                    var spyResponse;
-                    var $pageList = listView.$el.find('.pageList');
-                    var $needBtn = $pageList.find('a:nth-child(2)');
-                    var tCardUrl = new RegExp('\/wTrack\/list', 'i');
-
-                    server.respondWith('GET', tCardUrl, [400, {'Content-Type': 'application/json'}, JSON.stringify(fakeTCard)]);
-                    $needBtn.click();
-                    server.respond();
-
-                    spyResponse = mainSpy.args[3][0];
-                    expect(spyResponse).to.have.property('type', 'error');
-                    expect(spyResponse).to.have.property('message', 'Some Error.');
-                });
-
-                it('Try to showMore tCard', function () {
-                    var $pageList = listView.$el.find('.pageList');
-                    var $needBtn = $pageList.find('a:nth-child(2)');
-                    var tCardUrl = new RegExp('\/wTrack\/list', 'i');
-
-                    server.respondWith('GET', tCardUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeTCard)]);
-                    $needBtn.click();
-                    server.respond();
-                    expect(listView.$el.find('#listTable > tr').length).to.be.equals(2);
+                    expect(ajaxResponse).to.have.property('data');
+                    expect(ajaxResponse.data).to.have.property('contentType', 'wTrack');
+                    expect(ajaxResponse.data).to.have.property('count', '200');
+                    expect(ajaxResponse.data.sort).to.be.exist;
+                    expect(ajaxResponse.data.sort).to.have.property('project.name', -1);
                 });
 
                 it('Try to check|uncheck all checkboxes', function () {
@@ -1398,14 +1496,6 @@ define([
                     $select = listView.$el.find('#55b92ad221e4b7c40f000030');
                     $select.click();
 
-                    /*$sprintBtn = listView.$el.find('#listTable > tr.false > td:nth-child(3)');
-                     server.respondWith('GET', jobUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsWithId)]);
-                     $sprintBtn.click();
-                     server.respond();
-
-                     $select = listView.$el.find('#56e6f1ae0d773c634e918b68');
-                     $select.click();*/
-
                     $sprintBtn = listView.$el.find('#listTable > tr.false > td:nth-child(3)');
                     $sprintBtn.removeClass(' errorContent');
                     $sprintBtn.text('March');
@@ -1425,7 +1515,7 @@ define([
                     $copyBtn = topBarView.$el.find('#top-bar-copyBtn');
                     $copyBtn.click();
 
-                    expect(listView.$el.find('#listTable > tr').length).to.be.equals(4);
+                    expect(listView.$el.find('#listTable > tr').length).to.be.equals(5);
                 });
 
 
@@ -1497,6 +1587,8 @@ define([
                     $selectedItem.click();
                     $dialogEl = $('.ui-dialog');
 
+                    mainSpy.reset();
+
                     expect(goToCreateJobSpy.called).to.be.true;
                     expect(createJobSpy.called).to.be.true;
                     expect($dialogEl).to.exist;
@@ -1505,9 +1597,8 @@ define([
 
                     generateBtn = $dialogEl.find('#generateBtn');
                     generateBtn.click();
-                    expect(mainSpy.callCount).to.be.equal(5);
 
-                    spyResponse = mainSpy.args[4][0];
+                    spyResponse = mainSpy.args[0][0];
 
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'Please, enter correct Job name!');
@@ -1515,9 +1606,10 @@ define([
                     cancelBtn = $dialogEl.find('#cancelBtn');
                     cancelBtn.click();
 
+                    expect($('.ui-dialog')).to.not.exist;
                 });
 
-                it('Try to edit wTrack', function () {
+                /*it('Try to edit wTrack', function () {
                     var $selectedItem;
                     var $input;
                     var spyResponse;
@@ -1536,13 +1628,14 @@ define([
                     var wTrackUrl = '/wTrack/';
                     var keyDownEventEnter = $.Event('keydown', {keyCode: 13});
                     var keyDownEvent = $.Event('keydown');
-
                     var keyUpEvent = $.Event('keyup');
+
+                    mainSpy.reset();
+                    ajaxSpy.reset();
 
                     // change monday hours
                     server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
-
                     $mondayBtn.click();
                     server.respond();
                     server.respond();
@@ -1555,18 +1648,13 @@ define([
                     server.respondWith('GET', holidaysUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
                     $input.trigger(keyUpEvent);
 
-
                     $input.trigger('change');
                     server.respond();
                     server.respond();
 
-                    expect(mainSpy.callCount).to.be.equal(6);
-
-                    spyResponse = mainSpy.args[5][0];
-
+                    spyResponse = mainSpy.args[0][0];
                     expect(spyResponse).to.have.property('type', 'error');
                     expect(spyResponse).to.have.property('message', 'Сreate Overtime tCard for input more than 8 hours');
-
 
                     // change year
 
@@ -1578,7 +1666,6 @@ define([
                     $selectedItem.click();
                     server.respond();
                     server.respond();
-
 
                     // change month
                     server.respondWith('GET', vacationUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({})]);
@@ -1596,7 +1683,6 @@ define([
                     server.respond();
                     server.respond();
 
-
                     // change job
                     server.respondWith('GET', jobsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsWithId)]);
                     $jobsBtn.click();
@@ -1612,7 +1698,6 @@ define([
                     server.respondWith('GET', jobsUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeJobsWithId)]);
                     $selectedItem.click();
                     server.respond();
-
 
                     //change employee
 
@@ -1642,11 +1727,12 @@ define([
                     $selectedItem = $typeBtn.find('.newSelectList li:nth-child(2)');
                     $selectedItem.click();
 
+                    ajaxSpy.reset();
 
                     server.respondWith('PATCH', wTrackUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({success: 'Updated success'})]);
                     $saveBtn.click();
                     server.respond();
-                });
+                });*/
             });
         });
     });
