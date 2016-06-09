@@ -397,6 +397,21 @@ var Opportunities = function (models, event) {
                     if (data.source) {
                         _opportunitie.source = data.source;
                     }
+                    if (data.skype) {
+                        _opportunitie.skype = data.skype;
+                    }
+                    if (data.social && data.social.LI) {
+                        if (!_opportunitie.social) {
+                            _opportunitie.social = {};
+                        }
+                        _opportunitie.social.LI = data.social.LI;
+                    }
+                    if (data.social && data.social.FB) {
+                        if (!_opportunitie.social) {
+                            _opportunitie.social = {};
+                        }
+                        _opportunitie.social.FB = data.social.FB;
+                    }
                     event.emit('updateSequence', models.get(req.session.lastDb, "Opportunities", opportunitiesSchema), "sequence", 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
                         _opportunitie.sequence = sequence;
                         _opportunitie.save(function (err, result) {
@@ -887,7 +902,9 @@ var Opportunities = function (models, event) {
                                 isConverted   : 1,
                                 isOpportunitie: 1,
                                 customer      : 1,
-                                salesPerson   : 1
+                                salesPerson   : 1,
+                                skype         : 1,
+                                social        : 1
                             }
                         },
                         {
@@ -934,7 +951,6 @@ var Opportunities = function (models, event) {
 
                             if (!err) {
                                 var query = models.get(req.session.lastDb, "Opportunities", opportunitiesSchema);
-
 
                                 switch (data.contentType) {
 
@@ -1032,7 +1048,9 @@ var Opportunities = function (models, event) {
                                             "phones"         : 1,
                                             "email"          : 1,
                                             "address"        : 1,
-                                            "company"        : 1
+                                            "company"        : 1,
+                                            skype            : 1,
+                                            social           : 1
                                         }
                                     },
                                     {

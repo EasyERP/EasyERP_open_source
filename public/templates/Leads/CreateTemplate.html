@@ -21,31 +21,6 @@
                                 <dd>
                                     <a id="customerDd" class="current-selected" href="javascript:;"></a>
                                 </dd>
-                                <dt><label for="salesPerson">Assigned to</label></dt>
-                                <dd>
-                                    <a id="salesPerson" class="current-selected" href="javascript:;">Select</a>
-                                </dd>
-                                <dt><label for="street">Street</label></dt>
-                                <dd><input type="text" class="address" id="street" name="street" placeholder="Street..."
-                                           maxlength="32"/></dd>
-                                <dt><label for="city">City</label></dt>
-                                <dd><input type="text" class="address" id="city" name="city" placeholder="City"
-                                           maxlength="32"/></dd>
-                                <dt><label for="state">State</label></dt>
-                                <dd><input type="text" class="address" id="state" name="state" placeholder="State"
-                                           maxlength="32"/></dd>
-                                <dt><label for="zip">Zip</label></dt>
-                                <dd><input type="text" class="address" id="zip" name="zip" placeholder="ZIP"
-                                           maxlength="32"/></dd>
-                                <dt><label for="country">Country</label></dt>
-                                <dd><input type="text" class="address" id="country" name="country" placeholder="Country"
-                                           maxlength="32"/></dd>
-
-                                <!--                    <dt><label for="salesTeam">Sales Team</label></dt><dd><select id="salesTeam"> </select></dd>-->
-                            </dl>
-                        </div>
-                        <div class="half-block left">
-                            <dl class="opp-info">
                                 <dt><label for="first">First Name </label></dt>
                                 <dd><input type="text" class="name" id="first" placeholder="First Name" maxlength="32"/>
                                 </dd>
@@ -63,6 +38,37 @@
                                 <!--                    <dt><label for="workflowNamesDd">Workflow Name </label></dt><dd>
                                                         <a id="workflowNamesDd" class="current-selected" href="javascript:;"></a>
                                 </dd>-->
+                                <dt><label for="skype">Skype</label></dt>
+                                <dd><input type="text" id="skype" value="" placeholder="Skype"
+                                           maxlength="256"/></dd>
+                                <dt><label for="LI">LinkedIn</label></dt>
+                                <dd><input type="text" id="LI" placeholder="LinkedIn"
+                                           maxlength="256"/></dd>
+                                <dt><label for="FB">Facebook</label></dt>
+                                <dd><input type="text" id="FB" placeholder="Facebook"
+                                           maxlength="256"/></dd>
+                                </dl>
+                        </div>
+                        <div class="half-block left">
+                            <dl class="opp-info">
+                                <dt><label for="street">Street</label></dt>
+                                <dd><input type="text" class="address" id="street" name="street" placeholder="Street..."
+                                           maxlength="32"/></dd>
+                                <dt><label for="city">City</label></dt>
+                                <dd><input type="text" class="address" id="city" name="city" placeholder="City"
+                                           maxlength="32"/></dd>
+                                <dt><label for="state">State</label></dt>
+                                <dd><input type="text" class="address" id="state" name="state" placeholder="State"
+                                           maxlength="32"/></dd>
+                                <dt><label for="zip">Zip</label></dt>
+                                <dd><input type="text" class="address" id="zip" name="zip" placeholder="ZIP"
+                                           maxlength="32"/></dd>
+                                <dt><label for="country">Country</label></dt>
+                                <dd><input type="text" class="address" id="country" name="country" placeholder="Country"
+                                           maxlength="32"/></dd>
+
+                                <!--                    <dt><label for="salesTeam">Sales Team</label></dt><dd><select id="salesTeam"> </select></dd>-->
+
                                 <dt><label for="workflowsDd">Stage </label></dt>
                                 <dd id="selectWorkflow">
                                     <a id="workflowsDd" class="current-selected" href="javascript:;"></a>
@@ -79,11 +85,15 @@
                                 <dd>
                                     <a id="sourceDd" class="current-selected" href="javascript:;"></a>
                                 </dd>
+                                <dt><label for="salesPerson">Assigned to</label></dt>
+                                <dd>
+                                    <a id="salesPerson" class="current-selected" href="javascript:;">Select</a>
+                                </dd>
                             </dl>
                         </div>
                         <dl class="internal-info">
                             <dt><label for="internalNotes">Internal Notes</label></dt>
-                            <dd><textarea id="internalNotes" placeholder="Internal notes" maxlength="500"/></dd>
+                            <dd><textarea id="internalNotes" placeholder="Internal notes" maxlength="2500"/></dd>
                         </dl>
                         <div class="clearfix"></div>
                         <div class="half-block left withPaddingLeft">
