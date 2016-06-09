@@ -30,7 +30,7 @@ define([
              _,
              $,
              ListViewBase,
-             selectView,
+             SelectView,
              listTemplate,
              cancelEdit,
              forWeek,
@@ -361,33 +361,6 @@ define([
             }
 
             this.changedModels[wTrackId].worked = worked;
-        },
-
-        setEditable: function (td) {
-            var tr;
-
-            if (!td.parents) {
-                td = $(td.target).closest('td');
-            }
-
-            tr = td.parents('tr');
-
-            tr.addClass('edited');
-            // td.addClass('edited');
-
-            if (this.isEditRows()) {
-                this.setChangedValue();
-            }
-
-            return false;
-        },
-
-        isEditRows: function () {
-            var edited = this.$listTable.find('.edited');
-
-            this.edited = edited;
-
-            return !!edited.length;
         },
 
         setChangedValueToModel: function ($tr) {
@@ -842,7 +815,7 @@ define([
                 self.generateJob(e);
             }
 
-            this.hideNewSelect();
+            this.hide(e);
             this.setEditable(targetElement);
 
             if (needCheckVacHol) {
@@ -927,12 +900,13 @@ define([
         },
 
         checked: function (e) {
-            e.stopPropagation();
             var $thisEl = this.$el;
+            var changedRows = Object.keys(this.changedModels);
             var rawRows;
             var $checkedEls;
             var checkLength;
-            var changedRows = Object.keys(this.changedModels);
+
+            e.stopPropagation();
 
             if (this.collection.length > 0) {
                 $checkedEls = $thisEl.find('input.listCB:checked');
@@ -940,10 +914,11 @@ define([
                 checkLength = $checkedEls.length;
                 rawRows = $checkedEls.closest('.false');
 
-                this.checkProjectId(e, checkLength);
+                //this.checkProjectId(e, checkLength);
 
                 if (checkLength > 0) {
                     $('#top-bar-deleteBtn').show();
+                    $('#top-bar-copyBtn').show();
                     $('#top-bar-createBtn').hide();
 
                     $('#checkAll').prop('checked', false);
@@ -952,6 +927,7 @@ define([
                     }
                 } else {
                     $('#top-bar-deleteBtn').hide();
+                    $('#top-bar-copyBtn').hide();
                     $('#top-bar-createBtn').show();
                     $('#checkAll').prop('checked', false);
                 }
@@ -972,109 +948,6 @@ define([
             this.setAllTotalVals();
         },
 
-        saveItem: function () {
-            var errors = this.$el.find('.errorContent');
-            var model;
-            var id;
-
-            this.setChangedValueToModel();
-            //this.autoCalc();
-
-            for (id in this.changedModels) {
-                model = this.editCollection.get(id) || this.collection.get(id);
-
-                if (model) {
-                    model.changed = this.changedModels[id];
-                }
-            }
-
-            if (errors.length) {
-                return false;
-            }
-
-            this.editCollection.save();
-            this.$el.find('.edited').removeClass('edited');
-        },
-
-        savedNewModel: function (modelObjects) {
-            var $savedRow = this.$listTable.find(".false[data-id='" + modelObjects.cid + "']"); // additional selector for finding old row by cid (in case of multiply copying)
-            var $checkbox = $savedRow.find('input[type=checkbox]');
-            var modelId;
-
-            // modelObject = modelObject.success;
-
-            modelObjects.forEach(function (modelObject) { // now only one element from list? because we hav ot checkbox
-                modelId = modelObject._id;
-                $savedRow.attr('data-id', modelId);
-                $savedRow.removeClass('false');
-                $checkbox.val(modelId);
-                $savedRow.removeAttr('id');
-            });
-
-            this.hideSaveCancelBtns();
-            // this.hideOvertime();
-            this.resetCollection(modelObjects);
-        },
-
-        /* hideOvertime: function () {
-         this.$el.find('#overtime input').attr('checked', false);
-         this.$el.find('#overtime').hide();
-         }, */
-
-        resetCollection: function (models) {
-            var id;
-
-            if (models && models.length) {
-                // model = new CurrentModel(model);
-                this.collection.add(models);
-            } else {
-                this.collection.set(this.editCollection.models, {remove: false});
-            }
-
-            for (id in this.changedModels) {
-                delete this.changedModels[id];
-                this.editCollection.remove(id);
-            }
-
-            this.editCollection.add(this.collection.models);
-        },
-
-        updatedOptions: function () {
-            this.hideSaveCancelBtns();
-            this.resetCollection();
-        },
-
-        showNewSelect: function (e, prev, next) {
-            var $target = $(e.target);
-
-            e.stopPropagation();
-
-            if ($target.attr('id') === 'selectInput') {
-                return false;
-            }
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-
-            this.selectView = new selectView({
-                e          : e,
-                responseObj: this.responseObj
-            });
-
-            $target.append(this.selectView.render().el);
-
-            return false;
-        },
-
-        hideNewSelect: function (e) {
-            // $(".newSelectList").remove();
-
-            if (this.selectView) {
-                this.selectView.remove();
-            }
-        },
-
         bindingEventsToEditedCollection: function (context) {
             if (context.editCollection) {
                 context.editCollection.unbind();
@@ -1082,19 +955,6 @@ define([
             context.editCollection = new EditCollection(context.collection.toJSON());
             context.editCollection.on('saved', context.savedNewModel, context);
             context.editCollection.on('updated', context.updatedOptions, context);
-        },
-
-        setChangedValue: function () {
-            if (!this.changed) {
-                this.changed = true;
-                this.showSaveCancelBtns();
-            }
-        },
-
-        isNewRow: function () {
-            var newRow = $('.false');
-
-            return !!newRow.length;
         },
 
         createItem: function () {
@@ -1107,7 +967,7 @@ define([
                 year        : year,
                 month       : month,
                 week        : week,
-                //rate        : rate,
+                // rate        : rate,
                 projectModel: null,
                 _type       : 'ordinary'
             };
@@ -1134,7 +994,7 @@ define([
             this.changed = true;
         },
 
-        showSaveCancelBtns: function () {
+        /*showSaveCancelBtns: function () {
             var saveBtnEl = $('#top-bar-saveBtn');
             var cancelBtnEl = $('#top-bar-deleteBtn');
             var createBtnEl = $('#top-bar-createBtn');
@@ -1161,9 +1021,9 @@ define([
             createBtnEl.show();
 
             return false;
-        },
+        },*/
 
-        checkProjectId: function (e, checkLength) {
+        /*checkProjectId: function (e, checkLength) {
             var totalCheckLength = $('input.checkbox:checked').length;
             var element = e.target ? e.target : e;
             var checked = element ? element.checked : true;
@@ -1193,7 +1053,7 @@ define([
             }
 
             this.selectedProjectId = _.uniq(this.selectedProjectId);
-        },
+        },*/
 
         getAutoCalcField: function (idTotal, dataRow, money) {
             var footerRow = this.$el.find('#listFooter');
@@ -1220,7 +1080,7 @@ define([
         },
 
         setAllTotalVals: function (e) {
-            //e.stopPropagation();
+            // e.stopPropagation();
 
             this.getAutoCalcField('hours', 'worked');
             this.getAutoCalcField('monHours', '1');
@@ -1232,156 +1092,76 @@ define([
             this.getAutoCalcField('sunHours', '7');
         },
 
-        deleteItemsRender: function (deleteCounter, deletePage) {
-            var pagenation;
-            var holder;
-
-            dataService.getData(this.collectionLengthUrl, {
-                filter       : this.filter,
-                newCollection: this.newCollection
-            }, function (response, context) {
-                context.listLength = response.count || 0;
-                //context.getTotalLength(null, context.defaultItemsNumber, context.filter);
-                context.fetchSortCollection({});
-
-            }, this);
-            //this.deleteRender(deleteCounter, deletePage, {
-            //    filter: this.filter,
-            //    newCollection: this.newCollection,
-            //    parrentContentId: this.parrentContentId
-            //});
-
-            holder = this.$el;
-
-            if (deleteCounter !== this.collectionLength) {
-                var created = holder.find('#timeRecivingDataFromServer');
-                created.before(
-                    new ListItemView({
-                        collection : this.collection,
-                        page       : holder.find("#currentShowPage").val(),
-                        itemsNumber: holder.find("span#itemsNumber").text()
-                    }).render());//added two parameters page and items number
-            }
-
-            pagenation = this.$el.find('.pagination');
-
-            if (this.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
-
-            this.editCollection.reset(this.collection.models);
-
-            this.hideGenerateCopy();
+        deleteItemsRender: function () {
+            this.getPage({
+                remove: false
+            });
         },
 
-        triggerDeleteItemsRender: function (deleteCounter) {
-            this.deleteCounter = deleteCounter;
-            this.deletePage = $("#currentShowPage").val();
-
-            this.deleteItemsRender(deleteCounter, this.deletePage);
-        },
-
-        /*deleteItems: function() {
-            var $currentEl = this.$el;
-            var self = this;
-        },
-*/
         deleteItems: function () {
-            var $currentEl = this.$el;
-            var that = this;
-            var mid = 39;
+            var self = this;
+            var $thisEl = this.$el;
+            var $table = $thisEl.find('#listTable');
+            var mid = CONSTANTS.MID[this.contentType];
             var model;
-            var localCounter = 0;
-            var $checked = $('#listTable input:checked');
-            var count = $checked.length;
+            var $checkedInputs;
+            var value;
+            var enableDelete;
             var message;
-            var enableDelete = true;
-
-            this.collectionLength = this.collection.length;
 
             if (!this.changed) {
-                var answer = confirm('Really DELETE items ?!');
-                var value;
+                $checkedInputs = $table.find('input:checked');
 
-                if (answer === true) {
+                $.each($checkedInputs, function (index, checkbox) {
+                    value = checkbox.value;
 
-                    App.startPreload();
+                    if (value.length < 24) {
+                        self.editCollection.remove(value);
+                        self.editCollection.on('remove', function () {
 
-                    $.each($checked, function (index, checkbox) {
-                        value = checkbox.value;
+                        }, self);
 
-                        if (value.length < 24) {
-                            that.editCollection.remove(value);
-                            that.editCollection.on('remove', function () {
-                                this.listLength--;
-                                localCounter++;
+                    } else {
+                        model = self.collection.get(value);
 
-                                if (localCounter === count) {
-                                    that.triggerDeleteItemsRender(localCounter);
-                                }
+                        enableDelete = model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed';
 
-                            }, that);
-                        } else {
-                            model = that.collection.get(value);
-                            enableDelete = model.toJSON().workflow && model.toJSON().workflow.name !== 'Closed';
-
-                            if (!model.toJSON().workflow) {
-                                if ($.trim($currentEl.find('[data-id="' + value + '"]').find('[data-content="workflow"]').text()) !== 'Closed') {
-                                    enableDelete = true;
-                                }
+                        if (!model.toJSON().workflow) {
+                            if ($.trim($thisEl.find('[data-id="' + value + '"]').find('[data-content="workflow"]').text()) !== 'Closed') {
+                                enableDelete = true;
                             }
-
-                            if (enableDelete) {
-                                model.destroy({
-                                    headers: {
-                                        mid: mid
-                                    },
-                                    wait   : true,
-                                    success: function () {
-                                        that.listLength--;
-                                        localCounter++;
-
-                                        if (localCounter === count) {
-                                            that.triggerDeleteItemsRender(localCounter);
-                                        }
-                                    },
-                                    error  : function (model, res) {
-                                        if (res.status === 403 && index === 0) {
-                                            App.render({
-                                                type   : 'error',
-                                                message: "You do not have permission to perform this action"
-                                            });
-                                        }
-                                        that.listLength--;
-                                        localCounter++;
-
-                                        if (localCounter === count) {
-                                            that.triggerDeleteItemsRender(localCounter);
-                                        }
-                                    }
-                                });
-                            } else {
-                                message = "You can't delete tCard with closed project.";
-
-                                App.render({
-                                    type   : 'error',
-                                    message: message
-                                });
-
-                                localCounter++;
-
-                                if (localCounter === count) {
-                                    that.triggerDeleteItemsRender(localCounter);
-                                }
-                            }
-
                         }
-                    });
 
+                        if (enableDelete) {
+                            model.destroy({
+                                headers: {
+                                    mid: mid
+                                },
 
-                }
+                                wait   : true,
+                                success: function () {
+
+                                },
+
+                                error: function (_model, xhr) {
+                                    if (xhr.status === 403) {
+                                        App.render({
+                                            type   : 'error',
+                                            message: 'You do not have permission to perform this action'
+                                        });
+                                    }
+                                }
+                            });
+                        } else {
+                            message = "You can't delete tCard with closed project.";
+
+                            App.render({
+                                type   : 'error',
+                                message: message
+                            });
+                        }
+                    }
+                });
             } else {
                 this.cancelChanges();
             }
@@ -1424,7 +1204,7 @@ define([
                 cb();
             }, function (err) {
                 if (!err) {
-                    /*self.editCollection = new EditCollection(collection.toJSON());*/
+                    /* self.editCollection = new EditCollection(collection.toJSON());*/
                     self.bindingEventsToEditedCollection(self);
                     self.hideSaveCancelBtns();
                     self.copyEl.hide();

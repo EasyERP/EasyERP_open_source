@@ -212,39 +212,16 @@ module.exports = function (models, event) {
     };
 
     this.getByViewType = function (req, res, next) {
-        var query = req.query;
-        var viewType = query.viewType;
-        var id = req.query.id;
-
-        if (id && id.length >= 24) {
-            getById(req, res, next);
-            return false;
-        }
-
-        switch (viewType) {
-            case 'form':
-                getById(req, res, next);
-                break;
-            default:
-                getByViewType(req, res, next);
-                break;
-        }
-    };
-
-    function getByViewType(req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var data = req.query;
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
+        var sort = data.sort || {_id: 1};
         var viewType = data.viewType;
         var optionsObject = {};
         var filter = data.filter || {};
         var response = {};
-        var waterfallTasks;
-        var accessRollSearcher;
-        var contentSearcher;
-        var mainPipeline;
         var lookupPipeline = [{
             $lookup: {
                 from        : 'projectMembers',
@@ -422,6 +399,14 @@ module.exports = function (models, event) {
             health      : '$root.health',
             total       : 1
         };
+        var keysSort = Object.keys(sort);
+        var sortLength = keysSort.length - 1;
+        var sortKey;
+        var waterfallTasks;
+        var accessRollSearcher;
+        var contentSearcher;
+        var mainPipeline;
+        var i;
 
         if (viewType === 'list') {
             lookupPipeline.push({
@@ -471,6 +456,11 @@ module.exports = function (models, event) {
             mainPipeline = lookupPipeline.concat(projectThumbPipeline);
         }
 
+        for (i = 0; i <= sortLength; i++) {
+            sortKey = keysSort[i];
+            sort[sortKey] = parseInt(sort[sortKey], 10);
+        }
+
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
                 optionsObject.$or = caseFilter(filter);
@@ -509,6 +499,8 @@ module.exports = function (models, event) {
             }, {
                 $project: projectionLastStepOptions
             }, {
+                $sort: sort
+            }, {
                 $skip: skip
             }, {
                 $limit: limit
@@ -520,7 +512,7 @@ module.exports = function (models, event) {
                 }
 
                 cb(null, result);
-            })
+            });
         };
 
         waterfallTasks = [accessRollSearcher, contentSearcher];
@@ -540,7 +532,7 @@ module.exports = function (models, event) {
 
             res.status(200).send(response);
         });
-    }
+    };
 
     this.getByViewTypeTest = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
@@ -776,7 +768,7 @@ module.exports = function (models, event) {
                         }
 
                         cb(null, result);
-                    })
+                    });
             }], cb);
         };
 

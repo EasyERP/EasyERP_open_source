@@ -83,53 +83,53 @@
             common.getImages(ids, '/employees/getEmployeesImages');
         },
 
-        alpabeticalRender: function (e) {
-            var selectedLetter;
-            var target;
+        /* alpabeticalRender: function (e) { // took off to pagination
+         var selectedLetter;
+         var target;
 
-            if (e && e.target) {
-                target = $(e.target);
-                selectedLetter = $(e.target).text();
-                if (!this.filter) {
-                    this.filter = {};
-                }
+         if (e && e.target) {
+         target = $(e.target);
+         selectedLetter = $(e.target).text();
+         if (!this.filter) {
+         this.filter = {};
+         }
 
-                this.filter.letter = {
-                    key  : 'letter',
-                    value: selectedLetter,
-                    type : null
-                };
+         this.filter.letter = {
+         key  : 'letter',
+         value: selectedLetter,
+         type : null
+         };
 
-                target.parent().find('.current').removeClass('current');
-                target.addClass('current');
-                if ($(e.target).text() === 'All') {
-                    delete this.filter;
-                    delete App.filter.letter;
-                } else {
-                    App.filter.letter = this.filter.letter;
-                }
-            }
+         target.parent().find('.current').removeClass('current');
+         target.addClass('current');
+         if ($(e.target).text() === 'All') {
+         delete this.filter;
+         delete App.filter.letter;
+         } else {
+         App.filter.letter = this.filter.letter;
+         }
+         }
 
-            this.filter = App.filter;
+         this.filter = App.filter;
 
-            this.startTime = new Date();
-            this.newCollection = false;
-            this.$el.find('.thumbnailElement').remove();
+         this.startTime = new Date();
+         this.newCollection = false;
+         this.$el.find('.thumbnailElement').remove();
 
-            this.changeLocationHash(null, this.collection.pageSize, this.filter);
-            this.collection.getFirstPage({
-                filter     : this.filter,
-                showMore   : true,
-                viewType   : this.viewType,
-                contentType: this.contentType
-            });
-        },
+         this.changeLocationHash(null, this.collection.pageSize, this.filter);
+         this.collection.getFirstPage({
+         filter     : this.filter,
+         showMore   : true,
+         viewType   : this.viewType,
+         contentType: this.contentType
+         });
+         },*/
 
         render: function () {
             var self = this;
             var $currentEl = this.$el;
             var createdInTag = "<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + 'ms </div>';
-            var currentLetter;
+            /*  var currentLetter;*/
 
             $currentEl.html('');
 
@@ -153,32 +153,34 @@
                 self.hideItemsNumber(e);
             });
 
-            common.buildAphabeticArray(this.collection, function (arr) {
-                self.alphabeticArray = arr;
-                $('#startLetter').remove();
-                $('#searchContainer').after(_.template(AphabeticTemplate, {
-                    alphabeticArray   : self.alphabeticArray,
-                    allAlphabeticArray: self.allAlphabeticArray
-                }));
-                currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : 'All';
+            /*  common.buildAphabeticArray(this.collection, function (arr) {  changed on renderAlphabeticalFilter
+             self.alphabeticArray = arr;
+             $('#startLetter').remove();
+             $('#searchContainer').after(_.template(AphabeticTemplate, {
+             alphabeticArray   : self.alphabeticArray,
+             allAlphabeticArray: self.allAlphabeticArray
+             }));
+             currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : 'All';
 
-                if (currentLetter) {
-                    $('#startLetter a').each(function () {
-                        var target = $(this);
-                        if (target.text() === currentLetter) {
-                            target.addClass('current');
-                        }
-                    });
-                }
-            });
+             if (currentLetter) {
+             $('#startLetter a').each(function () {
+             var target = $(this);
+             if (target.text() === currentLetter) {
+             target.addClass('current');
+             }
+             });
+             }
+             });*/
+
+            this.renderAlphabeticalFilter();
             $currentEl.append(createdInTag);
 
             return this;
         },
 
-           /* showFilteredPage: function (filter, context) {
-                $('#top-bar-deleteBtn').hide();
-                $('#checkAll').prop('checked', false);
+        /* showFilteredPage: function (filter, context) {
+         $('#top-bar-deleteBtn').hide();
+         $('#checkAll').prop('checked', false);
 
          context.startTime = new Date();
          context.newCollection = false;
@@ -266,22 +268,22 @@
          this.filterView.renderFilterContent();
          },*/
 
-        showMoreAlphabet: function (newModels) {
-            var holder = this.$el;
-            var created = holder.find('#timeRecivingDataFromServer');
-            var showMore = holder.find('#showMoreDiv');
+        /* showMoreAlphabet: function (newModels) {
+         var holder = this.$el;
+         var created = holder.find('#timeRecivingDataFromServer');
+         var showMore = holder.find('#showMoreDiv');
 
-            this.defaultItemsNumber += newModels.length;
+         this.defaultItemsNumber += newModels.length;
 
-            this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
-            this.getTotalLength(this.defaultItemsNumber, this.filter);
+         this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
+         this.getTotalLength(this.defaultItemsNumber, this.filter);
 
-            holder.append(this.template({collection: newModels.toJSON()}));
-            holder.append(created);
-            created.before(showMore);
+         holder.append(this.template({collection: newModels.toJSON()}));
+         holder.append(created);
+         created.before(showMore);
 
-            this.asyncLoadImgs(newModels);
-        },
+         this.asyncLoadImgs(newModels);
+         },*/
 
         createItem: function () {
             new this.CreateView();

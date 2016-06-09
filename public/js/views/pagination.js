@@ -3,9 +3,10 @@ define([
     'jQuery',
     'Underscore',
     'views/Filter/FilterView',
+    'text!templates/Alpabet/AphabeticTemplate.html', // added alphabeticalRender
     'constants',
     'common'
-], function (Backbone, $, _, FilterView, CONSTANTS, common) {
+], function (Backbone, $, _, FilterView, aphabeticTemplate, CONSTANTS, common) {
     var View = Backbone.View.extend({
         el        : '#content-holder',
         filter    : null,
@@ -293,6 +294,87 @@ define([
             }
         },
 
+        // todo fixit
+        alpabeticalRender: function (e) {  // added from listViewBase and small refactor for thumbnails
+            var target;
+            var itemsNumber = $('.selectedItemsNumber').text() || this.collection.pageSize;
+            var selectedLetter;
+
+            this.startTime = new Date();
+
+            if (e && e.target) {
+                target = $(e.target);
+                selectedLetter = $(e.target).text();
+
+                if (!this.filter) {
+                    this.filter = {};
+                }
+                this.filter.letter = {
+                    key  : 'letter',
+                    value: selectedLetter,
+                    type : null
+                };
+
+                target.parent().find('.current').removeClass('current');
+                target.addClass('current');
+
+                if ($(e.target).text() === 'All') {
+                    delete this.filter;
+                    delete App.filter.letter;
+                } else {
+                    App.filter.letter = this.filter.letter;
+                }
+            }
+
+            this.filter = App.filter;
+            this.newCollection = false;
+            this.$el.find('.thumbnailElement').remove();
+
+            this.filterView.renderFilterContent(this.filter);
+            _.debounce(
+                function () {
+                    this.trigger('filter', App.filter);
+                }, 10);
+
+            $('#top-bar-deleteBtn').hide();
+            $('#checkAll').prop('checked', false);
+
+            this.changeLocationHash(1, itemsNumber, this.filter);
+            this.collection.getFirstPage({
+                count      : itemsNumber,
+                filter     : this.filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            });
+        },
+
+        renderAlphabeticalFilter: function () { // added from listViewBase
+            var self = this;
+            var currentLetter;
+
+            this.hasAlphabet = true;
+
+            common.buildAphabeticArray(this.collection, function (arr) {
+                self.$el.find('#startLetter').remove();
+                self.alphabeticArray = arr;
+                self.$el.find('#searchContainer').after(_.template(aphabeticTemplate, {
+                    alphabeticArray   : self.alphabeticArray,
+                    allAlphabeticArray: self.allAlphabeticArray
+                }));
+
+                currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : 'All';
+
+                if (currentLetter) {
+                    $('#startLetter').find('a').each(function () {
+                        var target = $(this);
+                        if (target.text() === currentLetter) {
+                            target.addClass('current');
+                        }
+                    });
+                }
+            });
+        },
+
         // when click in list of pages
         showPage: function (e) {
             var newRows = this.$el.find('#false');
@@ -316,13 +398,13 @@ define([
                 });
             }
 
-            this.getPage({page: page, viewType: this.viewType});
+            this.getPage({page: page, viewType: this.viewType, contentType: this.contentType});
         },
 
         nextPage: function (options) {
-            var page = options.page;
-            var count = options.count;
             var collection = this.collection;
+            var count = options.count;
+            var page = options.page || collection.currentPage + 1;
 
             options = options || {};
             count = count || collection.pageSize;
@@ -336,9 +418,9 @@ define([
         },
 
         previousPage: function (options) {
-            var page = options.page;
-            var count = options.count;
             var collection = this.collection;
+            var count = options.count;
+            var page = options.page || collection.currentPage - 1;
 
             options = options || {};
             count = count || collection.pageSize;

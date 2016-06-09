@@ -9,8 +9,9 @@ define([
     'views/Projects/EditView',
     'models/ProjectsModel',
     'collections/Projects/filterCollection',
-    'services/projects'
-], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, projects) {
+    'services/projects',
+    'common'
+], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, projects, common) {
     var ProjectsListView = ListViewBase.extend({
         createView       : CreateView,
         listTemplate     : listTemplate,
@@ -38,7 +39,7 @@ define([
 
         events: {
             'click .stageSelect'                     : projects.showNewSelect,
-            'click .newSelectList li'                : 'chooseOption',
+            'click .newSelectList li'                : projects.chooseOption,
             'click .health-wrapper .health-container': projects.showHealthDd,
             'click .health-wrapper ul li div'        : projects.chooseHealthDd
         },
@@ -46,35 +47,12 @@ define([
         hideNewSelect: function (e) {
             $('.newSelectList').remove();
         },
-        
+
         hideHealth: function () {
             var $thisEl = this.$el;
 
             $thisEl.find('.health-wrapper ul').hide();
             $thisEl.find('.newSelectList').hide();
-        },
-
-        chooseOption: function (e) {
-            var self = this;
-            var $targetElement = $(e.target);
-            var $td = $targetElement.parents('td');
-            var id = $td.attr('id');
-            var model = this.collection.get(id);
-
-            model.save({workflow: $targetElement.attr('id')}, {
-                headers: {
-                    mid: 39
-                },
-
-                patch   : true,
-                validate: false,
-                success : function () {
-                    self.showFilteredPage({}, self);
-                }
-            });
-
-            this.hideNewSelect();
-            return false;
         },
 
         /*checked: function (e) {
@@ -135,6 +113,9 @@ define([
             });
 
             $currentEl.append(itemView.render()); // added two parameters page and items number
+            common.populateWorkflowsList('Projects', '.filter-check-list', '', '/workflows', null, function (stages) {
+                self.stages = stages || [];
+            });
 
             this.renderFilter();
 
@@ -142,7 +123,6 @@ define([
             this.renderPagination($currentEl, this);
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
-
         }
 
     });

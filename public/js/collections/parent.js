@@ -57,6 +57,7 @@ define([
             var showMore;
             var success;
             var error;
+            var remove;
 
             page = page || this.currentPage;
             page = parseInt(page, 10);
@@ -70,6 +71,7 @@ define([
             wait = !!options.wait;
             reset = !!options.reset;
             isNew = !!options.newCollection;
+            remove = !options.remove;
 
             if (!options.hasOwnProperty('showMore')) {
                 showMore = true;
@@ -92,9 +94,11 @@ define([
 
             _opts.reset = reset;
             _opts.wait = wait;
+            _opts.remove = remove;
 
             delete data.wait;
             delete data.reset;
+            delete data.remove;
 
             self.pageSize = data.count;
             self.currentPage = data.page;
