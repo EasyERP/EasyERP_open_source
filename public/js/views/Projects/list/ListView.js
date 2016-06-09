@@ -9,15 +9,13 @@ define([
     'views/Projects/EditView',
     'models/ProjectsModel',
     'collections/Projects/filterCollection',
-    'views/Filter/FilterView',
     'services/projects'
-], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, FilterView, projects) {
+], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, projects) {
     var ProjectsListView = ListViewBase.extend({
         createView       : CreateView,
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         ContentCollection: ContentCollection,
-        FilterView       : FilterView,
         formUrl          : '#easyErp/Projects/form/',
         contentType      : 'Projects', //  needs in view.prototype.changeLocationHash
 

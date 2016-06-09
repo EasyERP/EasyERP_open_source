@@ -707,25 +707,24 @@ define([
         },
 
         renderFilter: function (baseFilter) {
-            self.filterView = new this.FilterView({
-                contentType: self.contentType
+            this.filterView = new this.FilterView({
+                contentType: this.contentType
             });
 
-            self.filterView.bind('filter', function (filter) {
+            this.filterView.bind('filter', function (filter) {
                 if (baseFilter) {
                     filter[baseFilter.name] = baseFilter.value;
                 }
-                self.showFilteredPage(filter);
+                this.showFilteredPage(filter);
             });
-            self.filterView.bind('defaultFilter', function (filter) {
+            this.filterView.bind('defaultFilter', function (filter) {
                 if (baseFilter) {
                     filter[baseFilter.name] = baseFilter.value;
                 }
-                self.showFilteredPage();
+                this.showFilteredPage();
             });
 
-            self.filterView.render();
-
+            this.filterView.render();
         }
     });
 
