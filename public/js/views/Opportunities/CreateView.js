@@ -124,7 +124,7 @@ define([
             }, function (response, context) {
                 var customer = response;
 
-                /*if (customer.type === 'Person') {
+                /* if (customer.type === 'Person') {
                     context.$el.find('#first').val(customer.name.first);
                     context.$el.find('#last').val(customer.name.last);
 
@@ -136,9 +136,9 @@ define([
                     context.$el.find('#last').val('');
 
                 }*/
-                //context.$el.find('#email').val(customer.email);
-                //context.$el.find('#phone').val(customer.phones.phone);
-                //context.$el.find('#mobile').val(customer.phones.mobile);
+                // context.$el.find('#email').val(customer.email);
+                // context.$el.find('#phone').val(customer.phones.phone);
+                // context.$el.find('#mobile').val(customer.phones.mobile);
                 context.$el.find('#street').val(customer.address.street);
                 context.$el.find('#city').val(customer.address.city);
                 context.$el.find('#state').val(customer.address.state);
@@ -148,7 +148,7 @@ define([
 
         },
 
-        /*switchTab: function (e) {
+        /* switchTab: function (e) {
          e.preventDefault();
          var link = this.$("#tabList a");
          if (link.hasClass("selected")) {
@@ -169,42 +169,42 @@ define([
             var opportunityModel = new OpportunityModel();
             var name = $.trim(this.$el.find('#name').val());
             var expectedRevenueValue = $.trim(this.$el.find('#expectedRevenueValue').val()) || '0';
-            //var expectedRevenueProgress = $.trim(this.$el.find('#expectedRevenueProgress').val());
+            // var expectedRevenueProgress = $.trim(this.$el.find('#expectedRevenueProgress').val());
             var expectedRevenue;
             var customerId = this.$('#customerDd').data('id');
-            //var email = $.trim(this.$el.find('#email').val());
+            // var email = $.trim(this.$el.find('#email').val());
             var salesPersonId = this.$('#salesPersonDd').data('id');
-            //var salesTeamId = this.$('#salesTeamDd').data('id');
-            //var nextAct = $.trim(this.$el.find('#nextActionDate').val());
+            // var salesTeamId = this.$('#salesTeamDd').data('id');
+            // var nextAct = $.trim(this.$el.find('#nextActionDate').val());
             var nextActionDesc = $.trim(this.$el.find('#nextActionDescription').val());
             var nextAction = {
-                //date: nextAct,
+                // date: nextAct,
                 desc: nextActionDesc
             };
             var expectedClosing = $.trim(this.$el.find('#expectedClosing').val());
             var priority = $.trim(this.$el.find('#priorityDd').text());
-            //var company = $.trim(this.$el.find('#company').val());
+            // var company = $.trim(this.$el.find('#company').val());
             var internalNotes = $.trim(this.$el.find('#internalNotes').val());
             var address = {};
-            //var first = $.trim(this.$el.find('#first').val());
-            //var last = $.trim(this.$el.find('#last').val());
-            /*var contactName = {
+            // var first = $.trim(this.$el.find('#first').val());
+            // var last = $.trim(this.$el.find('#last').val());
+            /* var contactName = {
                 first: first,
                 last : last
             };*/
-            //var func = $.trim($('#func').val());
-            //var phone = $.trim($('#phone').val());
-            //var mobile = $.trim($('#mobile').val());
-            //var fax = $.trim($('#fax').val());
-            /*var phones = {
+            // var func = $.trim($('#func').val());
+            // var phone = $.trim($('#phone').val());
+            // var mobile = $.trim($('#mobile').val());
+            // var fax = $.trim($('#fax').val());
+            /* var phones = {
                 phone : phone,
                 mobile: mobile,
                 fax   : fax
             };*/
-            var workflow = this.$('#workflowDd').data('id');
-            //var active = ($('#active').is(':checked'));
-            //var optout = ($('#optout').is(':checked'));
-            //var reffered = $.trim($('#reffered').val());
+            var workflow = this.$el.find('#workflowDd').data('id');
+            // var active = ($('#active').is(':checked'));
+            // var optout = ($('#optout').is(':checked'));
+            // var reffered = $.trim($('#reffered').val());
             var self = this;
             var usersId = [];
             var groupsId = [];
@@ -226,11 +226,11 @@ define([
 
             });
 
-            if (expectedRevenueValue /*|| expectedRevenueProgress*/) {
+            if (expectedRevenueValue /* || expectedRevenueProgress*/) {
                 expectedRevenue = {
                     value   : expectedRevenueValue,
                     currency: '$'
-                    //progress: expectedRevenueProgress
+                    // progress: expectedRevenueProgress
                 };
             }
 
@@ -239,22 +239,22 @@ define([
                     name           : name,
                     expectedRevenue: expectedRevenue,
                     customer       : customerId || null,
-                    //email          : email,
+                    // email          : email,
                     salesPerson    : salesPersonId || null,
-                    //salesTeam      : salesTeamId,
+                    // salesTeam      : salesTeamId,
                     nextAction     : nextAction,
                     expectedClosing: expectedClosing,
                     priority       : priority,
                     workflow       : workflow,
                     internalNotes  : internalNotes,
-                    //company        : company || null,
+                    // company        : company || null,
                     address        : address,
-                    //contactName    : contactName,
-                    //func           : func,
-                    //phones         : phones,
-                    //active         : active,
-                    //optout         : optout,
-                    //reffered       : reffered,
+                    // contactName    : contactName,
+                    // func           : func,
+                    // phones         : phones,
+                    // active         : active,
+                    // optout         : optout,
+                    // reffered       : reffered,
                     whoCanRW       : whoCanRW,
                     groups         : {
                         owner: this.$el.find('#allUsersSelect').data('id'),

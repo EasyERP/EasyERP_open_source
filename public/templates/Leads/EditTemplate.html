@@ -36,24 +36,6 @@
                                 <dd>
                                     <a id="customerDd" data-id="<%=model.customer?model.customer._id:''%>" class="current-selected" href="javascript:;"><%=model.customer?(model.customer.name.first+' '+model.customer.name.last):'Select'%></a>
                                 </dd>
-                                <dt><label for="salesPerson">Assigned to</label></dt>
-                                <dd>
-                                    <a id="salesPerson" data-id="<%=model.salesPerson?model.salesPerson._id:''%>" class="current-selected" href="javascript:;"><%=model.salesPerson?(model.salesPerson.name.first+' '+model.salesPerson.name.last):'Select'%></a>
-                                </dd>
-                                <dt><label for="street">Street</label></dt>
-                                <dd><input type="text" id="street" class="address" placeholder="Street..." name="street" value="<%=model.address.street%>" maxlength="32"/></dd>
-                                <dt><label for="city">City</label></dt>
-                                <dd><input type="text" id="city" class="address" placeholder="City" name="city" value="<%=model.address.city%>" maxlength="32"/></dd>
-                                <dt><label for="state">State</label></dt>
-                                <dd><input type="text" id="state" class="address" placeholder="State" name="state" value="<%=model.address.state%>" maxlength="32"/></dd>
-                                <dt><label for="zip">Zip</label></dt>
-                                <dd><input type="text" id="zip" class="address" name="zip" placeholder="Zip" value="<%=model.address.zip%>" maxlength="32"/></dd>
-                                <dt><label for="country">Country</label></dt>
-                                <dd><input type="text" id="country" class="address" name="country" placeholder="Country" value="<%=model.address.country%>" maxlength="32"/></dd>
-                            </dl>
-                        </div>
-                        <div class="half-block left">
-                            <dl class="opp-info">
                                 <dt><label for="first">First Name</label></dt>
                                 <dd><input type="text" class="name" id="first" placeholder="First Name" value="<%=(model.contactName) ? model.contactName.first : ''%>" maxlength="32"/></dd>
                                 <dt><label for="last">Last Name</label></dt>
@@ -64,6 +46,30 @@
                                 <dd><input type="text" id="phone" value="<%=model.phones.phone%>" placeholder="Phone number" maxlength="32"/></dd>
                                 <dt><label for="mobile">Mobile </label></dt>
                                 <dd><input type="text" id="mobile" value="<%=model.phones.mobile%>" placeholder="Mobile number" maxlength="32"/></dd>
+                                <dt><label for="skype">Skype</label></dt>
+                                <dd><input type="text" id="skype" placeholder="Skype" value="<%=model.skype%>"
+                                           maxlength="256"/></dd>
+                                <dt><label for="LI">LinkedIn</label></dt>
+                                <dd><input type="text" id="LI" placeholder="LinkedIn" value="<%=model.social.LI%>"
+                                           maxlength="256"/></dd>
+                                <dt><label for="FB">Facebook</label></dt>
+                                <dd><input type="text" id="FB" placeholder="Facebook" value="<%=model.social.FB%>"
+                                           maxlength="256"/></dd>
+                            </dl>
+
+                        </div>
+                        <div class="half-block left">
+                            <dl class="opp-info">
+                                <dt><label for="street">Street</label></dt>
+                                <dd><input type="text" id="street" class="address" placeholder="Street..." name="street" value="<%=model.address.street%>" maxlength="32"/></dd>
+                                <dt><label for="city">City</label></dt>
+                                <dd><input type="text" id="city" class="address" placeholder="City" name="city" value="<%=model.address.city%>" maxlength="32"/></dd>
+                                <dt><label for="state">State</label></dt>
+                                <dd><input type="text" id="state" class="address" placeholder="State" name="state" value="<%=model.address.state%>" maxlength="32"/></dd>
+                                <dt><label for="zip">Zip</label></dt>
+                                <dd><input type="text" id="zip" class="address" name="zip" placeholder="Zip" value="<%=model.address.zip%>" maxlength="32"/></dd>
+                                <dt><label for="country">Country</label></dt>
+                                <dd><input type="text" id="country" class="address" name="country" placeholder="Country" value="<%=model.address.country%>" maxlength="32"/></dd>
                                 <dt><label for="selectWorkflow">Stage </label></dt>
                                 <dd id="selectWorkflow">
                                     <a id="workflowsDd" data-id="<%=model.workflow?model.workflow._id:''%>" class="current-selected" href="javascript:;"><%=model.workflow?model.workflow.name:'Undefinded'%></a>
@@ -89,11 +95,16 @@
                                     <a id="sourceDd" data-id="<%=model.source?model.source:''%>" class="current-selected" href="javascript:;"><%=model.source?model.source:"Select"%></a>
                                 </dd>
 
+                                <dt><label for="salesPerson">Assigned to</label></dt>
+                                <dd>
+                                    <a id="salesPerson" data-id="<%=model.salesPerson?model.salesPerson._id:''%>" class="current-selected" href="javascript:;"><%=model.salesPerson?(model.salesPerson.name.first+' '+model.salesPerson.name.last):'Select'%></a>
+                                </dd>
+                            </dl>
                             </dl>
                         </div>
                         <dl class="internal-info">
                             <dt><label for="internalNotes">Internal Notes</label></dt>
-                            <dd><textarea id="internalNotes" placeholder="Add a Description..." maxlength="500"><%=model.internalNotes%></textarea>
+                            <dd><textarea id="internalNotes" placeholder="Add a Description..." maxlength="2500"><%=model.internalNotes%></textarea>
                             </dd>
                         </dl>
 

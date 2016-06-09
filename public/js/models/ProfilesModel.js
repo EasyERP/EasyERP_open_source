@@ -6,7 +6,7 @@ define([
     'use strict';
 
     var ProfilesModel = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
         initialize : function () {
             this.on('invalid', function (model, errors) {
                 var msg;
@@ -21,15 +21,17 @@ define([
                 }
             });
         },
-        validate   : function (attrs) {
+
+        validate: function (attrs) {
             var errors = [];
-            Validation.checkGroupsNameField(errors, true, attrs.profileName, "Profile name");
+            Validation.checkGroupsNameField(errors, true, attrs.profileName, 'Profile name');
 
             if (errors.length > 0) {
                 return errors;
             }
         },
-        urlRoot    : function () {
+
+        urlRoot: function () {
             return CONSTANTS.URLS.PROFILES;
         }
     });

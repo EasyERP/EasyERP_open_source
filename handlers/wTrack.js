@@ -1910,8 +1910,35 @@ var TCard = function (event, models) {
             }]);
 
             aggregation.options = {allowDiskUse: true};
-            aggregation.exec(function (err, result) {
-                waterfallCallback(err, result);
+
+            function getTotal(pcb) {
+                WTrack.aggregate([{
+                    $match: queryObject
+                }], function (err, result) {
+                    if (err) {
+                        return pcb(err);
+                    }
+
+                    pcb(null, result.length);
+                });
+            }
+
+            function getData(pcb) {
+                aggregation.exec(function (err, result) {
+                    pcb(err, result);
+                });
+            }
+
+            async.parallel([getTotal, getData], function (err, result) {
+                var responseObject = {};
+                if (err) {
+                    return waterfallCallback(err);
+                }
+
+                responseObject.total = result[0] || 0;
+                responseObject.data = result[1] || [];
+
+                waterfallCallback(null, result);
             });
 
         };

@@ -459,7 +459,7 @@ var User = function (event, models) {
 
         query = UserModel.findById(id, {__v: 0, pass: 0});
         query
-            .populate('profile', '_id profileName')
+            .populate('profile', '_id profileName profileAccess')
             .populate('relatedEmployee', 'imageSrc name fullName')
             .populate('savedFilters._id');
 

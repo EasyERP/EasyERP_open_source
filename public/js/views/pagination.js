@@ -198,14 +198,18 @@ define([
             }
         },
 
-        changeLocationHash: function (page, count, filter) {
+        changeLocationHash: function (page, count, filter, options) {
             var location = Backbone.history.fragment;
             var mainLocation = '#easyErp/' + this.contentType + '/' + this.viewType;
             var pId = (location.split('/pId=')[1]) ? location.split('/pId=')[1].split('/')[0] : '';
             var url;
             var thumbnails;
-            var locationFilter;
             var value = false;
+
+            if (!options || !options.hasOwnProperty('replace')) {
+                options = options || {};
+                options.replace = true;
+            }
 
             if (!page && this.viewType === 'list') {
                 page = (location.split('/p=')[1]) ? location.split('/p=')[1].split('/')[0] : 1;
@@ -248,7 +252,7 @@ define([
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
             }
 
-            Backbone.history.navigate(url, {replace: true});
+            Backbone.history.navigate(url, options);
         },
 
         checkPage: function (event) {
@@ -455,7 +459,7 @@ define([
                 this.filter = null;
             }
 
-            this.changeLocationHash(null, this.collection.pageSize, this.filter);
+            this.changeLocationHash(null, this.collection.pageSize, this.filter, {replace: false});
             this.collection.getFirstPage({
                 filter     : this.filter,
                 viewType   : this.viewType,

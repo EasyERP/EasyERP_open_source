@@ -63,7 +63,7 @@ define([
             if (endDate && Date.parse(startDateValue)) {
                 minDate = moment(new Date(startDateValue)).add(1, 'd').toDate();
             }
-            
+
             if (!endDate && Date.parse(endDateValue)) {
                 maxDate = moment(new Date(endDateValue)).subtract(1, 'd').toDate();
             }
@@ -88,7 +88,7 @@ define([
                     if (!self.changedModels[rowId]) {
                         self.changedModels[rowId] = {};
                     }
-                    
+
                     if (endDate) {
                         self.changedModels[rowId].endDate = moment(new Date(dateText)).endOf('day').toDate();
                     } else {
@@ -131,7 +131,7 @@ define([
                 return false;
             }
 
-            if (prevEndDate === constants.END_OF_PROJECT){
+            if (prevEndDate === constants.END_OF_PROJECT) {
                 return prevEndDate;
             }
 
@@ -339,7 +339,6 @@ define([
             var nextDay;
             var startDate;
 
-
             dataType = targetElement.data('content') + 'Id';
 
             targetElement.attr('data-id', id);
@@ -472,14 +471,14 @@ define([
                         var delModel = res.success;
                         row.remove();
                         self.editLastMember();
-                        //self.putPrevDate(content, e);
                         self.isChangedSales(delModel);
                     },
-                    error  : function (model, res) {
-                        if (res.status === 403 && index === 0) {
+
+                    error: function (model, res) {
+                        if (res.status === 403) {
                             App.render({
                                 type   : 'error',
-                                message: "You do not have permission to perform this action"
+                                message: 'You do not have permission to perform this action'
                             });
                         }
                     }
@@ -488,7 +487,6 @@ define([
                 row.remove();
                 this.collection.remove(model);
                 self.editLastMember();
-                //self.putPrevDate(content, e);
             }
         },
 

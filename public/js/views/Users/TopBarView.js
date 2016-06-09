@@ -6,15 +6,15 @@ define([
 ], function (_, BaseView, TopBarTemplate, Custom) {
     'use strict';
     var TopBarView = BaseView.extend({
-        contentType     : "Users",
+        contentType     : 'Users',
         collectionLength: 0,
         template        : _.template(TopBarTemplate),
 
         initialize: function (options) {
             this.actionType = options.actionType;
 
-            if (this.actionType !== "Content") {
-                Custom.setCurrentVT("form");
+            if (this.actionType !== 'Content') {
+                Custom.setCurrentVT('form');
             }
             if (options.collection) {
                 this.collection = options.collection;

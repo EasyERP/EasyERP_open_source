@@ -2079,10 +2079,10 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
-                salesManagers        : {$arrayElemAt: ['$salesManagers', 0]},
-                dueDate              : 1,
-                'project.name'       : 1,
-                invoiceDate          : 1,
+                salesManagers : {$arrayElemAt: ['$salesManagers', 0]},
+                dueDate       : 1,
+                'project.name': 1,
+                invoiceDate   : 1,
 
                 'supplier.name': {
                     $concat: ['$supplier.name.first', ' ', '$supplier.name.last']
@@ -2147,15 +2147,15 @@ var Module = function (models, event) {
             }
         }, {
             $project: {
-                salesPerson          : {$arrayElemAt: ['$salesManagers', 0]},
-                dueDate              : 1,
-                invoiceDate          : 1,
-                'project.name'       : 1,
-                'supplier.name'      : 1,
-                name                 : 1,
-                paymentInfo          : 1,
-                currency             : 1,
-                diffStatus           : 1
+                salesPerson    : {$arrayElemAt: ['$salesManagers', 0]},
+                dueDate        : 1,
+                invoiceDate    : 1,
+                'project.name' : 1,
+                'supplier.name': 1,
+                name           : 1,
+                paymentInfo    : 1,
+                currency       : 1,
+                diffStatus     : 1
             }
         }, {
             $project: {
@@ -2163,14 +2163,14 @@ var Module = function (models, event) {
                     $concat: ['$salesPerson.name.first', ' ', '$salesPerson.name.last']
                 },
 
-                dueDate              : 1,
-                invoiceDate          : 1,
-                'project.name'       : 1,
-                'supplier.name'      : 1,
-                name                 : 1,
-                paymentInfo          : 1,
-                rate                 : '$currency.rate',
-                diffStatus           : 1
+                dueDate        : 1,
+                invoiceDate    : 1,
+                'project.name' : 1,
+                'supplier.name': 1,
+                name           : 1,
+                paymentInfo    : 1,
+                rate           : '$currency.rate',
+                diffStatus     : 1
             }
         }, {
             $project: {
@@ -2665,6 +2665,35 @@ var Module = function (models, event) {
                 }, {
                     $match: optionsObject
                 }, {
+                    $group: {
+                        _id  : null,
+                        total: {$sum: 1},
+                        root : {$push: '$$ROOT'}
+                    }
+                }, {
+                    $unwind: '$root'
+                }, {
+                    $project: {
+                        _id        : '$root._id',
+                        salesPerson: '$root.salesPerson',
+                        workflow   : '$root.workflow',
+                        supplier   : '$root.supplier',
+                        expense    : '$root.expense',
+                        forSales   : '$root.forSales',
+                        currency   : '$root.currency',
+                        paymentInfo: '$root.paymentInfo',
+                        invoiceDate: '$root.invoiceDate',
+                        name       : '$root.name',
+                        paymentDate: '$root.paymentDate',
+                        dueDate    : '$root.dueDate',
+                        payments   : '$root.payments',
+                        approved   : '$root.approved',
+                        _type      : '$root._type',
+                        removable  : '$root.removable',
+                        paid       : '$root.paid',
+                        total      : 1
+                    }
+                }, {
                     $sort: sort
                 }, {
                     $skip: skip
@@ -2678,10 +2707,20 @@ var Module = function (models, event) {
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
         async.waterfall(waterfallTasks, function (err, result) {
+            var count;
+            var firstElement;
+            var response = {};
+
             if (err) {
                 return next(err);
             }
-            res.status(200).send(result);
+
+            firstElement = result[0];
+            count = firstElement && firstElement.total ? firstElement.total : 0;
+            response.total = count;
+            response.data = result;
+
+            res.status(200).send(response);
         });
     };
 };
