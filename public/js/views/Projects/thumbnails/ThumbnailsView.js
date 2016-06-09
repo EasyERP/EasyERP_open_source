@@ -38,6 +38,7 @@
         events: {
             'click .health-wrapper .health-container': projects.showHealthDd,
             'click .health-wrapper ul li div'        : projects.chooseHealthDd,
+            'click .newSelectList li'                : projects.chooseOption,
             'click .tasksByProject'                  : 'dropDown',
             'click .stageSelect'                     : projects.showNewSelect,
             'click .project'                         : 'useProjectFilter'
@@ -55,38 +56,6 @@
             e.preventDefault();
 
             Backbone.history.navigate('#easyErp/Tasks/list/p=1/c=100/filter=' + encodeURIComponent(JSON.stringify(filter)), {trigger: true});
-        },
-
-        chooseOption: function (e) {
-            var self = this;
-            var $targetElement = $(e.target);
-            var $thumbnail = $targetElement.parents('.thumbnail');
-            var id = $thumbnail.attr('id');
-            var model = this.collection.get(id);
-
-            model.save({workflow: $targetElement.attr('id')}, {
-                headers: {
-                    mid: 39
-                },
-
-                patch   : true,
-                validate: false,
-                success : function () {
-                    /*var filter = window.location.hash.split('filter=')[1];
-                     var url = '#easyErp/Projects/thumbnails';
-
-                     if (filter) {
-                     url += '/filter=' + filter;
-                     }
-                     Backbone.history.fragment = '';
-                     Backbone.history.navigate(url, {trigger: true});*/
-
-                    self.showFilteredPage();
-                }
-            });
-
-            this.hideHealth();
-            return false;
         },
 
         hideHealth: function () {

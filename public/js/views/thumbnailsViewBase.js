@@ -13,7 +13,6 @@
             'click .thumbnail'           : 'gotoEditForm',
             'click .dropDown'            : 'dropDown',
             'click .filterButton'        : 'showfilter',
-            'click .newSelectList li'    : 'chooseOption',
             'click .filter-check-list li': 'checkCheckbox'
         },
 
