@@ -218,14 +218,11 @@ module.exports = function (models, event) {
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
+        var sort = data.sort || {_id: 1};
         var viewType = data.viewType;
         var optionsObject = {};
         var filter = data.filter || {};
         var response = {};
-        var waterfallTasks;
-        var accessRollSearcher;
-        var contentSearcher;
-        var mainPipeline;
         var lookupPipeline = [{
             $lookup: {
                 from        : 'projectMembers',
@@ -403,6 +400,14 @@ module.exports = function (models, event) {
             health      : '$root.health',
             total       : 1
         };
+        var keysSort = Object.keys(sort);
+        var sortLength = keysSort.length - 1;
+        var sortKey;
+        var waterfallTasks;
+        var accessRollSearcher;
+        var contentSearcher;
+        var mainPipeline;
+        var i;
 
         if (viewType === 'list') {
             lookupPipeline.push({
@@ -452,6 +457,11 @@ module.exports = function (models, event) {
             mainPipeline = lookupPipeline.concat(projectThumbPipeline);
         }
 
+        for (i = 0; i <= sortLength; i++) {
+            sortKey = keysSort[i];
+            sort[sortKey] = parseInt(sort[sortKey], 10);
+        }
+
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
                 optionsObject.$or = caseFilter(filter);
@@ -490,19 +500,20 @@ module.exports = function (models, event) {
             }, {
                 $project: projectionLastStepOptions
             }, {
+                $sort: sort
+            }, {
                 $skip: skip
             }, {
                 $limit: limit
             });
 
             Project.aggregate(mainPipeline, function (err, result) {
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    cb(null, result);
+                if (err) {
+                    return cb(err);
                 }
-            )
+
+                cb(null, result);
+            });
         };
 
         waterfallTasks = [accessRollSearcher, contentSearcher];
@@ -758,7 +769,7 @@ module.exports = function (models, event) {
                         }
 
                         cb(null, result);
-                    })
+                    });
             }], cb);
         };
 

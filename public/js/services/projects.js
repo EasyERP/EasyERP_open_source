@@ -50,9 +50,41 @@ define([
         return false;
     }
 
+    function chooseOption(e) {
+        var self = this;
+        var $targetElement = $(e.target);
+        var $idContainer;
+        var id;
+        var model;
+
+        if (this.viewType === 'thumbnails') {
+            $idContainer = $targetElement.parents('.thumbnail');
+        } else {
+            $idContainer = $targetElement.parents('td');
+        }
+
+        id = $idContainer.attr('id');
+        model = this.collection.get(id);
+        model.save({workflow: $targetElement.attr('id')}, {
+            headers: {
+                mid: 39
+            },
+
+            patch   : true,
+            validate: false,
+            success : function () {
+                self.showFilteredPage({}, self);
+            }
+        });
+
+        this.hideNewSelect();
+        return false;
+    }
+
     return {
         chooseHealthDd: chooseHealthDd,
         showHealthDd  : showHealthDd,
-        showNewSelect : showNewSelect
+        showNewSelect : showNewSelect,
+        chooseOption  : chooseOption
     };
 });
