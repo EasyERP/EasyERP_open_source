@@ -202,7 +202,6 @@ define([
                 fax   : fax
             };*/
             var workflow = this.$el.find('#workflowDd').data('id');
-            var source = this.$el.find('#sourceDd').data('id');
             // var active = ($('#active').is(':checked'));
             // var optout = ($('#optout').is(':checked'));
             // var reffered = $.trim($('#reffered').val());
@@ -257,7 +256,6 @@ define([
                     // optout         : optout,
                     // reffered       : reffered,
                     whoCanRW       : whoCanRW,
-                    source         : source,
                     groups         : {
                         owner: this.$el.find('#allUsersSelect').data('id'),
                         users: usersId,
@@ -349,7 +347,6 @@ define([
 
             populate.getWorkflow('#workflowDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Opportunities'}, 'name', this, true);
             populate.get('#salesTeamDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, true, true);
-            populate.get('#sourceDd', '#workflowNamesDd', '/sources', {}, 'name', this, true, true);
 
             /*                common.populateCustomers("#customerDd", "/Customers",this.model);
              //common.populateEmployeesDd("#salesPerson"Dd, "/employee/getPersonsForDd");
