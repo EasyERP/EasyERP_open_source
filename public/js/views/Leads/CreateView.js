@@ -40,7 +40,7 @@ define([
                 dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
                     id: id
                 }, function (response, context) {
-                    var customer = response.data[0];
+                    var customer = response;
                     if (customer.type === 'Person') {
                         context.$el.find('#first').val(customer.name.first);
                         context.$el.find('#last').val(customer.name.last);
@@ -174,7 +174,6 @@ define([
             var address = {};
             var salesPersonId = this.$('#salesPerson').data('id');
             var salesTeamId = this.$('#salesTeam option:selected').val();
-
             var first = $.trim(this.$el.find('#first').val());
             var last = $.trim(this.$el.find('#last').val());
             var contactName = {
@@ -198,6 +197,12 @@ define([
             var active = (this.$el.find('#active').is(':checked'));
             var optout = (this.$el.find('#optout').is(':checked'));
             var reffered = $.trim(this.$el.find('#reffered').val());
+            var skype = $.trim(this.$el.find('#skype').val());
+            var LI = $.trim(this.$el.find('#LI').val());
+            var FB = $.trim(this.$el.find('#FB').val());
+
+            var source = $('#sourceDd').data('id');
+
             var usersId = [];
             var groupsId = [];
 
@@ -220,10 +225,16 @@ define([
 
             });
             this.model.save({
-                name         : name,
+                name : name,
+                skype: skype,
+
+                social: {
+                    LI: LI,
+                    FB: FB
+                },
                 company      : company || null,
                 campaign     : $('#campaignDd').data('id'),
-                source       : $('#sourceDd').data('id'),
+                source       : source,
                 customer     : idCustomer || null,
                 address      : address,
                 salesPerson  : salesPersonId || null,

@@ -754,16 +754,31 @@ var Module = function (models, event) {
                     if (data.reffered) {
                         _opportunitie.reffered = data.reffered;
                     }
-
-                    _opportunitie.createdBy.user = req.session.uId;
-                    //uId for edited by field on creation
-                    _opportunitie.editedBy.user = req.session.uId;
-
+                    if (data.uId) {
+                        _opportunitie.createdBy.user = data.uId;
+                        //uId for edited by field on creation
+                        _opportunitie.editedBy.user = data.uId;
+                    }
                     if (data.campaign) {
                         _opportunitie.campaign = data.campaign;
                     }
                     if (data.source) {
                         _opportunitie.source = data.source;
+                    }
+                    if (data.skype) {
+                        _opportunitie.skype = data.skype;
+                    }
+                    if (data.social && data.social.LI) {
+                        if (!_opportunitie.social) {
+                            _opportunitie.social = {};
+                        }
+                        _opportunitie.social.LI = data.social.LI;
+                    }
+                    if (data.social && data.social.FB) {
+                        if (!_opportunitie.social) {
+                            _opportunitie.social = {};
+                        }
+                        _opportunitie.social.FB = data.social.FB;
                     }
                     event.emit('updateSequence', models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema), 'sequence', 0, 0, _opportunitie.workflow, _opportunitie.workflow, true, false, function (sequence) {
                         _opportunitie.sequence = sequence;
@@ -2128,7 +2143,9 @@ var Module = function (models, event) {
             var query = models.get(req.session.lastDb, 'Opportunities', opportunitiesSchema);
 
             switch (data.contentType) {
+
                 case ('Opportunities'):
+                {
                     aggregateQuery.push({
                         $lookup: {
                             from        : 'Customers',
@@ -2138,84 +2155,11 @@ var Module = function (models, event) {
                         }
                     });
 
-                    aggregateQuery.push({
-                        $lookup: {
-                            from        : 'Employees',
-                            localField  : 'salesPerson',
-                            foreignField: '_id',
-                            as          : 'salesPerson'
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'workflows',
-                            localField  : 'workflow',
-                            foreignField: '_id',
-                            as          : 'workflow'
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Users',
-                            localField  : 'createdBy.user',
-                            foreignField: '_id',
-                            as          : 'createdBy.user'
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Users',
-                            localField  : 'editedBy.user',
-                            foreignField: '_id',
-                            as          : 'editedBy.user'
-                        }
-                    }, {
-                        $project: {
-                            isOpportunitie  : 1,
-                            customer        : {$arrayElemAt: ['$customer', 0]},
-                            salesPerson     : {$arrayElemAt: ['$salesPerson', 0]},
-                            workflow        : {$arrayElemAt: ['$workflow', 0]},
-                            'createdBy.user': {$arrayElemAt: ['$createdBy.user', 0]},
-                            'editedBy.user' : {$arrayElemAt: ['$editedBy.user', 0]},
-                            'createdBy.date': 1,
-                            'editedBy.date' : 1,
-                            creationDate    : 1,
-                            name            : 1,
-                            sequence        : 1,
-                            expectedRevenue : 1,
-                            nextAction      : 1
-                        }
-                    }, {
-                        $match: {
-                            $and: optionsObject
-                        }
-                    });
-
-                    aggregateQuery.push({
-                        $group: {
-                            _id  : null,
-                            total: {$sum: 1},
-                            root : {$push: '$$ROOT'}
-                        }
-                    }, {
-                        $unwind: '$root'
-                    }, {
-                        $project: {
-                            _id               : '$root._id',
-                            'customer.name'   : '$root.customer.name',
-                            'salesPerson.name': '$root.salesPerson.name',
-                            workflow          : '$root.workflow',
-                            'createdBy.user'  : '$root.createdBy.user.login',
-                            'editedBy.user'   : '$root.editedBy.user.login',
-                            'createdBy.date'  : '$root.createdBy.date',
-                            'editedBy.date'   : '$root.editedBy.date',
-                            creationDate      : '$root.creationDate',
-                            name              : '$root.name',
-                            sequence          : '$root.sequence',
-                            expectedRevenue   : '$root.expectedRevenue',
-                            nextAction        : '$root.nextAction',
-                            total             : 1
-                        }
-                    });
+                }
                     break;
                 case ('Leads'):
+                {
+
                     aggregateQuery.push({
                         $lookup: {
                             from        : 'Customers',
@@ -2225,89 +2169,85 @@ var Module = function (models, event) {
                         }
                     });
 
-                    aggregateQuery.push({
-                        $lookup: {
-                            from        : 'Employees',
-                            localField  : 'salesPerson',
-                            foreignField: '_id',
-                            as          : 'salesPerson'
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'workflows',
-                            localField  : 'workflow',
-                            foreignField: '_id',
-                            as          : 'workflow'
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Users',
-                            localField  : 'createdBy.user',
-                            foreignField: '_id',
-                            as          : 'createdBy.user'
-                        }
-                    }, {
-                        $lookup: {
-                            from        : 'Users',
-                            localField  : 'editedBy.user',
-                            foreignField: '_id',
-                            as          : 'editedBy.user'
-                        }
-                    }, {
-                        $project: {
-                            contactName      : 1,
-                            isOpportunitie   : 1,
-                            customer         : {$arrayElemAt: ['$customer', 0]},
-                            salesPerson      : {$arrayElemAt: ['$salesPerson', 0]},
-                            workflow         : {$arrayElemAt: ['$workflow', 0]},
-                            'createdBy.user' : {$arrayElemAt: ['$createdBy.user', 0]},
-                            'editedBy.user'  : {$arrayElemAt: ['$editedBy.user', 0]},
-                            'createdBy.date' : 1,
-                            'editedBy.date'  : 1,
-                            source           : 1,
-                            name             : 1,
-                            campaign         : 1,
-                            'phones.phone'   : '$phones.phone',
-                            email            : 1,
-                            'address.country': '$address.country'
-                        }
-                    }, {
-                        $match: {
-                            $and: optionsObject
-                        }
-                    });
-
-                    aggregateQuery.push({
-                        $group: {
-                            _id  : null,
-                            total: {$sum: 1},
-                            root : {$push: '$$ROOT'}
-                        }
-                    }, {
-                        $unwind: '$root'
-                    }, {
-                        $project: {
-                            _id               : '$root._id',
-                            contactName       : '$root.contactName',
-                            'customer.name'   : '$root.customer.name',
-                            'salesPerson.name': '$root.salesPerson.name',
-                            workflow          : '$root.workflow',
-                            'createdBy.user'  : '$root.createdBy.user.login',
-                            'editedBy.user'   : '$root.editedBy.user.login',
-                            'createdBy.date'  : '$root.createdBy.date',
-                            'editedBy.date'   : '$root.editedBy.date',
-                            source            : '$root.source',
-                            name              : '$root.name',
-                            campaign          : '$root.campaign',
-                            phones            : '$root.phones',
-                            email             : '$root.email',
-                            address           : '$root.address',
-                            total             : 1
-                        }
-                    });
-
+                }
                     break;
             }
+
+            aggregateQuery.push({
+                    $lookup: {
+                        from        : 'Employees',
+                        localField  : 'salesPerson',
+                        foreignField: '_id',
+                        as          : 'salesPerson'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'workflows',
+                        localField  : 'workflow',
+                        foreignField: '_id',
+                        as          : 'workflow'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Users',
+                        localField  : 'createdBy.user',
+                        foreignField: '_id',
+                        as          : 'createdBy.user'
+                    }
+                },
+                {
+                    $lookup: {
+                        from        : 'Users',
+                        localField  : 'editedBy.user',
+                        foreignField: '_id',
+                        as          : 'editedBy.user'
+                    }
+                },
+                {
+                    $project: {
+                        "contactName"    : {$concat: ['$contactName.first', " ", '$contactName.last']},
+                        "customer"       : {$arrayElemAt: ["$customer", 0]},
+                        "salesPerson"    : {$arrayElemAt: ["$salesPerson", 0]},
+                        "workflow"       : {$arrayElemAt: ["$workflow", 0]},
+                        "createdBy.user" : {$arrayElemAt: ["$createdBy.user", 0]},
+                        "editedBy.user"  : {$arrayElemAt: ["$editedBy.user", 0]},
+                        "createdBy.date" : 1,
+                        "editedBy.date"  : 1,
+                        "creationDate"   : 1,
+                        "isOpportunitie" : 1,
+                        "name"           : 1,
+                        "expectedRevenue": 1,
+                        "attachments"    : 1,
+                        "notes"          : 1,
+                        "convertedDate"  : 1,
+                        "isConverted"    : 1,
+                        "source"         : 1,
+                        "campaign"       : 1,
+                        "sequence"       : 1,
+                        "reffered"       : 1,
+                        "optout"         : 1,
+                        "active"         : 1,
+                        "color"          : 1,
+                        "categories"     : 1,
+                        "priority"       : 1,
+                        "expectedClosing": 1,
+                        "nextAction"     : 1,
+                        "internalNotes"  : 1,
+                        "phones"         : 1,
+                        "email"          : 1,
+                        "address"        : 1,
+                        "company"        : 1,
+                        skype            : 1,
+                        social           : 1
+                    }
+                },
+                {
+                    $match: {
+                        $and: optionsObject
+                    }
+                });
 
             if (data.sort) {
                 key = Object.keys(data.sort)[0];
@@ -2323,9 +2263,9 @@ var Module = function (models, event) {
             }
 
             aggregateQuery.push({
-                $skip: skip
+                $skip: (data.page - 1) * data.count
             }, {
-                $limit: limit
+                $limit: parseInt(data.count, 10)
             });
 
             query.aggregate(aggregateQuery).exec(waterfallCallback);
@@ -2490,32 +2430,34 @@ var Module = function (models, event) {
         var query;
 
         query = Opportunities.findById({_id: id}, {
-            name           : 1,
-            expectedRevenue: 1,
-            customer       : 1,
-            salesPerson    : 1,
-            nextAction     : 1,
-            expectedClosing: 1,
-            priority       : 1,
-            workflow       : 1,
-            address        : 1,
-            whoCanRW       : 1,
-            groups         : 1,
-            createdBy      : 1,
-            phones         : 1,
-            internalNotes  : 1,
-            editedBy       : 1,
-            notes          : 1
-            /* company         : 1,
-             tempCompanyField: 1,
-             contactName     : 1,
-             email           : 1,
-             campaign        : 1,
-             source          : 1*/
+            name            : 1,
+            expectedRevenue : 1,
+            customer        : 1,
+            salesPerson     : 1,
+            nextAction      : 1,
+            expectedClosing : 1,
+            priority        : 1,
+            workflow        : 1,
+            address         : 1,
+            whoCanRW        : 1,
+            groups          : 1,
+            createdBy       : 1,
+            phones          : 1,
+            internalNotes   : 1,
+            editedBy        : 1,
+            notes           : 1,
+            company         : 1,
+            tempCompanyField: 1,
+            contactName     : 1,
+            email           : 1,
+            campaign        : 1,
+            source          : 1,
+            social          : 1,
+            skype           : 1
         });
 
         query
-            // .populate('company', 'name')
+            .populate('company', 'name')
             .populate('customer', 'name')
             .populate('salesPerson', 'name')
             .populate('workflow', 'name')
