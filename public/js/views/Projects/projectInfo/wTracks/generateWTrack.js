@@ -536,7 +536,7 @@ define([
                             }
 
                             if (self.wTrackCollection) {
-                                self.wTrackCollection.getFirstPage({count: 50, page: 1, filter: filter});
+                                self.wTrackCollection.getFirstPage({page: 1, filter: filter});
                             }
 
                             if (self.quotationDialog) {

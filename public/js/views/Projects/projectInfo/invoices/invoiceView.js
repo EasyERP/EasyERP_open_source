@@ -348,6 +348,7 @@ define([
             });
             
             this.renderPagination($currentEl, this);
+           // this.setPagination(this.collection, self.$el);
 
             this.$el.find('#removeInvoice').hide();
             this.$el.find('#saveInvoice').hide();
