@@ -1,47 +1,49 @@
-/**
- * Created by Roman on 04.05.2015.
- */
 define([
+    'Underscore',
     'Backbone',
     'common',
     'constants'
-], function (Backbone, common, CONSTANTS) {
+], function (_, Backbone, common, CONSTANTS) {
     'use strict';
 
     var QuotationModel = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
 
         defaults: {
-            supplier         : {
+            supplier: {
                 _id : null,
                 name: ''
             },
-            project          : {
+
+            project: {
                 _id           : null,
                 projectnamager: {},
                 name          : ''
             },
-            workflow         : {
+            workflow: {
                 _id : null,
                 name: ''
             },
+
             supplierReference: '',
-            /*deliverTo: null,*/
-            orderDate        : new Date(),
-            expectedDate     : null,
-            name             : 'PO',
-            invoiceControl   : null,
-            invoiceRecived   : false,
-            paymentTerm      : null,
-            fiscalPosition   : null,
-            destination      : null,
-            incoterm         : null,
-            products         : []
+
+            orderDate     : new Date(),
+            expectedDate  : null,
+            name          : 'PO',
+            invoiceControl: null,
+            invoiceRecived: false,
+            paymentTerm   : null,
+            fiscalPosition: null,
+            destination   : null,
+            incoterm      : null,
+            products      : []
         },
-        urlRoot : function () {
+
+        urlRoot: function () {
             return CONSTANTS.URLS.QUOTATION;
         },
-        parse   : function (model) {
+
+        parse: function (model) {
             var products = model.products;
             var total;
             var unTaxed;
@@ -90,9 +92,12 @@ define([
             if (model.orderDate) {
                 model.orderDate = common.utcDateToLocaleDate(new Date(model.orderDate));
             }
+
             return model;
         }
+
     });
 
     return QuotationModel;
+
 });

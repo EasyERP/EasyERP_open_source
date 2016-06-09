@@ -424,7 +424,7 @@ define([
             var collectionElement;
 
             if (filterView) {
-                valuesArray = App.filter[filterView] || App.filter[filterView]['value'];
+                valuesArray = App.filter[filterView]['value'] || App.filter[filterView];
             } else {
                 App.filter = {};
                 this.removeSelectedFilter();

@@ -2,6 +2,8 @@
     <li><a class="active" href="javascript:;" class="">Leads by sale</a></li>
     <li><a href="javascript:;">Leads by date</a></li>
     <li><a href="javascript:;" class="">Leads by source</a></li>
+    <li><a href="javascript:;" class="">Opportunity Conversion</a></li>
+    <li><a href="javascript:;" class="">Opportunity Aging</a></li>
     <li><a href="javascript:;" class="">Opportunities</a></li>
     <li><a href="javascript:;" class="">Won/Lost</a></li>
 </ul>
@@ -10,7 +12,7 @@
         <div class="clearfix"></div>
         <h3 class="dashboard">Who created most leads?</h3>
 
-        <div class="choseDateRangeSource" data-type="sale">
+        <div class="choseDateRange" data-type="sale">
             <div class="item active" data-day="7">7D</div>
             <div class="item" data-day="30">30D</div>
             <div class="item" data-day="90">90D</div>
@@ -42,14 +44,14 @@
         <div class="clearfix"></div>
         <h3 class="dashboard">How many leads have been created?</h3>
 
-        <div class="choseDateItem">
+        <div data-type="date" class="choseDateItem">
             <div class="item active" data-item="D">Day</div>
             <div class="item" data-item="W">Week</div>
             <div class="item" data-item="M">Month</div>
             <div class="item" data-item="DW">Day of Week</div>
             <div class="item" data-item="DM">Day of Month</div>
         </div>
-        <div class="choseDateRange">
+        <div class="choseDateRange" data-type="date">
             <div class="item" data-day="7">7D</div>
             <div class="item active" data-day="30">30D</div>
             <div class="item" data-day="90">90D</div>
@@ -89,7 +91,7 @@
         <div class="clearfix"></div>
         <h3 class="dashboard">What are our best primary campaigs?</h3>
 
-        <div class="choseDateRangeSource"  data-type="source">
+        <div class="choseDateRange"  data-type="source">
             <div class="item" data-day="7">7D</div>
             <div class="item active" data-day="30">30D</div>
             <div class="item" data-day="90">90D</div>
@@ -119,9 +121,81 @@
     </div>
     <div class="chart-tabs-item">
         <div class="clearfix"></div>
+        <h3 class="dashboard">What is the conversion rate per Sale?</h3>
+
+        <div class="choseDateRange" data-type="opportunitieConversion">
+            <div class="item" data-day="7">7D</div>
+            <div class="item" data-day="30">30D</div>
+            <div class="item active" data-day="90">90D</div>
+            <div class="item" data-day="365">12M</div>
+        </div>
+        <div class="clearfix"></div>
+        <div class="legend-box opportunities">
+            <div class="new">
+                <div style="background-color: rgb(38, 167, 222);" class="square">
+                </div>
+                <div class="text">
+                    Finished Opportinities
+                </div>
+            </div>
+            <div class="convertRate">
+                <div style="background-color: #66ff66" class="square">
+                </div>
+                <div class="text">
+                    Opportunity Conversion Rate
+                </div>
+            </div>
+        </div>
+        <svg class="opportunitieConversionAmount"></svg>
+        <svg class="opportunitieConversionCount"></svg>
+    </div>
+    <div class="chart-tabs-item">
+        <div class="clearfix"></div>
+        <h3 class="dashboard">How long last activity was?</h3>
+        <br>
+        <br>
+        <div class="clearfix"></div>
+        <div class="legend-box opportunities">
+            <div class="new">
+                <div style="background-color: yellow;" class="square">
+                </div>
+                <div class="text">
+                    New
+                </div>
+            </div>
+            <div class="% 25-50">
+                <div style="background-color: rgb(86, 209, 181);" class="square">
+                </div>
+                <div class="text">
+                    % 25-50
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="% 50-75">
+                <div style="background-color: rgb(38, 167, 222);" class="square">
+                </div>
+                <div class="text">
+                    % 50-75
+                </div>
+                <div class="clearfix"></div>
+            </div>
+            <div class="% 75-100">
+                <div style="background-color: rgb(95, 186, 81);" class="square">
+                </div>
+                <div class="text">
+                    % 75-100
+                </div>
+                <div class="clearfix"></div>
+            </div>
+        </div>
+        <svg class="opportunitieAgingSum"></svg>
+        <svg class="opportunitieAgingCount"></svg>
+    </div>
+    <div class="chart-tabs-item">
+        <div class="clearfix"></div>
         <h3 class="dashboard">What stage are my opportunities in?</h3>
 
-        <div class="choseDateRangeOpportunities">
+        <div class="choseDateRange" data-type="opportunitie">
             <div class="item" data-day="7">7D</div>
             <div class="item active" data-day="30">30D</div>
             <div class="item" data-day="90">90D</div>
@@ -169,14 +243,14 @@
         <div class="clearfix"></div>
         <h3 class="dashboard">How many of our opportunities do we win?</h3>
 
-        <div class="choseDateItem">
+        <div data-type="winLost" class="choseDateItem">
             <div class="item active" data-item="D">Day</div>
             <div class="item" data-item="W">Week</div>
             <div class="item" data-item="M">Month</div>
             <div class="item" data-item="DW">Day of Week</div>
             <div class="item" data-item="DM">Day of Month</div>
         </div>
-        <div class="choseDateRange">
+        <div class="choseDateRange" data-type="winLost">
             <div class="item" data-day="7">7D</div>
             <div class="item active" data-day="30">30D</div>
             <div class="item" data-day="90">90D</div>
@@ -188,7 +262,7 @@
                 <div class="square">
                 </div>
                 <div class="text">
-                    Converted Leads
+                    In progress
                 </div>
                 <div class="clearfix"></div>
             </div>
@@ -197,15 +271,23 @@
                 <div class="square">
                 </div>
                 <div class="text">
-                    Unconverted Leads
+                    Won
+                </div>
+            </div>
+
+            <div class="unconverted">
+                <div style="background-color: red" class="square">
+                </div>
+                <div  class="text">
+                    Lost
                 </div>
             </div>
 
             <div class="convertRate">
-                <div class="square">
+                <div style="background-color: #3E88B9" class="square">
                 </div>
                 <div class="text">
-                    Opportunity Conversion Rate
+                    Win %
                 </div>
             </div>
         </div>

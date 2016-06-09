@@ -28,10 +28,8 @@ define([
         },
 
         render: function (options) {
-            var formString = this.template(options);
+            var formString = this.template({model: options, currencySplitter: helpers.currencySplitter});
             var self = this;
-
-            options.currencySplitter = helpers.currencySplitter;
 
             this.$el = $(formString).dialog({
                 closeOnEscape: false,

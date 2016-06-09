@@ -101,8 +101,8 @@ define([
         showFilteredPage: function (filter) {
             var itemsNumber = $('#itemsNumber').text();
 
-                $("#top-bar-deleteBtn").hide();
-                $('#checkAll').prop('checked', false);
+            $("#top-bar-deleteBtn").hide();
+            $('#checkAll').prop('checked', false);
 
             this.startTime = new Date();
             this.newCollection = false;
@@ -189,8 +189,8 @@ define([
                 cellSpan: 5
             }).render());
 
-                this.renderPagination($currentEl, this);
-                this.renderFilter(self);
+            this.renderPagination($currentEl, this);
+            this.renderFilter();
 
             this.renderPagination($currentEl, this);
 
@@ -215,7 +215,7 @@ define([
 
             model.urlRoot = '/quotation/';
             model.fetch({
-                data: {
+                data   : {
                     id      : id,
                     viewType: 'form'
                 },

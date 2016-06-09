@@ -1219,6 +1219,7 @@ define([
                         collection = new contentCollection({
                             viewType   : 'thumbnails',
                             reset      : true,
+                            showMore   : false,
                             count      : countPerPage,
                             filter     : filter,
                             contentType: contentType
@@ -1236,7 +1237,7 @@ define([
                             startTime : startTime,
                             filter    : filter
                         });
-                        var topbarView = new topBarView({actionType: "Content", collection: collection});
+                        var topbarView = new topBarView({actionType: 'Content', collection: collection});
 
                         collection.unbind('reset');
                         // var url = '#easyErp/' + contentType + '/thumbnails';

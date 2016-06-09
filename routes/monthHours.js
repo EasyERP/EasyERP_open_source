@@ -19,7 +19,7 @@ module.exports = function (event, models) {
             handler.getList(req, res);
         }
     });
-    router.get('/list/totalCollectionLength', handler.totalCollectionLength);
+    
     router.post('/', handler.create);
     router.patch('/', handler.patchM);
 

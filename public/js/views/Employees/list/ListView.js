@@ -10,9 +10,9 @@ define([
     'collections/Employees/filterCollection',
     'models/EmployeesModel',
     'common'
-], function ($, _, listViewBase, listTemplate, CreateView, EditView, ListItemView, FormView, contentCollection, CurrentModel, common) {
+], function ($, _, ListViewBase, listTemplate, CreateView, EditView, ListItemView, FormView, contentCollection, CurrentModel, common) {
     'use strict';
-    var EmployeesListView = listViewBase.extend({
+    var EmployeesListView = ListViewBase.extend({
         CreateView       : CreateView,
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
@@ -83,7 +83,7 @@ define([
 
             this.renderAlphabeticalFilter(this);
             this.renderPagination($currentEl, this);
-            this.renderFilter(self);
+            this.renderFilter();
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 

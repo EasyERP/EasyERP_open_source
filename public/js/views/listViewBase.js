@@ -3,7 +3,7 @@ define([
     'jQuery',
     'Underscore',
     'text!templates/Pagination/PaginationTemplate.html',
-    'text!templates/Alpabet/AphabeticTemplate.html',
+   /* 'text!templates/Alpabet/AphabeticTemplate.html',*/  // took off to pagination
     'text!templates/Notes/importTemplate.html',
     'views/pagination',
     'views/selectView/selectView',
@@ -11,7 +11,7 @@ define([
     'common',
     'dataService',
     'constants'
-], function (Backbone, $, _, paginationTemplate, aphabeticTemplate, importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS) {
+], function (Backbone, $, _, paginationTemplate,/* aphabeticTemplate,*/ importForm, Pagination, SelectView, AttachView, common, dataService, CONSTANTS) {
     'use strict';
 
     var ListViewBase = Pagination.extend({
@@ -73,7 +73,7 @@ define([
         },
 
         // todo fixit
-        alpabeticalRender: function (e) {
+      /*  alpabeticalRender: function (e) {  // took off to pagination
             var target;
             var itemsNumber = $('.selectedItemsNumber').text();
             var selectedLetter;
@@ -149,7 +149,7 @@ define([
                     });
                 }
             });
-        },
+        },*/
 
         renderPagination: function ($currentEl, _self) {
             var self = _self || this;
@@ -170,28 +170,6 @@ define([
                 this.previouslySelected.addClass('selectedItemsNumber');
                 // end
             }
-        },
-
-        renderFilter: function (self, baseFilter) {
-            self.filterView = new this.FilterView({
-                contentType: self.contentType
-            });
-
-            self.filterView.bind('filter', function (filter) {
-                if (baseFilter) {
-                    filter[baseFilter.name] = baseFilter.value;
-                }
-                self.showFilteredPage(filter, self);
-            });
-            self.filterView.bind('defaultFilter', function (filter) {
-                if (baseFilter) {
-                    filter[baseFilter.name] = baseFilter.value;
-                }
-                self.showFilteredPage({}, self);
-            });
-
-            self.filterView.render();
-
         },
 
         deleteItemsRender: function (deleteCounter, deletePage) {
@@ -260,12 +238,6 @@ define([
             if (e.which === 13) {
                 this.setChangedValueToModel();
             }
-        },
-
-        isNewRow: function () {
-            var newRow = $('#false');
-
-            return !!newRow.length;
         },
 
         editRow: function (e) {
@@ -338,11 +310,17 @@ define([
             var editModel;
             var editValue;
 
+            if (navigator.userAgent.indexOf('Firefox') > -1) {
+                this.setEditable(editedElement);
+            }
+
             if (editedElement.length) {
                 editedCol = editedElement.closest('td');
-                editedElementRowId = editedElement.closest('tr').data('id');
+                editedElementRowId = editedElement.closest('tr').attr('data-id');
                 editedElementContent = editedCol.data('content');
                 editedElementValue = editedElement.val();
+
+                // editedElementValue = editedElementValue.replace(/\s+/g, '');
 
                 if (editedElementRowId.length >= 24) {
                     editModel = this.collection.get(editedElementRowId) || this.editCollection.get(editedElementRowId);
@@ -362,6 +340,10 @@ define([
                 }
                 editedCol.text(editedElementValue);
                 editedElement.remove();
+
+                if (editedElementValue) {
+                    editedCol.removeClass('errorContent');
+                }
             }
         },
 

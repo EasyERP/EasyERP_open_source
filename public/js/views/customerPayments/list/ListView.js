@@ -137,7 +137,7 @@ define([
 
             this.renderPagination($currentEl, this);
 
-            this.renderFilter(self);
+            this.renderFilter();
 
             this.editCollection = new EditCollection(this.collection.toJSON());
 

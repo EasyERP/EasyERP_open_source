@@ -462,11 +462,52 @@
                 callback(response.data);
             });
         };
-        var getOpportunitiesForChart = function (source, dataRange, dataItem, callback) {
-            dataService.getData('/opportinities/OpportunitiesForChart', {
-                source   : source,
+        var getOpportunitiesForChart = function (type, dataRange, dataItem, callback) {
+            dataService.getData('/opportunities/OpportunitiesForChart', {
+                type   : type,
                 dataRange: dataRange,
                 dataItem : dataItem
+            }, function (response) {
+                callback(response.data);
+            });
+        };
+        var getEmployeesForChart = function (callback) {
+            dataService.getData('/employee/EmployeesForChart', {
+            }, function (response) {
+                callback(response);
+            });
+        };
+        var getHoursForChart = function (params, callback) {
+            dataService.getData('wTrack/hours', {
+                month: params.month,
+                year : params.year
+            }, function (response) {
+                callback(response);
+            });
+        };
+        var getVacationForChart = function (params, callback) {
+            dataService.getData('vacation/getStatistic', {
+                month: params.month,
+                year : params.year
+            }, function (response) {
+                callback(response);
+            });
+        };
+        var getEmployeesCount = function (callback) {
+            dataService.getData('employee/getEmployeesCount', {
+            }, function (response) {
+                callback(response);
+            });
+        };
+        var getOpportunitiesConversionForChart = function (dataRange, dataItem, callback) {
+            dataService.getData("/opportunities/OpportunitiesConversionForChart", {
+                dataRange: dataRange
+            }, function (response) {
+                callback(response.data);
+            });
+        };
+        var getOpportunitiesAgingChart = function (callback) {
+            dataService.getData("/opportunities/OpportunitiesAgingChart", {
             }, function (response) {
                 callback(response.data);
             });
@@ -1141,8 +1182,14 @@
             populateDepartmentsList         : populateDepartmentsList,
             getLeadsForChart                : getLeadsForChart,
             getOpportunitiesForChart        : getOpportunitiesForChart,
+            getOpportunitiesAgingChart        : getOpportunitiesAgingChart,
+            getOpportunitiesConversionForChart: getOpportunitiesConversionForChart,
             getImages                       : getImages,
             getImagesPM                     : getImagesPM,
-            populateOpportunitiesForMiniView: populateOpportunitiesForMiniView
+            populateOpportunitiesForMiniView  : populateOpportunitiesForMiniView,
+            getEmployeesForChart              : getEmployeesForChart,
+            getHoursForChart                  : getHoursForChart,
+            getVacationForChart               : getVacationForChart,
+            getEmployeesCount                 : getEmployeesCount
         }
     });

@@ -13,7 +13,7 @@ define([
     'constants'
 ], function ($,
              _,
-             listViewBase,
+             ListViewBase,
              listTemplate,
              CreateView,
              ListItemView,
@@ -25,7 +25,7 @@ define([
              CONSTANTS) {
     'use strict';
 
-    var ApplicationsListView = listViewBase.extend({
+    var ApplicationsListView = ListViewBase.extend({
 
         CreateView              : CreateView,
         listTemplate            : listTemplate,
@@ -134,7 +134,7 @@ define([
             });
 
             this.renderPagination($currentEl, this);
-            this.renderFilter(self);
+            this.renderFilter();
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
         },
 

@@ -3,9 +3,10 @@ define([
     'jQuery',
     'Underscore',
     'views/Filter/FilterView',
+    'text!templates/Alpabet/AphabeticTemplate.html', // added alphabeticalRender
     'constants',
     'common'
-], function (Backbone, $, _, FilterView, CONSTANTS, common) {
+], function (Backbone, $, _, FilterView, aphabeticTemplate, CONSTANTS, common) {
     var View = Backbone.View.extend({
         el        : '#content-holder',
         filter    : null,
@@ -243,12 +244,7 @@ define([
                 url += '/c=' + count;
             }
 
-            if (!filter) {
-                locationFilter = location.split('/filter=')[1];
-                if (locationFilter) {
-                    url += '/filter=' + locationFilter;
-                }
-            } else {
+            if (filter) {
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
             }
 
@@ -296,6 +292,87 @@ define([
 
                 // skip default case
             }
+        },
+
+        // todo fixit
+        alpabeticalRender: function (e) {  // added from listViewBase and small refactor for thumbnails
+            var target;
+            var itemsNumber = $('.selectedItemsNumber').text() || this.collection.pageSize;
+            var selectedLetter;
+
+            this.startTime = new Date();
+
+            if (e && e.target) {
+                target = $(e.target);
+                selectedLetter = $(e.target).text();
+
+                if (!this.filter) {
+                    this.filter = {};
+                }
+                this.filter.letter = {
+                    key  : 'letter',
+                    value: selectedLetter,
+                    type : null
+                };
+
+                target.parent().find('.current').removeClass('current');
+                target.addClass('current');
+
+                if ($(e.target).text() === 'All') {
+                    delete this.filter;
+                    delete App.filter.letter;
+                } else {
+                    App.filter.letter = this.filter.letter;
+                }
+            }
+
+            this.filter = App.filter;
+            this.newCollection = false;
+            this.$el.find('.thumbnailElement').remove();
+
+            this.filterView.renderFilterContent(this.filter);
+            _.debounce(
+                function () {
+                    this.trigger('filter', App.filter);
+                }, 10);
+
+            $('#top-bar-deleteBtn').hide();
+            $('#checkAll').prop('checked', false);
+
+            this.changeLocationHash(1, itemsNumber, this.filter);
+            this.collection.getFirstPage({
+                count      : itemsNumber,
+                filter     : this.filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            });
+        },
+
+        renderAlphabeticalFilter: function () { // added from listViewBase
+            var self = this;
+            var currentLetter;
+
+            this.hasAlphabet = true;
+
+            common.buildAphabeticArray(this.collection, function (arr) {
+                self.$el.find('#startLetter').remove();
+                self.alphabeticArray = arr;
+                self.$el.find('#searchContainer').after(_.template(aphabeticTemplate, {
+                    alphabeticArray   : self.alphabeticArray,
+                    allAlphabeticArray: self.allAlphabeticArray
+                }));
+
+                currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : 'All';
+
+                if (currentLetter) {
+                    $('#startLetter').find('a').each(function () {
+                        var target = $(this);
+                        if (target.text() === currentLetter) {
+                            target.addClass('current');
+                        }
+                    });
+                }
+            });
         },
 
         // when click in list of pages
@@ -374,6 +451,8 @@ define([
 
             if (filter && Object.keys(filter).length !== 0) {
                 this.filter = filter;
+            } else {
+                this.filter = null;
             }
 
             this.changeLocationHash(null, this.collection.pageSize, this.filter);
@@ -465,18 +544,26 @@ define([
             var CreateView = this.CreateView || Backbone.View.extend({});
             var startData = {};
             var cid;
-            var model = new this.CurrentModel();
+            var model = this.CurrentModel ? new this.CurrentModel() : {};
 
             cid = model.cid;
 
             startData.cid = cid;
 
             if (!this.isNewRow()) {
-                this.showSaveCancelBtns();
-                this.editCollection.add(model);
+                if (this.editCollection) {
+                    this.showSaveCancelBtns();
+                    this.editCollection.add(model);
+                }
             }
 
-            return new CreateView(startData);
+            return new CreateView(model);
+        },
+
+        isNewRow: function () {
+            var newRow = this.$el.find('#false');
+
+            return !!newRow.length;
         },
 
         editItem: function () {
@@ -699,6 +786,29 @@ define([
 
             this.checkAll();
             this.hideDeleteBtnAndUnSelectCheckAll();
+        },
+
+        renderFilter: function (baseFilter) {
+            var self = this;
+
+            self.filterView = new self.FilterView({
+                contentType: self.contentType
+            });
+
+            self.filterView.bind('filter', function (filter) {
+                if (baseFilter) {
+                    filter[baseFilter.name] = baseFilter.value;
+                }
+                self.showFilteredPage(filter);
+            });
+            self.filterView.bind('defaultFilter', function (filter) {
+                if (baseFilter) {
+                    filter[baseFilter.name] = baseFilter.value;
+                }
+                self.showFilteredPage();
+            });
+
+            self.filterView.render();
         }
     });
 

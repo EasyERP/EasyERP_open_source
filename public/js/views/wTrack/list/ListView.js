@@ -1305,7 +1305,7 @@ define([
                 self.responseObj['#department'] = departments;
             });
 
-            this.renderFilter(self);
+            this.renderFilter();
 
             setTimeout(function () {
                 /* self.editCollection = new EditCollection(self.collection.toJSON());
