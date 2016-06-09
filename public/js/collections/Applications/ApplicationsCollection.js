@@ -1,29 +1,15 @@
 define([
-    'Backbone',
-    'jQuery',
+    'collections/parent',
     'models/ApplicationsModel',
     'common',
     'constants'
-], function (Backbone, $, ApplicationModel, common, CONSTANTS) {
+], function (Parent, ApplicationModel, common, CONSTANTS) {
     'use strict';
-    var ApplicationsCollection = Backbone.Collection.extend({
+    var ApplicationsCollection = Parent.extend({
         model: ApplicationModel,
+
         url  : function () {
             return CONSTANTS.URLS.APPLICATIONS;
-        },
-
-        initialize: function () {
-            var mid = 39;
-
-            this.fetch({
-                data   : $.param({
-                    mid: mid
-                }),
-                type   : 'GET',
-                reset  : true,
-                success: this.fetchSuccess,
-                error  : this.fetchError
-            });
         },
 
         parse: function (response) {
@@ -44,8 +30,9 @@ define([
                 });
             }
 
-            return response.data;
+            return Parent.prototype.parse.apply(this, arguments);
         }
     });
+
     return ApplicationsCollection;
 });

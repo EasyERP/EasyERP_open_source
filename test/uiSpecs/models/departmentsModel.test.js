@@ -40,7 +40,7 @@ define([
             var urlRoot = department.urlRoot();
 
             expect(urlRoot).to.be.a('string');
-            expect(urlRoot).to.be.equals('/Departments/');
+            expect(urlRoot).to.be.equals('/departments/');
         });
 
         it('Check validation', function () {
