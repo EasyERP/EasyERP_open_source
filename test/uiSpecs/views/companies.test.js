@@ -1685,11 +1685,13 @@ define([
 
                 server.respondWith('GET', companyUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeCompaniesList)]);
                 companiesCollection = new CompaniesCollection({
-                    contentType  : 'Companies',
-                    count        : 100,
-                    filter       : null,
-                    newCollection: false,
-                    viewType     : 'list'
+                    contentType: 'Companies',
+                    filter     : null,
+                    viewType   : 'list',
+                    page       : 1,
+                    count      : 100,
+                    reset      : true,
+                    showMore   : false
                 });
                 server.respond();
 
@@ -2310,7 +2312,7 @@ define([
                 $selectedItem.click();
 
                 server.respondWith('POST', '/Opportunities/', [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                    success: "A new Opportunities create success",
+                    success: 'A new Opportunities create success',
                     id     : '123'
                 })]);
 
@@ -2374,7 +2376,7 @@ define([
                 $selectedItem.click();
 
                 server.respondWith('PATCH', opportunityUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify({
-                    success: "A new Opportunities create success",
+                    success: 'A new Opportunities create success',
                     id     : '123'
                 })]);
 
