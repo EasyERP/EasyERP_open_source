@@ -1726,8 +1726,10 @@ define([
                 $needBtn.click();
                 server.respond();
 
-                ajaxResponse =
-                expect()
+                ajaxResponse = jQueryAjaxSpy.args[0][0];
+                expect(ajaxResponse.data).to.exist;
+                expect(ajaxResponse.data).to.have.property('count', '25');
+                expect(ajaxResponse.data).to.have.property('page', 1);
             });
 
             it('Try to change leads stage', function () {
