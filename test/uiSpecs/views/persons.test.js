@@ -11531,7 +11531,7 @@ define([
                 done();
             });
 
-            it('Try to change page1 to page2', function() {
+            it('Try to change page1 to page2', function () {
                 var $currentPageList = $thisEl.find('.currentPageList');
                 var ajaxResponse;
                 var $page2Btn;
@@ -11548,6 +11548,75 @@ define([
                 expect(ajaxResponse).to.have.property('url', '/persons/');
                 expect(ajaxResponse.data).to.have.property('contentType');
             });
+
+            it('Try to select 25 items per page', function() {
+                var $pagination = $thisEl.find('.pagination');
+                var $needBtn = $pagination.find('.pageList > a').first();
+                var ajaxResponse;
+
+                ajaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = ajaxSpy.args[0][0];
+
+                expect(ajaxResponse.data).to.be.exist;
+                expect(ajaxResponse.data).to.have.property('page', 1);
+                expect(ajaxResponse.data).to.have.property('count', '25');
+            });
+
+            it('Try to select 50 items per page', function() {
+                var $pagination = $thisEl.find('.pagination');
+                var $needBtn = $pagination.find('.pageList > a').eq(1);
+                var ajaxResponse;
+
+                ajaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = ajaxSpy.args[0][0];
+
+                expect(ajaxResponse.data).to.be.exist;
+                expect(ajaxResponse.data).to.have.property('page', 1);
+                expect(ajaxResponse.data).to.have.property('count', '50');
+            });
+
+            it('Try to select 100 items per page', function() {
+                var $pagination = $thisEl.find('.pagination');
+                var $needBtn = $pagination.find('.pageList > a').eq(2);
+                var ajaxResponse;
+
+                ajaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = ajaxSpy.args[0][0];
+
+                expect(ajaxResponse.data).to.be.exist;
+                expect(ajaxResponse.data).to.have.property('page', 1);
+                expect(ajaxResponse.data).to.have.property('count', '100');
+            });
+
+            it('Try to select 200 items per page', function() {
+                var $pagination = $thisEl.find('.pagination');
+                var $needBtn = $pagination.find('.pageList > a').eq(3);
+                var ajaxResponse;
+
+                ajaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = ajaxSpy.args[0][0];
+
+                expect(ajaxResponse.data).to.be.exist;
+                expect(ajaxResponse.data).to.have.property('page', 1);
+                expect(ajaxResponse.data).to.have.property('count', '200');
+            });
+
 
             it('Try to export to CSV', function () {
                 var $exportToCsvBtn = topBarView.$el.find('#top-bar-exportToCsvBtn');
@@ -11749,7 +11818,6 @@ define([
             it('Try to save favorites filters', function () {
                 var userUrl = new RegExp('\/users\/', 'i');
                 var $searchContainer = $thisEl.find('#searchContainer');
-                var $searchArrow = $searchContainer.find('.search-content');
                 var $favoritesBtn = $searchContainer.find('li[data-value="#favoritesContent"]');
                 var $filterNameInput;
                 var $saveFilterBtn;
