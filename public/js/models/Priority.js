@@ -5,12 +5,13 @@
     'use strict';
 
     var taskPriority = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
         defaults   : {
             _id     : null,
-            priority: ""
+            priority: ''
         },
-        urlRoot    : function () {
+        
+        urlRoot: function () {
             return CONSTANTS.URLS.PRIORITY;
         }
     });

@@ -6,10 +6,10 @@ define([
     var CustomerModel = Backbone.Model.extend({
         url: function () {
             if (this.get('isCompany')) {
-                return "/createAccount";
+                return '/createAccount';
             }
 
-            return "/createCompany";
+            return '/createCompany';
         }
     });
 

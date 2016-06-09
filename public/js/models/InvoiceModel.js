@@ -1,16 +1,13 @@
-/**
- * Created by ANDREY on 29.04.2015.
- */
-
 define([
     'Backbone',
+    'Underscore',
     'common',
     'constants'
-], function (Backbone, common, CONSTANTS) {
+], function (Backbone, _, common, CONSTANTS) {
     'use strict';
 
     var InvoiceModel = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
         initialize : function () {
             this.on('invalid', function (model, errors) {
                 var msg;
@@ -25,17 +22,21 @@ define([
                 }
             });
         },
-        parse      : function (response) {
+
+        parse: function (response) {
+            var payments;
+            var products;
+            var balance;
+            var paid;
+            var total;
+            var unTaxed;
+            var taxes;
+            var unitPrice;
+            var subTotal;
+
             if (response) {
-                var payments = response.payments;
-                var products = response.products;
-                var balance;
-                var paid;
-                var total;
-                var unTaxed;
-                var taxes;
-                var unitPrice;
-                var subTotal;
+                payments = response.payments;
+                products = response.products;
 
                 if (response.paymentInfo) {
                     balance = response.paymentInfo.balance || 0;
@@ -98,18 +99,21 @@ define([
                 return response;
             }
         },
-        validate   : function () {
+
+        validate: function () {
             var errors = [];
 
             if (errors.length > 0) {
                 return errors;
             }
         },
-        defaults   : {
-            supplier   : {
+
+        defaults: {
+            supplier: {
                 id  : '',
                 name: ''
             },
+
             salesPerson: {
                 id  : '',
                 name: ''
@@ -133,7 +137,8 @@ define([
             }
 
         },
-        urlRoot    : function () {
+
+        urlRoot: function () {
             return CONSTANTS.URLS.INVOICE;
         }
     });

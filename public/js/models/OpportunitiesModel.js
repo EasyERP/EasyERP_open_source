@@ -23,7 +23,8 @@
                 }
             });
         },
-        parse      : function (response) {
+
+        parse: function (response) {
             if (!response.data) {
                 if (response.creationDate) {
                     response.creationDate = common.utcDateToLocaleDate(response.creationDate);
@@ -64,7 +65,8 @@
             }
             return response;
         },
-        validate   : function (attrs) {
+
+        validate: function (attrs) {
             var errors = [];
             Validation.checkGroupsNameField(errors, true, attrs.name, 'Subject');
             if (attrs.expectedClosing && attrs.nextAction) {
@@ -74,11 +76,13 @@
             Validation.checkCountryCityStateField(errors, false, attrs.address.state, 'State');
             Validation.checkCountryCityStateField(errors, false, attrs.address.city, 'City');
             Validation.checkMoneyField(errors, false, attrs.expectedRevenue.value, 'Expected revenue');
+
             if (errors.length > 0) {
                 return errors;
             }
         },
-        defaults   : {
+
+        defaults: {
             isOpportunitie : true,
             name           : '',
             expectedRevenue: {
@@ -86,40 +90,46 @@
                 currency: '$',
                 progress: ''
             },
-            company        : {
+
+            company: {
                 id  : '',
                 name: ''
             },
-            contactName    : {
+
+            contactName: {
                 first: '',
                 last : ''
             },
-            customer       : {
+
+            customer: {
                 id  : '',
                 name: ''
             },
-            address        : {
+
+            address: {
                 street : '',
                 city   : '',
                 state  : '',
                 zip    : '',
                 country: ''
             },
-            email          : '',
-            phones         : {
+
+            email : '',
+            phones: {
                 mobile: '',
                 phone : '',
                 fax   : ''
             },
 
-            func           : '',
-            salesPerson    : null,
-            salesTeam      : null,
-            internalNotes  : '',
-            nextAction     : {
+            func         : '',
+            salesPerson  : null,
+            salesTeam    : null,
+            internalNotes: '',
+            nextAction   : {
                 date: null,
                 desc: ''
             },
+
             expectedClosing: null,
             priority       : 'Trivial',
             categories     : '',
@@ -128,7 +138,8 @@
             reffered       : '',
             workflow       : ''
         },
-        urlRoot    : function () {
+
+        urlRoot: function () {
             return CONSTANTS.URLS.OPPORTUNITIES;
         }
     });

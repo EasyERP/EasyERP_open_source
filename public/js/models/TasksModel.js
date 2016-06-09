@@ -23,6 +23,7 @@ define([
                 }
             });
         },
+
         parse: function (response) {
             if (response.StartDate) {
                 response.StartDate = common.utcDateToLocaleDate(response.StartDate);
@@ -57,7 +58,7 @@ define([
             Validation.checkGroupsNameField(errors, true, attrs.summary, 'Summary');
             Validation.checkGroupsNameField(errors, true, attrs.project._id || attrs.project, 'Project');
             Validation.checkGroupsNameField(errors, true, attrs.assignedTo._id || attrs.assignedTo, 'AssignedTo');
-            
+
             if (attrs.deadline && attrs.StartDate) {
                 Validation.checkFirstDateIsGreater(errors, attrs.deadline, 'deadline date', attrs.StartDate, 'Start date');
             }

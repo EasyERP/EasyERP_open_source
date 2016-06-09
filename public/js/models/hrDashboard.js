@@ -1,6 +1,3 @@
-/**
- * Created by soundstorm on 30.06.15.
- */
 define([
     'Backbone',
     'collections/Dashboard/hiredFired'
@@ -8,7 +5,7 @@ define([
     'use strict';
 
     var Model = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
 
         parse: function (model) {
             if (model.data) {

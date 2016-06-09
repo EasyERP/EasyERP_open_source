@@ -4,7 +4,7 @@ define([
 ], function (Backbone, EmployeeDashboardData) {
     'use strict';
     var VacationDashboard = Backbone.Model.extend({
-        idAttribute: "department._id",
+        idAttribute: 'department._id',
         parse      : function (model) {
             if (model.employees) {
                 model.employees = new EmployeeDashboardData(model.employees);

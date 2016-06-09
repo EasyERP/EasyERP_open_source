@@ -28,10 +28,12 @@ define([
             amount     : 0,
             rate       : 0
         },
-        urlRoot : function () {
+
+        urlRoot: function () {
             return CONSTANTS.URLS.WTRACK;
         },
-        parse   : function (model) {
+
+        parse: function (model) {
             var profit;
             var revenue = model.revenue;
             var cost = model.cost;

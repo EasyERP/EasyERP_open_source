@@ -4,15 +4,16 @@ define([
 ], function (Backbone, CONSTANTS) {
     'use strict';
     var EventModel = Backbone.Model.extend({
-        idAttribute: "id",
+        idAttribute: 'id',
 
         defaults: {
-            color      : "",
-            assignedTo : "Nobody",
+            color      : '',
+            assignedTo : 'Nobody',
             description: '',
-            eventType  : "call"
+            eventType  : 'call'
         },
-        urlRoot : CONSTANTS.URLS.EVENTS
+        
+        urlRoot: CONSTANTS.URLS.EVENTS
     });
     return EventModel;
 });

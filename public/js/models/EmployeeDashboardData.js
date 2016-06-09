@@ -3,7 +3,7 @@ define([
 ], function (Backbone) {
     'use strict';
     var EmployeeForDashboard = Backbone.Model.extend({
-        idAttribute: "employee"
+        idAttribute: 'employee'
 
     });
 

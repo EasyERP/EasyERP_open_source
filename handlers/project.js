@@ -1004,7 +1004,7 @@ module.exports = function (models, event) {
 
                 res.status(200).send(project);
             });
-    }
+    };
 
     this.getForDd = function (req, res, next) {
         var project = models.get(req.session.lastDb, 'Project', ProjectSchema);

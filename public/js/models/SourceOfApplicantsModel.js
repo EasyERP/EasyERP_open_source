@@ -5,11 +5,12 @@
     'use strict';
 
     var SourceOfApplicantsModel = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
         defaults   : {
             name: 'New'
         },
-        urlRoot    : function () {
+        
+        urlRoot: function () {
             return CONSTANTS.URLS.SOURCESOFAPPLICANTS;
         }
     });
