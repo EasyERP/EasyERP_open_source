@@ -154,7 +154,7 @@
 
         },
 
-        /*switchTab: function (e) {  ui tests
+        /* switchTab: function (e) {  ui tests
          e.preventDefault();
          var link = this.$("#tabList a");
          if (link.hasClass("selected")) {
@@ -176,7 +176,7 @@
             var email = $.trim(this.$el.find('#email').val());
             var salesPersonId = this.$el.find('#salesPersonDd').data('id') || null;
             var currentSalesPerson = this.currentModel.get('salesPerson');
-            //var salesTeamId = this.$el.find('#salesTeamDd').data('id') || null;
+            // var salesTeamId = this.$el.find('#salesTeamDd').data('id') || null;
             var nextActionDate = $.trim(this.$el.find('#nextActionDate').val());
             var nextActionDescription = $.trim(this.$el.find('#nextActionDescription').val());
             var nextAction = {
@@ -233,7 +233,7 @@
                 name           : name,
                 customer       : customerId,
                 email          : email,
-                //salesTeam      : salesTeamId,
+                // salesTeam      : salesTeamId,
                 nextAction     : nextAction,
                 expectedClosing: expectedClosing,
                 priority       : priority,
@@ -362,9 +362,9 @@
                                 if (data.workflow) {
                                     $(".column[data-id='" + data.workflow + "']").find('#forContent').append(kanbanHolder);
                                     counter = $(".column[data-id='" + data.workflow + "']").closest('.column').find('.totalCount');
-                                    counter.html(parseInt(counter.html()) + 1);
+                                    counter.html(parseInt(counter.html(), 10) + 1);
                                     counter = $(".column[data-id='" + data.workflowStart + "']").closest('.column').find('.totalCount');
-                                    counter.html(parseInt(counter.html()) - 1);
+                                    counter.html(parseInt(counter.html(), 10) - 1);
 
                                     self.countTotalAmountForWorkflow(data.workflowStart);
                                     self.countTotalAmountForWorkflow(data.workflow);

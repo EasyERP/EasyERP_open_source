@@ -41,7 +41,7 @@
 
             this.render();
 
-            this.FilterView.trigger('filter', App.filter);
+            this.filterView.trigger('filter', App.filter);
 
             // this.asyncFetc(options.workflowCollection.toJSON());
             // this.getCollectionLengthByWorkflows(this);
