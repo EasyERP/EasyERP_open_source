@@ -14,7 +14,21 @@ define([
     'helpers/keyCodeHelper',
     'helpers/overTime',
     'helpers/isOverTime'
-], function (Backbone, $, _, selectView, CreateJob, template, wTrackModel, moment, async, common, dataService, employeeHelper, keyCodes, overTime, isOverTime) {
+], function (Backbone,
+             $,
+             _,
+             selectView,
+             CreateJob,
+             template,
+             wTrackModel,
+             moment,
+             async,
+             common,
+             dataService,
+             employeeHelper,
+             keyCodes,
+             overTime,
+             isOverTime) {
     'use strict';
 
     var CreateView = Backbone.View.extend({
@@ -48,12 +62,11 @@ define([
             this.wTracks = options.wTracks;
             this.setOverTime = overTime;
 
-                employeeHelper.getNonWorkingDaysByWeek(year, week, null, employee, null,
-                    function (nonWorkingDays, self) {
-                        options.nonWorkingDays = nonWorkingDays;
-                        self.render(options);
-                    }, this);
-
+            employeeHelper.getNonWorkingDaysByWeek(year, week, null, employee, null,
+                function (nonWorkingDays, self) {
+                    options.nonWorkingDays = nonWorkingDays;
+                    self.render(options);
+                }, this);
         },
 
         keyDown: function (e) {  // validation from generateWTrack, need keydown instead of keypress in case of enter key
@@ -301,7 +314,7 @@ define([
 
         autoHoursPerDay: function (e) {
             var targetEl = $(e.target);
-            var isInput = targetEl.prop("tagName") === 'INPUT';
+            var isInput = targetEl.prop('tagName') === 'INPUT';
             var tr = targetEl.closest('tr');
             var edited = tr.find('input.editing');
             var days = tr.find('.autoCalc');
@@ -411,7 +424,7 @@ define([
                 }
             }
 
-            /*else if (isHours) {
+            /* else if (isHours) {
              this.autoHoursPerDay(e);
              }*/
 
@@ -430,8 +443,9 @@ define([
                 this.selectView.remove();
             }
 
-            this.$el.find('.editing').each(function (el) {
+            this.$el.find('.editing').each(function () {
                 var val = $(this).val();
+
                 $(this).closest('td').text(val);
                 $(this).remove();
             });
@@ -485,7 +499,7 @@ define([
         },
 
         showNewSelect: function (e, prev, next) {
-            //populate.showSelect(e, prev, next, this);
+            // populate.showSelect(e, prev, next, this);
 
             var $target = $(e.target);
             e.stopPropagation();
@@ -526,27 +540,24 @@ define([
             var holidaysSpan = targetTd.find('span.viewCount');
             var prevText = hoursSpan.text();
             var slashPos = prevText.indexOf('/');
-            var text;
             var vacationHours = vacationSpan.text();
             var holidays = holidaysSpan.text();
             var vacationSpanClass = 'vacation ';
             var hoursSpanClass = 'vacationHours ';
-
             var year = moment().isoWeekYear();
             var week = moment().isoWeek();
             var dateByWeek = year * 100 + week;
-
-            var classString;
-
             var isInActiveClass = targetTd.hasClass('inactive');
             var isVacationClass = targetTd.hasClass('withVacation');
-
             var otherHours = this.tds.find('span.projectHours');
+
+            var classString;
+            var text;
 
             otherHours.each(function () {
                 var el = $(this);
 
-                totalHours += parseInt(el.text()) || 0;
+                totalHours += parseInt(el.text(), 10) || 0;
             });
 
             if (vacationHours) {
@@ -578,7 +589,7 @@ define([
         },
 
         getCellClass: function (dateByWeek, vacations, holidays, hours, isInActiveClass, isVacationClass) {
-            var s = "dashboardWeek ";
+            var s = 'dashboardWeek ';
             var startHours;
 
             if (isVacationClass) {
@@ -593,21 +604,21 @@ define([
             hours = hours + vacations + holidays * 8;
 
             if (hours > 40) {
-                s += "dgreen ";
+                s += 'dgreen ';
             } else if (hours > 35) {
-                s += "green ";
+                s += 'green ';
             } else if (hours > 19) {
-                s += "yellow ";
+                s += 'yellow ';
             } else if (hours > 8) {
-                s += startHours ? "pink " : ((dateByWeek >= this.dateByWeek) ? "red" : "");
+                s += startHours ? 'pink ' : ((dateByWeek >= this.dateByWeek) ? 'red' : "");
             } else if (dateByWeek >= this.dateByWeek) {
-                s += "red ";
+                s += 'red ';
             }
             if (dateByWeek === this.dateByWeek) {
-                s += "active ";
+                s += 'active ';
             }
             if (isInActiveClass) {
-                s += "inactive ";
+                s += 'inactive ';
             }
 
             return s;
@@ -621,17 +632,17 @@ define([
             workedHours = workedHours || 0;
 
             if (vacationHours > 16) {
-                v = workedHours ? "size40" : "sizeFull";
-                w = workedHours ? "size40" : "size0";
+                v = workedHours ? 'size40' : 'sizeFull';
+                w = workedHours ? 'size40' : 'size0';
             } else if (vacationHours > 8) {
-                v = workedHours ? "size16" : "size40";
-                w = workedHours ? "size24" : "size40";
+                v = workedHours ? 'size16' : 'size40';
+                w = workedHours ? 'size24' : 'size40';
             } else if (vacationHours > 0) {
-                v = workedHours ? "size8" : "size8";
-                w = "sizeFull";
+                v = workedHours ? 'size8' : 'size8';
+                w = 'sizeFull';
             } else {
-                v = "size0";
-                w = "sizeFull";
+                v = 'size0';
+                w = 'sizeFull';
             }
 
             if (inVacation && vacationHours) {
@@ -653,11 +664,12 @@ define([
                 dialogClass  : 'edit-dialog',
                 width        : '900px',
                 buttons      : {
-                    save  : {
+                    save: {
                         text : 'Save',
                         class: 'btn',
                         click: self.saveItem
                     },
+
                     cancel: {
                         text : 'Cancel',
                         class: 'btn',
