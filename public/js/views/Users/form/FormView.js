@@ -1,20 +1,16 @@
 define([
     'Backbone',
+    'Underscore',
     'text!templates/Users/form/FormTemplate.html',
     'models/UsersModel',
     'views/Users/EditView'
-], function (Backbone, FormTemplate, userModel, EditView) {
+], function (Backbone, _, FormTemplate, userModel, EditView) {
     var FormView = Backbone.View.extend({
-        el        : '#content-holder',
+        el: '#content-holder',
+
         initialize: function (options) {
             this.formModel = new userModel(options.model.get('user'));
-            this.formModel.urlRoot = "/users";
-        },
-
-        render: function () {
-            var formModel = this.formModel.toJSON();
-            this.$el.html(_.template(FormTemplate, formModel));
-            return this;
+            this.formModel.urlRoot = '/users';
         },
 
         editItem: function () {
@@ -29,13 +25,14 @@ define([
                     mid: mid
                 },
                 success: function () {
-                    Backbone.history.navigate("#easyErp/Users/list", {trigger: true});
+                    Backbone.history.navigate('#easyErp/Users/list', {trigger: true});
                 },
-                error  : function (model, res) {
+
+                error: function (model, res) {
                     if (res.status === 403) {
                         App.render({
                             type   : 'error',
-                            message: "You do not have permission to perform this action"
+                            message: 'You do not have permission to perform this action'
                         });
                     } else {
                         App.render({
@@ -46,6 +43,14 @@ define([
                 }
             });
 
+        },
+
+        render: function () {
+            var formModel = this.formModel.toJSON();
+            
+            this.$el.html(_.template(FormTemplate, formModel));
+            
+            return this;
         }
     });
 

@@ -14,6 +14,9 @@ define([
             relatedEmployee: null,
             savedFilters   : []
         },
+        urlRoot: function () {
+            return CONSTANTS.URLS.USERS;
+        },
 
         initialize: function () {
             this.on('invalid', function (model, errors) {
@@ -54,10 +57,6 @@ define([
             if (errors.length > 0) {
                 return errors;
             }
-        },
-
-        urlRoot: function () {
-            return CONSTANTS.URLS.USERS;
         }
     });
     return UserModel;

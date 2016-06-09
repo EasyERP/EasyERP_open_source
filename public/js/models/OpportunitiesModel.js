@@ -9,7 +9,70 @@
 
     var OpportunityModel = Backbone.Model.extend({
         idAttribute: '_id',
-        initialize : function () {
+        defaults   : {
+            isOpportunitie : true,
+            name           : '',
+            expectedRevenue: {
+                value   : 0,
+                currency: '$',
+                progress: ''
+            },
+
+            company: {
+                id  : '',
+                name: ''
+            },
+
+            contactName: {
+                first: '',
+                last : ''
+            },
+
+            customer: {
+                id  : '',
+                name: ''
+            },
+
+            address: {
+                street : '',
+                city   : '',
+                state  : '',
+                zip    : '',
+                country: ''
+            },
+
+            email: '',
+            
+            phones: {
+                mobile: '',
+                phone : '',
+                fax   : ''
+            },
+
+            func         : '',
+            salesPerson  : null,
+            salesTeam    : null,
+            internalNotes: '',
+
+            nextAction: {
+                date: null,
+                desc: ''
+            },
+            
+            expectedClosing: null,
+            priority       : 'Trivial',
+            categories     : '',
+            active         : true,
+            optout         : false,
+            reffered       : '',
+            workflow       : ''
+        },
+
+        urlRoot: function () {
+            return CONSTANTS.URLS.OPPORTUNITIES;
+        },
+        
+        initialize: function () {
             this.on('invalid', function (model, errors) {
                 var msg;
 
@@ -76,71 +139,9 @@
             Validation.checkCountryCityStateField(errors, false, attrs.address.state, 'State');
             Validation.checkCountryCityStateField(errors, false, attrs.address.city, 'City');
             Validation.checkMoneyField(errors, false, attrs.expectedRevenue.value, 'Expected revenue');
-
             if (errors.length > 0) {
                 return errors;
             }
-        },
-
-        defaults: {
-            isOpportunitie : true,
-            name           : '',
-            expectedRevenue: {
-                value   : 0,
-                currency: '$',
-                progress: ''
-            },
-
-            company: {
-                id  : '',
-                name: ''
-            },
-
-            contactName: {
-                first: '',
-                last : ''
-            },
-
-            customer: {
-                id  : '',
-                name: ''
-            },
-
-            address: {
-                street : '',
-                city   : '',
-                state  : '',
-                zip    : '',
-                country: ''
-            },
-
-            email : '',
-            phones: {
-                mobile: '',
-                phone : '',
-                fax   : ''
-            },
-
-            func         : '',
-            salesPerson  : null,
-            salesTeam    : null,
-            internalNotes: '',
-            nextAction   : {
-                date: null,
-                desc: ''
-            },
-
-            expectedClosing: null,
-            priority       : 'Trivial',
-            categories     : '',
-            active         : true,
-            optout         : false,
-            reffered       : '',
-            workflow       : ''
-        },
-
-        urlRoot: function () {
-            return CONSTANTS.URLS.OPPORTUNITIES;
         }
     });
     return OpportunityModel;

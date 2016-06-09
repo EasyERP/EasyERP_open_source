@@ -94,14 +94,14 @@ define([
             
             e.preventDefault();
             
-            link = this.$('#tabList a');
+            link = this.$el.find('#tabList a');
             
             if (link.hasClass('selected')) {
                 link.removeClass('selected');
             }
             
             index = link.index($(e.target).addClass('selected'));
-            this.$('.tab').hide().eq(index).show();
+            this.$el.find('.tab').hide().eq(index).show();
         },
 
         hideDialog: function () {
