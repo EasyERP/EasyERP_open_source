@@ -11,17 +11,18 @@ define([
     'common',
     'helpers',
     'dataService',
-    'constants'
-
-], function (_, $, quotationTopBar, ListTemplate, EditView, listView, QuotationCreateView, quotationCollection, CurrentModel, common, helpers, dataService, CONSTANTS) {
+    'constants',
+    'helpers/eventsBinder'
+], function (_, $, quotationTopBar, ListTemplate, EditView, listView, QuotationCreateView, quotationCollection, CurrentModel, common, helpers, dataService, CONSTANTS, eventsBinder) {
     'use strict';
 
     var quotationView = listView.extend({
 
-        el               : '#quotations',
-        contentCollection: quotationCollection,
-        templateHeader   : _.template(quotationTopBar),
-        templateList     : _.template(ListTemplate),
+        el                  : '#quotations',
+        contentCollection   : quotationCollection,
+        preventChangLocation: true,
+        templateHeader      : _.template(quotationTopBar),
+        templateList        : _.template(ListTemplate),
 
         events: {
             'click .checkbox'                    : 'checked',
@@ -45,6 +46,8 @@ define([
             this.defaultItemsNumber = 50;
             this.page = options.page || 1;
             this.eventChannel = options.eventChannel;
+
+            eventsBinder.subscribeCollectionEvents(this.collection, this);
         },
 
         chooseOption: function (e) {
@@ -77,100 +80,6 @@ define([
             return false;
         },
 
-        /* goSort: function (e) {
-         var target$;
-         var currentParrentSortClass;
-         var sortClass;
-         var sortConst;
-         var sortBy;
-         var sortObject;
-
-         this.collection.unbind('reset');
-         this.collection.unbind('showmore');
-
-         target$ = $(e.target).closest('th');
-         currentParrentSortClass = target$.attr('class');
-         sortClass = currentParrentSortClass.split(' ')[1];
-         sortConst = 1;
-         sortBy = target$.data('sort');
-         sortObject = {};
-
-         if (!sortClass) {
-         target$.addClass('sortUp');
-         sortClass = 'sortUp';
-         }
-         switch (sortClass) {
-         case 'sortDn':
-         {
-         target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
-         target$.removeClass('sortDn').addClass('sortUp');
-         sortConst = 1;
-         }
-         break;
-         case 'sortUp':
-         {
-         target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
-         target$.removeClass('sortUp').addClass('sortDn');
-         sortConst = -1;
-         }
-         break;
-         }
-         sortObject[sortBy] = sortConst;
-
-         this.fetchSortCollection(sortObject);
-         this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-         },
-
-         renderContent: function () {
-         var $currentEl = this.$el;
-         var pagenation;
-
-         $('#top-bar-deleteBtn').hide();
-         $('#checkAll').prop('checked', false);
-
-         if (this.collection.length > 0) {
-         $currentEl.find('#listTableQuotation').html(this.templateList({
-         quotations      : this.collection.toJSON(),
-         startNumber     : 0,
-         dateToLocal     : common.utcDateToLocaleDate,
-         currencySplitter: helpers.currencySplitter,
-         currencyClass   : helpers.currencyClass
-         }));
-         }
-
-         pagenation = this.$el.find('.pagination');
-         if (this.collection.length === 0) {
-         pagenation.hide();
-         } else {
-         pagenation.show();
-         }
-         },
-
-         getTotalLength: function (currentNumber, itemsNumber, filter) {
-         dataService.getData(this.totalCollectionLengthUrl, {
-         currentNumber: currentNumber,
-         filter       : filter,
-         contentType  : this.contentType,
-         newCollection: this.newCollection
-         }, function (response, context) {
-
-         var page = context.page || 1;
-         var length = context.listLength = response.count || 0;
-
-         if (itemsNumber === 'all') {
-         itemsNumber = response.count;
-         }
-
-         if (itemsNumber * (page - 1) > length) {
-         context.page = page = Math.ceil(length / itemsNumber);
-         // context.fetchSortCollection(context.sort);
-         // context.changeLocationHash(page, context.defaultItemsNumber, filter);
-         }
-
-         context.pageElementRender(response.count, itemsNumber, page);//prototype in main.js
-         }, this);
-         },
-         */
         goToEditDialog: function (e) {
             var self = this;
             var id = $(e.target).closest('tr').attr('data-id');
@@ -188,8 +97,9 @@ define([
 
             App.startPreload();
 
-            model.urlRoot = '/quotation/form/' + id;
+            model.urlRoot = '/quotation/';
             model.fetch({
+                data   : {id: id, contentType: this.contentType},
                 success: function (model) {
                     new EditView({
                         model        : model,
@@ -344,6 +254,34 @@ define([
             });
         },
 
+        showMoreContent: function (newModels) {
+            var $holder = this.$el;
+            var pagenation;
+
+            $("#top-bar-deleteBtn").hide();
+            $('#check_all').prop('checked', false);
+
+            $holder.find('#listTableQuotation').html(this.templateList({
+                quotations      : newModels.toJSON(),
+                startNumber     : 0,
+                dateToLocal     : common.utcDateToLocaleDate,
+                currencySplitter: helpers.currencySplitter,
+                currencyClass   : helpers.currencyClass
+            }));
+
+            pagenation = $holder.find('.pagination');
+
+            if (newModels.length !== 0) {
+                pagenation.show();
+            } else {
+                pagenation.hide();
+            }
+
+            if (typeof (this.recalcTotal) === 'function') {
+                this.recalcTotal();
+            }
+        },
+
         render: function () {
             var $currentEl = this.$el;
             var self = this;
@@ -358,6 +296,8 @@ define([
                 currencySplitter: helpers.currencySplitter,
                 currencyClass   : helpers.currencyClass
             }));
+
+            this.renderPagination($currentEl, this);
 
             this.$el.find('#removeQuotation').hide();
 

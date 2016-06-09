@@ -206,6 +206,10 @@ define([
             var thumbnails;
             var value = false;
 
+            if (this.preventChangLocation) {
+                return false;
+            }
+
             if (!options || !options.hasOwnProperty('replace')) {
                 options = options || {};
                 options.replace = true;
@@ -678,8 +682,8 @@ define([
             }
         },
 
-        setPagination: function (options) {
-            var $thisEl = this.$el;
+        setPagination: function (options, context) {
+            var $thisEl = context || this.$el;
             var $pageList = $thisEl.find('#pageList');
             var $curPageInput = $thisEl.find('#currentShowPage');
             var $itemsNumber = $thisEl.find('.itemsNumber');

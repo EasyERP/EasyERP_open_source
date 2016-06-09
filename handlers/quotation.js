@@ -1076,7 +1076,9 @@ var Module = function (models, event) {
                 }
             }, {
                 $sort: sort
-            }, {}, {
+            }, {
+                $skip: skip
+            }, {
                 $limit: limit
             }], cb);
         };

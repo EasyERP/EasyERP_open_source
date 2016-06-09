@@ -10,14 +10,15 @@ define([
     'models/PaymentModel',
     'helpers',
     'common',
-    'async'
-
-], function ($, _, ListView, paymentTemplate, listItemView, EditView, paymentCollection, editCollection, PaymentModel, helpers, common, async) {
+    'async',
+    'helpers/eventsBinder'
+], function ($, _, ListView, paymentTemplate, listItemView, EditView, paymentCollection, editCollection, PaymentModel, helpers, common, async, eventsBinder) {
     var paymentView = ListView.extend({
 
-        el               : '#payments',
-        listItemView     : listItemView,
-        contentCollection: paymentCollection,
+        el                  : '#payments',
+        ListItemView        : listItemView,
+        preventChangLocation: true,
+        contentCollection   : paymentCollection,
 
         initialize: function (options) {
             this.remove();
@@ -25,6 +26,8 @@ define([
             this.filter = options.filter ? options.filter : {};
 
             this.eventChannel = options.eventChannel;
+
+            eventsBinder.subscribeCollectionEvents(this.collection, this);
 
             if (options.activate) {
                 this.render({activeTab: true});
@@ -114,50 +117,6 @@ define([
             });
         },
 
-        /* goSort: function (e) {
-         var target$;
-         var currentParrentSortClass;
-         var sortClass;
-         var sortConst;
-         var sortBy;
-         var sortObject;
-
-         this.collection.unbind('reset');
-         this.collection.unbind('showmore');
-
-         target$ = $(e.target).closest('th');
-         currentParrentSortClass = target$.attr('class');
-         sortClass = currentParrentSortClass.split(' ')[1];
-         sortConst = 1;
-         sortBy = target$.data('sort');
-         sortObject = {};
-
-         if (!sortClass) {
-         target$.addClass('sortUp');
-         sortClass = 'sortUp';
-         }
-         switch (sortClass) {
-         case 'sortDn':
-         {
-         target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
-         target$.removeClass('sortDn').addClass('sortUp');
-         sortConst = 1;
-         }
-         break;
-         case 'sortUp':
-         {
-         target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
-         target$.removeClass('sortUp').addClass('sortDn');
-         sortConst = -1;
-         }
-         break;
-         }
-         sortObject[sortBy] = sortConst;
-
-         this.fetchSortCollection(sortObject);
-         this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-         },
-         */
         checked: function (e) {
             var el = this.$el;
             var $targetEl = $(e.target);
@@ -198,6 +157,38 @@ define([
             $('.crop-images-dialog').remove();
         },
 
+        showMoreContent: function (newModels) {
+            var $holder = this.$el;
+            var tBody = $holder.find('#listTable');
+            var itemView;
+            var pagenation;
+
+            tBody.empty();
+            $('#top-bar-deleteBtn').hide();
+            $('#check_all').prop('checked', false);
+
+            if (newModels.length > 0) {
+                itemView = new this.ListItemView({
+                    collection : newModels,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                });
+                tBody.append(itemView.render({thisEl: tBody}));
+            }
+
+            pagenation = $holder.find('.pagination');
+
+            if (newModels.length !== 0) {
+                pagenation.show();
+            } else {
+                pagenation.hide();
+            }
+
+            if (typeof (this.recalcTotal) === 'function') {
+                this.recalcTotal();
+            }
+        },
+
         render: function (options) {
             var $currentEl = this.$el;
             var self = this;
@@ -230,6 +221,8 @@ define([
                 currencySplitter   : helpers.currencySplitter,
                 currencyClass      : helpers.currencyClass
             }));
+
+            this.renderPagination($currentEl, this);
 
             this.$el.find('#savePayment').hide();
             this.$el.find('#removePayment').hide();

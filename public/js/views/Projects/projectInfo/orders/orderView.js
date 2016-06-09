@@ -11,17 +11,18 @@ define([
     'dataService',
     'common',
     'helpers',
-    'constants'
-
-], function (_, $, ListTemplate, lisHeader, paginationTemplate, EditView, listView, quotationCollection, OrderModel, dataService, common, helpers, CONSTANTS) {
+    'constants',
+    'helpers/eventsBinder'
+], function (_, $, ListTemplate, lisHeader, paginationTemplate, EditView, listView, quotationCollection, OrderModel, dataService, common, helpers, CONSTANTS, eventsBinder) {
     'use strict';
 
     var orderView = listView.extend({
 
-        el               : '#orders',
-        contentCollection: quotationCollection,
-        templateList     : _.template(ListTemplate),
-        templateHeader   : _.template(lisHeader),
+        el                  : '#orders',
+        contentCollection   : quotationCollection,
+        preventChangLocation: true,
+        templateList        : _.template(ListTemplate),
+        templateHeader      : _.template(lisHeader),
 
         events: {
             'click .checkbox'                    : 'checked',
@@ -41,6 +42,8 @@ define([
             this.startNumber = options.startNumber || 1;
             this.eventChannel = options.eventChannel;
 
+            eventsBinder.subscribeCollectionEvents(this.collection, this);
+
             this.render(options);
         },
 
@@ -48,7 +51,7 @@ define([
             var self = this;
             var model = new OrderModel({validate: false});
 
-            model.urlRoot = '/Order/';
+            model.urlRoot = '/order/';
             model.fetch({
                 data   : {id: id, contentType: this.contentType},
                 success: function (model) {
@@ -105,116 +108,36 @@ define([
             });
         },
 
-        /*  renderContent: function () {
-         var $currentEl = this.$el;
-         var pagenation;
+        showMoreContent: function (newModels) {
+            var $holder = this.$el;
+            var pagenation;
 
-         $('#top-bar-deleteBtn').hide();
-         $('#checkAll').prop('checked', false);
+            $('#top-bar-deleteBtn').hide();
+            $('#check_all').prop('checked', false);
 
-         if (this.collection.length > 0) {
-         $currentEl.find('#orderTable').html(this.templateList({
-         orderCollection : this.collection.toJSON(),
-         startNumber     : 0,
-         dateToLocal     : common.utcDateToLocaleDate,
-         currencySplitter: helpers.currencySplitter,
-         currencyClass   : helpers.currencyClass
-         }));
-         }
+            if (newModels.length > 0) {
+                $holder.find('#orderTable').html(this.templateList({
+                    orderCollection : newModels.toJSON(),
+                    startNumber     : 0,
+                    dateToLocal     : common.utcDateToLocaleDate,
+                    currencySplitter: helpers.currencySplitter,
+                    currencyClass   : helpers.currencyClass
+                }));
+            }
 
-         pagenation = this.$el.find('.pagination');
-         if (this.collection.length === 0) {
-         pagenation.hide();
-         } else {
-         pagenation.show();
-         }
-         },
+            pagenation = $holder.find('.pagination');
 
-         goSort: function (e) {
-         var target$;
-         var currentParrentSortClass;
-         var sortClass;
-         var sortConst;
-         var sortBy;
-         var sortObject;
+            if (newModels.length !== 0) {
+                pagenation.show();
+            } else {
+                pagenation.hide();
+            }
 
-         this.collection.unbind('reset');
-         this.collection.unbind('showmore');
+            if (typeof (this.recalcTotal) === 'function') {
+                this.recalcTotal();
+            }
+        },
 
-         target$ = $(e.target).closest('th');
-         currentParrentSortClass = target$.attr('class');
-         sortClass = currentParrentSortClass.split(' ')[1];
-         sortConst = 1;
-         sortBy = target$.data('sort');
-         sortObject = {};
-
-         if (!sortClass) {
-         target$.addClass('sortUp');
-         sortClass = 'sortUp';
-         }
-         switch (sortClass) {
-         case 'sortDn':
-         {
-         target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
-         target$.removeClass('sortDn').addClass('sortUp');
-         sortConst = 1;
-         }
-         break;
-         case 'sortUp':
-         {
-         target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
-         target$.removeClass('sortUp').addClass('sortDn');
-         sortConst = -1;
-         }
-         break;
-         }
-         sortObject[sortBy] = sortConst;
-
-         this.fetchSortCollection(sortObject);
-         this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-         },
-
-         getTotalLength: function (currentNumber, itemsNumber, filter) {
-         var self = this;
-
-         dataService.getData(this.totalCollectionLengthUrl, {
-         currentNumber: currentNumber,
-         filter       : filter,
-         contentType  : this.contentType,
-         newCollection: this.newCollection
-         }, function (response, context) {
-
-         var page = context.page || 1;
-         var length = context.listLength = response.count || 0;
-
-         if (itemsNumber === 'all') {
-         itemsNumber = response.count;
-         }
-
-         if (itemsNumber * (page - 1) > length) {
-         context.page = page = Math.ceil(length / itemsNumber);
-         }
-
-         context.pageElementRenderProject(response.count, itemsNumber, page, self);//prototype in main.js
-         }, this);
-         },
-
-         renderPagination: function ($currentEl, self) {
-         $currentEl.append(_.template(paginationTemplate));
-
-         var pagenation = self.$el.find('.pagination');
-
-         if (self.collection.length === 0) {
-         pagenation.hide();
-         } else {
-         pagenation.show();
-         }
-
-         $(document).on('click', function (e) {
-         self.hide(e);
-         });
-         },
-         */
         removeItems: function (event) {
             var answer = confirm('Really DELETE items ?!');
             var that = this;
@@ -339,6 +262,8 @@ define([
                 currencySplitter: helpers.currencySplitter,
                 currencyClass   : helpers.currencyClass
             }));
+
+            this.renderPagination($currentEl, this);
 
             this.$el.find('.fa.fa-times').hide();
 

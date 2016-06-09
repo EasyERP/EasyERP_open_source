@@ -369,7 +369,7 @@ define([
                         }
                     };
 
-                    self.wCollection.showMore({count: 50, page: 1, filter: filter});
+                    self.wCollection.getFirstPage({count: 100, page: 1, filter: filter});
 
                 });
             } else {
@@ -449,7 +449,7 @@ define([
                         }
                     };
 
-                    self.wCollection.showMore({count: 50, page: 1, filter: filter});
+                    self.wCollection.getFirstPage({count: 100, page: 1, filter: filter});
 
                 });
             }
@@ -525,13 +525,13 @@ define([
         createJob: function () {
             this.wCollection.unbind();
             this.wCollection.bind('reset', this.renderContent, this);
-            this.wCollection.bind('showmore', this.showMoreContent, this);
 
             if (this.generatedView) {
                 this.generatedView.undelegateEvents();
             }
 
             this.generatedView = new GenerateWTrack({
+                reset           : true,
                 model           : this.formModel,
                 wTrackCollection: this.wCollection,
                 createJob       : true
@@ -799,13 +799,15 @@ define([
             };
 
             this.jobsCollection = new JobsCollection({
+                reset    : true,
                 viewType : 'list',
                 filter   : filter,
                 projectId: _id,
-                count    : 50,
+                count    : 100,
                 url      : CONSTANTS.URLS.PROJECTS + _id + '/info'
             });
 
+            this.jobsCollection.unbind();
             this.jobsCollection.bind('reset add remove', self.renderJobs, self);
 
             cb();
@@ -852,6 +854,7 @@ define([
             };
 
             this.wCollection = new WTrackCollection({
+                reset   : true,
                 viewType: 'list',
                 count   : 100,
                 url     : CONSTANTS.URLS.PROJECTS + _id + '/weTracks'
@@ -885,43 +888,41 @@ define([
                 });
             }
 
-            function showMoreContent(newModels) {
-                self.wCollection.reset(newModels.toJSON());
-            }
-
+            this.wCollection.unbind();
             this.wCollection.bind('reset', createView);
-            this.wCollection.bind('showmore', showMoreContent);
+
         },
 
-        showMoreContent: function () {
-            var self = this;
-            var _id = this.id;
-            var gridStart = $('#grid-start').text();
+        /* showMoreContent: function () {
+         var self = this;
+         var _id = this.id;
+         var gridStart = $('#grid-start').text();
 
-            var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
+         var startNumber = gridStart ? (parseInt(gridStart, 10) < 1) ? 1 : parseInt(gridStart, 10) : 1;
 
-            var filter = {
-                project: {
-                    key  : 'project._id',
-                    value: [_id],
-                    type : 'ObjectId'
-                }
-            };
+         var filter = {
+         project: {
+         key  : 'project._id',
+         value: [_id],
+         type : 'ObjectId'
+         }
+         };
 
-            if (self.wTrackView) {
-                self.wTrackView.undelegateEvents();
-            }
+         if (self.wTrackView) {
+         self.wTrackView.undelegateEvents();
+         }
 
-            this.wTrackView = new WTrackView({
-                model      : self.wCollection,
-                filter     : filter,
-                startNumber: startNumber,
-                project    : self.formModel,
-                url        : CONSTANTS.URLS.PROJECTS + _id + '/weTracks'
-            });
+         this.wTrackView = new WTrackView({
+         reset      : true,
+         model      : self.wCollection,
+         filter     : filter,
+         startNumber: startNumber,
+         project    : self.formModel,
+         url        : CONSTANTS.URLS.PROJECTS + _id + '/weTracks'
+         });
 
-            this.wCollection.bind('reset', this.createView);
-        },
+         this.wCollection.bind('reset', this.createView);
+         },*/
 
         getInvoiceStats: function (cb) {
             // ToDo optimize
@@ -1011,7 +1012,8 @@ define([
             var callback;
 
             self.iCollection = new InvoiceCollection({
-                count      : 50,
+                reset      : true,
+                count      : 100,
                 viewType   : 'list',
                 contentType: 'salesInvoice',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/invoices'
@@ -1035,7 +1037,6 @@ define([
 
             self.iCollection.unbind();
             self.iCollection.bind('reset', createView);
-
         },
 
         getProforma: function (cb, quotationId) {
@@ -1045,7 +1046,8 @@ define([
             var callback;
 
             self.pCollection = new ProformaCollection({
-                count      : 50,
+                reset      : true,
+                count      : 100,
                 viewType   : 'list',
                 contentType: 'proforma',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/invoices'
@@ -1084,6 +1086,7 @@ define([
             var callback;
 
             self.payCollection = new PaymentCollection({
+                reset      : true,
                 count      : 100,
                 viewType   : 'list',
                 contentType: 'customerPayments',
@@ -1117,6 +1120,7 @@ define([
             var self = this;
 
             self.pMCollection = new ProjectMembersCol({
+                reset  : true,
                 project: self.formModel.id
             });
 
@@ -1134,6 +1138,7 @@ define([
                 new ProjectMembersView(data).render();
             }
 
+            self.pMCollection.unbind();
             self.pMCollection.bind('reset', createPM);
         },
 
@@ -1149,6 +1154,7 @@ define([
             };
 
             this.qCollection = new QuotationCollection({
+                reset      : true,
                 count      : 100,
                 viewType   : 'list',
                 contentType: 'salesQuotation',
@@ -1177,6 +1183,7 @@ define([
 
             }
 
+            this.qCollection.unbind();
             this.qCollection.bind('reset', createView);
             this.qCollection.bind('add remove', self.renderProformRevenue);
         },
@@ -1197,6 +1204,7 @@ define([
             };
 
             this.ordersCollection = new QuotationCollection({
+                reset      : true,
                 count      : 100,
                 viewType   : 'list',
                 contentType: 'salesOrder',
@@ -1221,13 +1229,9 @@ define([
 
             }
 
-            function showMoreContent(newModels) {
-                self.ordersCollection.reset(newModels.toJSON());
-            }
-
+            this.ordersCollection.unbind();
             this.ordersCollection.bind('reset', createView);
             this.ordersCollection.bind('add', self.renderProformRevenue);
-            this.ordersCollection.bind('showmore', showMoreContent);
         },
 
         renderProformRevenue: function (cb) {
