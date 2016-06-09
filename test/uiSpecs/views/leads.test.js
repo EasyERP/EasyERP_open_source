@@ -1732,6 +1732,23 @@ define([
                 expect(ajaxResponse.data).to.have.property('page', 1);
             });
 
+            it('Try to select 50 item per page', function () {
+                var $pagination = $thisEl.find('.pagination');
+                var $pageList = $pagination.find('.pageList');
+                var $needBtn = $pageList.find('.itemsNumber').eq(1);
+                var ajaxResponse;
+
+                jQueryAjaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = jQueryAjaxSpy.args[0][0];
+                expect(ajaxResponse.data).to.exist;
+                expect(ajaxResponse.data).to.have.property('count', '25');
+                expect(ajaxResponse.data).to.have.property('page', 1);
+            });
+
             it('Try to change leads stage', function () {
                 var $selectedItem;
                 var $needTr = listView.$el.find('#listTable > tr:nth-child(1)');
