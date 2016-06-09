@@ -237,7 +237,7 @@ define([
             return self.trigger('showmore', newFilteredCollection);
         },
 
-        filterCollection: function (field, value, collection) {
+        filterCollection: function (field, value, Collection) {
             var resultCollection;
             var regex;
 
@@ -247,7 +247,7 @@ define([
                 return model.get(field).match(regex);
             });
 
-            return new collection(resultCollection);
+            return new Collection(resultCollection);
         },
 
         /**

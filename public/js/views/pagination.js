@@ -413,44 +413,47 @@ define([
             var collection = this.collection;
             var count = options.count;
             var page = options.page || collection.currentPage + 1;
+            var filter = this.filter;
 
             options = options || {};
             count = count || collection.pageSize;
             options = _.extend(options, {
-                filter: this.filter,
+                filter: filter,
                 count : count
             });
 
             this.collection.getNextPage(options);
-            this.changeLocationHash(page, count);
+            this.changeLocationHash(page, count, filter);
         },
 
         previousPage: function (options) {
             var collection = this.collection;
             var count = options.count;
             var page = options.page || collection.currentPage - 1;
+            var filter = this.filter;
 
             options = options || {};
             count = count || collection.pageSize;
             options = _.extend(options, {
-                filter: this.filter,
+                filter: filter,
                 count : count
             });
 
             this.collection.getPreviousPage(options);
-            this.changeLocationHash(page, count);
+            this.changeLocationHash(page, count, filter);
         },
 
         firstPage: function (options) {
             var collection = this.collection;
             var count = options.count || collection.pageSize;
+            var filter = this.filter;
 
             options = options || {count: count};
 
-            options.filter = this.filter;
+            options.filter = filter;
 
             collection.getFirstPage(options);
-            this.changeLocationHash(1, count);
+            this.changeLocationHash(1, count, filter);
         },
 
         showFilteredPage: function (filter) {
@@ -474,16 +477,17 @@ define([
         lastPage: function (options) {
             var count = options.count;
             var collection = this.collection;
+            var filter = this.filter;
 
             options = options || {};
             count = count || collection.pageSize;
             options = _.extend(options, {
-                filter: this.filter,
+                filter: filter,
                 count : count
             });
 
             this.collection.getLastPage(options);
-            this.changeLocationHash(collection.lastPage, count);
+            this.changeLocationHash(collection.lastPage, count, filter);
         },
 
         getPage: function (options) {
@@ -502,7 +506,7 @@ define([
             });
 
             collection.getPage(page, options);
-            this.changeLocationHash(page, count);
+            this.changeLocationHash(page, count, filter);
         },
 
         // when tap in elementPerPage (50, 100, 200, ...)
@@ -510,6 +514,7 @@ define([
             var $targetEl = $(e.target);
             var newRows = this.$el.find('#false');
             var itemsNumber = $(e.target).text();
+            var filter = this.filter;
 
             this.startTime = new Date();
 
@@ -540,12 +545,12 @@ define([
             this.collection.getPage(1, {
                 count      : itemsNumber,
                 page       : 1,
-                filter     : this.filter,
+                filter     : filter,
                 viewType   : this.viewType,
                 contentType: this.contentType
             });
 
-            this.changeLocationHash(1, itemsNumber);
+            this.changeLocationHash(1, itemsNumber, filter);
         },
 
         createItem: function () {
