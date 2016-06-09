@@ -400,7 +400,7 @@ module.exports = function (models, event) {
             health      : '$root.health',
             total       : 1
         };
-        var keysSort = Object.keys(data.sort);
+        var keysSort = Object.keys(sort);
         var sortLength = keysSort.length - 1;
         var sortKey;
         var waterfallTasks;
@@ -769,7 +769,7 @@ module.exports = function (models, event) {
                         }
 
                         cb(null, result);
-                    })
+                    });
             }], cb);
         };
 

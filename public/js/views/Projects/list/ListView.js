@@ -9,8 +9,9 @@ define([
     'views/Projects/EditView',
     'models/ProjectsModel',
     'collections/Projects/filterCollection',
-    'services/projects'
-], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, projects) {
+    'services/projects',
+    'common'
+], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, projects, common) {
     var ProjectsListView = ListViewBase.extend({
         createView       : CreateView,
         listTemplate     : listTemplate,
@@ -112,6 +113,9 @@ define([
             });
 
             $currentEl.append(itemView.render()); // added two parameters page and items number
+            common.populateWorkflowsList('Projects', '.filter-check-list', '', '/workflows', null, function (stages) {
+                self.stages = stages || [];
+            });
 
             this.renderFilter();
 

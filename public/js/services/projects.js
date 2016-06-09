@@ -84,6 +84,7 @@ define([
     return {
         chooseHealthDd: chooseHealthDd,
         showHealthDd  : showHealthDd,
-        showNewSelect : showNewSelect
+        showNewSelect : showNewSelect,
+        chooseOption  : chooseOption
     };
 });
