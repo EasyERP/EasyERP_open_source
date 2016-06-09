@@ -180,7 +180,14 @@ module.exports = (function () {
         isConverted  : {type: Boolean, default: false},
         convertedDate: {type: Date, default: Date.now},
         notes        : {type: Array, default: []},
-        attachments  : {type: Array, default: []}
+        attachments  : {type: Array, default: []},
+
+        social: {
+            FB: {type: String, default: ''},
+            LI: {type: String, default: ''}
+        },
+
+        skype: {type: String, default: ''}
 
     }, {collection: 'Opportunities'});
 
