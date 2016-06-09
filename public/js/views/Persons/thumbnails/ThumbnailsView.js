@@ -51,29 +51,6 @@
             'click .company'           : 'gotoCompanyForm'
         },
 
-        getTotalLength: function (currentNumber) {
-            dataService.getData('/persons/totalCollectionLength', {
-                currentNumber: currentNumber,
-                filter       : this.filter,
-                newCollection: this.newCollection,
-                contentType  : this.contentType
-            }, function (response, context) {
-                var $showMore = context.$el.find('#showMoreDiv');
-                var $created;
-
-                if (response.showMore) {
-                    if ($showMore.length === 0) {
-                        $created = context.$el.find('#timeRecivingDataFromServer');
-                        $created.before('<div id="showMoreDiv"><input type="button" id="showMore" value="Show More"/></div>');
-                    } else {
-                        $showMore.show();
-                    }
-                } else {
-                    $showMore.hide();
-                }
-            }, this);
-        },
-
         asyncLoadImgs: function (collection) {
             var ids = _.map(collection.toJSON(), function (item) {
                 return item._id;
@@ -124,7 +101,6 @@
 
             this.changeLocationHash(null, this.defaultItemsNumber, this.filter);
             this.collection.showMoreAlphabet({count: this.defaultItemsNumber, page: 1, filter: this.filter});
-            this.getTotalLength(this.defaultItemsNumber, this.filter);
         },
 
         gotoForm: function (e) {
@@ -226,32 +202,6 @@
             }
         },
 
-        /* showMore       : function (event) {
-         //event.preventDefault();
-         this.collection.showMore({filter: this.filter, newCollection: this.newCollection});
-         },
-         showMoreContent: function (newModels) {
-         var holder = this.$el;
-         var content = holder.find("#thumbnailContent");
-         var showMore = holder.find('#showMoreDiv');
-         var created = holder.find('#timeRecivingDataFromServer');
-         this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
-         this.getTotalLength(this.defaultItemsNumber, this.filter);
-
-         if (showMore.length !== 0) {
-         showMore.before(this.template({collection: this.collection.toJSON()}));
-         $(".filter-check-list").eq(1).remove();
-         showMore.hide();
-         showMore.after(created);
-         } else {
-         content.html(this.template({collection: this.collection.toJSON()}));
-
-         }
-         this.asyncLoadImgs(newModels);
-
-         this.filterView.renderFilterContent();
-         },*/
-
         showMoreAlphabet: function (newModels) {
             var $holder = this.$el;
             var $created = $holder.find('#timeRecivingDataFromServer');
@@ -260,7 +210,6 @@
             this.defaultItemsNumber += newModels.length;
 
             this.changeLocationHash(null, (this.defaultItemsNumber < 100) ? 100 : this.defaultItemsNumber, this.filter);
-            this.getTotalLength(this.defaultItemsNumber, this.filter);
 
             $holder.append(this.template({collection: newModels.toJSON()}));
             $holder.append($created);
@@ -268,15 +217,15 @@
             this.asyncLoadImgs(newModels);
         },
 
-        /*createItem: function () {
+        /* createItem: function () {
             new CreateView();
-        },*/
+        },
 
         editItem: function () {
             new EditView({collection: this.collection});
-        },
+        },*/
 
-        /*deleteItems: function () {
+        /* deleteItems: function () {
             var mid = this.mId;
             var model;
             var self = this;

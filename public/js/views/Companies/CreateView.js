@@ -87,7 +87,7 @@ define([
         changeTab: function (e) {
             var $holder = $(e.target);
             var n;
-            var $dialogHolder
+            var $dialogHolder;
 
             $holder.closest('.dialog-tabs').find('a.active').removeClass('active');
             $holder.addClass('active');
@@ -101,7 +101,7 @@ define([
             $('#details-dialog').toggle();
         },
 
-        /*switchTab: function (e) {
+        /* switchTab: function (e) {
          e.preventDefault();
          var link = this.$('#tabList a');
          if (link.hasClass("selected")) {
@@ -211,11 +211,12 @@ define([
                     language     : language
                 },
 
-                groups  : {
+                groups: {
                     owner: $('#allUsersSelect').data('id'),
                     users: usersId,
                     group: groupsId
                 },
+
                 whoCanRW: whoCanRW
             }, {
                 headers: {

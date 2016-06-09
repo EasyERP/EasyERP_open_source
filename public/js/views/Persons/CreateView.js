@@ -88,22 +88,23 @@ define([
             }
         },
 
-            changeTab: function (e) {
-                var holder = $(e.target);
-                holder.closest(".dialog-tabs").find("a.active").removeClass("active");
-                holder.addClass("active");
-                var n = holder.parents(".dialog-tabs").find("li").index(holder.parent());
-                var dialogHolder = $(".dialog-tabs-items");
-                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
-                dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
-            },
+        changeTab: function (e) {
+            var $holder = $(e.target);
+            var $dialogHolder = $('.dialog-tabs-items');
+            var n;
+            
+            $holder.closest('.dialog-tabs').find('a.active').removeClass('active');
+            $holder.addClass('active');
+            n = $holder.parents('.dialog-tabs').find('li').index($holder.parent());
+            $dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+            $dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
+        },
 
         showEdit: function () {
             $('.upload').animate({
                 height : '20px',
                 display: 'block'
             }, 250);
-
         },
 
         hideEdit: function () {
@@ -111,7 +112,6 @@ define([
                 height : '0px',
                 display: 'block'
             }, 250);
-
         },
 
         saveItem: function () {
