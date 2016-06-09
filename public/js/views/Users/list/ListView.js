@@ -1,62 +1,59 @@
 define([
-        'jQuery',
-        'Underscore',
-        'views/listViewBase',
-        'text!templates/Users/list/ListHeader.html',
-        'views/Users/CreateView',
-        'views/Users/list/ListItemView',
-        'collections/Users/filterCollection',
-        'dataService'
-    ],
+    'jQuery',
+    'Underscore',
+    'views/listViewBase',
+    'text!templates/Users/list/ListHeader.html',
+    'views/Users/CreateView',
+    'views/Users/list/ListItemView',
+    'collections/Users/filterCollection',
+    'dataService'
+], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, ContentCollection) {
+    'use strict';
+    
+    var UsersListView = ListViewBase.extend({
+        createView              : CreateView,
+        listTemplate            : listTemplate,
+        ListItemView            : ListItemView,
+        contentCollection       : ContentCollection,
+        contentType             : 'Users', // needs in view.prototype.changeLocationHash
+        totalCollectionLengthUrl: '/totalCollectionLength/Users',
+        formUrl                 : '#easyErp/Users/form/',
 
-    function ($, _, listViewBase, listTemplate, createView, ListItemView, contentCollection) {
-        'use strict';
-        var UsersListView = listViewBase.extend({
-            createView              : createView,
-            listTemplate            : listTemplate,
-            contentCollection       : contentCollection,
-            contentType             : 'Users',//needs in view.prototype.changeLocationHash
-            totalCollectionLengthUrl: '/totalCollectionLength/Users',
-            formUrl                 : '#easyErp/Users/form/',
+        initialize: function (options) {
+            this.startTime = options.startTime;
+            this.collection = options.collection;
+            // _.bind(this.collection.showMore, this.collection);
+            this.defaultItemsNumber = this.collection.namberToShow || 100;
+            this.newCollection = options.newCollection;
+            this.deleteCounter = 0;
+            this.page = options.collection.currentPage;
+            this.sort = options.sort;
+            this.contentCollection = ContentCollection;
 
-            initialize: function (options) {
-                this.startTime = options.startTime;
-                this.collection = options.collection;
-                _.bind(this.collection.showMore, this.collection);
-                this.defaultItemsNumber = this.collection.namberToShow || 100;
-                this.newCollection = options.newCollection;
-                this.deleteCounter = 0;
-                this.page = options.collection.page;
-                this.sort = options.sort;
+            this.render();
+        },
 
-                this.render();
+        render: function () {
+            var $currentEl;
 
-                this.getTotalLength(null, this.defaultItemsNumber);
-                this.contentCollection = contentCollection;
-            },
+            $('.ui-dialog ').remove();
 
-            render: function () {
-                var $currentEl;
+            $currentEl = this.$el;
 
-                $('.ui-dialog ').remove();
+            $currentEl.html('');
+            $currentEl.append(_.template(listTemplate));
+            $currentEl.append(new ListItemView({
+                collection : this.collection,
+                page       : this.page,
+                itemsNumber: this.collection.namberToShow
+            }).render());
 
-                $currentEl = this.$el;
+            this.renderPagination($currentEl, this);
 
-                $currentEl.html('');
-                $currentEl.append(_.template(listTemplate));
-                $currentEl.append(new ListItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                }).render());
-                
-                this.renderPagination($currentEl, this);
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
+        }
 
-                $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
-
-            }
-
-        });
-
-        return UsersListView;
     });
+
+    return UsersListView;
+});

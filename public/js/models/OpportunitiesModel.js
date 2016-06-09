@@ -9,7 +9,70 @@
 
     var OpportunityModel = Backbone.Model.extend({
         idAttribute: '_id',
-        initialize : function () {
+        defaults   : {
+            isOpportunitie : true,
+            name           : '',
+            expectedRevenue: {
+                value   : 0,
+                currency: '$',
+                progress: ''
+            },
+
+            company: {
+                id  : '',
+                name: ''
+            },
+
+            contactName: {
+                first: '',
+                last : ''
+            },
+
+            customer: {
+                id  : '',
+                name: ''
+            },
+
+            address: {
+                street : '',
+                city   : '',
+                state  : '',
+                zip    : '',
+                country: ''
+            },
+
+            email: '',
+            
+            phones: {
+                mobile: '',
+                phone : '',
+                fax   : ''
+            },
+
+            func         : '',
+            salesPerson  : null,
+            salesTeam    : null,
+            internalNotes: '',
+
+            nextAction: {
+                date: null,
+                desc: ''
+            },
+            
+            expectedClosing: null,
+            priority       : 'Trivial',
+            categories     : '',
+            active         : true,
+            optout         : false,
+            reffered       : '',
+            workflow       : ''
+        },
+
+        urlRoot: function () {
+            return CONSTANTS.URLS.OPPORTUNITIES;
+        },
+        
+        initialize: function () {
             this.on('invalid', function (model, errors) {
                 var msg;
 
@@ -23,7 +86,8 @@
                 }
             });
         },
-        parse      : function (response) {
+
+        parse: function (response) {
             if (!response.data) {
                 if (response.creationDate) {
                     response.creationDate = common.utcDateToLocaleDate(response.creationDate);
@@ -64,7 +128,8 @@
             }
             return response;
         },
-        validate   : function (attrs) {
+
+        validate: function (attrs) {
             var errors = [];
             Validation.checkGroupsNameField(errors, true, attrs.name, 'Subject');
             if (attrs.expectedClosing && attrs.nextAction) {
@@ -77,59 +142,6 @@
             if (errors.length > 0) {
                 return errors;
             }
-        },
-        defaults   : {
-            isOpportunitie : true,
-            name           : '',
-            expectedRevenue: {
-                value   : 0,
-                currency: '$',
-                progress: ''
-            },
-            company        : {
-                id  : '',
-                name: ''
-            },
-            contactName    : {
-                first: '',
-                last : ''
-            },
-            customer       : {
-                id  : '',
-                name: ''
-            },
-            address        : {
-                street : '',
-                city   : '',
-                state  : '',
-                zip    : '',
-                country: ''
-            },
-            email          : '',
-            phones         : {
-                mobile: '',
-                phone : '',
-                fax   : ''
-            },
-
-            func           : '',
-            salesPerson    : null,
-            salesTeam      : null,
-            internalNotes  : '',
-            nextAction     : {
-                date: null,
-                desc: ''
-            },
-            expectedClosing: null,
-            priority       : 'Trivial',
-            categories     : '',
-            active         : true,
-            optout         : false,
-            reffered       : '',
-            workflow       : ''
-        },
-        urlRoot    : function () {
-            return CONSTANTS.URLS.OPPORTUNITIES;
         }
     });
     return OpportunityModel;

@@ -38,7 +38,7 @@
             this.getFirstPage(options);
         }
 
-        /*showMore: function (options) {
+        /* showMore: function (options) {
             var that = this;
             var filterObject = {};
             if (options) {
