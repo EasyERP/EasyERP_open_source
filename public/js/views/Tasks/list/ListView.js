@@ -202,7 +202,7 @@ define([
                         patch   : true,
                         validate: false,
                         success : function (newModel) {
-                            that.showFilteredPage({}, that); //When add filter by Type, then uncoment this code
+                            that.showFilteredPage({}, that); // When add filter by Type, then uncoment this code
                         }
                     });
             }

@@ -42,17 +42,6 @@ define([
             Custom.changeContentViewType(e, this.contentType, this.collection);
         },
 
-        render: function () {
-            var viewType;
-            
-            $('title').text(this.contentType);
-            viewType = Custom.getCurrentVT();
-            this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
-            Common.displayControlBtnsByActionType('Content', viewType);
-            
-            return this;
-        },
-
         deleteEvent: function (event) {
             var answer;
             
@@ -76,7 +65,6 @@ define([
             
             this.trigger('createEvent');
         },
-
         discardEvent: function (event) {
             event.preventDefault();
             
@@ -88,8 +76,18 @@ define([
             event.preventDefault();
             
             this.trigger('editKanban');
-        }
+        },
 
+        render: function () {
+            var viewType;
+
+            $('title').text(this.contentType);
+            viewType = Custom.getCurrentVT();
+            this.$el.html(this.template({viewType: viewType, contentType: this.contentType}));
+            Common.displayControlBtnsByActionType('Content', viewType);
+
+            return this;
+        }
     });
 
     return TopBarView;
