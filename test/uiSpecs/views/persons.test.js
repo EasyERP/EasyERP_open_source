@@ -11767,10 +11767,6 @@ define([
                 $saveFilterBtn.click();
                 server.respond();
                 expect(saveFilterSpy.called).to.be.true;
-
-                //close filter dropdown
-                $searchArrow.click();
-                expect($searchContainer.find('.search-options')).to.have.class('hidden');
             });
 
             it('Try to delete FullName filter', function () {
@@ -11848,6 +11844,7 @@ define([
             var clock;
             var alertStub;
             var saveSpy;
+            var createItemSpy;
 
             before(function () {
                 mainSpy = sinon.spy(App, 'render');
@@ -11856,6 +11853,7 @@ define([
                 alertStub = sinon.stub(window, 'alert');
                 alertStub.returns(true);
                 saveSpy = sinon.spy(CreateView.prototype, 'saveItem');
+                createItemSpy = sinon.spy(ThumbnailsView.prototype, 'createItem');
             });
 
             after(function () {
@@ -11864,9 +11862,10 @@ define([
                 clock.restore();
                 alertStub.restore();
                 saveSpy.restore();
+                createItemSpy.restore();
             });
 
-            it('Try to create CreateForm', function () {
+            it('Try to create CreateForm', function (done) {
                 var userForDdUrl = new RegExp('\/users\/forDd', 'i');
                 var depsForDdUrl = new RegExp('\/departments\/getForDD', 'i');
                 var emplLangUrl = new RegExp('\/employees\/languages', 'i');
@@ -11874,6 +11873,8 @@ define([
                 var customersUrl = new RegExp('\/customers\/', 'i');
                 var $createBtn = topBarView.$el.find('#top-bar-createBtn');
                 var $dialog;
+
+                createItemSpy.reset();
 
                 server.respondWith('GET', userForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeUsersForDD)]);
                 server.respondWith('GET', depsForDdUrl, [200, {'Content-Type': 'application/json'}, JSON.stringify(fakeDepsForDD)]);
@@ -11884,14 +11885,18 @@ define([
                 $createBtn.click();
                 server.respond();
 
-                $dialog = $('.ui-dialog');
+                //expect(createItemSpy.calledTwice).to.be.true;
+                $dialog = $('.ui-dialog').first();
                 expect($dialog).to.exist;
+                expect($dialog).to.have.lengthOf(1);
                 expect($dialog.find('.dialog-tabs')).to.exist;
                 expect($dialog.find('.dialog-tabs > li')).to.have.lengthOf(3);
                 expect($dialog.find('.formTitle')).to.exist
                 expect($dialog.find('.avatar')).to.exist;
                 expect($dialog.find('.avatarInfoContainer')).to.exist;
                 expect($dialog.find('.avatarInfoContainer  .half-block')).to.have.lengthOf(2);
+
+                done();
             });
 
             it('Try to save persons without need data', function () {
