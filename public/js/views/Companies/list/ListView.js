@@ -9,9 +9,9 @@ define([
     'views/Filter/FilterView',
     'common',
     'constants'
-], function ($, _, listViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {
+], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {
     'use strict';
-    var CompaniesListView = listViewBase.extend({
+    var CompaniesListView = ListViewBase.extend({
 
         CreateView              : CreateView,
         listTemplate            : listTemplate,
@@ -94,7 +94,7 @@ define([
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
-            this.renderFilter(self);
+            this.renderFilter();
         }
     });
     return CompaniesListView;

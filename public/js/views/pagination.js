@@ -704,6 +704,29 @@ define([
 
             this.checkAll();
             this.hideDeleteBtnAndUnSelectCheckAll();
+        },
+
+        renderFilter: function (baseFilter) {
+            var self = this;
+
+            self.filterView = new self.FilterView({
+                contentType: self.contentType
+            });
+
+            self.filterView.bind('filter', function (filter) {
+                if (baseFilter) {
+                    filter[baseFilter.name] = baseFilter.value;
+                }
+                self.showFilteredPage(filter);
+            });
+            self.filterView.bind('defaultFilter', function (filter) {
+                if (baseFilter) {
+                    filter[baseFilter.name] = baseFilter.value;
+                }
+                self.showFilteredPage();
+            });
+
+            self.filterView.render();
         }
     });
 

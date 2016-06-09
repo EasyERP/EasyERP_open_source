@@ -143,14 +143,7 @@
             $currentEl.html('');
             $currentEl.append(this.template({collection: this.collection.toJSON()}));
 
-            self.filterView = new FilterView({contentType: self.contentType});
-            self.filterView.bind('filter', function (filter) {
-                self.showFilteredPage(filter);
-            });
-            self.filterView.bind('defaultFilter', function () {
-                self.showFilteredPage({});
-            });
-            self.filterView.render();
+            self.renderFilter();
 
             common.populateWorkflowsList('Projects', '.filter-check-list', '', '/workflows', null, function (stages) {
                 self.stages = stages || [];

@@ -172,28 +172,6 @@ define([
             }
         },
 
-        renderFilter: function (self, baseFilter) {
-            self.filterView = new this.FilterView({
-                contentType: self.contentType
-            });
-
-            self.filterView.bind('filter', function (filter) {
-                if (baseFilter) {
-                    filter[baseFilter.name] = baseFilter.value;
-                }
-                self.showFilteredPage(filter, self);
-            });
-            self.filterView.bind('defaultFilter', function (filter) {
-                if (baseFilter) {
-                    filter[baseFilter.name] = baseFilter.value;
-                }
-                self.showFilteredPage({}, self);
-            });
-
-            self.filterView.render();
-
-        },
-
         deleteItemsRender: function (deleteCounter, deletePage) {
             var pagenation;
 

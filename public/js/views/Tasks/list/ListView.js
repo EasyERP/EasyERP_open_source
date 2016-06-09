@@ -240,7 +240,7 @@ define([
                 itemView.trigger('incomingStages', stages);
             });
             
-            this.renderFilter(this);
+            this.renderFilter();
             this.renderPagination($currentEl, this);
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');

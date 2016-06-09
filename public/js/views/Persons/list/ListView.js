@@ -9,10 +9,10 @@ define([
     'views/Filter/FilterView',
     'common',
     'constants'
-], function ($, _, listViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {
+], function ($, _, ListViewBase, listTemplate, CreateView, ListItemView, contentCollection, FilterView, common, CONSTANTS) {
     'use strict';
 
-    var PersonsListView = listViewBase.extend({
+    var PersonsListView = ListViewBase.extend({
         CreateView              : CreateView,
         listTemplate            : listTemplate,
         ListItemView            : ListItemView,
@@ -32,7 +32,7 @@ define([
             this.mId = CONSTANTS.MID[this.contentType];
             this.startTime = options.startTime;
             this.collection = options.collection;
-            //_.bind(this.collection.showMore, this.collection);
+            // _.bind(this.collection.showMore, this.collection);
             _.bind(this.collection.showMoreAlphabet, this.collection);
             this.allAlphabeticArray = common.buildAllAphabeticArray();
             this.filter = options.filter;
@@ -86,12 +86,12 @@ define([
                 itemsNumber: this.collection.pageSize
             }).render());
 
-                this.renderAlphabeticalFilter(this);
-                this.renderPagination($currentEl, this);
+            this.renderAlphabeticalFilter(this);
+            this.renderPagination($currentEl, this);
 
             $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
-            this.renderFilter(self);
+            this.renderFilter();
         }
     });
 
