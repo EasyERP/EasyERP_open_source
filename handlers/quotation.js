@@ -448,6 +448,28 @@ var Module = function (models, event) {
                 }, {
                     $match: optionsObject
                 }, {
+                    $group: {
+                        _id  : null,
+                        total: {$sum: 1},
+                        root : {$push: '$$ROOT'}
+                    }
+                }, {
+                    $unwind: '$root'
+                }, {
+                    $project: {
+                        _id            : '$root._id',
+                        salesPerson    : '$root.salesPerson',
+                        workflow       : '$root.workflow',
+                        supplier       : '$root.supplier',
+                        currency       : '$root.currency',
+                        paymentInfo    : '$root.paymentInfo',
+                        orderDate      : '$root.orderDate',
+                        name           : '$root.name',
+                        isOrder        : '$root.isOrder',
+                        proformaCounter: '$root.proformaCounter',
+                        total          : 1
+                    }
+                }, {
                     $sort: sort
                 }, {
                     $skip: skip
@@ -461,10 +483,20 @@ var Module = function (models, event) {
         waterfallTasks = [departmentSearcher, contentIdsSearcher, contentSearcher];
 
         async.waterfall(waterfallTasks, function (err, result) {
+            var count;
+            var firstElement;
+            var response = {};
+
             if (err) {
                 return next(err);
             }
-            res.status(200).send(result);
+
+            firstElement = result[0];
+            count = firstElement && firstElement.total ? firstElement.total : 0;
+            response.total = count;
+            response.data = result;
+
+            res.status(200).send(response);
         });
     };
 
@@ -1044,9 +1076,7 @@ var Module = function (models, event) {
                 }
             }, {
                 $sort: sort
-            }, {
-                $skip: skip
-            }, {
+            }, {}, {
                 $limit: limit
             }], cb);
         };

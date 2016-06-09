@@ -34,7 +34,7 @@ describe('Project Specs', function () {
                 projectShortDesc: 'esttest',
                 task            : [],
                 privacy         : 'All Users',
-                customer        : '55b92ad621e4b7c40f000635',
+                customer        : '55b92ad621e4b7c40f000629',
                 projectmanager  : {_id: '', name: ''},
                 teams           : {users: [], Teams: []},
                 info            : {
@@ -296,6 +296,45 @@ describe('Project Specs', function () {
                     if (err) {
                         return done(err);
                     }
+
+                    expect(body)
+                        .to.be.instanceOf(Object);
+                    expect(body)
+                        .to.have.property('_id');
+                    expect(body)
+                        .to.have.property('name');
+                    expect(body)
+                        .to.have.property('projectShortDesc');
+                    expect(body)
+                        .to.have.property('customer')
+                        .and.to.have.property('_id');
+                    expect(body)
+                        .to.have.property('customer')
+                        .and.to.have.property('name');
+                    expect(body)
+                        .to.have.property('projecttype');
+                    expect(body)
+                        .to.have.property('workflow')
+                        .and.to.have.property('name');
+                    expect(body)
+                        .to.have.property('workflow')
+                        .and.to.have.property('_id');
+                    expect(body)
+                        .to.have.property('health');
+                    expect(body)
+                        .to.have.property('paymentMethod')
+                        .and.to.have.property('name');
+                    expect(body)
+                        .to.have.property('paymentMethod')
+                        .and.to.have.property('_id');
+                    expect(body)
+                        .to.have.property('paymentTerms')
+                        .and.to.have.property('name');
+                    expect(body)
+                        .to.have.property('paymentTerms')
+                        .and.to.have.property('_id');
+                    expect(body)
+                        .to.have.property('description');
 
                     done();
                 });

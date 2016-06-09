@@ -93,13 +93,13 @@ define([
                 }
                 if (response.notes) {
                     _.map(response.notes, function (note) {
-                        note.date = common.utcDateToLocaleDate(note.date);
+                        note.date = common.utcDateToLocaleDate(new Date(note.date));
                         return note;
                     });
                 }
                 if (response.attachments) {
                     _.map(response.attachments, function (attachment) {
-                        attachment.uploadDate = common.utcDateToLocaleDate(attachment.uploadDate);
+                        attachment.uploadDate = common.utcDateToLocaleDate(new Date(attachment.uploadDate));
                         return attachment;
                     });
                 }

@@ -1,7 +1,3 @@
-/**
- * Created by liliya on 17.09.15.
- */
-
 define([
     'jQuery',
     'Underscore',
@@ -14,7 +10,7 @@ define([
     'models/PaymentModel',
     'helpers',
     'common',
-    "async"
+    'async'
 
 ], function ($, _, ListView, paymentTemplate, listItemView, EditView, paymentCollection, editCollection, PaymentModel, helpers, common, async) {
     var paymentView = ListView.extend({
@@ -41,24 +37,22 @@ define([
         template: _.template(paymentTemplate),
 
         events: {
-            "click .checkbox"               : "checked",
-            "click #savePayment"            : "saveItem",
-            "click #removePayment"          : "deleteItems",
-            "click tbody td:not(.checkbox)" : "goToEditDialog"
+            'click .checkbox'              : 'checked',
+            'click #savePayment'           : 'saveItem',
+            'click #removePayment'         : 'deleteItems',
+            'click tbody td:not(.checkbox)': 'goToEditDialog'
         },
 
         goToEditDialog: function (e) {
-            e.preventDefault();
-
-            var id = $(e.target).closest('tr').data("id");
+            var id = $(e.target).closest('tr').data('id');
             var model = this.collection.get(id);
+
+            e.preventDefault();
 
             new EditView({model: model});
         },
 
         deleteItems: function (e) {
-            e.preventDefault();
-
             var that = this;
             var model;
             var listTableCheckedInput;
@@ -77,26 +71,29 @@ define([
 
                         that.$listTable.find('[data-id="' + id + '"]').remove();
 
-                        $("#removePayment").hide();
+                        $('#removePayment').hide();
                         $('#checkAll_payments').prop('checked', false);
 
                         that.collection.remove(checkbox.value);
 
                         cb();
                     },
-                    error  : function (model, res) {
-                        if (res.status === 403 /*&& index === 0*/) {
+
+                    error: function (model, res) {
+                        if (res.status === 403) {
                             App.render({
                                 type   : 'error',
-                                message: "You do not have permission to perform this action"
+                                message: 'You do not have permission to perform this action'
                             });
                         }
 
                         cb();
                     }
                 });
-            }, function (err) {
-                that.eventChannel && that.eventChannel.trigger('paymentRemoved');
+            }, function () {
+                if (that.eventChannel) {
+                    that.eventChannel.trigger('paymentRemoved');
+                }
             });
         },
 
@@ -108,164 +105,67 @@ define([
 
             async.forEach(collection, function (model, cb) {
                 totalPaidAmount += parseFloat(model.paidAmount);
-                total += parseFloat(model.paidAmount/model.currency.rate) + parseFloat(model.differenceAmount);
+                total += parseFloat(model.paidAmount / model.currency.rate) + parseFloat(model.differenceAmount);
 
                 cb();
             }, function () {
-                self.$el.find("#totalPaidAmount").text(helpers.currencySplitter(totalPaidAmount.toFixed(2)));
-                self.$el.find("#total").text(helpers.currencySplitter(total.toFixed(2)));
+                self.$el.find('#totalPaidAmount').text(helpers.currencySplitter(totalPaidAmount.toFixed(2)));
+                self.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
             });
         },
 
-        saveItem: function (e) {
+        /* goSort: function (e) {
+         var target$;
+         var currentParrentSortClass;
+         var sortClass;
+         var sortConst;
+         var sortBy;
+         var sortObject;
 
-            e.preventDefault();
+         this.collection.unbind('reset');
+         this.collection.unbind('showmore');
 
-            var model;
-            var modelJSON;
+         target$ = $(e.target).closest('th');
+         currentParrentSortClass = target$.attr('class');
+         sortClass = currentParrentSortClass.split(' ')[1];
+         sortConst = 1;
+         sortBy = target$.data('sort');
+         sortObject = {};
 
-            this.setChangedValueToModel();
+         if (!sortClass) {
+         target$.addClass('sortUp');
+         sortClass = 'sortUp';
+         }
+         switch (sortClass) {
+         case 'sortDn':
+         {
+         target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
+         target$.removeClass('sortDn').addClass('sortUp');
+         sortConst = 1;
+         }
+         break;
+         case 'sortUp':
+         {
+         target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
+         target$.removeClass('sortUp').addClass('sortDn');
+         sortConst = -1;
+         }
+         break;
+         }
+         sortObject[sortBy] = sortConst;
 
-            for (var id in this.changedModels) {
-                model = this.editCollection.get(id);
-                modelJSON = model.toJSON();
-                model.changed = this.changedModels[id];
-            }
-            this.editCollection.save();
-            this.changedModels = {};
-        },
-
-        setChangedValueToModel: function () {
-            var editedElement = this.$el.find('#listTable').find('.editing');
-            var editedCol;
-            var editedElementRowId;
-            var editedElementContent;
-            var editedElementValue;
-            var editHolidayModel;
-
-            if (editedElement.length) {
-                editedCol = editedElement.closest('td');
-                editedElementRowId = editedElement.closest('tr').data('id');
-                editedElementContent = editedCol.data('content');
-                editedElementValue = editedElement.val();
-
-                editHolidayModel = this.editCollection.get(editedElementRowId);
-
-                if (!this.changedModels[editedElementRowId]) {
-                    if (!editHolidayModel.id) {
-                        this.changedModels[editedElementRowId] = editHolidayModel.attributes;
-                    } else {
-                        this.changedModels[editedElementRowId] = {};
-                    }
-                }
-
-                this.changedModels[editedElementRowId][editedElementContent] = editedElementValue;
-
-                editedCol.text(editedElementValue);
-                editedElement.remove();
-            }
-        },
-
-        updatedOptions: function () {
-            var savedRow = this.$listTable.find('#false');
-            var editedEl = savedRow.find('.editing');
-            var editedCol = editedEl.closest('td');
-            this.hideSaveCancelBtns();
-
-            editedCol.text(editedEl.val());
-            editedEl.remove();
-
-            this.resetCollection();
-        },
-
-        resetCollection: function (model) {
-            if (model && model._id) {
-                model = new currentModel(model);
-                this.collection.add(model);
-            } else {
-                this.collection.set(this.editCollection.models, {remove: false});
-            }
-        },
-
-        renderContent: function () {
-            var $currentEl = this.$el;
-            var tBody = $currentEl.find("#listTable");
-            var itemView;
-            var pagenation;
-
-            tBody.empty();
-            $("#top-bar-deleteBtn").hide();
-            $('#checkAll').prop('checked', false);
-
-            if (this.collection.length > 0) {
-                itemView = new this.listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                });
-                tBody.append(itemView.render({thisEl: tBody}));
-            }
-
-            pagenation = this.$el.find('.pagination');
-            if (this.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
-        },
-
-        goSort: function (e) {
-            var target$;
-            var currentParrentSortClass;
-            var sortClass;
-            var sortConst;
-            var sortBy;
-            var sortObject;
-
-            this.collection.unbind('reset');
-            this.collection.unbind('showmore');
-
-            target$ = $(e.target).closest('th');
-            currentParrentSortClass = target$.attr('class');
-            sortClass = currentParrentSortClass.split(' ')[1];
-            sortConst = 1;
-            sortBy = target$.data('sort');
-            sortObject = {};
-
-            if (!sortClass) {
-                target$.addClass('sortUp');
-                sortClass = "sortUp";
-            }
-            switch (sortClass) {
-                case "sortDn":
-                {
-                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                    target$.removeClass('sortDn').addClass('sortUp');
-                    sortConst = 1;
-                }
-                    break;
-                case "sortUp":
-                {
-                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                    target$.removeClass('sortUp').addClass('sortDn');
-                    sortConst = -1;
-                }
-                    break;
-            }
-            sortObject[sortBy] = sortConst;
-
-            this.fetchSortCollection(sortObject);
-            this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-        },
-
+         this.fetchSortCollection(sortObject);
+         this.getTotalLength(null, this.defaultItemsNumber, this.filter);
+         },
+         */
         checked: function (e) {
-            e.stopPropagation();
-
             var el = this.$el;
             var $targetEl = $(e.target);
-            var checkLength = el.find("input.checkbox:checked").length;
+            var checkLength = el.find('input.checkbox:checked').length;
             var checkAll$ = el.find('#checkAll_payments');
             var removeBtnEl = $('#removePayment');
+
+            e.stopPropagation();
 
             if ($targetEl.hasClass('notRemovable')) {
                 $targetEl.prop('checked', false);
@@ -279,7 +179,7 @@ define([
 
                     removeBtnEl.show();
 
-                    if (checkLength == this.collection.length) {
+                    if (checkLength === this.collection.length) {
 
                         checkAll$.prop('checked', true);
                     }
@@ -291,40 +191,11 @@ define([
         },
 
         hideDialog: function () {
-            $(".edit-dialog").remove();
-            $(".ui-dialog").remove();
-            $(".add-group-dialog").remove();
-            $(".add-user-dialog").remove();
-            $(".crop-images-dialog").remove();
-        },
-
-        hideSaveCancelBtns: function () {
-            var saveBtnEl = $('#savePayment');
-            var cancelBtnEl = $('#removePayment');
-
-            this.changed = false;
-
-            saveBtnEl.hide();
-            cancelBtnEl.hide();
-
-            return false;
-        },
-
-        showSaveCancelBtns: function () {
-            var saveBtnEl = $('#savePayment');
-            var cancelBtnEl = $('#removePayment');
-
-            saveBtnEl.show();
-            //cancelBtnEl.show();
-
-            return false;
-        },
-
-        setChangedValue: function () {
-            if (!this.changed) {
-                this.changed = true;
-                this.showSaveCancelBtns()
-            }
+            $('.edit-dialog').remove();
+            $('.ui-dialog').remove();
+            $('.add-group-dialog').remove();
+            $('.add-user-dialog').remove();
+            $('.crop-images-dialog').remove();
         },
 
         render: function (options) {
@@ -341,15 +212,15 @@ define([
             if (options && options.activeTab) {
                 self.hideDialog();
 
-                tabs = $(".chart-tabs");
+                tabs = $('.chart-tabs');
                 target = tabs.find('#paymentsTab');
 
-                target.closest(".chart-tabs").find("a.active").removeClass("active");
-                target.addClass("active");
-                n = target.parents(".chart-tabs").find("li").index(target.parent());
-                dialogHolder = $(".dialog-tabs-items");
-                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
-                dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
+                target.closest('.chart-tabs').find('a.active').removeClass('active');
+                target.addClass('active');
+                n = target.parents('.chart-tabs').find('li').index(target.parent());
+                dialogHolder = $('.dialog-tabs-items');
+                dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+                dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
             }
 
             $currentEl.append(template({
@@ -357,18 +228,18 @@ define([
                 startNumber        : 0,
                 utcDateToLocaleDate: common.utcDateToLocaleDate,
                 currencySplitter   : helpers.currencySplitter,
-                currencyClass   : helpers.currencyClass
+                currencyClass      : helpers.currencyClass
             }));
 
-            this.$el.find("#savePayment").hide();
-            this.$el.find("#removePayment").hide();
+            this.$el.find('#savePayment').hide();
+            this.$el.find('#removePayment').hide();
 
             $('#checkAll_payments').click(function () {
                 self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);
-                if (self.$el.find("input.checkbox:checked").length > 0) {
-                    self.$el.find("#removePayment").show();
+                if (self.$el.find('input.checkbox:checked').length > 0) {
+                    self.$el.find('#removePayment').show();
                 } else {
-                    self.$el.find("#removePayment").hide();
+                    self.$el.find('#removePayment').hide();
                 }
             });
 

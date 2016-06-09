@@ -20,6 +20,11 @@ define([
                 }
             }
 
+            if (options && options.url) {
+                this.url = options.url;
+                delete options.url;
+            }
+
             options = options || {};
             options.error = options.error || _errHandler;
             page = options.page;
