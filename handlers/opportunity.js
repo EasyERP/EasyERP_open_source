@@ -2249,6 +2249,56 @@ var Module = function (models, event) {
                     }
                 });
 
+            aggregateQuery.push({
+                $group: {
+                    _id  : null,
+                    total: {$sum: 1},
+                    root : {$push: '$$ROOT'}
+                }
+            }, {
+                $unwind: '$root'
+            }, {
+                $project: {
+                    _id             : '$root._id',
+                    contactName     : '$root.contactName',
+                    'customer'      : '$root.customer',
+                    'salesPerson'   : '$root.salesPerson',
+                    workflow        : '$root.workflow',
+                    'createdBy.user': '$root.createdBy.user.login',
+                    'editedBy.user' : '$root.editedBy.user.login',
+                    'createdBy.date': '$root.createdBy.date',
+                    'editedBy.date' : '$root.editedBy.date',
+                    creationDate    : '$root.creationDate',
+                    isOpportunitie  : '$root.isOpportunitie',
+                    name            : '$root.name',
+                    expectedRevenue : '$root.expectedRevenue',
+                    attachments     : '$root.attachments',
+                    notes           : '$root.notes',
+                    convertedDate   : '$root.convertedDate',
+                    isConverted     : '$root.isConverted',
+                    source          : '$root.source',
+                    campaign        : '$root.campaign',
+                    sequence        : '$root.sequence',
+                    reffered        : '$root.reffered',
+                    optout          : '$root.optout',
+                    active          : '$root.active',
+                    color           : '$root.color',
+                    categories      : '$root.categories',
+                    priority        : '$root.priority',
+                    expectedClosing : '$root.expectedClosing',
+                    nextAction      : '$root.nextAction',
+                    internalNotes   : '$root.internalNotes',
+                    phones          : '$root.phones',
+                    email           : '$root.email',
+                    address         : '$root.address',
+                    company         : '$root.company',
+                    skype           : '$root.skype',
+                    social          : '$root.social',
+                    total           : 1
+
+                }
+            });
+
             if (data.sort) {
                 key = Object.keys(data.sort)[0];
                 req.query.sort[key] = parseInt(data.sort[key], 10);
