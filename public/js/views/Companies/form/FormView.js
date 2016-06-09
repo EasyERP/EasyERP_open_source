@@ -30,6 +30,7 @@ define([
              CreateViewPersons,
              CONSTANTS) {
     'use strict';
+
     var FormCompaniesView = Backbone.View.extend({
         el         : '#content-holder',
         contentType: 'Companies',
@@ -57,10 +58,12 @@ define([
             common.populateOpportunitiesForMiniView('/opportunities/OpportunitiesForMiniView', null, formModel._id, this.pageMini, this.pageCount, true, function (count) {
                 self.allMiniOpp = count.listLength;
                 self.allPages = Math.ceil(self.allMiniOpp / self.pageCount);
+
                 if (self.allPages === self.pageMini) {
                     $('.miniPagination .next').addClass('not-active');
                     $('.miniPagination .last').addClass('not-active');
                 }
+
                 if (self.allPages === 1) {
                     $('.miniPagination').hide();
                 }
@@ -68,10 +71,12 @@ define([
             this.populatePersonsForMiniView('/persons/getPersonsForMiniView', formModel._id, this.pageMiniPersons, this.pageCountPersons, true, function (count) {
                 self.allMiniPersons = count.listLength;
                 self.allPagesPersons = Math.ceil(self.allMiniPersons / self.pageCountPersons);
+
                 if (self.allPagesPersons === self.pageMiniPersons) {
                     $('.miniPaginationPersons .next').addClass('not-active');
                     $('.miniPaginationPersons .last').addClass('not-active');
                 }
+
                 if (self.allPagesPersons === 1) {
                     $('.miniPaginationPersons').hide();
                 }
@@ -158,7 +163,7 @@ define([
             var formModel = this.formModel.toJSON();
 
             this.populatePersonsForMiniView('/persons/getPersonsForMiniView', formModel._id, this.pageMiniPersons, this.pageCountPersons, false, function (collection) {
-                var isLast = self.pageMiniPersons === self.allPagesPersons ? true : false;
+                var isLast = self.pageMiniPersons === self.allPagesPersons;
                 var perElem = self.$el.find('#persons');
                 perElem.empty();
                 perElem.append(
@@ -233,7 +238,6 @@ define([
             var model;
 
             e.preventDefault();
-
             model = this.formModel.toJSON();
 
             new CreateViewOpportunities({
@@ -263,6 +267,7 @@ define([
         editClick: function (e) {
             var maxlength = $('#' + $(e.target).parent().parent()[0].id).find('.no-long').attr('data-maxlength') || 32;
             var parent;
+
             e.preventDefault();
 
             $('.quickEdit #editInput').remove();
@@ -314,8 +319,8 @@ define([
 
                 patch  : true,
                 success: function (model) {
-                    Backbone.history.fragment = "";
-                    Backbone.history.navigate("#easyErp/Companies/form/" + model.id, {trigger: true});
+                    Backbone.history.fragment = '';
+                    Backbone.history.navigate('#easyErp/Companies/form/' + model.id, {trigger: true});
                 },
 
                 error: function (model, response) {
@@ -327,6 +332,7 @@ define([
                     }
                 }
             });
+
             if (!valid) {
                 newModel[objIndex[0]] = oldvalue;
                 this.formModel.set(newModel);
@@ -342,6 +348,7 @@ define([
 
         socialActive: function (e) {
             e.preventDefault();
+
             $(e.target).stop().animate({
                 'background-position-y': '-38px'
             }, 300);
@@ -349,6 +356,7 @@ define([
 
         socialNotActive: function (e) {
             e.preventDefault();
+
             $(e.target).stop().animate({
                 'background-position-y': '0px'
 
@@ -358,6 +366,7 @@ define([
         switchTab: function (e) {
             var $link = this.$('#tabList a');
             var index;
+
             e.preventDefault();
 
             if ($link.hasClass('selected')) {

@@ -16,9 +16,11 @@ define([
 
         initialize: function (options) {
             this.actionType = options.actionType;
+
             if (this.actionType !== 'Content') {
                 Custom.setCurrentVT('form');
             }
+
             if (options.collection) {
                 this.collection = options.collection;
                 this.collection.bind('reset', _.bind(this.render, this));
@@ -26,5 +28,6 @@ define([
             this.render();
         }
     });
+
     return TopBarView;
 });

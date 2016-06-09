@@ -398,13 +398,13 @@ define([
                 });
             }
 
-            this.getPage({page: page, viewType: this.viewType});
+            this.getPage({page: page, viewType: this.viewType, contentType: this.contentType});
         },
 
         nextPage: function (options) {
-            var page = options.page;
-            var count = options.count;
             var collection = this.collection;
+            var count = options.count;
+            var page = options.page || collection.currentPage + 1;
 
             options = options || {};
             count = count || collection.pageSize;
@@ -418,9 +418,9 @@ define([
         },
 
         previousPage: function (options) {
-            var page = options.page;
-            var count = options.count;
             var collection = this.collection;
+            var count = options.count;
+            var page = options.page || collection.currentPage - 1;
 
             options = options || {};
             count = count || collection.pageSize;
