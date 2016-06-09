@@ -8,6 +8,7 @@ var User = function (event, models) {
     var savedFiltersSchema = mongoose.Schemas.savedFilters;
     var constants = require('../constants/responses');
     var mainConstants = require('../constants/mainConstants');
+    var pageHelper = require('../helpers/pageHelper');
 
     var validator = require('../helpers/validator');
     var logger = require('../helpers/logger');
@@ -437,7 +438,7 @@ var User = function (event, models) {
      * @method Users
      * @instance
      */
-    this.getAll = function (req, res, next) {
+    /* this.getAll = function (req, res, next) {
         var response = {};
         var data = req.query;
         var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
@@ -448,6 +449,93 @@ var User = function (event, models) {
             }
 
             response.data = result;
+            res.status(200).send(response);
+        });
+    };*/
+
+    this.getAll = function (req, res, next) {
+        var response = {};
+        var data = req.query;
+        var paginationObject = pageHelper(data);
+        var limit = paginationObject.limit;
+        var sort;
+        var skip = paginationObject.skip;
+        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
+        var key;
+        var aggregateQuery;
+
+        if (data.sort) {
+            key = Object.keys(data.sort)[0];
+            data.sort[key] = parseInt(data.sort[key], 10);
+
+            sort = data.sort;
+        } else {
+            sort = {
+                login: 1
+            };
+        }
+
+        aggregateQuery = [
+            {
+                $lookup: {
+                    from        : 'Profile',
+                    localField  : 'profile',
+                    foreignField: '_id',
+                    as          : 'profile'
+                }
+            },
+            {
+                $group: {
+                    _id  : null,
+                    total: {$sum: 1},
+                    root : {$push: '$$ROOT'}
+                }
+            },
+            {
+                $unwind: '$root'
+            },
+            {
+                $project: {
+                    _id            : '$root._id',
+                    kanbanSettings : '$root.kanbanSettings',
+                    credentials    : '$root.credentials',
+                    email          : '$root.email',
+                    login          : '$root.login',
+                    imageSrc       : '$root.imageSrc',
+                    lastAccess     : '$root.lastAccess',
+                    savedFilters   : '$root.savedFilters',
+                    relatedEmployee: '$root.relatedEmployee',
+                    total          : 1,
+                    profile        : {
+                        $arrayElemAt: ['$root.profile', 0]
+                    }
+                }
+            },
+            {
+                $sort: sort
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            }
+        ];
+
+        UserModel.aggregate(aggregateQuery, function (err, result) {
+            var count;
+            var firstElement;
+
+            if (err) {
+                return next(err);
+            }
+
+            firstElement = result[0];
+            count = firstElement && firstElement.total ? firstElement.total : 0;
+
+            response.total = count;
+            response.data = result;
+
             res.status(200).send(response);
         });
     };
