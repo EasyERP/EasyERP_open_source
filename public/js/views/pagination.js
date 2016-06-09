@@ -682,8 +682,8 @@ define([
             }
         },
 
-        setPagination: function (options, context) {
-            var $thisEl = context || this.$el;
+        setPagination: function (options) {
+            var $thisEl = this.$el;
             var $pageList = $thisEl.find('#pageList');
             var $curPageInput = $thisEl.find('#currentShowPage');
             var $itemsNumber = $thisEl.find('.itemsNumber');

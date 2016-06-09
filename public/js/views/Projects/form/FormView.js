@@ -369,7 +369,7 @@ define([
                         }
                     };
 
-                    self.wCollection.getFirstPage({count: 100, page: 1, filter: filter});
+                    self.wCollection.getFirstPage({page: 1, filter: filter});
 
                 });
             } else {
@@ -449,7 +449,7 @@ define([
                         }
                     };
 
-                    self.wCollection.getFirstPage({count: 100, page: 1, filter: filter});
+                    self.wCollection.getFirstPage({page: 1, filter: filter});
 
                 });
             }
@@ -803,7 +803,6 @@ define([
                 viewType : 'list',
                 filter   : filter,
                 projectId: _id,
-                count    : 100,
                 url      : CONSTANTS.URLS.PROJECTS + _id + '/info'
             });
 
@@ -856,7 +855,6 @@ define([
             this.wCollection = new WTrackCollection({
                 reset   : true,
                 viewType: 'list',
-                count   : 100,
                 url     : CONSTANTS.URLS.PROJECTS + _id + '/weTracks'
             });
 
@@ -885,6 +883,12 @@ define([
                     filter            : filter,
                     startNumber       : startNumber,
                     project           : self.formModel
+                });
+
+                self.wCollection.trigger('fetchFinished', {
+                    totalRecords: self.wCollection.totalRecords,
+                    currentPage : self.wCollection.currentPage,
+                    pageSize    : self.wCollection.pageSize
                 });
             }
 
@@ -1013,7 +1017,6 @@ define([
 
             self.iCollection = new InvoiceCollection({
                 reset      : true,
-                count      : 100,
                 viewType   : 'list',
                 contentType: 'salesInvoice',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/invoices'
@@ -1027,6 +1030,12 @@ define([
                 });
 
                 self.renderTabCounter();
+
+                self.iCollection.trigger('fetchFinished', {
+                    totalRecords: self.iCollection.totalRecords,
+                    currentPage : self.iCollection.currentPage,
+                    pageSize    : self.iCollection.pageSize
+                });
 
                 if (typeof(cb) === 'function') {
                     callback();
@@ -1047,7 +1056,6 @@ define([
 
             self.pCollection = new ProformaCollection({
                 reset      : true,
-                count      : 100,
                 viewType   : 'list',
                 contentType: 'proforma',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/invoices'
@@ -1068,6 +1076,12 @@ define([
 
                 self.renderTabCounter();
 
+                self.pCollection.trigger('fetchFinished', {
+                    totalRecords: self.pCollection.totalRecords,
+                    currentPage : self.pCollection.currentPage,
+                    pageSize    : self.pCollection.pageSize
+                });
+
                 if (typeof(cb) === 'function') {
                     callback();
                 }
@@ -1087,7 +1101,6 @@ define([
 
             self.payCollection = new PaymentCollection({
                 reset      : true,
-                count      : 100,
                 viewType   : 'list',
                 contentType: 'customerPayments',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/payments'
@@ -1102,6 +1115,12 @@ define([
                 };
 
                 new PaymentView(data);
+
+                self.payCollection.trigger('fetchFinished', {
+                    totalRecords: self.payCollection.totalRecords,
+                    currentPage : self.payCollection.currentPage,
+                    pageSize    : self.payCollection.pageSize
+                });
 
                 if (typeof(cb) === 'function') {
                     callback();
@@ -1155,7 +1174,6 @@ define([
 
             this.qCollection = new QuotationCollection({
                 reset      : true,
-                count      : 100,
                 viewType   : 'list',
                 contentType: 'salesQuotation',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/quotations'
@@ -1181,6 +1199,12 @@ define([
 
                 self.renderTabCounter();
 
+                self.qCollection.trigger('fetchFinished', {
+                    totalRecords: self.qCollection.totalRecords,
+                    currentPage : self.qCollection.currentPage,
+                    pageSize    : self.qCollection.pageSize
+                });
+
             }
 
             this.qCollection.unbind();
@@ -1205,7 +1229,6 @@ define([
 
             this.ordersCollection = new QuotationCollection({
                 reset      : true,
-                count      : 100,
                 viewType   : 'list',
                 contentType: 'salesOrder',
                 url        : CONSTANTS.URLS.PROJECTS + _id + '/orders'
@@ -1226,6 +1249,12 @@ define([
                 });
 
                 self.renderTabCounter();
+
+                self.ordersCollection.trigger('fetchFinished', {
+                    totalRecords: self.ordersCollection.totalRecords,
+                    currentPage : self.ordersCollection.currentPage,
+                    pageSize    : self.ordersCollection.pageSize
+                });
 
             }
 
