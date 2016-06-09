@@ -13,9 +13,10 @@ define([
         FilterView: FilterView,
 
         events: {
-            'click .oe_sortable': 'goSort',
-            'click #checkAll'   : 'checkAll',
-            click               : 'hide'
+            'click .oe_sortable'   : 'goSort',
+            'click #checkAll'      : 'checkAll',
+            'click td.notRemovable': 'onDisabledClick',
+            click                  : 'hide'
         },
 
         hideDeleteBtnAndUnSelectCheckAll: function () {
@@ -39,24 +40,17 @@ define([
 
             $checkboxes.prop('checked', check);
 
-            this.inputClick(e);
+            this.checked(e);
+        },
+
+        onDisabledClick: function () {
+            App.render({
+                type   : 'error',
+                message: 'Can\'t be selected'
+            });
         },
 
         checked: function (e) {
-            var $targetEl = $(e.target);
-            var $targetDivContainer = $targetEl.closest('.listRow') && $targetEl.closest('.listRow').length ? $targetEl.closest('.listRow') : $targetEl.closest('tr'); // add or option
-            var $checkbox = $targetDivContainer.find('input[type="checkbox"]');
-            // var checked = $checkbox.prop('checked');
-
-            if (e) {
-                e.stopPropagation();
-            }
-
-            // $checkbox.prop('checked', !checked); //commented by Liliya
-            this.inputClick(e);
-        },
-
-        inputClick: function (e) {
             var $thisEl = this.$el;
             var $topBar = $('#top-bar');
             var $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll,notRemovable)');
