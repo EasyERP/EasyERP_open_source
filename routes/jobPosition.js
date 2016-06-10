@@ -20,7 +20,9 @@ module.exports = function (models) {
     router.post('/', accessStackMiddleware, handler.create);
     router.patch('/:id', accessStackMiddleware, handler.update);
     router.put('/:id', accessStackMiddleware, handler.update);
+    
     router.delete('/:id', accessStackMiddleware, handler.remove);
+    router.delete('/', accessStackMiddleware, handler.bulkRemove);
 
     return router;
 };

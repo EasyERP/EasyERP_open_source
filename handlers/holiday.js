@@ -8,24 +8,6 @@ var Module = function (models, event) {
     var moment = require('../public/js/libs/moment/moment');
     var pageHelper = require('../helpers/pageHelper');
 
-    this.totalCollectionLength = function (req, res, next) {
-        var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
-        var query;
-
-        query = Holiday.find();
-        query.exec(function (err, result) {
-            if (next) {
-                if (err) {
-                    return next(err);
-                }
-
-                res.status(200).send({count: result.length});
-            } else if (typeof res === 'function') {
-                res(null, result.length);
-            }
-        });
-    };
-
     function getHolidayFilter(req, res, next) {
         var Holiday = models.get(req.session.lastDb, 'Holiday', HolidaySchema);
         var options = req.query;
@@ -236,7 +218,7 @@ var Module = function (models, event) {
         var ids = body.ids;
 
         async.each(ids, function (id, cb) {
-            Holiday.remove({_id: id}, function (err, holiday) {
+            Holiday.findByIdAndRemove(id, function (err, holiday) {
                 if (err) {
                     return err(err);
                 }

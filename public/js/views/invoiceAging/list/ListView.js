@@ -10,11 +10,10 @@ define([
     'use strict';
 
     var ListView = listViewBase.extend({
-        listTemplate            : listTemplate,
-        listItemView            : ListItemView,
-        contentCollection       : contentCollection,
-        totalCollectionLengthUrl: '/invoice/invoiceAging/totalCollectionLength',
-        contentType             : CONSTANTS.INVOICEAGING, // 'invoiceAging',
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: contentCollection,
+        contentType      : CONSTANTS.INVOICEAGING, // 'invoiceAging',
 
         initialize: function (options) {
             $(document).off('click');
@@ -23,7 +22,6 @@ define([
             this.collection = options.collection;
             this.parrentContentId = options.collection.parrentContentId;
             this.sort = options.sort;
-            // this.filter = options.filter;
             this.page = options.collection.currentPage;
             this.contentCollection = contentCollection;
 
@@ -50,7 +48,7 @@ define([
 
             $currentEl.append(itemView.render()); // added two parameters page and items number
 
-            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + " ms</div>");
+            $currentEl.append("<div id='timeRecivingDataFromServer'>Created in " + (new Date() - this.startTime) + ' ms</div>');
 
         }
 

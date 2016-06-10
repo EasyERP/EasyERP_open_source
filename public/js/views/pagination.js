@@ -22,6 +22,9 @@ define([
 
         hideDeleteBtnAndUnSelectCheckAll: function () {
             $('#top-bar-deleteBtn').hide();
+            $('#top-bar-generateBtn').hide();
+            $('#top-bar-copyBtn').hide();
+            
             this.$el.find('#checkAll').prop('checked', false);
         },
 

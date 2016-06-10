@@ -29,11 +29,11 @@
         events: {
             'click .breadcrumb a, #lost, #won'                 : 'changeWorkflow',
             'click #tabList a'                                 : 'switchTab',
-            'keydown'                                          : 'keydownHandler',
+            keydown                                            : 'keydownHandler',
             'click .dialog-tabs a'                             : 'changeTab',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
             'click .current-selected'                          : 'showNewSelect',
-            'click'                                            : 'hideNewSelect'
+            click                                              : 'hideNewSelect'
         },
 
         initialize: function (options) {
@@ -115,8 +115,10 @@
 
         getWorkflowValue: function (value) {
             var workflows = [];
+            var i;
+            var max;
 
-            for (var i = 0, max = value.length; i < max; i++) {
+            for (i = 0, max = value.length; i < max; i++) {
                 workflows.push({name: value[i].name, status: value[i].status});
             }
 
@@ -176,7 +178,6 @@
             var email = $.trim(this.$el.find('#email').val());
             var salesPersonId = this.$el.find('#salesPersonDd').data('id') || null;
             var currentSalesPerson = this.currentModel.get('salesPerson');
-            // var salesTeamId = this.$el.find('#salesTeamDd').data('id') || null;
             var nextActionDate = $.trim(this.$el.find('#nextActionDate').val());
             var nextActionDescription = $.trim(this.$el.find('#nextActionDescription').val());
             var nextAction = {
@@ -211,13 +212,14 @@
             var whoCanRW = this.$el.find('[name="whoCanRW"]:checked').val();
             var data;
             var currentWorkflow = this.currentModel.get('workflow');
-            var oldWorkFlow = this.currentModel.get('workflow')._id;
-
+            var source = this.$el.find('#sourceDd').data('id');
             this.$el.find('dd .address').each(function () {
                 var el = $(this);
 
                 address[el.attr('name')] = el.val();
             });
+            /* var salesTeamId = this.$el.find('#salesTeamDd').data('id') || null;
+             var oldWorkFlow = this.currentModel.get('workflow')._id;*/
 
             this.$el.find('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
@@ -245,6 +247,7 @@
                 active         : active,
                 optout         : optout,
                 reffered       : reffered,
+                source         : source,
                 whoCanRW       : whoCanRW,
                 groups         : {
                     owner: this.$el.find('#allUsersSelect').data('id'),
@@ -288,99 +291,102 @@
                     var editHolder;
                     var trHolder;
                     var kanbanHolder;
+                    var kanbanHolderOpportunityLeft;
+                    var columnDataWorkflow;
                     var expectedRevenueHolder;
                     var counter;
                     var holder;
 
                     model = model.toJSON();
                     result = result.result;
-                    editHolder = self.$el;
 
                     switch (viewType) {
                         case 'list':
-                            {
-                                trHolder = $("tr[data-id='" + model._id + "'] td");
-                                trHolder.parent().attr('class', 'stage-' + self.$('#workflowDd').text().toLowerCase());
-                                trHolder.eq(3).text(name);
-                                trHolder.eq(4).text(parseInt(expectedRevenueValue));
-                                if (customerId) {
-                                    trHolder.eq(5).text(self.$('#customerDd').text());
-                                } else {
-                                    trHolder.eq(5).text('');
-                                }
-                                trHolder.eq(6).text(nextAction.date);
-                                trHolder.eq(7).text(nextAction.desc);
-                                trHolder.eq(8).find('a').text(self.$('#workflowDd').text());
-                                if (salesPersonId) {
-                                    trHolder.eq(9).text(self.$('#salesPersonDd').text());
-                                } else {
-                                    trHolder.eq(9).text('');
-                                }
-                                Backbone.history.fragment = '';
-                                Backbone.history.navigate(window.location.hash.replace('#', ''), {trigger: true});
-
+                        {
+                            trHolder = $("tr[data-id='" + model._id + "'] td");
+                            trHolder.parent().attr('class', 'stage-' + self.$('#workflowDd').text().toLowerCase());
+                            trHolder.eq(3).text(name);
+                            trHolder.eq(4).text(parseInt(expectedRevenueValue, 10));
+                            if (customerId) {
+                                trHolder.eq(5).text(self.$('#customerDd').text());
+                            } else {
+                                trHolder.eq(5).text('');
                             }
+                            trHolder.eq(6).text(nextAction.date);
+                            trHolder.eq(7).text(nextAction.desc);
+                            trHolder.eq(8).find('a').text(self.$('#workflowDd').text());
+                            if (salesPersonId) {
+                                trHolder.eq(9).text(self.$('#salesPersonDd').text());
+                            } else {
+                                trHolder.eq(9).text('');
+                            }
+                            Backbone.history.fragment = '';
+                            Backbone.history.navigate(window.location.hash.replace('#', ''), {trigger: true});
+
+                        }
                             break;
                         case 'kanban':
-                            {
-                                kanbanHolder = $('#' + model._id);
-                                expectedRevenueHolder = kanbanHolder.find('.opportunity-header h3');
-                                kanbanHolder.find('.opportunity-header h4').text(name);
+                        {
+                            kanbanHolder = $('#' + model._id);
+                            expectedRevenueHolder = kanbanHolder.find('.opportunity-header h3');
+                            kanbanHolder.find('.opportunity-header h4').text(name);
+                            kanbanHolderOpportunityLeft = kanbanHolder.find('.opportunity-content p.left');
+                            columnDataWorkflow = $(".column[data-id='" + data.workflow + "']");
 
-                                if (parseFloat(expectedRevenueValue) !== 0) {
-                                    expectedRevenueHolder.text(helpers.currencySplitter(expectedRevenueValue));
-                                    expectedRevenueHolder.addClass('dollar');
-                                } else {
-                                    expectedRevenueHolder.text('');
-                                    expectedRevenueHolder.removeClass('dollar');
-                                }
-
-                                kanbanHolder.find('.opportunity-content p.right').text(nextAction.date);
-
-                                if (customerId) {
-                                    kanbanHolder.find('.opportunity-content p.left').eq(0).text(self.$('#customerDd').text());
-                                } else {
-                                    kanbanHolder.find('.opportunity-content p.left').eq(0).text('');
-                                }
-
-                                if (salesPersonId) {
-                                    kanbanHolder.find('.opportunity-content p.left').eq(1).text(self.$('#salesPersonDd').text());
-                                } else {
-                                    kanbanHolder.find('.opportunity-content p.left').eq(1).text('');
-                                }
-
-                                if (result && result.sequence) {
-                                    $('#' + data.workflowStart).find('.item').each(function () {
-                                        var seq = $(this).find('.inner').data('sequence');
-                                        if (seq > data.sequenceStart) {
-                                            $(this).find('.inner').attr('data-sequence', seq - 1);
-                                        }
-                                    });
-                                    kanbanHolder.find('.inner').attr('data-sequence', result.sequence);
-                                }
-
-                                if (data.workflow) {
-                                    $(".column[data-id='" + data.workflow + "']").find('#forContent').append(kanbanHolder);
-                                    counter = $(".column[data-id='" + data.workflow + "']").closest('.column').find('.totalCount');
-                                    counter.html(parseInt(counter.html(), 10) + 1);
-                                    counter = $(".column[data-id='" + data.workflowStart + "']").closest('.column').find('.totalCount');
-                                    counter.html(parseInt(counter.html(), 10) - 1);
-
-                                    self.countTotalAmountForWorkflow(data.workflowStart);
-                                    self.countTotalAmountForWorkflow(data.workflow);
-                                } else {
-                                    self.countTotalAmountForWorkflow(currentWorkflow._id);
-                                }
+                            if (parseFloat(expectedRevenueValue) !== 0) {
+                                expectedRevenueHolder.text(helpers.currencySplitter(expectedRevenueValue));
+                                expectedRevenueHolder.addClass('dollar');
+                            } else {
+                                expectedRevenueHolder.text('');
+                                expectedRevenueHolder.removeClass('dollar');
                             }
+
+                            kanbanHolder.find('.opportunity-content p.right').text(nextAction.date);
+
+                            if (customerId) {
+                                kanbanHolderOpportunityLeft.eq(0).text(self.$('#customerDd').text());
+                            } else {
+                                kanbanHolderOpportunityLeft.eq(0).text('');
+                            }
+
+                            if (salesPersonId) {
+                                kanbanHolderOpportunityLeft.eq(1).text(self.$('#salesPersonDd').text());
+                            } else {
+                                kanbanHolderOpportunityLeft.eq(1).text('');
+                            }
+
+                            if (result && result.sequence) {
+                                $('#' + data.workflowStart).find('.item').each(function () {
+                                    var seq = $(this).find('.inner').data('sequence');
+                                    if (seq > data.sequenceStart) {
+                                        $(this).find('.inner').attr('data-sequence', seq - 1);
+                                    }
+                                });
+                                kanbanHolder.find('.inner').attr('data-sequence', result.sequence);
+                            }
+
+                            if (data.workflow) {
+                                columnDataWorkflow.find('#forContent').append(kanbanHolder);
+                                counter = columnDataWorkflow.closest('.column').find('.totalCount');
+                                counter.html(parseInt(counter.html(), 10) + 1);
+                                counter = $(".column[data-id='" + data.workflowStart + "']").closest('.column').find('.totalCount');
+                                counter.html(parseInt(counter.html(), 10) - 1);
+
+                                self.countTotalAmountForWorkflow(data.workflowStart);
+                                self.countTotalAmountForWorkflow(data.workflow);
+                            } else {
+                                self.countTotalAmountForWorkflow(currentWorkflow._id);
+                            }
+                        }
                             break;
                         case 'form':
-                            {
-                                holder = $('#opportunities .compactList');
-                                holder.find('p a#' + model._id).text(name);
-                                holder.find('div').eq(0).find('p').eq(1).text('$' + expectedRevenueValue);
-                                holder.find('div').eq(1).find('p').eq(0).text(nextAction.date);
-                                holder.find('div').eq(1).find('p').eq(1).text(self.$('#workflowDd').text());
-                            }
+                        {
+                            holder = $('#opportunities .compactList');
+                            holder.find('p a#' + model._id).text(name);
+                            holder.find('div').eq(0).find('p').eq(1).text('$' + expectedRevenueValue);
+                            holder.find('div').eq(1).find('p').eq(0).text(nextAction.date);
+                            holder.find('div').eq(1).find('p').eq(1).text(self.$('#workflowDd').text());
+                        }
                     }
                     self.hideDialog();
                 },
@@ -398,7 +404,7 @@
 
             oldColumnContainer.each(function (item) {
                 var value = $(this).text().replace(/\s/g, '');
-                
+
                 sum += parseFloat(value) || 0;
             });
             column.find('.totalAmount').text(helpers.currencySplitter(sum.toString()));
@@ -411,7 +417,7 @@
         },
 
         deleteItem: function (event) {
-            var mid = 39;
+            var mid = 25;
             var self = this;
             var answer = confirm('Really DELETE items ?!');
 
@@ -427,31 +433,33 @@
                         var viewType = custom.getCurrentVT();
                         var wId;
                         var newTotal;
+                        var holderTdTotalCount;
 
                         model = model.toJSON();
 
                         switch (viewType) {
                             case 'list':
-                                {
-                                    $("tr[data-id='" + model._id + "'] td").remove();
+                            {
+                                $("tr[data-id='" + model._id + "'] td").remove();
 
-                                }
+                            }
                                 break;
                             case 'form':
-                                {
-                                    $('a#' + model._id).parents('li').remove();
+                            {
+                                $('a#' + model._id).parents('li').remove();
 
-                                }
+                            }
                                 break;
                             case 'kanban':
-                                {
-                                    $('#' + model._id).remove();
-                                    wId = model.workflow._id;
-                                    newTotal = ($("td[data-id='" + wId + "'] .totalCount").html() - 1);
-                                    $("td[data-id='" + wId + "'] .totalCount").html(newTotal);
+                            {
+                                $('#' + model._id).remove();
+                                wId = model.workflow._id;
+                                holderTdTotalCount = $("td[data-id='" + wId + "'] .totalCount");
+                                newTotal = (holderTdTotalCount.html() - 1);
+                                holderTdTotalCount.html(newTotal);
 
-                                    self.countTotalAmountForWorkflow(wId);
-                                }
+                                self.countTotalAmountForWorkflow(wId);
+                            }
                         }
                         self.hideDialog();
                     },
@@ -546,20 +554,22 @@
 
                 self.responseObj['#salesPersonDd'] = employees;
             });
-            
+
             populate.getWorkflow('#workflowDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Opportunities'}, 'name', this);
             populate.get('#salesTeamDd', CONSTANTS.URLS.DEPARTMENTS_FORDD, {}, 'name', this, false, true);
-
+            populate.get('#sourceDd', '/employees/sources', {}, 'name', this);
 
             if (model.groups) {
                 if (model.groups.users.length > 0 || model.groups.group.length) {
                     $('.groupsAndUser').show();
                     model.groups.group.forEach(function (item) {
-                        $('.groupsAndUser').append('<tr data-type="targetGroups" data-id="' + item._id + '"><td>' + item.name + '</td><td class="text-right"></td></tr>');
+                        $('.groupsAndUser').append('<tr data-type="targetGroups" data-id="' + item._id + '"><td>' +
+                            item.name + '</td><td class="text-right"></td></tr>');
                         $('#targetGroups').append("<li id='" + item._id + "'>" + item.name + '</li>');
                     });
                     model.groups.users.forEach(function (item) {
-                        $('.groupsAndUser').append('<tr data-type="targetUsers" data-id="' + item._id + '"><td>' + item.login + '</td><td class="text-right"></td></tr>');
+                        $('.groupsAndUser').append('<tr data-type="targetUsers" data-id="' + item._id + '"><td>' +
+                            item.login + '</td><td class="text-right"></td></tr>');
                         $('#targetUsers').append('<li id="' + item._id + '">' + item.login + '</li>');
                     });
                 }

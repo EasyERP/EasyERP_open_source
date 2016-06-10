@@ -18,12 +18,15 @@ module.exports = function (event, models) {
     router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/dash', handler.getForDashVacation);
     router.get('/', accessStackMiddleware, handler.getByViewType);
+    
     router.post('/', accessStackMiddleware, handler.create);
     router.post('/generateWTrack', accessStackMiddleware, handler.generateWTrack);
-    router.delete('/:id', accessStackMiddleware, handler.remove);
     router.patch('/', accessStackMiddleware, handler.putchBulk);
     router.patch('/:id', accessStackMiddleware, handler.putchModel);
     /* router.put('/:id', handler.updateModel);*/
+
+    router.delete('/:id', accessStackMiddleware, handler.remove);
+    router.delete('/', accessStackMiddleware, handler.bulkRemove);
 
     return router;
 };

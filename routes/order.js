@@ -13,11 +13,11 @@ module.exports = function (models, event) {
     router.use(accessStackMiddleware);
 
     router.get('/', handler.getByViewType);
-
-    router.get('/totalCollectionLength', handler.totalCollectionLength);
     router.get('/getFilterValues', handler.getFilterValues);
-    router.delete('/:id', handler.remove);
+
     router.patch('/:id', handler.putchModel);
+
+    router.delete('/:id', handler.remove);
 
     return router;
 };

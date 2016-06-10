@@ -17,14 +17,12 @@ define([
 ], function ($, _, ListViewBase, paginationTemplate, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ProjectEditView, ProjectModel, ContentCollection, FilterView, common) {
     var TasksListView = ListViewBase.extend({
 
-        CreateView              : CreateView,
-        listTemplate            : listTemplate,
-        ListItemView            : ListItemView,
-        contentCollection       : ContentCollection,
-        filterView              : FilterView,
-        contentType             : 'Tasks',
-        totalCollectionLengthUrl: '/totalCollectionLength/Tasks',
-        // formUrl                 : "#easyErp/Tasks/form/",
+        CreateView       : CreateView,
+        listTemplate     : listTemplate,
+        ListItemView     : ListItemView,
+        contentCollection: ContentCollection,
+        filterView       : FilterView,
+        contentType      : 'Tasks',
 
         events: {
             'click td:not(:has("input[type="checkbox"]"))': 'goToEditDialog',
@@ -133,7 +131,7 @@ define([
             var id;
             var modelJSON;
             var type;
-            
+
             if (selectType === 'stages') {
                 if ($(target).attr('data-status') === 'done') {
                     id = targetParrentElement.attr('id').replace('stages_', '');
@@ -152,7 +150,7 @@ define([
                             headers: {
                                 mid: 39
                             },
-                            
+
                             patch   : true,
                             validate: false,
                             success : function () {
@@ -177,7 +175,7 @@ define([
                             headers: {
                                 mid: 39
                             },
-                            
+
                             patch   : true,
                             validate: false,
                             success : function () {
@@ -198,7 +196,7 @@ define([
                         headers: {
                             mid: 39
                         },
-                        
+
                         patch   : true,
                         validate: false,
                         success : function (newModel) {
@@ -236,10 +234,10 @@ define([
 
             common.populateWorkflowsList('Tasks', '.filter-check-list', '#workflowNamesDd', '/Workflows', null, function (stages) {
                 var stage = (self.filter) ? self.filter.workflow || [] : [];
-                
+
                 itemView.trigger('incomingStages', stages);
             });
-            
+
             this.renderFilter();
             this.renderPagination($currentEl, this);
 

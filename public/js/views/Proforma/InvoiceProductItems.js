@@ -1,8 +1,7 @@
-/**
- * Created by Roman on 27.04.2015.
- */
 define([
     'Backbone',
+    'Underscore',
+    'jQuery',
     'text!templates/Invoice/InvoiceProductItems.html',
     'text!templates/Invoice/InvoiceProductInputContent.html',
     'text!templates/Proforma/EditInvoiceProductInputContent.html',
@@ -12,19 +11,19 @@ define([
     'helpers/keyValidator',
     'helpers',
     'constants'
-], function (Backbone, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, productCollection, populate, keyValidator, helpers, CONSTANTS) {
+], function (Backbone, _, $, productItemTemplate, ProductInputContent, ProductItemsEditList, totalAmount, ProductCollection, populate, keyValidator, helpers, CONSTANTS) {
     'use strict'
     var ProductItemTemplate = Backbone.View.extend({
         el: '#invoiceItemsHolder',
 
         events: {
             'click .addProductItem'                                           : 'getProducts',
-            "click .newSelectList li:not(.miniStylePagination)"               : "chooseOption",
-            "click .newSelectList li.miniStylePagination"                     : "notHide",
-            "click .newSelectList li.miniStylePagination .next:not(.disabled)": "nextSelect",
-            "click .newSelectList li.miniStylePagination .prev:not(.disabled)": "prevSelect",
-            "click .current-selected"                                         : "showProductsSelect",
-            "keyup td[data-name=price] input"                                 : 'priceChange',
+            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
+            'click .newSelectList li.miniStylePagination'                     : 'notHide',
+            'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
+            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect',
+            'click .current-selected'                                         : 'showProductsSelect',
+            'keyup td[data-name=price] input'                                 : 'priceChange',
             'keypress .forNum'                                                : 'keypressHandler'
         },
 
@@ -46,7 +45,7 @@ define([
 
             this.render();
 
-            products = new productCollection(options);
+            products = new ProductCollection(options);
             products.bind('reset', function () {
                 this.products = products;
                 this.filterProductsForDD();
@@ -58,14 +57,14 @@ define([
         template: _.template(productItemTemplate),
 
         getProducts: function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-
             var target = $(e.target);
             var parrent = target.closest('tbody');
             var parrentRow = parrent.find('.productItem').last();
-            var rowId = parrentRow.attr("data-id");
+            var rowId = parrentRow.attr('data-id');
             var trEll = parrent.find('tr.productItem');
+
+            e.preventDefault();
+            e.stopPropagation();
 
             if (rowId === undefined || rowId !== 'false') {
                 if (!trEll.length) {
@@ -83,10 +82,8 @@ define([
 
             this.responseObj[id] = [];
             this.responseObj[id] = this.responseObj[id].concat(_.map(products, function (item) {
-                return {_id: item._id, name: item.name, level: item.projectShortDesc || ""};
+                return {_id: item._id, name: item.name, level: item.projectShortDesc || ''};
             }));
-
-            //$(id).text(this.responseObj[id][0].name).attr("data-id", this.responseObj[id][0]._id);
 
         },
 
@@ -95,21 +92,20 @@ define([
         },
 
         priceChange: function (e) {
-            e.preventDefault();
-
             var $targetEl = $(e.target);
             var parent = $targetEl.closest('td');
             var inputEl = parent.find('input');
+            var val = inputEl.val();
+
             if (!inputEl.length) {
                 inputEl = parent.find('textarea');
             }
-            var val = inputEl.val();
 
             if (!val.length) {
                 val = 0;
             }
 
-            //parent.removeClass('quickEdit').html('<span>' + val + '</span>');
+            e.preventDefault();
 
             if (inputEl.hasClass('datepicker')) {
                 parent.find('span').addClass('datepicker');
@@ -129,10 +125,10 @@ define([
 
         chooseOption: function (e) {
             var target = $(e.target);
-            var parrent = target.parents("td");
-            var trEl = target.parents("tr");
+            var parrent = target.parents('td');
+            var trEl = target.parents('tr');
             var parrents = trEl.find('td');
-            var _id = target.attr("id");
+            var _id = target.attr('id');
             var model = this.products.get(_id);
             var selectedProduct = model.toJSON();
             var taxes;
@@ -140,12 +136,11 @@ define([
             var amount;
 
             trEl.attr('data-id', model.id);
-            //trEl.find('.datepicker').removeClass('notVisible');
 
-            parrent.find(".current-selected").text(target.text()).attr("data-id", _id);
+            parrent.find('.current-selected').text(target.text()).attr('data-id', _id);
 
             $(parrents[1]).attr('class', 'editable').find('span').text(selectedProduct.info.description || '');
-            $(parrents[2]).attr('class', 'editable').find("span").text(1);
+            $(parrents[2]).attr('class', 'editable').find('span').text(1);
 
             price = selectedProduct.info.salePrice;
             $(parrents[3]).attr('class', 'editable').find('span').text(price);
@@ -157,23 +152,20 @@ define([
             $(parrents[4]).text(taxes);
             $(parrents[5]).text(amount.toFixed(2));
 
-            $(".newSelectList").hide();
+            $('.newSelectList').hide();
 
             this.calculateTotal(selectedProduct.info.salePrice);
         },
 
         recalculateTaxes: function (parent) {
-            parent = parent.closest('tr');
-
             var quantity = parent.find('[data-name="quantity"] span').text();
-            quantity = parseFloat(quantity);
-            var cost = parent.find('[data-name="price"] input').val();
-            cost = parseFloat(cost);
+            var cost = parseFloat(parent.find('[data-name="price"] input').val());
             var taxes = cost * this.taxesRate;
             var amount = cost + taxes;
             taxes = taxes.toFixed(2);
             amount = amount.toFixed(2);
-
+            quantity = parseFloat(quantity);
+            parent = parent.closest('tr');
             parent.find('.taxes').text(taxes);
             parent.find('.amount').text(amount);
 
@@ -199,9 +191,10 @@ define([
             var total;
             var date;
             var dates = [];
+            var i;
 
             if (totalEls) {
-                for (var i = totalEls - 1; i >= 0; i--) {
+                for (i = totalEls - 1; i >= 0; i--) {
                     $currentEl = $(resultForCalculate[i]);
                     cost = $currentEl.find('[data-name="price"] input').val() || '0';
                     quantity = this.quantityRetriver($currentEl);
@@ -245,7 +238,7 @@ define([
             selectedProduct = selectedProduct.get(id) || null;
 
             if (selectedProduct && selectedProduct.get('name') === CONSTANTS.IT_SERVICES) {
-                quantity = 1
+                quantity = 1;
             } else {
                 quantity = $parent.find('[data-name="quantity"] span').text();
                 quantity = parseFloat(quantity);
@@ -306,8 +299,6 @@ define([
             } else {
                 this.$el.html(this.template({
                     forSales  : self.forSales,
-                    /*collection: this.collection,
-                     options: options*/
                     isPaid    : self.isPaid,
                     notAddItem: this.notAddItem
                 }));

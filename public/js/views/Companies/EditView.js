@@ -36,7 +36,7 @@ define([
             'mouseleave .avatar'                               : 'hideEdit',
             'click .current-selected'                          : 'showNewSelect',
             'click .newSelectList li'                          : 'chooseOption',
-            'click'                                            : 'hideNewSelect',
+            click                                              : 'hideNewSelect',
             'click .details'                                   : 'toggleDetails',
             'click .dialog-tabs a'                             : 'changeTab',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'

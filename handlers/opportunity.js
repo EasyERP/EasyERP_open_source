@@ -89,7 +89,7 @@ var Module = function (models, event) {
         var email = body.email ? validator.escape(body.email) : '';
         var message = body.message ? validator.escape(body.message) : '';
         var utmMedium = body.utm_medium ? validator.escape(body.utm_medium) : '';
-        var utmSource = body.utm_source ? validator.escape(body.utm_source) : '';
+        var utmSource = body.utm_source ? validator.escape(body.utm_source) : 'Web Organic';
         var utmTerm = body.utm_term ? validator.escape(body.utm_term) : '';
         var utmCampaign = body.utm_campaign ? validator.escape(body.utm_campaign) : '';
         var isEmailValid = EMAIL_REGEXP.test(email);
@@ -256,7 +256,7 @@ var Module = function (models, event) {
         var ids = body.ids;
 
         async.each(ids, function (id, cb) {
-            Opportunity.remove({_id: id}, function (err, result) {
+            Opportunity.findByIdAndRemove(id, function (err, result) {
                 if (err) {
                     return err(err);
                 }

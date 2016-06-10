@@ -4,10 +4,12 @@ var User = function (event, models) {
     'use strict';
     var _ = require('lodash');
     var crypto = require('crypto');
+    var async = require('async');
     var userSchema = mongoose.Schemas.User;
     var savedFiltersSchema = mongoose.Schemas.savedFilters;
     var constants = require('../constants/responses');
     var mainConstants = require('../constants/mainConstants');
+    var pageHelper = require('../helpers/pageHelper');
 
     var validator = require('../helpers/validator');
     var logger = require('../helpers/logger');
@@ -391,6 +393,35 @@ var User = function (event, models) {
         });
     };
 
+    this.bulkRemove = function (req, res, next) {
+        var Model = models.get(req.session.lastDb, 'Users', userSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+        var err;
+
+        async.each(ids, function (id, cb) {
+            if (req.session.uId === id) {
+                err = new Error('You cannot delete current user');
+                err.status = 403;
+
+                return cb(err);
+            }
+            Model.findByIdAndRemove(id, function (err) {
+                if (err) {
+                    return err(err);
+                }
+
+                cb();
+            });
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
+        });
+    };
+
     this.getByProfile = function (req, res, next) {
         var profileId = req.params.id;
         var response = {};
@@ -437,7 +468,7 @@ var User = function (event, models) {
      * @method Users
      * @instance
      */
-    this.getAll = function (req, res, next) {
+    /* this.getAll = function (req, res, next) {
         var response = {};
         var data = req.query;
         var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
@@ -448,6 +479,93 @@ var User = function (event, models) {
             }
 
             response.data = result;
+            res.status(200).send(response);
+        });
+    };*/
+
+    this.getAll = function (req, res, next) {
+        var response = {};
+        var data = req.query;
+        var paginationObject = pageHelper(data);
+        var limit = paginationObject.limit;
+        var sort;
+        var skip = paginationObject.skip;
+        var UserModel = models.get(req.session.lastDb, 'Users', userSchema);
+        var key;
+        var aggregateQuery;
+
+        if (data.sort) {
+            key = Object.keys(data.sort)[0];
+            data.sort[key] = parseInt(data.sort[key], 10);
+
+            sort = data.sort;
+        } else {
+            sort = {
+                login: 1
+            };
+        }
+
+        aggregateQuery = [
+            {
+                $lookup: {
+                    from        : 'Profile',
+                    localField  : 'profile',
+                    foreignField: '_id',
+                    as          : 'profile'
+                }
+            },
+            {
+                $group: {
+                    _id  : null,
+                    total: {$sum: 1},
+                    root : {$push: '$$ROOT'}
+                }
+            },
+            {
+                $unwind: '$root'
+            },
+            {
+                $project: {
+                    _id            : '$root._id',
+                    kanbanSettings : '$root.kanbanSettings',
+                    credentials    : '$root.credentials',
+                    email          : '$root.email',
+                    login          : '$root.login',
+                    imageSrc       : '$root.imageSrc',
+                    lastAccess     : '$root.lastAccess',
+                    savedFilters   : '$root.savedFilters',
+                    relatedEmployee: '$root.relatedEmployee',
+                    total          : 1,
+                    profile        : {
+                        $arrayElemAt: ['$root.profile', 0]
+                    }
+                }
+            },
+            {
+                $sort: sort
+            },
+            {
+                $skip: skip
+            },
+            {
+                $limit: limit
+            }
+        ];
+
+        UserModel.aggregate(aggregateQuery, function (err, result) {
+            var count;
+            var firstElement;
+
+            if (err) {
+                return next(err);
+            }
+
+            firstElement = result[0];
+            count = firstElement && firstElement.total ? firstElement.total : 0;
+
+            response.total = count;
+            response.data = result;
+
             res.status(200).send(response);
         });
     };

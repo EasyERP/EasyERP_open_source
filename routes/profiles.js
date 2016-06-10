@@ -11,10 +11,11 @@ module.exports = function (models) {
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getProfile);
-    router.get('/forDd', authStackMiddleware, accessStackMiddleware, handler.getProfileForDd); // added middleware by Liliya
+    router.get('/forDd', authStackMiddleware, accessStackMiddleware, handler.getProfileForDd);
 
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.createProfile);
     router.put('/:_id', authStackMiddleware, accessStackMiddleware, handler.updateProfile);
+   
     router.delete('/:_id', authStackMiddleware, accessStackMiddleware, handler.removeProfile);
 
     return router;

@@ -38,10 +38,10 @@ define([
         contentType             : CONSTANTS.LEADS,
 
         events: {
-            'click .stageSelect'          : 'showNewSelect',
-            'click .newSelectList li'     : 'chooseOption',
-            'click .list td:not(.notForm)': 'goToEditDialog',
-            'click #convertToOpportunity' : 'openDialog'
+            'click .stageSelect'                     : 'showNewSelect',
+            'click .newSelectList li'                : 'chooseOption',
+            'click .list td:not(.notForm, .checkbox)': 'goToEditDialog',
+            'click #convertToOpportunity'            : 'openDialog'
         },
 
         initialize: function (options) {
@@ -117,7 +117,7 @@ define([
             });
 
             $currentEl.append(itemView.render());
-            
+
             this.renderFilter();
 
             this.renderPagination($currentEl, this);

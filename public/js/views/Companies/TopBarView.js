@@ -12,21 +12,7 @@ define([
         contentType   : 'Companies',
         actionType    : null,
         template      : _.template(ContentTopBarTemplate),
-        importTemplate: _.template(importTemplate),
-
-        initialize: function (options) {
-            this.actionType = options.actionType;
-
-            if (this.actionType !== 'Content') {
-                Custom.setCurrentVT('form');
-            }
-
-            if (options.collection) {
-                this.collection = options.collection;
-                this.collection.bind('reset', _.bind(this.render, this));
-            }
-            this.render();
-        }
+        importTemplate: _.template(importTemplate)
     });
 
     return TopBarView;

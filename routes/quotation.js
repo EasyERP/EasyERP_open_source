@@ -12,12 +12,14 @@ module.exports = function (models, event) {
     router.use(authStackMiddleware);
 
     router.get('/', accessStackMiddleware, handler.getByViewType);
-    router.get('/totalCollectionLength', accessStackMiddleware, handler.totalCollectionLength);
     router.get('/getFilterValues', accessStackMiddleware, handler.getFilterValues);
+
     router.post('/', accessStackMiddleware, handler.create);
-    router.delete('/:id', accessStackMiddleware, handler.remove);
     router.patch('/:id', accessStackMiddleware, handler.putchModel);
     router.put('/:id', accessStackMiddleware, handler.updateModel);
+    router.delete('/', accessStackMiddleware, handler.bulkRemove);
+
+    router.delete('/:id', accessStackMiddleware, handler.remove);
 
     return router;
 };

@@ -428,7 +428,7 @@ define([
             var answer = confirm('Really delete Job ?!');
 
             if (answer === true) {
-                dataService.postData('/jobs/remove', data, function (err) {
+                dataService.deleteData('/jobs/' + id, data, function (err) {
                     var filter;
 
                     if (err) {

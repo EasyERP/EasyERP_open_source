@@ -452,35 +452,30 @@ define([
 
             event.preventDefault();
 
-            if (answer === true) {
-                this.currentModel.destroy({
-                    headers: {
-                        mid: mid
-                    },
+            if (!answer) return;
 
-                    success: function () {
-                        $('.edit-product-dialog').remove();
+            this.currentModel.destroy({
+                headers: {
+                    mid: mid
+                },
 
-                        App.projectInfo = App.projectInfo || {};
-                        App.projectInfo.currentTab = 'orders';
+                success: function () {
+                    $('.edit-product-dialog').remove();
 
-                        self.hideDialog();
+                    App.projectInfo = App.projectInfo || {};
+                    App.projectInfo.currentTab = 'orders';
 
-                        if (self.eventChannel) {
-                            self.eventChannel.trigger('orderRemove');
-                        }
-                    },
+                    self.hideDialog();
 
-                    error: function (model, err) {
-                        if (err.status === 403) {
-                            App.render({
-                                type   : 'error',
-                                message: 'You do not have permission to perform this action'
-                            });
-                        }
+                    if (self.eventChannel) {
+                        self.eventChannel.trigger('orderRemove');
                     }
-                });
-            }
+                },
+
+                error: function (model, xhr) {
+                    self.errorNotification(xhr);
+                }
+            });
 
         },
 

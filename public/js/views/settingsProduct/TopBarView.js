@@ -1,56 +1,58 @@
 define([
-        'text!templates/Profiles/TopBarTemplate.html',
-        'custom',
-        'dataService',
-        "common"
-    ],
-    function (TopBarTemplate, Custom, dataService, Common) {
-        var TopBarView = Backbone.View.extend({
-            el         : '#top-bar',
-            contentType: "Product Categories",
-            actionType : null, //Content, Edit, Create
-            template   : _.template(TopBarTemplate),
+    'Backbone',
+    'Underscore',
+    'jQuery',
+    'text!templates/Profiles/TopBarTemplate.html',
+    'custom',
+    'dataService',
+    'common'
+], function (Backbone, _, $, TopBarTemplate, Custom, dataService, Common) {
+    var TopBarView = Backbone.View.extend({
+        el         : '#top-bar',
+        contentType: 'Product Categories',
+        actionType : null, // Content, Edit, Create
+        template   : _.template(TopBarTemplate),
 
-            events: {
-                "click #top-bar-deleteBtn": "deleteEvent",
-                "click #top-bar-editBtn"  : "editEvent",
-                "click #top-bar-createBtn": "createEvent",
-                "click #top-bar-saveBtn"  : "saveEvent"
-            },
+        events: {
+            'click #top-bar-deleteBtn': 'deleteEvent',
+            'click #top-bar-editBtn'  : 'editEvent',
+            'click #top-bar-createBtn': 'createEvent',
+            'click #top-bar-saveBtn'  : 'saveEvent'
+        },
 
-            createEvent: function (event) {
-                event.preventDefault();
+        initialize: function (options) {
+            this.actionType = options.actionType;
 
-                this.trigger('createEvent');
-            },
+            this.render();
+        },
 
-            editEvent: function (event) {
-                event.preventDefault();
+        createEvent: function (event) {
+            event.preventDefault();
 
-                this.trigger('editEvent');
-            },
+            this.trigger('createEvent');
+        },
 
-            saveEvent: function (event) {
-                event.preventDefault();
+        editEvent: function (event) {
+            event.preventDefault();
 
-                this.trigger('saveEvent');
-            },
+            this.trigger('editEvent');
+        },
 
-            initialize: function (options) {
-                this.actionType = options.actionType;
+        saveEvent: function (event) {
+            event.preventDefault();
 
-                this.render();
-            },
+            this.trigger('saveEvent');
+        },
 
-            render: function () {
-                $('title').text(this.contentType);
+        render: function () {
+            $('title').text(this.contentType);
 
-                this.$el.html(this.template({contentType: this.contentType}));
-                Common.displayControlBtnsByActionType(this.actionType);
+            this.$el.html(this.template({contentType: this.contentType}));
+            Common.displayControlBtnsByActionType(this.actionType);
 
-                return this;
-            }
-        });
-
-        return TopBarView;
+            return this;
+        }
     });
+
+    return TopBarView;
+});
