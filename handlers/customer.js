@@ -692,13 +692,13 @@ var Module = function (models) {
                             case ('list'):
                                 query.sort(sort);
                                 query
-                                    .select('_id createdBy editedBy address.country email name phones.phone')
+                                    .select('_id createdBy editedBy address.country email name fullName phones.phone')
                                     .populate('createdBy.user', 'login')
                                     .populate('editedBy.user', 'login');
                                 break;
                             case ('thumbnails'):
                                 query
-                                    .select('_id name company')
+                                    .select('_id name fullName company')
                                     .populate('company', '_id name');
                                 break;
                         }
@@ -709,7 +709,7 @@ var Module = function (models) {
                                 query.sort(sort);
 
                                 query
-                                    .select('_id editedBy createdBy salesPurchases name email phones.phone phones.mobile address.country')
+                                    .select('_id editedBy createdBy salesPurchases name fullName email phones.phone phones.mobile address.country')
                                     .populate('salesPurchases.salesPerson', '_id name')
                                     .populate('salesPurchases.salesTeam', '_id name')
                                     .populate('createdBy.user', 'login')
@@ -717,7 +717,7 @@ var Module = function (models) {
                                 break;
                             case ('thumbnails'):
                                 query
-                                    .select('_id name company')
+                                    .select('_id name fullName company')
                                     .populate('company', '_id name address');
                                 break;
 
@@ -734,7 +734,7 @@ var Module = function (models) {
                                 break;
                             case ('thumbnails'):
                                 query
-                                    .select('_id name company')
+                                    .select('_id name fullName company')
                                     .populate('company', '_id name address');
 
                                 break;
@@ -814,11 +814,11 @@ var Module = function (models) {
             case 'form':
                 getById(req, res, next);
                 break;
-            case 'mobile':
-                getCustomers(req, res, next);
+            case 'list':
+                getFilterCustomers(req, res, next);
                 break;
             default:
-                getFilterCustomers(req, res, next);
+                getCustomers(req, res, next);
                 break;
         }
     };

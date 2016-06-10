@@ -532,11 +532,11 @@ define([
                             self.hideDialog();
 
                             if (self.wTrackCollection && self.wTrackCollection.wTrackView) {
-                                self.wTrackCollection.wTrackView.undelegateEvents(); //need refactor
+                                self.wTrackCollection.wTrackView.undelegateEvents(); // need refactor
                             }
 
                             if (self.wTrackCollection) {
-                                self.wTrackCollection.showMore({count: 50, page: 1, filter: filter});
+                                self.wTrackCollection.getFirstPage({count: 50, page: 1, filter: filter});
                             }
 
                             if (self.quotationDialog) {

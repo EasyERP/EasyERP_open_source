@@ -24,7 +24,7 @@ define([
              CreateView,
              EditView,
              invoiceModel,
-             listItemView,
+             ListItemView,
              listTotalView,
              contentCollection,
              FilterView,
@@ -34,7 +34,7 @@ define([
     var InvoiceListView = listViewBase.extend({
         createView              : CreateView,
         listTemplate            : listTemplate,
-        listItemView            : listItemView,
+        ListItemView            : ListItemView,
         contentCollection       : contentCollection,
         FilterView              : FilterView,
         totalCollectionLengthUrl: '/Proforma/totalCollectionLength',
@@ -147,7 +147,7 @@ define([
             var itemView;
 
             $currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
-            itemView = new listItemView({
+            itemView = new ListItemView({
                 collection : self.collection,
                 page       : self.page,
                 itemsNumber: self.collection.namberToShow
@@ -246,7 +246,7 @@ define([
             if (deleteCounter !== this.collectionLength) {
                 holder = this.$el;
                 created = holder.find('#timeRecivingDataFromServer');
-                created.before(new listItemView({
+                created.before(new ListItemView({
                     collection : this.collection,
                     page       : holder.find('#currentShowPage').val(),
                     itemsNumber: holder.find('span#itemsNumber').text()

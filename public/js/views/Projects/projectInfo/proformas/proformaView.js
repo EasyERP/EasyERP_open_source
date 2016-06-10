@@ -10,20 +10,24 @@ define([
     'common',
     'helpers',
     'dataService',
-    'async'
-
-], function ($, _, ListView, invoiceTemplate, EditView, listItemView, invoiceCollection, InvoiceModel, common, helpers, dataService, async) {
+    'async',
+    'helpers/eventsBinder'
+], function ($, _, ListView, invoiceTemplate, EditView, listItemView, invoiceCollection, InvoiceModel, common, helpers, dataService, async, eventsBinder) {
     var invoiceView = ListView.extend({
 
-        el               : '#proforma',
-        listItemView     : listItemView,
-        contentCollection: invoiceCollection,
-        changedModels    : {},
+        el                  : '#proforma',
+        ListItemView        : listItemView,
+        preventChangLocation: true,
+        contentCollection   : invoiceCollection,
+        changedModels       : {},
+        contentType         : 'proforma',
 
         initialize: function (options) {
             this.remove();
             this.collection = options.model;
             this.filter = options.filter ? options.filter : {};
+
+            eventsBinder.subscribeCollectionEvents(this.collection, this);
 
             this.eventChannel = options.eventChannel;
 
@@ -131,10 +135,11 @@ define([
 
             var model = new InvoiceModel({validate: false});
 
-            model.urlRoot = '/Invoice/';
+            model.urlRoot = '/invoice/';
             model.fetch({
                 data: {
                     id       : invoice._id,
+                    viewType : 'form',
                     currentDb: App.currentDb
                 },
 
@@ -170,9 +175,10 @@ define([
             model.fetch({
                 data: {
                     id       : id,
+                    viewType : 'form',
                     currentDb: App.currentDb
                 },
-                
+
                 success: function (model) {
 
                     new EditView({
@@ -194,77 +200,6 @@ define([
             });
         },
 
-        /* renderContent: function () {
-         var $currentEl = this.$el;
-         var tBody = $currentEl.find('#listTable');
-         var itemView;
-         var pagenation;
-
-         tBody.empty();
-         $('#top-bar-deleteBtn').hide();
-         $('#checkAll').prop('checked', false);
-
-         if (this.collection.length > 0) {
-         itemView = new this.listItemView({
-         collection : this.collection,
-         page       : this.page,
-         itemsNumber: this.collection.namberToShow
-         });
-         tBody.append(itemView.render({thisEl: tBody}));
-         }
-
-         pagenation = this.$el.find('.pagination');
-         if (this.collection.length === 0) {
-         pagenation.hide();
-         } else {
-         pagenation.show();
-         }
-         },
-
-         goSort: function (e) {
-         var target$;
-         var currentParrentSortClass;
-         var sortClass;
-         var sortConst;
-         var sortBy;
-         var sortObject;
-
-         this.collection.unbind('reset');
-         this.collection.unbind('showmore');
-
-         target$ = $(e.target).closest('th');
-         currentParrentSortClass = target$.attr('class');
-         sortClass = currentParrentSortClass.split(' ')[1];
-         sortConst = 1;
-         sortBy = target$.data('sort');
-         sortObject = {};
-
-         if (!sortClass) {
-         target$.addClass('sortUp');
-         sortClass = 'sortUp';
-         }
-         switch (sortClass) {
-         case 'sortDn':
-         {
-         target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
-         target$.removeClass('sortDn').addClass('sortUp');
-         sortConst = 1;
-         }
-         break;
-         case 'sortUp':
-         {
-         target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
-         target$.removeClass('sortUp').addClass('sortDn');
-         sortConst = -1;
-         }
-         break;
-         }
-         sortObject[sortBy] = sortConst;
-
-         this.fetchSortCollection(sortObject);
-         // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-         },
-         */
         checked: function (e) {
             var $targetEl = $(e.target);
             var $el = this.$el;
@@ -306,6 +241,34 @@ define([
             $('.crop-images-dialog').remove();
         },
 
+        showMoreContent: function (newModels) {
+            var $currentEl = this.$el;
+            var tBody = $currentEl.find('#listTable');
+            var itemView;
+            var pagenation;
+
+            tBody.empty();
+            $('#top-bar-deleteBtn').hide();
+            $('#check_all').prop('checked', false);
+
+            if (newModels.length > 0) {
+                itemView = new this.ListItemView({
+                    collection : newModels,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                });
+                tBody.append(itemView.render({thisEl: tBody}));
+            }
+
+            pagenation = this.$el.find('.pagination');
+
+            if (newModels.length === 0) {
+                pagenation.hide();
+            } else {
+                pagenation.show();
+            }
+        },
+
         render: function (options) {
             var $currentEl = this.$el;
             var template = _.template(invoiceTemplate);
@@ -341,6 +304,8 @@ define([
                 currencySplitter   : helpers.currencySplitter,
                 currencyClass      : helpers.currencyClass
             }));
+
+            this.renderPagination($currentEl, this);
 
             this.$el.find('#removeProforma').hide();
             this.$el.find('#saveProforma').hide();

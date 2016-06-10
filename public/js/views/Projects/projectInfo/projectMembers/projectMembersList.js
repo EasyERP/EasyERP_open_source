@@ -17,7 +17,8 @@ define([
     'use strict';
 
     var PMView = Backbone.View.extend({
-        el: '#projectMembers',
+        el                  : '#projectMembers',
+        preventChangLocation: true,
 
         initialize: function (options) {
             this.project = options.project ? options.project.toJSON() : {};

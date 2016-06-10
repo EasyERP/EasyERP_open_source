@@ -14,8 +14,8 @@ define([
     'dataService',
     'populate',
     'async',
-    'constants'
-
+    'constants',
+    'helpers/eventsBinder'
 ], function ($,
              _,
              wTrackTemplate,
@@ -31,14 +31,16 @@ define([
              dataService,
              populate,
              async,
-             CONSTANTS) {
+             CONSTANTS,
+             eventsBinder) {
     var wTrackView = listView.extend({
 
-        el            : '#timesheet',
-        templateHeader: _.template(wTrackTopBar),
-        listItemView  : listItemView,
-        template      : _.template(wTrackTemplate),
-        changedModels : {},
+        el                  : '#timesheet',
+        templateHeader      : _.template(wTrackTopBar),
+        ListItemView        : listItemView,
+        template            : _.template(wTrackTemplate),
+        changedModels       : {},
+        preventChangLocation: true,
 
         events: {
             'mouseover .currentPageList'                             : 'showPagesPopup',
@@ -61,6 +63,8 @@ define([
             this.defaultItemsNumber = options.defaultItemsNumber || CONSTANTS.DEFAULT_ELEMENTS_PER_PAGE;
             this.filter = options.filter ? options.filter : {};
             this.project = options.project ? options.project : {};
+
+            eventsBinder.subscribeCollectionEvents(this.collection, this);
 
             this.startNumber = options.startNumber || 1;
 
@@ -112,255 +116,36 @@ define([
             e.preventDefault();
         },
 
-        /*showMoreContent: function (newModels) {
-         var holder = this.$el;
-         var itemView;
-         var pagenation;
+        showMoreContent: function (newModels) {
+            var $holder = this.$el;
+            var itemView;
+            var pagenation;
 
-         this.editCollection.reset(newModels);
+            this.hideDeleteBtnAndUnSelectCheckAll();
 
-         holder.find('#listTable').empty();
+            $holder.find('#listTable').empty();
 
-         itemView = new this.listItemView({
-         collection : newModels,
-         page       : holder.find('#currentShowPage').val(),
-         itemsNumber: this.defaultItemsNumber
-         });
+            itemView = new this.ListItemView({
+                collection : newModels,
+                page       : this.collection.currentPage,
+                itemsNumber: this.collection.pageSize
+            });
 
-         holder.append(itemView.render());
+            $holder.append(itemView.render());
 
-         itemView.undelegateEvents();
+            itemView.undelegateEvents();
 
-         pagenation = holder.find('.pagination');
-         if (newModels.length !== 0) {
-         pagenation.show();
-         } else {
-         pagenation.hide();
-         }
-         $('#top-bar-deleteBtn').hide();
-         $('#checkAll').prop('checked', false);
-         },
+            pagenation = $holder.find('.pagination');
 
-         goSort: function (e) {
-         var target$;
-         var currentParrentSortClass;
-         var sortClass;
-         var sortConst;
-         var sortBy;
-         var sortObject;
-         var newRows = this.$el.find('#false').length;
-
-         e.preventDefault();
-
-         if (this.isNewRow) {
-         newRows = this.isNewRow();
-         }
-
-         if ((this.changedModels && Object.keys(this.changedModels).length) || newRows) {
-         return App.render({
-         type   : 'notify',
-         message: 'Please, save previous changes or cancel them!'
-         });
-         }
-
-         this.collection.unbind('reset');
-         this.collection.unbind('showmore');
-
-         target$ = $(e.target).closest('th');
-         currentParrentSortClass = target$.attr('class');
-         sortClass = currentParrentSortClass.split(' ')[1];
-         sortConst = 1;
-         sortBy = target$.data('sort');
-         sortObject = {};
-
-         if (!sortClass) {
-         target$.addClass('sortUp');
-         sortClass = 'sortUp';
-         }
-         switch (sortClass) {
-         case 'sortDn':
-         {
-         target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
-         target$.removeClass('sortDn').addClass('sortUp');
-         sortConst = 1;
-         }
-         break;
-         case 'sortUp':
-         {
-         target$.parent().find('th').removeClass('sortDn').removeClass('sortUp');
-         target$.removeClass('sortUp').addClass('sortDn');
-         sortConst = -1;
-         }
-         break;
-         }
-         sortObject[sortBy] = sortConst;
-
-         this.fetchSortCollection(sortObject);
-         this.getTotalLength(null, this.defaultItemsNumber, this.filter);
-         },
-
-         fetchSortCollection: function (sortObject) {
-         this.sort = sortObject;
-         this.collection = new wTrackCollection({
-         viewType        : 'list',
-         sort            : sortObject,
-         page            : this.page,
-         count           : this.defaultItemsNumber,
-         filter          : this.filter,
-         parrentContentId: this.parrentContentId,
-         contentType     : this.contentType,
-         newCollection   : this.newCollection
-         });
-         this.collection.bind('reset', this.renderContent, this);
-         this.collection.bind('showmore', this.showMoreContent, this);
-         },
-
-         getTotalLength: function (currentNumber, itemsNumber, filter) {
-         var self = this;
-
-         dataService.getData(this.totalCollectionLengthUrl, {
-         currentNumber: currentNumber,
-         filter       : filter,
-         contentType  : this.contentType,
-         newCollection: this.newCollection
-         }, function (response, context) {
-
-         var page = context.page || 1;
-         var length = context.listLength = response.count || 0;
-
-         if (itemsNumber === 'all') {
-         itemsNumber = response.count;
-         }
-
-         if (itemsNumber * (page - 1) > length) {
-         context.page = page = Math.ceil(length / itemsNumber);
-         context.fetchSortCollection(context.sort);
-         // context.changeLocationHash(page, context.defaultItemsNumber, filter);
-         }
-
-         context.pageElementRenderProject(response.count, itemsNumber, page, self);//prototype in main.js
-         }, this);
-         },
-
-         /!*renderPagination: function ($currentEl, self) {
-         $currentEl.append(_.template(paginationTemplate));
-
-         var pagenation = self.$el.find('.pagination');
-
-         if (self.collection.length === 0) {
-         pagenation.hide();
-         } else {
-         pagenation.show();
-         }
-
-         $(document).on("click", function (e) {
-         self.hidePagesPopup(e);
-         });
-         },*!/
-         showPage: function (event) {
-         event.preventDefault();
-         event.stopPropagation();
-
-         this.collection.unbind('reset');
-         this.collection.unbind('showmore');
-
-         this.showPProject(event, {
-         filter       : this.filter,
-         newCollection: this.newCollection,
-         sort         : this.sort
-         }, true, this);
-         },
-
-         checkPage: function (event) {
-         var elementId = $(event.target).attr('id');
-         var checkProject;
-         var data = {
-         sort         : this.sort,
-         filter       : this.filter,
-         newCollection: this.newCollection
-         };
-
-         event.preventDefault();
-         event.stopPropagation();
-
-         this.collection.unbind('reset');
-         this.collection.unbind('showmore');
-
-         $('#checkAll').prop('checked', false);
-         switch (elementId) {
-         case 'previousPage':
-         this.prevPProject(data, true, this);
-         break;
-
-         case 'nextPage':
-         this.nextPProject(data, true, this);
-         break;
-
-         case 'firstShowPage':
-         this.firstPProject(data, true, this);
-         break;
-
-         case 'lastShowPage':
-         this.lastPProject(data, true, this);
-         break;
-         }
-         dataService.getData(this.totalCollectionLengthUrl, {
-         filter       : this.filter,
-         newCollection: this.newCollection
-         }, function (response, context) {
-         context.listLength = response.count || 0;
-         }, this);
-         },*/
-
-        /*        showNewSelect: function (e, prev, next) {
-         populate.showSelect(e, prev, next, this);
-
-         return false;
-         },
-
-         nextSelect: function (e) {
-         this.showNewSelect(e, false, true);
-         },
-
-         prevSelect: function (e) {
-         this.showNewSelect(e, true, false);
-         },
-
-         showPagesPopup: function (e) {
-         $(e.target).closest("button").next("ul").toggle();
-         return false;
-         },*/
-
-        bindingEventsToEditedCollection: function (context) {
-            if (context.editCollection) {
-                context.editCollection.unbind();
-            }
-            context.editCollection = new EditCollection(context.collection.toJSON());
-            context.editCollection.on('saved', context.savedNewModel, context);
-            context.editCollection.on('updated', context.updatedOptions, context);
-        },
-
-        savedNewModel: function (modelObject) {
-            var savedRow = this.$listTable.find(".false[data-id='" + modelObject.cid + "']"); // additional selector for finding old row by cid (in case of multiply copying)
-            var modelId;
-            var checkbox = savedRow.find('input[type=checkbox]');
-
-            modelObject = modelObject.success;
-
-            if (modelObject) {
-                modelId = modelObject._id;
-                savedRow.attr('data-id', modelId);
-                checkbox.val(modelId);
-                savedRow.removeAttr('id');
-                savedRow.removeClass('false');
+            if (newModels.length !== 0) {
+                pagenation.show();
+            } else {
+                pagenation.hide();
             }
 
-            this.hideSaveCancelBtns();
-            this.resetCollection(modelObject);
-        },
-
-        removeInputs: function () {
-            this.setChangedValueToModel();
+            if (typeof (this.recalcTotal) === 'function') {
+                this.recalcTotal();
+            }
         },
 
         rerenderNumbers: function () {
@@ -503,55 +288,6 @@ define([
 
             return false;
         },
-
-        /*  switchPageCounter: function (event) {
-
-         var targetEl;
-         var itemsNumber;
-         var newRows = this.$el.find('#false');
-
-         event.preventDefault();
-
-         if ((this.changedModels && Object.keys(this.changedModels).length) || (this.isNewRow ? this.isNewRow() : newRows.length)) {
-         return App.render({
-         type   : 'notify',
-         message: 'Please, save previous changes or cancel them!'
-         });
-         }
-
-         targetEl = $(event.target);
-
-         if (this.previouslySelected) {
-         this.previouslySelected.removeClass('selectedItemsNumber');
-         }
-
-         this.previouslySelected = targetEl;
-         targetEl.addClass('selectedItemsNumber');
-
-         this.startTime = new Date();
-         itemsNumber = targetEl.text();
-
-         if (itemsNumber === 'all') {
-         itemsNumber = this.listLength;
-         }
-
-         this.defaultItemsNumber = itemsNumber;
-
-         // this.getTotalLength(null, itemsNumber, this.filter); //this event fire when view is initialize
-
-         this.collection.showMore({
-         count        : itemsNumber,
-         page         : 1,
-         filter       : this.filter,
-         newCollection: this.newCollection
-         });
-         this.page = 1;
-
-         $('#top-bar-deleteBtn').hide();
-         $('#checkAll').prop('checked', false);
-
-         //   this.changeLocationHash(1, itemsNumber, this.filter);
-         },*/
 
         saveItem: function (e) {
             var self = this;
@@ -703,10 +439,6 @@ define([
                 row = target.closest('tr');
                 model = self.collection.get(id) ? self.collection.get(id) : self.editCollection.get(id);
 
-                /*                 var hours = model.get('worked');
-                 var rate = model.get('rate');
-                 var revenue = parseInt(hours) * parseFloat(rate);*/
-
                 $(selectedWtrack).attr('checked', false);
 
                 model.set({isPaid: false});
@@ -752,7 +484,7 @@ define([
                 wTracks    : wTracks,
                 startNumber: self.startNumber - 1
             }));
-            
+
             this.renderPagination($('#timesheet'), self);
 
             this.genInvoiceEl = this.$el.find('#top-bar-generateBtn');

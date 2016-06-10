@@ -32,7 +32,7 @@ define([
                     responseObj['#employee'] = employees;
                 });
 
-                dataService.getData('/department/getForDD', null, function (response) {
+                dataService.getData(CONSTANTS.URLS.DEPARTMENTS_FORDD, null, function (response) {
                     responseObj['#department'] = response.data;
                 });
             }
