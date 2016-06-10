@@ -34,13 +34,13 @@ define([
              CONSTANTS,
              eventsBinder) {
     var wTrackView = listView.extend({
-
         el                  : '#timesheet',
         templateHeader      : _.template(wTrackTopBar),
         ListItemView        : listItemView,
         template            : _.template(wTrackTemplate),
         changedModels       : {},
         preventChangLocation: true,
+        cancelEdit          : cancelEdit,
 
         events: {
             'mouseover .currentPageList': 'showPagesPopup',
@@ -48,7 +48,7 @@ define([
             'click .showPage'           : 'showPage',
             'change #currentShowPage'   : 'showPage',
             'click .checkbox'           : 'checked',
-            'change .listCB'            : 'setAllTotalVals',
+            'change .checkbox'          : 'setAllTotalVals',
             'click #top-bar-copyBtn'    : 'copyRow',
             'click #savewTrack'         : 'saveItem',
             'click #deletewTrack'       : 'deleteItems',
@@ -152,7 +152,7 @@ define([
 
         },
 
-        deleteItems: function (e) {
+        /*deleteItems: function (e) {
             var that = this;
 
             var mid = 39;
@@ -210,65 +210,7 @@ define([
             } else {
                 this.cancelChanges();
             }
-        },
-
-        cancelChanges: function () {
-            var self = this;
-            var edited = this.edited;
-            var collection = this.collection;
-            var editedCollectin = this.editCollection;
-            var copiedCreated;
-            var dataId;
-            var enable;
-
-            async.each(edited, function (el, cb) {
-                var tr = $(el).closest('tr');
-                var rowNumber = tr.find('[data-content="number"]').text();
-                var id = tr.attr('data-id');
-                var template = _.template(cancelEdit);
-                var model;
-
-                if (!id) {
-                    return cb('Empty id');
-                } else if (id.length < 24) {
-                    tr.remove();
-                    model = self.changedModels;
-
-                    if (model) {
-                        delete model[id];
-                    }
-
-                    return cb();
-                }
-
-                model = collection.get(id);
-                model = model.toJSON();
-                model.startNumber = rowNumber;
-                enable = model && model.workflow.name !== 'Closed' ? true : false;
-                tr.replaceWith(template({model: model, enable: enable}));
-                cb();
-            }, function (err) {
-                if (!err) {
-                    self.copyEl.hide();
-                    self.hideSaveCancelBtns();
-                }
-            });
-
-            if (this.createdCopied) {
-                copiedCreated = this.$el.find('.false');
-                copiedCreated.each(function () {
-                    dataId = $(this).attr('data-id');
-                    self.editCollection.remove(dataId);
-                    delete self.changedModels[dataId];
-                    $(this).remove();
-                });
-
-                this.createdCopied = false;
-            }
-
-            self.changedModels = {};
-            self.responseObj['#jobs'] = [];
-        },
+        },*/
 
         hideSaveCancelBtns: function () {
             var saveBtnEl = $('#savewTrack');
@@ -402,7 +344,7 @@ define([
 
             return false;
         },
-        
+
         copyRow: function (e) {
 
             var checkedRows = this.$el.find('input.listCB:checked:not(#checkAll)');

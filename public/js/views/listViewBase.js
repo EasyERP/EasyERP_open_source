@@ -172,33 +172,6 @@ define([
             }
         },
 
-        /*deleteItemsRender: function (deleteCounter, deletePage) {
-            var pagenation;
-
-            $('#checkAll').prop('checked', false);
-            dataService.getData(this.totalCollectionLengthUrl, {
-                filter       : this.filter,
-                newCollection: this.newCollection,
-                contentType  : this.contentType,
-                mid          : this.mId
-            }, function (response, context) {
-                context.listLength = response.count || 0;
-            }, this);
-
-            this.deleteRender(deleteCounter, deletePage, {
-                filter       : this.filter,
-                newCollection: this.newCollection
-            });
-
-            pagenation = this.$el.find('.pagination');
-
-            if (this.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
-        },*/
-
         // added methods for edit in listView
 
         savedNewModel: function (modelObject) {
@@ -272,12 +245,15 @@ define([
         },
 
         setEditable: function (td) {
+            var tr;
 
             if (!td.parents) {
                 td = $(td.target).closest('td');
             }
 
-            td.addClass('edited');
+            tr = td.parents('tr');
+
+            tr.addClass('edited');
 
             if (this.isEditRows()) {
                 this.setChangedValue();

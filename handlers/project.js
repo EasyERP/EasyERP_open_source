@@ -106,7 +106,7 @@ module.exports = function (models, event) {
                 event.emit('updateProjectDetails', {req: req, _id: result._id});
             }
 
-            event.emit('recollectProjectInfo');
+            // event.emit('recollectProjectInfo');
             res.status(201).send({success: 'A new Project crate success', result: result, id: result._id});
         });
     };
@@ -182,7 +182,8 @@ module.exports = function (models, event) {
             if (project._id) {
                 event.emit('updateProjectDetails', {req: req, _id: project._id});
             }
-            event.emit('recollectProjectInfo');
+            
+            // event.emit('recollectProjectInfo');
             res.status(200).send(project);
         });
     };

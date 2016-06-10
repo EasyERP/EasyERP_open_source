@@ -85,7 +85,7 @@ var Module = function (models, event) {
 
             if (projectId) {
                 event.emit('updateProjectDetails', {req: req, _id: projectId, jobId: jobId});
-                event.emit('recollectProjectInfo');
+                // event.emit('recollectProjectInfo');
             }
 
             res.status(200).send({success: model});
