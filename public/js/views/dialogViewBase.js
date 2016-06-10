@@ -10,10 +10,11 @@
     var View = Backbone.View.extend({
 
         events: {
-            keydown                  : 'keyDownHandler',
-            click                    : 'hideNewSelect',
-            'click .dialog-tabs a'   : 'changeTab',
-            'click .current-selected': 'showNewSelect'
+            keydown                                            : 'keyDownHandler',
+            click                                              : 'hideNewSelect',
+            'click .dialog-tabs a'                             : 'changeTab',
+            'click .current-selected:not(.jobs)'               : 'showNewSelect',
+            'click .newSelectList li:not(.miniStylePagination)': 'chooseOption'
         },
 
         showNewSelect: function (e) {
@@ -58,6 +59,9 @@
                 case 27:
                     this.hideDialog();
                     break;
+                case 13:
+                    this.validateForm(e);
+                    break;
                 default:
                     break;
             }
@@ -71,16 +75,23 @@
         },
 
         changeTab: function (e) {
+            var $target = $(e.target);
             var n;
-            var $dialogHolder;
-            var $holder = $(e.target);
+            var dialogHolder;
+            var closestEl = $target.closest('.dialog-tabs');
+            var dataClass = closestEl.data('class');
+            var selector = '.dialog-tabs-items.' + dataClass;
+            var itemActiveSelector = '.dialog-tabs-item.' + dataClass + '.active';
+            var itemSelector = '.dialog-tabs-item.' + dataClass;
 
-            $holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            $holder.addClass('active');
-            n = $holder.parents('.dialog-tabs').find('li').index($holder.parent());
-            $dialogHolder = $holder.closest('.dialog-tabs').parent().find('.dialog-tabs-items');
-            $dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            $dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
+            closestEl.find('a.active').removeClass('active');
+            $target.addClass('active');
+
+            n = $target.parents('.dialog-tabs').find('li').index($target.parent());
+            dialogHolder = $(selector);
+
+            dialogHolder.find(itemActiveSelector).removeClass('active');
+            dialogHolder.find(itemSelector).eq(n).addClass('active');
         },
 
         renderAssignees: function (model) {

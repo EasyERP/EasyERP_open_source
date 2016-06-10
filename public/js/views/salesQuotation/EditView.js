@@ -1,10 +1,10 @@
 define([
     'Underscore',
     'views/Quotation/EditView'
-], function (_, ParrentEditView) {
+], function (_, ParentEditView) {
     'use strict';
 
-    var EditView = ParrentEditView.extend({
+    var EditView = ParentEditView.extend({
         forSales   : true,
         contentType: 'salesQuotation',
 
