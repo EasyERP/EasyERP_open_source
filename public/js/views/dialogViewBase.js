@@ -2,19 +2,22 @@
     'Backbone',
     'jQuery',
     'Underscore',
-    'views/Assignees/AssigneesView'
-], function (Backbone, $, _, AssigneesView) {
+    'views/Assignees/AssigneesView',
+    'views/selectView/selectView'
+], function (Backbone, $, _, AssigneesView, SelectView) {
     'use strict';
 
     var View = Backbone.View.extend({
 
         events: {
-            keydown: 'keyDownHandler',
-            click  : 'hideNewSelect'
+            keydown               : 'keyDownHandler',
+            click                 : 'hideNewSelect',
+            'click .dialog-tabs a': 'changeTab'
         },
 
         showNewSelect: function (e) {
             var $target = $(e.target);
+
             e.stopPropagation();
 
             if ($target.attr('id') === 'selectInput') {
@@ -131,13 +134,13 @@
         }
     });
 
-    /*View.extend = function (childView) {
-     var view = Backbone.View.extend.apply(this, arguments);
+    View.extend = function (childView) {
+        var view = Backbone.View.extend.apply(this, arguments);
 
-     view.prototype.events = _.extend({}, this.prototype.events, childView.events);
+        view.prototype.events = _.extend({}, this.prototype.events, childView.events);
 
-     return view;
-     };*/
+        return view;
+    };
 
     return View;
 });

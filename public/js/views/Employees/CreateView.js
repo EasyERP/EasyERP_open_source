@@ -8,7 +8,7 @@ define([
     'populate',
     'views/Notes/AttachView',
     'views/Assignees/AssigneesView',
-    'views/listViewBase',
+    'views/dialogViewBase',
     'constants',
     'moment'
 ], function (Backbone, $, _, CreateTemplate, EmployeeModel, common, populate, AttachView, AssigneesView, ParentView, CONSTANTS, moment) {
@@ -67,7 +67,7 @@ define([
           /*  'click #tabList a'                                 : 'switchTab',*/
             'mouseenter .avatar'                               : 'showEdit',
             'mouseleave .avatar'                               : 'hideEdit',
-            keydown                                            : 'keydownHandler',
+           /* keydown                                            : 'keydownHandler',*/
             'click .dialog-tabs a'                             : 'changeTab',
             'click .current-selected'                          : 'showNewSelect',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
@@ -240,26 +240,6 @@ define([
             pag.text(s);
         },*/
 
-        changeTab: function (e) {
-            var $holder = $(e.target);
-            var n = $holder.parents('.dialog-tabs').find('li').index($holder.parent());
-            var $dialogHolder = this.$el.find('.dialog-tabs-items');
-
-            $holder.closest('.dialog-tabs').find('a.active').removeClass('active');
-            $holder.addClass('active');
-            $dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
-            $dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
-        },
-
-        keydownHandler: function (e) {
-            switch (e.which) {
-                case 27:
-                    this.hideDialog();
-                    break;
-                default:
-                    break;
-            }
-        },
 
         showEdit: function () {
             this.$el.find('.upload').animate({

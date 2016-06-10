@@ -7,11 +7,11 @@ define([
     'common',
     'populate',
     'views/Notes/AttachView',
-    'views/Assignees/AssigneesView',
+    'views/dialogViewBase',
     'constants'
-], function (Backbone, $, _, CreateTemplate, ApplicationModel, common, populate, AttachView, AssigneesView, CONSTANTS) {
+], function (Backbone, $, _, CreateTemplate, ApplicationModel, common, populate, AttachView, ParentView, CONSTANTS) {
     'use strict';
-    var CreateView = Backbone.View.extend({
+    var CreateView = ParentView.extend({
         el         : '#content-holder',
         contentType: 'Applications',
         template   : _.template(CreateTemplate),
@@ -25,21 +25,21 @@ define([
         },
 
         events: {
-            'click #tabList a'                                                : 'switchTab',
-            /* 'change #workflowNames'                                           : 'changeWorkflows',*/
+           /* 'click #tabList a'                                                : 'switchTab',
+             'change #workflowNames'                                           : 'changeWorkflows',*/
             'mouseenter .avatar'                                              : 'showEdit',
             'mouseleave .avatar'                                              : 'hideEdit',
-            'click .current-selected'                                         : 'showNewSelect',
+           /* 'click .current-selected'                                         : 'showNewSelect',
             click                                                             : 'hideNewSelect',
-            keydown                                                           : 'keydownHandler',
+            keydown                                                           : 'keydownHandler',*/
             'click .dialog-tabs a'                                            : 'changeTab',
-            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption',
-            'click .newSelectList li.miniStylePagination'                     : 'notHide',
+            'click .newSelectList li:not(.miniStylePagination)'               : 'chooseOption'
+           /* 'click .newSelectList li.miniStylePagination'                     : 'notHide',
             'click .newSelectList li.miniStylePagination .next:not(.disabled)': 'nextSelect',
-            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'
+            'click .newSelectList li.miniStylePagination .prev:not(.disabled)': 'prevSelect'*/
         },
 
-        notHide: function () {
+       /* notHide: function () {
             return false;
         },
 
@@ -79,7 +79,7 @@ define([
             $('.add-group-dialog').remove();
             $('.add-user-dialog').remove();
             $('.crop-images-dialog').remove();
-        },
+        },*/
 
         getWorkflowValue: function (value) {
             var workflows = [];
@@ -101,7 +101,7 @@ define([
             this.saveItem();
         },
 
-        switchTab: function (e) {
+       /* switchTab: function (e) {
             var link = this.$('#tabList a');
             var index;
 
@@ -113,10 +113,10 @@ define([
 
             index = link.index($(e.target).addClass('selected'));
             this.$('.tab').hide().eq(index).show();
-        },
+        },*/
 
         showEdit: function () {
-            $('.upload').animate({
+            this.$el.find('.upload').animate({
                 height : '20px',
                 display: 'block'
             }, 250);
@@ -124,7 +124,7 @@ define([
         },
 
         hideEdit: function () {
-            $('.upload').animate({
+            this.$el.find('.upload').animate({
                 height : '0px',
                 display: 'block'
             }, 250);
@@ -134,110 +134,110 @@ define([
         saveItem: function () {
             var self = this;
             var mid = this.mId;
-            var el = this.$el;
+            var $thisEl = this.$el;
             var name = {
-                first: $.trim(this.$el.find('#first').val()),
-                last : $.trim(this.$el.find('#last').val())
+                first: $.trim($thisEl.find('#first').val()),
+                last : $.trim($thisEl.find('#last').val())
             };
 
-            var gender = $('#genderDd').data('id') || null;
+            var gender = $thisEl.find('#genderDd').attr('data-id') || null;
 
-            var jobType = $('#jobTypeDd').data('id') || null;
+            var jobType = $thisEl.find('#jobTypeDd').attr('data-id') || null;
 
-            var marital = $('#maritalDd').data('id') || null;
+            var marital = $thisEl.find('#maritalDd').attr('data-id') || null;
 
             var workAddress = {
-                street : $.trim(el.find('#street').val()),
-                city   : $.trim(el.find('#city').val()),
-                state  : $.trim(el.find('#state').val()),
-                zip    : $.trim(el.find('#zip').val()),
-                country: $.trim(el.find('#country').val())
+                street : $.trim($thisEl.find('#street').val()),
+                city   : $.trim($thisEl.find('#city').val()),
+                state  : $.trim($thisEl.find('#state').val()),
+                zip    : $.trim($thisEl.find('#zip').val()),
+                country: $.trim($thisEl.find('#country').val())
             };
 
             var social = {
-                LI: $.trim(el.find('#LI').val()),
-                FB: $.trim(el.find('#FB').val())
+                LI: $.trim($thisEl.find('#LI').val()),
+                FB: $.trim($thisEl.find('#FB').val())
             };
 
-            var tags = $.trim(el.find('#tags').val()).split(',');
+            var tags = $.trim($thisEl.find('#tags').val()).split(',');
 
-            var workEmail = $.trim(el.find('#workEmail').val());
+            var workEmail = $.trim($thisEl.find('#workEmail').val());
 
-            var personalEmail = $.trim(el.find('#personalEmail').val());
+            var personalEmail = $.trim($thisEl.find('#personalEmail').val());
 
-            var skype = $.trim(el.find('#skype').val());
+            var skype = $.trim($thisEl.find('#skype').val());
 
             var workPhones = {
-                phone : $.trim(el.find('#phone').val()),
-                mobile: $.trim(el.find('#mobile').val())
+                phone : $.trim($thisEl.find('#phone').val()),
+                mobile: $.trim($thisEl.find('#mobile').val())
             };
 
-            var bankAccountNo = $.trim($('#bankAccountNo').val());
+            var bankAccountNo = $.trim($thisEl.find('#bankAccountNo').val());
 
-            var relatedUser = this.$el.find('#relatedUsersDd').data('id') || null;
+            var relatedUser = $thisEl.find('#relatedUsersDd').attr('data-id') || null;
 
-            var departmentDd = this.$el.find('#departmentDd');
+            var departmentDd = $thisEl.find('#departmentDd');
 
-            var department = departmentDd.data('id') || null;
+            var department = departmentDd.attr('data-id') || null;
 
-            var jobPositionDd = this.$el.find('#jobPositionDd');
-            var jobPosition = jobPositionDd.data('id') || null;
+            var jobPositionDd = $thisEl.find('#jobPositionDd');
+            var jobPosition = jobPositionDd.attr('data-id') || null;
 
-            var weeklySchedulerDd = this.$el.find('#weeklySchedulerDd');
+            var weeklySchedulerDd = $thisEl.find('#weeklySchedulerDd');
 
-            var weeklyScheduler = weeklySchedulerDd.data('id');
+            var weeklyScheduler = weeklySchedulerDd.attr('data-id');
 
-            var projectManagerDD = this.$el.find('#projectManagerDD');
-            var manager = projectManagerDD.data('id') || null;
+            var projectManagerDD = $thisEl.find('#projectManagerDD');
+            var manager = projectManagerDD.attr('data-id') || null;
 
-            var identNo = $.trim($('#identNo').val());
+            var identNo = $.trim($thisEl.find('#identNo').val());
 
-            var passportNo = $.trim(el.find('#passportNo').val());
+            var passportNo = $.trim($thisEl.find('#passportNo').val());
 
-            var otherId = $.trim(el.find('#otherId').val());
+            var otherId = $.trim($thisEl.find('#otherId').val());
 
             var homeAddress = {};
 
-            var dateBirthSt = $.trim(this.$el.find('#dateBirth').val());
+            var dateBirthSt = $.trim($thisEl.find('#dateBirth').val());
 
-            var sourceId = $('#sourceDd').data('id');
+            var sourceId = $thisEl.find('#sourceDd').attr('data-id');
 
-            var nationality = $('#nationality').data('id');
+            var nationality = $thisEl.find('#nationality').attr('data-id');
 
             var usersId = [];
             var groupsId = [];
 
             var groups;
 
-            var whoCanRW = el.find('[name="whoCanRW"]:checked').val();
+            var whoCanRW = $thisEl.find('[name="whoCanRW"]:checked').val();
 
-            var referredBy = $.trim(el.find('#referredBy').val());
+            var referredBy = $.trim($thisEl.find('#referredBy').val());
 
-            var expectedSalary = $.trim(el.find('#expectedSalary').val());
+            var expectedSalary = $.trim($thisEl.find('#expectedSalary').val());
 
-            var proposedSalary = parseInt($.trim(el.find('#proposedSalary').val()), 10);
+            var proposedSalary = parseInt($.trim($thisEl.find('#proposedSalary').val()), 10);
 
-            var workflow = this.$el.find('#workflowsDd').data('id') || null;
+            var workflow = $thisEl.find('#workflowsDd').attr('data-id') || null;
 
-            var nextAction = $.trim($('#nextAction').val());
+            var nextAction = $.trim($thisEl.find('#nextAction').val());
 
-            $('dd').find('.homeAddress').each(function () {
+            $thisEl.find('dd').find('.homeAddress').each(function () {
                 var elem = $(this);
                 homeAddress[elem.attr('name')] = $.trim(elem.val());
             });
 
-            $('.groupsAndUser tr').each(function () {
+            $thisEl.find('.groupsAndUser tr').each(function () {
                 if ($(this).data('type') === 'targetUsers') {
-                    usersId.push($(this).data('id'));
+                    usersId.push($(this).attr('data-id'));
                 }
                 if ($(this).data('type') === 'targetGroups') {
-                    groupsId.push($(this).data('id'));
+                    groupsId.push($(this).attr('data-id'));
                 }
 
             });
 
             groups = {
-                owner: $('#allUsersSelect').data('id'),
+                owner: $thisEl.find('#allUsersSelect').attr('data-id'),
                 users: usersId,
                 group: groupsId
             };
@@ -291,23 +291,24 @@ define([
             });
         },
 
-        hideNewSelect: function () {
+       /* hideNewSelect: function () {
             $('.newSelectList').hide();
         },
 
         showNewSelect: function (e, prev, next) {
             populate.showSelect(e, prev, next, this);
             return false;
-        },
+        },*/
 
         chooseOption: function (e) {
-            $(e.target).parents('dd').find('.current-selected').text($(e.target).text()).attr('data-id', $(e.target).attr('id'));
+            var $target = $(e.target);
+            $target.parents('dd').find('.current-selected').text($target.text()).attr('data-id', $target.attr('id'));
         },
 
         render: function () {
             var formString = this.template();
             var self = this;
-            var notDiv;
+            var $thisEl;
             this.$el = $(formString).dialog({
                 closeOnEscape: false,
                 dialogClass  : 'edit-dialog create-app-dialog',
@@ -327,20 +328,25 @@ define([
                     }
                 }
             });
+            
+            $thisEl = this.$el;
+            
             this.attachView = new AttachView({
                 model   : new ApplicationModel(),
                 url     : '/uploadApplicationFiles',
                 isCreate: true
             });
             
-            notDiv = this.$el.find('.attach-container');
+            /* notDiv = this.$el.find('.attach-container');
             notDiv.append(this.attachView.render().el);
             notDiv = this.$el.find('.assignees-container');
             notDiv.append(
                 new AssigneesView({
                     model: this.currentModel
                 }).render().el
-            );
+            );*/
+
+            this.renderAssignees(this.currentModel);
             populate.getWorkflow('#workflowsDd', '#workflowNamesDd', CONSTANTS.URLS.WORKFLOWS_FORDD, {id: 'Applications'}, 'name', this, true, function (data) {
                 var i;
 
@@ -348,7 +354,7 @@ define([
                     if (data[i].name === 'Refused') {
                         self.refuseId = data[i]._id;
                         if (self.currentModel && self.currentModel.toJSON().workflow && self.currentModel.toJSON().workflow._id === data[i]._id) {
-                            $('.refuseEmployee').hide();
+                            $thisEl.find('.refuseEmployee').hide();
                         }
                         break;
                     }
@@ -363,14 +369,14 @@ define([
             populate.get('#weeklySchedulerDd', '/weeklyScheduler/forDd', {}, 'name', this, true);
 
             common.canvasDraw({model: this.model.toJSON()}, this);
-            $('#nextAction').datepicker({
+            $thisEl.find('#nextAction').datepicker({
                 dateFormat : 'd M, yy',
                 changeMonth: true,
                 changeYear : true,
                 minDate    : new Date()
             });
 
-            $('#dateBirth').datepicker({
+            $thisEl.find('#dateBirth').datepicker({
                 changeMonth: true,
                 changeYear : true,
                 yearRange  : '-100y:c+nn',

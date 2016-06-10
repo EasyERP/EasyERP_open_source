@@ -102,7 +102,6 @@ define([
             /* 'click #tabList a'                                               : 'switchTab',*/
             'mouseenter .avatar'                                             : 'showEdit',
             'mouseleave .avatar'                                             : 'hideEdit',
-            'click .dialog-tabs a'                                           : 'changeTab',
             'click .endContractReasonList, .withEndContract .arrow'          : 'showEndContractSelect',
             'click .withEndContract .newSelectList li'                       : 'endContract',
             'click .current-selected'                                        : 'showNewSelect',
