@@ -36,7 +36,7 @@ define([
             'click td.editable'                                : 'editRow',
             'change .editable '                                : 'setEditable',
             'click .newSelectList li:not(.miniStylePagination)': 'chooseOption',
-            'click tbody td:not(.checkbox, .date)'             : 'editItem'
+            'click td:not(input.checkbox)'                     : 'editItem'
         },
 
         initialize: function (options) {
@@ -62,7 +62,7 @@ define([
 
             e.preventDefault();
 
-            new EditView({model: model});
+            return new EditView({model: model});
         },
 
         recalcTotal: function () {
@@ -117,12 +117,11 @@ define([
         },
 
         render: function () {
-            var self;
+            var self = this;
             var $currentEl;
 
             $('.ui-dialog ').remove();
 
-            self = this;
             $currentEl = this.$el;
 
             $currentEl.html('');

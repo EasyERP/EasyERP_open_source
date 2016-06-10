@@ -104,6 +104,20 @@ var BonusType = function (models) {
         });
     };
 
+    this.bulkRemove = function (req, res, next) {
+        var bonusTypeModel = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        bonusTypeModel.remove({_id: {$in: ids}}, function (err, removed) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(removed);
+        });
+    };
+
     this.getForDD = function (req, res, next) {
         var Bonus = models.get(req.session.lastDb, 'bonusType', bonusTypeSchema);
 

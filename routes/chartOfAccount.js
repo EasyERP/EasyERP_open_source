@@ -13,9 +13,12 @@ module.exports = function (models) {
 
     router.get('/', accessStackMiddleware, handler.getForView);
     router.get('/getForDd', accessStackMiddleware, handler.getForDd);
+
     router.post('/', accessStackMiddleware, handler.create);
-    router.delete('/:id', accessStackMiddleware, handler.remove);
     router.patch('/', accessStackMiddleware, handler.putchBulk);
+
+    router.delete('/:id', accessStackMiddleware, handler.remove);
+    router.delete('/', accessStackMiddleware, handler.bulkRemove);
 
     return router;
 };

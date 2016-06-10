@@ -12,7 +12,6 @@ module.exports = function (models, event) {
     var accessStackMiddleware = require('../helpers/access')(moduleId, models);
 
     router.get('/', authStackMiddleware, accessStackMiddleware, handler.getByViewType);
-    router.get('/totalCollectionLength', authStackMiddleware, accessStackMiddleware, handler.totalCollectionLength);
     router.get('/getFilterValues', authStackMiddleware, accessStackMiddleware, handler.getFilterValues);
     router.get('/OpportunitiesForMiniView', authStackMiddleware, accessStackMiddleware, handler.opportunitiesForMiniView);
     router.get('/OpportunitiesForChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesForChart);
@@ -20,11 +19,14 @@ module.exports = function (models, event) {
     router.get('/OpportunitiesAgingChart', authStackMiddleware, accessStackMiddleware, handler.getOpportunitiesAgingChart);
     router.get('/getLengthByWorkflows', authStackMiddleware, accessStackMiddleware, handler.getLengthByWorkflows);
     router.get('/priority', authStackMiddleware, accessStackMiddleware, handler.getLeadsPriority);
+   
     router.post('/', authStackMiddleware, accessStackMiddleware, handler.create);
     router.post('/createLeadFromSite', handler.addNewLeadFromSite);
     router.patch('/:id', authStackMiddleware, accessStackMiddleware, handler.updateOnlySelectedFields);
     router.put('/:id', authStackMiddleware, accessStackMiddleware, handler.update);
+   
     router.delete('/:id', authStackMiddleware, accessStackMiddleware, handler.remove);
-
+    router.delete('/', authStackMiddleware, accessStackMiddleware, handler.bulkRemove);
+    
     return router;
 };

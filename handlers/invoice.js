@@ -1390,7 +1390,28 @@ var Module = function (models, event) {
         });
     };
 
+    this.bulkRemove = function (req, res, next) {
+        var db = req.session.lastDb;
+        var Model = models.get(db, 'Invoice', InvoiceSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        async.each(ids, function (id, cb) {
+            removeInvoice(req, null, id, next, cb);
+        }, function (err, result) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
+        });
+    };
+
     this.removeInvoice = function (req, res, id, next) {
+        removeInvoice(req, res, id, next);
+    };
+
+    function removeInvoice(req, res, id, next, callback) {
         var db = req.session.lastDb;
         var paymentIds = [];
         var jobs = [];
@@ -1414,7 +1435,7 @@ var Module = function (models, event) {
         };
 
         if (id.length < 24) {
-            return res.status(400).send();
+            return res ? res.status(400).send() : callback();
         }
 
         models.get(db, 'Invoice', InvoiceSchema).findByIdAndRemove(id, function (err, result) {
@@ -1654,10 +1675,14 @@ var Module = function (models, event) {
                 }
             });
 
-            res.status(200).send(result);
+            if (res) {
+                res.status(200).send(result);
+            } else if (callback) {
+                callback();
+            }
         });
 
-    };
+    }
 
     this.updateInvoice = function (req, res, _id, data, next) {
         var Invoice = models.get(req.session.lastDb, 'wTrackInvoice', wTrackInvoiceSchema);

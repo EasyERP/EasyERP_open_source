@@ -211,6 +211,32 @@ var MonthHours = function (event, models) {
         });
     };
 
+    this.bulkRemove = function (req, res, next) {
+        var MonthHoursModel = models.get(req.session.lastDb, 'MonthHours', MonthHoursSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        async.each(ids, function (id, cb) {
+            MonthHoursModel.remove({_id: id}, function (err, result) {
+                if (err) {
+                    return err(err);
+                }
+
+                composeAndCash(req);
+                event.emit('dropHoursCashes', req);
+                event.emit('setReconcileTimeCard', {req: req, month: result.month, year: result.year});
+
+                cb();
+            });
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send({success: true});
+        });
+    };
+
 };
 
 module.exports = MonthHours;

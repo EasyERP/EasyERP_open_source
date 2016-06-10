@@ -125,6 +125,20 @@ var Module = function (models) {
 
         });
     };
+
+    this.bulkRemove = function (req, res, next) {
+        var Journal = models.get(req.session.lastDb, 'journal', journalSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        Journal.remove({_id: {$in: ids}}, function (err, removed) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(removed);
+        });
+    };
 };
 
 module.exports = Module;

@@ -13,7 +13,7 @@ define([
     'common'
 ], function ($, _, ListViewBase, listTemplate, stagesTamplate, CreateView, ListItemView, EditView, CurrentModel, ContentCollection, projects, common) {
     var ProjectsListView = ListViewBase.extend({
-        createView       : CreateView,
+        CreateView       : CreateView,
         listTemplate     : listTemplate,
         ListItemView     : ListItemView,
         ContentCollection: ContentCollection,
@@ -54,45 +54,6 @@ define([
             $thisEl.find('.health-wrapper ul').hide();
             $thisEl.find('.newSelectList').hide();
         },
-
-        /*checked: function (e) {
-         var $targetEl = $(e.target);
-
-         if ($targetEl.hasClass('notRemovable')) {
-         $targetEl.prop('checked', false);
-
-         return false;
-         }
-
-         if (this.collection.length > 0) {
-         var checkLength = $("input.checkbox:checked").length;
-
-         if ($("input.checkbox:checked").length > 0) {
-         $("#top-bar-deleteBtn").show();
-         $('#checkAll').prop('checked', false);
-
-         if (checkLength == this.collection.length) {
-         $('#checkAll').prop('checked', true);
-         }
-         }
-         else {
-         $("#top-bar-deleteBtn").hide();
-         $('#checkAll').prop('checked', false);
-         }
-         }
-         },*/
-
-        /*renderCheckboxes: function () {
-         this.$el.find('#checkAll').click(function () {
-
-         $(':checkbox:not(.notRemovable)').prop('checked', this.checked);
-         if ($("input.checkbox:checked").length > 0) {
-         $("#top-bar-deleteBtn").show();
-         } else {
-         $("#top-bar-deleteBtn").hide();
-         }
-         });
-         },*/
 
         render: function () {
             var itemView;

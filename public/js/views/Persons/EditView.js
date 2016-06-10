@@ -32,7 +32,7 @@ define([
             'click #saveBtn'                                   : 'saveItem',
             'click #cancelBtn'                                 : 'hideDialog',
             'click .current-selected'                          : 'showNewSelect',
-            'click'                                            : 'hideNewSelect',
+            click                                              : 'hideNewSelect',
             'mouseenter .avatar'                               : 'showEdit',
             'mouseleave .avatar'                               : 'hideEdit',
             'click .dialog-tabs a'                             : 'changeTab',
