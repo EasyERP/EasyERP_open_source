@@ -12,7 +12,7 @@ define([
     'views/ExpensesPayments/list/ListItemView',
     'views/ExpensesPayments/list/ListTotalView',
     'collections/ExpensesPayments/filterCollection',
-    'collections/ExpensesPayments/EditCollection',
+    'collections/ExpensesPayments/editCollection',
     'dataService',
     'populate',
     'async',
