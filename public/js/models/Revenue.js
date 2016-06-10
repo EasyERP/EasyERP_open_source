@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 17.06.2015.
- */
 define([
     'Backbone'
 ], function (Backbone) {

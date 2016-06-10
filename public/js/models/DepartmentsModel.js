@@ -5,7 +5,7 @@
 ], function (Backbone, Validation, CONSTANTS) {
     'use strict';
     var DepartmentsModel = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
         initialize : function () {
             this.on('invalid', function (model, errors) {
                 var msg;
@@ -20,19 +20,22 @@
                 }
             });
         },
-        validate   : function (attrs) {
+
+        validate: function (attrs) {
             var errors = [];
-            Validation.checkGroupsNameField(errors, true, attrs.name, "Department name");
+            Validation.checkGroupsNameField(errors, true, attrs.name, 'Department name');
             if (errors.length > 0) {
                 return errors;
             }
         },
-        defaults   : {
+
+        defaults: {
             name             : '',
-            parentDepartment : "",
-            departmentManager: ""
+            parentDepartment : '',
+            departmentManager: ''
         },
-        urlRoot    : function () {
+
+        urlRoot: function () {
             return CONSTANTS.URLS.DEPARTMENTS;
         }
     });

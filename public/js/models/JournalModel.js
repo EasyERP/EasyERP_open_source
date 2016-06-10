@@ -4,7 +4,7 @@ define([
 ], function (Backbone, CONSTANTS) {
     'use strict';
     var JournalModel = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
         urlRoot    : function () {
             return CONSTANTS.URLS.JOURNAL;
         }

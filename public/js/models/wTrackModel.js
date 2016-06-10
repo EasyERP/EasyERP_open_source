@@ -28,11 +28,13 @@ define([
             amount     : 0,
             rate       : 0
         },
-        urlRoot : function () {
+
+        urlRoot: function () {
             return CONSTANTS.URLS.WTRACK;
         },
-        parse   : function (model) {
-            var profit;
+
+        parse: function (model) {
+         /*   var profit;
             var revenue = model.revenue;
             var cost = model.cost;
             var amount = model.amount;
@@ -42,10 +44,10 @@ define([
             cost = (cost / 100).toFixed(2);
             amount = amount ? (amount / 100).toFixed(2) : 0;
 
-            model.revenue = revenue;
-            model.profit = profit.toFixed(2);
-            model.cost = cost;
-            model.amount = amount;
+          //  model.revenue = revenue;
+          //  model.profit = profit.toFixed(2);
+          //  model.cost = cost;
+          //  model.amount = amount;*/
 
             return model;
         }

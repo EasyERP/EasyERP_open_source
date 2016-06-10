@@ -3,10 +3,11 @@
     'Underscore',
     'models/UsersModel',
     'common',
-    'constants'
-], function (Backbone, _, UserModel, common, CONSTANTS) {
+    'constants',
+    'collections/parent'
+], function (Backbone, _, UserModel, common, CONSTANTS, Parent) {
     'use strict';
-    var UsersCollection = Backbone.Collection.extend({
+    var UsersCollection = Parent.extend({
         model       : UserModel,
         url         : CONSTANTS.URLS.USERS,
         page        : null,
@@ -15,47 +16,20 @@
         contentType : null,
 
         initialize: function (options) {
-            var that = this;
+            var page;
+
+            options = options || {};
 
             this.startTime = new Date();
-            this.namberToShow = options.count;
-            this.page = options.page || 1;
+            this.contentType = options.contentType;
 
-            this.fetch({
-                data   : options,
-                reset  : true,
-                success: function () {
-                    that.page++;
-                },
-                error  : function (models, xhr) {
-                    if (xhr.status === 401) {
-                        Backbone.history.navigate('#login', {trigger: true});
-                    }
-                }
-            });
-        },
+            page = options.page;
 
-        showMore: function (options) {
-            var that = this;
-            var filterObject = options || {};
+            if (page) {
+                return this.getPage(page, options);
+            }
 
-            filterObject.page = (options && options.page) ? options.page : this.page;
-            filterObject.count = (options && options.count) ? options.count : this.namberToShow;
-
-            this.fetch({
-                data   : filterObject,
-                waite  : true,
-                success: function (models) {
-                    that.page++;
-                    that.trigger('showmore', models);
-                },
-                error  : function () {
-                    App.render({
-                        type   : 'error',
-                        message: "Some Error."
-                    });
-                }
-            });
+            this.getFirstPage(options);
         },
 
         parse: function (response) {
@@ -67,7 +41,8 @@
                     return user;
                 });
             }
-            return response.data;
+
+            return Parent.prototype.parse.call(this, response);
         }
     });
     return UsersCollection;

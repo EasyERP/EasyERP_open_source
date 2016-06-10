@@ -1,13 +1,10 @@
-/**
- * Created by Roman on 27.04.2015.
- */
 define([
     'Backbone',
+    'Underscore',
     'text!templates/Projects/projectInfo/wTracks/wTrackPerEmployee.html'
 
-], function (Backbone, template) {
+], function (Backbone, _, template) {
     var View = Backbone.View.extend({
-        /*el: '#wTrackItemsHolder',*/
         className: 'rawValue',
         events   : {},
 

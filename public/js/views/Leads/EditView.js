@@ -108,7 +108,6 @@ define([
             var idCustomer = $('#customerDd').attr('data-id');
             var currentCustomer = this.currentModel.get('customer');
             var address = {};
-
             var salesPersonId = this.$('#salesPerson').data('id');
             var currentSalesPerson = this.currentModel.get('salesPerson');
             // salesPersonId = salesPersonId ? salesPersonId : null;
@@ -133,7 +132,12 @@ define([
             var currentWorkflow = this.currentModel.get('workflow');
             var workflow = this.$('#workflowsDd').data('id');
             var priority = this.$el.find('#priorityDd').attr('data-id');
+            var skype = $.trim(this.$el.find('#skype').val());
+            var LI = $.trim(this.$el.find('#LI').val());
+            var FB = $.trim(this.$el.find('#FB').val());
+
             var internalNotes = $.trim($('#internalNotes').val());
+
             var active;
             var optout;
             var reffered = $.trim($('#reffered').val());
@@ -141,7 +145,14 @@ define([
             var groupsId = [];
             var whoCanRW = this.$el.find("[name='whoCanRW']:checked").val();
             var data = {
-                name         : name,
+                name : name,
+                skype: skype,
+
+                social: {
+                    LI: LI,
+                    FB: FB
+                },
+                
                 company      : company,
                 campaign     : this.$el.find('#campaignDd').data('id'),
                 source       : this.$el.find('#sourceDd').data('id'),
@@ -291,7 +302,7 @@ define([
                 dataService.getData(CONSTANTS.URLS.CUSTOMERS, {
                     id: id
                 }, function (response, context) {
-                    var customer = response.data[0];
+                    var customer = response;
                     if (customer.type === 'Person') {
                         context.$el.find('#first').val(customer.name.first);
                         context.$el.find('#last').val(customer.name.last);

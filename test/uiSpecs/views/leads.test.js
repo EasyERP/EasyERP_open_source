@@ -36,241 +36,241 @@ define([
         total: 3,
         data : [
             {
-                _id: "573adafe0ff1f7a761a03ea1",
-                total: 86,
-                contactName: " ",
-                salesPerson: {
+                _id            : "573adafe0ff1f7a761a03ea1",
+                total          : 86,
+                contactName    : " ",
+                salesPerson    : {
                     name: {
-                        last: "Gusti",
+                        last : "Gusti",
                         first: "Yana"
                     }
                 },
-                workflow: {
-                    _id: "528ce779f3f67bc40b00001f",
-                    __v: 0,
-                    attachments: [ ],
-                    color: "#2C3E50",
-                    name: "In Progress",
-                    sequence: 1,
-                    status: "In Progress",
-                    wId: "Leads",
-                    wName: "lead",
-                    source: "lead",
+                workflow       : {
+                    _id         : "528ce779f3f67bc40b00001f",
+                    __v         : 0,
+                    attachments : [],
+                    color       : "#2C3E50",
+                    name        : "In Progress",
+                    sequence    : 1,
+                    status      : "In Progress",
+                    wId         : "Leads",
+                    wName       : "lead",
+                    source      : "lead",
                     targetSource: [
                         "lead"
                     ],
-                    visible: true
+                    visible     : true
                 },
-                createdBy: {
+                createdBy      : {
                     user: "yana.gusti",
                     date: "2016-05-17T08:49:02.333Z"
                 },
-                editedBy: {
+                editedBy       : {
                     user: "yana.gusti",
                     date: "2016-05-17T08:49:56.981Z"
                 },
-                creationDate: "2016-05-17T08:49:02.332Z",
-                isOpportunitie: false,
-                name: "test",
+                creationDate   : "2016-05-17T08:49:02.332Z",
+                isOpportunitie : false,
+                name           : "test",
                 expectedRevenue: {
                     currency: "",
                     progress: 0,
-                    value: 0
+                    value   : 0
                 },
-                attachments: [ ],
-                notes: [ ],
-                convertedDate: "2016-05-17T08:49:02.334Z",
-                isConverted: false,
-                source: "email",
-                campaign: "email",
-                sequence: 0,
-                reffered: "",
-                optout: false,
-                active: true,
-                color: "#4d5a75",
-                categories: {
+                attachments    : [],
+                notes          : [],
+                convertedDate  : "2016-05-17T08:49:02.334Z",
+                isConverted    : false,
+                source         : "email",
+                campaign       : "email",
+                sequence       : 0,
+                reffered       : "",
+                optout         : false,
+                active         : true,
+                color          : "#4d5a75",
+                categories     : {
                     name: "",
-                    id: ""
+                    id  : ""
                 },
-                priority: "High",
+                priority       : "High",
                 expectedClosing: null,
-                nextAction: {
+                nextAction     : {
                     date: "2016-05-17T08:49:02.332Z",
                     desc: ""
                 },
-                internalNotes: "",
-                phones: {
-                    fax: "",
-                    phone: "",
+                internalNotes  : "",
+                phones         : {
+                    fax   : "",
+                    phone : "",
                     mobile: ""
                 },
-                email: "",
-                address: {
+                email          : "",
+                address        : {
                     country: "",
-                    zip: "",
-                    state: "",
-                    city: "",
-                    street: ""
+                    zip    : "",
+                    state  : "",
+                    city   : "",
+                    street : ""
                 },
-                company: null
+                company        : null
             },
             {
-                _id: "572b29ddd420f6a873ac6104",
-                total: 86,
-                contactName: "Michael FitzGerald",
-                salesPerson: {
+                _id            : "572b29ddd420f6a873ac6104",
+                total          : 86,
+                contactName    : "Michael FitzGerald",
+                salesPerson    : {
                     name: {
-                        last: "Popp",
+                        last : "Popp",
                         first: "Larysa"
                     }
                 },
-                workflow: {
-                    _id: "528ce779f3f67bc40b00001f",
-                    __v: 0,
-                    attachments: [ ],
-                    color: "#2C3E50",
-                    name: "In Progress",
-                    sequence: 1,
-                    status: "In Progress",
-                    wId: "Leads",
-                    wName: "lead",
-                    source: "lead",
+                workflow       : {
+                    _id         : "528ce779f3f67bc40b00001f",
+                    __v         : 0,
+                    attachments : [],
+                    color       : "#2C3E50",
+                    name        : "In Progress",
+                    sequence    : 1,
+                    status      : "In Progress",
+                    wId         : "Leads",
+                    wName       : "lead",
+                    source      : "lead",
                     targetSource: [
                         "lead"
                     ],
-                    visible: true
+                    visible     : true
                 },
-                createdBy: {
+                createdBy      : {
                     user: "larysa.popp",
                     date: "2016-05-05T11:09:17.326Z"
                 },
-                editedBy: {
+                editedBy       : {
                     user: "larysa.popp",
                     date: "2016-05-05T11:09:17.326Z"
                 },
-                creationDate: "2016-05-05T11:09:17.326Z",
-                isOpportunitie: false,
-                name: "Outstaff project Android",
+                creationDate   : "2016-05-05T11:09:17.326Z",
+                isOpportunitie : false,
+                name           : "Outstaff project Android",
                 expectedRevenue: {
                     currency: "",
                     progress: 0,
-                    value: 0
+                    value   : 0
                 },
-                attachments: [ ],
-                notes: [ ],
-                convertedDate: "2016-05-05T11:09:17.326Z",
-                isConverted: false,
-                source: "",
-                campaign: "",
-                sequence: 14,
-                reffered: "",
-                optout: false,
-                active: true,
-                color: "#4d5a75",
-                categories: {
+                attachments    : [],
+                notes          : [],
+                convertedDate  : "2016-05-05T11:09:17.326Z",
+                isConverted    : false,
+                source         : "",
+                campaign       : "",
+                sequence       : 14,
+                reffered       : "",
+                optout         : false,
+                active         : true,
+                color          : "#4d5a75",
+                categories     : {
                     name: "",
-                    id: ""
+                    id  : ""
                 },
-                priority: "P3",
+                priority       : "P3",
                 expectedClosing: null,
-                nextAction: {
+                nextAction     : {
                     date: "2016-05-05T11:09:17.326Z",
                     desc: ""
                 },
-                internalNotes: "Android project ( 6-8 weeks)",
-                phones: {
-                    fax: "",
-                    phone: "",
+                internalNotes  : "Android project ( 6-8 weeks)",
+                phones         : {
+                    fax   : "",
+                    phone : "",
                     mobile: "+353868331710"
                 },
-                email: "",
-                address: {
+                email          : "",
+                address        : {
                     country: "Ireland",
-                    zip: "",
-                    state: "",
-                    city: "Galway",
-                    street: ""
+                    zip    : "",
+                    state  : "",
+                    city   : "Galway",
+                    street : ""
                 },
-                company: null
+                company        : null
             },
             {
-                _id: "57151285bf6bf18e63429606",
-                total: 86,
-                contactName: "Andras Kovecs",
-                salesPerson: {
+                _id            : "57151285bf6bf18e63429606",
+                total          : 86,
+                contactName    : "Andras Kovecs",
+                salesPerson    : {
                     name: {
-                        last: "Popp",
+                        last : "Popp",
                         first: "Larysa"
                     }
                 },
-                workflow: {
-                    _id: "528ce79bf3f67bc40b000020",
-                    __v: 0,
-                    attachments: [ ],
-                    color: "#2C3E50",
-                    name: "Cancelled",
-                    sequence: 0,
-                    status: "Cancelled",
-                    wId: "Leads",
-                    wName: "lead",
-                    source: "lead",
+                workflow       : {
+                    _id         : "528ce79bf3f67bc40b000020",
+                    __v         : 0,
+                    attachments : [],
+                    color       : "#2C3E50",
+                    name        : "Cancelled",
+                    sequence    : 0,
+                    status      : "Cancelled",
+                    wId         : "Leads",
+                    wName       : "lead",
+                    source      : "lead",
                     targetSource: [
                         "lead"
                     ],
-                    visible: true
+                    visible     : true
                 },
-                createdBy: {
+                createdBy      : {
                     user: "larysa.popp",
                     date: "2016-04-18T16:59:49.943Z"
                 },
-                editedBy: {
+                editedBy       : {
                     user: "larysa.popp",
                     date: "2016-05-05T11:07:07.914Z"
                 },
-                creationDate: "2016-04-18T16:59:49.942Z",
-                isOpportunitie: false,
-                name: "ios android",
+                creationDate   : "2016-04-18T16:59:49.942Z",
+                isOpportunitie : false,
+                name           : "ios android",
                 expectedRevenue: {
                     currency: "",
                     progress: 0,
-                    value: 0
+                    value   : 0
                 },
-                attachments: [ ],
-                notes: [ ],
-                convertedDate: "2016-04-18T16:59:49.943Z",
-                isConverted: false,
-                source: "",
-                campaign: "",
-                sequence: 70,
-                reffered: "",
-                optout: false,
-                active: true,
-                color: "#4d5a75",
-                categories: {
+                attachments    : [],
+                notes          : [],
+                convertedDate  : "2016-04-18T16:59:49.943Z",
+                isConverted    : false,
+                source         : "",
+                campaign       : "",
+                sequence       : 70,
+                reffered       : "",
+                optout         : false,
+                active         : true,
+                color          : "#4d5a75",
+                categories     : {
                     name: "",
-                    id: ""
+                    id  : ""
                 },
-                priority: "P3",
+                priority       : "P3",
                 expectedClosing: null,
-                nextAction: {
+                nextAction     : {
                     date: "2016-04-18T16:59:49.943Z",
                     desc: ""
                 },
-                internalNotes: "ios, android app",
-                phones: {
-                    fax: "",
-                    phone: "",
+                internalNotes  : "ios, android app",
+                phones         : {
+                    fax   : "",
+                    phone : "",
                     mobile: ""
                 },
-                email: "andras.kovecs@angl.tv",
-                address: {
+                email          : "andras.kovecs@angl.tv",
+                address        : {
                     country: "",
-                    zip: "",
-                    state: "",
-                    city: "",
-                    street: ""
+                    zip    : "",
+                    state  : "",
+                    city   : "",
+                    street : ""
                 },
-                company: null
+                company        : null
             }
         ]
     };
@@ -1394,23 +1394,23 @@ define([
     var fakeLeadsPriority = {
         data: [
             {
-                _id: "Trivial",
-                type: "Leads",
+                _id     : "Trivial",
+                type    : "Leads",
                 priority: "Trivial"
             },
             {
-                _id: "Low",
-                type: "Leads",
+                _id     : "Low",
+                type    : "Leads",
                 priority: "Low"
             },
             {
-                _id: "Medium",
-                type: "Leads",
+                _id     : "Medium",
+                type    : "Leads",
                 priority: "Medium"
             },
             {
-                _id: "High",
-                type: "Leads",
+                _id     : "High",
+                type    : "Leads",
                 priority: "High"
             }
         ]
@@ -1418,56 +1418,56 @@ define([
     var fakeEmployeesForDD = {
         data: [
             {
-                _id: "55b92ad221e4b7c40f000030",
+                _id       : "55b92ad221e4b7c40f000030",
                 department: {
-                    _id: "55bb1f40cb76ca630b000007",
-                    sequence: 4,
-                    nestingLevel: 1,
-                    editedBy: {
+                    _id              : "55bb1f40cb76ca630b000007",
+                    sequence         : 4,
+                    nestingLevel     : 1,
+                    editedBy         : {
                         date: "2016-03-30T11:20:27.579Z",
                         user: "52203e707d4dba8813000003"
                     },
-                    createdBy: {
+                    createdBy        : {
                         date: "2015-07-31T07:09:52.155Z",
                         user: "52203e707d4dba8813000003"
                     },
-                    users: [ ],
+                    users            : [],
                     departmentManager: "55b92ad221e4b7c40f000030",
-                    parentDepartment: "56e6775c5ec71b00429745a4",
-                    departmentName: "PM",
-                    __v: 0,
-                    isDevelopment: false
+                    parentDepartment : "56e6775c5ec71b00429745a4",
+                    departmentName   : "PM",
+                    __v              : 0,
+                    isDevelopment    : false
                 },
-                name: {
+                name      : {
                     first: "Alex",
-                    last: "Svatuk"
+                    last : "Svatuk"
                 },
                 isEmployee: true
             },
             {
-                _id: "55b92ad221e4b7c40f000031",
+                _id       : "55b92ad221e4b7c40f000031",
                 department: {
-                    _id: "55b92ace21e4b7c40f00000f",
-                    ID: 1,
-                    sequence: 3,
-                    nestingLevel: 1,
-                    editedBy: {
+                    _id              : "55b92ace21e4b7c40f00000f",
+                    ID               : 1,
+                    sequence         : 3,
+                    nestingLevel     : 1,
+                    editedBy         : {
                         date: "2016-02-25T08:41:05.787Z",
                         user: "563f673270bbc2b740ce89ae"
                     },
-                    createdBy: {
+                    createdBy        : {
                         date: "2015-07-29T19:34:38.907Z",
                         user: "52203e707d4dba8813000003"
                     },
-                    users: [ ],
+                    users            : [],
                     departmentManager: null,
-                    parentDepartment: "56cebdf6541812c07197358f",
-                    departmentName: "iOS",
-                    __v: 0,
-                    isDevelopment: true
+                    parentDepartment : "56cebdf6541812c07197358f",
+                    departmentName   : "iOS",
+                    __v              : 0,
+                    isDevelopment    : true
                 },
-                name: {
-                    last: "Gleba",
+                name      : {
+                    last : "Gleba",
                     first: "Alex"
                 },
                 isEmployee: true
@@ -1713,6 +1713,23 @@ define([
                 editedBy = $firstRow.find('td:nth-child(13)').text();
                 expect(editedBy).not.to.be.empty;
                 expect(editedBy).to.not.match(/object Object|undefined/);
+            });
+
+            it('Try to select 25 item per page', function () {
+                var $pagination = $thisEl.find('.pagination');
+                var $pageList = $pagination.find('.pageList');
+                var $needBtn = $pageList.find('.itemsNumber').first();
+                var ajaxResponse;
+
+                jQueryAjaxSpy.reset();
+
+                $needBtn.click();
+                server.respond();
+
+                ajaxResponse = jQueryAjaxSpy.args[0][0];
+                expect(ajaxResponse.data).to.exist;
+                expect(ajaxResponse.data).to.have.property('count', '25');
+                expect(ajaxResponse.data).to.have.property('page', 1);
             });
 
             it('Try to change leads stage', function () {

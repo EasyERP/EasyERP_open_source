@@ -3,18 +3,21 @@ define([
     'jQuery',
     'Underscore',
     'views/Filter/FilterView',
+    'text!templates/Alpabet/AphabeticTemplate.html', // added alphabeticalRender
     'constants',
-    'common'
-], function (Backbone, $, _, FilterView, CONSTANTS, common) {
+    'common',
+    'dataService'
+], function (Backbone, $, _, FilterView, aphabeticTemplate, CONSTANTS, common, dataService) {
     var View = Backbone.View.extend({
         el        : '#content-holder',
         filter    : null,
         FilterView: FilterView,
 
         events: {
-            'click .oe_sortable': 'goSort',
-            'click #checkAll'   : 'checkAll',
-            click               : 'hide'
+            'click .oe_sortable'   : 'goSort',
+            'click #checkAll'      : 'checkAll',
+            'click td.notRemovable': 'onDisabledClick',
+            click                  : 'hide'
         },
 
         hideDeleteBtnAndUnSelectCheckAll: function () {
@@ -38,24 +41,17 @@ define([
 
             $checkboxes.prop('checked', check);
 
-            this.inputClick(e);
+            this.checked(e);
+        },
+
+        onDisabledClick: function () {
+            App.render({
+                type   : 'error',
+                message: 'Can\'t be selected'
+            });
         },
 
         checked: function (e) {
-            var $targetEl = $(e.target);
-            var $targetDivContainer = $targetEl.closest('.listRow') && $targetEl.closest('.listRow').length ? $targetEl.closest('.listRow') : $targetEl.closest('tr'); // add or option
-            var $checkbox = $targetDivContainer.find('input[type="checkbox"]');
-            // var checked = $checkbox.prop('checked');
-
-            if (e) {
-                e.stopPropagation();
-            }
-
-            // $checkbox.prop('checked', !checked); //commented by Liliya
-            this.inputClick(e);
-        },
-
-        inputClick: function (e) {
             var $thisEl = this.$el;
             var $topBar = $('#top-bar');
             var $checkBoxes = $thisEl.find('.checkbox:checked:not(#checkAll,notRemovable)');
@@ -197,14 +193,22 @@ define([
             }
         },
 
-        changeLocationHash: function (page, count, filter) {
+        changeLocationHash: function (page, count, filter, options) {
             var location = Backbone.history.fragment;
             var mainLocation = '#easyErp/' + this.contentType + '/' + this.viewType;
             var pId = (location.split('/pId=')[1]) ? location.split('/pId=')[1].split('/')[0] : '';
             var url;
             var thumbnails;
-            var locationFilter;
             var value = false;
+
+            if (this.preventChangLocation) {
+                return false;
+            }
+
+            if (!options || !options.hasOwnProperty('replace')) {
+                options = options || {};
+                options.replace = true;
+            }
 
             if (!page && this.viewType === 'list') {
                 page = (location.split('/p=')[1]) ? location.split('/p=')[1].split('/')[0] : 1;
@@ -243,25 +247,20 @@ define([
                 url += '/c=' + count;
             }
 
-            if (!filter) {
-                locationFilter = location.split('/filter=')[1];
-                if (locationFilter) {
-                    url += '/filter=' + locationFilter;
-                }
-            } else {
+            if (filter) {
                 url += '/filter=' + encodeURIComponent(JSON.stringify(filter));
             }
 
-            Backbone.history.navigate(url, {replace: true});
+            Backbone.history.navigate(url, options);
         },
 
         checkPage: function (event) {
             var newRows = this.$el.find('#false');
             var elementId = $(event.target).attr('id');
             var data = {
-                sort    : this.sort,
-                filter  : this.filter,
-                viewType: this.viewType,
+                sort       : this.sort,
+                filter     : this.filter,
+                viewType   : this.viewType,
                 contentType: this.contentType
             };
 
@@ -298,6 +297,87 @@ define([
             }
         },
 
+        // todo fixit
+        alpabeticalRender: function (e) {  // added from listViewBase and small refactor for thumbnails
+            var target;
+            var itemsNumber = $('.selectedItemsNumber').text() || this.collection.pageSize;
+            var selectedLetter;
+
+            this.startTime = new Date();
+
+            if (e && e.target) {
+                target = $(e.target);
+                selectedLetter = $(e.target).text();
+
+                if (!this.filter) {
+                    this.filter = {};
+                }
+                this.filter.letter = {
+                    key  : 'letter',
+                    value: selectedLetter,
+                    type : null
+                };
+
+                target.parent().find('.current').removeClass('current');
+                target.addClass('current');
+
+                if ($(e.target).text() === 'All') {
+                    delete this.filter;
+                    delete App.filter.letter;
+                } else {
+                    App.filter.letter = this.filter.letter;
+                }
+            }
+
+            this.filter = App.filter;
+            this.newCollection = false;
+            this.$el.find('.thumbnailElement').remove();
+
+            this.filterView.renderFilterContent(this.filter);
+            _.debounce(
+                function () {
+                    this.trigger('filter', App.filter);
+                }, 10);
+
+            $('#top-bar-deleteBtn').hide();
+            $('#checkAll').prop('checked', false);
+
+            this.changeLocationHash(1, itemsNumber, this.filter);
+            this.collection.getFirstPage({
+                count      : itemsNumber,
+                filter     : this.filter,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            });
+        },
+
+        renderAlphabeticalFilter: function () { // added from listViewBase
+            var self = this;
+            var currentLetter;
+
+            this.hasAlphabet = true;
+
+            common.buildAphabeticArray(this.collection, function (arr) {
+                self.$el.find('#startLetter').remove();
+                self.alphabeticArray = arr;
+                self.$el.find('#searchContainer').after(_.template(aphabeticTemplate, {
+                    alphabeticArray   : self.alphabeticArray,
+                    allAlphabeticArray: self.allAlphabeticArray
+                }));
+
+                currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : 'All';
+
+                if (currentLetter) {
+                    $('#startLetter').find('a').each(function () {
+                        var target = $(this);
+                        if (target.text() === currentLetter) {
+                            target.addClass('current');
+                        }
+                    });
+                }
+            });
+        },
+
         // when click in list of pages
         showPage: function (e) {
             var newRows = this.$el.find('#false');
@@ -321,51 +401,62 @@ define([
                 });
             }
 
-            this.getPage({page: page, viewType: this.viewType});
+            this.getPage({page: page, viewType: this.viewType, contentType: this.contentType});
         },
 
         nextPage: function (options) {
-            var page = options.page;
-            var count = options.count;
             var collection = this.collection;
+            var filter = this.filter;
+            var count;
+            var page;
 
             options = options || {};
+            count = options.count;
             count = count || collection.pageSize;
-            options = _.extend(options, {
-                filter: this.filter,
+            page = options.page || collection.currentPage + 1;
+            options = _.extend({
+                filter: filter,
                 count : count
-            });
+            }, options);
 
             this.collection.getNextPage(options);
-            this.changeLocationHash(page, count);
+            this.changeLocationHash(page, count, filter);
         },
 
         previousPage: function (options) {
-            var page = options.page;
-            var count = options.count;
             var collection = this.collection;
+            var filter = this.filter;
+            var count;
+            var page;
 
             options = options || {};
+            count = options.count;
             count = count || collection.pageSize;
-            options = _.extend(options, {
-                filter: this.filter,
+            page = options.page || collection.currentPage - 1;
+            options = _.extend({
+                filter: filter,
                 count : count
-            });
+            }, options);
 
             this.collection.getPreviousPage(options);
-            this.changeLocationHash(page, count);
+            this.changeLocationHash(page, count, filter);
         },
 
         firstPage: function (options) {
             var collection = this.collection;
-            var count = options.count || collection.pageSize;
+            var filter = this.filter;
+            var count;
 
-            options = options || {count: count};
-
-            options.filter = this.filter;
+            options = options || {};
+            count = options.count;
+            count = count || collection.pageSize;
+            options = _.extend({
+                filter: filter,
+                count : count
+            }, options);
 
             collection.getFirstPage(options);
-            this.changeLocationHash(1, count);
+            this.changeLocationHash(1, count, filter);
         },
 
         showFilteredPage: function (filter) {
@@ -374,9 +465,11 @@ define([
 
             if (filter && Object.keys(filter).length !== 0) {
                 this.filter = filter;
+            } else {
+                this.filter = null;
             }
 
-            this.changeLocationHash(null, this.collection.pageSize, this.filter);
+            this.changeLocationHash(null, this.collection.pageSize, this.filter, {replace: false});
             this.collection.getFirstPage({
                 filter     : this.filter,
                 viewType   : this.viewType,
@@ -385,37 +478,42 @@ define([
         },
 
         lastPage: function (options) {
-            var count = options.count;
             var collection = this.collection;
+            var filter = this.filter;
+            var count;
 
             options = options || {};
+            count = options.count;
             count = count || collection.pageSize;
-            options = _.extend(options, {
-                filter: this.filter,
+            options = _.extend({
+                filter: filter,
                 count : count
-            });
+            }, options);
 
             this.collection.getLastPage(options);
-            this.changeLocationHash(collection.lastPage, count);
+            this.changeLocationHash(collection.lastPage, count, filter);
         },
 
         getPage: function (options) {
-            var count = options.count;
             var collection = this.collection;
-            var filter = this.filter || {};
+            var filter = this.filter;
+            var count;
             var page;
 
             options = options || {};
+            count = options.count;
             count = count || collection.pageSize;
             page = options.page;
 
-            options = _.extend(options, {
-                filter: filter,
-                count : count
-            });
+            options = _.extend({
+                filter     : filter,
+                count      : count,
+                viewType   : this.viewType,
+                contentType: this.contentType
+            }, options);
 
             collection.getPage(page, options);
-            this.changeLocationHash(page, count);
+            this.changeLocationHash(page, count, filter);
         },
 
         // when tap in elementPerPage (50, 100, 200, ...)
@@ -423,6 +521,7 @@ define([
             var $targetEl = $(e.target);
             var newRows = this.$el.find('#false');
             var itemsNumber = $(e.target).text();
+            var filter = this.filter;
 
             this.startTime = new Date();
 
@@ -453,30 +552,38 @@ define([
             this.collection.getPage(1, {
                 count      : itemsNumber,
                 page       : 1,
-                filter     : this.filter,
+                filter     : filter,
                 viewType   : this.viewType,
                 contentType: this.contentType
             });
 
-            this.changeLocationHash(1, itemsNumber);
+            this.changeLocationHash(1, itemsNumber, filter);
         },
 
         createItem: function () {
             var CreateView = this.CreateView || Backbone.View.extend({});
             var startData = {};
             var cid;
-            var model = new this.CurrentModel();
+            var model = this.CurrentModel ? new this.CurrentModel() : {};
 
             cid = model.cid;
 
             startData.cid = cid;
 
             if (!this.isNewRow()) {
-                this.showSaveCancelBtns();
-                this.editCollection.add(model);
+                if (this.editCollection) {
+                    this.showSaveCancelBtns();
+                    this.editCollection.add(model);
+                }
             }
 
-            return new CreateView(startData);
+            return new CreateView(model);
+        },
+
+        isNewRow: function () {
+            var newRow = this.$el.find('#false');
+
+            return !!newRow.length;
         },
 
         editItem: function () {
@@ -490,57 +597,30 @@ define([
             var $thisEl = this.$el;
             var $table = $thisEl.find('#listTable');
             var mid = CONSTANTS.MID[this.contentType];
-            var model;
-            var localCounter = 0;
+            var collection = this.collection;
+            var url = collection.url;
             var $checkedInputs;
-            var count;
+            var ids = [];
 
             $checkedInputs = $table.find('input:checked');
-            $.each($checkedInputs, function (index, checkbox) {
-                model = self.collection.get(checkbox.value);
-                model.destroy({
-                    headers: {
-                        mid: mid
-                    },
-                    wait   : true,
-                    success: function () {
-                        if (self.hasAlphabet) {
-                            common.buildAphabeticArray(self.collection, function (arr) {
-                                var currentLetter = (self.filter && self.filter.letter) ? self.filter.letter.value : null;
-                                var $startLetter = $('#startLetter');
 
-                                self.alphabeticArray = arr;
-                                $startLetter = $startLetter.replaceWith(_.template(aphabeticTemplate, {
-                                    alphabeticArray   : self.alphabeticArray,
-                                    selectedLetter    : (self.selectedLetter === '' ? 'All' : self.selectedLetter),
-                                    allAlphabeticArray: self.allAlphabeticArray
-                                }));
+            $.each($checkedInputs, function () {
+                var $el = $(this);
 
-                                if (currentLetter) {
-                                    $startLetter.find('a').each(function () {
-                                        var $target = $(this);
+                ids.push($el.val());
+            });
 
-                                        if ($target.text() === currentLetter) {
-                                            $target.addClass('current');
-                                        }
-                                    });
-                                }
-                            });
-                        }
+            ids = _.compact(ids);
 
-                        self.collection.remove(model);
-                        // self.deleteItemsRender(self.deleteCounter, self.deletePage);
-                    },
+            dataService.deleteData(url, {ids: ids}, function (err, response) {
+                if (err) {
+                    return App.render({
+                        type   : 'error',
+                        message: 'Can\'t remove items'
+                    });
+                }
 
-                    error: function (_model, xhr) {
-                        if (xhr.status === 403) {
-                            App.render({
-                                type   : 'error',
-                                message: 'You do not have permission to perform this action'
-                            });
-                        }
-                    }
-                });
+                self.getPage();
             });
         },
 
@@ -699,6 +779,29 @@ define([
 
             this.checkAll();
             this.hideDeleteBtnAndUnSelectCheckAll();
+        },
+
+        renderFilter: function (baseFilter) {
+            var self = this;
+
+            self.filterView = new self.FilterView({
+                contentType: self.contentType
+            });
+
+            self.filterView.bind('filter', function (filter) {
+                if (baseFilter) {
+                    filter[baseFilter.name] = baseFilter.value;
+                }
+                self.showFilteredPage(filter);
+            });
+            self.filterView.bind('defaultFilter', function (filter) {
+                if (baseFilter) {
+                    filter[baseFilter.name] = baseFilter.value;
+                }
+                self.showFilteredPage();
+            });
+
+            self.filterView.render();
         }
     });
 

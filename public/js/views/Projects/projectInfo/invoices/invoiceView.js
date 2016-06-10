@@ -1,7 +1,3 @@
-/**
- * Created by liliya on 17.09.15.
- */
-
 define([
     'Underscore',
     'jQuery',
@@ -13,24 +9,27 @@ define([
     'models/InvoiceModel',
     'common',
     'helpers',
-    "dataService",
-    "async",
-    'constants'
-
-], function (_, $, ListView, invoiceTemplate, editView, listItemView, invoiceCollection, InvoiceModel, common, helpers, dataService, async, CONSTANTS) {
+    'dataService',
+    'async',
+    'constants',
+    'helpers/eventsBinder'
+], function (_, $, ListView, invoiceTemplate, EditView, ListItemView, invoiceCollection, InvoiceModel, common, helpers, dataService, async, CONSTANTS, eventsBinder) {
     'use strict';
 
     var invoiceView = ListView.extend({
 
-        el               : '#invoices',
-        listItemView     : listItemView,
-        contentCollection: invoiceCollection,
-        changedModels    : {},
+        el                  : '#invoices',
+        ListItemView        : ListItemView,
+        contentCollection   : invoiceCollection,
+        preventChangLocation: true,
+        changedModels       : {},
 
         initialize: function (options) {
             this.remove();
-            this.collection = options.model;
+            this.collection = options.collection;
             this.filter = options.filter || {};
+
+            eventsBinder.subscribeCollectionEvents(this.collection, this);
 
             this.eventChannel = options.eventChannel;
 
@@ -40,81 +39,42 @@ define([
         template: _.template(invoiceTemplate),
 
         events: {
-            "click .checkbox"        : "checked",
-            //"click .list tbody td:not(.notForm, .validated)": "goToEditDialog",
-            "click #removeInvoice"   : "deleteItems",
-            "click #saveInvoice"     : "saveItems",
-            "click .selectList"      : "showSelects",
-            "click .newSelectList li": "chooseOption"
-        },
-
-        showSelects: function (e) {
-            e.preventDefault();
-
-            $(e.target).parent('td').append("<ul class='newSelectList'><li>Draft</li><li>Done</li></ul>");
-
-            e.stopPropagation();
+            'click .checkbox'        : 'checked',
+            'click #removeInvoice'   : 'deleteItems',
+            'click #saveInvoice'     : 'saveItems',
+            'click .newSelectList li': 'chooseOption'
         },
 
         saveItems: function (e) {
-            e.preventDefault();
-            var id;
             var model;
             var self = this;
+            var keys = Object.keys(this.changedModels);
+            var id;
 
-            for (id in this.changedModels) {
+            e.preventDefault();
+
+            for (id = keys.length - 1; id >= 0; id--) {
                 model = this.collection.get(id);
 
                 model.save({
-                    'validated': self.changedModels[id].validated
+                    validated: self.changedModels[id].validated
                 }, {
-                    headers : {
+                    headers: {
                         mid: 55
                     },
+
                     patch   : true,
                     validate: false,
                     success : function () {
-                        self.$el.find("#saveInvoice").hide();
+                        self.$el.find('#saveInvoice').hide();
                     }
                 });
             }
 
-            for (id in this.changedModels) {
-                delete this.changedModels[id];
-            }
-        },
-
-        chooseOption: function (e) {
-            var self = this;
-            var target$ = $(e.target);
-            var targetElement = target$.parents("td");
-            var targetTr = target$.parents("tr");
-            var id = targetTr.attr('data-id');
-
-            if (!this.changedModels[id]) {
-                this.changedModels[id] = {};
-            }
-
-            if (!this.changedModels[id].hasOwnProperty('validated')) {
-                this.changedModels[id].validated = target$.text();
-                this.changesCount++;
-            }
-
-            targetElement.find('.selectList').text(target$.text());
-
-            this.hideNewSelect();
-
-            this.$el.find("#saveInvoice").show();
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $(".newSelectList").hide();
+            this.changedModels = {};
         },
 
         deleteItems: function (e) {
-            e.preventDefault();
-
             var that = this;
             var model;
             var orderId;
@@ -123,7 +83,10 @@ define([
             var listTableCheckedInput;
             var payments;
             var table = this.$el.find('#listTable');
+
             listTableCheckedInput = table.find("input:not('#checkAll_invoice'):checked");
+
+            e.preventDefault();
 
             this.collectionLength = this.collection.length;
             async.each(listTableCheckedInput, function (checkbox, cb) {
@@ -131,11 +94,11 @@ define([
                 model.destroy({
                     wait   : true,
                     success: function (model) {
-                        orderId = model.get("sourceDocument");
+                        orderId = model.get('sourceDocument');
                         orderId = orderId && orderId._id ? orderId._id : orderId;
                         id = model.get('_id');
                         payments = model.get('payments');
-                        tr = $("[data-id=" + orderId + "]");
+                        tr = $('[data-id=' + orderId + ']');
 
                         table.find('[data-id="' + id + '"]').remove();
 
@@ -144,19 +107,22 @@ define([
                         tr.removeClass('notEditable');
                         tr.find('.checkbox').removeClass('notRemovable');
 
-                        $("#removeInvoice").hide();
+                        $('#removeInvoice').hide();
                         $('#checkAll_invoice').prop('checked', false);
 
-                        that.eventChannel && that.eventChannel.trigger('invoiceRemove');
+                        if (that.eventChannel) {
+                            that.eventChannel.trigger('invoiceRemove');
+                        }
                         that.collection.remove(checkbox.value);
 
                         cb();
                     },
-                    error  : function (model, res) {
-                        if (res.status === 403 /*&& index === 0*/) {
+
+                    error: function (model, res) {
+                        if (res.status === 403) {
                             App.render({
                                 type   : 'error',
-                                message: "You do not have permission to perform this action"
+                                message: 'You do not have permission to perform this action'
                             });
                         }
 
@@ -181,34 +147,35 @@ define([
             var total = 0;
 
             async.forEach(collection, function (model, cb) {
-                balance += parseInt(model.paymentInfo.balance);
-                paid += parseInt(model.paymentInfo.unTaxed);
-                total += parseInt(model.paymentInfo.total);
+                balance += parseInt(model.paymentInfo.balance, 10);
+                paid += parseInt(model.paymentInfo.unTaxed, 10);
+                total += parseInt(model.paymentInfo.total, 10);
 
                 cb();
             }, function () {
-                self.$el.find("#balance").text(helpers.currencySplitter(balance.toFixed(2)));
-                self.$el.find("#paid").text(helpers.currencySplitter(paid.toFixed(2)));
-                self.$el.find("#total").text(helpers.currencySplitter(total.toFixed(2)));
+                self.$el.find('#balance').text(helpers.currencySplitter(balance.toFixed(2)));
+                self.$el.find('#paid').text(helpers.currencySplitter(paid.toFixed(2)));
+                self.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
             });
         },
 
         showDialog: function (orderId) {
             var self = this;
             var invoice = _.find(this.collection.toJSON(), function (el) {
-                return (el.sourceDocument ? el.sourceDocument._id.toString() === orderId.toString() : null)
+                return (el.sourceDocument ? el.sourceDocument._id.toString() === orderId.toString() : null);
             });
 
             var model = new InvoiceModel({validate: false});
 
-            model.urlRoot = '/Invoice/form';
+            model.urlRoot = '/Invoice/';
             model.fetch({
-                data   : {
+                data: {
                     id       : invoice._id,
                     currentDb: App.currentDb
                 },
+
                 success: function (model) {
-                    new editView({
+                    return new EditView({
                         model       : model,
                         redirect    : true,
                         collection  : this.collection,
@@ -216,9 +183,10 @@ define([
                         eventChannel: self.eventChannel
                     });
                 },
-                error  : function () {
+
+                error: function () {
                     App.render({
-                        type: 'error',
+                        type   : 'error',
                         message: 'Please refresh browser'
                     });
                 }
@@ -228,19 +196,21 @@ define([
 
         goToEditDialog: function (e) {
             var self = this;
-            var id = $(e.target).closest('tr').data("id");
+            var id = $(e.target).closest('tr').data('id');
             var model = new InvoiceModel({validate: false});
 
             e.preventDefault();
 
-            model.urlRoot = '/Invoice/form';
+            model.urlRoot = '/Invoice/';
             model.fetch({
-                data   : {
+                data: {
                     id       : id,
-                    currentDb: App.currentDb
+                    currentDb: App.currentDb,
+                    viewType : 'form'
                 },
+
                 success: function (model) {
-                    new editView({
+                    return new EditView({
                         model       : model,
                         redirect    : true,
                         collection  : self.collection,
@@ -248,84 +218,14 @@ define([
                         eventChannel: self.eventChannel
                     });
                 },
-                error  : function () {
+
+                error: function () {
                     App.render({
                         type   : 'error',
                         message: 'Please refresh browser'
                     });
                 }
             });
-        },
-
-        renderContent: function () {
-            var $currentEl = this.$el;
-            var tBody = $currentEl.find("#listTable");
-            var itemView;
-            var pagenation;
-
-            tBody.empty();
-            $("#top-bar-deleteBtn").hide();
-            $('#checkAll').prop('checked', false);
-
-            if (this.collection.length > 0) {
-                itemView = new this.listItemView({
-                    collection : this.collection,
-                    page       : this.page,
-                    itemsNumber: this.collection.namberToShow
-                });
-                tBody.append(itemView.render({thisEl: tBody}));
-            }
-
-            pagenation = this.$el.find('.pagination');
-            if (this.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
-        },
-
-        goSort: function (e) {
-            var target$;
-            var currentParrentSortClass;
-            var sortClass;
-            var sortConst;
-            var sortBy;
-            var sortObject;
-
-            this.collection.unbind('reset');
-            this.collection.unbind('showmore');
-
-            target$ = $(e.target).closest('th');
-            currentParrentSortClass = target$.attr('class');
-            sortClass = currentParrentSortClass.split(' ')[1];
-            sortConst = 1;
-            sortBy = target$.data('sort');
-            sortObject = {};
-
-            if (!sortClass) {
-                target$.addClass('sortUp');
-                sortClass = "sortUp";
-            }
-            switch (sortClass) {
-                case "sortDn":
-                {
-                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                    target$.removeClass('sortDn').addClass('sortUp');
-                    sortConst = 1;
-                }
-                    break;
-                case "sortUp":
-                {
-                    target$.parent().find("th").removeClass('sortDn').removeClass('sortUp');
-                    target$.removeClass('sortUp').addClass('sortDn');
-                    sortConst = -1;
-                }
-                    break;
-            }
-            sortObject[sortBy] = sortConst;
-
-            this.fetchSortCollection(sortObject);
-            // this.getTotalLength(null, this.defaultItemsNumber, this.filter);
         },
 
         checked: function (e) {
@@ -342,7 +242,7 @@ define([
             }
 
             if (this.collection.length > 0) {
-                checkLength = $el.find("input.checkbox:checked:not(.notRemovable)").length;
+                checkLength = $el.find('input.checkbox:checked:not(.notRemovable)').length;
                 checkAll$ = $el.find('#checkAll_invoice');
                 removeBtnEl = $('#removeInvoice');
 
@@ -362,11 +262,43 @@ define([
         },
 
         hideDialog: function () {
-            $(".edit-dialog").remove();
-            $(".ui-dialog").remove();
-            $(".add-group-dialog").remove();
-            $(".add-user-dialog").remove();
-            $(".crop-images-dialog").remove();
+            $('.edit-dialog').remove();
+            $('.ui-dialog').remove();
+            $('.add-group-dialog').remove();
+            $('.add-user-dialog').remove();
+            $('.crop-images-dialog').remove();
+        },
+
+        showMoreContent: function (newModels) {
+            var $currentEl = this.$el;
+            var tBody = $currentEl.find('#listTable');
+            var itemView;
+            var pagenation;
+
+            tBody.empty();
+
+            this.hideDeleteBtnAndUnSelectCheckAll();
+
+            if (newModels.length > 0) {
+                itemView = new this.ListItemView({
+                    collection : newModels,
+                    page       : this.page,
+                    itemsNumber: this.collection.namberToShow
+                });
+                tBody.append(itemView.render({thisEl: tBody}));
+            }
+
+            pagenation = this.$el.find('.pagination');
+
+            if (newModels.length === 0) {
+                pagenation.hide();
+            } else {
+                pagenation.show();
+            }
+
+            if (typeof (this.recalcTotal) === 'function') {
+                this.recalcTotal();
+            }
         },
 
         render: function (options) {
@@ -383,15 +315,15 @@ define([
             if (options && options.activeTab) {
                 self.hideDialog();
 
-                tabs = $(".chart-tabs");
+                tabs = $('.chart-tabs');
                 target = tabs.find('#invoicesTab');
 
-                target.closest(".chart-tabs").find("a.active").removeClass("active");
-                target.addClass("active");
-                n = target.parents(".chart-tabs").find("li").index(target.parent());
-                dialogHolder = $(".dialog-tabs-items");
-                dialogHolder.find(".dialog-tabs-item.active").removeClass("active");
-                dialogHolder.find(".dialog-tabs-item").eq(n).addClass("active");
+                target.closest('.chart-tabs').find('a.active').removeClass('active');
+                target.addClass('active');
+                n = target.parents('.chart-tabs').find('li').index(target.parent());
+                dialogHolder = $('.dialog-tabs-items');
+                dialogHolder.find('.dialog-tabs-item.active').removeClass('active');
+                dialogHolder.find('.dialog-tabs-item').eq(n).addClass('active');
 
                 App.projectInfo = App.projectInfo || {};
                 App.projectInfo.currentTab = 'invoices';
@@ -413,17 +345,20 @@ define([
                 self.stages = stages;
             });
 
-            this.$el.find("#removeInvoice").hide();
-            this.$el.find("#saveInvoice").hide();
+            this.renderPagination($currentEl, this);
+            // this.setPagination(this.collection, self.$el);
+
+            this.$el.find('#removeInvoice').hide();
+            this.$el.find('#saveInvoice').hide();
 
             $('#checkAll_invoice').click(function () {
 
                 self.$el.find(':checkbox:not(.notRemovable)').prop('checked', this.checked);
 
-                if (self.$el.find("input.checkbox:checked").length > 0) {
-                    self.$el.find("#removeInvoice").show();
+                if (self.$el.find('input.checkbox:checked').length > 0) {
+                    self.$el.find('#removeInvoice').show();
                 } else {
-                    self.$el.find("#removeInvoice").hide();
+                    self.$el.find('#removeInvoice').hide();
                     $('#checkAll_invoice').prop('checked', false);
                 }
             });

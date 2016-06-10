@@ -11,6 +11,7 @@ module.exports = function (models, event) {
     var pathMod = require('path');
 
     var ProjectSchema = mongoose.Schemas.Project;
+    var ProjectTypeSchema = mongoose.Schemas.projectType;
     var wTrackSchema = mongoose.Schemas.wTrack;
     var MonthHoursSchema = mongoose.Schemas.MonthHours;
     var EmployeeSchema = mongoose.Schemas.Employee;
@@ -196,36 +197,17 @@ module.exports = function (models, event) {
         });
     }
 
-    this.remove = function (req, res, next) {
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
-        var _id = req.params.id;
-
-        Project.findByIdAndRemove(_id, function (err) {
-            if (err) {
-                return next(err);
-            }
-
-            removeTasksByPorjectID(req, _id);
-
-            res.status(200).send({success: 'Remove all tasks Starting...'});
-        });
-    };
-
-
     this.getByViewType = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var data = req.query;
         var paginationObject = pageHelper(data);
         var limit = paginationObject.limit;
         var skip = paginationObject.skip;
+        var sort = data.sort || {_id: 1};
         var viewType = data.viewType;
         var optionsObject = {};
         var filter = data.filter || {};
         var response = {};
-        var waterfallTasks;
-        var accessRollSearcher;
-        var contentSearcher;
-        var mainPipeline;
         var lookupPipeline = [{
             $lookup: {
                 from        : 'projectMembers',
@@ -403,6 +385,14 @@ module.exports = function (models, event) {
             health      : '$root.health',
             total       : 1
         };
+        var keysSort = Object.keys(sort);
+        var sortLength = keysSort.length - 1;
+        var sortKey;
+        var waterfallTasks;
+        var accessRollSearcher;
+        var contentSearcher;
+        var mainPipeline;
+        var i;
 
         if (viewType === 'list') {
             lookupPipeline.push({
@@ -452,6 +442,11 @@ module.exports = function (models, event) {
             mainPipeline = lookupPipeline.concat(projectThumbPipeline);
         }
 
+        for (i = 0; i <= sortLength; i++) {
+            sortKey = keysSort[i];
+            sort[sortKey] = parseInt(sort[sortKey], 10);
+        }
+
         if (filter && typeof filter === 'object') {
             if (filter.condition === 'or') {
                 optionsObject.$or = caseFilter(filter);
@@ -490,19 +485,20 @@ module.exports = function (models, event) {
             }, {
                 $project: projectionLastStepOptions
             }, {
+                $sort: sort
+            }, {
                 $skip: skip
             }, {
                 $limit: limit
             });
 
             Project.aggregate(mainPipeline, function (err, result) {
-                    if (err) {
-                        return cb(err);
-                    }
-
-                    cb(null, result);
+                if (err) {
+                    return cb(err);
                 }
-            )
+
+                cb(null, result);
+            });
         };
 
         waterfallTasks = [accessRollSearcher, contentSearcher];
@@ -672,7 +668,7 @@ module.exports = function (models, event) {
                         }
 
                         cb(null, result);
-                    })
+                    });
             }, function (cb) {
                 Project
                     .aggregate([{
@@ -758,7 +754,7 @@ module.exports = function (models, event) {
                         }
 
                         cb(null, result);
-                    })
+                    });
             }], cb);
         };
 
@@ -782,13 +778,13 @@ module.exports = function (models, event) {
     this.getForWtrack = function (req, res, next) {
         var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
         var data = req.query;
-        var inProgress = data && data.inProgress ? true : false;
+        var inProgress = data && data.inProgress || false;
         var id = data ? data._id : null;
-        var filter = inProgress ? {'workflow': {$ne: CONSTANTS.PROJECTCLOSED}} : {};
+        var filter = inProgress ? {workflow: {$ne: CONSTANTS.PROJECTCLOSED}} : {};
 
         if (id) {
             filter._id = objectId(id);
-        }//add fof Projects in wTrack
+        }// add fof Projects in wTrack
 
         Project
             .find(filter)
@@ -807,9 +803,9 @@ module.exports = function (models, event) {
     };
 
     this.getProjectType = function (req, res, next) {
-        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var ProjectType = models.get(req.session.lastDb, 'proectType', ProjectTypeSchema);
 
-        Project.find({}, function (err, projectType) {
+        ProjectType.find({}, function (err, projectType) {
             if (err) {
                 return next(err);
             }
@@ -929,14 +925,16 @@ module.exports = function (models, event) {
         project.aggregate([
             {
                 $group: {
-                    _id      : null,
-                    project  : {
+                    _id    : null,
+                    project: {
                         $addToSet: '$name'
                     },
+
                     startDate: {
                         $addToSet: '$StartDate'
                     },
-                    endDate  : {
+
+                    endDate: {
                         $addToSet: '$EndDate'
                     }
                 }
@@ -997,7 +995,7 @@ module.exports = function (models, event) {
 
             project.find({_id: {$in: result}}, {name: 1, projectShortDesc: 1})
                 .lean()
-                .sort({'name': 1})
+                .sort({name: 1})
                 .exec(function (err, _res) {
                     if (err) {
                         return cb(err);
@@ -1006,7 +1004,7 @@ module.exports = function (models, event) {
                     cb(null, _res);
                 });
 
-        }
+        };
 
         waterfallTasks = [accessRollSearcher, contentSearcher];
 
@@ -1339,7 +1337,7 @@ module.exports = function (models, event) {
 
                                     projectTeam[empId].profit = parseFloat(((wTrack.revenue - wTrack.cost) / 100).toFixed(2));
                                     projectTeam[empId].cost = parseFloat((wTrack.cost / 100).toFixed(2));
-                                    //projectTeam[empId].rate = parseFloat(wTrack.rate);
+                                    // projectTeam[empId].rate = parseFloat(wTrack.rate);
                                     projectTeam[empId].hours = parseFloat(wTrack.worked);
                                     projectTeam[empId].revenue = parseFloat((wTrack.revenue / 100).toFixed(2));
                                 }
@@ -1424,7 +1422,7 @@ module.exports = function (models, event) {
                             budgetTotal: budgetTotal
                         };
 
-                        Job.update({_id: jobID}, {$set: {budget: budget}}, function (err, result) {
+                        Job.update({_id: jobID}, {$set: {budget: budget}}, function (err) {
                             if (err) {
                                 return next(err);
                             }
@@ -1504,7 +1502,7 @@ module.exports = function (models, event) {
 
         if (sort) {
             key = Object.keys(sort)[0];
-            sort[key] = parseInt(sort[key]);
+            sort[key] = parseInt(sort[key], 10);
         } else {
             sort = {'projectmanager.name.first': 1};
         }
@@ -1515,13 +1513,15 @@ module.exports = function (models, event) {
             $lookup: {
                 from        : 'Employees',
                 localField  : 'salesmanager',
-                foreignField: '_id', as: 'salesmanager'
+                foreignField: '_id',
+                as          : 'salesmanager'
             }
         }, {
             $lookup: {
                 from        : 'jobs',
                 localField  : 'budget.projectTeam',
-                foreignField: '_id', as: 'budget.projectTeam'
+                foreignField: '_id',
+                as          : 'budget.projectTeam'
             }
         }, {
             $project: {
@@ -1543,13 +1543,16 @@ module.exports = function (models, event) {
                 salesmanager: {
                     $addToSet: '$salesmanager'
                 },
-                projectTeam : {
+
+                projectTeam: {
                     $push: '$budget.projectTeam'
                 },
-                budgetTotal : {
+
+                budgetTotal: {
                     $addToSet: '$budget.budgetTotal'
                 },
-                name        : {
+
+                name: {
                     $addToSet: '$name'
                 }
             }
@@ -1666,8 +1669,6 @@ module.exports = function (models, event) {
                 min = totalObj.minDate;
                 max = totalObj.maxDate;
 
-                parallelTasks = [getMinWTrack, getMaxWTrack];
-
                 function getMinWTrack(cb) {
                     var newDate;
                     var wTrack;
@@ -1743,6 +1744,8 @@ module.exports = function (models, event) {
                     });
                 }
 
+                parallelTasks = [getMinWTrack, getMaxWTrack];
+
                 async.parallel(parallelTasks, function (err, result) {
                     var startDate = result[0];
                     var endDate = result[1];
@@ -1773,22 +1776,51 @@ module.exports = function (models, event) {
                             return -1;
                         }
                         return 0;
-                    } else {
-                        if (fieldA < fieldB) {
-                            return 1;
-                        }
-                        if (fieldA > fieldB) {
-                            return -1;
-                        }
-                        return 0;
                     }
+                    if (fieldA < fieldB) {
+                        return 1;
+                    }
+                    if (fieldA > fieldB) {
+                        return -1;
+                    }
+                    return 0;
                 });
             }
-
 
             data.data = collection;
 
             res.status(200).send(data);
+        });
+    };
+
+    this.remove = function (req, res, next) {
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var _id = req.params.id;
+
+        Project.findByIdAndRemove(_id, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            removeTasksByPorjectID(req, _id);
+
+            res.status(200).send({success: 'Remove all tasks Starting...'});
+        });
+    };
+
+    this.bulkRemove = function (req, res, next) {
+        var Project = models.get(req.session.lastDb, 'Project', ProjectSchema);
+        var body = req.body || {ids: []};
+        var ids = body.ids;
+
+        // todo some validation on ids array, like check for objectId
+
+        Project.remove({_id: {$in: ids}}, function (err, removed) {
+            if (err) {
+                return next(err);
+            }
+
+            res.status(200).send(removed);
         });
     };
 };

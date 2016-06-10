@@ -73,5 +73,6 @@
             });
         }
     });
+
     return CompaniesCollection;
 });

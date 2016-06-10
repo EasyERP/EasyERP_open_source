@@ -35,7 +35,6 @@ define([
         listItemView            : listItemView,
         contentCollection       : contentCollection,
         FilterView              : FilterView,
-        totalCollectionLengthUrl: '/Invoice/totalCollectionLength',
         contentType             : CONSTANTS.SALESINVOICE, // 'salesInvoice', //'Invoice',//needs in view.prototype.changeLocationHash
         changedModels           : {},
 
@@ -204,40 +203,6 @@ define([
                     });
                 }
             });
-        },
-
-        deleteItemsRender: function (deleteCounter, deletePage) {
-            var holder;
-            var created;
-            var pagenation;
-
-            dataService.getData('/Invoice/totalCollectionLength', {
-                filter       : this.filter,
-                newCollection: this.newCollection
-            }, function (response, context) {
-                context.listLength = response.count || 0;
-            }, this);
-            this.deleteRender(deleteCounter, deletePage, {
-                filter          : this.filter,
-                newCollection   : this.newCollection,
-                parrentContentId: this.parrentContentId
-            });
-            if (deleteCounter !== this.collectionLength) {
-                holder = this.$el;
-                created = holder.find('#timeRecivingDataFromServer');
-                created.before(new listItemView({
-                    collection : this.collection,
-                    page       : holder.find('#currentShowPage').val(),
-                    itemsNumber: holder.find('span#itemsNumber').text()
-                }).render()); // added two parameters page and items number
-            }
-
-            pagenation = this.$el.find('.pagination');
-            if (this.collection.length === 0) {
-                pagenation.hide();
-            } else {
-                pagenation.show();
-            }
         }
 
     });

@@ -10,8 +10,9 @@ define([
             mname  : '',
             content: []
         },
-        parse  : function (resp) {
-            if (resp.result.status === "0") {
+
+        parse: function (resp) {
+            if (resp.result.status === '0') {
                 return {
                     mid    : resp.data[0].mid,
                     mname  : resp.data[0].mname,

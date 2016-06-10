@@ -1,12 +1,14 @@
-define(['Validation', 'common'], function (Validation, common) {
-    var InvoiceModel = Backbone.Model.extend({
-        idAttribute: "_id",
+define([
+    'Backbone'
+], function (Backbone) {
+    var Model = Backbone.Model.extend({
+        idAttribute: '_id',
         initialize : function () {
         },
 
-        urlRoot    : function () {
+        urlRoot: function () {
             return '/weeklyScheduler';
         }
     });
-    return InvoiceModel;
+    return Model;
 });

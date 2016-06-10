@@ -13,11 +13,11 @@ define([
         'constants'
     ],
 
-    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, listItemView, contentCollection, FilterView, common, dataService, CONSTANTS) {
+    function (listViewBase, listTemplate, stagesTemplate, CreateView, editView, invoiceModel, ListItemView, contentCollection, FilterView, common, dataService, CONSTANTS) {
         var InvoiceListView = listViewBase.extend({
             createView              : CreateView,
             listTemplate            : listTemplate,
-            listItemView            : listItemView,
+            ListItemView            : ListItemView,
             contentCollection       : contentCollection,
             FilterView              : FilterView,
             totalCollectionLengthUrl: '/Invoice/totalCollectionLength',
@@ -193,7 +193,7 @@ define([
 
                 function currentEllistRenderer(self) {
                     $currentEl.append(_.template(listTemplate, {currentDb: App.weTrack}));
-                    var itemView = new listItemView({
+                    var itemView = new ListItemView({
                         collection : self.collection,
                         page       : self.page,
                         itemsNumber: self.collection.namberToShow
@@ -245,7 +245,7 @@ define([
                 if (deleteCounter !== this.collectionLength) {
                     var holder = this.$el;
                     var created = holder.find('#timeRecivingDataFromServer');
-                    created.before(new listItemView({
+                    created.before(new ListItemView({
                         collection : this.collection,
                         page       : holder.find("#currentShowPage").val(),
                         itemsNumber: holder.find("span#itemsNumber").text()

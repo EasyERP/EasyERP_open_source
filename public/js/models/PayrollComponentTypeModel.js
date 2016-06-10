@@ -1,10 +1,12 @@
-define(['Validation', 'common'], function (Validation, common) {
+define([
+    'Backbone'
+], function (Backbone) {
     var InvoiceModel = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
         initialize : function () {
         },
 
-        urlRoot    : function () {
+        urlRoot: function () {
             return '/payrollComponentTypes';
         }
     });

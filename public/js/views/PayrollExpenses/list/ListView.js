@@ -163,7 +163,7 @@ define([
                 self.changedPeriods = {};
 
                 self.showHideSaveCancelBtns();
-            }, 'application/json');
+            });
         },
 
         deleteItems: function () {

@@ -43,10 +43,6 @@ define([
             return CONSTANTS.URLS.QUOTATION;
         },
 
-        parseData: function () {
-
-        },
-
         parse: function (model) {
             var products = model.products;
             var total;

@@ -45,7 +45,7 @@
                         </colgroup>
                         <tbody id="payRoll-TableBody">
                         <% var total = 0;%>
-                        <% supplier.forEach(function(_supplier, index){ %>
+                        <% model.supplier.forEach(function(_supplier, index){ %>
 
                         <tr data-id="<%=_supplier._id%>">
                             <td data-content="number" class="centerCell"><%=index+1%></td>
@@ -53,7 +53,7 @@
                                                                   <!--value="<%=_supplier._id%>"-->
                                                                   <!--class="checkbox"/></td>-->
                             <td class="" data-content="supplier"><%=_supplier._id.fullName ? _supplier._id.fullName :''%></td>
-                            <td><%=month + '/' + year%></td>
+                            <td><%=model.month + '/' + model.year%></td>
                             <td data-type="input" class="autoCalc cash calc money" data-content="onCash"
                                 data-cash="<%=_supplier.paidAmount%>">
                                 <%=currencySplitter(_supplier.paidAmount.toFixed())%>

@@ -1,6 +1,3 @@
-/**
- * Created by soundstorm on 30.06.15.
- */
 define([
     'Backbone',
     'collections/Dashboard/employeeByDepartment'
@@ -8,7 +5,7 @@ define([
     'use strict';
 
     var Model = Backbone.Model.extend({
-        idAttribute: "department",
+        idAttribute: 'department',
 
         parse: function (model) {
             if (model.employeeData) {

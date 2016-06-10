@@ -17,7 +17,8 @@ define([
     'use strict';
 
     var PMView = Backbone.View.extend({
-        el: '#projectMembers',
+        el                  : '#projectMembers',
+        preventChangLocation: true,
 
         initialize: function (options) {
             this.project = options.project ? options.project.toJSON() : {};
@@ -63,7 +64,7 @@ define([
             if (endDate && Date.parse(startDateValue)) {
                 minDate = moment(new Date(startDateValue)).add(1, 'd').toDate();
             }
-            
+
             if (!endDate && Date.parse(endDateValue)) {
                 maxDate = moment(new Date(endDateValue)).subtract(1, 'd').toDate();
             }
@@ -88,7 +89,7 @@ define([
                     if (!self.changedModels[rowId]) {
                         self.changedModels[rowId] = {};
                     }
-                    
+
                     if (endDate) {
                         self.changedModels[rowId].endDate = moment(new Date(dateText)).endOf('day').toDate();
                     } else {
@@ -131,7 +132,7 @@ define([
                 return false;
             }
 
-            if (prevEndDate === constants.END_OF_PROJECT){
+            if (prevEndDate === constants.END_OF_PROJECT) {
                 return prevEndDate;
             }
 
@@ -246,10 +247,11 @@ define([
 
         updatedOptions: function () {
             var id;
+            var keys = Object.keys(this.changedModels);
 
             this.showCreateBtn();
 
-            for (id in this.changedModels) {
+            for (id = keys.length - 1; id >= 0; id--) {
                 this.collection.get(id).set(this.changedModels[id]);
                 delete this.changedModels[id];
             }
@@ -276,6 +278,7 @@ define([
             var errorContent = this.$el.find('.errorContent');
             var newElements = this.$el.find('tr.false');
             var isPickedEmployee = newElements.find('[data-content="employee"]').text();
+            var keys = Object.keys(this.changedModels);
 
             e.preventDefault();
 
@@ -293,7 +296,7 @@ define([
                 });
             }
 
-            for (id in this.changedModels) {
+            for (id = keys.length - 1; id >= 0; id--) {
                 model = this.collection.get(id);
 
                 if (model) {
@@ -339,13 +342,12 @@ define([
             var nextDay;
             var startDate;
 
-
             dataType = targetElement.data('content') + 'Id';
 
             targetElement.attr('data-id', id);
 
             if (dataType === 'projectPositionId') {
-                //this.removePrevPosition();
+                // this.removePrevPosition();
                 startDate = this.prevEndDate(targetRow);
 
                 if (startDate === constants.END_OF_PROJECT) {
@@ -472,14 +474,14 @@ define([
                         var delModel = res.success;
                         row.remove();
                         self.editLastMember();
-                        //self.putPrevDate(content, e);
                         self.isChangedSales(delModel);
                     },
-                    error  : function (model, res) {
-                        if (res.status === 403 && index === 0) {
+
+                    error: function (model, res) {
+                        if (res.status === 403) {
                             App.render({
                                 type   : 'error',
-                                message: "You do not have permission to perform this action"
+                                message: 'You do not have permission to perform this action'
                             });
                         }
                     }
@@ -488,7 +490,6 @@ define([
                 row.remove();
                 this.collection.remove(model);
                 self.editLastMember();
-                //self.putPrevDate(content, e);
             }
         },
 

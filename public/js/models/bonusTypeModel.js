@@ -1,15 +1,13 @@
-/**
- * Created by Liliya_Pikiner on 7/1/2015.
- */
 define([
-    'Backbone'
-], function (Backbone) {
+    'Backbone',
+    'constants'
+], function (Backbone, CONSTANTS) {
 
     var bonusTypeModel = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
 
         urlRoot: function () {
-            return "/bonusType";
+            return CONSTANTS.URLS.BONUSTYPE;
         },
 
         defaults: {

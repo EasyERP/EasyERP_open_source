@@ -56,7 +56,10 @@ define([
             var isNew;
             var showMore;
             var success;
+            var remove;
             var error;
+            var merge;
+            var add;
 
             page = page || this.currentPage;
             page = parseInt(page, 10);
@@ -76,6 +79,21 @@ define([
             } else {
                 showMore = !!options.showMore;
             }
+            if (!options.hasOwnProperty('remove')) {
+                remove = true;
+            } else {
+                remove = !!options.remove;
+            }
+            if (!options.hasOwnProperty('add')) {
+                add = true;
+            } else {
+                add = !!options.add;
+            }
+            if (!options.hasOwnProperty('merge')) {
+                merge = true;
+            } else {
+                merge = !!options.merge;
+            }
 
             if (isNew || !options.data) {
                 _opts.data = _.extend({}, options);
@@ -92,9 +110,13 @@ define([
 
             _opts.reset = reset;
             _opts.wait = wait;
+            _opts.remove = remove;
 
             delete data.wait;
             delete data.reset;
+            delete data.remove;
+            delete data.add;
+            delete data.merge;
 
             self.pageSize = data.count;
             self.currentPage = data.page;
@@ -233,7 +255,7 @@ define([
             return self.trigger('showmore', newFilteredCollection);
         },
 
-        filterCollection: function (field, value, collection) {
+        filterCollection: function (field, value, Collection) {
             var resultCollection;
             var regex;
 
@@ -243,7 +265,7 @@ define([
                 return model.get(field).match(regex);
             });
 
-            return new collection(resultCollection);
+            return new Collection(resultCollection);
         },
 
         /**

@@ -47,6 +47,7 @@ define([
         initialize: function (options) {
             var self = this;
             var formModel;
+            var $thisEl = this.$el;
 
             this.mId = CONSTANTS.MID[this.contentType];
             this.formModel = options.model;
@@ -62,15 +63,16 @@ define([
             common.populateOpportunitiesForMiniView('/opportunities/OpportunitiesForMiniView', formModel._id, formModel.company ? formModel.company._id : null, this.pageMini, this.pageCount, true, function (opps) {
                 self.allMiniOpp = opps.listLength;
                 self.allPages = Math.ceil(self.allMiniOpp / self.pageCount);
+
                 if (self.allPages === self.pageMini) {
-                    $('.miniPagination .next').addClass('not-active');
-                    $('.miniPagination .last').addClass('not-active');
+                    $thisEl.find('.miniPagination .next').addClass('not-active');
+                    $thisEl.find('.miniPagination .last').addClass('not-active');
                 }
+
                 if (self.allPages === 1 || self.allPages === 0) {
-                    $('.miniPagination').hide();
+                    $thisEl.find('.miniPagination').hide();
                 }
             });
-
         },
 
         nextMiniPage: function () {
@@ -124,18 +126,20 @@ define([
 
         quickEdit: function (e) {
             var trId = $(e.target).closest('dd');
+            var $thisEl = this.$el;
 
-            if ($('#' + trId.attr('id')).find('#editSpan').length === 0) {
-                $('#' + trId.attr('id')).append('<span id="editSpan" class=""><a href="#">e</a></span>');
-                if ($('#' + trId.attr('id')).width() - 30 < $('#' + trId.attr('id')).find('.no-long').width()) {
-                    $('#' + trId.attr('id')).find('.no-long').width($('#' + trId.attr('id')).width() - 30);
+            if ($thisEl.find('#' + trId.attr('id')).find('#editSpan').length === 0) {
+                $thisEl.find('#' + trId.attr('id')).append('<span id="editSpan" class=""><a href="#">e</a></span>');
+                if ($thisEl.find('#' + trId.attr('id')).width() - 30 < $thisEl.find('#' + trId.attr('id')).find('.no-long').width()) {
+                    $thisEl.find('#' + trId.attr('id')).find('.no-long').width($thisEl.find('#' + trId.attr('id')).width() - 30);
                 }
             }
         },
 
         removeEdit: function () {
-            $('#editSpan').remove();
-            $('dd .no-long').css({width: 'auto'});
+            var $thisEl = this.$el;
+            $thisEl.find('#editSpan').remove();
+            $thisEl.find('dd .no-long').css({width: 'auto'});
         },
 
         cancelClick: function (e) {
@@ -147,31 +151,32 @@ define([
 
         editClick: function (e) {
             var maxlength = $('#' + $(e.target).parent().parent()[0].id).find('.no-long').attr('data-maxlength') || 32;
+            var $thisEl = this.$el;
             var parent;
             var objIndex;
 
             e.preventDefault();
-            $('.quickEdit #editInput').remove();
-            $('.quickEdit #cancelSpan').remove();
-            $('.quickEdit #saveSpan').remove();
+            $thisEl.find('.quickEdit #editInput').remove();
+            $thisEl.find('.quickEdit #cancelSpan').remove();
+            $thisEl.find('.quickEdit #saveSpan').remove();
 
             if (this.prevQuickEdit) {
-                if ($('#' + this.prevQuickEdit.id).hasClass('quickEdit')) {
-                    if ($('#' + this.prevQuickEdit.id).hasClass('with-checkbox')) {
-                        $('#' + this.prevQuickEdit.id + ' input').prop('disabled', true).prop('checked', ($('#' + this.prevQuickEdit.id + ' input').prop('checked') ? 'checked' : ''));
-                        $('.quickEdit').removeClass('quickEdit');
+                if ($thisEl.find('#' + this.prevQuickEdit.id).hasClass('quickEdit')) {
+                    if ($thisEl.find('#' + this.prevQuickEdit.id).hasClass('with-checkbox')) {
+                        $thisEl.find('#' + this.prevQuickEdit.id + ' input').prop('disabled', true).prop('checked', ($thisEl.find('#' + this.prevQuickEdit.id + ' input').prop('checked') ? 'checked' : ''));
+                        $thisEl.find('.quickEdit').removeClass('quickEdit');
                     } else if (this.prevQuickEdit.id === 'email') {
-                        $('#' + this.prevQuickEdit.id).append('<a href="mailto:' + this.text + '">' + this.text + '</a>');
-                        $('.quickEdit').removeClass('quickEdit');
+                        $thisEl.find('#' + this.prevQuickEdit.id).append('<a href="mailto:' + this.text + '">' + this.text + '</a>');
+                        $thisEl.find('.quickEdit').removeClass('quickEdit');
                     } else {
-                        $('.quickEdit').text(this.text || '').removeClass('quickEdit');
+                        $thisEl.find('.quickEdit').text(this.text || '').removeClass('quickEdit');
                     }
                 }
             }
 
             parent = $(e.target).parent().parent();
-            $('#' + parent[0].id).addClass('quickEdit');
-            $('#editSpan').remove();
+            $thisEl.find('#' + parent[0].id).addClass('quickEdit');
+            $thisEl.find('#editSpan').remove();
             objIndex = parent[0].id.split('_');
 
             if (objIndex.length > 1) {
@@ -181,9 +186,9 @@ define([
             }
 
             if (parent[0].id === 'dateBirth') {
-                $('#' + parent[0].id).text('');
-                $('#' + parent[0].id).append('<input id="editInput" maxlength="48" type="text" readonly class="left has-datepicker"/>');
-                $('.has-datepicker').datepicker({
+                $thisEl.find('#' + parent[0].id).text('');
+                $thisEl.find('#' + parent[0].id).append('<input id="editInput" maxlength="48" type="text" readonly class="left has-datepicker"/>');
+                $thisEl.find('.has-datepicker').datepicker({
                     dateFormat : 'd M, yy',
                     changeMonth: true,
                     changeYear : true,
@@ -191,24 +196,25 @@ define([
                     maxDate    : '-18y',
                     minDate    : null
                 });
-            } else if ($('#' + parent[0].id).hasClass('with-checkbox')) {
-                $('#' + parent[0].id + ' input').removeAttr('disabled');
+            } else if ($thisEl.find('#' + parent[0].id).hasClass('with-checkbox')) {
+                $thisEl.find('#' + parent[0].id + ' input').removeAttr('disabled');
             } else {
-                $('#' + parent[0].id).text('');
-                $('#' + parent[0].id).append('<input id="editInput" maxlength="' + maxlength + '" type="text" class="left"/>');
+                $thisEl.find('#' + parent[0].id).text('');
+                $thisEl.find('#' + parent[0].id).append('<input id="editInput" maxlength="' + maxlength + '" type="text" class="left"/>');
             }
 
-            $('#editInput').val(this.text);
+            $thisEl.find('#editInput').val(this.text);
             this.prevQuickEdit = parent[0];
-            $('#' + parent[0].id).append('<span id="saveSpan"><a href="#">c</a></span>');
-            $('#' + parent[0].id).append('<span id="cancelSpan"><a href="#">x</a></span>');
-            $('#' + parent[0].id).find('#editInput').width($('#' + parent[0].id).find('#editInput').width() - 50);
+            $thisEl.find('#' + parent[0].id).append('<span id="saveSpan"><a href="#">c</a></span>');
+            $thisEl.find('#' + parent[0].id).append('<span id="cancelSpan"><a href="#">x</a></span>');
+            $thisEl.find('#' + parent[0].id).find('#editInput').width($thisEl.find('#' + parent[0].id).find('#editInput').width() - 50);
         },
 
         saveCheckboxChange: function (e) {
             var parent = $(e.target).parent();
             var objIndex = parent[0].id.replace('_', '.');
             var currentModel = this.model;
+
             currentModel[objIndex] = ($('#' + parent[0].id + ' input').prop('checked'));
             this.formModel.save(currentModel, {
                 headers: {
@@ -221,7 +227,7 @@ define([
 
         saveClick: function (e) {
             var parent = $(e.target).parent().parent();
-            var objIndex = parent[0].id.split('_'); //replace change to split;
+            var objIndex = parent[0].id.split('_'); // replace change to split;
             var currentModel = this.model;
             var newModel = {};
             var oldvalue = {};
@@ -297,16 +303,16 @@ define([
 
         render: function () {
             var formModel = this.formModel.toJSON();
-            var el = this.$el;
+            var $thisEl = this.$el;
 
-            el.html(_.template(personFormTemplate, formModel));
+            $thisEl.html(_.template(personFormTemplate, formModel));
             this.renderMiniOpp();
-            el.find('.formLeftColumn').append(
+            $thisEl.find('.formLeftColumn').append(
                 new NoteView({
                     model: this.formModel
                 }).render().el
             );
-            el.find('.formLeftColumn').append(
+            $thisEl.find('.formLeftColumn').append(
                 new AttachView({
                     model: this.formModel
                 }).render().el
@@ -319,7 +325,7 @@ define([
         },
 
         editItem: function () {
-            //create editView in dialog here
+            // create editView in dialog here
             new EditView({model: this.formModel});
         },
 

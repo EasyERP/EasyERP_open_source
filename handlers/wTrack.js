@@ -1847,6 +1847,13 @@ var TCard = function (event, models) {
                 }
             }, {
                 $lookup: {
+                    from        : 'Project',
+                    localField  : 'project',
+                    foreignField: '_id',
+                    as          : 'project'
+                }
+            }, {
+                $lookup: {
                     from        : 'jobs',
                     localField  : 'jobs',
                     foreignField: '_id',
@@ -1857,6 +1864,7 @@ var TCard = function (event, models) {
                     jobs      : {$arrayElemAt: ['$jobs', 0]},
                     employee  : {$arrayElemAt: ['$employee', 0]},
                     department: {$arrayElemAt: ['$department', 0]},
+                    project   : {$arrayElemAt: ['$project', 0]},
                     month     : 1,
                     year      : 1,
                     week      : 1,
@@ -1874,10 +1882,22 @@ var TCard = function (event, models) {
                     7         : 1
                 }
             }, {
+                $lookup: {
+                    from        : 'Customers',
+                    localField  : 'project.customer',
+                    foreignField: '_id',
+                    as          : 'customer'
+                }
+            }, {
                 $project: {
                     jobs: {
                         _id : '$jobs._id',
                         name: '$jobs.name'
+                    },
+
+                    project: {
+                        _id : '$project._id',
+                        name: '$project.name'
                     },
 
                     employee: {
@@ -1888,6 +1908,37 @@ var TCard = function (event, models) {
                         name: '$department.name'
                     },
 
+                    customer: {$arrayElemAt: ['$customer', 0]},
+                    month   : 1,
+                    year    : 1,
+                    week    : 1,
+                    revenue : 1,
+                    amount  : 1,
+                    rate    : 1,
+                    hours   : 1,
+                    cost    : 1,
+                    worked  : 1,
+                    isPaid  : 1,
+                    _type   : 1,
+                    1       : 1,
+                    2       : 1,
+                    3       : 1,
+                    4       : 1,
+                    5       : 1,
+                    6       : 1,
+                    7       : 1
+                }
+            }, {
+                $project: {
+                    jobs      : 1,
+                    employee  : 1,
+                    department: 1,
+                    customer  : {
+                        _id : '$customer._id',
+                        name: '$customer.name'
+                    },
+
+                    project: 1,
                     month  : 1,
                     year   : 1,
                     week   : 1,
@@ -1910,8 +1961,35 @@ var TCard = function (event, models) {
             }]);
 
             aggregation.options = {allowDiskUse: true};
-            aggregation.exec(function (err, result) {
-                waterfallCallback(err, result);
+
+            function getTotal(pcb) {
+                WTrack.aggregate([{
+                    $match: queryObject
+                }], function (err, result) {
+                    if (err) {
+                        return pcb(err);
+                    }
+
+                    pcb(null, result.length);
+                });
+            }
+
+            function getData(pcb) {
+                aggregation.exec(function (err, result) {
+                    pcb(err, result);
+                });
+            }
+
+            async.parallel([getTotal, getData], function (err, result) {
+                var responseObject = {};
+                if (err) {
+                    return waterfallCallback(err);
+                }
+
+                responseObject.total = result[0] || 0;
+                responseObject.data = result[1] || [];
+
+                waterfallCallback(null, responseObject);
             });
 
         };

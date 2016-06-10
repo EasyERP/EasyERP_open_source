@@ -6,11 +6,12 @@
 
     var DegreeModel = Backbone.Model.extend({
 
-    idAttribute: "_id",
+        idAttribute: '_id',
         defaults   : {
             name: ''
         },
-        urlRoot    : function () {
+        
+        urlRoot: function () {
             return CONSTANTS.URLS.COMPANIES;
         }
     });

@@ -11,25 +11,34 @@ define([
     'views/salesOrder/EditView',
     'models/QuotationModel',
     'collections/salesQuotation/filterCollection',
-    'views/Filter/FilterView',
     'dataService',
     'constants',
     'helpers',
     'helpers'
-], function ($, _, listViewBase, listTemplate, listForWTrack, stagesTemplate,
-             createView, ListItemView, ListTotalView, EditView, QuotationModel,
-             contentCollection, FilterView, dataService, CONSTANTS, helpers) {
+], function ($, 
+             _,
+             ListViewBase, 
+             listTemplate, 
+             listForWTrack, 
+             stagesTemplate,
+             createView, 
+             ListItemView, 
+             ListTotalView, 
+             EditView, 
+             QuotationModel,
+             contentCollection,
+             dataService, 
+             CONSTANTS, 
+             helpers) {
     'use strict';
 
-    var OrdersListView = listViewBase.extend({
+    var OrdersListView = ListViewBase.extend({
 
         createView              : createView,
         listTemplate            : listTemplate,
         ListItemView            : ListItemView,
         contentCollection       : contentCollection,
-        FilterView              : FilterView,
         contentType             : 'salesOrder', // needs in view.prototype.changeLocationHash
-        totalCollectionLengthUrl: '/order/totalCollectionLength',
 
         initialize: function (options) {
             this.startTime = options.startTime;
@@ -52,7 +61,7 @@ define([
         },
 
         showFilteredPage: function (filter) {
-            var itemsNumber = $('#itemsNumber').text();
+            var itemsNumber = $("#itemsNumber").text();
             
             $('#top-bar-deleteBtn').hide();
             $('#checkAll').prop('checked', false);
@@ -80,13 +89,13 @@ define([
 
         chooseOption: function (e) {
             var self = this;
-            var target$ = $(e.target);
-            var targetElement = target$.parents('td');
-            var id = targetElement.attr('id');
+            var $target = $(e.target);
+            var $targetElement = $target.parents('td');
+            var id = $targetElement.attr('id');
             var model = this.collection.get(id);
 
             model.save({
-                workflow: target$.attr('id')
+                workflow: $target.attr('id')
             }, {
                 headers: {
                     mid: 55
@@ -113,20 +122,6 @@ define([
             this.$el.find('#total').text(helpers.currencySplitter(total.toFixed(2)));
         },
 
-        showNewSelect: function (e) {
-            if ($('.newSelectList').is(':visible')) {
-                this.hideNewSelect();
-                return false;
-            }
-
-            $(e.target).parent().append(_.template(stagesTemplate, {stagesCollection: this.stages}));
-            return false;
-        },
-
-        hideNewSelect: function () {
-            $('.newSelectList').remove();
-        },
-
         render: function () {
             var self;
             var $currentEl;
@@ -149,9 +144,9 @@ define([
             $currentEl.append(new ListTotalView({element: this.$el.find('#listTable'), cellSpan: 5}).render());
 
             this.renderPagination($currentEl, this);
-            this.renderFilter(self);
+            this.renderFilter();
 
-            $currentEl.append('<div id=\'timeRecivingDataFromServer\'>Created in ' + (new Date() - this.startTime) + ' ms</div>');
+            $currentEl.append('<div id="timeRecivingDataFromServer">Created in ' + (new Date() - this.startTime) + ' ms</div>');
 
             dataService.getData(CONSTANTS.URLS.WORKFLOWS_FETCH, {
                 wId         : 'Sales Order',
@@ -163,13 +158,13 @@ define([
         },
 
         goToEditDialog: function (e) {
-            e.preventDefault();
+            var $tr = $(e.target).closest('tr');
+            var id = $tr.data('id');
+            var notEditable = $tr.hasClass('notEditable');
+            var onlyView;
+            var model = new QuotationModel({validate: false});
 
-            var tr = $(e.target).closest('tr'); // eslint-disable-line
-            var id = tr.data('id'); // eslint-disable-line
-            var notEditable = tr.hasClass('notEditable'); // eslint-disable-line
-            var onlyView; // eslint-disable-line
-            var model = new QuotationModel({validate: false}); // eslint-disable-line
+            e.preventDefault();
 
             if (notEditable) {
                 onlyView = true;
@@ -178,9 +173,9 @@ define([
             model.urlRoot = '/Order/form/' + id;
             model.fetch({
                 data   : {contentType: this.contentType},
-                success: function (fetchedModel) {
-                    var editView = new EditView({
-                        model   : fetchedModel,
+                success: function (model) {
+                    return new EditView({
+                        model: model, 
                         onlyView: onlyView
                     });
                 },

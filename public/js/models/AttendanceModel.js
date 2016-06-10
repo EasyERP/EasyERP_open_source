@@ -1,21 +1,21 @@
-/**
- * Created by German on 30.06.2015.
- */
 define([
     'Backbone'
 ], function (Backbone) {
     'use strict';
     var AttendanceModel = Backbone.Model.extend({
         defaults: {
-            employees      : [],
-            years          : ['Line Year', 2014],
-            status         : [
+            employees: [],
+
+            years: ['Line Year', 2014],
+
+            status: [
                 'All',
                 'Hired',
                 'Not Hired'
             ],
-            labelMonth     : ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
-            weekDays       : ["S", "M", "T", "W", "T", "F", "S"],
+            
+            labelMonth     : ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+            weekDays       : ['S', 'M', 'T', 'W', 'T', 'F', 'S'],
             leaveDays      : 0,
             lastLeave      : 0,
             workingDays    : 0,

@@ -1,6 +1,3 @@
-/**
- * Created by Roman on 20.05.2015.
- */
 define([
     'Backbone',
     'common',
@@ -9,13 +6,14 @@ define([
     'use strict';
 
     var PaymentModel = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
 
         defaults: {
-            supplier        : {
+            supplier: {
                 _id     : null,
                 fullName: ''
             },
+
             paidAmount      : 0,
             paymentMethod   : null,
             date            : new Date(),
@@ -26,10 +24,12 @@ define([
             invoice         : null,
             invoiced        : 0
         },
-        urlRoot : function () {
+
+        urlRoot: function () {
             return CONSTANTS.URLS.PAYMENT;
         },
-        parse   : function (model) {
+
+        parse: function (model) {
             var differenceAmount = model.differenceAmount || 0;
             var paidAmount = model.paidAmount || 0;
             var invoiced;

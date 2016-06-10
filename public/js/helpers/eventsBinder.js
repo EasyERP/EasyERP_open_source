@@ -1,15 +1,25 @@
-define(['jQuery'], function ($) {
+define([
+    'Underscore',
+    'jQuery'
+], function (_, $) {
+    'use strict';
+
     return {
         subscribeCollectionEvents: function (collection, contentView) {
             collection.bind('showmore', contentView.showMoreContent, contentView);
             collection.bind('showmoreAlphabet', contentView.showMoreAlphabet, contentView);
             collection.bind('fetchFinished', contentView.setPagination, contentView);
+            collection.bind('errorPagination', function (err) {
+                App.render({
+                    type   : 'error',
+                    message: err.statusText || 'Some Error.'
+                });
+            });
 
             $(document).on('click', function (e) {
-                if (contentView && typeof (contentView.hide) === 'function'){
+                if (contentView && typeof (contentView.hide) === 'function') {
                     contentView.hide(e);
                 }
-
             });
         },
 

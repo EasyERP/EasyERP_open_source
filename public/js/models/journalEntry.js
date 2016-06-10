@@ -6,7 +6,7 @@ define([
     'use strict';
 
     var JournalEntryModel = Backbone.Model.extend({
-        idAttribute: "_id",
+        idAttribute: '_id',
         urlRoot    : function () {
             return CONSTANTS.URLS.JOURNALENTRY;
         },
